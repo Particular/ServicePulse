@@ -15,9 +15,9 @@
             serviceInstaller = new ServiceInstaller
             {
                 StartType = ServiceStartMode.Automatic,
-                ServiceName = "AdvancedInstallerLicenser",
-                DisplayName = "Advanced Installer Licenser",
-                Description = "Utility for cloud agent that automatically licenses AdvanceInstaller"
+                ServiceName = "ServicePulse",
+                DisplayName = "ServicePulse in Particular",
+                Description = "An Operations Manager’s Best Friend."
             };
 
             Installers.Add(serviceInstaller);

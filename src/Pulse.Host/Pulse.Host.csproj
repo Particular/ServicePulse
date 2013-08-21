@@ -70,14 +70,14 @@
     <Content Include="app\fonts\glyphicons-halflings-regular.woff">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="app\img\ie7-forbidden-logo.jpg" />
+    <Content Include="app\img\ServicePulseLogo.png" />
     <Content Include="app\lib\jquery-1.10.2.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app\img\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="app\css\app.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -154,6 +154,7 @@
     <Content Include="app\lib\bootstrap.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="app\NoIE.html" />
     <Content Include="app\partials\partial1.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
