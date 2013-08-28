@@ -1,1 +1,7 @@
-<p>This is the partial for view 1.</p>
+<div ng-controller="MyCtrl1">
+    <p>This is the partial for view 1.</p>
+    <a class="btn btn-default" ng-click="callSignalR()">Click me</a>
+<ul ng-repeat="ping in pings">
+    <li>{{ping}}</li>
+</ul>
+</div>
