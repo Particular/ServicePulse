@@ -1,4 +1,6 @@
-<p>This is the partial for view 2.</p>
-<p>
-  Showing of 'interpolate' filter:
-</p>
+<div ng-controller="MyCtrl2">
+   
+<ul ng-repeat="e in endpoints">
+    <li>{{e.name}}@{{e.machine}} <strong>{{e.sla}}</strong></li>
+</ul>
+</div>

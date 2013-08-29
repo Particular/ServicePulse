@@ -7,15 +7,18 @@ angular.module('myApp.controllers', [])
 
         $scope.pings = [];
         $scope.callSignalR = function() {
-            streamService.send('ServiceBus.Management.Infrastructure.SignalR.Ping, ServiceBus.Management', { title: 'John' });
+            streamService.send('Ping', { name: 'John' });
         };
-        streamService.subscribe($scope, 'ping', function (message) {
+        streamService.subscribe($scope, 'Pong', function (message) {
             $scope.$apply(function(scope) {
                 scope.pings.push(message);
             });
         });
         
+        
   }])
-  .controller('MyCtrl2', [function() {
-
+  .controller('MyCtrl2', ['$scope', 'serviceControlService', function($scope, serviceControlService) {
+      serviceControlService.getEndpointsWithSla().then(function(endpoints) {
+          $scope.endpoints = endpoints;
+      });
   }]);
