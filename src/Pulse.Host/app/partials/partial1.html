@@ -1,7 +1,7 @@
 <div ng-controller="MyCtrl1">
-    <p>This is the partial for view 1.</p>
-    <a class="btn btn-default" ng-click="callSignalR()">Click me</a>
-<ul ng-repeat="ping in pings">
-    <li>{{ping.Message}}</li>
-</ul>
+    <h2>Heartbeats indicators</h2>
+    <div class="well">
+        <a href="#/view2" class="btn btn-success btn-lg">{{model.success}} active endpoints</a>
+        <a href="#/view2" class="btn btn-danger btn-lg">{{model.fail}} failing endpoints</a>
+    </div>
 </div>

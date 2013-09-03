@@ -13,7 +13,7 @@ angular.module('myApp.services', [])
         connection.received(function(data) {
             $log.info('SignalR data received');
             $log.info(data);
-            $rootScope.$broadcast(data.Type, data.Message);
+            $rootScope.$broadcast(data.type, data.message);
         });
 
         connection.start().done(function() {
@@ -22,7 +22,6 @@ angular.module('myApp.services', [])
 
         var onSubscribe = function($scope, messageType, handler) {
             $scope.$on(messageType, function(event, message) {
-                // note that the handler is passed the problem domain parameters 
                 handler(message);
             });
         };

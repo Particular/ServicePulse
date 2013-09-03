@@ -1,5 +1,6 @@
 ﻿namespace Pulse.Host
 {
+    using System;
     using System.IO;
     using Nancy;
     using Nancy.Conventions;
@@ -35,9 +36,25 @@
             });
         }
 
+        protected override IRootPathProvider RootPathProvider
+        {
+            get { return new CustomRootPathProvider(); }
+        }
+
         protected override DiagnosticsConfiguration DiagnosticsConfiguration
         {
             get { return new DiagnosticsConfiguration {Password = @"Welcome1"}; }
+        }
+
+        class CustomRootPathProvider : IRootPathProvider
+        {
+            public string GetRootPath()
+            {
+#if DEBUG
+                return Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\"));
+#endif
+                return AppDomain.CurrentDomain.BaseDirectory;
+            }
         }
     }
 }
