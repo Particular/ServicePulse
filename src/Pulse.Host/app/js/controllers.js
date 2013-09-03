@@ -3,14 +3,19 @@
 /* Controllers */
 
 angular.module('myApp.controllers', [])
-    .controller('MyCtrl1', ['$scope', 'streamService', function ($scope, streamService) {
+    .controller('MyCtrl1', ['$scope', 'streamService', 'serviceControlService', function ($scope, streamService, serviceControlService) {
 
-        $scope.model = {success: 0, fail: 0};
+        $scope.model = {active_endpoints: '?', number_of_failing_endpoints: '?'};
         
-        streamService.subscribe($scope, 'HeartbeatSummary', function (message) {
+        serviceControlService.getHeartbeatStats().then(function (stat) {
+            $scope.model.active_endpoints = stat.active_endpoints;
+            $scope.model.number_of_failing_endpoints = stat.number_of_failing_endpoints;
+        });
+
+        streamService.subscribe($scope, 'HeartbeatSummaryChanged', function (message) {
             $scope.$apply(function (scope) {
-                scope.model.success = message.active_endpoints;
-                scope.model.fail = message.number_of_failing_endpoints;
+                scope.model.active_endpoints = message.active_endpoints;
+                scope.model.number_of_failing_endpoints = message.number_of_failing_endpoints;
             });
         });
         

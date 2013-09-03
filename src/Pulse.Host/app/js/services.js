@@ -40,6 +40,18 @@ angular.module('myApp.services', [])
     }])
     .service('serviceControlService', ['$http', 'serviceControlUrl', function($http, serviceControlUrl) {
 
+        this.getHeartbeatStats = function () {
+            return $http.jsonp(serviceControlUrl + '/heartbeats/stats?callback=JSON_CALLBACK').then(function (response) {
+                return response.data;
+            });
+        };
+        
+        this.getHeartbeatsList = function () {
+            return $http.jsonp(serviceControlUrl + '/heartbeats?callback=JSON_CALLBACK').then(function (response) {
+                return response.data;
+            });
+        };
+        
         this.getEndpoints = function() {
             return $http.jsonp(serviceControlUrl + '/endpoints?callback=JSON_CALLBACK').then(function(response) {
                 return response.data;
