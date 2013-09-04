@@ -3,9 +3,12 @@
 /* Directives */
 
 
-angular.module('myApp.directives', []).
-  directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
+angular.module('sc.directives', []).
+  directive('moment', ['$timeout', function($timeout) {
+      return {        
+          restrict: 'C',
+          link: function(scope, element, attr) {
+              //$timeout.setTimeout();
+          }
+      };
   }]);

@@ -2,11 +2,11 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers'])
+angular.module('sc', ['sc.filters', 'sc.services', 'sc.directives', 'sc.controllers'])
     .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/view1', {templateUrl: 'partials/partial1.html', controller: 'MyCtrl1'});
-        $routeProvider.when('/view2', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'});
-        $routeProvider.otherwise({redirectTo: '/view1'});
+        $routeProvider.when('/heartbeatsStats', { templateUrl: 'partials/heartbeatsStats.html', controller: 'heartbeatsStats' });
+        $routeProvider.when('/heartbeats', { templateUrl: 'partials/heartbeats.html', controller: 'heartbeats' });
+        $routeProvider.otherwise({ redirectTo: '/heartbeatsStats' });
     }])
     .run(['$rootScope', '$log', function ($rootScope, $log) {
         $rootScope.$log = $log;

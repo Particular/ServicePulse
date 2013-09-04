@@ -2,8 +2,8 @@
 
 /* Controllers */
 
-angular.module('myApp.controllers', [])
-    .controller('MyCtrl1', ['$scope', 'streamService', 'serviceControlService', function ($scope, streamService, serviceControlService) {
+angular.module('sc.controllers', [])
+    .controller('heartbeatsStats', ['$scope', 'streamService', 'serviceControlService', function ($scope, streamService, serviceControlService) {
 
         $scope.model = {active_endpoints: '?', number_of_failing_endpoints: '?'};
         
@@ -13,15 +13,24 @@ angular.module('myApp.controllers', [])
         });
 
         streamService.subscribe($scope, 'HeartbeatSummaryChanged', function (message) {
-            $scope.$apply(function (scope) {
-                scope.model.active_endpoints = message.active_endpoints;
-                scope.model.number_of_failing_endpoints = message.number_of_failing_endpoints;
-            });
+            $scope.model.active_endpoints = message.active_endpoints;
+            $scope.model.number_of_failing_endpoints = message.number_of_failing_endpoints;
         });
         
   }])
-  .controller('MyCtrl2', ['$scope', 'serviceControlService', function($scope, serviceControlService) {
-      serviceControlService.getEndpointsWithSla().then(function(endpoints) {
-          $scope.endpoints = endpoints;
+  .controller('heartbeats', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
+
+      $scope.model = [];
+
+      function refresh() {
+          serviceControlService.getHeartbeatsList().then(function(heartbeats) {
+              $scope.model = heartbeats;
+          });
+      }
+
+      refresh();
+
+      streamService.subscribe($scope, 'HeartbeatSummaryChanged', function (_) {
+          refresh();
       });
   }]);

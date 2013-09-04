@@ -4,16 +4,28 @@
 
 // Demonstrate how to register services
 // In this case it is a simple value service.
-angular.module('myApp.services', [])
+angular.module('sc.services', ['angular-cache'])
     .constant('serviceControlUrl', 'http://localhost:33333/api')
+    .run(function ($http, $angularCacheFactory) {
+        $angularCacheFactory('defaultCache', {
+            capacity: 1000,  // This cache can hold 1000 items,
+            maxAge: 90000, // Items added to this cache expire after 15 minutes
+            aggressiveDelete: true, // Items will be actively deleted when they expire
+            cacheFlushInterval: 3600000, // This cache will clear itself every hour,
+            storageMode: 'localStorage'
+        });
+
+        //$http.defaults.cache = $angularCacheFactory.get('defaultCache');
+    })
     .factory('streamService', ['$log', '$rootScope', 'serviceControlUrl', function($log, $rootScope, serviceControlUrl) {
-
+        var prefix = 'signalr::';
         var connection = $.connection(serviceControlUrl + '/messagestream');
-
+        var registrations = {};
+        
         connection.received(function(data) {
             $log.info('SignalR data received');
             $log.info(data);
-            $rootScope.$broadcast(data.type, data.message);
+            $rootScope.$broadcast(prefix + data.type, data.message);
         });
 
         connection.start().done(function() {
@@ -21,13 +33,23 @@ angular.module('myApp.services', [])
         });
 
         var onSubscribe = function($scope, messageType, handler) {
-            $scope.$on(messageType, function(event, message) {
-                handler(message);
+            var deregFunc = $scope.$on(prefix + messageType, function (event, message) {
+                $scope.$apply(function(_) {
+                    handler(message);
+                });
             });
+
+            registrations[messageType + $scope.$id] = deregFunc;
         };
 
         var onUnsubscribe = function($scope, messageType) {
+            var deregFunc = registrations[messageType + $scope.$id];
 
+            if (deregFunc !== null) {
+                deregFunc();
+            }
+            
+            delete registrations[messageType + $scope.$id];
         };
 
         return {

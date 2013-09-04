@@ -2,9 +2,9 @@
 
 /* Filters */
 
-angular.module('myApp.filters', []).
-  filter('interpolate', ['version', function(version) {
-    return function(text) {
-      return String(text).replace(/\%VERSION\%/mg, version);
-    }
+angular.module('sc.filters', []).
+  filter('moment', [function() {
+      return function(text) {
+          return moment(text).fromNow();
+      };
   }]);
