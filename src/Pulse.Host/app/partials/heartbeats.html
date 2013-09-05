@@ -3,7 +3,7 @@
     <div class="col-6 col-sm-6 col-lg-4" ng-repeat="heartbeat in model">
         <div style="margin: 5px;" ng-class="{'alert-success': heartbeat.failing == false, 'alert-danger': heartbeat.failing == true}">
             <h2>{{heartbeat.endpoint}}</h2>
-            <p>Last Updated At: {{heartbeat.last_heartbeat_sent_at | moment}}</p>
+            <p>Last Updated: <span moment="{{heartbeat.last_heartbeat_sent_at}}"></span></p>
         </div>
     </div>
 </div>
