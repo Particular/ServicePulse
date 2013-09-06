@@ -7,8 +7,8 @@
     <ProjectGuid>{D120B791-BD1B-4E06-B4E1-69801A73209B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pulse.Host</RootNamespace>
-    <AssemblyName>Pulse.Host</AssemblyName>
+    <RootNamespace>ServicePulse.Host</RootNamespace>
+    <AssemblyName>ServicePulse.Host</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
