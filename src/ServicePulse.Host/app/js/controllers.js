@@ -12,12 +12,16 @@ angular.module('sc.controllers', [])
             $scope.model.failing_endpoints = stat.failing_endpoints;
         });
 
-        streamService.subscribe($scope, 'HeartbeatGracePeriodElapsed', function(_) {
+        streamService.subscribe($scope, 'EndpointExceededGracePeriodForHeartbeats', function (_) {
             $scope.model.failing_endpoints++;
             ;
         });
 
-        streamService.subscribe($scope, 'HeartbeatReceived', function(_) {
+        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (_) {
+            $scope.model.failing_endpoints--;
+        });
+
+        streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function (_) {
             $scope.model.active_endpoints++;
         });
 
@@ -30,22 +34,26 @@ angular.module('sc.controllers', [])
             $scope.model = heartbeats;
         });
 
-        streamService.subscribe($scope, 'HeartbeatGracePeriodElapsed', function (message) {
-            processMessage(message, false);
+        streamService.subscribe($scope, 'EndpointExceededGracePeriodForHeartbeats', function (message) {
+            processMessage(message, false, message.last_heartbeat_received_at);
         });
 
-        streamService.subscribe($scope, 'HeartbeatReceived', function(message) {
-            processMessage(message, true);
+        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (message) {
+            processMessage(message, true,message.restored_at);
         });
 
-        function processMessage(message, active) {
+        streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function (message) {
+            processMessage(message, true, message.heartbeat_sent_at);
+        });
+
+        function processMessage(message, active, occured_at) {
             var idx = findHeartbeat(message.endpoint, message.machine);
 
             if (idx == -1) {
                 $scope.model.push(angular.extend({ active: active }, message));
             } else {
                 $scope.model[idx].active = active;
-                $scope.model[idx].last_sent_at = message.last_sent_at;
+                $scope.model[idx].last_sent_at = occured_at;
             }
         }
 
