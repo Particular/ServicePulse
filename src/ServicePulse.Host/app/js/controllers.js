@@ -12,16 +12,17 @@ angular.module('sc.controllers', [])
             $scope.model.failing_endpoints = stat.failing_endpoints;
         });
 
-        streamService.subscribe($scope, 'EndpointExceededGracePeriodForHeartbeats', function (_) {
+        streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function (_) {
             $scope.model.failing_endpoints++;
-            ;
+            $scope.model.active_endpoints--;
         });
 
-        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (_) {
+        streamService.subscribe($scope, 'EndpointRestored', function (_) {
             $scope.model.failing_endpoints--;
+            $scope.model.active_endpoints++;
         });
 
-        streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function (_) {
+        streamService.subscribe($scope, 'EndpointDetected', function (_) {
             $scope.model.active_endpoints++;
         });
 
@@ -34,26 +35,26 @@ angular.module('sc.controllers', [])
             $scope.model = heartbeats;
         });
 
-        streamService.subscribe($scope, 'EndpointExceededGracePeriodForHeartbeats', function (message) {
-            processMessage(message, false, message.last_heartbeat_received_at);
+        streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function (message) {
+            processMessage(message, false, message.last_received_at);
         });
 
-        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (message) {
-            processMessage(message, true,message.restored_at);
+        streamService.subscribe($scope, 'EndpointRestored', function (message) {
+            processMessage(message, true, message.at);
         });
 
-        streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function (message) {
-            processMessage(message, true, message.heartbeat_sent_at);
+        streamService.subscribe($scope, 'EndpointDetected', function (message) {
+            processMessage(message, true, message.at);
         });
 
-        function processMessage(message, active, occured_at) {
+        function processMessage(message, active, lastUpdatedAt) {
             var idx = findHeartbeat(message.endpoint, message.machine);
 
             if (idx == -1) {
-                $scope.model.push(angular.extend({ active: active }, message));
+                $scope.model.push(angular.extend({ active: active, last_sent_at: lastUpdatedAt }, message));
             } else {
                 $scope.model[idx].active = active;
-                $scope.model[idx].last_sent_at = occured_at;
+                $scope.model[idx].last_sent_at = lastUpdatedAt;
             }
         }
 
