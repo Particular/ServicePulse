@@ -60,6 +60,14 @@
     <Compile Include="PulseBootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\css\bootstrap-glyphicons.css" />
+    <Content Include="app\css\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="app\css\font-awesome.css" />
+    <Content Include="app\css\fullcalendar.css" />
+    <Content Include="app\css\unicorn.grey.css" />
+    <Content Include="app\css\unicorn.main.css" />
     <Content Include="app\fonts\glyphicons-halflings-regular.eot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -69,8 +77,94 @@
     <Content Include="app\fonts\glyphicons-halflings-regular.woff">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="app\img\alpha.png" />
+    <Content Include="app\img\breadcrumb.png" />
+    <Content Include="app\img\glyphicons-halflings-white.png" />
+    <Content Include="app\img\glyphicons-halflings.png" />
+    <Content Include="app\img\gritter-light.png" />
+    <Content Include="app\img\gritter-long.png" />
+    <Content Include="app\img\gritter.png" />
+    <Content Include="app\img\hue.png" />
+    <Content Include="app\img\icons\16\book.png" />
+    <Content Include="app\img\icons\16\cabinet.png" />
+    <Content Include="app\img\icons\16\calendar.png" />
+    <Content Include="app\img\icons\16\client.png" />
+    <Content Include="app\img\icons\16\database.png" />
+    <Content Include="app\img\icons\16\download.png" />
+    <Content Include="app\img\icons\16\graph.png" />
+    <Content Include="app\img\icons\16\home.png" />
+    <Content Include="app\img\icons\16\lock.png" />
+    <Content Include="app\img\icons\16\mail.png" />
+    <Content Include="app\img\icons\16\pdf.png" />
+    <Content Include="app\img\icons\16\people.png" />
+    <Content Include="app\img\icons\16\piechart.png" />
+    <Content Include="app\img\icons\16\search.png" />
+    <Content Include="app\img\icons\16\shopping-bag.png" />
+    <Content Include="app\img\icons\16\survey.png" />
+    <Content Include="app\img\icons\16\tag.png" />
+    <Content Include="app\img\icons\16\user.png" />
+    <Content Include="app\img\icons\16\wallet.png" />
+    <Content Include="app\img\icons\16\web.png" />
+    <Content Include="app\img\icons\32\book.png" />
+    <Content Include="app\img\icons\32\cabinet.png" />
+    <Content Include="app\img\icons\32\calendar.png" />
+    <Content Include="app\img\icons\32\client.png" />
+    <Content Include="app\img\icons\32\database.png" />
+    <Content Include="app\img\icons\32\download.png" />
+    <Content Include="app\img\icons\32\graph.png" />
+    <Content Include="app\img\icons\32\home.png" />
+    <Content Include="app\img\icons\32\lock.png" />
+    <Content Include="app\img\icons\32\maestro-32.png" />
+    <Content Include="app\img\icons\32\mail.png" />
+    <Content Include="app\img\icons\32\pdf.png" />
+    <Content Include="app\img\icons\32\people.png" />
+    <Content Include="app\img\icons\32\piechart.png" />
+    <Content Include="app\img\icons\32\search.png" />
+    <Content Include="app\img\icons\32\shopping-bag.png" />
+    <Content Include="app\img\icons\32\survey.png" />
+    <Content Include="app\img\icons\32\tag.png" />
+    <Content Include="app\img\icons\32\user.png" />
+    <Content Include="app\img\icons\32\wallet.png" />
+    <Content Include="app\img\icons\32\web.png" />
+    <Content Include="app\img\ie-spacer.gif" />
     <Content Include="app\img\ie7-forbidden-logo.jpg" />
+    <Content Include="app\img\jquery-ui\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="app\img\jquery-ui\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="app\img\jquery-ui\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="app\img\jquery-ui\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="app\img\jquery-ui\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="app\img\jquery-ui\ui-bg_glass_75_ffffff_1x400.png" />
+    <Content Include="app\img\jquery-ui\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="app\img\jquery-ui\ui-bg_inset-soft_95_fef1ec_1x100.png" />
+    <Content Include="app\img\jquery-ui\ui-icons_222222_256x240.png" />
+    <Content Include="app\img\jquery-ui\ui-icons_2e83ff_256x240.png" />
+    <Content Include="app\img\jquery-ui\ui-icons_454545_256x240.png" />
+    <Content Include="app\img\jquery-ui\ui-icons_888888_256x240.png" />
+    <Content Include="app\img\jquery-ui\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="app\img\jquery-ui\ui-icons_f6cf3b_256x240.png" />
+    <Content Include="app\img\larrow.png" />
+    <Content Include="app\img\line.png" />
+    <Content Include="app\img\logo.png" />
+    <Content Include="app\img\menu-active.png" />
+    <Content Include="app\img\rarrow.png" />
+    <Content Include="app\img\saturation.png" />
+    <Content Include="app\img\select2.png" />
+    <Content Include="app\img\select2x2.png" />
     <Content Include="app\img\ServicePulseLogo.png" />
+    <Content Include="app\img\spinner.gif" />
+    <Content Include="app\img\sprite.png" />
+    <Content Include="app\index.html" />
+    <Content Include="app\js\bootstrap.min.js" />
+    <Content Include="app\js\excanvas.min.js" />
+    <Content Include="app\js\fullcalendar.min.js" />
+    <Content Include="app\js\jquery-ui.custom.js" />
+    <Content Include="app\js\jquery.flot.min.js" />
+    <Content Include="app\js\jquery.flot.resize.min.js" />
+    <Content Include="app\js\jquery.jpanelmenu.min.js" />
+    <Content Include="app\js\jquery.min.js" />
+    <Content Include="app\js\jquery.sparkline.min.js" />
+    <Content Include="app\js\unicorn.dashboard.js" />
+    <Content Include="app\js\unicorn.js" />
     <Content Include="app\lib\angular-cache-1.1.0.min.js" />
     <Content Include="app\lib\jquery-1.10.2.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -100,16 +194,13 @@
     <Content Include="app\css\bootstrap-theme.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="app\css\bootstrap.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="app\css\bootstrap.min.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="app\fonts\glyphicons-halflings-regular.svg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="app\index.html">
+    <Content Include="app\index_original.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="app\js\app.js">
