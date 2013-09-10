@@ -66,8 +66,14 @@
     </Content>
     <Content Include="app\css\font-awesome.css" />
     <Content Include="app\css\fullcalendar.css" />
+    <Content Include="app\css\unicorn.blue.css" />
+    <Content Include="app\css\unicorn.grey-old.css" />
     <Content Include="app\css\unicorn.grey.css" />
+    <Content Include="app\css\unicorn.light-blue.css" />
     <Content Include="app\css\unicorn.main.css" />
+    <Content Include="app\css\unicorn.red-green.css" />
+    <Content Include="app\css\unicorn.red.css" />
+    <Content Include="app\fonts\fontawesome-webfont.svg" />
     <Content Include="app\fonts\glyphicons-halflings-regular.eot">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -154,15 +160,14 @@
     <Content Include="app\img\spinner.gif" />
     <Content Include="app\img\sprite.png" />
     <Content Include="app\index.html" />
-    <Content Include="app\js\bootstrap.min.js" />
-    <Content Include="app\js\excanvas.min.js" />
-    <Content Include="app\js\fullcalendar.min.js" />
-    <Content Include="app\js\jquery-ui.custom.js" />
-    <Content Include="app\js\jquery.flot.min.js" />
-    <Content Include="app\js\jquery.flot.resize.min.js" />
-    <Content Include="app\js\jquery.jpanelmenu.min.js" />
+    <Content Include="app\lib\excanvas.min.js" />
+    <Content Include="app\lib\fullcalendar.min.js" />
+    <Content Include="app\lib\jquery-ui.custom.js" />
+    <Content Include="app\lib\jquery.flot.min.js" />
+    <Content Include="app\lib\jquery.flot.resize.min.js" />
+    <Content Include="app\lib\jquery.jpanelmenu.min.js" />
     <Content Include="app\js\jquery.min.js" />
-    <Content Include="app\js\jquery.sparkline.min.js" />
+    <Content Include="app\lib\jquery.sparkline.min.js" />
     <Content Include="app\js\unicorn.dashboard.js" />
     <Content Include="app\js\unicorn.js" />
     <Content Include="app\lib\angular-cache-1.1.0.min.js" />
@@ -175,6 +180,10 @@
     <Content Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="app\fonts\fontawesome-webfont.eot" />
+    <None Include="app\fonts\fontawesome-webfont.ttf" />
+    <None Include="app\fonts\fontawesome-webfont.woff" />
+    <None Include="app\fonts\FontAwesome.otf" />
     <None Include="app\lib\jquery-1.10.2.min.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

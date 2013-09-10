@@ -19,6 +19,7 @@
             conventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/css", "/app/css"));
             conventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/img", "/app/img"));
             conventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/fonts", "/app/fonts"));
+            conventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/font", "/app/fonts"));
             conventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddDirectory("/partials", "/app/partials"));
             conventions.StaticContentsConventions.Add(StaticContentConventionBuilder.AddFile("/NoIE.html", "/app/NoIE.html"));
             conventions.StaticContentsConventions.Add((ctx, root) =>
