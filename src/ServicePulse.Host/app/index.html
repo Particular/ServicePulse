@@ -1,130 +1,39 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="sc">
 <head>
     <title>Service Pulse</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/font-awesome.css" />
-    <link rel="stylesheet" href="css/fullcalendar.css" />
     <link rel="stylesheet" href="css/unicorn.main.css" />
     <link rel="stylesheet" href="css/unicorn.grey.css" class="skin-color" />
 </head>
 <body>
     <div id="header">
-        <h1><a href="./dashboard.html">Service Pulse</a></h1>
+        <h1><a href="/">Service Pulse</a></h1>
         <a id="menu-trigger" href="#"><i class="icon-align-justify"></i></a>
-    </div>
-
-    <div id="search">
-        <input type="text" placeholder="Search here..." />
-        <button type="submit" class="tip-right" title="Search"><i class="icon-search"></i></button>
     </div>
     <div id="user-nav">
         <ul class="btn-group">
-            <li class="btn dropdown" id="menu-messages"><a href="#" data-toggle="dropdown" data-target="#menu-messages" class="dropdown-toggle"><i class="icon-envelope"></i><span class="text">Messages</span> <span class="label label-danger">5</span> <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    <li><a class="sAdd" title="" href="#">new message</a></li>
-                    <li><a class="sInbox" title="" href="#">inbox</a></li>
-                    <li><a class="sOutbox" title="" href="#">outbox</a></li>
-                    <li><a class="sTrash" title="" href="#">trash</a></li>
-                </ul>
-            </li>
-            <li class="btn"><a title="" href="#"><i class="icon-cog"></i><span class="text">Settings</span></a></li>
-            <li class="btn"><a title="" href="login.html"><i class="icon-share-alt"></i><span class="text">Logout</span></a></li>
+            <li class="btn"><a title="" href="#"><i class="icon-cog"></i><span class="text">Configure</span></a></li>
         </ul>
     </div>
 
     <div id="sidebar">
         <ul>
-            <li class="active"><a href="index.html"><i class="icon-home"></i><span>Dashboard</span></a></li>
+            <li class="active"><a href="/"><i class="icon-home"></i><span>Dashboard</span></a></li>
             <li><a href="monitor.html"><i class="icon-tint"></i><span>Monitor</span></a></li>
             <li><a href="alerts.html"><i class="icon-pencil"></i><span>Alerts</span></a></li>
-            <li><a href="configure.html"><i class="icon-th"></i><span>Configure</span></a></li>
         </ul>
     </div>
-
-    <div id="style-switcher">
-        <i class="icon-arrow-left"></i>
-        <span>Style:</span>
-        <a href="#grey" style="background-color: #555555; border-color: #aaaaaa;"></a>
-        <a href="#light-blue" style="background-color: #8399b0;"></a>
-        <a href="#blue" style="background-color: #2D2F57;"></a>
-        <a href="#red" style="background-color: #673232;"></a>
-    </div>
-
-    <div id="content">
-        <div id="content-header">
-            <h1>Dashboard</h1>
-        </div>
-        <div id="breadcrumb">
-            <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
-            <a href="#" class="current">Dashboard</a>
-        </div>
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-xs-12 center" style="text-align: center;">
-                    <ul class="stat-boxes">
-                        <li class="popover-visits">
-                            <div class="left sparkline_bar_bad"><span>2,4,9,7,12,10,12</span>+10%</div>
-                            <div class="right">
-                                <strong>1</strong>
-                                Failing Endpoints
-                            </div>
-                        </li>
-                        <li class="popover-users">
-                            <div class="left sparkline_bar_good"><span>20,15,18,14,10,9,9,9</span>0%</div>
-                            <div class="right">
-                                <strong>4</strong>
-                                Active Endpoints
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="widget-box">
-                        <div class="widget-title"><span class="icon"><i class="icon-signal"></i></span>
-                            <h5>Site Statistics</h5>
-                            <div class="buttons"><a href="#" class="btn"><i class="icon-refresh"></i><span class="text">Update stats</span></a></div>
-                        </div>
-                        <div class="widget-content">
-                            <div class="row">
-                                <div class="col-xs-12 col-sm-4">
-                                    <ul class="site-stats">
-                                        <li>
-                                            <div class="cc"><i class="icon-user"></i><strong>1433</strong> <small>Total Users</small></div>
-                                        </li>
-                                        <li>
-                                            <div class="cc"><i class="icon-arrow-right"></i><strong>16</strong> <small>New Users (last week)</small></div>
-                                        </li>
-                                        <li class="divider"></li>
-                                        <li>
-                                            <div class="cc"><i class="icon-shopping-cart"></i><strong>259</strong> <small>Total Shop Items</small></div>
-                                        </li>
-                                        <li>
-                                            <div class="cc"><i class="icon-tag"></i><strong>8650</strong> <small>Total Orders</small></div>
-                                        </li>
-                                        <li>
-                                            <div class="cc"><i class="icon-repeat"></i><strong>29</strong> <small>Pending Orders</small></div>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="col-xs-12 col-sm-8">
-                                    <div class="chart"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    
+    <div id="content" ng-view>
+        
     </div>
     <div class="row">
         <div id="footer" class="col-xs-12">
-            2013 &copy; NServiceBus Ltd.
+            &copy; 2013 Particular Software Limited. All rights reserved
         </div>
     </div>
 
@@ -138,8 +47,8 @@
     <script src="lib/jquery.flot.min.js"></script>
     <script src="lib/jquery.flot.resize.min.js"></script>
     <script src="lib/jquery.sparkline.min.js"></script>
-    <script src="lib/fullcalendar.min.js"></script>
     <script src="lib/jquery.jpanelmenu.min.js"></script>
+    <script src="lib/jquery.nicescroll.min.js"></script>
     <script src="lib/moment.min.js"></script>
     <script src="js/unicorn.js"></script>
     <script src="js/unicorn.dashboard.js"></script>

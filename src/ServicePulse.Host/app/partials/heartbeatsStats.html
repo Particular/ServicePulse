@@ -1,5 +1,30 @@
-<h2>Heartbeats indicators</h2>
-<div class="well" ng-controller="heartbeatsStats" >
-    <a href="#/heartbeats" class="btn btn-success btn-lg">{{model.active_endpoints}} active endpoints</a>
-    <a href="#/heartbeats" class="btn btn-danger btn-lg">{{model.failing_endpoints}} failing endpoints</a>
-</div>
+<div id="content-header">
+            <h1>Dashboard</h1>
+        </div>
+        <div id="breadcrumb">
+            <a href="#" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>Home</a>
+            <a href="#" class="current">Dashboard</a>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 center" style="text-align: center;">
+                    <ul class="quick-actions" ng-controller="heartbeatsStats">
+							<li>
+								<a href="#/heartbeats" ng-class="{'alert-success': model.failing_endpoints == 0, 'alert-danger': model.failing_endpoints > 0}">
+									<i class="icon-piechart"></i>
+								    Endpoint Heartbeat 
+                                    <div><strong>({{model.active_endpoints}} ok; {{model.failing_endpoints}} bad)</strong></div>
+								</a>
+							</li>
+							<li>
+								<a href="#" class="alert-success">
+									<i class="icon-graph"></i>
+								    Failed Messages 
+                                    <div><strong>(10 in 2 endpoints)</strong></div>
+								</a>
+							</li>
+						</ul>
+                </div>
+            </div>
+            
+        </div>

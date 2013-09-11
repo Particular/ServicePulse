@@ -1,6 +1,6 @@
 /**
  * Unicorn Admin Template
- * Version 2.0.2
+ * Version 2.1.0
  * Diablo9983 -> diablo9983@gmail.com
 **/
 $(function(){
@@ -15,6 +15,11 @@ $(function(){
 	    trigger: '#menu-trigger'
 	});
 
+	$("html").niceScroll({
+		hideraildelay: 1,
+		zindex: 9999,
+		horizrailenabled: false
+	});
 	
 	// === Resize window related === //
 	$(window).resize(function()
@@ -31,6 +36,8 @@ $(function(){
 			ul2.css({'display':'block'});
 			if(!$('html').hasClass('jPanelMenu')) {
 				jPM.on();
+				$('#jPanelMenu-menu').niceScroll();
+				$('#jPanelMenu-menu').getNiceScroll().resize();
 			}
 
 			if($(window).scrollTop() > 35) {
@@ -52,6 +59,7 @@ $(function(){
 			ul2.css({'display':'block'});
 			$('#user-nav > ul').css({width:'auto',margin:'0'});
 		}
+		$('html').getNiceScroll().resize();
 	});
 	
 	
@@ -68,6 +76,10 @@ $(function(){
 			}
 		});
 		jPM.on();
+		$('#jPanelMenu-menu').niceScroll({
+			zindex: '9999'
+		});
+		$('#jPanelMenu-menu').getNiceScroll().resize();
 	}
 
 	if($(window).width() > 480)
@@ -144,7 +156,28 @@ $(function(){
 			submenus_parents.removeClass('open');		
 			li.addClass('open');	
 		}
+		$('html').getNiceScroll().resize();
+	});
 
+	$('.go-full-screen').click(function(){
+		backdrop = $('.white-backdrop');
+		wbox = $(this).parents('.widget-box');
+		/*if($('body > .white-backdrop').length <= 0) {
+			$('<div class="white-backdrop">').appendTo('body');
+		}*/
+		if(wbox.hasClass('widget-full-screen')) {
+			backdrop.fadeIn(200,function(){
+				wbox.removeClass('widget-full-screen',function(){
+					backdrop.fadeOut(200);
+				});
+			});
+		} else {
+			backdrop.fadeIn(200,function(){
+				wbox.addClass('widget-full-screen',function(){
+					backdrop.fadeOut(200);
+				});
+			});
+		}
 	});
 });
 
