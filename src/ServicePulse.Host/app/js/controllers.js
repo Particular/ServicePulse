@@ -17,12 +17,12 @@ angular.module('sc.controllers', [])
             $scope.model.active_endpoints--;
         });
 
-        streamService.subscribe($scope, 'EndpointRestored', function (_) {
+        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (_) {
             $scope.model.failing_endpoints--;
             $scope.model.active_endpoints++;
         });
 
-        streamService.subscribe($scope, 'EndpointDetected', function (_) {
+        streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function (_) {
             $scope.model.active_endpoints++;
         });
 
@@ -36,15 +36,15 @@ angular.module('sc.controllers', [])
         });
 
         streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function (message) {
-            processMessage(message, false, message.last_received_at);
+            processMessage(message, false, message.lastReceivedAt);
         });
 
-        streamService.subscribe($scope, 'EndpointRestored', function (message) {
-            processMessage(message, true, message.at);
+        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (message) {
+            processMessage(message, true, message.restoredAt);
         });
 
-        streamService.subscribe($scope, 'EndpointDetected', function (message) {
-            processMessage(message, true, message.at);
+        streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function (message) {
+            processMessage(message, true, message.detectedAt);
         });
 
         function processMessage(message, active, lastUpdatedAt) {
