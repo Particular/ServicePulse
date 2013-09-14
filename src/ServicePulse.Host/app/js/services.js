@@ -62,6 +62,12 @@ angular.module('sc.services', ['angular-cache'])
     }])
     .service('serviceControlService', ['$http', 'serviceControlUrl', function($http, serviceControlUrl) {
 
+        this.getAlerts = function () {
+            return $http.jsonp(serviceControlUrl + '/alerts?callback=JSON_CALLBACK').then(function (response) {
+                return response.data;
+            });
+        };
+        
         this.getHeartbeatStats = function () {
             return $http.jsonp(serviceControlUrl + '/heartbeats/stats?callback=JSON_CALLBACK').then(function (response) {
                 return response.data;
@@ -95,4 +101,5 @@ angular.module('sc.services', ['angular-cache'])
                     return results;
                 });
         };
+
     }]);

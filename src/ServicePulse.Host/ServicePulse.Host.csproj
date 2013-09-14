@@ -152,6 +152,7 @@
     <Content Include="app\img\spinner.gif" />
     <Content Include="app\img\sprite.png" />
     <Content Include="app\index.html" />
+    <Content Include="app\js\unicorn.tables.js" />
     <Content Include="app\lib\excanvas.min.js" />
     <Content Include="app\lib\fullcalendar.min.js" />
     <Content Include="app\lib\jquery-ui.custom.js" />

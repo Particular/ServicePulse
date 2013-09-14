@@ -27,6 +27,22 @@ angular.module('sc.controllers', [])
         });
 
     }])
+    .controller('alerts', ['$scope', 'serviceControlService', 'streamService', function($scope, serviceControlService, streamService) {
+
+        $scope.model = [];
+
+        serviceControlService.getAlerts().then(function (alerts) {
+            $scope.model = alerts;
+        });
+
+        streamService.subscribe($scope, 'AlertRaised', function (message) {
+            processMessage(message);
+        });
+
+        function processMessage(message) {
+            $scope.model.push(angular.extend(message));
+        };
+    }])
     .controller('heartbeats', ['$scope', 'serviceControlService', 'streamService', function($scope, serviceControlService, streamService) {
 
         $scope.model = [];

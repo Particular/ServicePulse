@@ -9,22 +9,59 @@
             <div class="row">
                 <div class="col-xs-12 center" style="text-align: center;">
                     <ul class="quick-actions" ng-controller="heartbeatsStats">
-							<li>
-								<a href="#/heartbeats" ng-class="{'alert-success': model.failing_endpoints == 0, 'alert-danger': model.failing_endpoints > 0}">
-									<i class="icon-piechart"></i>
-								    Endpoint Heartbeat 
-                                    <div><strong>({{model.active_endpoints}} ok; {{model.failing_endpoints}} bad)</strong></div>
-								</a>
-							</li>
-							<li>
-								<a href="#" class="alert-success">
-									<i class="icon-graph"></i>
-								    Failed Messages 
-                                    <div><strong>(10 in 2 endpoints)</strong></div>
-								</a>
-							</li>
-						</ul>
+                        <li>
+                            <a href="#/heartbeats" ng-class="{'alert-success': model.failing_endpoints == 0, 'alert-danger': model.failing_endpoints > 0}">
+                                <i class="icon-piechart"></i>
+                                Endpoint Heartbeat 
+                                <div><strong>({{model.active_endpoints}} ok; {{model.failing_endpoints}} bad)</strong></div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="alert-success">
+                                <i class="icon-graph"></i>
+                                Failed Messages 
+                                <div><strong>(10 in 2 endpoints)</strong></div>
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-xs-12">
+                    
+						<div class="widget-box">
+							<div class="widget-title">
+								<span class="icon">
+									<i class="icon-th"></i>
+								</span>
+								<h5>Events</h5>
+							</div>
+							<div class="widget-content nopadding">
+								<table class="table table-bordered table-striped table-hover" ng-controller="alerts">
+									<thead>
+									<tr>
+									<th>Category</th>
+									<th>Description</th>
+									<th>Severity</th>
+									<th>Raised At</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr ng-repeat="alert in model" class="gradeA">
+									    <td>{{alert.category}}</td>
+									    <td>{{alert.description}}</td>
+									    <td>{{alert.severity}}</td>
+                                        <td>{{alert.raisedAt | date:'MM/dd/yyyy @ h:mma' }}</td>
+									<td></td>
+									</tr>
+									
+									</tbody>
+									</table>  
+							</div>
+						</div>
+                </div>
+
             </div>
             
         </div>
