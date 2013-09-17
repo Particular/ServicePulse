@@ -48,13 +48,12 @@
 									</tr>
 									</thead>
 									<tbody>
-									<tr ng-repeat="alert in model" class="gradeA">
+									<tr ng-repeat="alert in model | orderBy: '-raised_at' | limitTo: 10" class="gradeA">
 									    <td>{{alert.category}}</td>
 									    <td>{{alert.description}}</td>
 									    <td>{{alert.severity}}</td>
-                                        <td>{{alert.raisedAt | date:'MM/dd/yyyy @ h:mma' }}</td>
-									<td></td>
-									</tr>
+									    <td>{{alert.raised_at | date:'MM/dd/yyyy @ HH:mm:ss' }}</td>
+                                    </tr>
 									
 									</tbody>
 									</table>  
