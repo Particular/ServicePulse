@@ -129,7 +129,6 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
-    <Content Include="app\index_original.html" />
     <Content Include="app\js\bootstrap.js" />
     <Content Include="app\js\custom.js" />
     <Content Include="app\js\excanvas.js" />
