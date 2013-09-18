@@ -27,6 +27,7 @@ angular.module('sc.controllers', [])
         });
 
     }])
+
     .controller('alerts', ['$scope', 'serviceControlService', 'streamService', function($scope, serviceControlService, streamService) {
 
         $scope.model = [];
@@ -43,6 +44,25 @@ angular.module('sc.controllers', [])
             $scope.model.push(angular.extend(message));
         };
     }])
+
+        .controller('failedMessages', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
+
+            $scope.model = { number_of_failed_messages: 0, failedMessages: [] };
+
+            serviceControlService.getFailedMessages().then(function (failedMessages) {
+                $scope.model.failedMessages = failedMessages;
+                $scope.model.number_of_failed_messages = failedMessages.length;
+            });
+
+            streamService.subscribe($scope, 'MessageFailed', function (message) {
+                processMessage(message);
+            });
+
+            function processMessage(message) {
+                //$scope.model.errors.push(angular.extend(message));
+                $scope.model.number_of_failed_messages++;
+            };
+        }])
     .controller('heartbeats', ['$scope', 'serviceControlService', 'streamService', function($scope, serviceControlService, streamService) {
 
         $scope.model = [];
