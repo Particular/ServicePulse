@@ -60,10 +60,17 @@ angular.module('sc.services', ['angular-cache'])
             }
         };
     }])
+
     .service('serviceControlService', ['$http', 'serviceControlUrl', function($http, serviceControlUrl) {
 
         this.getAlerts = function () {
             return $http.jsonp(serviceControlUrl + '/alerts?callback=JSON_CALLBACK').then(function (response) {
+                return response.data;
+            });
+        };
+        
+        this.getFailedMessages = function () {
+            return $http.jsonp(serviceControlUrl + '/errors?callback=JSON_CALLBACK').then(function (response) {
                 return response.data;
             });
         };
