@@ -19,9 +19,9 @@
 					</div>
 				    <div class="box-content">
 				             <a href="#/heartbeats" class="quick-button span2" ng-controller="heartbeatsStats" data-rel="popover" data-content="And here's some amazing content. It's very engaging. right?" title="A Title"> 
-				                   <i class="fa-icon-heart green"></i>
+				                   <i class="fa-icon-heart" ng-class="{'green': model.failing_endpoints == 0, 'red':  model.failing_endpoints > 0}"></i>
 				                   <p>{{model.active_endpoints}} Active Endpoints</p>
-				                   <span class="notification red">{{model.failing_endpoints}}</span>
+				                   <span ng-show="model.failing_endpoints > 0" class="notification red">{{model.failing_endpoints}}</span>
 				               </a>
 
 				        <a class="quick-button span2" ng-controller="failedMessages" href="#/failedMessages">
