@@ -1,9 +1,25 @@
-<h2>Heartbeats List</h2>
-<div class="row" ng-controller="heartbeats">
-    <div class="col-6 col-sm-6 col-lg-4" ng-repeat="heartbeat in model">
-        <div style="margin: 5px;" ng-class="{'alert-success': heartbeat.active, 'alert-danger': heartbeat.active == false}">
+<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#">Home</a> <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="#">Dashboard</a> <span class="divider">/</span>
+        </li>
+        <li>
+            <a>Endpoint Heartbeats</a> 
+        </li>
+    </ul>
+    <hr>
+</div>
+
+<div class="row-fluid sortable" ng-controller="heartbeats">
+<div class="box span12" ng-repeat="heartbeat in model">
+    
+     <div style="margin: 5px;" ng-class="{'alert-success': heartbeat.active, 'alert-danger': heartbeat.active == false}">
             <h4>{{heartbeat.endpoint}}@{{heartbeat.machine}}</h4>
             <p>Last Updated: {{heartbeat.last_sent_at | date:'MM/dd/yyyy @ HH:mm:ss'}}</p>
         </div>
-    </div>
+</div>
 </div>

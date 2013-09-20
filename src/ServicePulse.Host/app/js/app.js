@@ -6,6 +6,7 @@ angular.module('sc', ['sc.filters', 'sc.services', 'sc.directives', 'sc.controll
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/heartbeatsStats', { templateUrl: 'partials/heartbeatsStats.html', controller: 'heartbeatsStats' });
         $routeProvider.when('/heartbeats', { templateUrl: 'partials/heartbeats.html', controller: 'heartbeats' });
+        $routeProvider.when('/failedMessages', { templateUrl: 'partials/failedMessages.html', controller: 'failedMessages' });
         $routeProvider.otherwise({ redirectTo: '/heartbeatsStats' });
     }])
     .run(['$rootScope', '$log', function ($rootScope, $log) {
