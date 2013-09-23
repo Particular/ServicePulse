@@ -25,13 +25,14 @@
 				               </a>
 
 				        <a class="quick-button span2" ng-controller="failedMessages" href="#/failedMessages">
-				            <i class="fa-icon-envelope red"></i>
+				             <i class="fa-icon-envelope" ng-class="{'green': model.number_of_failed_messages == 0, 'red':  model.number_of_failed_messages > 0}"></i>
 				            <p>Failed Messages</p>
-				            <span class="notification red">{{model.number_of_failed_messages}}</span>
+				            <span ng-show="model.number_of_failed_messages > 0" class="notification red">{{model.number_of_failed_messages}}</span>
 				        </a>
-				        <a class="quick-button span2">
-				            <i class="fa-icon-check green"></i>
+				        <a class="quick-button span2" ng-controller="customChecks" href="#/customChecks">
+				            <i class="fa-icon-check" ng-class="{'green': model.number_of_failed_checks == 0, 'red':  model.number_of_failed_checks > 0}"></i>
 				            <p>Custom Checks</p>
+                            <span ng-show="model.number_of_failed_checks > 0" class="notification red">{{model.number_of_failed_checks}}</span>
 				        </a>
                            <a class="quick-button span2">
 				            <i class="fa-icon-thumbs-down red"></i>

@@ -45,6 +45,26 @@ angular.module('sc.controllers', [])
         };
     }])
 
+     .controller('customChecks', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
+
+         $scope.model = { number_of_failed_checks: 0, failedChecks: [] };
+
+         //TODO: Need to read the list of failed checks from database
+         //serviceControlService.getFailedChecks().then(function (failedChecks) {
+         //    $scope.model.failedChecks = failedChecks;
+         //    $scope.model.number_of_failed_checks = failedChecks.length;
+         //});
+
+         streamService.subscribe($scope, 'CustomCheckFailed', function (message) {
+             $scope.model.number_of_failed_checks++;
+         });
+
+         streamService.subscribe($scope, 'CustomCheckSucceeded', function (message) {
+             $scope.model.number_of_failed_checks--;
+         });
+
+     }])
+
         .controller('failedMessages', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
 
             $scope.model = { number_of_failed_messages: 0, failedMessages: [] };
