@@ -66,16 +66,21 @@
 								  <th>Category</th>
 								  <th>Description</th>
 								  <th>Severity</th>
-								  <th>Raised at</th>
+							      <th>Raised at</th>
+                                  <th>Related to</th>
 							  </tr>
 						  </thead>   
 						    <tbody>
 						        
                                 <tr ng-repeat="alert in model | orderBy: '-raised_at' | limitTo: 10" >
 									    <td>{{alert.category}}</td>
-									    <td>{{alert.description}}</td>
-									    <td>{{alert.severity}}</td>
-									    <td>{{alert.raised_at | date:'MM/dd/yyyy @ HH:mm:ss' }}</td>
+                                    <td>{{alert.description}}</td>
+                                    <td class="center">
+						                <span ng-class="{'label label-success': alert.severity == 'info', 'label label-important':  alert.severity == 'error'}">{{alert.severity}}</span>  
+						                									
+						            </td>
+                                    <td>{{alert.raised_at | date:'MM/dd/yyyy @ HH:mm:ss' }}</td>
+                                    <td>{{alert.related_to[0]}}</td>
                                </tr>
 						    </tbody>
 					  </table>            
