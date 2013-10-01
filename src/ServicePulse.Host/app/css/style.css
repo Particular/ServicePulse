@@ -13,7 +13,6 @@
 =================================================================== */
 @import url("jquery-ui-1.8.21.custom.css");								/* jQuery User Interface Framework Styles */
 @import url("fullcalendar.css");										/* Calendars Styles */
-@import url("chosen.css");												/* Select Boxes Styles */  
 @import url("uniform.default.css");										/* Uniform Styles */
 @import url("jquery.cleditor.css");										/* Text Editor Styles. */  
 @import url("jquery.noty.css");											/* Noty Notifications Style */
@@ -961,12 +960,63 @@ ul.messages li .message {
 	text-shadow: 0 1px 0px rgba(255, 255, 255, .6);
 	text-align: center;
 	cursor: pointer;
-	position: relative;
-	-webkit-transition: all 0.3s ease;
-	-moz-transition: all 0.3s ease;
-	-ms-transition: all 0.3s ease;
-	-o-transition: all 0.3s ease;
-	transition: all 0.3s ease;
+	position: relative;	
+}
+
+.quick-button .startAnimation {
+    -webkit-animation:changeBackColor 5s 5;
+}
+
+.quick-button-animate {
+	border: 1px solid #ddd;
+	margin-bottom: -1px;
+  	padding: 30px 0px 10px 0px;
+	font-size: 14px;
+  	background-color: #fafafa;
+  	background-image: -moz-linear-gradient(top, #fafafa, #efefef);
+  	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fafafa), to(#efefef));
+  	background-image: -webkit-linear-gradient(top, #fafafa, #efefef);
+  	background-image: -o-linear-gradient(top, #fafafa, #efefef);
+  	background-image: linear-gradient(to bottom, #fafafa, #efefef);
+  	filter: progid:dximagetransform.microsoft.gradient(startColorstr='#fafafa', endColorstr='#efefef', GradientType=0);
+  	-webkit-box-shadow: 0 1px 0px rgba(255, 255, 255, .8);
+	   -moz-box-shadow: 0 1px 0px rgba(255, 255, 255, .8);
+			box-shadow: 0 1px 0px rgba(255, 255, 255, .8);
+  	-webkit-border-radius: 2px;
+       -moz-border-radius: 2px;
+          	border-radius: 2px;
+	display:block;
+	color: #646464;
+	text-shadow: 0 1px 0px rgba(255, 255, 255, .6);
+	text-align: center;
+	cursor: pointer;
+	position: relative;	
+    -webkit-animation: bounce 2s ease-out;
+    -webkit-animation-iteration-count: 6;
+}
+
+
+@-webkit-keyframes bounce {
+   0% { -webkit-transform: scaleY(1.0); }
+   50% { -webkit-transform: translateY(-30px) }
+   100% { -webkit-transform: scaleY(1.0); }
+}
+
+@-webkit-keyframes pulsate {
+    0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.5;}
+    50% {opacity: 1.0;}
+    100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
+}
+@-webkit-keyframes changeBackColor /* Safari and Chrome */
+{
+from {
+    background:#fafafa;
+    color: black;
+}
+to {
+    background:#da4f49;
+    color: white;
+}
 }
 
 .quick-button:hover {
@@ -983,6 +1033,7 @@ ul.messages li .message {
        -moz-box-shadow: 0px 0px 3px rgba(0,0,0,.25);
           	box-shadow: 0px 0px 3px rgba(0,0,0,.25);
 }
+
 .quick-button:hover .notification {
 	-webkit-transition: all 0.3s ease;
 	-moz-transition: all 0.3s ease;
@@ -1376,6 +1427,12 @@ ul.chat li .message .text {
   	background-color: #F4A506 \9;
 }
 
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+from {background:#fafafa;}
+to {background:#da4f49;}
+}
+
 .btn-danger {
   	background-color: #da4f49;
   	color: #ffffff;
@@ -1390,6 +1447,19 @@ ul.chat li .message .text {
   	border-color: #f1360a #f1360a #f1360a;
   	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   	filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+
+          -webkit-transition: all 3000ms cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+   -moz-transition: all 3000ms cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+    -ms-transition: all 3000ms cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+     -o-transition: all 3000ms cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+        transition: all 3000ms cubic-bezier(0.655, 0.510, 0.235, 0.630); /* custom */
+
+-webkit-transition-timing-function: cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+   -moz-transition-timing-function: cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+    -ms-transition-timing-function: cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+     -o-transition-timing-function: cubic-bezier(0.655, 0.510, 0.235, 0.630); 
+        transition-timing-function: cubic-bezier(0.655, 0.510, 0.235, 0.630); /* custom */
+
 }
 .btn-danger:hover,
 .btn-danger:active,

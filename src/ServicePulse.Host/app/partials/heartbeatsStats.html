@@ -18,13 +18,13 @@
 						<h2><i class="fa-icon-dashboard"></i><span class="break"></span>Indicators</h2>
 					</div>
 				    <div class="box-content">
-				             <a href="#/heartbeats" class="quick-button span2" ng-controller="heartbeatsStats" data-rel="popover" data-content="And here's some amazing content. It's very engaging. right?" title="A Title"> 
+				             <a href="#/heartbeats" class="quick-button span2" ng-class="{'': model.failing_endpoints == 0, 'quick-button-animate':  model.failing_endpoints > 0}" ng-controller="heartbeatsStats" data-rel="popover" data-content="And here's some amazing content. It's very engaging. right?" title="A Title"> 
 				                   <i class="fa-icon-heart" ng-class="{'green': model.failing_endpoints == 0, 'red':  model.failing_endpoints > 0}"></i>
 				                   <p>{{model.active_endpoints}} Active Endpoints</p>
 				                   <span ng-show="model.failing_endpoints > 0" class="notification red">{{model.failing_endpoints}}</span>
 				               </a>
 
-				        <a class="quick-button span2" ng-controller="failedMessages" href="#/failedMessages">
+				        <a class="quick-button span2" ng-class="{'': model.number_of_failed_messages == 0, 'quick-button-animate':  model.number_of_failed_messages > 0}" ng-controller="failedMessages" href="#/failedMessages">
 				             <i class="fa-icon-envelope" ng-class="{'green': model.number_of_failed_messages == 0, 'red':  model.number_of_failed_messages > 0}"></i>
 				            <p>Failed Messages</p>
 				            <span ng-show="model.number_of_failed_messages > 0" class="notification red">{{model.number_of_failed_messages}}</span>

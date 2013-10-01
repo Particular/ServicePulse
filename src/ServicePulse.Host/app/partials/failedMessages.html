@@ -1,4 +1,4 @@
-﻿  <div>
+﻿<div>
       <hr>
       <ul class="breadcrumb">
           <li>
@@ -14,86 +14,105 @@
       <hr>
   </div>
 
+<h3>Total number of messages in the error queue: 109</h3>
 
-<div class="row-fluid sortable">
-    
-    <div class="box span6">
+<div class="row-fluid sortable" ng-controller="failedMessages">
+    <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="fa-icon-filter"></i><span class="break"></span>Filter by Message Type</h2>
+            <h2><i class="fa-icon-search"></i><span class="break"></span>Narrow your search</h2>
             <div class="box-icon">
                 <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
             </div>
         </div>
-        <div class="box-content">
-            <ul class="nav nav-list" >
-                <li>
-                    <label class="checkbox">
-                        <input type="checkbox" id="Checkbox5" value="option2" checked="">Message1</label>
-                    <label class="checkbox">
-                        <input type="checkbox" id="Checkbox3" value="option2" checked="">Message2</label>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-
-    <div class="box span6">
-        <div class="box-header" data-original-title>
-            <h2><i class="fa-icon-filter"></i><span class="break"></span>Filter by Endpoint</h2>
-            <div class="box-icon">
-                <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+        <div class="box-content" style="min-height:225px; height:auto !important;">
+            
+            <div class="span2" style="float:left;">
+                 <h3>Machines</h3>
+                <ul style="list-style-type: none; padding:0; margin:0">
+                    <li ng-repeat="msg in model.failedMessagesStats['machines'].values">{{msg.range}} <strong>({{msg.hits}})</strong></li>
+                </ul>
             </div>
-        </div>
-        <div class="box-content">
-            <ul class="nav nav-list" >
-                <li>
-                    <label class="checkbox">
-                        <input type="checkbox" id="Checkbox1" value="option2" checked="">Endpoint1</label>
-                    <label class="checkbox">
-                        <input type="checkbox" id="Checkbox2" value="option2" checked="">Endpoint2</label>
-                </li>
-            </ul>
+            <div class="span3" style="float:left;">
+                <h3>Endpoints</h3>
+                <ul style="list-style-type: none; padding:0; margin:0">
+                    <li ng-repeat="msg in model.failedMessagesStats['endpoints'].values">{{msg.range}} <strong>({{msg.hits}})</strong></li>
+                </ul>
+            </div>
+            <div class="span7" style="float:left;">
+                <h3>Message Types</h3>
+                <ul style="list-style-type: none; padding:0; margin:0">
+                    <li ng-repeat="msg in model.failedMessagesStats['message types'].values">{{msg.range}} <strong>({{msg.hits}})</strong></li>
+                </ul>
+            </div>
+            <!--<div class="span3" style="float:left;">
+                   <h3>Custom Tags</h3>
+                    <ul style="list-style-type: none; padding:0; margin:0">
+                        <li>Database Exceptions <strong>(3)</strong></li>
+                        <li>Connectivity Issues <strong>(4)</strong></li>
+                    </ul>
+            </div>-->
+            <br style="clear: left;" />
+            
+            <hr>     
+            <div class="control-group">
+                <select multiple style="width:350px;" data-placeholder="Select your filter criteria" ui-select2="" ng-model="model.selectedTags">
+                    <option ng-repeat="tag in model.tags" value="{{tag.id}}">{{tag.label}}</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <button class="btn">Clear</button>
+
         </div>
     </div>
+  
 </div>
-    	<!--/row-->
+
+<!--/row-->
 			
-                <div class="row-fluid sortable">		
+                <div class="row-fluid sortable" ng-controller="failedMessages">		
 				<div class="box span12">
 					<div class="box-header" data-original-title>
-						<h2><i class="fa-icon-envelope"></i><span class="break"></span>Total Failed Messages: {{model.number_of_failed_messages}}</h2>
+						<h2><i class="fa-icon-envelope"></i><span class="break"></span>Messages that match criteria: {{model.number_of_failed_messages}}</h2>
 						<div class="box-icon">
 							<a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
 					    </div>
 					</div>
-					<div class="box-content">
-						<table class="table table-striped table-bordered bootstrap-datatable datatable" ng-controller="failedMessages">
-						  <thead>
-						      <tr>
-						          <th><input type="checkbox" /></th>
-						          <th>Type</th>
-						          <th>Timestamp</th>
-						          <th>Endpoint</th>
-						          <th>Machine</th>
-						          <th>Info</th>
-						      </tr>
-						  </thead>   
-						    <tbody>
-						        <tr ng-repeat="errMessage in model.failedMessages | orderBy: '-time_sent'" >
-						            <td><input type="checkbox" /></td>
-						            <td>{{errMessage.message_type}}</td>
-						            <td>{{errMessage.time_sent | date:'MM/dd/yyyy @ HH:mm:ss' }}</td>
-						            <td>{{errMessage.receiving_endpoint.name}}</td>
-						            <td>{{errMessage.receiving_endpoint.machine}}</td>
-						            <td class="center">
-						                <a class="btn btn-info" href="#">
-						                    <i class="icon-zoom-in icon-white"></i>  
-						                </a>									
-						            </td>
-						        </tr>
-						    </tbody>
-					  </table>            
-					</div>
+				    <div class="box-content">
+				        <p class="center">
+				            <button class="btn btn-primary" id="reprocess-selected" ng-click="retrySelected()">Retry selected</button>
+                            <button class="btn btn-primary" id="reprocess-all" ng-click="retryAll()">Retry all ({{model.number_of_failed_messages}} messages)</button>
+				        </p>
+
+				        <table class="table table-striped table-bordered bootstrap-datatable datatable" ng-controller="failedMessages">
+				            <thead>
+				                <tr>
+				                    <th><input type="checkbox" /></th>
+				                    <th>Machine</th>
+				                    <th>Endpoint</th>
+				                    <th>Message Type</th>
+				                    <th>Timestamp</th>
+				                    <th>Failure Reason</th>
+				                    <th>Info</th>
+				                </tr>
+				            </thead>   
+				            <tbody>
+				                <tr ng-repeat="errMessage in model.failedMessages | orderBy: '-time_sent'" >
+				                    <td><input type="checkbox" /></td>
+				                    <td>{{errMessage.receiving_endpoint.machine}}</td>
+				                    <td>{{errMessage.receiving_endpoint.name}}</td>
+				                    <td>{{errMessage.message_type}}</td>
+				                    <td>{{errMessage.time_sent | date:'MM/dd/yyyy @ HH:mm:ss' }}</td>
+				                    <td>{{errMessage.failure_details.exception.message }}</td>
+				                    <td class="center">
+				                        <a class="btn btn-info" href="#">
+				                            <i class="icon-zoom-in icon-white"></i>  
+				                        </a>									
+				                    </td>
+				                </tr>
+				            </tbody>
+				        </table>
+                                   
+				    </div>
 				</div><!--/span-->
 			
 			</div><!--/row-->
