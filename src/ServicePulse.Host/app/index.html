@@ -18,8 +18,9 @@
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
 	<link id="base-style" href="css/style.css" rel="stylesheet">
 	<link id="base-style-responsive" href="css/style-responsive.css" rel="stylesheet">
-	
-	<!--[if lt IE 7 ]>
+	<link rel="stylesheet" href="css/select2.css" />
+
+    <!--[if lt IE 7 ]>
 	<link id="ie-style" href="css/style-ie.css" rel="stylesheet">
 	<![endif]-->
 	<!--[if IE 8 ]>
@@ -116,12 +117,12 @@
 		        <div class="span2 main-menu-span">
 		            <div class="nav-collapse sidebar-nav">
 		                <ul class="nav nav-tabs nav-stacked main-menu">
-		                    <li><a href="index.html"><i class="fa-icon-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span></a></li>
-		                    <li><a href="/heartbeats"><i class="fa-icon-heart icon-white"></i><span class="hidden-tablet"> Endpoint Heartbeats</span></a></li>
-		                    <li><a href="/failedMessages"><i class="fa-icon-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span></a></li>
-		                    <li><a href="index.html"><i class="fa-icon-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span></a></li>
-                            <li><a href="index.html"><i class="fa-icon-thumbs-down icon-white"></i><span class="hidden-tablet"> SLA Violations</span></a></li>
-		                    <li><a href="index.html"><i class="fa-icon-info-sign icon-white"></i><span class="hidden-tablet"> Events</span></a></li>
+		                    <li><a href="/#/heartbeatStats"><i class="fa-icon-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span></a></li>
+		                    <li><a href="/#/heartbeats"><i class="fa-icon-heart icon-white"></i><span class="hidden-tablet"> Endpoint Heartbeats</span></a></li>
+		                    <li><a href="/#/failedMessages"><i class="fa-icon-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span></a></li>
+		                    <li><a href="/#/heartbeatStats"><i class="fa-icon-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span></a></li>
+                            <li><a href="/#/heartbeatStats"><i class="fa-icon-thumbs-down icon-white"></i><span class="hidden-tablet"> SLA Violations</span></a></li>
+		                    <li><a href="/#/heartbeatStats"><i class="fa-icon-info-sign icon-white"></i><span class="hidden-tablet"> Events</span></a></li>
 
 		                </ul>
 		            </div><!--/.well -->
@@ -163,7 +164,7 @@
     <script src="js/jquery.flot.pie.min.js"></script>
     <script src="js/jquery.flot.stack.js"></script>
     <script src="js/jquery.flot.resize.min.js"></script>
-    <script src="js/jquery.chosen.min.js"></script>
+    <script src="lib/select2.min.js"></script>
     <script src="js/jquery.uniform.min.js"></script>
     <script src="js/jquery.cleditor.min.js"></script>
     <script src="js/jquery.noty.js"></script>
@@ -178,6 +179,7 @@
     <script src="js/jquery.sparkline.min.js"></script>
     <script src="js/custom.js"></script>
     <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/select2.directive.js"></script>
     <script src="lib/angular-cache-1.1.0.min.js"></script>
     <script src="lib/jquery.signalR-1.1.3.min.js"></script>
     <script src="lib/excanvas.min.js"></script>
@@ -186,9 +188,5 @@
     <script src="js/controllers.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/directives.js"></script>
-    
-    <script>
-    $("a[rel=popover]").popover();
-    </script>
 </body>
 </html>
