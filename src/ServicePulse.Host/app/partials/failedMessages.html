@@ -80,7 +80,7 @@
 				    <div class="box-content">
 				        <p class="center">
 				            <button class="btn btn-primary" id="reprocess-selected" ng-click="retrySelected()">Retry selected</button>
-                            <button class="btn btn-primary" id="reprocess-all" ng-click="retryAll()">Retry all (21 messages)</button>
+                            <button class="btn btn-primary" id="reprocess-all" ng-click="retryAll()">Retry all ({{model.number_of_failed_messages}} messages)</button>
 				        </p>
 
 				        <table class="table table-striped table-bordered bootstrap-datatable datatable" ng-controller="failedMessages">
