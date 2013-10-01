@@ -75,6 +75,21 @@ angular.module('sc.services', ['angular-cache'])
             });
         };
         
+        this.getFailedMessageStats = function () {
+            return $http.jsonp(serviceControlUrl + '/errors/facets?callback=JSON_CALLBACK').then(function (response) {
+                return response.data;
+            });
+        };
+
+        this.retryAllFailedMessages = function () {
+            delete $http.defaults.headers.common['X-Requested-With'];
+            $http.post(serviceControlUrl + '/errors/retry/all')
+                .success(function(data, status, headers, config) {
+                    alert('successfully posted');
+                });
+        };
+
+
         this.getHeartbeatStats = function () {
             return $http.jsonp(serviceControlUrl + '/heartbeats/stats?callback=JSON_CALLBACK').then(function (response) {
                 return response.data;

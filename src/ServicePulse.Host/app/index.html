@@ -18,8 +18,14 @@
 	<link href="css/bootstrap-responsive.css" rel="stylesheet">
 	<link id="base-style" href="css/style.css" rel="stylesheet">
 	<link id="base-style-responsive" href="css/style-responsive.css" rel="stylesheet">
-	
-	<!--[if lt IE 7 ]>
+	<link rel="stylesheet" href="css/chosen.css" />
+
+    <style type="text/css" media="all">
+    /* fix rtl for demo */
+        .chosen-rtl .chosen-drop { left: -9000px; }
+    </style>
+
+    <!--[if lt IE 7 ]>
 	<link id="ie-style" href="css/style-ie.css" rel="stylesheet">
 	<![endif]-->
 	<!--[if IE 8 ]>
@@ -163,7 +169,7 @@
     <script src="js/jquery.flot.pie.min.js"></script>
     <script src="js/jquery.flot.stack.js"></script>
     <script src="js/jquery.flot.resize.min.js"></script>
-    <script src="js/jquery.chosen.min.js"></script>
+    <script src="js/chosen.jquery.js"></script>
     <script src="js/jquery.uniform.min.js"></script>
     <script src="js/jquery.cleditor.min.js"></script>
     <script src="js/jquery.noty.js"></script>
@@ -187,8 +193,19 @@
     <script src="js/filters.js"></script>
     <script src="js/directives.js"></script>
     
-    <script>
-    $("a[rel=popover]").popover();
+    <script type="text/javascript">
+
+        var config = {
+            '.chosen-select': {},
+            '.chosen-select-deselect': { allow_single_deselect: true },
+            '.chosen-select-no-single': { disable_search_threshold: 10 },
+            '.chosen-select-no-results': { no_results_text: 'Oops, nothing found!' },
+            '.chosen-select-width': { width: "95%" }
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
     </script>
+
 </body>
 </html>

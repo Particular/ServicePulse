@@ -62,6 +62,8 @@
   <ItemGroup>
     <Content Include="app\css\bootstrap-responsive.css" />
     <Content Include="app\css\bootstrap.css" />
+    <Content Include="app\css\chosen-sprite%402x.png" />
+    <Content Include="app\css\chosen-sprite.png" />
     <Content Include="app\css\chosen.css" />
     <Content Include="app\css\elfinder.min.css" />
     <Content Include="app\css\elfinder.theme.css" />
@@ -130,12 +132,13 @@
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
     <Content Include="app\js\bootstrap.js" />
+    <Content Include="app\js\chosen.jquery.js" />
+    <Content Include="app\js\chosen.jquery.min.js" />
     <Content Include="app\js\custom.js" />
     <Content Include="app\js\excanvas.js" />
     <Content Include="app\js\fullcalendar.min.js" />
     <Content Include="app\js\jquery-1.7.2.min.js" />
     <Content Include="app\js\jquery-ui-1.8.21.custom.min.js" />
-    <Content Include="app\js\jquery.chosen.min.js" />
     <Content Include="app\js\jquery.cleditor.min.js" />
     <Content Include="app\js\jquery.cookie.js" />
     <Content Include="app\js\jquery.dataTables.min.js" />

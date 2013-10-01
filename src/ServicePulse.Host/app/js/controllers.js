@@ -3,6 +3,7 @@
 /* Controllers */
 
 angular.module('sc.controllers', [])
+    
     .controller('heartbeatsStats', ['$scope', 'streamService', 'serviceControlService', function($scope, streamService, serviceControlService) {
 
         $scope.model = { active_endpoints: 0, failing_endpoints: 0 };
@@ -67,12 +68,41 @@ angular.module('sc.controllers', [])
 
         .controller('failedMessages', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
 
-            $scope.model = { number_of_failed_messages: 0, failedMessages: [] };
+            $scope.model = { number_of_failed_messages: 0, failedMessages: [], failedMessagesStats:[], tags:[], selectedTags: [] };
+
 
             serviceControlService.getFailedMessages().then(function (failedMessages) {
                 $scope.model.failedMessages = failedMessages;
                 $scope.model.number_of_failed_messages = failedMessages.length;
             });
+            
+            serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
+                $scope.model.failedMessagesStats = failedMessagesStats;
+                
+                // populate the tags -- loop through each category
+                for (var i = 0; i < $scope.model.failedMessagesStats['machines'].values.length; i++) {
+                    var tagObj = { id: 'machines', label: $scope.model.failedMessagesStats['machines'].values[i].range };
+                    $scope.model.tags.push(tagObj);
+                }
+                for (var i = 0; i < $scope.model.failedMessagesStats['endpoints'].values.length; i++) {
+                    var tagObj = { id: 'endpoints', label: $scope.model.failedMessagesStats['endpoints'].values[i].range };
+                    $scope.model.tags.push(tagObj);
+                }
+                
+                for (var i = 0; i < $scope.model.failedMessagesStats['message types'].values.length; i++) {
+                    var tagObj = { id: 'message types', label: $scope.model.failedMessagesStats['message types'].values[i].range };
+                    $scope.model.tags.push(tagObj);
+                }
+            });
+
+
+            $scope.retryAll = function() {
+                serviceControlService.retryAllFailedMessages();
+            };
+            
+            $scope.retrySelected = function () {
+                alert('going to retry all selected messages');
+            };
 
             streamService.subscribe($scope, 'MessageFailed', function (message) {
                 processMessage(message);
