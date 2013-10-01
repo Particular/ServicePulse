@@ -64,25 +64,24 @@ angular.module('sc.services', ['angular-cache'])
     .service('serviceControlService', ['$http', 'serviceControlUrl', function($http, serviceControlUrl) {
 
         this.getAlerts = function () {
-            return $http.jsonp(serviceControlUrl + '/alerts?callback=JSON_CALLBACK').then(function (response) {
+            return $http.get(serviceControlUrl + '/alerts').then(function (response) {
                 return response.data;
             });
         };
         
         this.getFailedMessages = function () {
-            return $http.jsonp(serviceControlUrl + '/errors?callback=JSON_CALLBACK').then(function (response) {
+            return $http.get(serviceControlUrl + '/errors').then(function (response) {
                 return response.data;
             });
         };
         
         this.getFailedMessageStats = function () {
-            return $http.jsonp(serviceControlUrl + '/errors/facets?callback=JSON_CALLBACK').then(function (response) {
+            return $http.get(serviceControlUrl + '/errors/facets').then(function (response) {
                 return response.data;
             });
         };
 
         this.retryAllFailedMessages = function () {
-            delete $http.defaults.headers.common['X-Requested-With'];
             $http.post(serviceControlUrl + '/errors/retry/all')
                 .success(function(data, status, headers, config) {
                     alert('successfully posted');
@@ -91,19 +90,19 @@ angular.module('sc.services', ['angular-cache'])
 
 
         this.getHeartbeatStats = function () {
-            return $http.jsonp(serviceControlUrl + '/heartbeats/stats?callback=JSON_CALLBACK').then(function (response) {
+            return $http.get(serviceControlUrl + '/heartbeats/stats').then(function (response) {
                 return response.data;
             });
         };
         
         this.getHeartbeatsList = function () {
-            return $http.jsonp(serviceControlUrl + '/heartbeats?callback=JSON_CALLBACK').then(function (response) {
+            return $http.get(serviceControlUrl + '/heartbeats').then(function (response) {
                 return response.data;
             });
         };
         
         this.getEndpoints = function() {
-            return $http.jsonp(serviceControlUrl + '/endpoints?callback=JSON_CALLBACK').then(function(response) {
+            return $http.get(serviceControlUrl + '/endpoints').then(function (response) {
                 return response.data;
             });
         };
@@ -114,7 +113,7 @@ angular.module('sc.services', ['angular-cache'])
                 .then(function(endpoints) {
                     var results = [];
                     endpoints.forEach(function(item) {
-                        $http.jsonp(serviceControlUrl + '/endpoints/' + item.name + '/sla?callback=JSON_CALLBACK').then(function (response) {
+                        $http.get(serviceControlUrl + '/endpoints/' + item.name + '/sla').then(function (response) {
                             angular.extend(item, {sla: response.data.current});
                             results.push(item);
                         });
