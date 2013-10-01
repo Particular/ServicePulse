@@ -62,9 +62,6 @@
   <ItemGroup>
     <Content Include="app\css\bootstrap-responsive.css" />
     <Content Include="app\css\bootstrap.css" />
-    <Content Include="app\css\chosen-sprite%402x.png" />
-    <Content Include="app\css\chosen-sprite.png" />
-    <Content Include="app\css\chosen.css" />
     <Content Include="app\css\elfinder.min.css" />
     <Content Include="app\css\elfinder.theme.css" />
     <Content Include="app\css\font-awesome-ie7.css" />
@@ -76,6 +73,7 @@
     <Content Include="app\css\jquery.iphone.toggle.css" />
     <Content Include="app\css\jquery.noty.css" />
     <Content Include="app\css\noty_theme_default.css" />
+    <Content Include="app\css\select2.css" />
     <Content Include="app\css\style-ie.css" />
     <Content Include="app\css\style-responsive.css" />
     <Content Include="app\css\style.css" />
@@ -108,6 +106,9 @@
     <Content Include="app\img\quicklook-bg.png" />
     <Content Include="app\img\quicklook-icons.png" />
     <Content Include="app\img\resize.png" />
+    <Content Include="app\img\select2-spinner.gif" />
+    <Content Include="app\img\select2.png" />
+    <Content Include="app\img\select2x2.png" />
     <Content Include="app\img\ServicePulse.ico" />
     <Content Include="app\img\ServicePulseLogo.png" />
     <Content Include="app\img\servicePulse_256.ico" />
@@ -132,8 +133,6 @@
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
     <Content Include="app\js\bootstrap.js" />
-    <Content Include="app\js\chosen.jquery.js" />
-    <Content Include="app\js\chosen.jquery.min.js" />
     <Content Include="app\js\custom.js" />
     <Content Include="app\js\excanvas.js" />
     <Content Include="app\js\fullcalendar.min.js" />
@@ -172,6 +171,8 @@
     <Content Include="app\lib\jquery.signalR-1.1.3.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="app\lib\select2.directive.js" />
+    <Content Include="app\lib\select2.min.js" />
     <Content Include="app\partials\failedMessages.html" />
     <Content Include="FodyWeavers.xml">
       <SubType>Designer</SubType>

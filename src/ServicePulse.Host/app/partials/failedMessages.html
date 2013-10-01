@@ -1,9 +1,4 @@
-﻿
-<link rel="stylesheet" href="../css/chosen.css" />
-<script src="../js/chosen.jquery.js"></script>
-
-  
-<div>
+﻿<div>
       <hr>
       <ul class="breadcrumb">
           <li>
@@ -60,13 +55,9 @@
             
             <hr>     
             <div class="control-group">
-               <!-- <select ng-model="model.tags"  ng-options="value.id as value.label for value in model.tags" />
-               -->     
-                <select data-placeholder="Select your filter criteria" multiple class="chosen-select" 
-                    style="width:350px;" id="failureMessageRelatedTags" chosen="model.tags" ng-model="model.selectedTags"  
-                    ng-options="value.label for value in model.tags">
+                <select multiple style="width:350px;" data-placeholder="Select your filter criteria" ui-select2="" ng-model="model.selectedTags">
+                    <option ng-repeat="tag in model.tags" value="{{tag.id}}">{{tag.label}}</option>
                 </select>
-                
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
             <button class="btn">Clear</button>

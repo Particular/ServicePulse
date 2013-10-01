@@ -70,7 +70,6 @@ angular.module('sc.controllers', [])
 
             $scope.model = { number_of_failed_messages: 0, failedMessages: [], failedMessagesStats:[], tags:[], selectedTags: [] };
 
-
             serviceControlService.getFailedMessages().then(function (failedMessages) {
                 $scope.model.failedMessages = failedMessages;
                 $scope.model.number_of_failed_messages = failedMessages.length;

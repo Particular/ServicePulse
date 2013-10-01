@@ -160,8 +160,6 @@ function template_functions(){
 	/* ---------- Uniform ---------- */
 	$("input:checkbox, input:radio, input:file").not('[data-no-uniform="true"],#uniform-is-ajax').uniform();
 
-	/* ---------- Choosen ---------- */
-	$('[data-rel="chosen"],[rel="chosen"]').chosen();
 
 	/* ---------- Tabs ---------- */
 	$('#myTab a:first').tab('show');

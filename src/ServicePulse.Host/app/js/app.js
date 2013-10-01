@@ -2,7 +2,7 @@
 
 
 // Declare app level module which depends on filters, and services
-angular.module('sc', ['sc.filters', 'sc.services', 'sc.directives', 'sc.controllers'])
+angular.module('sc', ['sc.filters', 'sc.services', 'sc.directives', 'sc.controllers', 'ui.select2'])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/heartbeatsStats', { templateUrl: 'partials/heartbeatsStats.html', controller: 'heartbeatsStats' });
         $routeProvider.when('/heartbeats', { templateUrl: 'partials/heartbeats.html', controller: 'heartbeats' });
