@@ -171,6 +171,7 @@
     <Content Include="app\lib\jquery.signalR-1.1.3.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="app\lib\ng-grid.js" />
     <Content Include="app\lib\select2.directive.js" />
     <Content Include="app\lib\select2.min.js" />
     <Content Include="app\partials\failedMessages.html" />

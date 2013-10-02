@@ -1,8 +1,9 @@
 'use strict';
 
+
 /* Controllers */
 
-angular.module('sc.controllers', [])
+angular.module('sc.controllers', ['ngGrid'])
     
     .controller('heartbeatsStats', ['$scope', 'streamService', 'serviceControlService', function($scope, streamService, serviceControlService) {
 
@@ -68,13 +69,30 @@ angular.module('sc.controllers', [])
 
         .controller('failedMessages', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
 
-            $scope.model = { number_of_failed_messages: 0, failedMessages: [], failedMessagesStats:[], tags:[], selectedTags: [] };
+            $scope.model = { number_of_failed_messages: 0, failedMessages: [], failedMessagesStats:[], tags:[], selectedTags: [], selectedMessages: [], selectedIds: [] };
 
             serviceControlService.getFailedMessages().then(function (failedMessages) {
                 $scope.model.failedMessages = failedMessages;
                 $scope.model.number_of_failed_messages = failedMessages.length;
             });
             
+            $scope.gridOptions = {
+                data: 'model.failedMessages',
+                showGroupPanel: true,
+                enableRowSelection: true,
+                showSelectionCheckbox: true,
+                columnDefs:
+                [
+                    { field: 'receiving_endpoint.machine', displayName: 'Machine', enableCellEdit: false },
+                    { field: 'receiving_endpoint.name', displayName: 'Name', enableCellEdit: false },
+                    { field: 'message_type', displayName: 'Message Type', enableCellEdit: false },
+                    { field: 'time_sent', displayName: 'Timestamp', enableCellEdit: false },
+                    { field: 'failure_details.exception.exception_type', displayName: 'Exception Type', enableCellEdit: false },
+                    { field: 'failure_details.exception.message', displayName: 'Failure Reason', enableCellEdit: false }
+                ],
+                selectedItems: $scope.model.selectedMessages
+            };
+
             serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
                 $scope.model.failedMessagesStats = failedMessagesStats;
                 
@@ -100,7 +118,10 @@ angular.module('sc.controllers', [])
             };
             
             $scope.retrySelected = function () {
-                alert('going to retry all selected messages');
+                for (var i = 0; i < $scope.model.selectedMessages.length; i++) {
+                    $scope.model.selectedIds.push($scope.model.selectedMessages[i].id);
+                }
+                serviceControlService.retrySelectedFailedMessages($scope.model.selectedIds);
             };
 
             streamService.subscribe($scope, 'MessageFailed', function (message) {

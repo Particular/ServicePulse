@@ -77,43 +77,16 @@
 							<a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
 					    </div>
 					</div>
-				    <div class="box-content">
+				    <div class="box-content" ng-controller="failedMessages">
 				        <p class="center">
 				            <button class="btn btn-primary" id="reprocess-selected" ng-click="retrySelected()">Retry selected</button>
-                            <button class="btn btn-primary" id="reprocess-all" ng-click="retryAll()">Retry all ({{model.number_of_failed_messages}} messages)</button>
+				            <button class="btn btn-primary" id="reprocess-all" ng-click="retryAll()">Retry all ({{model.number_of_failed_messages}} messages)</button>
 				        </p>
-
-				        <table class="table table-striped table-bordered bootstrap-datatable datatable" ng-controller="failedMessages">
-				            <thead>
-				                <tr>
-				                    <th><input type="checkbox" /></th>
-				                    <th>Machine</th>
-				                    <th>Endpoint</th>
-				                    <th>Message Type</th>
-				                    <th>Timestamp</th>
-				                    <th>Failure Reason</th>
-				                    <th>Info</th>
-				                </tr>
-				            </thead>   
-				            <tbody>
-				                <tr ng-repeat="errMessage in model.failedMessages | orderBy: '-time_sent'" >
-				                    <td><input type="checkbox" /></td>
-				                    <td>{{errMessage.receiving_endpoint.machine}}</td>
-				                    <td>{{errMessage.receiving_endpoint.name}}</td>
-				                    <td>{{errMessage.message_type}}</td>
-				                    <td>{{errMessage.time_sent | date:'MM/dd/yyyy @ HH:mm:ss' }}</td>
-				                    <td>{{errMessage.failure_details.exception.message }}</td>
-				                    <td class="center">
-				                        <a class="btn btn-info" href="#">
-				                            <i class="icon-zoom-in icon-white"></i>  
-				                        </a>									
-				                    </td>
-				                </tr>
-				            </tbody>
-				        </table>
-                                   
+                         <div style="  border: 1px solid rgb(212,212,212);width: 100%; height: 400px;" ng-grid="gridOptions"></div>
+				                   
 				    </div>
 				</div><!--/span-->
 			
 			</div><!--/row-->
-			    <hr>
+<hr>
+

@@ -87,6 +87,13 @@ angular.module('sc.services', ['angular-cache'])
                     alert('successfully posted');
                 });
         };
+        
+        this.retrySelectedFailedMessages = function (selectedMessages) {
+            $http.post(serviceControlUrl + '/errors/retry', selectedMessages)
+                .success(function (data, status, headers, config) {
+                    alert('successfully posted');
+                });
+        };
 
 
         this.getHeartbeatStats = function () {
