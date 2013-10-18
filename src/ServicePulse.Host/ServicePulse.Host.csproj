@@ -11,7 +11,6 @@
     <AssemblyName>ServicePulse.Host</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <FodyPath>..\packages\Fody.1.17.0.0</FodyPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,23 +34,21 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Nancy, Version=0.20.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.0.20.0\lib\net40\Nancy.dll</HintPath>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Nancy">
+      <HintPath>..\packages\Nancy\lib\net40\Nancy.dll</HintPath>
     </Reference>
-    <Reference Include="Nancy.Hosting.Self, Version=0.20.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Nancy.Hosting.Self.0.20.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+    <Reference Include="Nancy.Hosting.Self">
+      <HintPath>..\packages\Nancy.Hosting.Self\lib\net40\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\AbstractCommand.cs" />
@@ -153,18 +150,12 @@
     <Content Include="app\lib\select2.directive.js" />
     <Content Include="app\lib\select2.min.js" />
     <Content Include="app\partials\failedMessages.html" />
-    <Content Include="FodyWeavers.xml">
-    </Content>
     <EmbeddedResource Include="Hosting\Help.txt" />
     <Content Include="app\font\fontawesome-webfont-0.eot" />
     <Content Include="app\font\fontawesome-webfont.eot" />
     <Content Include="app\font\fontawesome-webfont.ttf" />
     <Content Include="app\font\fontawesome-webfont.woff" />
     <Content Include="app\lib\jquery-1.10.2.min.map" />
-    <None Include="Fody.targets" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\css\app.css" />
@@ -173,26 +164,16 @@
     <Content Include="app\js\directives.js" />
     <Content Include="app\js\filters.js" />
     <Content Include="app\js\services.js" />
-    <Content Include="app\lib\angular\angular-cookies.js">
-    </Content>
-    <Content Include="app\lib\angular\angular-cookies.min.js">
-    </Content>
-    <Content Include="app\lib\angular\angular-loader.js">
-    </Content>
-    <Content Include="app\lib\angular\angular-loader.min.js">
-    </Content>
-    <Content Include="app\lib\angular\angular-resource.js">
-    </Content>
-    <Content Include="app\lib\angular\angular-resource.min.js">
-    </Content>
-    <Content Include="app\lib\angular\angular-sanitize.js">
-    </Content>
-    <Content Include="app\lib\angular\angular-sanitize.min.js">
-    </Content>
-    <Content Include="app\lib\angular\angular.js">
-    </Content>
-    <Content Include="app\lib\angular\angular.min.js">
-    </Content>
+    <Content Include="app\lib\angular\angular-cookies.js"></Content>
+    <Content Include="app\lib\angular\angular-cookies.min.js"></Content>
+    <Content Include="app\lib\angular\angular-loader.js"></Content>
+    <Content Include="app\lib\angular\angular-loader.min.js"></Content>
+    <Content Include="app\lib\angular\angular-resource.js"></Content>
+    <Content Include="app\lib\angular\angular-resource.min.js"></Content>
+    <Content Include="app\lib\angular\angular-sanitize.js"></Content>
+    <Content Include="app\lib\angular\angular-sanitize.min.js"></Content>
+    <Content Include="app\lib\angular\angular.js"></Content>
+    <Content Include="app\lib\angular\angular.min.js"></Content>
     <Content Include="app\lib\bootstrap.js" />
     <Content Include="app\lib\bootstrap.min.js" />
     <Content Include="app\lib\moment.min.js" />
@@ -206,6 +187,11 @@
       <Visible>false</Visible>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ripple.dependencies.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -214,4 +200,6 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Import Project="$(SolutionDir)..\BuildSupport\GitFlowVersion\build\GitFlowVersionTask.targets" />
+  <Import Project="$(SolutionDir)..\BuildSupport\RippleRestoreTask.targets" />
 </Project>
