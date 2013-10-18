@@ -3,6 +3,7 @@
     using System;
     using System.Configuration.Install;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.ServiceProcess;
     using Hosting;
@@ -16,7 +17,7 @@
             this.action = action;
         }
 
-        public override void Execute(HostArguments args)
+        public void ExecuteInternal(HostArguments args)
         {
             var serviceInstaller = new ServiceInstaller
             {
@@ -62,6 +63,12 @@
 
                 action(transactedInstaller);
             }
+        }
+
+        public bool IsServiceInstalled(string serviceName)
+        {
+            return ServiceController.GetServices()
+                .Any(service => string.CompareOrdinal(service.ServiceName, serviceName) == 0);
         }
 
         static void SetStartMode(ServiceInstaller installer, StartMode startMode)
