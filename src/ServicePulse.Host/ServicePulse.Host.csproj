@@ -58,8 +58,10 @@
     <Compile Include="Commands\CommandRunner.cs" />
     <Compile Include="Commands\ExtractCommand.cs" />
     <Compile Include="Commands\InstallCommand.cs" />
+    <Compile Include="Commands\RunCommand.cs" />
     <Compile Include="Commands\ServiceCommand.cs" />
     <Compile Include="Commands\UninstallCommand.cs" />
+    <Compile Include="Commands\UpdateConfigCommand.cs" />
     <Compile Include="Hosting\Host.cs">
       <SubType>Component</SubType>
     </Compile>

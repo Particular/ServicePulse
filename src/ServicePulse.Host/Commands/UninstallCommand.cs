@@ -4,7 +4,7 @@
 
     internal class UninstallCommand : ServiceCommand
     {
-        public UninstallCommand() : base(installer => installer.Uninstall(new Hashtable()))
+        public UninstallCommand() : base(installer => installer.Uninstall(null))
         {
         }
     }

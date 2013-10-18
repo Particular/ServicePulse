@@ -3,29 +3,26 @@
     using System;
     using System.IO;
     using System.Linq;
-    using System.Text.RegularExpressions;
+    using System.Reflection;
     using Hosting;
 
     internal class ExtractCommand : AbstractCommand
     {
         public override void Execute(HostArguments args)
         {
-            ExportResources(args.OutputPath);
+            ExtractResources(args.OutputPath);
 
-            UpdateConfig(args);
+            if (String.IsNullOrEmpty(args.ServiceControlUrl))
+            {
+                return;
+            }
+
+            UpdateConfig(args.OutputPath, args.ServiceControlUrl);
         }
 
-        static void UpdateConfig(HostArguments args)
+        static void ExtractResources(string directoryPath)
         {
-            var appJsPath = Path.Combine(args.OutputPath, "config.js");
-            var appJsCode = File.ReadAllText(appJsPath);
-            File.WriteAllText(appJsPath,
-                Regex.Replace(appJsCode, @"(service_control_url: ')([\w:/]*)(')", "$1" + args.ServiceControlUrl + "$3"));
-        }
-
-        void ExportResources(string directoryPath)
-        {
-            var assembly = GetType().Assembly;
+            var assembly = Assembly.GetExecutingAssembly();
             var resources = assembly.GetManifestResourceNames().Where(x => x.StartsWith(@"app\"));
             foreach (var resourceName in resources)
             {

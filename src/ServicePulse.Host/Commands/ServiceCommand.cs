@@ -40,20 +40,15 @@
 
             var arguments = String.Empty;
 
-            if (!String.IsNullOrEmpty(args.DisplayName))
+            if (!String.IsNullOrEmpty(args.Url))
             {
-                arguments += string.Format(" -displayname \"{0}\"", args.DisplayName);
+                arguments += string.Format(" --url=\"{0}\"", args.Url);
             }
 
-            if (!String.IsNullOrEmpty(args.ServiceName))
-            {
-                arguments += string.Format(" -servicename \"{0}\"", args.ServiceName);
-            }
-            
-            using (var e = new HostInstaller(args, arguments, installers))
+            using (var hostInstaller = new HostInstaller(args, arguments, installers))
             using (var transactedInstaller = new TransactedInstaller())
             {
-                transactedInstaller.Installers.Add(e);
+                transactedInstaller.Installers.Add(hostInstaller);
 
                 var assembly = Assembly.GetEntryAssembly();
 

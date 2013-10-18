@@ -2,10 +2,9 @@
 {
     using System.Collections;
     using System.Configuration.Install;
-    using System.ServiceProcess;
     using Microsoft.Win32;
 
-    internal class HostInstaller : ServiceProcessInstaller
+    internal class HostInstaller : Installer
     {
         public HostInstaller(HostArguments settings, string arguments, Installer[] installers)
         {
@@ -25,9 +24,6 @@
                     Registry.LocalMachine.OpenSubKey(
                         string.Format(@"System\CurrentControlSet\Services\{0}", settings.ServiceName), true))
             {
-
-                service.SetValue("Description", settings.Description);
-
                 var imagePath = (string) service.GetValue("ImagePath");
 
                 imagePath += arguments;

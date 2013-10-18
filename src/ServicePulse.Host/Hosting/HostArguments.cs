@@ -1,26 +1,38 @@
 namespace ServicePulse.Host.Hosting
 {
     using System;
+    using System.Collections.Generic;
+#if DEBUG
+    using System.Diagnostics;
+#endif
     using System.IO;
     using System.Reflection;
     using System.ServiceProcess;
     using System.Text;
+    using Commands;
 
     internal class HostArguments
     {
         public HostArguments(string[] args)
         {
-            executionMode = ExecutionMode.Run;
+            var executionMode = ExecutionMode.Run;
+
+            commands = new List<Type> {typeof(UpdateConfigCommand), typeof(RunCommand)};
             startMode = StartMode.Automatic;
             url = "http://localhost:8081";
             ServiceName = "ServicePulse";
-            DisplayName = "ServicePulse in Particular";
-            Description = "An Operations Manager’s Best Friend.";
+            DisplayName = "ServicePulse";
+            Description = "An Operations Manager's Best Friend in Particular.";
             ServiceAccount = ServiceAccount.LocalSystem;
             Username = String.Empty;
             Password = String.Empty;
-            OutputPath = Environment.CurrentDirectory;
-
+            OutputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
+#if DEBUG
+            if (Debugger.IsAttached)
+            {
+                OutputPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\app"));
+            }     
+#endif
             var runOptions = new OptionSet
             {
                 {
@@ -46,7 +58,11 @@ namespace ServicePulse.Host.Hosting
                 {
                     "e|extract",
                     @"Extract files to be installed in a Web Server."
-                    , s => { executionMode = ExecutionMode.Extract; }
+                    , s =>
+                    {
+                        commands = new List<Type> {typeof(UpdateConfigCommand), typeof(ExtractCommand)};
+                        executionMode = ExecutionMode.Extract;
+                    }
                 },
                 {
                     "serviceControlUrl=",
@@ -68,7 +84,11 @@ namespace ServicePulse.Host.Hosting
                 {
                     "u|uninstall",
                     @"Uninstall the endpoint as a Windows service."
-                    , s => { executionMode = ExecutionMode.Uninstall; }
+                    , s =>
+                    {
+                        commands = new List<Type> {typeof(UninstallCommand)};
+                        executionMode = ExecutionMode.Uninstall;
+                    }
                 },
                 {
                     "serviceName=",
@@ -87,7 +107,11 @@ namespace ServicePulse.Host.Hosting
                 {
                     "i|install",
                     @"Install the endpoint as a Windows service."
-                    , s => { executionMode = ExecutionMode.Install; }
+                    , s =>
+                    {
+                        commands = new List<Type> {typeof(UpdateConfigCommand), typeof(InstallCommand)};
+                        executionMode = ExecutionMode.Install;
+                    }
                 },
                 {
                     "serviceName=",
@@ -190,9 +214,9 @@ namespace ServicePulse.Host.Hosting
             }
         }
 
-        public ExecutionMode ExecutionMode
+        public List<Type> Commands
         {
-            get { return executionMode; }
+            get { return commands; }
         }
 
         public bool Help { get; set; }
@@ -257,9 +281,10 @@ namespace ServicePulse.Host.Hosting
         readonly OptionSet extractOptions;
         readonly OptionSet installOptions;
         readonly OptionSet uninstallOptions;
-        ExecutionMode executionMode;
+        List<Type> commands;
+        string serviceControlUrl;
         StartMode startMode;
-        string url, serviceControlUrl;
+        string url;
     }
 
     internal enum ExecutionMode

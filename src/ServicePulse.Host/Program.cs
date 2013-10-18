@@ -1,7 +1,5 @@
 ﻿namespace ServicePulse.Host
 {
-    using System;
-    using System.Diagnostics;
     using Commands;
     using Hosting;
 
@@ -17,26 +15,7 @@
                 return;
             }
 
-            if (arguments.ExecutionMode != ExecutionMode.Run)
-            {
-                new CommandRunner(arguments).Execute();
-                return;
-            }
-
-            using (var service = new Host(arguments))
-            {
-                service.Run();
-
-                if (!Environment.UserInteractive)
-                {
-                    return;
-                }
-
-                Process.Start(arguments.Url);
-                Console.WriteLine("Running on {0}", arguments.Url);
-                Console.WriteLine("Press enter to exit");
-                Console.ReadLine();
-            }
+            new CommandRunner(arguments.Commands).Execute(arguments);
         }
     }
 }

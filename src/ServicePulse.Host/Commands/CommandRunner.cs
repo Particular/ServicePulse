@@ -1,32 +1,25 @@
 ﻿namespace ServicePulse.Host.Commands
 {
+    using System;
+    using System.Collections.Generic;
     using Hosting;
 
     internal class CommandRunner
     {
-        public CommandRunner(HostArguments args)
+        public CommandRunner(List<Type> commands)
         {
-            this.args = args;
+            this.commands = commands;
         }
 
-        public void Execute()
+        public void Execute(HostArguments args)
         {
-            if (args.ExecutionMode == ExecutionMode.Install)
+            foreach (var commandType in commands)
             {
-                new InstallCommand().Execute(args);
-            }
-
-            if (args.ExecutionMode == ExecutionMode.Uninstall)
-            {
-                new UninstallCommand().Execute(args);
-            }
-
-            if (args.ExecutionMode == ExecutionMode.Extract)
-            {
-                new ExtractCommand().Execute(args);
+                var command = (AbstractCommand)Activator.CreateInstance(commandType);
+                command.Execute(args);
             }
         }
 
-        readonly HostArguments args;
+        readonly List<Type> commands;
     }
 }
