@@ -1,44 +1,42 @@
-﻿namespace Pulse.Host
+﻿namespace ServicePulse.Host
 {
     using System;
     using System.Diagnostics;
-    using System.ServiceProcess;
-    using Nancy.Hosting.Self;
+    using Commands;
+    using Hosting;
 
-    public class Program : ServiceBase
+    public class Program
     {
-        NancyHost nancyHost;
-        const string url = "http://localhost:1234";
-
-        static void Main()
+        static void Main(string[] args)
         {
-            using (var service = new Program())
+            var arguments = new HostArguments(args);
+
+            if (arguments.Help)
             {
-                if (Environment.UserInteractive)
-                {
-                    service.OnStart(null);
-                    Process.Start(url);
-                    Console.WriteLine("Running on {0}", url);
-                    Console.WriteLine("Press enter to exit");
-                    Console.ReadLine();
-                    service.OnStop();
-                }
-                else
-                {
-                    Run(service);
-                }
+                arguments.PrintUsage();
+                return;
             }
-        }
 
-        protected override void OnStart(string[] args)
-        {
-            nancyHost = new NancyHost(new Uri(url), new PulseBootstrapper());
-            nancyHost.Start();
-        }
+            if (arguments.ExecutionMode != ExecutionMode.Run)
+            {
+                new CommandRunner(arguments).Execute();
+                return;
+            }
 
-        protected override void OnStop()
-        {
-            nancyHost.Dispose();
+            using (var service = new Host(arguments))
+            {
+                service.Run();
+
+                if (!Environment.UserInteractive)
+                {
+                    return;
+                }
+
+                Process.Start(arguments.Url);
+                Console.WriteLine("Running on {0}", arguments.Url);
+                Console.WriteLine("Press enter to exit");
+                Console.ReadLine();
+            }
         }
     }
 }

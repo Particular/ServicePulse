@@ -4,22 +4,10 @@
 
 // Demonstrate how to register services
 // In this case it is a simple value service.
-angular.module('sc.services', ['angular-cache'])
-    .constant('serviceControlUrl', 'http://localhost:33333/api')
-    .run(function ($http, $angularCacheFactory) {
-        $angularCacheFactory('defaultCache', {
-            capacity: 1000,  // This cache can hold 1000 items,
-            maxAge: 90000, // Items added to this cache expire after 15 minutes
-            aggressiveDelete: true, // Items will be actively deleted when they expire
-            cacheFlushInterval: 3600000, // This cache will clear itself every hour,
-            storageMode: 'localStorage'
-        });
-
-        //$http.defaults.cache = $angularCacheFactory.get('defaultCache');
-    })
-    .factory('streamService', ['$log', '$rootScope', 'serviceControlUrl', function($log, $rootScope, serviceControlUrl) {
+angular.module('sc.services', [])
+    .factory('streamService', ['$log', '$rootScope', 'scConfig', function ($log, $rootScope, scConfig) {
         var prefix = 'signalr::';
-        var connection = $.connection(serviceControlUrl + '/messagestream');
+        var connection = $.connection(scConfig.service_control_url + '/messagestream');
         var registrations = {};
         
         connection.received(function(data) {
@@ -34,7 +22,7 @@ angular.module('sc.services', ['angular-cache'])
 
         var onSubscribe = function($scope, messageType, handler) {
             var deregFunc = $scope.$on(prefix + messageType, function (event, message) {
-                $scope.$apply(function(_) {
+                $scope.$apply(function() {
                     handler(message);
                 });
             });
@@ -61,55 +49,55 @@ angular.module('sc.services', ['angular-cache'])
         };
     }])
 
-    .service('serviceControlService', ['$http', 'serviceControlUrl', function($http, serviceControlUrl) {
+    .service('serviceControlService', ['$http', 'scConfig', function ($http, scConfig) {
 
         this.getAlerts = function () {
-            return $http.get(serviceControlUrl + '/alerts').then(function (response) {
+            return $http.get(scConfig.service_control_url + '/alerts').then(function (response) {
                 return response.data;
             });
         };
         
         this.getFailedMessages = function () {
-            return $http.get(serviceControlUrl + '/errors').then(function (response) {
+            return $http.get(scConfig.service_control_url + '/errors').then(function (response) {
                 return response.data;
             });
         };
         
         this.getFailedMessageStats = function () {
-            return $http.get(serviceControlUrl + '/errors/facets').then(function (response) {
+            return $http.get(scConfig.service_control_url + '/errors/facets').then(function (response) {
                 return response.data;
             });
         };
 
         this.retryAllFailedMessages = function () {
-            $http.post(serviceControlUrl + '/errors/retry/all')
-                .success(function(data, status, headers, config) {
+            $http.post(scConfig.service_control_url + '/errors/retry/all')
+                .success(function() {
                     alert('successfully posted');
                 });
         };
         
         this.retrySelectedFailedMessages = function (selectedMessages) {
-            $http.post(serviceControlUrl + '/errors/retry', selectedMessages)
-                .success(function (data, status, headers, config) {
+            $http.post(scConfig.service_control_url + '/errors/retry', selectedMessages)
+                .success(function () {
                     alert('successfully posted');
                 });
         };
 
 
         this.getHeartbeatStats = function () {
-            return $http.get(serviceControlUrl + '/heartbeats/stats').then(function (response) {
+            return $http.get(scConfig.service_control_url + '/heartbeats/stats').then(function (response) {
                 return response.data;
             });
         };
         
         this.getHeartbeatsList = function () {
-            return $http.get(serviceControlUrl + '/heartbeats').then(function (response) {
+            return $http.get(scConfig.service_control_url + '/heartbeats').then(function (response) {
                 return response.data;
             });
         };
         
         this.getEndpoints = function() {
-            return $http.get(serviceControlUrl + '/endpoints').then(function (response) {
+            return $http.get(scConfig.service_control_url + '/endpoints').then(function (response) {
                 return response.data;
             });
         };
@@ -120,7 +108,7 @@ angular.module('sc.services', ['angular-cache'])
                 .then(function(endpoints) {
                     var results = [];
                     endpoints.forEach(function(item) {
-                        $http.get(serviceControlUrl + '/endpoints/' + item.name + '/sla').then(function (response) {
+                        $http.get(scConfig.service_control_url + '/endpoints/' + item.name + '/sla').then(function (response) {
                             angular.extend(item, {sla: response.data.current});
                             results.push(item);
                         });

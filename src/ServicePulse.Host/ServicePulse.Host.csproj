@@ -54,16 +54,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Installer.cs">
+    <Compile Include="Commands\AbstractCommand.cs" />
+    <Compile Include="Commands\CommandRunner.cs" />
+    <Compile Include="Commands\ExtractCommand.cs" />
+    <Compile Include="Commands\InstallCommand.cs" />
+    <Compile Include="Commands\ServiceCommand.cs" />
+    <Compile Include="Commands\UninstallCommand.cs" />
+    <Compile Include="Hosting\Host.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Program.cs">
+    <Compile Include="Hosting\HostArguments.cs" />
+    <Compile Include="Hosting\HostInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Hosting\Options.cs" />
+    <Compile Include="Nancy\PulseBootstrapper.cs" />
+    <Compile Include="Nancy\SpecialEmbeddedFileResponse.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PulseBootstrapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\config.js" />
     <Content Include="app\css\bootstrap-responsive.css" />
     <Content Include="app\css\bootstrap.css" />
     <Content Include="app\css\font-awesome-ie7.css" />
@@ -134,41 +145,32 @@
     <Content Include="app\lib\jquery.nicescroll.min.js" />
     <Content Include="app\lib\jquery.sparkline.min.js" />
     <Content Include="app\lib\angular-cache-1.1.0.min.js" />
-    <Content Include="app\lib\jquery-1.10.2.min.js">
-    </Content>
-    <Content Include="app\lib\jquery.signalR-1.1.3.min.js">
-    </Content>
+    <Content Include="app\lib\jquery-1.10.2.min.js" />
+    <Content Include="app\lib\jquery.signalR-1.1.3.min.js" />
     <Content Include="app\lib\ng-grid.js" />
     <Content Include="app\lib\select2.directive.js" />
     <Content Include="app\lib\select2.min.js" />
     <Content Include="app\partials\failedMessages.html" />
     <Content Include="FodyWeavers.xml">
     </Content>
-    <None Include="app\font\fontawesome-webfont-0.eot" />
-    <None Include="app\font\fontawesome-webfont.eot" />
-    <None Include="app\font\fontawesome-webfont.ttf" />
-    <None Include="app\font\fontawesome-webfont.woff" />
-    <None Include="app\lib\jquery-1.10.2.min.map">
-    </None>
+    <EmbeddedResource Include="Hosting\Help.txt" />
+    <Content Include="app\font\fontawesome-webfont-0.eot" />
+    <Content Include="app\font\fontawesome-webfont.eot" />
+    <Content Include="app\font\fontawesome-webfont.ttf" />
+    <Content Include="app\font\fontawesome-webfont.woff" />
+    <Content Include="app\lib\jquery-1.10.2.min.map" />
     <None Include="Fody.targets" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="app\css\app.css">
-    </Content>
-    <Content Include="app\js\app.js">
-    </Content>
-    <Content Include="app\js\controllers.js">
-    </Content>
-    <Content Include="app\js\directives.js">
-    </Content>
-    <Content Include="app\js\filters.js">
-    </Content>
-    <Content Include="app\js\services.js">
-    </Content>
+    <Content Include="app\css\app.css" />
+    <Content Include="app\js\app.js" />
+    <Content Include="app\js\controllers.js" />
+    <Content Include="app\js\directives.js" />
+    <Content Include="app\js\filters.js" />
+    <Content Include="app\js\services.js" />
     <Content Include="app\lib\angular\angular-cookies.js">
     </Content>
     <Content Include="app\lib\angular\angular-cookies.min.js">
@@ -189,17 +191,16 @@
     </Content>
     <Content Include="app\lib\angular\angular.min.js">
     </Content>
-    <Content Include="app\lib\bootstrap.js">
-    </Content>
-    <Content Include="app\lib\bootstrap.min.js">
-    </Content>
+    <Content Include="app\lib\bootstrap.js" />
+    <Content Include="app\lib\bootstrap.min.js" />
     <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
-    <Content Include="app\partials\heartbeatsStats.html">
-    </Content>
-    <Content Include="app\partials\heartbeats.html">
-    </Content>
+    <Content Include="app\partials\heartbeatsStats.html" />
+    <Content Include="app\partials\heartbeats.html" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
+      <LogicalName>%(RelativeDir)%(Filename)%(Extension)</LogicalName>
       <Visible>false</Visible>
     </EmbeddedResource>
   </ItemGroup>
