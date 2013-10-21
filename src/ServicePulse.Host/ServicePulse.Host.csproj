@@ -102,6 +102,7 @@
     <Content Include="app\img\glyphicons-halflings.png" />
     <Content Include="app\img\icons-big.png" />
     <Content Include="app\img\icons-small.png" />
+    <Content Include="app\img\ie7-forbidden-logo.jpg" />
     <Content Include="app\img\i_16_radio.png" />
     <Content Include="app\img\logo.png" />
     <Content Include="app\img\logo20.png" />
@@ -164,16 +165,10 @@
     <Content Include="app\js\directives.js" />
     <Content Include="app\js\filters.js" />
     <Content Include="app\js\services.js" />
-    <Content Include="app\lib\angular\angular-cookies.js"></Content>
-    <Content Include="app\lib\angular\angular-cookies.min.js"></Content>
-    <Content Include="app\lib\angular\angular-loader.js"></Content>
-    <Content Include="app\lib\angular\angular-loader.min.js"></Content>
-    <Content Include="app\lib\angular\angular-resource.js"></Content>
-    <Content Include="app\lib\angular\angular-resource.min.js"></Content>
-    <Content Include="app\lib\angular\angular-sanitize.js"></Content>
-    <Content Include="app\lib\angular\angular-sanitize.min.js"></Content>
-    <Content Include="app\lib\angular\angular.js"></Content>
-    <Content Include="app\lib\angular\angular.min.js"></Content>
+    <Content Include="app\lib\angular\angular.js">
+    </Content>
+    <Content Include="app\lib\angular\angular.min.js">
+    </Content>
     <Content Include="app\lib\bootstrap.js" />
     <Content Include="app\lib\bootstrap.min.js" />
     <Content Include="app\lib\moment.min.js" />
