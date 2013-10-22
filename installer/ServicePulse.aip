@@ -252,16 +252,13 @@
     <ROW Dialog_="LicenseAgreementDlg" Control_="LicenseAgreementDlgDialogInitializer" Event="[STORE_DEFAULT_VISUAL_STYLE]" Argument="[AI_CONTROL_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="103"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="[AI_CONTROL_VISUAL_STYLE]" Argument="[STORE_DEFAULT_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="2"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="AgreeInstall" Event="[AI_CONTROL_VISUAL_STYLE]" Argument="[STORE_DEFAULT_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="99"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="DetectService" Condition="AI_INSTALL AND ( INST_URI &gt;&lt; &quot;localhost&quot; OR INST_URI &gt;&lt; ComputerName )" Ordering="98"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_1" Condition="AI_INSTALL AND ( INST_URI &gt;&lt; &quot;localhost&quot; OR INST_URI &gt;&lt; ComputerName )" Ordering="97"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="SpawnDialog" Argument="SpawnDialog" Condition="AI_INSTALL AND ( AI_SERVICE_STATE = &quot;Not Found&quot; )" Ordering="99"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="SpawnDialog" Argument="SpawnDialog" Condition="AI_INSTALL AND ( INVALID_URL )" Ordering="99"/>
     <ROW Dialog_="SpawnDialog" Control_="Yes" Event="EndDialog" Argument="Return" Condition="1" Ordering="100"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_ChooseTextStyles" Type="1" Source="aicustact.dll" Target="ChooseTextStyles"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Particular.ServiceControl"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -283,7 +280,6 @@
     <ROW Action="AI_ResolveLocalizedCredentials" Type="1" Source="aicustact.dll" Target="GetLocalizedCredentials"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="DetectService" Type="1" Source="aicustact.dll" Target="DetectService" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_1"/>
     <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --url=http://pulse.localhost.com:[PORT_VAL] --serviceControlUrl=[INST_URI]" Options="1"/>
     <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http:// www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]" Options="1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
