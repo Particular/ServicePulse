@@ -137,13 +137,6 @@
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
     <Content Include="app\lib\excanvas.min.js" />
-    <Content Include="app\lib\fullcalendar.min.js" />
-    <Content Include="app\lib\jquery-ui.custom.js" />
-    <Content Include="app\lib\jquery.flot.min.js" />
-    <Content Include="app\lib\jquery.flot.resize.min.js" />
-    <Content Include="app\lib\jquery.jpanelmenu.min.js" />
-    <Content Include="app\lib\jquery.nicescroll.min.js" />
-    <Content Include="app\lib\jquery.sparkline.min.js" />
     <Content Include="app\lib\angular-cache-1.1.0.min.js" />
     <Content Include="app\lib\jquery-1.10.2.min.js" />
     <Content Include="app\lib\jquery.signalR-1.1.3.min.js" />
