@@ -54,7 +54,7 @@
     <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~3.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="Files\ServicePulse.Host.pdb" SelfReg="false" NextFile="Nancy.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="Output Package" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\Operations.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" UseLargeSchema="true" ExeName="ServicePulse"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="Output Package" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\Operations.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" Options="8" UseLargeSchema="true" ExeName="ServicePulse"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
@@ -90,6 +90,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
+    <ROW Name="Particular.CustomActions.CA.dll" SourcePath="res-binary\Particular.CustomActions.CA.dll"/>
     <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
     <ROW Name="ServicePuzleLabel.png" SourcePath="res\ServicePuzleLabel.png"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
@@ -140,7 +141,7 @@
     <ROW Dialog_="InstallDlg" Control="Text_1" Type="Text" X="17" Y="187" Width="125" Height="18" Attributes="65539" Property="TEXT_1_PROP" Text="ServicePulse Port:" Order="1400"/>
     <ROW Dialog_="InstallDlg" Control="Text_3" Type="Text" X="17" Y="227" Width="140" Height="18" Attributes="65539" Property="TEXT_1_PROP_1_1" Text="ServiceControl Instance URI" Order="1500"/>
     <ROW Dialog_="InstallDlg" Control="Edit_2" Type="Edit" X="157" Y="227" Width="149" Height="18" Attributes="3" Property="INST_URI" Text="{260}" Order="1600"/>
-    <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="ScrollableText" X="17" Y="106" Width="312" Height="243" Attributes="3" Property="EulaRead" Text="..\..\ServiceControl\installer\Setup\License.rtf" Order="600" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText_2" MsiKey="LicenseAgreementDlg#AgreementText"/>
+    <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="ScrollableText" X="17" Y="106" Width="312" Height="243" Attributes="3" Property="EulaRead" Text="License.rtf" Order="600" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText_2" MsiKey="LicenseAgreementDlg#AgreementText"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="PrintBtn" Type="ImageButton" X="301" Y="77" Width="28" Height="28" Attributes="3" Text="[MetroPrintButton]" Order="700" MsiKey="LicenseAgreementDlg#PrintBtn" AssociatedCtrl="AgreementText" ExtType="ImageButton"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="AdvInst" Type="Text" X="5" Y="388" Width="74" Height="11" Attributes="65539" Text="Advanced Installer" TextStyle="[BrandingStyle]" Order="800" MsiKey="LicenseAgreementDlg#AdvInst"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="63" Attributes="1" Text="[AppLogoIcon]" Order="900"/>
@@ -168,7 +169,7 @@
     <ROW Dialog_="ResumeDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="63" Attributes="1" Text="[AppLogoIcon]" Order="700"/>
     <ROW Dialog_="SpawnDialog" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="330" Height="120" Attributes="1" Text="[Background]" Order="100"/>
     <ROW Dialog_="SpawnDialog" Control="Yes" Type="ImageButton" X="126" Y="84" Width="78" Height="28" Attributes="3" Text="[metrobuttonimage]" TextStyle="[MetroButtonText]" Order="200" ExtData="[ButtonText_OK]" ExtDataLocId="[ButtonText_Yes]"/>
-    <ROW Dialog_="SpawnDialog" Control="Text" Type="Text" X="68" Y="18" Width="249" Height="60" Attributes="196611" Text="ServiceControl must be installed on your local machine to continue the installation of ServicePulse." TextStyle="[SubTitleStyle]" Order="300"/>
+    <ROW Dialog_="SpawnDialog" Control="Text" Type="Text" X="68" Y="18" Width="249" Height="60" Attributes="196611" Text="ServiceControl URI cannot be reached. Please make sure it is a valid URI." TextStyle="[SubTitleStyle]" Order="300"/>
     <ROW Dialog_="SpawnDialog" Control="Bitmap_1" Type="Bitmap" X="17" Y="15" Width="38" Height="52" Attributes="1" Text="[InfoIcon]" Order="400"/>
     <ROW Dialog_="SpawnDialog" Control="AdvInst" Type="Text" X="5" Y="388" Width="74" Height="11" Attributes="196611" Text="Advanced Installer" TextStyle="[BrandingStyle]" Order="500"/>
     <ROW Dialog_="UserExit" Control="AdvInst" Type="Text" X="5" Y="388" Width="74" Height="11" Attributes="65539" Text="Advanced Installer" TextStyle="[BrandingStyle]" Order="700" MsiKey="UserExit#AdvInst"/>
@@ -252,8 +253,10 @@
     <ROW Dialog_="LicenseAgreementDlg" Control_="LicenseAgreementDlgDialogInitializer" Event="[STORE_DEFAULT_VISUAL_STYLE]" Argument="[AI_CONTROL_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="103"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="[AI_CONTROL_VISUAL_STYLE]" Argument="[STORE_DEFAULT_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="2"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="AgreeInstall" Event="[AI_CONTROL_VISUAL_STYLE]" Argument="[STORE_DEFAULT_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="99"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="SpawnDialog" Argument="SpawnDialog" Condition="AI_INSTALL AND ( INVALID_URL )" Ordering="99"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="SpawnDialog" Argument="SpawnDialog" Condition="VALID_URL=&quot;Invalid_Url&quot;" Ordering="201"/>
     <ROW Dialog_="SpawnDialog" Control_="Yes" Event="EndDialog" Argument="Return" Condition="1" Ordering="100"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="[AiEventsControl]" Argument="Next" Condition="VALID_URL=&quot;Valid_Url&quot;" Ordering="200" MsiKey="InstallDlg#InstallButton#[AiEventsControl]#Next#1"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Validate_URL" Condition="AI_INSTALL" Ordering="98"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
@@ -286,6 +289,7 @@
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall"/>
+    <ROW Action="Validate_URL" Type="1" Source="Particular.CustomActions.CA.dll" Target="ValidateUrl" WithoutSeq="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
     <ROW Dialog="SpawnDialog" HCentering="50" VCentering="50" Width="330" Height="120" Attributes="3" Title="[ProductName] [Setup]" Control_Default="Yes" Control_Cancel="Yes" TitleLocId="Dialog.TemplateSpawnDlg"/>
