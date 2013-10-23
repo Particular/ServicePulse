@@ -25,7 +25,7 @@
     <ROW Property="PORT_VAL" Value="8080" Type="4"/>
     <ROW Property="ProductCode" Value="1033:{BAE534DC-0605-4EC0-8E26-561E9107485B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
-    <ROW Property="ProductName" Value="ServicePulse[|ProductVersion]"/>
+    <ROW Property="ProductName" Value="ServicePulse [|ProductVersion]"/>
     <ROW Property="ProductVersion" Value="1.0.0" Type="32"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{7682150C-DFE3-4CF0-B565-1C4BEF9A787E}"/>
@@ -157,15 +157,14 @@
     <ROW Dialog_="LicenseAgreementDlg" Control="PrintBtn" Type="ImageButton" X="301" Y="77" Width="28" Height="28" Attributes="3" Text="[MetroPrintButton]" Order="700" MsiKey="LicenseAgreementDlg#PrintBtn" AssociatedCtrl="AgreementText" ExtType="ImageButton"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="AdvInst" Type="Text" X="5" Y="388" Width="74" Height="11" Attributes="65539" Text="Advanced Installer" TextStyle="[BrandingStyle]" Order="800" MsiKey="LicenseAgreementDlg#AdvInst"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="63" Attributes="1" Text="[AppLogoIcon]" Order="900"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="Bitmap" Type="Bitmap" X="1" Y="0" Width="345" Height="400" Attributes="1" Text="[Background]" Order="1000" MsiKey="MaintenanceTypeDlg#Bitmap"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RepairButton" Type="PushButton" X="77" Y="173" Width="38" Height="38" Attributes="5767170" Text="[RepairIcon]" Order="1100" MsiKey="MaintenanceTypeDlg#RepairButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="RemoveLabel" Type="Text" X="120" Y="210" Width="100" Height="11" Attributes="65538" Text="&amp;Remove" TextStyle="[DlgTitleFont]" Order="1300" TextLocId="Control.Text.MaintenanceTypeDlg#RemoveLabel" MsiKey="MaintenanceTypeDlg#RemoveLabel"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control="AdvInst" Type="Text" X="5" Y="388" Width="74" Height="11" Attributes="65539" Text="Advanced Installer" TextStyle="[BrandingStyle]" Order="1400" MsiKey="MaintenanceTypeDlg#AdvInst"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="SubTitle" Type="Text" X="17" Y="105" Width="312" Height="20" Attributes="196611" Text="Modify, Repair or Remove installation" TextStyle="[SubTitleStyle]" Order="1500" TextLocId="Control.Text.MaintenanceTypeDlg#Title" MsiKey="MaintenanceTypeDlg#SubTitle"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroModifyButton" Type="ImageButton" X="27" Y="155" Width="92" Height="123" Attributes="3" Text="[ModifyButton]" Order="1600" MsiKey="MaintenanceTypeDlg#MetroModifyButton" ExtType="ImageButton"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroRepairButton" Type="ImageButton" X="128" Y="155" Width="92" Height="123" Attributes="3" Text="repair.png" Order="1700" MsiKey="MaintenanceTypeDlg#MetroRepairButton" ExtType="ImageButton"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroRemoveButton" Type="ImageButton" X="228" Y="155" Width="92" Height="123" Attributes="3" Text="remove.png" Order="1800" MsiKey="MaintenanceTypeDlg#MetroRemoveButton" ExtType="ImageButton"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroRemoveText" Type="Text" X="234" Y="278" Width="86" Height="15" Attributes="65539" Text="&amp;Remove" Order="1900" TextLocId="Control.Text.MaintenanceTypeDlg#RemoveLabel" MsiKey="MaintenanceTypeDlg#MetroRemoveText"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroRepairText" Type="Text" X="133" Y="278" Width="86" Height="16" Attributes="65539" Text="Re&amp;pair" Order="2000" TextLocId="Control.Text.MaintenanceTypeDlg#RepairLabel" MsiKey="MaintenanceTypeDlg#MetroRepairText"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroModifyText" Type="Text" X="33" Y="278" Width="86" Height="16" Attributes="65539" Text="&amp;Modify" Order="2100" TextLocId="Control.Text.MaintenanceTypeDlg#ChangeLabel" MsiKey="MaintenanceTypeDlg#MetroModifyText"/>
-    <ROW Dialog_="MaintenanceTypeDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="63" Attributes="1" Text="[AppLogoIcon]" Order="2200"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="SubTitle" Type="Text" X="17" Y="105" Width="312" Height="20" Attributes="196611" Text="Remove installation" TextStyle="[SubTitleStyle]" Order="1500" TextLocId="Control.Text.MaintenanceTypeDlg#Title" MsiKey="MaintenanceTypeDlg#SubTitle"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroRemoveButton" Type="ImageButton" X="40" Y="155" Width="92" Height="123" Attributes="3" Text="remove.png" Order="1600" MsiKey="MaintenanceTypeDlg#MetroRemoveButton" ExtType="ImageButton"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="MetroRemoveText" Type="Text" X="40" Y="278" Width="86" Height="15" Attributes="65539" Text="&amp;Remove" Order="1700" TextLocId="Control.Text.MaintenanceTypeDlg#RemoveLabel" MsiKey="MaintenanceTypeDlg#MetroRemoveText"/>
+    <ROW Dialog_="MaintenanceTypeDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="63" Attributes="1" Text="[AppLogoIcon]" Order="1800"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="Cancel" Type="ImageButton" X="163" Y="359" Width="78" Height="28" Attributes="2" Text="[NextCancelButtons]" TextStyle="[MetroButtonText]" Order="100" MsiKey="MsiRMFilesInUse#Cancel" Options="1" ExtType="ImageButton" ExtData="[ButtonText_Cancel]" ExtDataLocId="-"/>
     <ROW Dialog_="MsiRMFilesInUse" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="63" Attributes="1" Text="[AppLogoIcon]" Order="800"/>
     <ROW Dialog_="OutOfDiskDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="63" Attributes="1" Text="[AppLogoIcon]" Order="600"/>
@@ -199,13 +198,13 @@
     <ROW Dialog_="VerifyRemoveDlg" Control="SubTitle" Type="Text" X="17" Y="105" Width="317" Height="19" Attributes="196611" Text="Begin removal of [ProductName]" TextStyle="[SubTitleStyle]" Order="400" TextLocId="Azure.Control.Text.VerifyRemoveDlg#Title" MsiKey="VerifyRemoveDlg#SubTitle"/>
     <ROW Dialog_="VerifyRepairDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="345" Height="400" Attributes="1" Text="[Background]" Order="100" MsiKey="VerifyRepairDlg#Bitmap"/>
     <ROW Dialog_="VerifyRepairDlg" Control="Cancel" Type="ImageButton" X="163" Y="359" Width="78" Height="28" Attributes="2" Text="[NextCancelButtons]" TextStyle="[MetroButtonText]" Order="200" MsiKey="VerifyRepairDlg#Cancel" Options="1" ExtType="ImageButton" ExtData="[ButtonText_Cancel]" ExtDataLocId="-"/>
-    <ATTRIBUTE name="DeletedRows" value="AdminInstallPointDlg#CompanyText@LicenseAgreementDlg#ProductNameTitle@InstallDlg#CompanyText@OutOfDiskDlg#CompanyText@PrepareDlg#ProductNameTitle@UserExit#CompanyText@PrepareDlg#CompanyText@ProgressDlg#ProductLogo@AdminBrowseDlg#CompanyText@InstallDlg#ProductNameTitle@AdminInstallPointDlg#ProductLogo@ProgressDlg#ProductNameTitle@ResumeDlg#ProductLogo@LicenseAgreementDlg#ProductLogo@ProgressDlg#CompanyText@LicenseAgreementDlg#CompanyText@OutOfRbDiskDlg#ProductLogo@AdminBrowseDlg#ProductLogo@OutOfRbDiskDlg#ProductNameTitle@FatalError#CompanyText@OutOfRbDiskDlg#CompanyText@AdminInstallPointDlg#ProductNameTitle@MsiRMFilesInUse#ProductLogo@OutOfDiskDlg#ProductLogo@AdminWelcomeDlg#ProductLogo@OutOfDiskDlg#ProductNameTitle@BrowseDlg#ProductLogo@MaintenanceTypeDlg#CompanyText@BrowseDlg#ProductNameTitle@BrowseDlg#CompanyText@ExitDialog#ProductLogo@CustomizeDlg#ProductLogo@ExitDialog#ProductNameTitle@ExitDialog#CompanyText@MaintenanceTypeDlg#ProductLogo@MaintenanceTypeDlg#ProductNameTitle@CustomizeDlg#ProductNameTitle@ResumeDlg#ProductNameTitle@CustomizeDlg#CompanyText@FilesInUse#CompanyText@PatchWelcomeDlg#ProductNameTitle@PatchWelcomeDlg#CompanyText@PatchWelcomeDlg#ProductLogo@ResumeDlg#CompanyText@AdminWelcomeDlg#ProductNameTitle@AdminWelcomeDlg#CompanyText@AdminInstallPointDlg#TitleIcon@AdminBrowseDlg#ProductNameTitle@DiskCostDlg#ProductLogo@DiskCostDlg#ProductNameTitle@FatalError#ProductNameTitle@DiskCostDlg#CompanyText@FatalError#ProductLogo@FilesInUse#ProductLogo@FilesInUse#ProductNameTitle@MsiRMFilesInUse#ProductNameTitle@MsiRMFilesInUse#CompanyText@UserExit#ProductLogo@UserExit#ProductNameTitle"/>
+    <ATTRIBUTE name="DeletedRows" value="AdminInstallPointDlg#CompanyText@LicenseAgreementDlg#ProductNameTitle@InstallDlg#CompanyText@OutOfDiskDlg#CompanyText@PrepareDlg#ProductNameTitle@UserExit#CompanyText@PrepareDlg#CompanyText@ProgressDlg#ProductLogo@AdminBrowseDlg#CompanyText@InstallDlg#ProductNameTitle@AdminInstallPointDlg#ProductLogo@ProgressDlg#ProductNameTitle@ResumeDlg#ProductLogo@LicenseAgreementDlg#ProductLogo@ProgressDlg#CompanyText@LicenseAgreementDlg#CompanyText@OutOfRbDiskDlg#ProductLogo@AdminBrowseDlg#ProductLogo@OutOfRbDiskDlg#ProductNameTitle@FatalError#CompanyText@OutOfRbDiskDlg#CompanyText@AdminInstallPointDlg#ProductNameTitle@MsiRMFilesInUse#ProductLogo@OutOfDiskDlg#ProductLogo@AdminWelcomeDlg#ProductLogo@OutOfDiskDlg#ProductNameTitle@BrowseDlg#ProductLogo@MaintenanceTypeDlg#CompanyText@BrowseDlg#ProductNameTitle@BrowseDlg#CompanyText@ExitDialog#ProductLogo@CustomizeDlg#ProductLogo@ExitDialog#ProductNameTitle@ExitDialog#CompanyText@MaintenanceTypeDlg#ProductLogo@MaintenanceTypeDlg#ProductNameTitle@CustomizeDlg#ProductNameTitle@ResumeDlg#ProductNameTitle@CustomizeDlg#CompanyText@FilesInUse#CompanyText@PatchWelcomeDlg#ProductNameTitle@PatchWelcomeDlg#CompanyText@MaintenanceTypeDlg#MetroRepairButton@PatchWelcomeDlg#ProductLogo@ResumeDlg#CompanyText@AdminWelcomeDlg#ProductNameTitle@MaintenanceTypeDlg#MetroModifyButton@AdminWelcomeDlg#CompanyText@AdminInstallPointDlg#TitleIcon@AdminBrowseDlg#ProductNameTitle@DiskCostDlg#ProductLogo@DiskCostDlg#ProductNameTitle@FatalError#ProductNameTitle@MaintenanceTypeDlg#MetroRepairText@DiskCostDlg#CompanyText@FatalError#ProductLogo@FilesInUse#ProductLogo@FilesInUse#ProductNameTitle@MsiRMFilesInUse#ProductNameTitle@MsiRMFilesInUse#CompanyText@UserExit#ProductLogo@UserExit#ProductNameTitle@MaintenanceTypeDlg#MetroModifyText"/>
     <ATTRIBUTE name="FixedSizeBitmaps" value="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Action="Enable" Condition="AGREE_CHECKBOX" MsiKey="InstallDlg#InstallButton#Enable#AGREE_CHECKBOX"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Action="Disable" Condition="NOT AGREE_CHECKBOX" MsiKey="InstallDlg#InstallButton#Disable#NOT AGREE_CHECKBOX"/>
-    <ATTRIBUTE name="DeletedRows" value="InstallDlg#InstallButton#Hide#(Text_Next &lt;&gt; Text_Install) AND (InstallDlg)@AdminBrowseDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@PrepareDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@OutOfRbDiskDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@AdminInstallPointDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@MaintenanceTypeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@ProgressDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@BrowseDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@OutOfDiskDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@ExitDialog#ProductNameTitle#Hide#NOT AIEXTERNALUI@CustomizeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@ResumeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@AdminWelcomeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@FatalError#ProductNameTitle#Hide#NOT AIEXTERNALUI@UserExit#ProductNameTitle#Hide#NOT AIEXTERNALUI"/>
+    <ATTRIBUTE name="DeletedRows" value="InstallDlg#InstallButton#Hide#(Text_Next &lt;&gt; Text_Install) AND (InstallDlg)@AdminBrowseDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@PrepareDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@OutOfRbDiskDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@AdminInstallPointDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@MaintenanceTypeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@ProgressDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@BrowseDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@OutOfDiskDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@ExitDialog#ProductNameTitle#Hide#NOT AIEXTERNALUI@CustomizeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@ResumeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@AdminWelcomeDlg#ProductNameTitle#Hide#NOT AIEXTERNALUI@FatalError#ProductNameTitle#Hide#NOT AIEXTERNALUI@UserExit#ProductNameTitle#Hide#NOT AIEXTERNALUI@MaintenanceTypeDlg#MetroRepairText#Show#AIEXTERNALUI@MaintenanceTypeDlg#MetroRepairText#Hide#NOT AIEXTERNALUI@MaintenanceTypeDlg#MetroModifyButton#Default#AIEXTERNALUI@MaintenanceTypeDlg#MetroModifyText#Show#AIEXTERNALUI@MaintenanceTypeDlg#MetroModifyText#Hide#NOT AIEXTERNALUI"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="InstallDlg" Control_="Next" Event="EndDialog" Argument="Return" Condition="AI_INSTALL" Ordering="301"/>
@@ -270,6 +269,7 @@
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Validate_URL" Condition="AI_INSTALL" Ordering="97"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Warning_ServiceControl" Condition="VALID_URL=&quot;Invalid_Url&quot;" Ordering="99"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_1" Condition="VALID_URL=&quot;Invalid_Url&quot;" Ordering="98"/>
+    <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#MetroRepairButton#[AiEventsControl]#RepairButton#1@MaintenanceTypeDlg#MetroModifyButton#[AiEventsControl]#ChangeButton#1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesCommit" WithoutSeq="true"/>
@@ -281,6 +281,7 @@
     <ROW Action="AI_ChooseTextStyles" Type="1" Source="aicustact.dll" Target="ChooseTextStyles"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl please verify the ULI specified and that the service is running. |ServicePulse[ProductVersion] |MB_OK,MB_ICONINFORMATION,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="ServicePulse"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -302,11 +303,15 @@
     <ROW Action="AI_ResolveLocalizedCredentials" Type="1" Source="aicustact.dll" Target="GetLocalizedCredentials"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="Delete_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]sc.exe&quot; delete ServicePulse"/>
+    <ROW Action="DetectService" Type="1" Source="aicustact.dll" Target="DetectService" Options="3" AdditionalSeq="AI_DATA_SETTER_2"/>
     <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --url=[INST_URI_PULSE]:[PORT_VAL] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
     <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]" Options="1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+    <ROW Action="Start_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start ServicePulse"/>
+    <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop ServicePulse"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;ServicePulse&quot;"/>
     <ROW Action="Validate_URL" Type="1" Source="Particular.CustomActions.CA.dll_1" Target="ValidateUrl" WithoutSeq="true"/>
     <ROW Action="Warning_ServiceControl" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_1"/>
@@ -326,7 +331,7 @@
     <ROW Action="AI_ResolveLocalizedCredentials" Sequence="52"/>
     <ROW Action="AI_GetArpIconPath" Sequence="51"/>
     <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1501"/>
-    <ROW Action="Launch_Url" Condition="( NOT Installed )" Sequence="6402"/>
+    <ROW Action="Launch_Url" Condition="( NOT Installed )" Sequence="6403"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
@@ -340,9 +345,14 @@
     <ROW Action="AI_DATA_SETTER" Sequence="3997"/>
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
     <ROW Action="Install_Service" Condition="( NOT Installed )" Sequence="6401"/>
-    <ROW Action="Uninstall_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) )" Sequence="1601"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
+    <ROW Action="Start_Service" Condition="( NOT Installed )" Sequence="6402"/>
+    <ROW Action="Delete_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) AND ( AI_SERVICE_STATE&lt;&gt;&quot;Not Found&quot; )" Sequence="1604"/>
+    <ROW Action="Uninstall_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) AND ( AI_SERVICE_STATE&lt;&gt;&quot;Not Found&quot; )" Sequence="1603"/>
+    <ROW Action="DetectService" Sequence="1602"/>
+    <ROW Action="AI_DATA_SETTER_2" Sequence="1601"/>
+    <ROW Action="Stop_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) )" Sequence="211"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
