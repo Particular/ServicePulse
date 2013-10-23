@@ -15,7 +15,7 @@
             if (IsServiceInstalled(args.ServiceName))
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Out.WriteLine("The {0} service is already installed.");
+                Console.Out.WriteLine("The '{0}' service is already installed.", args.ServiceName);
                 Console.ResetColor();
 
                 return;    
