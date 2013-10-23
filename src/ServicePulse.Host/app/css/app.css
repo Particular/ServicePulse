@@ -1,6 +1,17 @@
 /* app css stylesheet */
 
+html,
 body {
-    margin-right: 15px;
-    margin-left: 15px;
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by its height */
+  margin: 0 auto -50px;
+  /* Pad bottom by footer height */
+  padding: 0 0;
 }

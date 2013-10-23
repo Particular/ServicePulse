@@ -59,10 +59,10 @@ angular.module('sc.services', [])
         
         this.getFailedMessages = function () {
             return $http.get(scConfig.service_control_url + '/errors').then(function (response) {
-                return response.data;
+                return response;
             });
         };
-        
+          
         this.getFailedMessageStats = function () {
             return $http.get(scConfig.service_control_url + '/errors/facets').then(function (response) {
                 return response.data;
@@ -82,7 +82,6 @@ angular.module('sc.services', [])
                     alert('successfully posted');
                 });
         };
-
 
         this.getHeartbeatStats = function () {
             return $http.get(scConfig.service_control_url + '/heartbeats/stats').then(function (response) {
@@ -117,5 +116,4 @@ angular.module('sc.services', [])
                     return results;
                 });
         };
-
     }]);

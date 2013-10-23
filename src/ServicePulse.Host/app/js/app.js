@@ -1,16 +1,22 @@
 'use strict';
 
-angular.module('sc', ['sc.filters', 'sc.services', 'sc.directives', 'sc.controllers', 'ui.select2']);
+angular.module('sc', [
+    'ngRoute',
+    'ui.select2',
+    'sc.filters',
+    'sc.services',
+    'sc.directives',
+    'sc.controllers',
+    'failedMessages',
+    'heartbeats',
+    'dashboard']);
 
 angular.module('sc')
     .constant('scConfig', SC.config);
 
 angular.module('sc')
     .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/heartbeatsStats', { templateUrl: 'partials/heartbeatsStats.html', controller: 'heartbeatsStats' });
-        $routeProvider.when('/heartbeats', { templateUrl: 'partials/heartbeats.html', controller: 'heartbeats' });
-        $routeProvider.when('/failedMessages', { templateUrl: 'partials/failedMessages.html', controller: 'failedMessages' });
-        $routeProvider.otherwise({ redirectTo: '/heartbeatsStats' });
+        $routeProvider.otherwise({ redirectTo: '/dashboard' });
     }]);
 
 angular.module('sc')

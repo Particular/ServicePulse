@@ -136,14 +136,17 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
-    <Content Include="app\lib\excanvas.min.js" />
-    <Content Include="app\lib\angular-cache-1.1.0.min.js" />
+    <Content Include="app\js\dashboard\dashboard.js" />
+    <Content Include="app\js\failed_messages\failedMessages.js" />
+    <Content Include="app\js\heartbeats\heartbeats.js" />
+    <Content Include="app\lib\angular\angular-route.js" />
+    <Content Include="app\lib\angular\angular-route.min.js" />
     <Content Include="app\lib\jquery-1.10.2.min.js" />
     <Content Include="app\lib\jquery.signalR-1.1.3.min.js" />
     <Content Include="app\lib\ng-grid.js" />
     <Content Include="app\lib\select2.directive.js" />
     <Content Include="app\lib\select2.min.js" />
-    <Content Include="app\partials\failedMessages.html" />
+    <Content Include="app\js\failed_messages\failedMessages.html" />
     <EmbeddedResource Include="Hosting\Help.txt" />
     <Content Include="app\font\fontawesome-webfont-0.eot" />
     <Content Include="app\font\fontawesome-webfont.eot" />
@@ -166,8 +169,8 @@
     <Content Include="app\lib\bootstrap.min.js" />
     <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
-    <Content Include="app\partials\heartbeatsStats.html" />
-    <Content Include="app\partials\heartbeats.html" />
+    <Content Include="app\js\dashboard\dashboard.html" />
+    <Content Include="app\js\heartbeats\heartbeats.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
@@ -176,6 +179,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app\lib\angular\angular-route.min.js.map" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>
