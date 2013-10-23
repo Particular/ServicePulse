@@ -39,8 +39,8 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="AI_CustomARPName" ComponentId="{0F1C90D1-A696-4DB2-9737-BB96B63E50DF}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{CD4BC5FC-47B0-4899-856E-C252440A24FB}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
-    <ROW Component="Nancy.Hosting.Self.dll" ComponentId="{64AC311C-49D9-46C5-AB4D-E016956E1346}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.dll"/>
-    <ROW Component="Nancy.dll" ComponentId="{935AC657-C5CD-4EE3-93F4-1739F252B846}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.dll"/>
+    <ROW Component="Nancy.Hosting.Self.dll" ComponentId="{9E4A337A-69DD-4A09-860B-56BDFC7D5E5D}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.dll"/>
+    <ROW Component="Nancy.dll" ComponentId="{C13F0946-B502-4A46-AF72-75EDB09A7E19}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.dll"/>
     <ROW Component="ProductInformation" ComponentId="{E871FDAC-CF7D-45FA-A1C9-73006CE87216}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
     <ROW Component="ServicePulse.Host.exe" ComponentId="{AE9BCD73-377B-49A1-812D-AEBB7013AA5F}" Directory_="APPDIR" Attributes="0" KeyPath="ServicePulse.Host.exe"/>
   </COMPONENT>
@@ -49,10 +49,10 @@
     <ATTRIBUTE name="CurrentFeature" value="ServicePulse"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="Nancy.Hosting.Self.dll" Component_="Nancy.Hosting.Self.dll" FileName="NancyH~1.dll|Nancy.Hosting.Self.dll" Attributes="0" SourcePath="Files\Nancy.Hosting.Self.dll" SelfReg="false" NextFile="ServicePulse.Host.exe"/>
-    <ROW File="Nancy.dll" Component_="Nancy.dll" FileName="Nancy.dll" Attributes="0" SourcePath="Files\Nancy.dll" SelfReg="false"/>
-    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="Files\ServicePulse.Host.exe" SelfReg="false" NextFile="ServicePulse.Host.pdb" DigSign="true"/>
-    <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~3.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="Files\ServicePulse.Host.pdb" SelfReg="false" NextFile="Nancy.dll"/>
+    <ROW File="Nancy.Hosting.Self.dll" Component_="Nancy.Hosting.Self.dll" FileName="NancyH~1.dll|Nancy.Hosting.Self.dll" Attributes="0" SourcePath="binaries\Nancy.Hosting.Self.dll" SelfReg="false" NextFile="ServicePulse.Host.pdb"/>
+    <ROW File="Nancy.dll" Component_="Nancy.dll" FileName="Nancy.dll" Attributes="0" SourcePath="binaries\Nancy.dll" SelfReg="false" NextFile="Nancy.Hosting.Self.dll"/>
+    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="Files\ServicePulse.Host.exe" SelfReg="false" NextFile="Nancy.dll" DigSign="true"/>
+    <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~1.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="binaries\ServicePulse.Host.pdb" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
     <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="Output Package" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\Operations.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" Options="8" UseLargeSchema="true" ExeName="ServicePulse"/>
@@ -374,6 +374,6 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="[|ProductVersion]" Attributes="2" ActionProperty="AI_NEWERPRODUCTFOUND"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
-    <ROW Directory_="APPDIR" SourcePath="Files" Feature="ServicePulse" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
+    <ROW Directory_="APPDIR" SourcePath="binaries" Feature="ServicePulse" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
   </COMPONENT>
 </DOCUMENT>

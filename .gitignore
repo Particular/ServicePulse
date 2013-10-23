@@ -110,3 +110,4 @@ UpgradeLog*.XML
 /installer/Output Package
 /installer/ServicePulse-cache
 /installer/res/Thumbs.db
+/installer/binaries
