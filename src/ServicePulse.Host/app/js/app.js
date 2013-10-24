@@ -3,10 +3,12 @@
 angular.module('sc', [
     'ngRoute',
     'ui.select2',
-    'sc.filters',
-    'sc.services',
-    'sc.directives',
-    'sc.controllers',
+    'services.streamService',
+    'services.serviceControlService',
+    'services.notifications',
+    'services.exceptionHandler',
+    'directives.moment',
+    'alerts',
     'failedMessages',
     'heartbeats',
     'dashboard']);
@@ -23,3 +25,16 @@ angular.module('sc')
     .run(['$rootScope', '$log', function ($rootScope, $log) {
         $rootScope.$log = $log;
     }]);
+
+angular.module('sc').controller('AppCtrl', ['$scope', 'notifications', function ($scope, notifications) {
+
+    $scope.notifications = notifications;
+
+    $scope.removeNotification = function (notification) {
+        notifications.remove(notification);
+    };
+
+    $scope.$on('$routeChangeError', function (event, current, previous, rejection) {
+        notifications.pushForCurrentRoute('errors.route.changeError', 'error', {}, { rejection: rejection });
+    });
+}]);

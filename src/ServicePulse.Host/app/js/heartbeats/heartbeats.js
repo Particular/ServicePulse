@@ -2,7 +2,7 @@
 
 angular.module('heartbeats', [])
     .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/heartbeats', { templateUrl: 'js/heartbeats/heartbeats.html', controller: 'HeartbeatsCtrl' });
+        $routeProvider.when('/heartbeats', { templateUrl: 'js/heartbeats/heartbeats.tpl.html', controller: 'HeartbeatsCtrl' });
     }])
     .controller('HeartbeatsCtrl', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
 
@@ -13,15 +13,15 @@ angular.module('heartbeats', [])
         });
 
         streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function (message) {
-            processMessage(message, false, message.lastReceivedAt);
+            processMessage(message, false, message.last_received_at);
         });
 
         streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (message) {
-            processMessage(message, true, message.restoredAt);
+            processMessage(message, true, message.restored_at);
         });
 
         streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function (message) {
-            processMessage(message, true, message.detectedAt);
+            processMessage(message, true, message.detected_at);
         });
 
         $scope.$on('$destroy', function () {

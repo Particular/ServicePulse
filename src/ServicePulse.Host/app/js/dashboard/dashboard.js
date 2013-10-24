@@ -2,7 +2,7 @@
 
 angular.module('dashboard', [])
     .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/dashboard', { templateUrl: 'js/dashboard/dashboard.html', controller: 'DashboardCtrl' });
+        $routeProvider.when('/dashboard', { templateUrl: 'js/dashboard/dashboard.tpl.html', controller: 'DashboardCtrl' });
     }])
     .controller('DashboardCtrl', ['$log', '$scope', 'streamService', 'serviceControlService', function ($log, $scope, streamService, serviceControlService) {
 

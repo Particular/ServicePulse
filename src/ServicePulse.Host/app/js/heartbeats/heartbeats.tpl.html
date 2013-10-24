@@ -14,8 +14,8 @@
     <hr>
 </div>
 
-<div class="row">
-    <div class="box span12" ng-repeat="heartbeat in model">
+<div class="row" ng-repeat="heartbeat in model">
+    <div class="span5">
         <div style="margin: 5px;" ng-class="{'alert-success': heartbeat.active, 'alert-danger': heartbeat.active == false}">
             <h4>{{heartbeat.endpoint}}@{{heartbeat.machine}}</h4>
             <p>Last Updated: <moment date="{{heartbeat.last_sent_at}}" /></p>

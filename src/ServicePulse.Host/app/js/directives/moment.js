@@ -1,7 +1,6 @@
 'use strict';
 
-/* Directives */
-angular.module('sc.directives', [])
+angular.module('directives.moment', [])
     .directive('moment', ['$timeout', function($timeout) {
         return {
             restrict: 'E',

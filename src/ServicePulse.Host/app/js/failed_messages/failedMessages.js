@@ -2,7 +2,7 @@
 
 angular.module('failedMessages', ['ngGrid'])
     .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.html', controller: 'FailedMessagesCtrl' });
+        $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
     .controller('FailedMessagesCtrl', ['$scope', 'serviceControlService', 'streamService', function($scope, serviceControlService, streamService) {
 

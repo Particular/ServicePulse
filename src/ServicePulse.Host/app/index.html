@@ -22,52 +22,45 @@
     <![endif]-->
 
 </head>
-<body>
-    <div id="wrap">
-        <noscript>
-            <div class="alert alert-block span10">
-                <h4 class="alert-heading">Warning!</h4>
-                <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
-            </div>
-        </noscript>
-        <div class="navbar">
-            <div class="navbar-inner">
-                <div class="container-fluid">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                    <a class="brand" href="/"> <img alt="Service Pulse" src="img/logo.png" /> <span class="hidden-phone"></span></a>
-                </div>
-            </div>
+<body ng-controller="AppCtrl">
+    <noscript>
+        <div class="alert alert-block span10">
+            <h4 class="alert-heading">Warning!</h4>
+            <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
         </div>
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span2 main-menu-span">
-                    <div class="nav-collapse sidebar-nav">
-                        <ul class="nav nav-tabs nav-stacked main-menu">
-                            <li><a href="/#/dashboard"><i class="fa-icon-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span></a></li>
-                            <li><a href="/#/heartbeats"><i class="fa-icon-heart icon-white"></i><span class="hidden-tablet"> Endpoint Heartbeats</span></a></li>
-                            <li><a href="/#/failedMessages"><i class="fa-icon-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span></a></li>
-                            <li><a href="/#/heartbeatStats"><i class="fa-icon-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span></a></li>
-                            <li><a href="/#/heartbeatStats"><i class="fa-icon-thumbs-down icon-white"></i><span class="hidden-tablet"> SLA Violations</span></a></li>
-                            <li><a href="/#/heartbeatStats"><i class="fa-icon-info-sign icon-white"></i><span class="hidden-tablet"> Events</span></a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="content" class="span10" ng-view></div>
-                <div class="clearfix"></div>
-
+    </noscript>
+    <div ng-include="'notifications.tpl.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".top-nav.nav-collapse,.sidebar-nav.nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/"> <img alt="Service Pulse" src="img/logo.png" /> <span class="hidden-phone"></span></a>
             </div>
         </div>
     </div>
-    <footer>
-        <p>
-            <span style="text-align:left;float:left">&copy; <a href="http://particular.net" target="_blank">Particular Software Limited. All rights reserved</a> 2013</span>
-            <span style="text-align:right;float:right">Powered by: <a href="#">Service Control</a></span>
-        </p>
-    </footer>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2 main-menu-span">
+                <div class="nav-collapse sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked main-menu">
+                        <li><a href="/#/dashboard"><i class="fa-icon-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span></a></li>
+                        <li><a href="/#/heartbeats"><i class="fa-icon-heart icon-white"></i><span class="hidden-tablet"> Endpoint Heartbeats</span></a></li>
+                        <li><a href="/#/failedMessages"><i class="fa-icon-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span></a></li>
+                        <li><a href="/#/heartbeatStats"><i class="fa-icon-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span></a></li>
+                        <li><a href="/#/heartbeatStats"><i class="fa-icon-thumbs-down icon-white"></i><span class="hidden-tablet"> SLA Violations</span></a></li>
+                        <li><a href="/#/heartbeatStats"><i class="fa-icon-info-sign icon-white"></i><span class="hidden-tablet"> Events</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="content" class="span10" ng-view></div>
+            <div class="clearfix"></div>
+
+        </div>
+    </div>
     <script src="lib/jquery-1.10.2.min.js"></script>
     <script src="lib/bootstrap.min.js"></script>
     <script src="lib/select2.min.js"></script>
@@ -79,12 +72,14 @@
     <script src="lib/moment.min.js"></script>
     <script src="config.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/services.js"></script>
-    <script src="js/controllers.js"></script>
+    <script src="js/services/exceptionHandler.js"></script>
+    <script src="js/services/notifications.js"></script>
+    <script src="js/services/serviceControlService.js"></script>
+    <script src="js/services/streamService.js"></script>
+    <script src="js/directives/moment.js"></script>
+    <script src="js/alerts/alerts.js"></script>
     <script src="js/dashboard/dashboard.js"></script>
     <script src="js/failed_messages/failedMessages.js"></script>
     <script src="js/heartbeats/heartbeats.js"></script>
-    <script src="js/filters.js"></script>
-    <script src="js/directives.js"></script>
 </body>
 </html>
