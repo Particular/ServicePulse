@@ -59,7 +59,16 @@ angular.module('sc.services', [])
         
         this.getFailedMessages = function () {
             return $http.get(scConfig.service_control_url + '/errors').then(function (response) {
-                return response;
+                return {
+                    data: response.data,
+                    total: response.headers('Total-Count')
+                };
+            });
+        };
+        
+        this.getTotalFailedMessages = function () {
+            return $http.head(scConfig.service_control_url + '/errors').then(function (response) {
+                return response.headers('Total-Count');
             });
         };
           

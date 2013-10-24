@@ -10,7 +10,7 @@
     </ul>
     <hr>
 </div>
-<div class="row-fluid sortable" ng-controller="DashboardCtrl">
+<div class="row-fluid sortable">
     <div class="box span12">
         <div class="box-header">
             <h2><i class="fa-icon-dashboard"></i><span class="break"></span>Indicators</h2>
@@ -61,7 +61,7 @@
                         <td class="center">
                             <span ng-class="{'label label-success': alert.severity == 'info', 'label label-important':  alert.severity == 'error'}">{{alert.severity}}</span>
                         </td>
-                        <td>{{alert.raised_at | date:'MM/dd/yyyy @ HH:mm:ss' }}</td>
+                        <td><moment date="{{alert.raised_at}}" /></td>
                         <td>{{alert.related_to[0]}}</td>
                     </tr>
                 </tbody>

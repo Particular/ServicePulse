@@ -10,7 +10,7 @@ angular.module('failedMessages', ['ngGrid'])
 
         serviceControlService.getFailedMessages().then(function(response) {
             $scope.model.failedMessages = response.data;
-            $scope.model.number_of_failed_messages = response.headers("Total");            
+            $scope.model.number_of_failed_messages = response.total;            
         });
 
         $scope.gridOptions = {
@@ -62,7 +62,11 @@ angular.module('failedMessages', ['ngGrid'])
             serviceControlService.retrySelectedFailedMessages($scope.model.selectedIds);
         };
 
-        streamService.subscribe($scope, 'MessageFailed', function(message) {
+        streamService.subscribe($scope, 'MessageFailed', function() {
             $scope.model.number_of_failed_messages++;
+        });
+        
+        $scope.$on('$destroy', function () {
+            streamService.unsubscribe($scope, 'MessageFailed');
         });
     }]);

@@ -24,6 +24,12 @@ angular.module('heartbeats', [])
             processMessage(message, true, message.detectedAt);
         });
 
+        $scope.$on('$destroy', function () {
+            streamService.unsubscribe($scope, 'EndpointFailedToHeartbeat');
+            streamService.unsubscribe($scope, 'HeartbeatingEndpointDetected');
+            streamService.unsubscribe($scope, 'EndpointHeartbeatRestored');
+        });
+
         function processMessage(message, active, lastUpdatedAt) {
             var idx = findHeartbeat(message.endpoint, message.machine);
 

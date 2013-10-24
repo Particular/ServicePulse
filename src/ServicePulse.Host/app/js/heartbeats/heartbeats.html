@@ -14,7 +14,7 @@
     <hr>
 </div>
 
-<div class="row" ng-controller="HeartbeatsCtrl">
+<div class="row">
     <div class="box span12" ng-repeat="heartbeat in model">
         <div style="margin: 5px;" ng-class="{'alert-success': heartbeat.active, 'alert-danger': heartbeat.active == false}">
             <h4>{{heartbeat.endpoint}}@{{heartbeat.machine}}</h4>
