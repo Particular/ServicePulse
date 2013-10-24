@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('services.streamService', [])
-    .factory('streamService', ['$log', '$rootScope', 'scConfig', function($log, $rootScope, scConfig) {
+    .factory('streamService', ['notifications', '$log', '$rootScope', 'scConfig', function(notifications, $log, $rootScope, scConfig) {
         var prefix = 'signalr::';
         var connection = $.connection(scConfig.service_control_url + '/messagestream');
         var registrations = {};
@@ -12,9 +12,28 @@ angular.module('services.streamService', [])
             $rootScope.$broadcast(prefix + data.type, data.message);
         });
 
-        connection.start().done(function() {
-            $log.info('SignalR started');
-        });
+        connection.start()
+            .done(function() {
+                $log.info('SignalR started');
+
+                connection.error(function(error) {
+                    notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'error', { error: error });
+                });
+
+                connection.reconnected(function() {
+                    notifications.pushForCurrentRoute('Reconnected to ServiceControl', 'info');
+                });
+
+                connection.stateChanged(function(change) {
+                    console.log('SignalR state changed to=' + change.newState);
+
+                    if (change.newState === $.signalR.connectionState.disconnected) {
+                        console.log('The server is offline');
+                    }
+                });
+            }).fail(function() {
+                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'error', { url: scConfig.service_control_url });
+            });
 
         var onSubscribe = function($scope, messageType, handler) {
             var deregFunc = $scope.$on(prefix + messageType, function(event, message) {
