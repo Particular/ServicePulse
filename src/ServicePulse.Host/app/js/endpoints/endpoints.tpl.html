@@ -1,0 +1,19 @@
+<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#">Home</a> <span class="divider">/</span>
+        </li>
+        <li>Endpoints Overview</li>
+    </ul>
+    <hr>
+</div>
+
+<div class="row" ng-repeat="endpoint in model">
+    <div class="span5">
+        <div style="margin: 5px;" ng-class="{'alert-success': endpoint.active, 'alert-danger': endpoint.active == false}">
+            <h4>{{endpoint.endpoint}}@{{endpoint.machine}}</h4>
+            <p>Last Updated: <sp-moment date="{{endpoint.last_sent_at}}" /></p>
+        </div>
+    </div>
+</div>

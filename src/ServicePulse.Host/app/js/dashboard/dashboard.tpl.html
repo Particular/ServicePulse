@@ -1,9 +1,6 @@
 <div>
     <hr>
     <ul class="breadcrumb">
-        <li>
-            <a href="/">Home</a> <span class="divider">/</span>
-        </li>
         <li>Dashboard</li>
     </ul>
     <hr>
@@ -15,7 +12,7 @@
             <h2><i class="fa-icon-dashboard"></i><span class="break"></span>Indicators</h2>
         </div>
         <div class="box-content">
-            <sp-hud href="#/heartbeats" icon="fa-icon-heart" text="{{model.active_endpoints}} Active Endpoints" total-failures="model.failing_endpoints"></sp-hud>
+            <sp-hud href="#/endpoints" icon="fa-icon-heart" text="{{model.active_endpoints}} Active Endpoints" total-failures="model.failing_endpoints"></sp-hud>
             <sp-hud href="#/failedMessages" icon="fa-icon-envelope" text="{{model.number_of_failed_messages}} Failed Messages" total-failures="model.number_of_failed_messages"></sp-hud>
             <sp-hud href="#/customChecks" icon="fa-icon-check" text="{{model.number_of_failed_checks}} Custom Checks" total-failures="model.number_of_failed_checks"></sp-hud>
             <div class="clearfix"></div>

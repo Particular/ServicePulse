@@ -141,7 +141,7 @@
     <Content Include="app\js\directives\hud.js" />
     <Content Include="app\js\directives\hud.tpl.html" />
     <Content Include="app\js\failed_messages\failedMessages.js" />
-    <Content Include="app\js\heartbeats\heartbeats.js" />
+    <Content Include="app\js\endpoints\endpoints.js" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />
@@ -179,7 +179,7 @@
     <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\dashboard\dashboard.tpl.html" />
-    <Content Include="app\js\heartbeats\heartbeats.tpl.html" />
+    <Content Include="app\js\endpoints\endpoints.tpl.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
@@ -190,6 +190,7 @@
   <ItemGroup>
     <None Include="app\lib\angular\angular-animate.min.js.map" />
     <None Include="app\lib\angular\angular-route.min.js.map" />
+    <None Include="app\lib\angular\angular.min.js.map" />
     <None Include="ripple.dependencies.config">
       <SubType>Designer</SubType>
     </None>
