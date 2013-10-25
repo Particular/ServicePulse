@@ -281,7 +281,7 @@
     <ROW Action="AI_ChooseTextStyles" Type="1" Source="aicustact.dll" Target="ChooseTextStyles"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl please verify the URI specified and that the service is running. |ServicePulse[ProductVersion] |MB_OK,MB_ICONINFORMATION,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
-    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="ServicePulse"/>
+    <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="Particular.ServicePulse"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -304,14 +304,14 @@
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="DetectService" Type="1" Source="aicustact.dll" Target="DetectService" Options="3" AdditionalSeq="AI_DATA_SETTER_2"/>
-    <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --url=[INST_URI_PULSE]:[PORT_VAL] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
+    <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --url=[INST_URI_PULSE]:[PORT_VAL] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
     <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]" Options="1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
-    <ROW Action="Start_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start ServicePulse"/>
-    <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop ServicePulse"/>
-    <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;ServicePulse&quot;"/>
+    <ROW Action="Start_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
+    <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
+    <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
     <ROW Action="Validate_URL" Type="1" Source="Particular.CustomActions.CA.dll_1" Target="ValidateUrl" WithoutSeq="true"/>
     <ROW Action="Warning_ServiceControl" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_1"/>
   </COMPONENT>
