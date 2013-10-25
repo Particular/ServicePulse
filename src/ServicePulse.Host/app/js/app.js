@@ -12,7 +12,7 @@ angular.module('sc', [
     'directives.hud',
     'alerts',
     'failedMessages',
-    'heartbeats',
+    'endpoints',
     'dashboard']);
 
 angular.module('sc')

@@ -1,10 +1,10 @@
 ﻿'use strict';
 
-angular.module('heartbeats', [])
+angular.module('endpoints', [])
     .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/heartbeats', { templateUrl: 'js/heartbeats/heartbeats.tpl.html', controller: 'HeartbeatsCtrl' });
+        $routeProvider.when('/endpoints', { templateUrl: 'js/endpoints/endpoints.tpl.html', controller: 'EndpointsCtrl' });
     }])
-    .controller('HeartbeatsCtrl', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
+    .controller('EndpointsCtrl', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
 
         $scope.model = [];
 
