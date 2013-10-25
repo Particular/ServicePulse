@@ -23,7 +23,7 @@
                     <td class="center">
                         <span ng-class="{'label label-success': alert.severity == 'info', 'label label-important':  alert.severity == 'error'}">{{alert.severity}}</span>
                     </td>
-                    <td><moment date="{{alert.raised_at}}" /></td>
+                    <td><sp-moment date="{{alert.raised_at}}" /></td>
                     <td>{{alert.related_to[0]}}</td>
                 </tr>
             </tbody>

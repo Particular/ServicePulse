@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('directives.moment', [])
-    .directive('moment', ['$timeout', function($timeout) {
+    .directive('spMoment', ['$timeout', function($timeout) {
         return {
             restrict: 'E',
             link: function(scope, element, attrs) {

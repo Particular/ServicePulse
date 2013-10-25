@@ -2,12 +2,14 @@
 
 angular.module('sc', [
     'ngRoute',
+    'ngAnimate',
     'ui.select2',
     'services.streamService',
     'services.serviceControlService',
     'services.notifications',
     'services.exceptionHandler',
     'directives.moment',
+    'directives.hud',
     'alerts',
     'failedMessages',
     'heartbeats',

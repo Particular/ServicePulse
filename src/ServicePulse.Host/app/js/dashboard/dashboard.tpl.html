@@ -8,27 +8,16 @@
     </ul>
     <hr>
 </div>
+
 <div class="row-fluid sortable">
     <div class="box span12">
         <div class="box-header">
             <h2><i class="fa-icon-dashboard"></i><span class="break"></span>Indicators</h2>
         </div>
         <div class="box-content">
-            <a href="#/heartbeats" class="quick-button span2" ng-class="{'': model.failing_endpoints == 0, 'quick-button-animate':  model.failing_endpoints > 0}">
-                <i class="fa-icon-heart" ng-class="{'green': model.failing_endpoints == 0, 'red':  model.failing_endpoints > 0}"></i>
-                <p>{{model.active_endpoints}} Active Endpoints</p>
-                <span ng-show="model.failing_endpoints > 0" class="notification red">{{model.failing_endpoints}}</span>
-            </a>
-            <a href="#/failedMessages" class="quick-button span2" ng-class="{'': model.number_of_failed_messages == 0, 'quick-button-animate':  model.number_of_failed_messages > 0}">
-                <i class="fa-icon-envelope" ng-class="{'green': model.number_of_failed_messages == 0, 'red':  model.number_of_failed_messages > 0}"></i>
-                <p>Failed Messages</p>
-                <span ng-show="model.number_of_failed_messages > 0" class="notification red">{{model.number_of_failed_messages}}</span>
-            </a>
-            <a href="#/customChecks" class="quick-button span2">
-                <i class="fa-icon-check" ng-class="{'green': model.number_of_failed_checks == 0, 'red':  model.number_of_failed_checks > 0}"></i>
-                <p>Custom Checks</p>
-                <span ng-show="model.number_of_failed_checks > 0" class="notification red">{{model.number_of_failed_checks}}</span>
-            </a>
+            <sp-hud href="#/heartbeats" icon="fa-icon-heart" text="{{model.active_endpoints}} Active Endpoints" total-failures="model.failing_endpoints"></sp-hud>
+            <sp-hud href="#/failedMessages" icon="fa-icon-envelope" text="{{model.number_of_failed_messages}} Failed Messages" total-failures="model.number_of_failed_messages"></sp-hud>
+            <sp-hud href="#/customChecks" icon="fa-icon-check" text="{{model.number_of_failed_checks}} Custom Checks" total-failures="model.number_of_failed_checks"></sp-hud>
             <div class="clearfix"></div>
         </div>
     </div>
