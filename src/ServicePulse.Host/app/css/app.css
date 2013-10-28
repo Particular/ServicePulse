@@ -1,3 +1,36 @@
 /* app css stylesheet */
 
+.quick-button-animate-add {
+	-moz-animation: bounce 2s ease-out;
+    -moz-animation-iteration-count: 6;
+    -o-animation: bounce 2s ease-out;
+    -o-animation-iteration-count: 6;
+    -webkit-animation: bounce 2s ease-out;
+    -webkit-animation-iteration-count: 6;
+    animation: bounce 2s ease-out;
+    animation-iteration-count: 6;
+}
 
+@keyframes bounce {
+   0% { transform: scaleY(1.0); }
+   50% { transform: translateY(-30px) }
+   100% { transform: scaleY(1.0); }
+}
+
+@-moz-keyframes bounce {
+   0% { -moz-transform: scaleY(1.0); }
+   50% { -moz-transform: translateY(-30px) }
+   100% { -moz-transform: scaleY(1.0); }
+}
+
+@-o-keyframes bounce {
+   0% { -o-transform: scaleY(1.0); }
+   50% { -o-transform: translateY(-30px) }
+   100% { -o-transform: scaleY(1.0); }
+}
+
+@-webkit-keyframes bounce {
+   0% { -webkit-transform: scaleY(1.0); }
+   50% { -webkit-transform: translateY(-30px) }
+   100% { -webkit-transform: scaleY(1.0); }
+}

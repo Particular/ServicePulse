@@ -6,16 +6,19 @@ angular.module('directives.moment', [])
             restrict: 'E',
             link: function(scope, element, attrs) {
                 var timeoutId = null;
-
+                var m;
+                
                 attrs.$observe('date', function (value) {
                     if (value) {
+                        m = moment(attrs.date);
+                        element.attr('title', m.format('LLLL'));
                         updateText();
                         updateLoop();
                     }
                 });
 
                 function updateText() {
-                    element.text(moment(attrs.date).fromNow());
+                    element.text(m.fromNow());
                 }
 
                 function updateLoop() {

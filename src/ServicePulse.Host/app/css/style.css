@@ -952,62 +952,6 @@ ul.messages li .message {
 	position: relative;	
 }
 
-.quick-button .startAnimation {
-    -webkit-animation:changeBackColor 5s 5;
-}
-
-.quick-button-animate {
-	border: 1px solid #ddd;
-	margin-bottom: -1px;
-  	padding: 30px 0px 10px 0px;
-	font-size: 14px;
-  	background-color: #fafafa;
-  	background-image: -moz-linear-gradient(top, #fafafa, #efefef);
-  	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fafafa), to(#efefef));
-  	background-image: -webkit-linear-gradient(top, #fafafa, #efefef);
-  	background-image: -o-linear-gradient(top, #fafafa, #efefef);
-  	background-image: linear-gradient(to bottom, #fafafa, #efefef);
-  	filter: progid:dximagetransform.microsoft.gradient(startColorstr='#fafafa', endColorstr='#efefef', GradientType=0);
-  	-webkit-box-shadow: 0 1px 0px rgba(255, 255, 255, .8);
-	   -moz-box-shadow: 0 1px 0px rgba(255, 255, 255, .8);
-			box-shadow: 0 1px 0px rgba(255, 255, 255, .8);
-  	-webkit-border-radius: 2px;
-       -moz-border-radius: 2px;
-          	border-radius: 2px;
-	display:block;
-	color: #646464;
-	text-shadow: 0 1px 0px rgba(255, 255, 255, .6);
-	text-align: center;
-	cursor: pointer;
-	position: relative;	
-    -webkit-animation: bounce 2s ease-out;
-    -webkit-animation-iteration-count: 6;
-}
-
-
-@-webkit-keyframes bounce {
-   0% { -webkit-transform: scaleY(1.0); }
-   50% { -webkit-transform: translateY(-30px) }
-   100% { -webkit-transform: scaleY(1.0); }
-}
-
-@-webkit-keyframes pulsate {
-    0% {-webkit-transform: scale(0.1, 0.1); opacity: 0.5;}
-    50% {opacity: 1.0;}
-    100% {-webkit-transform: scale(1.2, 1.2); opacity: 0.0;}
-}
-@-webkit-keyframes changeBackColor /* Safari and Chrome */
-{
-from {
-    background:#fafafa;
-    color: black;
-}
-to {
-    background:#da4f49;
-    color: white;
-}
-}
-
 .quick-button:hover {
 	text-decoration: none;
 	border-color: #a5a5a5;
