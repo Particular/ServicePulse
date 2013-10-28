@@ -20,8 +20,8 @@ namespace ServicePulse.Host.Hosting
             commands = new List<Type> {typeof(UpdateConfigCommand), typeof(RunCommand)};
             startMode = StartMode.Automatic;
             url = "http://localhost:8081";
-            ServiceName = "ServicePulse";
-            DisplayName = "ServicePulse";
+            ServiceName = "Particular.ServicePulse";
+            DisplayName = "Particular ServicePulse";
             Description = "An Operations Manager's Best Friend in Particular.";
             ServiceAccount = ServiceAccount.LocalSystem;
             Username = String.Empty;
