@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('services.serviceControlService', [])
-    .service('serviceControlService', ['$http', 'scConfig', function ($http, scConfig) {
+    .service('serviceControlService', ['$http', 'scConfig', 'notifications', function ($http, scConfig, notifications) {
 
         this.getAlerts = function () {
             return $http.get(scConfig.service_control_url + '/alerts').then(function (response) {
@@ -9,8 +9,8 @@ angular.module('services.serviceControlService', [])
             });
         };
         
-        this.getFailedMessages = function () {
-            return $http.get(scConfig.service_control_url + '/errors').then(function (response) {
+        this.getFailedMessages = function (sortBy) {
+            return $http.get(scConfig.service_control_url + '/errors?sort=' + sortBy).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -32,15 +32,21 @@ angular.module('services.serviceControlService', [])
 
         this.retryAllFailedMessages = function () {
             $http.post(scConfig.service_control_url + '/errors/retry/all')
-                .success(function() {
-                    alert('successfully posted');
+                .success(function () {
+                    notifications.pushForCurrentRoute('Retrying all messages...', 'info');
+                })
+                .error(function() {
+                    notifications.pushForCurrentRoute('Retrying all messages failed', 'error');
                 });
         };
         
         this.retrySelectedFailedMessages = function (selectedMessages) {
             $http.post(scConfig.service_control_url + '/errors/retry', selectedMessages)
                 .success(function () {
-                    alert('successfully posted');
+                    notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
+                })
+                .error(function () {
+                    notifications.pushForCurrentRoute('Retrying messages failed', 'error');
                 });
         };
 

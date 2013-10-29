@@ -36,11 +36,11 @@ angular.module('services.notifications', []).factory('notifications', ['$rootSco
       return addNotification(notifications.STICKY, prepareNotification(message, type, interpolateParams, otherProperties));
   };
 
-    notificationsService.pushForCurrentRoute = function(message, type, interpolateParams, otherProperties) {
+  notificationsService.pushForCurrentRoute = function(message, type, interpolateParams, otherProperties) {
         return addNotification(notifications.ROUTE_CURRENT, prepareNotification(message, type, interpolateParams, otherProperties));
   };
 
-    notificationsService.pushForNextRoute = function(message, type, interpolateParams, otherProperties) {
+  notificationsService.pushForNextRoute = function(message, type, interpolateParams, otherProperties) {
         return addNotification(notifications.ROUTE_NEXT, prepareNotification(message, type, interpolateParams, otherProperties));
   };
 

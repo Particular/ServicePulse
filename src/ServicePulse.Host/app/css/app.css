@@ -34,3 +34,21 @@
    50% { -webkit-transform: translateY(-30px) }
    100% { -webkit-transform: scaleY(1.0); }
 }
+
+.scRow {
+    border-bottom: 1px solid #e3e3e3;
+    margin-bottom: 2px;
+}
+
+.rowText {
+    color: #000000;
+}
+
+.scSelectableRow {
+    border: 1px solid #fcfcfc;
+}
+
+.rowSelected {
+    border: 1px solid #6BA6E1;
+    background-color: #f2f6fc !important;
+}

@@ -1,67 +1,61 @@
 ﻿'use strict';
 
-angular.module('failedMessages', ['ngGrid'])
+angular.module('failedMessages', [])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', 'serviceControlService', 'streamService', function($scope, serviceControlService, streamService) {
+    .controller('FailedMessagesCtrl', ['$scope', 'serviceControlService', 'streamService', '$routeParams', function ($scope, serviceControlService, streamService, $routeParams) {
 
-        $scope.model = { number_of_failed_messages: 0, failedMessages: [], failedMessagesStats: [], tags: [], selectedTags: [], selectedMessages: [], selectedIds: [] };
+        $scope.model = { number_of_failed_messages: 0, failedMessages: [], failedMessagesStats: [], tags: [], selectedTags: [] };
 
-        serviceControlService.getFailedMessages().then(function(response) {
-            $scope.model.failedMessages = response.data;
-            $scope.model.number_of_failed_messages = response.total;            
-        });
+        function load(sortKey) {
+            serviceControlService.getFailedMessages(sortKey).then(function (response) {
+                $scope.model.failedMessages = response.data;
+                $scope.model.number_of_failed_messages = response.total;            
+            });
+            
+            serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
+                $scope.model.failedMessagesStats = failedMessagesStats;
 
-        $scope.gridOptions = {
-            data: 'model.failedMessages',
-            showGroupPanel: true,
-            enableRowSelection: true,
-            showSelectionCheckbox: true,
-            columnDefs:
-            [
-                { field: 'receiving_endpoint.machine', displayName: 'Machine', enableCellEdit: false },
-                { field: 'receiving_endpoint.name', displayName: 'Name', enableCellEdit: false },
-                { field: 'message_type', displayName: 'Message Type', enableCellEdit: false },
-                { field: 'time_sent', displayName: 'Timestamp', enableCellEdit: false },
-                { field: 'failure_details.exception.exception_type', displayName: 'Exception Type', enableCellEdit: false },
-                { field: 'failure_details.exception.message', displayName: 'Failure Reason', enableCellEdit: false }
-            ],
-            selectedItems: $scope.model.selectedMessages
+                $scope.model.tags = [];
+                
+                for (var i = 0; i < $scope.model.failedMessagesStats['machines'].values.length; i++) {
+                    $scope.model.tags.push({ id: 'machines', label: $scope.model.failedMessagesStats['machines'].values[i].range });
+                }
+
+                for (var i = 0; i < $scope.model.failedMessagesStats['endpoints'].values.length; i++) {
+                    $scope.model.tags.push({ id: 'endpoints', label: $scope.model.failedMessagesStats['endpoints'].values[i].range });
+                }
+
+                for (var i = 0; i < $scope.model.failedMessagesStats['message types'].values.length; i++) {
+                    $scope.model.tags.push({ id: 'message types', label: $scope.model.failedMessagesStats['message types'].values[i].range });
+                }
+            });
         };
 
-        serviceControlService.getFailedMessageStats().then(function(failedMessagesStats) {
-            $scope.model.failedMessagesStats = failedMessagesStats;
-
-            // populate the tags -- loop through each category
-            for (var i = 0; i < $scope.model.failedMessagesStats['machines'].values.length; i++) {
-                var tagObj = { id: 'machines', label: $scope.model.failedMessagesStats['machines'].values[i].range };
-                $scope.model.tags.push(tagObj);
-            }
-            
-            for (var i = 0; i < $scope.model.failedMessagesStats['endpoints'].values.length; i++) {
-                var tagObj = { id: 'endpoints', label: $scope.model.failedMessagesStats['endpoints'].values[i].range };
-                $scope.model.tags.push(tagObj);
-            }
-
-            for (var i = 0; i < $scope.model.failedMessagesStats['message types'].values.length; i++) {
-                var tagObj = { id: 'message types', label: $scope.model.failedMessagesStats['message types'].values[i].range };
-                $scope.model.tags.push(tagObj);
-            }
-        });
-
+        load($routeParams.sort);
 
         $scope.retryAll = function() {
             serviceControlService.retryAllFailedMessages();
         };
 
-        $scope.retrySelected = function() {
-            for (var i = 0; i < $scope.model.selectedMessages.length; i++) {
-                $scope.model.selectedIds.push($scope.model.selectedMessages[i].id);
-            }
-            serviceControlService.retrySelectedFailedMessages($scope.model.selectedIds);
+        $scope.retrySelected = function () {
+            serviceControlService.retrySelectedFailedMessages(getSelected());
         };
 
+        $scope.getSelected = function() {
+            var selectedIds = [];
+
+            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                if ($scope.model.failedMessages[i].selected) {
+                    selectedIds.push($scope.model.failedMessages[i].id);
+                }
+            }
+
+            return selectedIds;
+        };
+
+        
         streamService.subscribe($scope, 'MessageFailed', function() {
             $scope.model.number_of_failed_messages++;
         });

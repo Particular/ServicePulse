@@ -4,6 +4,7 @@ angular.module('sc', [
     'ngRoute',
     'ngAnimate',
     'ui.select2',
+    'ui.bootstrap.dropdownToggle',
     'services.streamService',
     'services.serviceControlService',
     'services.notifications',

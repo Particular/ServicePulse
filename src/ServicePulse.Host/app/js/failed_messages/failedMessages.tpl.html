@@ -13,9 +13,6 @@
     <div class="box span12">
         <div class="box-header" data-original-title>
             <h2><i class="fa-icon-search"></i><span class="break"></span>Narrow your search</h2>
-            <div class="box-icon">
-                <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
-            </div>
         </div>
         <div class="box-content" style="min-height:225px; height:auto !important;">
 
@@ -56,18 +53,39 @@
     <div class="box span12">
         <div class="box-header" data-original-title>
             <h2><i class="fa-icon-envelope"></i><span class="break"></span>Messages that match criteria: {{model.number_of_failed_messages}}</h2>
-            <div class="box-icon">
-                <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
-            </div>
         </div>
         <div class="box-content">
-            <p class="center">
-                <button class="btn btn-primary" id="reprocess-selected" ng-click="retrySelected()">Retry selected</button>
-                <button class="btn btn-primary" id="reprocess-all" ng-click="retryAll()">Retry all ({{model.number_of_failed_messages}} messages)</button>
-            </p>
-            <div style="  border: 1px solid rgb(212,212,212);width: 100%; height: 400px;" ng-grid="gridOptions"></div>
-
+            <div class="btn-toolbar">
+                <button class="btn" id="reprocess-selected" ng-click="retrySelected()" ng-disabled="model.selectedMessages.length == 0"><i class="icon-repeat"></i> Retry {{getSelected().length}} selected</button>
+                <button class="btn" id="reprocess-all" ng-click="retryAll()"><i class="icon-asterisk"></i> Retry all ({{model.number_of_failed_messages}} messages)</button>
+                <div class="btn-group pull-right">
+                    <a class="btn btn-link dropdown-toggle"
+                       data-toggle="dropdown"
+                       href="#">
+                        Sort by
+                        <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#/failedMessages?sort=message_type">Message Type</a></li>
+                        <li><a href="#/failedMessages?sort=time_sent">Time Sent</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="scRow" ng-repeat="row in model.failedMessages">
+                <div class="row-fluid scSelectableRow" ng-class="{rowSelected: row.selected == true}" ng-click="row.selected = !row.selected" style="cursor: pointer;">
+                    <div class="span1" style="margin-left: 5px; width: 0;"><input type="checkbox" ng-checked="row.selected"></div>
+                    <div class="span11">
+                        <div class=" row-fluid">
+                            <div class="span4" title="Endpoint: {{row.receiving_endpoint.name}}@{{row.receiving_endpoint.machine}}">{{row.receiving_endpoint.name}}@{{row.receiving_endpoint.machine}}</div>
+                            <div class="span6 rowText" title="Message Type: {{row.message_type}}">{{row.message_type}}</div>
+                            <div class="span2"><sp-moment date="{{row.time_sent}}" /></div>
+                        </div>
+                        <div class="row-fluid">
+                            <div class="span12"><code>{{row.failure_details.exception.message}}</code></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+     </div>
 </div>
-<hr>

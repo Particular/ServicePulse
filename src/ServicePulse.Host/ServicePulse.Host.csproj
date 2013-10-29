@@ -75,7 +75,9 @@
   <ItemGroup>
     <Content Include="app\config.js" />
     <Content Include="app\css\bootstrap-responsive.css" />
+    <Content Include="app\css\bootstrap-responsive.min.css" />
     <Content Include="app\css\bootstrap.css" />
+    <Content Include="app\css\bootstrap.min.css" />
     <Content Include="app\css\font-awesome-ie7.css" />
     <Content Include="app\css\font-awesome.css" />
     <Content Include="app\css\select2.css" />
@@ -138,6 +140,7 @@
     <Content Include="app\index.html" />
     <Content Include="app\js\alerts\alerts.tpl.html" />
     <Content Include="app\js\dashboard\dashboard.js" />
+    <Content Include="app\js\directives\dropdownToggle.js" />
     <Content Include="app\js\directives\hud.js" />
     <Content Include="app\js\directives\hud.tpl.html" />
     <Content Include="app\js\failed_messages\failedMessages.js" />
