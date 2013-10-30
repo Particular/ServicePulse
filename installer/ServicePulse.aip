@@ -18,7 +18,7 @@
     <ROW Property="ARPSYSTEMCOMPONENT" Value="1"/>
     <ROW Property="ARPURLINFOABOUT" Value="http://particular.net/ServicePulse"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://particular.net/downloads"/>
-    <ROW Property="AppLogoIcon" Value="applogoicon" MultiBuildValue="DefaultBuild:ServicePuzleLabel.png" Type="1" MsiKey="AppLogoIcon"/>
+    <ROW Property="AppLogoIcon" Value="applogoicon" MultiBuildValue="DefaultBuild:ServiceInsight_Installer_Logo.png" Type="1" MsiKey="AppLogoIcon"/>
     <ROW Property="INST_URI" Value="http://localhost:33333/api/" Type="4"/>
     <ROW Property="INST_URI_PULSE" Value="http://localhost:8082" Type="4"/>
     <ROW Property="Manufacturer" Value="Particular Software Ltd."/>
@@ -103,7 +103,7 @@
     <ROW Name="Particular.CustomActions.CA.dll_1" SourcePath="..\src\packages\Particular.CustomActions\lib\net40\Particular.CustomActions.CA.dll"/>
     <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
     <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
-    <ROW Name="ServicePuzleLabel.png" SourcePath="res\ServicePuzleLabel.png"/>
+    <ROW Name="ServiceInsight_Installer_Logo.png" SourcePath="res\ServiceInsight_Installer_Logo.png"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
     <ROW Name="viewer.exe" SourcePath="&lt;AI_CUSTACTS&gt;viewer.exe"/>
