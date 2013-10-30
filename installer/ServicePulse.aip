@@ -307,7 +307,7 @@
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="DetectService" Type="1" Source="aicustact.dll" Target="DetectService" Options="3" AdditionalSeq="AI_DATA_SETTER_2"/>
     <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --description=&quot;Monitoring and operations for NServiceBus&quot; --url=[INST_URI_PULSE] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
-    <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]" Options="1"/>
+    <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]&amp;localURL=[INST_URI_PULSE]" Options="1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[ProgramMenuFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
