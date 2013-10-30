@@ -20,9 +20,8 @@
     <ROW Property="ARPURLUPDATEINFO" Value="http://particular.net/downloads"/>
     <ROW Property="AppLogoIcon" Value="applogoicon" MultiBuildValue="DefaultBuild:ServicePuzleLabel.png" Type="1" MsiKey="AppLogoIcon"/>
     <ROW Property="INST_URI" Value="http://localhost:33333/api/" Type="4"/>
-    <ROW Property="INST_URI_PULSE" Value="http://localhost:8081" Type="4"/>
+    <ROW Property="INST_URI_PULSE" Value="http://localhost:8082" Type="4"/>
     <ROW Property="Manufacturer" Value="Particular Software Ltd."/>
-    <ROW Property="PORT_VAL" Value="8081" Type="4"/>
     <ROW Property="ProductCode" Value="1033:{BAE534DC-0605-4EC0-8E26-561E9107485B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="ServicePulse [|ProductVersion]"/>
@@ -325,7 +324,7 @@
     <ROW Name="Operations_1.exe" SourcePath="res\Operations.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
-    <ROW IniFile="URL" FileName="Servic~1.url|ServicePulse Web Application.url" DirProperty="SHORTCUTDIR" Section="InternetShortcut" Key="URL" Value="[INST_URI_PULSE]:[PORT_VAL]" Action="0" Component_="ServicePulse.Host.exe"/>
+    <ROW IniFile="URL" FileName="Servic~1.url|ServicePulse Web Application.url" DirProperty="SHORTCUTDIR" Section="InternetShortcut" Key="URL" Value="[INST_URI_PULSE]" Action="0" Component_="ServicePulse.Host.exe"/>
     <ROW IniFile="WorkingDirectory" FileName="Servic~1.url|ServicePulse Web Application.url" DirProperty="SHORTCUTDIR" Section="InternetShortcut" Key="WorkingDirectory" Value="[SHORTCUTDIR]" Action="0" Component_="ServicePulse.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
