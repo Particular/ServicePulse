@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('alerts', ['ngGrid'])
+angular.module('alerts', [])
     .controller('AlertsCtrl', ['$scope', 'serviceControlService', 'streamService', function($scope, serviceControlService, streamService) {
 
         $scope.model = [];

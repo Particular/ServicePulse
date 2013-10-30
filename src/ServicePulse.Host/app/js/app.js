@@ -5,6 +5,7 @@ angular.module('sc', [
     'ngAnimate',
     'ui.select2',
     'ui.bootstrap.dropdownToggle',
+    'infinite-scroll',
     'services.streamService',
     'services.serviceControlService',
     'services.notifications',

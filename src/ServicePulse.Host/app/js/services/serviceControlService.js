@@ -9,8 +9,8 @@ angular.module('services.serviceControlService', [])
             });
         };
         
-        this.getFailedMessages = function (sortBy) {
-            return $http.get(scConfig.service_control_url + '/errors?sort=' + sortBy).then(function (response) {
+        this.getFailedMessages = function(sortBy, page) {
+            return $http.get(scConfig.service_control_url + '/errors?page=' + page + '&sort=' + sortBy).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -75,7 +75,7 @@ angular.module('services.serviceControlService', [])
                     var results = [];
                     endpoints.forEach(function(item) {
                         $http.get(scConfig.service_control_url + '/endpoints/' + item.name + '/sla').then(function (response) {
-                            angular.extend(item, {sla: response.data.current});
+                            angular.extend(item, { sla: response.data.current });
                             results.push(item);
                         });
                     });
