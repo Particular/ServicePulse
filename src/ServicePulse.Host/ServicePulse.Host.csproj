@@ -153,6 +153,7 @@
     <Content Include="app\lib\jquery.signalR-1.1.3.min.js" />
     <Content Include="app\lib\ng-grid.js" />
     <Content Include="app\lib\ng-infinite-scroll.min.js" />
+    <Content Include="app\lib\page-width-functions.js" />
     <Content Include="app\lib\select2.directive.js" />
     <Content Include="app\lib\select2.min.js" />
     <Content Include="app\js\failed_messages\failedMessages.tpl.html" />
