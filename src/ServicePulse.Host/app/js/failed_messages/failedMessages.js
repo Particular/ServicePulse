@@ -44,10 +44,6 @@ angular.module('failedMessages', [])
         };
 
         $scope.retrySelected = function () {
-            serviceControlService.retrySelectedFailedMessages(getSelected());
-        };
-
-        $scope.getSelected = function() {
             var selectedIds = [];
 
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
@@ -55,11 +51,9 @@ angular.module('failedMessages', [])
                     selectedIds.push($scope.model.failedMessages[i].id);
                 }
             }
-
-            return selectedIds;
+            serviceControlService.retrySelectedFailedMessages(selectedIds);
         };
 
-        
         streamService.subscribe($scope, 'MessageFailed', function() {
             $scope.model.total_number_of_failed_messages++;
         });
