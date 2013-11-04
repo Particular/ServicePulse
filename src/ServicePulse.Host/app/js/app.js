@@ -3,6 +3,7 @@
 angular.module('sc', [
     'ngRoute',
     'ngAnimate',
+    'ngSanitize',
     'ui.select2',
     'ui.bootstrap.dropdownToggle',
     'infinite-scroll',
@@ -37,8 +38,12 @@ angular.module('sc').controller('AppCtrl', ['$scope', 'notifications', function 
     $scope.removeNotification = function (notification) {
         notifications.remove(notification);
     };
+    
+    if (new Date() > new Date(2014, 2, 10)) {
+        notifications.pushSticky('<h4>Beta period has elapsed!</h4>Continued use is of this version of ServicePulse is unauthorized. To receive the latest and licensed release of ServicePulse please go to <a href="http://particular.net/downloads">http://particular.net/downloads</a>', 'info');
+    }
 
     $scope.$on('$routeChangeError', function (event, current, previous, rejection) {
-        notifications.pushForCurrentRoute('errors.route.changeError', 'error', {}, { rejection: rejection });
+        notifications.pushForCurrentRoute('Route change error', 'error', {}, { rejection: rejection });
     });
 }]);
