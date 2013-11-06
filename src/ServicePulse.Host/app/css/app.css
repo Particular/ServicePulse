@@ -52,3 +52,22 @@
     border: 1px solid #6BA6E1;
     background-color: #f2f6fc !important;
 }
+
+.row-fluid .span1.check {
+    width: 0;
+    margin-left: 5px;
+}
+
+@media (min-width: 1200px) {
+    .row-fluid .span11.check {
+        width: 96.452991%;
+        *width: 96.452991%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .row-fluid .span11.check {
+        width: 96.489362%;
+        *width: 96.489362%;
+    }
+}

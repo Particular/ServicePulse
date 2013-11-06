@@ -23,11 +23,11 @@
                     <div class="row-fluid">
                         <div class="span2" title="Id: {{item.id}}"><strong>{{item.id}}</strong></div>
                         <div class="span4" title="Category: {{item.category}}">{{item.category}}</div>
-                        <div class="span6 text-right" title="On: {{item.originating_endpoint.name + '@' + item.originating_endpoint.machine}}">on {{item.originating_endpoint.name + '@' + item.originating_endpoint.machine}}</div>
+                        <div class="span6 text-right" title="In: {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}">in {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}</div>
                     </div>
                 </div>
                 <div class="alert alert-success" ng-show='!loadingData && model.total == 0'>No failed custom checks</div>
-                <div class="alert alert-info" ng-show='loadingData'>Loading more data...</div>
+                <div class="alert alert-info" ng-show='loadingData'><strong>Loading data ...</strong></div>
             </div>
             </div>
     </div>
