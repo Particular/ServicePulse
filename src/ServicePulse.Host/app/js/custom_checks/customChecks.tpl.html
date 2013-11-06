@@ -1,0 +1,30 @@
+<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">Home</a> <span class="divider">/</span>
+        </li>
+        <li>Custom Checks</li>
+    </ul>
+    <hr>
+</div>
+<div class="row-fluid">
+    <div class="box span12">
+        <div class="box-header" data-original-title>
+            <h2><i class="fa-icon-check"></i><span class="break"></span>Showing {{model.total}} failed custom check(s)</h2>
+        </div>
+        <div class="box-content">
+            <div class="scRow" ng-repeat="item in model.data | orderBy: '-reported_at'">
+                <div class="row-fluid">
+                    <div class="span10 text-info">{{item.failure_reason}}</div>
+                    <div class="span2 text-right"><sp-moment date="{{item.reported_at}}" /></div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span2" title="Id: {{item.id}}"><strong>{{item.id}}</strong></div>
+                    <div class="span4" title="Category: {{item.category}}">{{item.category}}</div>
+                    <div class="span6 text-right" title="On: {{item.originating_endpoint.name + '@' + item.originating_endpoint.machine}}">on {{item.originating_endpoint.name + '@' + item.originating_endpoint.machine}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

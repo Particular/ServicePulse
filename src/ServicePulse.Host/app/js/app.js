@@ -16,6 +16,7 @@ angular.module('sc', [
     'alerts',
     'failedMessages',
     'endpoints',
+    'customChecks',
     'dashboard']);
 
 angular.module('sc')

@@ -139,6 +139,8 @@
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
     <Content Include="app\js\alerts\alerts.tpl.html" />
+    <Content Include="app\js\custom_checks\customChecks.js" />
+    <Content Include="app\js\custom_checks\customChecks.tpl.html" />
     <Content Include="app\js\dashboard\dashboard.js" />
     <Content Include="app\js\directives\dropdownToggle.js" />
     <Content Include="app\js\directives\hud.js" />

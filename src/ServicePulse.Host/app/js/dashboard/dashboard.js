@@ -16,17 +16,17 @@ angular.module('dashboard', [])
         serviceControlService.getTotalFailedMessages().then(function (response) {
             $scope.model.number_of_failed_messages = response;
         });
-
-        streamService.subscribe($scope, 'CustomCheckFailed', function () {
-            $scope.model.number_of_failed_checks++;
-        });
-
-        streamService.subscribe($scope, 'CustomCheckSucceeded', function () {
-            $scope.model.number_of_failed_checks--;
-        });
         
-        streamService.subscribe($scope, 'MessageFailed', function () {
-            $scope.model.number_of_failed_messages++;
+        serviceControlService.getTotalCustomChecks().then(function (response) {
+            $scope.model.number_of_failed_checks = response;
+        });
+
+        streamService.subscribe($scope, 'TotalCustomCheckUpdated', function (message) {
+            $scope.model.number_of_failed_checks = message.total;
+        });
+
+        streamService.subscribe($scope, 'TotalErrorMessagesUpdated', function (message) {
+            $scope.model.number_of_failed_messages = message.total;
         });
         
         streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function() {
@@ -47,8 +47,7 @@ angular.module('dashboard', [])
             streamService.unsubscribe($scope, 'EndpointHeartbeatRestored');
             streamService.unsubscribe($scope, 'HeartbeatingEndpointDetected');
             streamService.unsubscribe($scope, 'EndpointFailedToHeartbeat');
-            streamService.unsubscribe($scope, 'MessageFailed');
-            streamService.unsubscribe($scope, 'CustomCheckSucceeded');
-            streamService.unsubscribe($scope, 'CustomCheckFailed');
+            streamService.unsubscribe($scope, 'TotalErrorMessagesUpdated');
+            streamService.unsubscribe($scope, 'TotalCustomCheckUpdated');
         });
     }]);
