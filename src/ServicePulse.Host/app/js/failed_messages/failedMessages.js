@@ -6,7 +6,7 @@ angular.module('failedMessages', [])
     }])
     .controller('FailedMessagesCtrl', ['$scope', 'serviceControlService', 'streamService', '$routeParams', function ($scope, serviceControlService, streamService, $routeParams) {
 
-        $scope.model = { total_number_of_failed_messages: 0, failedMessages: [], failedMessagesStats: [] };
+        $scope.model = { total: 0, failedMessages: [], failedMessagesStats: [], selectedIds:[] };
         $scope.loadingData = false;
         $scope.disableLoadingData = false;
         
@@ -18,9 +18,9 @@ angular.module('failedMessages', [])
                 $scope.loadingData = false;
                 
                 $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
-                $scope.model.total_number_of_failed_messages = response.total;
+                $scope.model.total = response.total;
                 
-                if ($scope.model.failedMessages.length >= $scope.model.total_number_of_failed_messages) {
+                if ($scope.model.failedMessages.length >= $scope.model.total) {
                     $scope.disableLoadingData = true;
                 }
             });
@@ -39,23 +39,26 @@ angular.module('failedMessages', [])
             load($routeParams.sort, page++); 
         };
         
+        $scope.toggleRowSelect = function(row) {
+            row.selected = !row.selected;
+            
+            if (row.selected) {
+                $scope.model.selectedIds.push(row.id);
+            } else {
+                $scope.model.selectedIds.splice($scope.model.selectedIds.indexOf(row.id), 1);
+            }
+        };
+        
         $scope.retryAll = function() {
             serviceControlService.retryAllFailedMessages();
         };
 
         $scope.retrySelected = function () {
-            var selectedIds = [];
-
-            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
-                if ($scope.model.failedMessages[i].selected) {
-                    selectedIds.push($scope.model.failedMessages[i].id);
-                }
-            }
-            serviceControlService.retrySelectedFailedMessages(selectedIds);
+            serviceControlService.retrySelectedFailedMessages($scope.model.selectedIds);
         };
 
         streamService.subscribe($scope, 'MessageFailed', function() {
-            $scope.model.total_number_of_failed_messages++;
+            $scope.model.total++;
         });
         
         $scope.$on('$destroy', function () {

@@ -30,8 +30,8 @@ angular.module('services.serviceControlService', [])
             });
         };
         
-        this.getCustomChecks = function () {
-            return $http.get(scConfig.service_control_url + '/customchecks').then(function (response) {
+        this.getCustomChecks = function (page) {
+            return $http.get(scConfig.service_control_url + '/customchecks?page=' + page).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
