@@ -39,7 +39,12 @@ angular.module('failedMessages', [])
             load($routeParams.sort, page++); 
         };
         
-        $scope.toggleRowSelect = function(row) {
+        $scope.toggleRowSelect = function (row) {
+            
+            if (row.retried) {
+                return;
+            }
+            
             row.selected = !row.selected;
             
             if (row.selected) {
@@ -55,6 +60,15 @@ angular.module('failedMessages', [])
 
         $scope.retrySelected = function () {
             serviceControlService.retrySelectedFailedMessages($scope.model.selectedIds);
+
+            $scope.model.selectedIds = [];
+            
+            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                if ($scope.model.failedMessages[i].selected) {
+                    $scope.model.failedMessages[i].selected = false;
+                    $scope.model.failedMessages[i].retried = true;
+                }
+            }
         };
 
         streamService.subscribe($scope, 'MessageFailed', function() {
