@@ -29,24 +29,14 @@ angular.module('dashboard', [])
             $scope.model.number_of_failed_messages = message.total;
         });
         
-        streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function() {
-            $scope.model.failing_endpoints++;
-            $scope.model.active_endpoints--;
+        streamService.subscribe($scope, 'TotalEndpointsUpdated', function (message) {
+            $scope.model.failing_endpoints = message.failing;
+            $scope.model.active_endpoints = message.active;
         });
 
-        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function() {
-            $scope.model.failing_endpoints--;
-            $scope.model.active_endpoints++;
-        });
-
-        streamService.subscribe($scope, 'HeartbeatingEndpointDetected', function() {
-            $scope.model.active_endpoints++;
-        });
 
         $scope.$on('$destroy', function () {
-            streamService.unsubscribe($scope, 'EndpointHeartbeatRestored');
-            streamService.unsubscribe($scope, 'HeartbeatingEndpointDetected');
-            streamService.unsubscribe($scope, 'EndpointFailedToHeartbeat');
+            streamService.unsubscribe($scope, 'TotalEndpointsUpdated');
             streamService.unsubscribe($scope, 'TotalErrorMessagesUpdated');
             streamService.unsubscribe($scope, 'TotalCustomCheckUpdated');
         });

@@ -4,7 +4,7 @@ angular.module('customChecks', [])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/customChecks', { templateUrl: 'js/custom_checks/customChecks.tpl.html', controller: 'CustomChecksCtrl' });
     }])
-    .controller('CustomChecksCtrl', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
+    .controller('CustomChecksCtrl', ['$scope', 'serviceControlService', function ($scope, serviceControlService) {
 
         $scope.model = { data: [], total: 0};
         $scope.loadingData = false;
