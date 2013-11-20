@@ -20,6 +20,10 @@ angular.module('customChecks', [])
             $scope.loadingData = true;
             load(page++);
         };
+
+        $scope.mute = function(row) {
+            serviceControlService.muteCustomChecks(row);
+        };
         
         function load(page) {
             serviceControlService.getCustomChecks(page).then(function (response) {

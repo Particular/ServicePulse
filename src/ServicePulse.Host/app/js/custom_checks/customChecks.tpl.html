@@ -17,13 +17,16 @@
             <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
                 <div class="scRow" ng-repeat="item in model.data | orderBy: '-reported_at'">
                     <div class="row-fluid">
-                        <div class="span10 text-info">{{item.failure_reason}}</div>
-                        <div class="span2 text-right"><sp-moment date="{{item.reported_at}}" /></div>
+                        <div class="span4" title="Id: {{item.custom_check_id}}"><strong>{{item.custom_check_id}}</strong></div>
+                        <div class="span4" title="Category: {{item.category}}">{{item.category}}</div>
+                        <div class="span4 text-right"><sp-moment date="{{item.reported_at}}" /></div>
                     </div>
                     <div class="row-fluid">
-                        <div class="span2" title="Id: {{item.id}}"><strong>{{item.id}}</strong></div>
-                        <div class="span4" title="Category: {{item.category}}">{{item.category}}</div>
-                        <div class="span6 text-right" title="In: {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}">in {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}</div>
+                        <div class="span9 text-info"><pre>{{item.failure_reason}}</pre></div>
+                        <div class="span3 text-right" title="In: {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}">in {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}</div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span12 text-right"><a class="btn btn-small btn-link" ng-click="mute(item)"><i class="icon-volume-off"></i> Mute</a></div>
                     </div>
                 </div>
                 <div class="alert alert-success" ng-show='!loadingData && model.total == 0'>No failed custom checks</div>

@@ -14,7 +14,7 @@
         <div style="margin: 5px;" ng-class="{'alert-success': endpoint.reported_status != 'dead', 'alert-danger': endpoint.reported_status == 'dead'}">
             <h4>{{endpoint.originating_endpoint.name}}@{{endpoint.originating_endpoint.machine}}</h4>
             <p>Latest heartbeat received: <sp-moment date="{{endpoint.last_report_at}}" /></p>
-            <button class="btn btn-danger" ng-click="removeEndpoint(endpoint.id)">Remove</button>
+            <button class="btn btn-danger" ng-click="removeEndpoint(endpoint)">Remove</button>
         </div>
     </div>
 </div>

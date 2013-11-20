@@ -45,6 +45,16 @@ angular.module('services.serviceControlService', [])
             });
         };
 
+        this.muteCustomChecks = function(customCheck) {
+            $http.delete(scConfig.service_control_url + '/customchecks/' + customCheck.id)
+                .success(function () {
+                    notifications.pushForCurrentRoute('"{{item.custom_check_id}}" custom check muted', 'info', { item: customCheck });
+                })
+                .error(function () {
+                    notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'error', { item: customCheck });
+                });
+        };
+        
         this.retryAllFailedMessages = function () {
             $http.post(scConfig.service_control_url + '/errors/retry/all')
                 .success(function () {
@@ -77,13 +87,13 @@ angular.module('services.serviceControlService', [])
             });
         };
         
-        this.deleteEndpoint = function (id) {
-            $http.delete(scConfig.service_control_url + '/heartbeats/' + id)
+        this.removeEndpoint = function (endpoint) {
+            $http.delete(scConfig.service_control_url + '/heartbeats/' + endpoint.id)
                 .success(function () {
-                    notifications.pushForCurrentRoute('Endpoint deleted', 'info');
+                    notifications.pushForCurrentRoute('{{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint removed', 'info', { item: endpoint });
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Endpoint deletion failed', 'error');
+                    notifications.pushForCurrentRoute('Failed to remove {{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint', 'error', { item: endpoint });
                 });
         };
         

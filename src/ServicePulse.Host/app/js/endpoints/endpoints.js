@@ -10,8 +10,8 @@ angular.module('endpoints', [])
 
         var timeoutId;
 
-        $scope.removeEndpoint = function(id) {
-            serviceControlService.deleteEndpoint(id);
+        $scope.removeEndpoint = function(endpoint) {
+            serviceControlService.removeEndpoint(endpoint);
         };
         
         $scope.$on('$destroy', function () {
