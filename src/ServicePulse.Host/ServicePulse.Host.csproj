@@ -106,6 +106,7 @@
     <Content Include="app\img\icons-small.png" />
     <Content Include="app\img\ie7-forbidden-logo.jpg" />
     <Content Include="app\img\i_16_radio.png" />
+    <Content Include="app\img\loader_spinner.gif" />
     <Content Include="app\img\logo.png" />
     <Content Include="app\img\logo20.png" />
     <Content Include="app\img\progress.gif" />

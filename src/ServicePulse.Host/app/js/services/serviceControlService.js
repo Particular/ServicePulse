@@ -77,6 +77,16 @@ angular.module('services.serviceControlService', [])
             });
         };
         
+        this.deleteEndpoint = function (id) {
+            $http.delete(scConfig.service_control_url + '/heartbeats/' + id)
+                .success(function () {
+                    notifications.pushForCurrentRoute('Endpoint deleted', 'info');
+                })
+                .error(function () {
+                    notifications.pushForCurrentRoute('Endpoint deletion failed', 'error');
+                });
+        };
+        
         this.getEndpoints = function() {
             return $http.get(scConfig.service_control_url + '/endpoints').then(function (response) {
                 return response.data;
