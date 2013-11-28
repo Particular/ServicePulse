@@ -1,0 +1,20 @@
+<div class="box span12">
+    <div class="box-header" data-original-title>
+        <h2><i class="fa-icon-info-sign"></i><span class="break"></span>Latest events</h2>
+    </div>
+    <div class="box-content" ng-controller="EventLogItemsCtrl">
+        <div class="scRow" ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10">
+            <div class="row-fluid">
+                <div class="span10 text-info">{{eventLogItem.description}}</div>
+                <div class="span2 text-right"><sp-moment date="{{eventLogItem.raised_at}}" /></div>
+            </div>
+            <div class="row-fluid">
+                <div class="span2" title="Severity: {{eventLogItem.severity}}"><span ng-class="{'label label-success': eventLogItem.severity == 'info', 'label label-important':  eventLogItem.severity == 'error'}">{{eventLogItem.severity}}</span></div>
+                <div class="span4" title="Category: {{eventLogItem.category}}">{{eventLogItem.category}}</div>
+                <div class="span6" title="Related to: {{eventLogItem.related_to[0]}}">{{eventLogItem.related_to[0]}}</div>
+            </div>
+        </div>
+        <div class="alert alert-success" ng-show='!loadingData && model.length == 0'>No events!</div>
+        <div class="loading" ng-show='loadingData'></div>
+    </div>
+</div>

@@ -12,7 +12,7 @@ angular.module('sc', [
     'services.exceptionHandler',
     'directives.moment',
     'directives.hud',
-    'alerts',
+    'eventLogItems',
     'failedMessages',
     'endpoints',
     'customChecks',

@@ -3,8 +3,8 @@
 angular.module('services.serviceControlService', [])
     .service('serviceControlService', ['$http', 'scConfig', 'notifications', function ($http, scConfig, notifications) {
 
-        this.getAlerts = function () {
-            return $http.get(scConfig.service_control_url + '/alerts').then(function (response) {
+        this.getEventLogItems = function () {
+            return $http.get(scConfig.service_control_url + '/eventlogitems').then(function (response) {
                 return response.data;
             });
         };
