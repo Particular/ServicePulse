@@ -139,7 +139,7 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
-    <Content Include="app\js\alerts\alerts.tpl.html" />
+    <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\custom_checks\customChecks.js" />
     <Content Include="app\js\custom_checks\customChecks.tpl.html" />
     <Content Include="app\js\dashboard\dashboard.js" />
@@ -172,7 +172,7 @@
   <ItemGroup>
     <Content Include="app\css\app.css" />
     <Content Include="app\js\app.js" />
-    <Content Include="app\js\alerts\alerts.js" />
+    <Content Include="app\js\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
     <Content Include="app\notifications.tpl.html" />
     <Content Include="app\js\services\breadcrumbs.js" />
