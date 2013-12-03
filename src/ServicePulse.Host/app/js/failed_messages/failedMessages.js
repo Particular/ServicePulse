@@ -4,7 +4,7 @@ angular.module('failedMessages', [])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', 'serviceControlService', 'streamService', '$routeParams', function ($scope, serviceControlService, streamService, $routeParams) {
+    .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', function ($scope,$window, serviceControlService, streamService, $routeParams) {
 
         $scope.model = { total: 0, failedMessages: [], failedMessagesStats: [], selectedIds:[], newMessages: 0 };
         $scope.loadingData = false;
@@ -84,6 +84,12 @@ angular.module('failedMessages', [])
                     $scope.model.failedMessages[i].retried = true;
                 }
             }
+        };
+        
+        $scope.debugInServiceInsight = function (index) {
+            var messageId = $scope.model.failedMessages[index].id;
+            
+            $window.open("si://localhost:33333/api?&Search=" + messageId +  "&AutoRefresh=1");
         };
 
         streamService.subscribe($scope, 'MessageFailed', function () {

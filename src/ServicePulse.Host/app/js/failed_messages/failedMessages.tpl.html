@@ -80,7 +80,8 @@
                                 <div class="span2 text-right"><sp-moment date="{{row.time_sent}}" /></div>
                             </div>
                             <div class="row-fluid">
-                                <div class="span8"><pre>{{row.failure_details.exception.message}}</pre></div>
+                                <div class="span4"><pre>{{row.failure_details.exception.message}}</pre></div>
+                                <div class="span4 text-right" title="Open in ServiceInsight"><button class="btn" ng-click="debugInServiceInsight($index)">Open i ServiceInsight</button></div>
                                 <div class="span4 text-right" title="In: {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}">in {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}</div>
                             </div>
                         </div>
