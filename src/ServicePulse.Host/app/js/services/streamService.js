@@ -7,9 +7,18 @@ angular.module('services.streamService', [])
         var registrations = {};
 
         connection.received(function(data) {
-            $log.info('SignalR data received');
+
             $log.info(data);
-            $rootScope.$broadcast(prefix + data.type, data.message);
+            
+            for (var i in data.types) {
+                var type = data.types[i];
+                
+                $log.info("Dispatching event: " + type);
+                $rootScope.$broadcast(prefix + type, data.message);
+            }
+            
+            $log.info("Payload:" + JSON.stringify(data.message));
+
         });
 
         connection.start()
