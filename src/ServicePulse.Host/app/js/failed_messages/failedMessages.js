@@ -92,7 +92,19 @@ angular.module('failedMessages', [])
             $window.open("si://localhost:33333/api?&Search=" + messageId +  "&AutoRefresh=1");
         };
 
-        streamService.subscribe($scope, 'MessageFailed', function () {
+        streamService.subscribe($scope, 'MessageFailed', function (event) {
+
+            var failedMessageId = event.failed_message_id;
+            
+            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                var existingFailure = $scope.model.failedMessages[i];
+                if (failedMessageId == existingFailure.id && existingFailure.retried) {
+                    existingFailure.retried = false;
+                    return;
+                }
+                
+            }
+
             $scope.model.newMessages++;
         });
         

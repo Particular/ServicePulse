@@ -75,6 +75,8 @@
                         <div class="span11 check">
                             <div class=" row-fluid">
                                 <div ng-if="row.retried" class="span1"><span class="label label-info">Retried</span></div>
+                                <div ng-if="row.number_of_processing_attempts > 1" class="span1"><span class="label label-warning">Rpt.Failures({{row.number_of_processing_attempts}})</span></div>
+
                                 <div ng-if="row.retried" class="span9 rowText" title="Message Type: {{row.message_type}}">{{row.message_type | limitTo: 90}}<span ng-show="row.message_type.length > 90">...</span></div>
                                 <div ng-if="!row.retried"  class="span10 rowText" title="Message Type: {{row.message_type}}">{{row.message_type | limitTo: 90}}<span ng-show="row.message_type.length > 90">...</span></div>
                                 <div class="span2 text-right"><sp-moment date="{{row.time_sent}}" /></div>
