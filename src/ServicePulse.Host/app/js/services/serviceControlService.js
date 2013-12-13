@@ -40,7 +40,7 @@ angular.module('services.serviceControlService', [])
         };
           
         this.getFailedMessageStats = function () {
-            return $http.get(scConfig.service_control_url + '/errors/facets').then(function (response) {
+            return $http.get(scConfig.service_control_url + '/errors/summary').then(function (response) {
                 return response.data;
             });
         };
