@@ -95,7 +95,9 @@ angular.module('failedMessages', [])
         streamService.subscribe($scope, 'MessageFailed', function (event) {
 
             var failedMessageId = event.failed_message_id;
-            
+
+            $scope.model.total++;
+
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                 var existingFailure = $scope.model.failedMessages[i];
                 if (failedMessageId == existingFailure.id && existingFailure.retried) {
@@ -106,6 +108,25 @@ angular.module('failedMessages', [])
             }
 
             $scope.model.newMessages++;
+        });
+        
+        streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
+
+            var failedMessageId = event.failed_message_id;
+
+            $scope.model.total--;
+
+            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                var existingFailure = $scope.model.failedMessages[i];
+                if (failedMessageId == existingFailure.id) {
+                    //remove the item
+                    $scope.model.failedMessages.splice(i, 1);
+                    return;
+                }
+
+            }
+
+            $scope.model.newMessages--;
         });
         
         $scope.$on('$destroy', function () {
