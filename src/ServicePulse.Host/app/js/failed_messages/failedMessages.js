@@ -131,5 +131,6 @@ angular.module('failedMessages', [])
         
         $scope.$on('$destroy', function () {
             streamService.unsubscribe($scope, 'MessageFailed');
+            streamService.unsubscribe($scope, 'MessageFailureResolved');
         });
     }]);
