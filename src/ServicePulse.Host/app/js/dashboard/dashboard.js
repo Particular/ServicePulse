@@ -28,7 +28,15 @@ angular.module('dashboard', [])
         streamService.subscribe($scope, 'TotalErrorMessagesUpdated', function (message) {
             $scope.model.number_of_failed_messages = message.total;
         });
-        
+
+        streamService.subscribe($scope, 'MessageFailed', function () {
+            $scope.model.number_of_failed_messages++;
+        });
+
+        streamService.subscribe($scope, 'MessageFailureResolved', function () {
+            $scope.model.number_of_failed_messages--;
+        });
+
         streamService.subscribe($scope, 'TotalEndpointsUpdated', function (message) {
             $scope.model.failing_endpoints = message.failing;
             $scope.model.active_endpoints = message.active;
@@ -39,5 +47,7 @@ angular.module('dashboard', [])
             streamService.unsubscribe($scope, 'TotalEndpointsUpdated');
             streamService.unsubscribe($scope, 'TotalErrorMessagesUpdated');
             streamService.unsubscribe($scope, 'TotalCustomCheckUpdated');
+            streamService.unsubscribe($scope, 'MessageFailed');
+            streamService.unsubscribe($scope, 'MessageFailureResolved');
         });
     }]);
