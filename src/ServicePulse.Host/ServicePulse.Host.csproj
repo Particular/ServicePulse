@@ -116,6 +116,7 @@
     <Content Include="app\img\select2-spinner.gif" />
     <Content Include="app\img\select2.png" />
     <Content Include="app\img\select2x2.png" />
+    <Content Include="app\img\ServiceInsight-Small.png" />
     <Content Include="app\img\ServicePulse.ico" />
     <Content Include="app\img\ServicePulseLogo.png" />
     <Content Include="app\img\servicePulse_256.ico" />
