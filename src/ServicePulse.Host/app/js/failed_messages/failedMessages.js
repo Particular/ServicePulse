@@ -91,7 +91,7 @@ angular.module('failedMessages', [])
         };
         
         $scope.debugInServiceInsight = function (index) {
-            var messageId = $scope.model.failedMessages[index].id;
+            var messageId = $scope.model.failedMessages[index].message_id;
             
             $window.open("si://localhost:33333/api?&Search=" + messageId +  "&AutoRefresh=1");
         };
