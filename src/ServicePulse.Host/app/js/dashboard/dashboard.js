@@ -42,6 +42,16 @@ angular.module('dashboard', [])
             $scope.model.active_endpoints = message.active;
         });
 
+        streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function (event) {
+
+            $scope.model.active_endpoints--;
+            $scope.model.failing_endpoints++;
+        });
+
+        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (event) {
+            $scope.model.active_endpoints++;
+            $scope.model.failing_endpoints--;
+        });
 
         $scope.$on('$destroy', function () {
             streamService.unsubscribe($scope, 'TotalEndpointsUpdated');
