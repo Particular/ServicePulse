@@ -12,7 +12,7 @@
 <div class="row-fluid">
     <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="fa-icon-info-sign"></i><span class="break"></span>Summary statistics</h2>
+            <h2><i class="fa fa-info-circle"></i><span class="break"></span>Summary statistics</h2>
         </div>
         <div class="box-content">
             <div class="row-fluid">
@@ -47,7 +47,7 @@
 <div class="row-fluid">
     <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="fa-icon-envelope"></i><span class="break"></span>Showing {{model.failedMessages.length}} message(s) <i ng-show="!disableLoadingData">(scroll down to load more)</i></h2>
+            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.failedMessages.length}} message(s) <i ng-show="!disableLoadingData">(scroll down to load more)</i></h2>
         </div>
         <div class="box-content">
             <div class="btn-toolbar">
@@ -87,7 +87,10 @@
                                     <span ng-if="row.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
                                     <span ng-if="row.number_of_processing_attempts > 1" tooltip="This message has already failed {{row.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
                                 </div>
-                                <div class="span6 text-right"><a tooltip="Open in ServiceInsight" class="btn btn-small btn-link" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a></div>
+                                <div class="span6 text-right">
+                                    <a class="btn btn-small btn-link" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
+                                    <!--<a clip-copy="row.message_id" class="btn btn-small btn-link"><span><i class="fa fa-clipboard" style="color: #646464; font-size: 14px;"></i> Copy Id to clipboard</span></a>-->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -95,6 +98,9 @@
                 <div class="alert alert-success" ng-show='!loadingData && model.total == 0'>No failed messages</div>
                 <div class="loading" ng-show='loadingData'></div>
             </div>
-         </div>
-     </div>
+        </div>
+    </div>
 </div>
+<script>
+    $('.js-clipboard').live('mousedown')
+</script>

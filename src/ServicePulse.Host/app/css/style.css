@@ -11,8 +11,7 @@
 
 /* Import Section
 =================================================================== */
-@import url("font-awesome.css");										/* Font Awesome Styles */
-@import url("font-awesome-ie7.css");									/* Font Awesome Styles */
+@import url("font-awesome.min.css");										/* Font Awesome Styles */
 
 /* Basic
 =================================================================== */

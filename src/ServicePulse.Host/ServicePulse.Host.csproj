@@ -78,13 +78,13 @@
     <Content Include="app\css\bootstrap-responsive.min.css" />
     <Content Include="app\css\bootstrap.css" />
     <Content Include="app\css\bootstrap.min.css" />
-    <Content Include="app\css\font-awesome-ie7.css" />
     <Content Include="app\css\font-awesome.css" />
+    <Content Include="app\css\font-awesome.min.css" />
     <Content Include="app\css\select2.css" />
     <Content Include="app\css\style-ie.css" />
     <Content Include="app\css\style-responsive.css" />
     <Content Include="app\css\style.css" />
-    <Content Include="app\font\fontawesome-webfont.svg" />
+    <Content Include="app\fonts\fontawesome-webfont.svg" />
     <Content Include="app\img\arrows-active.png" />
     <Content Include="app\img\arrows-normal.png" />
     <Content Include="app\img\bg-input-focus.png" />
@@ -140,6 +140,7 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
+    <Content Include="app\js\directives\ngClip.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\custom_checks\customChecks.js" />
     <Content Include="app\js\custom_checks\customChecks.tpl.html" />
@@ -164,10 +165,9 @@
     <Content Include="app\lib\page-width-functions.js" />
     <Content Include="app\js\failed_messages\failedMessages.tpl.html" />
     <EmbeddedResource Include="Hosting\Help.txt" />
-    <Content Include="app\font\fontawesome-webfont-0.eot" />
-    <Content Include="app\font\fontawesome-webfont.eot" />
-    <Content Include="app\font\fontawesome-webfont.ttf" />
-    <Content Include="app\font\fontawesome-webfont.woff" />
+    <Content Include="app\fonts\fontawesome-webfont.eot" />
+    <Content Include="app\fonts\fontawesome-webfont.ttf" />
+    <Content Include="app\fonts\fontawesome-webfont.woff" />
     <Content Include="app\lib\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +175,8 @@
     <Content Include="app\js\app.js" />
     <Content Include="app\js\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
+    <Content Include="app\lib\ZeroClipboard.min.js" />
+    <Content Include="app\lib\ZeroClipboard.swf" />
     <Content Include="app\notifications.tpl.html" />
     <Content Include="app\js\services\breadcrumbs.js" />
     <Content Include="app\js\services\exceptionHandler.js" />
@@ -199,6 +201,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app\fonts\FontAwesome.otf" />
     <None Include="app\lib\angular\angular-animate.min.js.map" />
     <None Include="app\lib\angular\angular-route.min.js.map" />
     <None Include="app\lib\angular\angular-sanitize.min.js.map" />

@@ -62,6 +62,10 @@ angular.module('failedMessages', [])
                 $scope.model.selectedIds.splice($scope.model.selectedIds.indexOf(row.id), 1);
             }
         };
+
+        $scope.getId = function (row) {        
+            return row.message_id;
+        };
         
         $scope.refreshResults = function () {
             init();

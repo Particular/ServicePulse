@@ -4,6 +4,7 @@ angular.module('sc', [
     'ngRoute',
     'ngAnimate',
     'ngSanitize',
+    'ngClipboard',
     'ui.bootstrap',
     'infinite-scroll',
     'services.streamService',
