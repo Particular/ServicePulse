@@ -59,5 +59,8 @@ angular.module('dashboard', [])
             streamService.unsubscribe($scope, 'TotalCustomCheckUpdated');
             streamService.unsubscribe($scope, 'MessageFailed');
             streamService.unsubscribe($scope, 'MessageFailureResolved');
+            streamService.unsubscribe($scope, 'EndpointFailedToHeartbeat');
+            streamService.unsubscribe($scope, 'EndpointHeartbeatRestored');
+            
         });
     }]);
