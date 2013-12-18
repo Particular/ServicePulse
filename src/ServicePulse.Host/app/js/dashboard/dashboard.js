@@ -8,9 +8,11 @@ angular.module('dashboard', [])
 
         $scope.model = { active_endpoints: 0, failing_endpoints: 0, number_of_failed_messages: 0, number_of_failed_checks: 0 };
 
+        var endpointCountLastUpdated;
         serviceControlService.getHeartbeatStats().then(function(stat) {
             $scope.model.active_endpoints = stat.active_endpoints;
             $scope.model.failing_endpoints = stat.failing_endpoints;
+            endpointCountLastUpdated = Date.now();
         });
 
         serviceControlService.getTotalFailedMessages().then(function (response) {
@@ -38,19 +40,13 @@ angular.module('dashboard', [])
         });
 
         streamService.subscribe($scope, 'TotalEndpointsUpdated', function (message) {
-            $scope.model.failing_endpoints = message.failing;
-            $scope.model.active_endpoints = message.active;
-        });
-
-        streamService.subscribe($scope, 'EndpointFailedToHeartbeat', function (event) {
-
-            $scope.model.active_endpoints--;
-            $scope.model.failing_endpoints++;
-        });
-
-        streamService.subscribe($scope, 'EndpointHeartbeatRestored', function (event) {
-            $scope.model.active_endpoints++;
-            $scope.model.failing_endpoints--;
+            // we can get these events out of order. So, ignore the current event, if we have processed one that was more update to date.
+            var eventDate = new Date(Date.parse(message.last_updated_at));
+            if (eventDate > endpointCountLastUpdated) {
+                $scope.model.failing_endpoints = message.failing;
+                $scope.model.active_endpoints = message.active;
+                endpointCountLastUpdated = eventDate;
+            }
         });
 
         $scope.$on('$destroy', function () {
@@ -58,9 +54,6 @@ angular.module('dashboard', [])
             streamService.unsubscribe($scope, 'TotalErrorMessagesUpdated');
             streamService.unsubscribe($scope, 'TotalCustomCheckUpdated');
             streamService.unsubscribe($scope, 'MessageFailed');
-            streamService.unsubscribe($scope, 'MessageFailureResolved');
-            streamService.unsubscribe($scope, 'EndpointFailedToHeartbeat');
-            streamService.unsubscribe($scope, 'EndpointHeartbeatRestored');
-            
+            streamService.unsubscribe($scope, 'MessageFailureResolved');            
         });
     }]);
