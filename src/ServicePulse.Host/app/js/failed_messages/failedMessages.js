@@ -78,7 +78,7 @@ angular.module('failedMessages', [])
         };
 
         $scope.retrySelected = function () {
-            serviceControlService.retrySelectedFailedMessages($scope.model.selectedIds);
+            serviceControlService.retryFailedMessages($scope.model.selectedIds);
 
             $scope.model.selectedIds = [];
             
@@ -90,6 +90,19 @@ angular.module('failedMessages', [])
             }
         };
         
+        $scope.archiveSelected = function () {
+            serviceControlService.archiveFailedMessages($scope.model.selectedIds);
+
+            $scope.model.selectedIds = [];
+
+            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                if ($scope.model.failedMessages[i].selected) {
+                    $scope.model.failedMessages[i].selected = false;
+                    $scope.model.failedMessages[i].archived = true;
+                }
+            }
+        };
+
         $scope.debugInServiceInsight = function (index) {
             var messageId = $scope.model.failedMessages[index].message_id;
             

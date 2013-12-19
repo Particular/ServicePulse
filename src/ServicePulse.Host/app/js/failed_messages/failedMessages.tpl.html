@@ -53,6 +53,7 @@
             <div class="btn-toolbar">
                 <button class="btn" ng-click="retrySelected()" ng-disabled="model.selectedIds.length == 0"><i class="icon-repeat"></i> Retry {{model.selectedIds.length}} selected</button>
                 <button class="btn" ng-click="retryAll()" ng-disabled="model.total == 0"><i class="icon-asterisk"></i> Retry all messages</button>
+                <button class="btn" ng-click="archiveSelected()" ng-disabled="model.selectedIds.length == 0"><i class="icon-repeat"></i> Archive {{model.selectedIds.length}} selected</button>
                 <div class="btn-group pull-right">
                     <a class="btn btn-link dropdown-toggle"
                        data-toggle="dropdown"
@@ -71,11 +72,10 @@
             <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
                 <div class="scRow" ng-repeat="row in model.failedMessages">
                     <div class="row-fluid scSelectableRow" ng-class="{rowSelected: row.selected == true}" ng-click="toggleRowSelect(row)" style="cursor: pointer;">
-                        <div class="span1 check"><input type="checkbox" ng-disabled="row.retried" ng-checked="row.selected"></div>
+                        <div class="span1 check"><input type="checkbox" ng-disabled="row.retried || row.archived" ng-checked="row.selected"></div>
                         <div class="span11 check">
                             <div class=" row-fluid">
-                                <div ng-if="row.retried" class="span10 rowText" title="Message Type: {{row.message_type}}">{{row.message_type | limitTo: 90}}<span ng-show="row.message_type.length > 90">...</span></div>
-                                <div ng-if="!row.retried"  class="span10 rowText" title="Message Type: {{row.message_type}}">{{row.message_type | limitTo: 90}}<span ng-show="row.message_type.length > 90">...</span></div>
+                                <div class="span10 rowText" title="Message Type: {{row.message_type}}">{{row.message_type | limitTo: 90}}<span ng-show="row.message_type.length > 90">...</span></div>
                                 <div class="span2 text-right"><sp-moment date="{{row.time_sent}}" /></div>
                             </div>
                             <div class="row-fluid">
@@ -85,6 +85,7 @@
                             <div class="row-fluid">
                                 <div class="span6 text-left">
                                     <span ng-if="row.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
+                                    <span ng-if="row.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
                                     <span ng-if="row.number_of_processing_attempts > 1" tooltip="This message has already failed {{row.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
                                 </div>
                                 <div class="span6 text-right">

@@ -65,13 +65,23 @@ angular.module('services.serviceControlService', [])
                 });
         };
         
-        this.retrySelectedFailedMessages = function (selectedMessages) {
+        this.retryFailedMessages = function (selectedMessages) {
             $http.post(scConfig.service_control_url + '/errors/retry', selectedMessages)
                 .success(function () {
                     notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'error');
+                });
+        };
+
+        this.archiveFailedMessages = function (selectedMessages) {
+            $http.post(scConfig.service_control_url + '/errors/archive', selectedMessages)
+                .success(function () {
+                    notifications.pushForCurrentRoute('Archiving {{num}} messages...', 'info', { num: selectedMessages.length });
+                })
+                .error(function () {
+                    notifications.pushForCurrentRoute('Archiving messages failed', 'error');
                 });
         };
 
