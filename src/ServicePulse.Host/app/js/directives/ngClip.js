@@ -7,8 +7,8 @@ angular.module('ngClipboard', []).
   directive('clipCopy', ['ZeroClipboardConfig', function (zeroClipboardConfig) {
       return {
           scope: {
-              clipCopy: '&',
-              clipClick: '&'
+              clipComplete: '&',
+              clipLoad: '&'
           },
           restrict: 'A',
           link: function (scope, element, attrs) {
@@ -18,11 +18,19 @@ angular.module('ngClipboard', []).
                   allowScriptAccess: "always"
               });
 
-              clip.on('mousedown', function (client) {
-                  client.setText(scope.$eval(scope.clipCopy));
-                  if (angular.isDefined(attrs.clipClick)) {
-                      scope.$apply(scope.clipClick);
+              clip.on('load', function() {
+                  if (angular.isDefined(attrs.clipLoad)) {
+                      scope.$apply(scope.clipLoad);
                   }
+              });
+              clip.on('complete', function () {
+                  if (angular.isDefined(attrs.clipComplete)) {
+                      scope.$apply(scope.clipComplete);
+                  }
+                  console.log('Copy button 2');
+              });
+              clip.on("noflash wrongflash", function() {
+                  return element.remove();
               });
           }
       };

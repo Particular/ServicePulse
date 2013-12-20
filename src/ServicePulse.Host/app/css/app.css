@@ -94,3 +94,8 @@
     background-image: url('/img/ServiceInsight-Small.png');
     background-position: center;
 }
+
+.action_icon {
+    color: #646464; 
+    font-size: 14px;
+}

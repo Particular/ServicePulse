@@ -79,7 +79,10 @@
                                 <div class="span2 text-right"><sp-moment date="{{row.time_sent}}" /></div>
                             </div>
                             <div class="row-fluid">
-                                <div class="span8"><pre title="{{row.exception.stack_trace}}">{{row.exception.message}}</pre></div>
+                                <div class="span8">
+                                    <pre ng-if="!row.showStacktrace">{{row.exception.message}}</pre>
+                                    <pre ng-if="row.showStacktrace">{{row.exception.stack_trace}}</pre>
+                                </div>
                                 <div class="span4 text-right" title="In: {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}">in {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}</div>
                             </div>
                             <div class="row-fluid">
@@ -89,8 +92,10 @@
                                     <span ng-if="row.number_of_processing_attempts > 1" tooltip="This message has already failed {{row.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
                                 </div>
                                 <div class="span6 text-right">
-                                    <a class="btn btn-small btn-link" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
-                                    <!--<a clip-copy="row.message_id" class="btn btn-small btn-link"><span><i class="fa fa-clipboard" style="color: #646464; font-size: 14px;"></i> Copy Id to clipboard</span></a>-->
+                                    <a eat-click ng-if="row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-minus-square action_icon"></i> Hide stacktrace</a>
+                                    <a eat-click ng-if="!row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-plus-square action_icon"></i> Show stacktrace</a>
+                                    <a eat-click clip-copy data-clipboard-text="{{row.message_id}}" class="btn btn-small btn-link"><span><i class="fa fa-clipboard action_icon"></i> Copy Id to clipboard</span></a>
+                                    <a eat-click tooltip="This only works if ServiceInsight is installed." class="btn btn-small btn-link" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
                                 </div>
                             </div>
                         </div>

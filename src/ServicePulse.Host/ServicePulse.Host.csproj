@@ -140,6 +140,7 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
+    <Content Include="app\js\directives\eat.click.js" />
     <Content Include="app\js\directives\ngClip.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\custom_checks\customChecks.js" />
@@ -153,6 +154,9 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\failed_messages\failedMessages.js" />
     <Content Include="app\js\endpoints\endpoints.js" />
+    <Content Include="app\js\failed_messages\JavaScript1.js" />
+    <Content Include="app\js\failed_messages\JavaScript2.js" />
+    <Content Include="app\js\failed_messages\JavaScript3.js" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />

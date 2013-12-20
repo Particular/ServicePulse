@@ -13,6 +13,7 @@ angular.module('sc', [
     'services.exceptionHandler',
     'directives.moment',
     'directives.hud',
+    'directives.eatClick',
     'eventLogItems',
     'failedMessages',
     'endpoints',

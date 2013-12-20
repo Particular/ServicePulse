@@ -43,8 +43,12 @@ angular.module('failedMessages', [])
             });
         };
 
+        $scope.toggleStacktrace = function (row) {
+            row.showStacktrace = !row.showStacktrace;
+            return false;
+        };
+
         $scope.loadMoreResults = function () {
-            
             load(); 
         };
         
