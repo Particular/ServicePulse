@@ -4,7 +4,7 @@ angular.module('failedMessages', [])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', function ($scope,$window, serviceControlService, streamService, $routeParams) {
+    .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig) {
 
         $scope.model = { total: 0, failedMessages: [], failedMessagesStats: [], selectedIds:[], newMessages: 0 };
         $scope.loadingData = false;
@@ -109,8 +109,17 @@ angular.module('failedMessages', [])
 
         $scope.debugInServiceInsight = function (index) {
             var messageId = $scope.model.failedMessages[index].message_id;
-            
-            $window.open("si://localhost:33333/api?&Search=" + messageId +  "&AutoRefresh=1");
+            var dnsName = scConfig.service_control_url.toLowerCase();
+            var isSecure = false;
+
+            if (dnsName.indexOf("https") == 0) {
+                isSecure = true;
+                dnsName = dnsName.replace("https://", "");
+            } else {
+                dnsName = dnsName.replace("http://", "");
+            }
+
+            $window.open("si://" + dnsName + "?secure=" + isSecure + "&search=" + messageId);
         };
 
         streamService.subscribe($scope, 'MessageFailed', function (event) {
