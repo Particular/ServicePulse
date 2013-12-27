@@ -53,7 +53,7 @@
             <div class="btn-toolbar">
                 <button class="btn" ng-click="retrySelected()" ng-disabled="model.selectedIds.length == 0"><i class="icon-repeat"></i> Retry {{model.selectedIds.length}} selected</button>
                 <button class="btn" ng-click="retryAll()" ng-disabled="model.total == 0"><i class="icon-asterisk"></i> Retry all messages</button>
-                <button class="btn" ng-click="archiveSelected()" ng-disabled="model.selectedIds.length == 0"><i class="icon-repeat"></i> Archive {{model.selectedIds.length}} selected</button>
+                <button tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn" ng-click="archiveSelected()" ng-disabled="model.selectedIds.length == 0"><i class="icon-repeat"></i> Archive {{model.selectedIds.length}} selected</button>
                 <div class="btn-group pull-right">
                     <a class="btn btn-link dropdown-toggle"
                        data-toggle="dropdown"

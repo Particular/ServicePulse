@@ -54,7 +54,7 @@ angular.module('failedMessages', [])
         
         $scope.toggleRowSelect = function (row) {
             
-            if (row.retried) {
+            if (row.retried || row.archived) {
                 return;
             }
             
