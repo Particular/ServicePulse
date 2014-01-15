@@ -9,12 +9,27 @@
     <hr>
 </div>
 
-<div class="row" ng-repeat="endpoint in model">
-    <div class="span5">
-        <div style="margin: 5px;" ng-class="{'alert-success': endpoint.reported_status != 'dead', 'alert-danger': endpoint.reported_status == 'dead'}">
-            <h4>{{endpoint.originating_endpoint.name}}@{{endpoint.originating_endpoint.machine}}</h4>
-            <p>Latest heartbeat received: <sp-moment date="{{endpoint.last_report_at}}" /></p>
-            <button class="btn btn-danger" ng-click="removeEndpoint(endpoint)">Remove</button>
+<div class="row-fluid">
+    <div class="box span6">
+        <div class="box-header" data-original-title>
+            <h2><i class="fa fa-info-circle"></i><span class="break"></span>Active Endpoints</h2>
+        </div>
+        <div class="box-content">
+            <div class="well well-small" ng-repeat="endpoint in model | filter:{reported_status:'Beating'}">
+                <h4>{{endpoint.originating_endpoint.name}}@{{endpoint.originating_endpoint.machine}}</h4>
+                <p>Latest heartbeat received: <sp-moment date="{{endpoint.last_report_at}}" /></p>
+            </div>
+        </div>
+    </div>
+    <div class="box span6">
+        <div class="box-header" data-original-title>
+            <h2><i class="fa fa-info-circle"></i><span class="break"></span>Inactive Endpoints</h2>
+        </div>
+        <div class="box-content">
+            <div class="well well-small" ng-repeat="endpoint in model | filter:{reported_status:'Dead'}">
+                <h4>{{endpoint.originating_endpoint.name}}@{{endpoint.originating_endpoint.machine}}</h4>
+                <p>Latest heartbeat received: <sp-moment date="{{endpoint.last_report_at}}" /></p>
+            </div>
         </div>
     </div>
 </div>

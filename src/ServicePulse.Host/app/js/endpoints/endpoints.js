@@ -10,10 +10,6 @@ angular.module('endpoints', [])
 
         var timeoutId;
 
-        $scope.removeEndpoint = function(endpoint) {
-            serviceControlService.removeEndpoint(endpoint);
-        };
-        
         $scope.$on('$destroy', function () {
             $timeout.cancel(timeoutId);
         });
@@ -21,12 +17,12 @@ angular.module('endpoints', [])
         function updateUI() {
             serviceControlService.getHeartbeatsList().then(function(heartbeats) {
                 $scope.model = heartbeats;
+
+                timeoutId = $timeout(function () {
+                    updateUI();
+                }, 5000);
             });
         }
 
-        timeoutId = $timeout(function () {
-            updateUI();
-        }, 5000);
-        
         updateUI();
     }]);
