@@ -10,7 +10,7 @@ angular.module('services.serviceControlService', [])
         };
         
         this.getFailedMessages = function(sortBy, page) {
-            return $http.get(scConfig.service_control_url + '/errors?page=' + page + '&sort=' + sortBy).then(function (response) {
+            return $http.get(scConfig.service_control_url + '/errors?status=unresolved&page=' + page + '&sort=' + sortBy).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -19,7 +19,7 @@ angular.module('services.serviceControlService', [])
         };
         
         this.getTotalFailedMessages = function () {
-            return $http.head(scConfig.service_control_url + '/errors').then(function (response) {
+            return $http.head(scConfig.service_control_url + '/errors?status=unresolved').then(function (response) {
                 return response.headers('Total-Count');
             });
         };

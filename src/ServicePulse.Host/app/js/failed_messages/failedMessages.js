@@ -74,11 +74,17 @@ angular.module('failedMessages', [])
         $scope.refreshResults = function () {
             init();
             load();
+            
             $scope.model.newMessages = 0;
         };
         
         $scope.retryAll = function() {
             serviceControlService.retryAllFailedMessages();
+
+            init();
+            delete $scope.model.failedMessagesStats; 
+            $scope.model.total = 0;
+            $scope.model.newMessages = 0;
         };
 
         $scope.retrySelected = function () {
