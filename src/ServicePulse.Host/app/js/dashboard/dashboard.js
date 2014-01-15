@@ -15,10 +15,14 @@ angular.module('dashboard', [])
             endpointCountLastUpdated = Date.now();
         });
 
-        serviceControlService.getTotalFailedMessages().then(function (response) {
-            $scope.model.number_of_failed_messages = response;
-        });
-        
+        function updateTotalFailedMessages() {
+            serviceControlService.getTotalFailedMessages().then(function(response) {
+                $scope.model.number_of_failed_messages = response;
+            });
+        }
+
+        updateTotalFailedMessages();
+
         serviceControlService.getTotalCustomChecks().then(function (response) {
             $scope.model.number_of_failed_checks = response;
         });
@@ -27,16 +31,12 @@ angular.module('dashboard', [])
             $scope.model.number_of_failed_checks = message.total;
         });
 
-        streamService.subscribe($scope, 'TotalErrorMessagesUpdated', function (message) {
-            $scope.model.number_of_failed_messages = message.total;
-        });
-
         streamService.subscribe($scope, 'MessageFailed', function () {
-            $scope.model.number_of_failed_messages++;
+            updateTotalFailedMessages();
         });
 
         streamService.subscribe($scope, 'MessageFailureResolved', function () {
-            $scope.model.number_of_failed_messages--;
+            updateTotalFailedMessages();
         });
 
         streamService.subscribe($scope, 'TotalEndpointsUpdated', function (message) {
@@ -51,7 +51,6 @@ angular.module('dashboard', [])
 
         $scope.$on('$destroy', function () {
             streamService.unsubscribe($scope, 'TotalEndpointsUpdated');
-            streamService.unsubscribe($scope, 'TotalErrorMessagesUpdated');
             streamService.unsubscribe($scope, 'TotalCustomCheckUpdated');
             streamService.unsubscribe($scope, 'MessageFailed');
             streamService.unsubscribe($scope, 'MessageFailureResolved');            
