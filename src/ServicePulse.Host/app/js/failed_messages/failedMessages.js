@@ -119,7 +119,7 @@ angular.module('failedMessages', [])
                 dnsName = dnsName.replace("http://", "");
             }
 
-            $window.open("si://" + dnsName + "?secure=" + isSecure + "&search=" + messageId);
+            $window.open("si://" + dnsName + "?search=" + messageId);
         };
 
         streamService.subscribe($scope, 'MessageFailed', function (event) {
