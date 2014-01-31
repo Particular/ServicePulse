@@ -116,10 +116,8 @@ angular.module('failedMessages', [])
         $scope.debugInServiceInsight = function (index) {
             var messageId = $scope.model.failedMessages[index].message_id;
             var dnsName = scConfig.service_control_url.toLowerCase();
-            var isSecure = false;
 
             if (dnsName.indexOf("https") == 0) {
-                isSecure = true;
                 dnsName = dnsName.replace("https://", "");
             } else {
                 dnsName = dnsName.replace("http://", "");
@@ -159,7 +157,6 @@ angular.module('failedMessages', [])
                     $scope.model.failedMessages.splice(i, 1);
                     return;
                 }
-
             }
 
             $scope.model.newMessages--;

@@ -8,51 +8,65 @@ angular.module('dashboard', [])
 
         $scope.model = { active_endpoints: 0, failing_endpoints: 0, number_of_failed_messages: 0, number_of_failed_checks: 0 };
 
-        var endpointCountLastUpdated;
+        var heartbeatsUpdated = new OutOfOrderPurger();
+        var failedMessageUpdated = new OutOfOrderPurger();
+        var customChecksUpdated = new OutOfOrderPurger();
+
         serviceControlService.getHeartbeatStats().then(function(stat) {
-            $scope.model.active_endpoints = stat.active_endpoints;
-            $scope.model.failing_endpoints = stat.failing_endpoints;
-            endpointCountLastUpdated = Date.now();
+            $scope.model.active_endpoints = stat.active;
+            $scope.model.failing_endpoints = stat.failing;
+            heartbeatsUpdated.resetToNow();
         });
 
-        function updateTotalFailedMessages() {
-            serviceControlService.getTotalFailedMessages().then(function(response) {
-                $scope.model.number_of_failed_messages = response;
-            });
-        }
-
-        updateTotalFailedMessages();
+        serviceControlService.getTotalFailedMessages().then(function(response) {
+            $scope.model.number_of_failed_messages = response;
+            failedMessageUpdated.resetToNow();
+        });
 
         serviceControlService.getTotalCustomChecks().then(function (response) {
             $scope.model.number_of_failed_checks = response;
+            customChecksUpdated.resetToNow();
         });
 
-        streamService.subscribe($scope, 'TotalCustomCheckUpdated', function (message) {
-            $scope.model.number_of_failed_checks = message.total;
+        streamService.subscribe($scope, 'CustomChecksUpdated', function (message) {
+            customChecksUpdated.runIfLatest(message, function() {
+                $scope.model.number_of_failed_checks = message.failed;
+            });
         });
 
-        streamService.subscribe($scope, 'MessageFailed', function () {
-            updateTotalFailedMessages();
+        streamService.subscribe($scope, 'MessageFailuresUpdated', function (message) {
+            failedMessageUpdated.runIfLatest(message, function() {
+                $scope.model.number_of_failed_messages = message.total;
+            });
         });
 
-        streamService.subscribe($scope, 'MessageFailureResolved', function () {
-            updateTotalFailedMessages();
-        });
-
-        streamService.subscribe($scope, 'TotalEndpointsUpdated', function (message) {
-            // we can get these events out of order. So, ignore the current event, if we have processed one that was more update to date.
-            var eventDate = new Date(Date.parse(message.last_updated_at));
-            if (eventDate > endpointCountLastUpdated) {
+        streamService.subscribe($scope, 'HeartbeatsUpdated', function (message) {
+            heartbeatsUpdated.runIfLatest(message, function() {
                 $scope.model.failing_endpoints = message.failing;
                 $scope.model.active_endpoints = message.active;
-                endpointCountLastUpdated = eventDate;
-            }
+            });
         });
 
         $scope.$on('$destroy', function () {
-            streamService.unsubscribe($scope, 'TotalEndpointsUpdated');
-            streamService.unsubscribe($scope, 'TotalCustomCheckUpdated');
-            streamService.unsubscribe($scope, 'MessageFailed');
-            streamService.unsubscribe($scope, 'MessageFailureResolved');            
+            streamService.unsubscribe($scope, 'HeartbeatsUpdated');
+            streamService.unsubscribe($scope, 'CustomChecksUpdated');
+            streamService.unsubscribe($scope, 'MessageFailuresUpdated');
         });
+
+        function OutOfOrderPurger() {
+            var latestData = Date.now();
+
+            this.resetToNow = function() {
+                latestData = Date.now();
+            };
+
+            this.runIfLatest = function (message, func) {
+                var raisedAt = new Date(Date.parse(message.raised_at));
+
+                if (raisedAt > latestData) {
+                    latestData = raisedAt;
+                    func();
+                }
+            };
+        }
     }]);

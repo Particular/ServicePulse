@@ -37,9 +37,5 @@ angular.module('customChecks', [])
                     $scope.disableLoadingData = true;
                 }
             });
-
-            serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
-                $scope.model.failedMessagesStats = failedMessagesStats;
-            });
         };
     }]);
