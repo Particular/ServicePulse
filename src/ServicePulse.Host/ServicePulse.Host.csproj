@@ -140,6 +140,8 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
+    <Content Include="app\js\configuration\configuration.js" />
+    <Content Include="app\js\configuration\configuration.tpl.html" />
     <Content Include="app\js\directives\eat.click.js" />
     <Content Include="app\js\directives\ngClip.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />

@@ -1,0 +1,35 @@
+<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">Home</a> <span class="divider">/</span>
+        </li>
+        <li>Configuration</li>
+    </ul>
+    <hr>
+</div>
+<div class="row-fluid">
+    <div class="box span12">
+        <div class="box-header" data-original-title>
+            <h2><i class="fa fa-cog"></i><span class="break"></span>Endpoints Configuration</h2>
+        </div>
+        <div class="box-content">
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Host</th>
+                    <th>Latest Heartbeat</th>
+                    <th>Monitor</th>
+                </tr>
+                <tr ng-repeat="e in model.endpoints">
+                    <td>{{e.name}}</td>
+                    <td>{{e.host_display_name}}</td>
+                    <td ng-show="e.heartbeat_information"><sp-moment date="{{e.heartbeat_information.last_report_at}}" /></td>
+                    <td ng-show="!e.heartbeat_information">N/A</td>
+                    <td><input type="checkbox" ng-checked="e.monitor_heartbeat" ng-model="model.changes[e.id]" ng-change="update('{{e.id}}')"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
