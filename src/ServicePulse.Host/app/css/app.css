@@ -99,3 +99,8 @@
     color: #646464; 
     font-size: 14px;
 }
+
+.icon-archive-messages {
+    background-image: url('/img/archive-errors.png');
+    background-position: center;
+}
