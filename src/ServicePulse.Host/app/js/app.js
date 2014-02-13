@@ -43,10 +43,6 @@ angular.module('sc').controller('AppCtrl', [
             notifications.remove(notification);
         };
 
-        if (new Date() > new Date(2014, 5, 1)) {
-            notifications.pushSticky('<h4>Beta period has elapsed!</h4>Continued use is of this version of ServicePulse is unauthorized. To receive the latest and licensed release of ServicePulse please go to <a href="http://particular.net/downloads">http://particular.net/downloads</a>', 'info');
-        }
-
         $scope.$on('$routeChangeError', function(event, current, previous, rejection) {
             notifications.pushForCurrentRoute('Route change error', 'error', {}, { rejection: rejection });
         });
