@@ -26,7 +26,7 @@ angular.module('customChecks', [])
         };
         
         function load(page) {
-            serviceControlService.getCustomChecks(page).then(function (response) {
+            serviceControlService.getFailingCustomChecks(page).then(function (response) {
 
                 $scope.loadingData = false;
 

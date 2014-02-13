@@ -25,16 +25,16 @@ angular.module('services.serviceControlService', [])
                 });
             };
 
-            this.getTotalCustomChecks = function() {
-                return $http.head(scConfig.service_control_url + '/customchecks').then(function(response) {
+            this.getTotalFailingCustomChecks = function() {
+                return $http.head(scConfig.service_control_url + '/customchecks?status=fail').then(function(response) {
                     return response.headers('Total-Count');
                 });
             };
 
-            this.getCustomChecks = function(page) {
-                return $http.get(scConfig.service_control_url + '/customchecks?page=' + page).then(function(response) {
+            this.getFailingCustomChecks = function(page) {
+                return $http.get(scConfig.service_control_url + '/customchecks?status=fail&page=' + page).then(function (response) {
                     return {
-                        data: response.data,
+                        data: response.data, 
                         total: response.headers('Total-Count')
                     };
                 });

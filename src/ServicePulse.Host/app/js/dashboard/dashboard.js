@@ -23,7 +23,7 @@ angular.module('dashboard', [])
             failedMessageUpdated.resetToNow();
         });
 
-        serviceControlService.getTotalCustomChecks().then(function (response) {
+        serviceControlService.getTotalFailingCustomChecks().then(function (response) {
             $scope.model.number_of_failed_checks = response;
             customChecksUpdated.resetToNow();
         });

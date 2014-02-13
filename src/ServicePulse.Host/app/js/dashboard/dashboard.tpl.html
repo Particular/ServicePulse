@@ -5,19 +5,6 @@
     </ul>
     <hr>
 </div>
-
-<div class="row-fluid">
-    <div class="box span12">
-        <div class="box-header" data-original-title>
-            <h2><i class="fa fa-info-circle"></i><span class="break"></span>Summary statistics</h2>
-        </div>
-        <div class="box-content">
-            <div>Known Endpoints: 3 (hard codes!)</div>
-            <div>Active Endpoints: {{model.active_endpoints}}</div>
-            <div>Custom Checks: 2 (hard coded!)</div>
-        </div>
-    </div>
-</div>
 <div class="row-fluid">
     <div class="box span12">
         <div class="box-header">
@@ -28,6 +15,20 @@
             <sp-hud href="#/failedMessages" icon="fa fa-envelope" text="Failed Messages" total-failures="model.number_of_failed_messages"></sp-hud>
             <sp-hud href="#/customChecks" icon="fa fa-check" text="Custom Checks" total-failures="model.number_of_failed_checks"></sp-hud>
             <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="box span12">
+        <div class="box-header" data-original-title>
+            <h2><i class="fa fa-info-circle"></i><span class="break"></span>Summary statistics</h2>
+        </div>
+        <div class="box-content">
+            <ul>
+                <li><a href="#/endpoints">{{model.active_endpoints}} Active Endpoint(s)</a></li>
+                <li><a href="#/customChecks">{{model.number_of_failed_checks}} Failing custom check(s)</a></li>
+                <li><a href="#/failedMessages">{{model.number_of_failed_messages}} Failed message(s)</a></li>
+            </ul>
         </div>
     </div>
 </div>
