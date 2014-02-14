@@ -74,6 +74,12 @@
                     <div class="row-fluid scSelectableRow" ng-class="{rowSelected: row.selected == true}" ng-click="toggleRowSelect(row)" style="cursor: pointer;">
                         <div class="span1 check"><input type="checkbox" ng-disabled="row.retried || row.archived" ng-checked="row.selected"></div>
                         <div class="span11 check">
+                            <div class="span11">
+                                <a eat-click ng-if="row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-minus-square action_icon"></i> Hide stacktrace</a>
+                                <a eat-click ng-if="!row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-plus-square action_icon"></i> Show stacktrace</a>
+                                <a eat-click clip-copy data-clipboard-text="{{row.message_id}}" class="btn btn-small btn-link"><span><i class="fa fa-clipboard action_icon"></i> Copy Id to clipboard</span></a>
+                                <a eat-click tooltip="This only works if ServiceInsight is installed." class="btn btn-small btn-link" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
+                            </div>
                             <div class=" row-fluid">
                                 <div class="span10 rowText" title="Message Type: {{row.message_type}}">{{row.message_type | limitTo: 90}}<span ng-show="row.message_type.length > 90">...</span></div>
                                 <div class="span2 text-right"><sp-moment date="{{row.time_sent}}" /></div>
@@ -90,12 +96,6 @@
                                     <span ng-if="row.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
                                     <span ng-if="row.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
                                     <span ng-if="row.number_of_processing_attempts > 1" tooltip="This message has already failed {{row.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
-                                </div>
-                                <div class="span6 text-right">
-                                    <a eat-click ng-if="row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-minus-square action_icon"></i> Hide stacktrace</a>
-                                    <a eat-click ng-if="!row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-plus-square action_icon"></i> Show stacktrace</a>
-                                    <a eat-click clip-copy data-clipboard-text="{{row.message_id}}" class="btn btn-small btn-link"><span><i class="fa fa-clipboard action_icon"></i> Copy Id to clipboard</span></a>
-                                    <a eat-click tooltip="This only works if ServiceInsight is installed." class="btn btn-small btn-link" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
                                 </div>
                             </div>
                         </div>
