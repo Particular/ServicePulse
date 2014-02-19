@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{63786CE5-D899-43DF-AD4E-C2CA3BAC3FC2}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <ConfigurationName>Debug</ConfigurationName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <ConfigurationName>Release</ConfigurationName>
+  </PropertyGroup>
+  <Target Name="Clean">
+    <ItemGroup>
+      <FilesToDelete Include="$(ProjectDir)Build\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
+  <Target Name="Build" DependsOnTargets="Build" />
+  <Target Name="ReBuild" DependsOnTargets="Build" />
+  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(SolutionDir)..\buildsupport\PepitaPackage.dll" />
+  <Target Name="Build" DependsOnTargets="Clean">
+    <MakeDir Directories="$(ProjectDir)Build" />
+    <Copy SourceFiles="$(ProjectDir)ServicePulse.install.nuspec" DestinationFolder="$(ProjectDir)Build" />
+    <Copy SourceFiles="$(ProjectDir)chocolateyInstall.ps1" DestinationFolder="$(ProjectDir)Build\Tools" />
+    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(ProjectDir)Build" MetadataAssembly="$(SolutionDir)ServicePulse.Host\bin\$(ConfigurationName)\ServicePulse.Host.exe" />
+  </Target>
+  <ItemGroup>
+    <None Include="chocolateyInstall.ps1" />
+    <None Include="ServicePulse.install.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="readme.txt" />
+  </ItemGroup>
+</Project>

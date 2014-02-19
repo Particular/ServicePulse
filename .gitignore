@@ -23,7 +23,6 @@ x64/
 *.meta
 *.obj
 *.pch
-*.pdb
 *.pgc
 *.pgd
 *.rsp
@@ -111,3 +110,5 @@ UpgradeLog*.XML
 /installer/ServicePulse-cache
 /installer/res/Thumbs.db
 /installer/binaries
+
+src/Chocolatey/Build/*
