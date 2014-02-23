@@ -4,12 +4,12 @@
     <id>ServicePulse.install</id>
     <version>$version$</version>
     <title>ServicePulse.install (Install)</title>
-    <authors>$authors$</authors>
-    <owners>$authors$</owners>
+    <authors>Particular Software</authors>
+    <owners>Particular Software</owners>
     <projectUrl>http://particular.net/servicepulse</projectUrl>
     <iconUrl>http://particular.net/icons/servicepulse.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Production monitoring for your systems</description>
     <summary></summary>
     <tags>nservicebus particular chocolatey servicepulse</tags>
     <dependencies>

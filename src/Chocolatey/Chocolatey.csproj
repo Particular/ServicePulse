@@ -12,21 +12,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <ConfigurationName>Release</ConfigurationName>
   </PropertyGroup>
-  <Target Name="Clean">
-    <ItemGroup>
-      <FilesToDelete Include="$(ProjectDir)Build\**\*.*" />
-    </ItemGroup>
-    <Delete Files="@(FilesToDelete)" />
-  </Target>
-  <Target Name="Build" DependsOnTargets="Build" />
-  <Target Name="ReBuild" DependsOnTargets="Build" />
-  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(SolutionDir)..\buildsupport\PepitaPackage.dll" />
-  <Target Name="Build" DependsOnTargets="Clean">
-    <MakeDir Directories="$(ProjectDir)Build" />
-    <Copy SourceFiles="$(ProjectDir)ServicePulse.install.nuspec" DestinationFolder="$(ProjectDir)Build" />
-    <Copy SourceFiles="$(ProjectDir)chocolateyInstall.ps1" DestinationFolder="$(ProjectDir)Build\Tools" />
-    <PepitaPackage.CreatePackageTask NuGetBuildDirectory="$(ProjectDir)Build" MetadataAssembly="$(SolutionDir)ServicePulse.Host\bin\$(ConfigurationName)\ServicePulse.Host.exe" />
-  </Target>
   <ItemGroup>
     <None Include="chocolateyInstall.ps1" />
     <None Include="ServicePulse.install.nuspec">
@@ -36,4 +21,36 @@
   <ItemGroup>
     <Content Include="readme.txt" />
   </ItemGroup>
+  <Target Name="Build" DependsOnTargets="Build" />
+  <Target Name="ReBuild" DependsOnTargets="Build" />
+  <UsingTask 
+    TaskName="GitFlowVersionTask.GetVersion" 
+    AssemblyFile="$(SolutionDir)..\buildsupport\GitFlowVersion\GitFlowVersionTask.dll" />
+  <UsingTask 
+    TaskName="PepitaPackage.CreatePackageTask" 
+    AssemblyFile="$(SolutionDir)..\buildsupport\PepitaPackage.dll" />
+  <UsingTask
+    TaskName="MSBuild.Community.Tasks.FileUpdate" 
+    AssemblyFile="$(SolutionDir)..\buildsupport\MSBuild.Community.Tasks.dll" />
+  <Target Name="Build">
+    <GetVersion SolutionDirectory="$(SolutionDir)">
+      <Output TaskParameter="SemVer" PropertyName="SemVer" />
+    </GetVersion>
+    <ItemGroup>
+      <FilesToDelete Include="$(ProjectDir)Build\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+    <MakeDir Directories="$(ProjectDir)Build" />
+    <Copy 
+      SourceFiles="$(ProjectDir)$(SolutionName).install.nuspec" 
+      DestinationFolder="$(ProjectDir)Build" />
+    <Copy 
+      SourceFiles="$(ProjectDir)chocolateyInstall.ps1" 
+      DestinationFolder="$(ProjectDir)Build\Tools" />
+    <ItemGroup>
+      <InstallFile Include="$(ProjectDir)Build\Tools\chocolateyInstall.ps1" />
+    </ItemGroup>
+    <FileUpdate Files="@(InstallFile)" Regex="VERSION" ReplacementText="$(SemVer)" />
+    <CreatePackageTask NuGetBuildDirectory="$(ProjectDir)Build" Version="$(SemVer)" TargetDir="$(SolutionDir)..\nugets" />
+  </Target>
 </Project>
