@@ -1,6 +1,6 @@
 ﻿For testing
 
-cinst ServicePulse.install  -source "C:\Code\ServicePulse\nugets;http://chocolatey.org/api/v2" -force
+cinst ServicePulse.install  -source "C:\Code\ServicePulse\nugets;http://chocolatey.org/api/v2" -force -pre
 
 cuninst ServicePulse.install 
 
