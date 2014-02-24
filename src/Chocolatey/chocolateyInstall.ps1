@@ -1,1 +1,1 @@
-﻿Install-ChocolateyPackage 'ServicePulse.install' 'exe' '' 'https://github.com/Particular/ServicePulse/releases/download/VERSION/Particular.ServicePulse-VERSION.exe'
+﻿Install-ChocolateyPackage 'ServicePulse.install' 'exe' '' 'https://github.com/Particular/ServicePulse/releases/download/SemVer/Particular.ServicePulse-SemVer.exe'
