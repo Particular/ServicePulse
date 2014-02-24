@@ -7,7 +7,7 @@
     <authors>Particular Software</authors>
     <owners>Particular Software</owners>
     <projectUrl>http://particular.net/servicepulse</projectUrl>
-    <iconUrl>http://particular.net/icons/servicepulse.png</iconUrl>
+    <iconUrl>http://s3.amazonaws.com/nuget.images/ServicePulse_128.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Production monitoring for your systems</description>
     <summary></summary>
