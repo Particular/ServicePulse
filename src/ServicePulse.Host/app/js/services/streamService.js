@@ -8,17 +8,11 @@ angular.module('services.streamService', [])
 
         connection.received(function(data) {
 
-            $log.info(data);
-            
             for (var i in data.types) {
                 var type = data.types[i];
                 
-                $log.info("Dispatching event: " + type);
                 $rootScope.$broadcast(prefix + type, data.message);
             }
-            
-            $log.info("Payload:" + JSON.stringify(data.message));
-
         });
 
         connection.start()
