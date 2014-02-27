@@ -62,6 +62,7 @@
     <Compile Include="Commands\ServiceCommand.cs" />
     <Compile Include="Commands\UninstallCommand.cs" />
     <Compile Include="Commands\UpdateConfigCommand.cs" />
+    <Compile Include="Commands\UpdateVersionCommand.cs" />
     <Compile Include="Hosting\Host.cs">
       <SubType>Component</SubType>
     </Compile>

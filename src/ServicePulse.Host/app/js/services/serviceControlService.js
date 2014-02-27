@@ -4,6 +4,12 @@ angular.module('services.serviceControlService', [])
     .service('serviceControlService', [
         '$http', 'scConfig', 'notifications', function($http, scConfig, notifications) {
 
+            this.getVersion = function() {
+                return $http.get(scConfig.service_control_url).then(function(response) {
+                    return response.headers('X-Particular-Version');
+                });
+            };
+
             this.getEventLogItems = function() {
                 return $http.get(scConfig.service_control_url + '/eventlogitems').then(function(response) {
                     return response.data;
@@ -32,9 +38,9 @@ angular.module('services.serviceControlService', [])
             };
 
             this.getFailingCustomChecks = function(page) {
-                return $http.get(scConfig.service_control_url + '/customchecks?status=fail&page=' + page).then(function (response) {
+                return $http.get(scConfig.service_control_url + '/customchecks?status=fail&page=' + page).then(function(response) {
                     return {
-                        data: response.data, 
+                        data: response.data,
                         total: response.headers('Total-Count')
                     };
                 });

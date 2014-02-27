@@ -22,6 +22,7 @@ angular.module('sc', [
     'dashboard']);
 
 angular.module('sc')
+    .constant('version', '0.2.0-unstable147')
     .constant('scConfig', SC.config);
 
 angular.module('sc')
@@ -35,7 +36,13 @@ angular.module('sc')
     }]);
 
 angular.module('sc').controller('AppCtrl', [
-    '$scope', 'notifications', function($scope, notifications) {
+    '$scope', 'notifications', 'serviceControlService', 'version', function ($scope, notifications, serviceControlService, version) {
+
+        serviceControlService.getVersion().then(function(sc_version) {
+            $scope.SCVersion = sc_version;
+        });
+
+        $scope.Version = version;
 
         $scope.notifications = notifications;
 
