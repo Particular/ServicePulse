@@ -9,7 +9,26 @@
     {
         public override void Execute(HostArguments args)
         {
+            ExtractApp(args.OutputPath);
             UpdateVersion(args.OutputPath);
+        }
+
+        static void ExtractApp(string directoryPath)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+
+            using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\app.js"))
+            {
+                var destinationPath = Path.Combine(directoryPath, "js/app.js");
+
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
+
+                using (Stream file = File.OpenWrite(destinationPath))
+                {
+                    resourceStream.CopyTo(file);
+                    file.Flush();
+                }
+            }
         }
 
         static void UpdateVersion(string directoryPath)
