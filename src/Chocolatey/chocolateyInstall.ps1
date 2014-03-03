@@ -1,6 +1,15 @@
 ﻿$packageName = "ServicePulse"
-$url = "https://github.com/Particular/ServicePulse/releases/download/SemVer/Particular.ServicePulse-SemVer.exe"
 
+
+$url = gci -path "c:\ChocolateyResourceCache" -Filter "Particular.ServicePulse-*.exe" | select -first 1
+
+if($url){
+	$url = $url | Select -expandProperty FullName
+	"$url" 
+}
+else{
+	$url = "https://github.com/Particular/ServicePulse/releases/download/SemVer/Particular.ServicePulse-SemVer.exe"
+}
 try {
 
     $chocTempDir = Join-Path $env:TEMP "chocolatey"
@@ -15,7 +24,7 @@ try {
 
     Get-ChocolateyWebFile $packageName $file $url 
 	$msiArguments  ="/quiet  /L*V `"$logFile`""
-	Write-Host "Starting installer with arguments: $msiArguments";
+	Write-Host "Starting installer with arguments: $msiArguments"
     Start-ChocolateyProcessAsAdmin "$msiArguments" $file -validExitCodes 0
 
     Write-ChocolateySuccess $packageName
