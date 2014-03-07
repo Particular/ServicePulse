@@ -18,34 +18,40 @@ angular.module('sc', [
     'failedMessages',
     'endpoints',
     'customChecks',
+    'configuration',
     'dashboard']);
 
 angular.module('sc')
+    .constant('version', '0.2.0-unstable147')
     .constant('scConfig', SC.config);
 
 angular.module('sc')
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.otherwise({ redirectTo: '/dashboard' });
-    }]);
+}]);
 
 angular.module('sc')
     .run(['$rootScope', '$log', function ($rootScope, $log) {
         $rootScope.$log = $log;
     }]);
 
-angular.module('sc').controller('AppCtrl', ['$scope', 'notifications', function ($scope, notifications) {
+angular.module('sc').controller('AppCtrl', [
+    '$scope', 'notifications', 'serviceControlService', 'version', function ($scope, notifications, serviceControlService, version) {
 
-    $scope.notifications = notifications;
+        serviceControlService.getVersion().then(function(sc_version) {
+            $scope.SCVersion = sc_version;
+        });
 
-    $scope.removeNotification = function (notification) {
-        notifications.remove(notification);
-    };
-    
-    if (new Date() > new Date(2014, 5, 1)) {
-        notifications.pushSticky('<h4>Beta period has elapsed!</h4>Continued use is of this version of ServicePulse is unauthorized. To receive the latest and licensed release of ServicePulse please go to <a href="http://particular.net/downloads">http://particular.net/downloads</a>', 'info');
+        $scope.Version = version;
+
+        $scope.notifications = notifications;
+
+        $scope.removeNotification = function(notification) {
+            notifications.remove(notification);
+        };
+
+        $scope.$on('$routeChangeError', function(event, current, previous, rejection) {
+            notifications.pushForCurrentRoute('Route change error', 'error', {}, { rejection: rejection });
+        });
     }
-
-    $scope.$on('$routeChangeError', function (event, current, previous, rejection) {
-        notifications.pushForCurrentRoute('Route change error', 'error', {}, { rejection: rejection });
-    });
-}]);
+]);

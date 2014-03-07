@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D120B791-BD1B-4E06-B4E1-69801A73209B}</ProjectGuid>
@@ -59,6 +62,7 @@
     <Compile Include="Commands\ServiceCommand.cs" />
     <Compile Include="Commands\UninstallCommand.cs" />
     <Compile Include="Commands\UpdateConfigCommand.cs" />
+    <Compile Include="Commands\UpdateVersionCommand.cs" />
     <Compile Include="Hosting\Host.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -85,6 +89,7 @@
     <Content Include="app\css\style-responsive.css" />
     <Content Include="app\css\style.css" />
     <Content Include="app\fonts\fontawesome-webfont.svg" />
+    <Content Include="app\img\archive-errors.png" />
     <Content Include="app\img\arrows-active.png" />
     <Content Include="app\img\arrows-normal.png" />
     <Content Include="app\img\bg-input-focus.png" />
@@ -140,6 +145,8 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
+    <Content Include="app\js\configuration\configuration.js" />
+    <Content Include="app\js\configuration\configuration.tpl.html" />
     <Content Include="app\js\directives\eat.click.js" />
     <Content Include="app\js\directives\ngClip.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
@@ -154,9 +161,6 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\failed_messages\failedMessages.js" />
     <Content Include="app\js\endpoints\endpoints.js" />
-    <Content Include="app\js\failed_messages\JavaScript1.js" />
-    <Content Include="app\js\failed_messages\JavaScript2.js" />
-    <Content Include="app\js\failed_messages\JavaScript3.js" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />
@@ -215,13 +219,6 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
   <Import Project="$(SolutionDir)..\BuildSupport\GitFlowVersion\build\GitFlowVersionTask.targets" />
   <Import Project="$(SolutionDir)..\BuildSupport\RippleRestoreTask.targets" />
 </Project>

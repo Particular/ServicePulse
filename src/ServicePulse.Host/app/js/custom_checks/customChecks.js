@@ -26,7 +26,7 @@ angular.module('customChecks', [])
         };
         
         function load(page) {
-            serviceControlService.getCustomChecks(page).then(function (response) {
+            serviceControlService.getFailingCustomChecks(page).then(function (response) {
 
                 $scope.loadingData = false;
 
@@ -36,10 +36,6 @@ angular.module('customChecks', [])
                 if ($scope.model.data.length >= $scope.model.total) {
                     $scope.disableLoadingData = true;
                 }
-            });
-
-            serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
-                $scope.model.failedMessagesStats = failedMessagesStats;
             });
         };
     }]);
