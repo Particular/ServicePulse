@@ -17,9 +17,9 @@
         <div class="box-content">
             <div class="row-fluid">
                 <div class=" span2">
-                    <h3>Machines</h3>
+                    <h3>Hosts</h3>
                     <ul class="unstyled">
-                        <li ng-repeat="msg in model.failedMessagesStats['machines'].values" title="{{msg.range}}">
+                        <li ng-repeat="msg in model.failedMessagesStats['hosts'].values" title="{{msg.range}}">
                             {{msg.range | limitTo: 30}}<span ng-show="msg.range.length > 30">...</span> <strong>({{msg.hits}})</strong>
                         </li>
                     </ul>
