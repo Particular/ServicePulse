@@ -8,7 +8,7 @@ if($url){
 	"$url" 
 }
 else{
-	$url = "https://github.com/Particular/ServicePulse/releases/download/SemVer/Particular.ServicePulse-SemVer.exe"
+	$url = "https://github.com/Particular/$packageName/releases/download/{{ReleaseName}}/Particular.$packageName-{{FileVersion}}.exe"
 }
 try {
 
