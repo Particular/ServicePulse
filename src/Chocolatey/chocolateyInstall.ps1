@@ -1,7 +1,7 @@
 ﻿$packageName = "ServicePulse"
 
 
-$url = gci -path "c:\ChocolateyResourceCache" -Filter "Particular.ServicePulse-*.exe" | select -first 1
+$url = gci -path "c:\ChocolateyResourceCache" -Filter "Particular.ServicePulse-*.exe" -ErrorAction SilentlyContinue | select -first 1
 
 if($url){
 	$url = $url | Select -expandProperty FullName
