@@ -36,7 +36,7 @@
             var appJsPath = Path.Combine(directoryPath, "js/app.js");
             var appJsCode = File.ReadAllText(appJsPath);
             File.WriteAllText(appJsPath,
-                Regex.Replace(appJsCode, @"(constant\('version', ')([\w:/.]*)(')", "${1}" + GetFileVersion() + "$3"));
+                Regex.Replace(appJsCode, @"(constant\('version', ')([\w:/.-]*)(')", "${1}" + GetFileVersion() + "$3"));
         }
 
         static string GetFileVersion()
