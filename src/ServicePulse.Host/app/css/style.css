@@ -394,6 +394,8 @@ h6 {
   	min-height: 40px;
   	padding-right: 20px;
   	padding-left: 20px;
+    padding-top:15px;
+    padding-bottom: 10px;
 	background: url(../img/dbg.jpg);
 	border-left: 0px solid #0a0c0e;
 	border-right: 0px solid #0a0c0e;
