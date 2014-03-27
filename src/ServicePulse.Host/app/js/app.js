@@ -44,7 +44,7 @@ angular.module('sc').controller('AppCtrl', [
 
         serviceControlService.checkLicense().then(function(isValid) {
             if (!isValid) {
-                notifications.pushSticky('Your license has expired', 'error');
+                notifications.pushSticky('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>', 'error');
             }
         });
 
