@@ -33,7 +33,7 @@ angular.module('services.notifications', []).factory('notifications', ['$rootSco
   };
     
   notificationsService.pushSticky = function(message, type, interpolateParams, otherProperties) {
-      return addNotification(notifications.STICKY, prepareNotification(message, type, interpolateParams, otherProperties));
+      return addNotification(notifications.STICKY, angular.extend(prepareNotification(message, type, interpolateParams, otherProperties), { disableClosing: true }));
   };
 
   notificationsService.pushForCurrentRoute = function(message, type, interpolateParams, otherProperties) {
