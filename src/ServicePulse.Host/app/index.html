@@ -26,7 +26,6 @@
             <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
         </div>
     </noscript>
-    <div ng-include="'notifications.tpl.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
     <div class="navbar">
         <div class="navbar-inner">
             <div class="container-fluid">
@@ -49,6 +48,7 @@
             </div>
             <div id="content" class="span10">
                 <div class="clearfix"></div>
+                <div ng-include="'notifications.tpl.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
                 <div id="view" class="span10" ng-view></div>
             </div>
         </div>
