@@ -42,6 +42,12 @@ angular.module('sc').controller('AppCtrl', [
             $scope.SCVersion = sc_version;
         });
 
+        serviceControlService.checkLicense().then(function(isValid) {
+            if (!isValid) {
+                notifications.pushSticky('Your license has expired', 'error');
+            }
+        });
+
         $scope.Version = version;
 
         $scope.notifications = notifications;

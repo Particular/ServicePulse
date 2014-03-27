@@ -10,6 +10,15 @@ angular.module('services.serviceControlService', [])
                 });
             };
 
+            this.checkLicense = function () {
+                return $http.get(scConfig.service_control_url + '/').then(function (response) {
+                    if (response.data.license_status != "valid") {
+                        return false;
+                    }
+                    return true;
+                });
+            };
+
             this.getEventLogItems = function() {
                 return $http.get(scConfig.service_control_url + '/eventlogitems').then(function(response) {
                     return response.data;
