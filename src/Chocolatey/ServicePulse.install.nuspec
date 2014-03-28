@@ -13,7 +13,6 @@
     <summary></summary>
     <tags>nservicebus particular chocolatey servicepulse</tags>
     <dependencies>
-      <dependency id="DotNet4.5" version="4.5.20120822"  />
     </dependencies>
   </metadata>
 </package>
