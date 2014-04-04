@@ -1,4 +1,4 @@
-﻿ServicePulse by Particular Software Pty Ltd
+﻿ServicePulse by Particular Software
 
 USAGE:
    ServicePulse.Host.exe --install [options]
