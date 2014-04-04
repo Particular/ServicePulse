@@ -21,7 +21,7 @@
     <ROW Property="AppLogoIcon" Value="applogoicon" MultiBuildValue="DefaultBuild:ServiceInsight_Installer_Logo.png" Type="1" MsiKey="AppLogoIcon"/>
     <ROW Property="INST_URI" Value="http://localhost:33333/api/" Type="4"/>
     <ROW Property="INST_URI_PULSE" Value="http://localhost:9090" Type="4"/>
-    <ROW Property="Manufacturer" Value="NServiceBus Ltd"/>
+    <ROW Property="Manufacturer" Value="Particular Software"/>
     <ROW Property="ProductCode" Value="1033:{BAE534DC-0605-4EC0-8E26-561E9107485B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="ServicePulse [|ProductVersion]"/>
