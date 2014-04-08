@@ -32,8 +32,8 @@
   <Target Name="Build" DependsOnTargets="Build" />
   <Target Name="ReBuild" DependsOnTargets="Build" />
   <UsingTask TaskName="GitFlowVersionTask.GetVersion" AssemblyFile="$(SolutionDir)..\buildsupport\GitFlowVersion\GitFlowVersionTask.dll" />
-  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(SolutionDir)..\buildsupport\PepitaPackage.dll" />
-  <UsingTask TaskName="MSBuild.Community.Tasks.FileUpdate" AssemblyFile="$(SolutionDir)..\buildsupport\MSBuild.Community.Tasks.dll" />
+  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(ProjectDir)PepitaPackage.dll" />
+  <UsingTask TaskName="MSBuild.Community.Tasks.FileUpdate" AssemblyFile="$(ProjectDir)MSBuild.Community.Tasks.dll" />
   <Target Name="Build">
     <GetVersion SolutionDirectory="$(SolutionDir)">
       <Output TaskParameter="SemVer" PropertyName="SemVer" />
@@ -41,6 +41,7 @@
       <Output TaskParameter="MajorMinorPatch" PropertyName="MajorMinorPatch" />
       <Output TaskParameter="Stability" PropertyName="Stability" />
       <Output TaskParameter="PreReleasePartOne" PropertyName="PreReleasePartOne" />
+      <Output TaskParameter="NuGetVersion" PropertyName="NuGetVersion" />
     </GetVersion>
 
     <PropertyGroup Condition=" '$(Stability)' == 'Final' ">
@@ -69,5 +70,8 @@
     <FileUpdate Files="@(InstallFile)" Regex="{{ReleaseName}}" ReplacementText="$(ChocoVersion)" />
 
     <CreatePackageTask  NuGetBuildDirectory="$(ProjectDir)Build" Version="$(ChocoVersion)" TargetDir="$(SolutionDir)..\nugets" />
+    <FileUpdate Files="@(InstallFile)" Regex="SemVer" ReplacementText="$(SemVer)" />
+    <FileUpdate Files="@(InstallFile)" Regex="MajorMinorPatch" ReplacementText="$(MajorMinorPatch)" />
+    <CreatePackageTask NuGetBuildDirectory="$(ProjectDir)Build" Version="$(NuGetVersion)" TargetDir="$(SolutionDir)..\nugets" />
   </Target>
 </Project>
