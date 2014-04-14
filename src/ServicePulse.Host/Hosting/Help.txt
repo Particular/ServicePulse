@@ -1,0 +1,33 @@
+﻿ServicePulse by Particular Software
+
+USAGE:
+   ServicePulse.Host.exe --install [options]
+   ServicePulse.Host.exe --uninstall [options]
+   ServicePulse.Host.exe --extract [options]
+   ServicePulse.Host.exe [--url="http://localhost:9090"] [--serviceControlUrl="http://localhost:8080/api"]
+																
+INSTALL OPTIONS:
+
+{0}
+
+UNINSTALL OPTIONS:
+
+{1}
+
+EXTRACT OPTIONS:
+
+{2}
+
+EXAMPLES:
+   ServicePulse.Host.exe --install 
+     --serviceName="MyServicePulse" 
+     --displayName="My Pulse"
+     --description="Service for monitoring" 
+     --username="corp\serviceuser"
+     --password="p@ssw0rd!"
+	 --url="http://localhost:9090"
+	 --serviceControlUrl="http://localhost:8080/api"
+
+   ServicePulse.Host.exe --uninstall --serviceName="MyServicePulse"
+
+   ServicePulse.Host.exe --extract --serviceControlUrl="http://localhost:8080/api"

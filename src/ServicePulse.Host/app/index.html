@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en" ng-app="sc">
+<head>
+    <meta charset="utf-8">
+    <title>Service Pulse</title>
+    <meta name="description" content="An Operations Manager’s Best Friend">
+    <meta name="author" content="Particular Software">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link id="bootstrap-style" href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link id="base-style" href="css/style.css" rel="stylesheet">
+    <link id="base-style-responsive" href="css/style-responsive.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/select2.css" />
+    <link rel="shortcut icon" href="img/ServicePulse.ico">
+    <!--[if lt IE 9 ]>
+    <script type="text/javascript">
+        window.location = '/NoIE.html';
+    </script>
+    <![endif]-->
+</head>
+<body ng-controller="AppCtrl">
+    <noscript>
+        <div class="alert alert-block span10">
+            <h4 class="alert-heading">Warning!</h4>
+            <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
+        </div>
+    </noscript>
+    <div class="navbar">
+        <div class="navbar-inner">
+            <div class="container-fluid">
+                <a class="brand" href="/"> <img alt="Service Pulse" src="img/logo.png" /> <span class="hidden-phone"></span></a>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span2 main-menu-span">
+                <div class="nav-collapse sidebar-nav">
+                    <ul class="nav nav-tabs nav-stacked main-menu">
+                        <li><a href="/#/dashboard"><i class="fa fa-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span></a></li>
+                        <li><a href="/#/endpoints"><i class="fa fa-heart icon-white"></i><span class="hidden-tablet"> Endpoints Overview</span></a></li>
+                        <li><a href="/#/failedMessages"><i class="fa fa-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span></a></li>
+                        <li><a href="/#/customChecks"><i class="fa fa-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span></a></li>
+                        <li><a href="/#/configuration"><i class="fa fa-cog icon-white"></i><span class="hidden-tablet"> Configuration</span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="content" class="span10">
+                <div class="clearfix"></div>
+                <div ng-include="'notifications.tpl.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
+                <div id="view" class="span10" ng-view></div>
+            </div>
+        </div>
+    </div>
+    <script src="lib/jquery-1.10.2.min.js"></script>
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular/angular-route.js"></script>
+    <script src="lib/angular/angular-animate.js"></script>
+    <script src="lib/angular/angular-sanitize.js"></script>
+    <script src="lib/ng-infinite-scroll.min.js"></script>
+    <script src="lib/jquery.signalR-1.1.3.min.js"></script>
+    <script src="lib/page-width-functions.js"></script>
+    <script src="lib/ZeroClipboard.min.js"></script>
+    <script src="config.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/services/exceptionHandler.js"></script>
+    <script src="js/services/notifications.js"></script>
+    <script src="js/services/serviceControlService.js"></script>
+    <script src="js/services/streamService.js"></script>
+    <script src="js/directives/ngClip.js"></script>
+    <script src="js/directives/moment.js"></script>
+    <script src="js/directives/moment.min.js"></script>
+    <script src="js/directives/ui-bootstrap-custom-tpls-0.6.0.min.js"></script>
+    <script src="js/directives/hud.js"></script>
+    <script src="js/directives/eat.click.js"></script>
+    <script src="js/event_log_items/eventLogItems.js"></script>
+    <script src="js/dashboard/dashboard.js"></script>
+    <script src="js/failed_messages/failedMessages.js"></script>
+    <script src="js/custom_checks/customChecks.js"></script>
+    <script src="js/endpoints/endpoints.js"></script>
+    <script src="js/configuration/configuration.js"></script>
+</body>
+</html>

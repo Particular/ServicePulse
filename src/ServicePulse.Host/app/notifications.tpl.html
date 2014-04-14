@@ -1,0 +1,4 @@
+<div ng-class="['alert', 'alert-'+notification.type]" ng-repeat="notification in notifications.getCurrent()">
+    <button class="close" ng-click="removeNotification(notification)" ng-hide="disableClosing">x</button>
+    <span ng-bind-html="notification.message"></span>
+</div>

@@ -1,0 +1,106 @@
+/* app css stylesheet */
+
+.quick-button-animate-add {
+	-moz-animation: bounce 2s ease-out;
+    -moz-animation-iteration-count: 6;
+    -o-animation: bounce 2s ease-out;
+    -o-animation-iteration-count: 6;
+    -webkit-animation: bounce 2s ease-out;
+    -webkit-animation-iteration-count: 6;
+    animation: bounce 2s ease-out;
+    animation-iteration-count: 6;
+}
+
+@keyframes bounce {
+   0% { transform: scaleY(1.0); }
+   50% { transform: translateY(-30px) }
+   100% { transform: scaleY(1.0); }
+}
+
+@-moz-keyframes bounce {
+   0% { -moz-transform: scaleY(1.0); }
+   50% { -moz-transform: translateY(-30px) }
+   100% { -moz-transform: scaleY(1.0); }
+}
+
+@-o-keyframes bounce {
+   0% { -o-transform: scaleY(1.0); }
+   50% { -o-transform: translateY(-30px) }
+   100% { -o-transform: scaleY(1.0); }
+}
+
+@-webkit-keyframes bounce {
+   0% { -webkit-transform: scaleY(1.0); }
+   50% { -webkit-transform: translateY(-30px) }
+   100% { -webkit-transform: scaleY(1.0); }
+}
+
+.scRow {
+    border-bottom: 1px solid #e3e3e3;
+    margin-bottom: 2px;
+}
+
+.rowText {
+    color: #000000;
+}
+
+.scSelectableRow {
+    border: 1px solid #fcfcfc;
+}
+
+.rowSelected {
+    border: 1px solid #6BA6E1;
+    background-color: #f2f6fc !important;
+}
+
+.row-fluid .span1.check {
+    width: 0;
+    margin-left: 5px;
+}
+
+@media (min-width: 1200px) {
+    .row-fluid .span11.check {
+        width: 96.452991%;
+        *width: 96.452991%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+    .row-fluid .span11.check {
+        width: 96.489362%;
+        *width: 96.489362%;
+    }
+}
+
+.newMessages {
+    padding-top: 15px;
+    background-color: #f7f7f9;
+    border: 1px solid #e1e1e8;
+    cursor: pointer;
+}
+
+.newMessages:hover {
+    background-color: #DBDBDB;
+}
+
+.loading {
+    background-image: url('/img/loader_spinner.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 65px;
+}
+
+.icon-service-insight {
+    background-image: url('/img/ServiceInsight-Small.png');
+    background-position: center;
+}
+
+.action_icon {
+    color: #646464; 
+    font-size: 14px;
+}
+
+.icon-archive-messages {
+    background-image: url('/img/archive-errors.png');
+    background-position: center;
+}

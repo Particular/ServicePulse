@@ -1,9 +1,0 @@
-<h2>Heartbeats List</h2>
-<div class="row" ng-controller="heartbeats">
-    <div class="col-6 col-sm-6 col-lg-4" ng-repeat="heartbeat in model">
-        <div style="margin: 5px;" ng-class="{'alert-success': heartbeat.active, 'alert-danger': heartbeat.active == false}">
-            <h4>{{heartbeat.endpoint}}@{{heartbeat.machine}}</h4>
-            <p>Last Updated: <span moment="{{heartbeat.last_sent_at}}"></span></p>
-        </div>
-    </div>
-</div>
