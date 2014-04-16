@@ -12,6 +12,12 @@
         {
             var appJsPath = Path.Combine(directoryPath, "config.js");
             var appJsCode = File.ReadAllText(appJsPath);
+
+            if (File.Exists(appJsPath))
+            {
+                File.Delete(appJsPath);
+            }
+
             File.WriteAllText(appJsPath,
                 Regex.Replace(appJsCode, @"(service_control_url: ')([\w:/]*)(')", "$1" + serviceControlUrl + "$3"));
         }
