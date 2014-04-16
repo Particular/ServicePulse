@@ -23,6 +23,11 @@
 
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
+                if (File.Exists(destinationPath))
+                {
+                    File.Delete(destinationPath);
+                }
+
                 using (Stream file = File.OpenWrite(destinationPath))
                 {
                     resourceStream.CopyTo(file);
@@ -35,11 +40,6 @@
         {
             var appJsPath = Path.Combine(directoryPath, "js/app.js");
             var appJsCode = File.ReadAllText(appJsPath);
-
-            if (File.Exists(appJsPath))
-            {
-                File.Delete(appJsPath);
-            }
 
             var updatedContent = Regex.Replace(appJsCode, @"(constant\('version', ')([\w:/.-]*)(')", "${1}" + GetFileVersion() + "$3");
 
