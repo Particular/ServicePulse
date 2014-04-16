@@ -34,6 +34,11 @@
 
                     Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
+                    if (File.Exists(destinationPath))
+                    {
+                        File.Delete(destinationPath);
+                    }
+
                     using (Stream file = File.OpenWrite(destinationPath))
                     {
                         resourceStream.CopyTo(file);
