@@ -26,8 +26,8 @@ try {
 	$msiArguments  ="/quiet  /L*V `"$logFile`""
 	Write-Host "Starting installer with arguments: $msiArguments"
     Start-ChocolateyProcessAsAdmin "$msiArguments" $file -validExitCodes 0
-
     Write-ChocolateySuccess $packageName
+    Remove-Item $pathToVsixInstaller -ErrorAction SilentlyContinue 
 } catch {
 	Write-ChocolateyFailure $packageName $($_.Exception.Message)
 	throw
