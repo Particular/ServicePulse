@@ -50,7 +50,7 @@
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
     <MakeDir Directories="$(ProjectDir)Build" />
-    <Copy SourceFiles="$(ProjectDir)$(SolutionName).install.nuspec" DestinationFolder="$(ProjectDir)Build" />
+    <Copy SourceFiles="$(ProjectDir)ServicePulse.install.nuspec" DestinationFolder="$(ProjectDir)Build" />
     <Copy SourceFiles="$(ProjectDir)chocolateyInstall.ps1" DestinationFolder="$(ProjectDir)Build\Tools" />
     <Copy SourceFiles="$(ProjectDir)chocolateyUninstall.ps1" DestinationFolder="$(ProjectDir)Build\Tools" />
     <Copy SourceFiles="$(ProjectDir)elevatedUninstall.ps1" DestinationFolder="$(ProjectDir)Build\Tools" />
