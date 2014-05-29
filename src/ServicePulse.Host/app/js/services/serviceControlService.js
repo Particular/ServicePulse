@@ -34,6 +34,22 @@ angular.module('services.serviceControlService', [])
                 });
             };
 
+            this.getMessageBody = function(messageId) {
+                return $http.get(scConfig.service_control_url + '/messages/' + messageId + "/body").then(function(response) {
+                    return {
+                        data: response.data
+                    };
+                });
+            };
+
+            this.getMessageHeaders = function(messageId) {
+                return $http.get(scConfig.service_control_url + '/messages/search/' + messageId).then(function (response) {
+                    return {
+                        data: response.data
+                    };
+                });
+            };
+
             this.getTotalFailedMessages = function() {
                 return $http.head(scConfig.service_control_url + '/errors?status=unresolved').then(function(response) {
                     return response.headers('Total-Count');

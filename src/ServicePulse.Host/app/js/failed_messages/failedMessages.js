@@ -43,11 +43,24 @@ angular.module('failedMessages', [])
             });
         };
 
-        $scope.toggleStacktrace = function (row) {
-            row.showStacktrace = !row.showStacktrace;
+        $scope.togglePanel = function (row, panelnum) {
+
+            if (row.messageBody === undefined) {
+                serviceControlService.getMessageBody(row.message_id).then(function(message) {
+                    row.messageBody = message.data;
+                });
+            }
+
+            if (row.messageHeaders === undefined) {
+                serviceControlService.getMessageHeaders(row.message_id).then(function (message) {
+                    row.messageHeaders = message.data[0].headers;
+                });
+            }
+
+            row.panel = panelnum;
             return false;
         };
-
+        
         $scope.loadMoreResults = function () {
             load(); 
         };
