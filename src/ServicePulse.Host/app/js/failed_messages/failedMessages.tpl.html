@@ -74,9 +74,13 @@
                     <div class="row-fluid scSelectableRow" ng-class="{rowSelected: row.selected == true}" ng-click="toggleRowSelect(row)" style="cursor: pointer;">
                         <div class="span1 check"><input type="checkbox" ng-disabled="row.retried || row.archived" ng-checked="row.selected"></div>
                         <div class="span11 check">
-                            <div class="span11">
-                                <a eat-click ng-if="row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-minus-square action_icon"></i> Hide stacktrace</a>
-                                <a eat-click ng-if="!row.showStacktrace" class="btn btn-small btn-link" ng-click="toggleStacktrace(row)"><i class="fa fa-plus-square action_icon"></i> Show stacktrace</a>
+                            <div class="span11" ng-init="row.panel = 0">
+                                <a eat-click ng-show="row.panel === 1" class="btn btn-small btn-link" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide stacktrace</a>
+                                <a eat-click ng-hide="row.panel === 1" class="btn btn-small btn-link" ng-click="togglePanel(row, 1)"><i class="fa fa-plus-square action_icon"></i> Show stacktrace</a>
+                                <a eat-click ng-show="row.panel === 2" class="btn btn-small btn-link" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide headers</a>
+                                <a eat-click ng-hide="row.panel === 2" class="btn btn-small btn-link" ng-click="togglePanel(row, 2)"><i class="fa fa-plus-square action_icon"></i> Show headers</a>
+                                <a eat-click ng-show="row.panel === 3" class="btn btn-small btn-link" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide message body</a>
+                                <a eat-click ng-hide="row.panel === 3" class="btn btn-small btn-link" ng-click="togglePanel(row, 3)"><i class="fa fa-plus-square action_icon"></i> Show message body</a>
                                 <a eat-click clip-copy data-clipboard-text="{{row.message_id}}" class="btn btn-small btn-link"><span><i class="fa fa-clipboard action_icon"></i> Copy Id to clipboard</span></a>
                                 <a eat-click tooltip="This only works if ServiceInsight is installed." class="btn btn-small btn-link" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
                             </div>
@@ -86,8 +90,18 @@
                             </div>
                             <div class="row-fluid">
                                 <div class="span8">
-                                    <pre ng-if="!row.showStacktrace">{{row.exception.message}}</pre>
-                                    <pre ng-if="row.showStacktrace">{{row.exception.stack_trace}}</pre>
+                                    <pre ng-show="row.panel === 0">{{ row.exception.message }}</pre>
+                                    <pre ng-show="row.panel === 1">{{ row.exception.stack_trace }}</pre>
+                                    <pre ng-show="row.panel === 2">
+                                    <!-- Table -->
+                                        <table class="table">
+                                            <tr ng-repeat="header in row.messageHeaders">
+                                                <td nowrap="nowrap">{{header.key}}</td>
+                                                <td >{{header.value}}</td>
+                                            </tr>
+                                        </table>
+                                     </pre>
+                                    <pre ng-show="row.panel === 3">{{ row.messageBody }}</pre>
                                 </div>
                                 <div class="span4 text-right" title="In: {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}">in {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}</div>
                             </div>
