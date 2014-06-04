@@ -15,4 +15,9 @@
     <dependencies>
     </dependencies>
   </metadata>
+    <files>
+      <file src="chocolateyInstall.ps1" target="Tools" />
+      <file src="chocolateyUninstall.ps1" target="Tools" />
+      <file src="elevatedUninstall.ps1" target="Tools" />
+    </files>
 </package>

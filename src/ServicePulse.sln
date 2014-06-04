@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Host", "ServicePulse.Host\ServicePulse.Host.csproj", "{D120B791-BD1B-4E06-B4E1-69801A73209B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chocolatey", "Chocolatey\Chocolatey.csproj", "{63786CE5-D899-43DF-AD4E-C2CA3BAC3FC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		{D120B791-BD1B-4E06-B4E1-69801A73209B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D120B791-BD1B-4E06-B4E1-69801A73209B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D120B791-BD1B-4E06-B4E1-69801A73209B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63786CE5-D899-43DF-AD4E-C2CA3BAC3FC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63786CE5-D899-43DF-AD4E-C2CA3BAC3FC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63786CE5-D899-43DF-AD4E-C2CA3BAC3FC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63786CE5-D899-43DF-AD4E-C2CA3BAC3FC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
