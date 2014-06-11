@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="9.9" version="10.3" Modules="enterprise" RootPath="." Language="en" Id="{EB6913C3-A2D9-484A-9A49-E3D640F2A96C}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="9.9" version="10.6" Modules="enterprise" RootPath="." Language="en" Id="{EB6913C3-A2D9-484A-9A49-E3D640F2A96C}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiValidationComponent">
     <ROW Table="File" Column="Sequence" MinValue="1" MaxValue="2147483647" Description="Sequence with respect to the media images; order must track cabinet order." Options="0" ColumnType="3" ColumnIndex="7" ColumnSize="4" MsiKey="File#Sequence"/>
     <ROW Table="Media" Column="LastSequence" MinValue="0" MaxValue="2147483647" Description="File sequence number for the last file for this media." Options="0" ColumnType="3" ColumnIndex="1" ColumnSize="4" MsiKey="Media#LastSequence"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
+    <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_EXTERNALUIUNINSTALLERNAME" MultiBuildValue="DefaultBuild:aiui"/>
     <ROW Property="AI_FINDEXE_TITLE" Value="Select the installation package for [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
     <ROW Property="AI_MINDOTNETVERSION" MultiBuildValue="DefaultBuild:4.0" ValueLocId="-"/>
@@ -31,6 +32,8 @@
     <ROW Property="UpgradeCode" Value="{7682150C-DFE3-4CF0-B565-1C4BEF9A787E}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT40" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
@@ -127,7 +130,6 @@
     <ROW Dialog_="AdminInstallPointDlg" Control="Description" Type="Text" X="17" Y="105" Width="312" Height="65" Attributes="196611" Text="The [Wizard] will create a server image of [ProductName], at a specified network location.  Click &quot;[Text_Next]&quot; to continue or &quot;Cancel&quot; to exit the [Wizard]." Order="700" TextLocId="Metro.Control.Text.AdminWelcomeDlg#Description" MsiKey="AdminInstallPointDlg#Description"/>
     <ROW Dialog_="AdminInstallPointDlg" Control="BrowseButton" Type="ImageButton" X="311" Y="225" Width="21" Height="20" Attributes="3" Text="[browsebutton]" TextStyle="DlgFont8" Order="800" MsiKey="AdminInstallPointDlg#BrowseButton" ExtType="ImageButton" ExtData="..." ExtDataLocId="Metro.Control.ExtData.WelcomeDlg.BrowseTxt"/>
     <ROW Dialog_="AdminInstallPointDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="900"/>
-    <ROW Dialog_="AdminRegistrationDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="1100" MsiKey="AdminRegistrationDlg#ProductLogo"/>
     <ROW Dialog_="AdminWelcomeDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="600"/>
     <ROW Dialog_="BrowseDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="1200"/>
     <ROW Dialog_="CustomizeDlg" Control="QuickSelectionTree" Type="QuickSelectionTree" X="17" Y="144" Width="310" Height="99" Attributes="3" Property="CUSTOMIZEDLGQUICKSELECTIONTREE_1_PROP" Text="Control.Text.CustomizeDlg#QuickSelectionTree" Order="300" TextLocId="Control.Text.CustomizeDlg#QuickSelectionTree" MsiKey="CustomizeDlg#QuickSelectionTree" ExtType="QuickSelectionTree"/>
@@ -207,7 +209,6 @@
     <ROW Dialog_="VerifyRepairDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="700" MsiKey="VerifyRepairDlg#ProductLogo"/>
     <ROW Dialog_="VerifyRepairDlg" Control="AdvInst" Type="Text" X="5" Y="388" Width="74" Height="11" Attributes="196611" Text="Advanced Installer" TextStyle="[BrandingStyle]" Order="800" MsiKey="VerifyRepairDlg#AdvInst"/>
     <ATTRIBUTE name="DeletedRows" value="AdminInstallPointDlg#CompanyText@LicenseAgreementDlg#ProductNameTitle@InstallDlg#CompanyText@OutOfDiskDlg#CompanyText@PrepareDlg#ProductNameTitle@UserExit#CompanyText@PrepareDlg#CompanyText@ProgressDlg#ProductLogo@AdminBrowseDlg#CompanyText@InstallDlg#ProductNameTitle@AdminInstallPointDlg#ProductLogo@ProgressDlg#ProductNameTitle@ResumeDlg#ProductLogo@LicenseAgreementDlg#ProductLogo@ProgressDlg#CompanyText@LicenseAgreementDlg#CompanyText@OutOfRbDiskDlg#ProductLogo@AdminBrowseDlg#ProductLogo@OutOfRbDiskDlg#ProductNameTitle@FatalError#CompanyText@OutOfRbDiskDlg#CompanyText@AdminInstallPointDlg#ProductNameTitle@MsiRMFilesInUse#ProductLogo@OutOfDiskDlg#ProductLogo@AdminWelcomeDlg#ProductLogo@OutOfDiskDlg#ProductNameTitle@BrowseDlg#ProductLogo@MaintenanceTypeDlg#CompanyText@BrowseDlg#ProductNameTitle@BrowseDlg#CompanyText@ExitDialog#ProductLogo@CustomizeDlg#ProductLogo@ExitDialog#ProductNameTitle@ExitDialog#CompanyText@MaintenanceTypeDlg#ProductLogo@MaintenanceTypeDlg#ProductNameTitle@CustomizeDlg#ProductNameTitle@ResumeDlg#ProductNameTitle@CustomizeDlg#CompanyText@FilesInUse#CompanyText@PatchWelcomeDlg#ProductNameTitle@PatchWelcomeDlg#CompanyText@MaintenanceTypeDlg#MetroRepairButton@PatchWelcomeDlg#ProductLogo@ResumeDlg#CompanyText@AdminWelcomeDlg#ProductNameTitle@MaintenanceTypeDlg#MetroModifyButton@AdminWelcomeDlg#CompanyText@AdminInstallPointDlg#TitleIcon@AdminBrowseDlg#ProductNameTitle@DiskCostDlg#ProductLogo@DiskCostDlg#ProductNameTitle@FatalError#ProductNameTitle@MaintenanceTypeDlg#MetroRepairText@DiskCostDlg#CompanyText@FatalError#ProductLogo@FilesInUse#ProductLogo@FilesInUse#ProductNameTitle@MsiRMFilesInUse#ProductNameTitle@MsiRMFilesInUse#CompanyText@UserExit#ProductLogo@UserExit#ProductNameTitle@MaintenanceTypeDlg#MetroModifyText@VerifyRemoveDlg#CompanyText@VerifyRepairDlg#ProductNameTitle@VerifyRepairDlg#CompanyText@VerifyRemoveDlg#ProductNameTitle"/>
-    <ATTRIBUTE name="FixedSizeBitmaps" value="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Action="Enable" Condition="AGREE_CHECKBOX" MsiKey="InstallDlg#InstallButton#Enable#AGREE_CHECKBOX"/>
@@ -300,6 +301,7 @@
     <ROW Action="AI_DeleteRCadLzma" Type="51" Source="AI_DeleteRLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteRLzma" Type="1281" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
     <ROW Action="AI_DoRemoveExternalUIStub" Type="3585" Source="ExternalUICleaner.dll" Target="DoRemoveExternalUIStub" WithoutSeq="true"/>
+    <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
     <ROW Action="AI_EstimateExtractFiles" Type="1" Source="Prereq.dll" Target="EstimateExtractFiles"/>
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_ExtractFiles" Type="1025" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER"/>
@@ -321,7 +323,7 @@
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[ProgramMenuFolder]\Particular Software\"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
-    <ROW Action="Start_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
+    <ROW Action="Start_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
     <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
     <ROW Action="Validate_URL" Type="1" Source="Particular.CustomActions.CA.dll_1" Target="ValidateUrl" WithoutSeq="true"/>
@@ -367,16 +369,18 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="52"/>
-    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
+    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="52"/>
     <ROW Action="InstallDlg" Condition="AI_INSTALL" Sequence="1230" SeqType="3" MsiKey="WelcomeDlg"/>
     <ROW Action="MaintenanceTypeDlg" Condition="AI_MAINT" Sequence="1250" SeqType="3" MsiKey="MaintenanceTypeDlg"/>
     <ROW Action="AI_ChooseTextStyles" Sequence="74"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101"/>
+    <ROW Action="AI_DpiContentScale" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="(AI_DOTNET40_SEARCH = &quot;#1&quot;) OR (AI_DOTNET45_SEARCH &gt;= &quot;4.5&quot;)" Description="[ProductName] cannot be installed on systems with .NET Framework version lower than [AI_MINDOTNETVERSION]" DescriptionLocId="AI.LaunchCondition.DotNET" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]" DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegLocatorComponent">
