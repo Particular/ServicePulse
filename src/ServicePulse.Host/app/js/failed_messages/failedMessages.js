@@ -46,17 +46,20 @@ angular.module('failedMessages', [])
         $scope.togglePanel = function (row, panelnum) {
 
             if (row.messageBody === undefined) {
-                serviceControlService.getMessageBody(row.message_id).then(function(message) {
+                serviceControlService.getMessageBody(row.message_id).then(function (message) {
                     row.messageBody = message.data;
+                }, function() {
+                    row.bodyUnavailable = "message body unavailable, this may be due to security restrictions applied to ServiceControl";
                 });
             }
 
             if (row.messageHeaders === undefined) {
                 serviceControlService.getMessageHeaders(row.message_id).then(function (message) {
                     row.messageHeaders = message.data[0].headers;
+                }, function() {
+                    row.headersUnavailable = "message headers unavailable, this may be due to security restrictions applied to ServiceControl";
                 });
             }
-
             row.panel = panelnum;
             return false;
         };

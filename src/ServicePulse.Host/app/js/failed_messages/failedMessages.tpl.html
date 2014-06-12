@@ -92,16 +92,15 @@
                                 <div class="span8">
                                     <pre ng-show="row.panel === 0">{{ row.exception.message }}</pre>
                                     <pre ng-show="row.panel === 1">{{ row.exception.stack_trace }}</pre>
-                                    <pre ng-show="row.panel === 2">
-                                    <!-- Table -->
-                                        <table class="table">
-                                            <tr ng-repeat="header in row.messageHeaders">
-                                                <td nowrap="nowrap">{{header.key}}</td>
-                                                <td >{{header.value}}</td>
-                                            </tr>
-                                        </table>
-                                     </pre>
-                                    <pre ng-show="row.panel === 3">{{ row.messageBody }}</pre>
+                                    <table class="table" ng-show="row.panel === 2 && row.messageHeaders" >
+                                        <tr ng-repeat="header in row.messageHeaders">
+                                            <td nowrap="nowrap">{{header.key}}</td>
+                                            <td><pre>{{header.value}}</pre></td>
+                                        </tr>
+                                    </table>
+                                    <div class="alert alert-info" ng-show="row.panel === 2 && row.headersUnavailable">{{row.headersUnavailable}}</div>   
+                                    <pre ng-show="row.panel === 3 && row.messageBody">{{row.messageBody}}</pre>
+                                    <div class="alert alert-info" ng-show="row.panel === 3 && row.bodyUnavailable">{{row.bodyUnavailable}}</div> 
                                 </div>
                                 <div class="span4 text-right" title="In: {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}">in {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.machine}}</div>
                             </div>
