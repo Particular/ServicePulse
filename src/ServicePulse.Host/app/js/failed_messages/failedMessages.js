@@ -101,6 +101,7 @@ angular.module('failedMessages', [])
             delete $scope.model.failedMessagesStats; 
             $scope.model.total = 0;
             $scope.model.newMessages = 0;
+            $scope.refreshResults();
         };
 
         $scope.retrySelected = function () {
@@ -114,6 +115,7 @@ angular.module('failedMessages', [])
                     $scope.model.failedMessages[i].retried = true;
                 }
             }
+            $scope.refreshResults();
         };
         
         $scope.archiveSelected = function () {
@@ -158,6 +160,8 @@ angular.module('failedMessages', [])
             }
 
             $scope.model.newMessages++;
+            $scope.refreshResults();
+
         });
         
         streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
@@ -176,6 +180,7 @@ angular.module('failedMessages', [])
             }
 
             $scope.model.newMessages--;
+            $scope.refreshResults();
         });
         
         $scope.$on('$destroy', function () {
