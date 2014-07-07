@@ -112,7 +112,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
-    <ROW Name="Particular.CustomActions.CA.dll_1" SourcePath="..\src\packages\Particular.CustomActions\lib\net40\Particular.CustomActions.CA.dll"/>
+    <ROW Name="ServicePulse.Install.CustomActions.dll_1" SourcePath="..\installer\customactions\ServicePulse.Install.CustomActions.dll"/>
     <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
     <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
     <ROW Name="ServiceInsight_Installer_Logo.png" SourcePath="res\ServiceInsight_Installer_Logo.png"/>
@@ -326,7 +326,7 @@
     <ROW Action="Start_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
     <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
-    <ROW Action="Validate_URL" Type="1" Source="Particular.CustomActions.CA.dll_1" Target="ValidateUrl" WithoutSeq="true"/>
+    <ROW Action="Validate_URL" Type="1" Source="ServicePulse.Install.CustomActions.dll_1" Target="ValidateUrl" WithoutSeq="true"/>
     <ROW Action="Warning_ServiceControl" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
