@@ -8,18 +8,35 @@
     public class CustomActions
     {
         [CustomAction]
-        public static ActionResult ValidateUrl(Session session)
+        public static ActionResult CheckServicePulseUrl(Session session)
         {
-            Log(session, "Begin custom action ValidateUrl");
+            Log(session, "Begin custom action CheckServicePulseUrl");
+            string url = session.Get("INST_URI_PULSE");
+            session.Set("VALID_PULSE_URL", UrlIsValid(url, session) ? "TRUE" : "FALSE");
+            Log(session, "End custom action CheckServicePulseUrl");
+            return ActionResult.Success;
+        }
 
+        [CustomAction]
+        public static ActionResult CheckServiceControlUrl(Session session)
+        {
+            Log(session, "Begin custom action CheckServiceControlUrl");
+            string url = session.Get("INST_URI");
+            session.Set("VALID_CONTROL_URL", UrlIsValid(url,session) ? "TRUE" : "FALSE");
+            Log(session, "End custom action CheckServiceControlUrl");
+            return ActionResult.Success;
+        }
+
+
+        [CustomAction]
+        public static ActionResult ContactServiceControl(Session session)
+        {
+            Log(session, "Begin custom action ContactServiceControl");
             // getting URL from property
             string url = session.Get("INST_URI");
-
             var connectionSuccessful = false;
-
             try
             {
-
                 if (url == null)
                 {
                     return ActionResult.Success;
@@ -33,9 +50,7 @@
                     {
                         throw new Exception(response.StatusDescription);
                     }
-
                     string version = response.Headers["X-Particular-Version"];
-
                     if (!string.IsNullOrEmpty(version))
                     {
                         session.Set("REPORTED_VERSION", version.Split(' ').First());
@@ -48,20 +63,26 @@
             {
                 Log(session, ex.ToString());
             }
-
-            if (connectionSuccessful)
-            {
-                session.Set("VALID_URL", "Valid_Url");
-            }
-            else
-            {
-                session.Set("VALID_URL", "Invalid_Url");
-            }
-
-            Log(session, "End custom action ValidateUrl");
-
+            session.Set("CONTACT_SERVICECONTROL", connectionSuccessful ? "TRUE" : "FALSE");
+            Log(session, "End custom action ContactServiceControl");
             return ActionResult.Success;
         }
+
+        static bool UrlIsValid(string url, Session session)
+        {
+            Uri uri;
+            if (Uri.TryCreate(url, UriKind.Absolute, out uri))
+            {
+                if ((uri.Scheme == Uri.UriSchemeHttp) || (uri.Scheme == Uri.UriSchemeHttps))
+                {
+                    Log(session, string.Format("Url is valid - {0}", url));
+                    return true;
+                }
+            }
+            Log(session, string.Format("Url is invalid - {0}", url));
+            return false;
+        }
+
 
         static void Log(Session session, string message)
         {
