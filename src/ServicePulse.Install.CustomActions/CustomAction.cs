@@ -2,6 +2,7 @@
 {
     using System;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Net;
     using System.Security.Principal;
@@ -123,9 +124,9 @@
         {
            var pi = new ProcessStartInfo
            {
-               Verb = "runas", 
                Arguments = command, 
-               FileName = "netsh.exe",
+               FileName = Path.Combine(Environment.SystemDirectory, "netsh.exe"),
+               WindowStyle = ProcessWindowStyle.Hidden
            };
 
            using (var p = new Process {StartInfo = pi})
