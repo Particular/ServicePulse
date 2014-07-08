@@ -21,8 +21,9 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://particular.net/ServicePulse"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://particular.net/downloads"/>
     <ROW Property="AppLogoIcon" Value="applogoicon" MultiBuildValue="DefaultBuild:ServiceInsight_Installer_Logo.png" Type="1" MsiKey="AppLogoIcon"/>
+    <ROW Property="INST_PORT_PULSE" Value="9090" Type="4"/>
     <ROW Property="INST_URI" Value="http://localhost:33333/api/" Type="4"/>
-    <ROW Property="INST_URI_PULSE" Value="http://localhost:9090" Type="4"/>
+    <ROW Property="INST_URI_PULSE" Value="9090" Type="4"/>
     <ROW Property="Manufacturer" Value="Particular Software"/>
     <ROW Property="ProductCode" Value="1033:{BAE534DC-0605-4EC0-8E26-561E9107485B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
@@ -36,7 +37,7 @@
     <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
-    <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
+    <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1" DirectoryOptions="12"/>
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
@@ -44,16 +45,27 @@
     <ROW Component="AI_CustomARPName" ComponentId="{0F1C90D1-A696-4DB2-9737-BB96B63E50DF}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{DF00D24A-7668-4F3D-9629-2A1537091C3F}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{CD4BC5FC-47B0-4899-856E-C252440A24FB}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
+    <ROW Component="APPDIR" ComponentId="{C52555BD-B541-4AA9-BB71-4EA74F875CA3}" Directory_="APPDIR" Attributes="0"/>
+    <ROW Component="Nancy.Hosting.Self.dll" ComponentId="{4D5E7FBE-5306-4760-B8C3-C56A7F534C10}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.dll"/>
+    <ROW Component="Nancy.Hosting.Self.xml" ComponentId="{ECCAD97B-ECBE-4775-BC14-491AB4CA4DA8}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.xml" Type="0"/>
+    <ROW Component="Nancy.dll" ComponentId="{ECFAAAAD-0ECB-4140-8CCA-7906D3133776}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.dll"/>
+    <ROW Component="ParticularSoftware" ComponentId="{3D19C20F-940E-4A60-ACEF-ACDDF010F2D9}" Directory_="APPDIR" Attributes="4" KeyPath="ParticularSoftware"/>
     <ROW Component="ProductInformation" ComponentId="{E871FDAC-CF7D-45FA-A1C9-73006CE87216}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{7C9E09BA-EAB2-4EF3-B35C-E7497EE433DE}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="ServicePulse" ComponentId="{02519674-CE1F-48C0-8F22-78B2827C507D}" Directory_="APPDIR" Attributes="4" KeyPath="ServicePulse"/>
     <ROW Component="ServicePulse.Host.exe" ComponentId="{AE9BCD73-377B-49A1-812D-AEBB7013AA5F}" Directory_="APPDIR" Attributes="0" KeyPath="ServicePulse.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath ProductInformation SHORTCUTDIR ServicePulse.Host.exe"/>
+    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath APPDIR Nancy.Hosting.Self.dll Nancy.Hosting.Self.xml Nancy.dll ParticularSoftware ProductInformation SHORTCUTDIR ServicePulse ServicePulse.Host.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="ServicePulse"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="binaries\ServicePulse.Host.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="Nancy.Hosting.Self.dll" Component_="Nancy.Hosting.Self.dll" FileName="NancyH~1.dll|Nancy.Hosting.Self.dll" Attributes="0" SourcePath="binaries\Nancy.Hosting.Self.dll" SelfReg="false" NextFile="Nancy.Hosting.Self.xml"/>
+    <ROW File="Nancy.Hosting.Self.xml" Component_="Nancy.Hosting.Self.xml" FileName="NancyH~1.xml|Nancy.Hosting.Self.xml" Attributes="0" SourcePath="binaries\Nancy.Hosting.Self.xml" SelfReg="false" NextFile="Nancy.xml"/>
+    <ROW File="Nancy.dll" Component_="Nancy.dll" FileName="Nancy.dll" Attributes="0" SourcePath="binaries\Nancy.dll" SelfReg="false" NextFile="Nancy.Hosting.Self.dll"/>
+    <ROW File="Nancy.xml" Component_="Nancy.Hosting.Self.xml" FileName="Nancy.xml" Attributes="0" SourcePath="binaries\Nancy.xml" SelfReg="false" NextFile="ServicePulse.Host.pdb"/>
+    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="binaries\ServicePulse.Host.exe" SelfReg="false" NextFile="Nancy.dll" DigSign="true"/>
+    <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~1.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="binaries\ServicePulse.Host.pdb" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Options="3"/>
@@ -152,8 +164,8 @@
     <ROW Dialog_="InstallDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="1200" MsiKey="InstallDlg#ProductLogo"/>
     <ROW Dialog_="InstallDlg" Control="Text_3" Type="Text" X="17" Y="235" Width="140" Height="18" Attributes="65539" Property="TEXT_1_PROP_1_1" Text="ServiceControl Instance URI" Order="1300"/>
     <ROW Dialog_="InstallDlg" Control="Edit_2" Type="Edit" X="157" Y="234" Width="149" Height="18" Attributes="3" Property="INST_URI" Text="{260}" Order="1400"/>
-    <ROW Dialog_="InstallDlg" Control="Text_2" Type="Text" X="17" Y="195" Width="140" Height="18" Attributes="65539" Property="TEXT_1_PROP_1_1_1" Text="ServicePulse Instance URI" Order="1500"/>
-    <ROW Dialog_="InstallDlg" Control="Edit_3" Type="Edit" X="157" Y="195" Width="149" Height="18" Attributes="3" Property="INST_URI_PULSE" Text="{260}" Order="1600"/>
+    <ROW Dialog_="InstallDlg" Control="Text_2" Type="Text" X="17" Y="195" Width="140" Height="18" Attributes="65539" Property="TEXT_1_PROP_1_1_1" Text="ServicePulse Instance Port" Order="1500"/>
+    <ROW Dialog_="InstallDlg" Control="Edit_3" Type="Edit" X="157" Y="195" Width="149" Height="18" Attributes="19" Property="INST_PORT_PULSE" Text="{260}" Order="1600"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="ScrollableText" X="17" Y="106" Width="312" Height="243" Attributes="3" Property="EulaRead" Text="License.rtf" Order="600" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText_2" MsiKey="LicenseAgreementDlg#AgreementText"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="PrintBtn" Type="ImageButton" X="301" Y="77" Width="28" Height="28" Attributes="3" Text="[MetroPrintButton]" Order="700" MsiKey="LicenseAgreementDlg#PrintBtn" AssociatedCtrl="AgreementText" ExtType="ImageButton"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="AdvInst" Type="Text" X="5" Y="388" Width="74" Height="11" Attributes="65539" Text="Advanced Installer" TextStyle="[BrandingStyle]" Order="800" MsiKey="LicenseAgreementDlg#AdvInst"/>
@@ -253,7 +265,7 @@
     <ROW Dialog_="LicenseAgreementDlg" Control_="LicenseAgreementDlgDialogInitializer" Event="[STORE_DEFAULT_VISUAL_STYLE]" Argument="[AI_CONTROL_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="103"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="[AI_CONTROL_VISUAL_STYLE]" Argument="[STORE_DEFAULT_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="2"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="AgreeInstall" Event="[AI_CONTROL_VISUAL_STYLE]" Argument="[STORE_DEFAULT_VISUAL_STYLE]" Condition="AI_INSTALL AND AiLicenseAgreement" Ordering="99"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="[AiEventsControl]" Argument="Next" Condition="1 AND (VALID_PULSE_URL=&quot;TRUE&quot;) AND (VALID_CONTROL_URL=&quot;TRUE&quot;) AND (CONTACT_SERVICECONTROL=&quot;TRUE&quot;)" Ordering="212" MsiKey="InstallDlg#InstallButton#[AiEventsControl]#Next#1"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="[AiEventsControl]" Argument="Next" Condition="1 AND  (VALID_PORT=&quot;TRUE&quot;) AND (VALID_CONTROL_URL=&quot;TRUE&quot;) AND (CONTACT_SERVICECONTROL=&quot;TRUE&quot;)" Ordering="220" MsiKey="InstallDlg#InstallButton#[AiEventsControl]#Next#1"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Connect_SC" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;TRUE&quot; )" Ordering="97"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Warning_ServiceControl_Unavail_msg" Condition="CONTACT_SERVICECONTROL=&quot;FALSE&quot;" Ordering="99"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_1" Condition="CONTACT_SERVICECONTROL=&quot;FALSE&quot;" Ordering="98"/>
@@ -270,16 +282,17 @@
     <ROW Dialog_="MaintenanceTypeDlg" Control_="RepairButton" Event="[Text_Next]" Argument="[AI_Text_Next_Orig]" Condition="AI_MAINT" Ordering="1102" Options="2"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control_="Back" Event="[ButtonText_Next]" Argument="[AI_ButtonText_Next_Orig]" Condition="AI_MAINT" Ordering="0" Options="2"/>
     <ROW Dialog_="MaintenanceTypeDlg" Control_="Back" Event="[Text_Next]" Argument="[AI_Text_Next_Orig]" Condition="AI_MAINT" Ordering="1" Options="2"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Check_SP_URL" Condition="AI_INSTALL" Ordering="94"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Invalid_ServicePulseUrl_Msg" Condition="VALID_PULSE_URL=&quot;FALSE&quot;" Ordering="96"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_3" Condition="VALID_PULSE_URL=&quot;FALSE&quot;" Ordering="95"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Check_SC_URL" Condition="AI_INSTALL" Ordering="91"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="VALID_CONTROL_URL=&quot;FALSE&quot;" Ordering="93"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_4" Condition="VALID_CONTROL_URL=&quot;FALSE&quot;" Ordering="92"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Check_SC_URL" Condition="AI_INSTALL AND ( VALID_PORT = &quot;TRUE&quot; )" Ordering="94"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="VALID_CONTROL_URL=&quot;FALSE&quot;" Ordering="96"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_4" Condition="VALID_CONTROL_URL=&quot;FALSE&quot;" Ordering="95"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Check_SP_PORT" Condition="AI_INSTALL" Ordering="91"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Invalid_ServicePulseUrl_Msg" Condition="VALID_PORT = &quot;FALSE&quot;" Ordering="93"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_3" Condition="VALID_PORT = &quot;FALSE&quot;" Ordering="92"/>
     <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#MetroRepairButton#[AiEventsControl]#RepairButton#1@MaintenanceTypeDlg#MetroModifyButton#[AiEventsControl]#ChangeButton#1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
+    <ROW Directory_="APPDIR" Component_="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesCommit" WithoutSeq="true"/>
@@ -292,7 +305,7 @@
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl please verify the URI specified and that the service is running. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="Particular.ServicePulse"/>
-    <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="The URL specified for ServicePulse is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="The specified port  for ServicePulse is invalid. Please choose port between 1 and 49151 |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_4" Type="51" Source="CustomActionData" Target="The URL specified for ServiceControl is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
@@ -317,16 +330,17 @@
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
     <ROW Action="Check_SC_URL" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="CheckServiceControlUrl" WithoutSeq="true"/>
-    <ROW Action="Check_SP_URL" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="CheckServicePulseUrl" WithoutSeq="true"/>
+    <ROW Action="Check_SP_PORT" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="CheckPulsePort" WithoutSeq="true"/>
     <ROW Action="Connect_SC" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ContactServiceControl" WithoutSeq="true"/>
     <ROW Action="DetectService" Type="1" Source="aicustact.dll" Target="DetectService" Options="3" AdditionalSeq="AI_DATA_SETTER_2"/>
-    <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --description=&quot;Monitoring and operations for NServiceBus&quot; --url=[INST_URI_PULSE] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
+    <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --description=&quot;Monitoring and operations for NServiceBus&quot; --url=http://localhost:[INST_PORT_PULSE] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
     <ROW Action="Invalid_ServiceControlUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_4"/>
     <ROW Action="Invalid_ServicePulseUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_3"/>
     <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]&amp;localURL=[INST_URI_PULSE]" Options="1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[ProgramMenuFolder]\Particular Software\"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+    <ROW Action="SetUrlAcl" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="SetUrlAcl"/>
     <ROW Action="Start_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
     <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
@@ -348,7 +362,7 @@
     <ROW Action="AI_ResolveLocalizedCredentials" Sequence="52"/>
     <ROW Action="AI_GetArpIconPath" Sequence="51"/>
     <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1501"/>
-    <ROW Action="Launch_Url" Condition="( NOT Installed ) AND ( UILevel &lt;&gt; &quot;2&quot; )" Sequence="6403"/>
+    <ROW Action="Launch_Url" Condition="( NOT Installed ) AND ( UILevel &lt;&gt; &quot;2&quot; )" Sequence="6404"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99" Builds="DefaultBuild"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteCadLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="199" Builds="DefaultBuild"/>
@@ -361,13 +375,14 @@
     <ROW Action="AI_ExtractFiles" Sequence="3998" Builds="DefaultBuild"/>
     <ROW Action="AI_DATA_SETTER" Sequence="3997"/>
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
-    <ROW Action="Install_Service" Condition="( NOT Installed )" Sequence="6401"/>
+    <ROW Action="Install_Service" Condition="( NOT Installed )" Sequence="6402"/>
     <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
-    <ROW Action="Start_Service" Condition="( NOT Installed )" Sequence="6402"/>
+    <ROW Action="Start_Service" Condition="( NOT Installed )" Sequence="6403"/>
     <ROW Action="Uninstall_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) AND ( AI_SERVICE_STATE&lt;&gt;&quot;Not Found&quot; )" Sequence="1603"/>
     <ROW Action="DetectService" Sequence="1602"/>
     <ROW Action="AI_DATA_SETTER_2" Sequence="1601"/>
     <ROW Action="Stop_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) )" Sequence="211"/>
+    <ROW Action="SetUrlAcl" Condition="( NOT Installed )" Sequence="6401"/>
     <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
@@ -385,6 +400,11 @@
     <ROW Condition="(AI_DOTNET40_SEARCH = &quot;#1&quot;) OR (AI_DOTNET45_SEARCH &gt;= &quot;4.5&quot;)" Description="[ProductName] cannot be installed on systems with .NET Framework version lower than [AI_MINDOTNETVERSION]" DescriptionLocId="AI.LaunchCondition.DotNET" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]" DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiLockPermComponent">
+    <ROW LockObject="APPDIR" Table="CreateFolder" User="Users" Permission="1610809791"/>
+    <ROW LockObject="ParticularSoftware" Table="Registry" User="Everyone" Permission="131097"/>
+    <ROW LockObject="ServicePulse" Table="Registry" User="Users" Permission="1880096767"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegLocatorComponent">
     <ROW Signature_="AI_DotNet40SearchSgn" Root="2" Key="SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" Name="Install" Type="2"/>
@@ -404,8 +424,10 @@
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
     <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
     <ROW Registry="NoRepair" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoRepair" Value="#1" Component_="AI_CustomARPName"/>
+    <ROW Registry="ParticularSoftware" Root="2" Key="Software\ParticularSoftware" Name="+" Component_="ParticularSoftware"/>
     <ROW Registry="Path" Root="2" Key="Software\ParticularSoftware\ServicePulse" Name="Path" Value="[APPDIR]" Component_="ProductInformation"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Publisher" Value="[Manufacturer]" Component_="AI_CustomARPName"/>
+    <ROW Registry="ServicePulse" Root="2" Key="Software\ParticularSoftware\ServicePulse" Name="+" Component_="ServicePulse"/>
     <ROW Registry="URLInfoAbout" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLInfoAbout" Value="[ARPURLINFOABOUT]" Component_="AI_CustomARPName"/>
     <ROW Registry="URLUpdateInfo" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="URLUpdateInfo" Value="[ARPURLUPDATEINFO]" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode]" Component_="AI_CustomARPName"/>

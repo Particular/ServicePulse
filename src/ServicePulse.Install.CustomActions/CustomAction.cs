@@ -1,39 +1,30 @@
 ﻿namespace ServicePulse.Install.CustomActions
 {
     using System;
+    using System.Diagnostics;
     using System.Linq;
     using System.Net;
+    using System.Security.Principal;
     using Microsoft.Deployment.WindowsInstaller;
 
     public class CustomActions
     {
         [CustomAction]
-        public static ActionResult CheckServicePulseUrl(Session session)
-        {
-            Log(session, "Begin custom action CheckServicePulseUrl");
-            string url = session.Get("INST_URI_PULSE");
-            session.Set("VALID_PULSE_URL", UrlIsValid(url, session) ? "TRUE" : "FALSE");
-            Log(session, "End custom action CheckServicePulseUrl");
-            return ActionResult.Success;
-        }
-
-        [CustomAction]
         public static ActionResult CheckServiceControlUrl(Session session)
         {
             Log(session, "Begin custom action CheckServiceControlUrl");
-            string url = session.Get("INST_URI");
+            var url = session.Get("INST_URI");
             session.Set("VALID_CONTROL_URL", UrlIsValid(url,session) ? "TRUE" : "FALSE");
             Log(session, "End custom action CheckServiceControlUrl");
             return ActionResult.Success;
         }
-
 
         [CustomAction]
         public static ActionResult ContactServiceControl(Session session)
         {
             Log(session, "Begin custom action ContactServiceControl");
             // getting URL from property
-            string url = session.Get("INST_URI");
+            var url = session.Get("INST_URI");
             var connectionSuccessful = false;
             try
             {
@@ -46,11 +37,16 @@
                 request.Timeout = 2000;
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
+                    if (response == null)
+                    { 
+                        throw new Exception("No response");
+                    }
+
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
                         throw new Exception(response.StatusDescription);
                     }
-                    string version = response.Headers["X-Particular-Version"];
+                    var version = response.Headers["X-Particular-Version"];
                     if (!string.IsNullOrEmpty(version))
                     {
                         session.Set("REPORTED_VERSION", version.Split(' ').First());
@@ -68,6 +64,78 @@
             return ActionResult.Success;
         }
 
+        [CustomAction]
+        public static ActionResult SetUrlAcl(Session session)
+        {
+           Log(session, "Start custom action SetUrlAcl");
+           var port = session.Get("INST_PORT_PULSE"); 
+           var aclUrl =  string.Format("http://+:{0}/", port);
+           
+           RunNetsh(string.Format("http del urlacl url={0}", aclUrl));
+           var addUrlAclCommand = string.Format("http add urlacl url={0} user={1}", aclUrl, LocalizedNameForEveryOne());
+           var exitCode = RunNetsh(addUrlAclCommand);
+           if (exitCode != 0)
+           {
+                Log(session, string.Format("Error: 'netsh.exe {0}' returned {1}", addUrlAclCommand, exitCode));
+                Log(session, "End custom action SetUrlAcl");
+                return ActionResult.Failure;
+            }
+            Log(session, string.Format("Executed: 'netsh.exe {0}'", addUrlAclCommand));
+            Log(session, "End custom action SetUrlAcl");
+            return ActionResult.Success;
+        }
+
+        [CustomAction]
+        public static ActionResult CheckPulsePort(Session session)
+        {
+            try
+            {
+                Log(session, "Start custom action CheckPulsePort");
+                var port = session.Get("INST_PORT_PULSE");
+                UInt16 portNumber;
+                if (UInt16.TryParse(port, out portNumber))
+                {
+                    // Port numbder 49152 and above should no be used http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
+                    if (portNumber < 49152)
+                    {
+                        session.Set("VALID_PORT", "TRUE");
+                        return ActionResult.Success;
+                    }
+                }
+                session.Set("VALID_PORT", "FALSE");
+                return ActionResult.Success;
+            }
+            finally
+            {
+                Log(session, "End custom action CheckPulsePort");
+            }
+        }
+
+        //The Everyone group name changes based on locale 
+        static string LocalizedNameForEveryOne()
+        {
+            var everyoneSecurityIdentifier = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+            var account = (NTAccount) everyoneSecurityIdentifier.Translate(typeof(NTAccount));
+            return account.Value;
+        }
+
+        static int RunNetsh(string command)
+        {
+           var pi = new ProcessStartInfo
+           {
+               Verb = "runas", 
+               Arguments = command, 
+               FileName = "netsh.exe",
+           };
+
+           using (var p = new Process {StartInfo = pi})
+           {
+               p.Start();
+               p.WaitForExit();
+               return p.ExitCode;
+           }            
+        }
+
         static bool UrlIsValid(string url, Session session)
         {
             Uri uri;
@@ -82,7 +150,6 @@
             Log(session, string.Format("Url is invalid - {0}", url));
             return false;
         }
-
 
         static void Log(Session session, string message)
         {
