@@ -23,7 +23,7 @@ namespace ServicePulse.Host.Hosting
             ServiceName = "Particular.ServicePulse";
             DisplayName = "Particular ServicePulse";
             Description = "An Operations Manager's Best Friend in Particular.";
-            ServiceAccount = ServiceAccount.LocalSystem;
+            ServiceAccount = ServiceAccount.LocalService;
             Username = String.Empty;
             Password = String.Empty;
             OutputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
