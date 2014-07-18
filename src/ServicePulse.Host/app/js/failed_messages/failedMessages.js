@@ -49,7 +49,7 @@ angular.module('failedMessages', [])
                 serviceControlService.getMessageBody(row.message_id).then(function (message) {
                     row.messageBody = message.data;
                 }, function() {
-                    row.bodyUnavailable = "message body unavailable, this may be due to security restrictions applied to ServiceControl";
+                    row.bodyUnavailable = "message body unavailable";
                 });
             }
 
@@ -57,7 +57,7 @@ angular.module('failedMessages', [])
                 serviceControlService.getMessageHeaders(row.message_id).then(function (message) {
                     row.messageHeaders = message.data[0].headers;
                 }, function() {
-                    row.headersUnavailable = "message headers unavailable, this may be due to security restrictions applied to ServiceControl";
+                    row.headersUnavailable = "message headers unavailable";
                 });
             }
             row.panel = panelnum;
