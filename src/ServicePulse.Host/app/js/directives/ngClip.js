@@ -2,9 +2,9 @@
 
 angular.module('ngClipboard', []).
   value('ZeroClipboardConfig', {
-      path: '/lib/ZeroClipboard.swf'
+     swfpath: '/lib/ZeroClipboard.swf'
   }).
-  directive('clipCopy', ['ZeroClipboardConfig', function (zeroClipboardConfig) {
+  directive('clipCopy', ['ZeroClipboardConfig', function () {
       return {
           scope: {
               clipComplete: '&',
@@ -13,17 +13,16 @@ angular.module('ngClipboard', []).
           restrict: 'A',
           link: function (scope, element, attrs) {
               // Create the clip object
-              var clip = new ZeroClipboard(element, {
-                  moviePath: zeroClipboardConfig.path,
-                  allowScriptAccess: "always"
-              });
+              var clip = new ZeroClipboard(element);
 
-              clip.on('load', function() {
+              clip.on('load', function () {
+                  console.log("loaded");
                   if (angular.isDefined(attrs.clipLoad)) {
                       scope.$apply(scope.clipLoad);
                   }
               });
               clip.on('complete', function () {
+                  console.log("loaded");
                   if (angular.isDefined(attrs.clipComplete)) {
                       scope.$apply(scope.clipComplete);
                   }
