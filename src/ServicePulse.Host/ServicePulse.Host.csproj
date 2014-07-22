@@ -215,6 +215,7 @@
     <None Include="app\lib\angular\angular-route.min.js.map" />
     <None Include="app\lib\angular\angular-sanitize.min.js.map" />
     <None Include="app\lib\angular\angular.min.js.map" />
+    <None Include="app\lib\ZeroClipboard.min.map" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
