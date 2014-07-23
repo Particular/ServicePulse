@@ -178,8 +178,6 @@
     <Content Include="app\fonts\fontawesome-webfont.ttf" />
     <Content Include="app\fonts\fontawesome-webfont.woff" />
     <Content Include="app\lib\jquery-1.10.2.min.map" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="app\css\app.css" />
     <Content Include="app\js\app.js" />
     <Content Include="app\js\event_log_items\eventLogItems.js" />
@@ -192,16 +190,20 @@
     <Content Include="app\js\services\notifications.js" />
     <Content Include="app\js\services\serviceControlService.js" />
     <Content Include="app\js\services\streamService.js" />
-    <Content Include="app\lib\angular\angular.js">
-    </Content>
-    <Content Include="app\lib\angular\angular.min.js">
-    </Content>
+    <Content Include="app\lib\angular\angular.js" />
+    <Content Include="app\lib\angular\angular.min.js" />
     <Content Include="app\lib\bootstrap.js" />
     <Content Include="app\lib\bootstrap.min.js" />
     <Content Include="app\js\directives\moment.min.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\dashboard\dashboard.tpl.html" />
     <Content Include="app\js\endpoints\endpoints.tpl.html" />
+    <Content Include="app\fonts\FontAwesome.otf" />
+    <Content Include="app\lib\angular\angular-animate.min.js.map" />
+    <Content Include="app\lib\angular\angular-route.min.js.map" />
+    <Content Include="app\lib\angular\angular-sanitize.min.js.map" />
+    <Content Include="app\lib\angular\angular.min.js.map" />
+    <Content Include="app\lib\ZeroClipboard.min.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
@@ -210,12 +212,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app\fonts\FontAwesome.otf" />
-    <None Include="app\lib\angular\angular-animate.min.js.map" />
-    <None Include="app\lib\angular\angular-route.min.js.map" />
-    <None Include="app\lib\angular\angular-sanitize.min.js.map" />
-    <None Include="app\lib\angular\angular.min.js.map" />
-    <None Include="app\lib\ZeroClipboard.min.map" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
