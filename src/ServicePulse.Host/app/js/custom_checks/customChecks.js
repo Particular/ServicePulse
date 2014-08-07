@@ -4,7 +4,7 @@ angular.module('customChecks', [])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/customChecks', { templateUrl: 'js/custom_checks/customChecks.tpl.html', controller: 'CustomChecksCtrl' });
     }])
-    .controller('CustomChecksCtrl', ['$scope', 'serviceControlService', function ($scope, serviceControlService) {
+    .controller('CustomChecksCtrl', ['$scope', 'serviceControlService',  'streamService', function ($scope, serviceControlService, streamService) {
 
         $scope.model = { data: [], total: 0};
         $scope.loadingData = false;
@@ -25,6 +25,14 @@ angular.module('customChecks', [])
             serviceControlService.muteCustomChecks(row);
         };
         
+
+        streamService.subscribe($scope, 'CustomChecksUpdated', function (event) {
+            $scope.loadingData = true;
+            $scope.model = { data: [], total: 0 };
+            $scope.disableLoadingData = false;
+            load(1);
+        });
+
         function load(page) {
             serviceControlService.getFailingCustomChecks(page).then(function (response) {
 
