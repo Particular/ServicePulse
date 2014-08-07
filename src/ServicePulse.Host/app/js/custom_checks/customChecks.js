@@ -23,17 +23,21 @@ angular.module('customChecks', [])
 
         $scope.mute = function(row) {
             serviceControlService.muteCustomChecks(row);
+            reloadData();
         };
-        
 
         streamService.subscribe($scope, 'CustomChecksUpdated', function (event) {
-            $scope.loadingData = true;
-            $scope.model = { data: [], total: 0 };
-            $scope.disableLoadingData = false;
-            load(1);
+            reloadData();
         });
 
-        function load(page) {
+    function reloadData() {
+        $scope.loadingData = true;
+        $scope.model = { data: [], total: 0 };
+        $scope.disableLoadingData = false;
+        load(1);
+    }
+
+    function load(page) {
             serviceControlService.getFailingCustomChecks(page).then(function (response) {
 
                 $scope.loadingData = false;
