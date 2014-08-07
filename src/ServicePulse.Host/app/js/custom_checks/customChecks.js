@@ -23,12 +23,21 @@ angular.module('customChecks', [])
 
         $scope.mute = function(row) {
             serviceControlService.muteCustomChecks(row);
-            reloadData();
         };
 
-        streamService.subscribe($scope, 'CustomChecksUpdated', function (event) {
+        streamService.subscribe($scope, 'CustomChecksUpdated', function () {
             reloadData();
         });
+
+        streamService.subscribe($scope, 'CustomCheckDeleted', function () {
+            reloadData();
+        });
+
+        $scope.$on('$destroy', function () {
+            streamService.unsubscribe($scope, 'CustomChecksUpdated');
+            streamService.unsubscribe($scope, 'CustomCheckDeleted');
+        });
+
 
     function reloadData() {
         $scope.loadingData = true;
