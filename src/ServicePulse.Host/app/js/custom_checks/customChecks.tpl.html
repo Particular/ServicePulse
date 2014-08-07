@@ -23,7 +23,7 @@
                     </div>
                     <div class="row-fluid">
                         <div class="span9 text-info"><pre>{{item.failure_reason}}</pre></div>
-                        <div class="span3 text-right" title="In: {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}">in {{item.originating_endpoint.name}} on {{item.originating_endpoint.machine}}</div>
+                        <div class="span3 text-right" title="In: {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}}">in {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}}</div>
                     </div>
                     <div class="row-fluid">
                         <div class="span12 text-right"><a tooltip="Mute this custom check so it doesn't show up as an alert" class="btn btn-small btn-link" ng-click="mute(item)"><i class="icon-volume-off"></i> Mute</a></div>
