@@ -5,13 +5,6 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Host", "ServicePulse.Host\ServicePulse.Host.csproj", "{D120B791-BD1B-4E06-B4E1-69801A73209B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{F0C08802-4722-4E10-B898-D5A3AF34A13D}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Install.CustomActions", "ServicePulse.Install.CustomActions\ServicePulse.Install.CustomActions.csproj", "{7E47B904-EF48-4F26-AAB5-BE435BCDC696}"
 EndProject
 Global
