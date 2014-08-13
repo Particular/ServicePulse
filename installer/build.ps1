@@ -16,12 +16,11 @@ New-Item -Name "Binaries" -ItemType Directory -Force | Out-Null
 Get-ChildItem Binaries | Remove-Item -Force
 Copy-Item -Container ..\src\ServicePulse.Host\bin\Release\*.* -Destination .\Binaries -ErrorAction Stop
 
-
 $AdvancedInstallerPath = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Caphyon\Advanced Installer\"  | Select -ExpandProperty "Advanced Installer Path" 
 $AdvinstCLI = Join-Path -Path $AdvancedInstallerPath -ChildPath "bin\x86\AdvancedInstaller.com"
 
 $setupProjectFile = "ServicePulse.aip"
-$packageName = "Particular.ServicePulse-$PackageVersion.exe"
+$packageName = ("Particular.ServicePulse-{0}.exe" -f $PackageVersion)
 
 # MSI version must be in classic x.x.x.x format
 if ($PackageVersion -match "-") {

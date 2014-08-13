@@ -73,7 +73,7 @@
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="qh" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" EulaPathLocId="*"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="Output Package" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\Operations.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" UseLargeSchema="true" ExeName="ServicePulse"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="Output" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\Operations.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" UseLargeSchema="true" ExeName="ServicePulse"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
