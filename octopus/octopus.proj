@@ -48,9 +48,9 @@
       <MainFiles Include="$(ProjectDir)footer.md" />
       <MainFiles Include="$(ProjectDir)ReleaseNotesCompiler.CLI.exe" />
       <MainFiles Include="$(NuGetExePath)" />
-      <MainFiles Include="$(SolutionDir)..\Particular.ServicePulse*.exe" />
+      <MainFiles Include="$(SolutionDir)..\Artifacts\Particular.ServicePulse*.exe" />
 
-      <ContentFiles Include="$(SolutionDir)..\ServicePulse.install.*.nupkg" />
+      <ContentFiles Include="$(SolutionDir)..\Artifacts\ServicePulse.install.*.nupkg" />
     </ItemGroup>
 
     <Delete Files="@(FilesToDelete)" />
