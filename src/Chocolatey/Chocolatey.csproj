@@ -61,6 +61,7 @@
     </ItemGroup>
     <FileUpdate Files="@(InstallFile)" Regex="{{FileVersion}}" ReplacementText="$(SemVer)" />
     <FileUpdate Files="@(InstallFile)" Regex="{{ReleaseName}}" ReplacementText="$(ChocoVersion)" />
+    <FileUpdate Files="@(InstallFile)" Regex="{{MajorMinorPatch}}" ReplacementText="$(MajorMinorPatch)" />
     <CreatePackageTask NuGetBuildDirectory="$(ProjectDir)Output" Version="$(ChocoVersion)" TargetDir="$(SolutionDir)..\nugets" />
 
   </Target>
