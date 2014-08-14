@@ -37,16 +37,15 @@
   <Target Name="Build" DependsOnTargets="Clean">
     <GetVersion SolutionDirectory="$(SolutionDir)">
       <Output TaskParameter="SemVer" PropertyName="SemVer" />
-      <Output TaskParameter="Stability" PropertyName="Stability" />
+      <Output TaskParameter="BranchName" PropertyName="BranchName" />
       <Output TaskParameter="MajorMinorPatch" PropertyName="MajorMinorPatch" />
-      <Output TaskParameter="Stability" PropertyName="Stability" />
-      <Output TaskParameter="PreReleasePartOne" PropertyName="PreReleasePartOne" />
+      <Output TaskParameter="LegacySemVerPadded" PropertyName="LegacySemVerPadded" />
     </GetVersion>
-    <PropertyGroup Condition=" '$(Stability)' == 'Final' ">
+    <PropertyGroup Condition=" '$(BranchName)' == 'Master' ">
       <ChocoVersion>$(MajorMinorPatch)</ChocoVersion>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Stability)' != 'Final' ">
-      <ChocoVersion>$(MajorMinorPatch)-$(Stability)$(PreReleasePartOne)</ChocoVersion>
+    <PropertyGroup Condition=" '$(BranchName)' != 'Master' ">
+      <ChocoVersion>$(LegacySemVerPadded)</ChocoVersion>
     </PropertyGroup>
 
     
