@@ -45,9 +45,6 @@
     <ROW Component="AI_DisableModify" ComponentId="{DF00D24A-7668-4F3D-9629-2A1537091C3F}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{CD4BC5FC-47B0-4899-856E-C252440A24FB}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
     <ROW Component="APPDIR" ComponentId="{C52555BD-B541-4AA9-BB71-4EA74F875CA3}" Directory_="APPDIR" Attributes="0"/>
-    <ROW Component="Nancy.Hosting.Self.dll" ComponentId="{E6589644-C94A-42A2-A25E-BACC2C9E44DD}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.dll"/>
-    <ROW Component="Nancy.Hosting.Self.xml" ComponentId="{C7839FDE-D826-4E46-9C41-7CBEEDE2ABDB}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.xml" Type="0"/>
-    <ROW Component="Nancy.dll" ComponentId="{92BB4EF1-6CF7-4407-B7E1-EA0D0F2CAB8A}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.dll"/>
     <ROW Component="ParticularSoftware" ComponentId="{3D19C20F-940E-4A60-ACEF-ACDDF010F2D9}" Directory_="APPDIR" Attributes="4" KeyPath="ParticularSoftware"/>
     <ROW Component="ProductInformation" ComponentId="{E871FDAC-CF7D-45FA-A1C9-73006CE87216}" Directory_="APPDIR" Attributes="4" KeyPath="Version"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{7C9E09BA-EAB2-4EF3-B35C-E7497EE433DE}" Directory_="SHORTCUTDIR" Attributes="0"/>
@@ -55,16 +52,11 @@
     <ROW Component="ServicePulse.Host.exe" ComponentId="{AE9BCD73-377B-49A1-812D-AEBB7013AA5F}" Directory_="APPDIR" Attributes="0" KeyPath="ServicePulse.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath APPDIR Nancy.Hosting.Self.dll Nancy.Hosting.Self.xml Nancy.dll ParticularSoftware ProductInformation SHORTCUTDIR ServicePulse ServicePulse.Host.exe"/>
+    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath APPDIR ParticularSoftware ProductInformation SHORTCUTDIR ServicePulse ServicePulse.Host.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="ServicePulse"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="Nancy.Hosting.Self.dll" Component_="Nancy.Hosting.Self.dll" FileName="NancyH~1.dll|Nancy.Hosting.Self.dll" Attributes="0" SourcePath="binaries\Nancy.Hosting.Self.dll" SelfReg="false" NextFile="Nancy.Hosting.Self.xml"/>
-    <ROW File="Nancy.Hosting.Self.xml" Component_="Nancy.Hosting.Self.xml" FileName="NancyH~1.xml|Nancy.Hosting.Self.xml" Attributes="0" SourcePath="binaries\Nancy.Hosting.Self.xml" SelfReg="false" NextFile="Nancy.xml"/>
-    <ROW File="Nancy.dll" Component_="Nancy.dll" FileName="Nancy.dll" Attributes="0" SourcePath="binaries\Nancy.dll" SelfReg="false" NextFile="Nancy.Hosting.Self.dll"/>
-    <ROW File="Nancy.xml" Component_="Nancy.Hosting.Self.xml" FileName="Nancy.xml" Attributes="0" SourcePath="binaries\Nancy.xml" SelfReg="false" NextFile="ServicePulse.Host.pdb"/>
-    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="binaries\ServicePulse.Host.exe" SelfReg="false" NextFile="Nancy.dll" DigSign="true"/>
-    <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~1.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="binaries\ServicePulse.Host.pdb" SelfReg="false"/>
+    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="binaries\ServicePulse.Host.exe" SelfReg="false" DigSign="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
     <ROW RemoveFile="_" Options="3"/>
@@ -335,7 +327,7 @@
     <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --description=&quot;Monitoring and operations for NServiceBus&quot; --url=http://localhost:[INST_PORT_PULSE] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
     <ROW Action="Invalid_ServiceControlUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_4"/>
     <ROW Action="Invalid_ServicePulseUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_3"/>
-    <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]&amp;localURL=[INST_URI_PULSE]" Options="1"/>
+    <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]&amp;localURL=http://localhost:[INST_PORT_PULSE]" Options="1"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[ProgramMenuFolder]\Particular Software\"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
@@ -349,7 +341,7 @@
     <ROW Name="Operations_1.exe" SourcePath="res\Operations.ico" Index="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
-    <ROW IniFile="URL" FileName="Servic~1.url|ServicePulse Web Application.url" DirProperty="SHORTCUTDIR" Section="InternetShortcut" Key="URL" Value="[INST_URI_PULSE]" Action="0" Component_="ServicePulse.Host.exe"/>
+    <ROW IniFile="URL" FileName="Servic~1.url|ServicePulse Web Application.url" DirProperty="SHORTCUTDIR" Section="InternetShortcut" Key="URL" Value="http://localhost:[INST_PORT_PULSE]" Action="0" Component_="ServicePulse.Host.exe"/>
     <ROW IniFile="WorkingDirectory" FileName="Servic~1.url|ServicePulse Web Application.url" DirProperty="SHORTCUTDIR" Section="InternetShortcut" Key="WorkingDirectory" Value="[SHORTCUTDIR]" Action="0" Component_="ServicePulse.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">

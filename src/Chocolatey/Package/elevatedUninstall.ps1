@@ -1,5 +1,5 @@
 ﻿$productName = "ServicePulse";
-$version = "MajorMinorPatch";
+$version = "{{MajorMinorPatch}}";
 
 $app = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "$productName*"  -and ($_.Version -eq "$version") }
 if($app -eq $null) 
