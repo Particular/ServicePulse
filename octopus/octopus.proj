@@ -13,9 +13,9 @@
 
   <Target Name="EnsureNuGetExists" BeforeTargets="Build">
     <PropertyGroup>
-      <ErrorText>This project references NuGet.exe - TeamCity Agents should have it here %teamcity_agent.tools.dir%\NuGet.CommandLine.DEFAULT.nupkg\tools\Nuget.exe</ErrorText>
+      <ErrorText>This project references NuGet.exe - TeamCity Agents should have it here C:\buildagent\tools\NuGet.CommandLine.DEFAULT.nupkg\tools\Nuget.exe</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('$(teamcity_agent_tools_dir)\NuGet.CommandLine.DEFAULT.nupkg\tools\NuGet.exe')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\NuGet.CommandLine.2.8.2\tools\NuGet.exe'))" />
+    <Error Condition="!Exists('c:\buildagent\tools\NuGet.CommandLine.DEFAULT.nupkg\tools\Nuget.exe')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)packages\NuGet.CommandLine.2.8.2\tools\NuGet.exe'))" />
   </Target>
   
   <Target Name="Build">
@@ -28,7 +28,7 @@
       <BuildFolder>$(ProjectDir)Build\</BuildFolder>
       <OutputFolder>$(SolutionDir)..\OctopusPackage</OutputFolder>
 
-      <NuGetExePath>'$(teamcity_agent_tools_dir)\NuGet.CommandLine.DEFAULT.nupkg\tools\NuGet.exe'</NuGetExePath>
+      <NuGetExePath>'c:\buildagent\tools\NuGet.CommandLine.DEFAULT.nupkg\tools\Nuget.exe'</NuGetExePath>
 
       <NuGetCommand Condition=" '$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
       <NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">mono --runtime=v4.0.30319 "$(NuGetExePath)"</NuGetCommand>
