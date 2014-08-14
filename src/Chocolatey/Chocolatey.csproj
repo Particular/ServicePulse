@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{83786CE5-D899-43DF-AD4E-C2CA3BACFFC2}</ProjectGuid>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <ConfigurationName>Debug</ConfigurationName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <ConfigurationName>Release</ConfigurationName>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+	<None Include="Package\chocolateyInstall.ps1" />
+    <None Include="Package\chocolateyUninstall.ps1" />
+    <None Include="Package\elevatedUninstall.ps1" />
+    <None Include="Package\ServicePulse.install.nuspec" />
+  </ItemGroup>
+  <Target Name="ReBuild" DependsOnTargets="Build" />
+  <UsingTask TaskName="GitVersionTask.GetVersion" AssemblyFile="$(SolutionDir)..\buildsupport\GitVersionTask\GitVersionTask.dll" />
+  <UsingTask TaskName="PepitaPackage.CreatePackageTask" AssemblyFile="$(ProjectDir)PepitaPackage.dll" />
+  <UsingTask TaskName="MSBuild.Community.Tasks.FileUpdate" AssemblyFile="$(ProjectDir)MSBuild.Community.Tasks.dll" />
+  <Target Name="Clean">
+    <ItemGroup>
+      <FilesToDelete Include="$(ProjectDir)\Output`\**\*.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
+  <Target Name="Build" DependsOnTargets="Clean">
+    <GetVersion SolutionDirectory="$(SolutionDir)">
+      <Output TaskParameter="SemVer" PropertyName="SemVer" />
+      <Output TaskParameter="Stability" PropertyName="Stability" />
+      <Output TaskParameter="MajorMinorPatch" PropertyName="MajorMinorPatch" />
+      <Output TaskParameter="Stability" PropertyName="Stability" />
+      <Output TaskParameter="PreReleasePartOne" PropertyName="PreReleasePartOne" />
+    </GetVersion>
+    <PropertyGroup Condition=" '$(Stability)' == 'Final' ">
+      <ChocoVersion>$(MajorMinorPatch)</ChocoVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Stability)' != 'Final' ">
+      <ChocoVersion>$(MajorMinorPatch)-$(Stability)$(PreReleasePartOne)</ChocoVersion>
+    </PropertyGroup>
+
+    
+    <MakeDir Directories="$(ProjectDir)Output" />
+    <Copy SourceFiles="$(ProjectDir)Package\ServicePulse.install.nuspec" DestinationFolder="$(ProjectDir)Output" />
+    <Copy SourceFiles="$(ProjectDir)Package\chocolateyInstall.ps1" DestinationFolder="$(ProjectDir)Output\Tools" />
+    <Copy SourceFiles="$(ProjectDir)Package\chocolateyUninstall.ps1" DestinationFolder="$(ProjectDir)Output\Tools" />
+    <Copy SourceFiles="$(ProjectDir)Package\elevatedUninstall.ps1" DestinationFolder="$(ProjectDir)Output\Tools" />
+    <ItemGroup>
+      <InstallFile Include="$(ProjectDir)Output\Tools\chocolateyInstall.ps1" />
+      <InstallFile Include="$(ProjectDir)Output\Tools\chocolateyUninstall.ps1" />
+      <InstallFile Include="$(ProjectDir)Output\Tools\elevatedUninstall.ps1" />
+    </ItemGroup>
+    <FileUpdate Files="@(InstallFile)" Regex="{{FileVersion}}" ReplacementText="$(SemVer)" />
+    <FileUpdate Files="@(InstallFile)" Regex="{{ReleaseName}}" ReplacementText="$(ChocoVersion)" />
+    <CreatePackageTask NuGetBuildDirectory="$(ProjectDir)Output" Version="$(ChocoVersion)" TargetDir="$(SolutionDir)..\nugets" />
+
+  </Target>
+</Project>

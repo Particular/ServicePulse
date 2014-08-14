@@ -1,8 +1,7 @@
 ﻿For testing
 
-cinst ServicePulse.install  -source "C:\Code\ServicePulse\nugets;http://chocolatey.org/api/v2" -force -pre
-cinst ServicePulse.install  -source "C:\Code\ServicePulse\nugets" -force -pre
+cinst ServiceMatrix.install  -source "C:\Code\ServiceMatrix\nugets;http://chocolatey.org/api/v2" -force -pre
 
-cuninst ServicePulse.install 
+cuninst ServiceMatrix.install 
 
-Here is an actual release https://github.com/Particular/ServicePulse/releases/download/1.0.0-Beta3/Particular.ServicePulse-1.0.0-Beta3.exe
+Here is an actual release https://github.com/Particular/ServiceMatrix/releases/download/2.0.0-Beta3/Particular.ServiceMatrix-2.0.0-Beta3.exe
