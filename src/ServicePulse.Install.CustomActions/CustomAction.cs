@@ -73,7 +73,10 @@
            var aclUrl =  string.Format("http://+:{0}/", port);
            
            RunNetsh(string.Format("http del urlacl url={0}", aclUrl));
-           var addUrlAclCommand = string.Format("http add urlacl url={0} user={1}", aclUrl, LocalizedNameForEveryOne());
+
+           // sddl=D:(A;;GX;;;WD) maps to the same as setting user=Everyone  
+           // user=everyone fails if the OS langauge is not English,  localised look of NTAccout fails as MSI is set to English US 
+           var addUrlAclCommand = string.Format("http add urlacl url={0} sddl=D:(A;;GX;;;WD)", aclUrl);
            var exitCode = RunNetsh(addUrlAclCommand);
            if (exitCode != 0)
            {
@@ -110,14 +113,6 @@
             {
                 Log(session, "End custom action CheckPulsePort");
             }
-        }
-
-        //The Everyone group name changes based on locale 
-        static string LocalizedNameForEveryOne()
-        {
-            var everyoneSecurityIdentifier = new SecurityIdentifier(WellKnownSidType.WorldSid, null);
-            var account = (NTAccount) everyoneSecurityIdentifier.Translate(typeof(NTAccount));
-            return account.Value;
         }
 
         static int RunNetsh(string command)
