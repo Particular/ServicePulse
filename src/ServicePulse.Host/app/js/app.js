@@ -22,7 +22,7 @@ angular.module('sc', [
     'dashboard']);
 
 angular.module('sc')
-    .constant('version', '1.1.0')
+    .constant('version', '1.2.0-unstable.0+0.Branch.develop.Sha.aaead68b73a6929ce05f3751e3222856e237037e')
     .constant('scConfig', SC.config);
 
 angular.module('sc')

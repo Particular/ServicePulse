@@ -5,7 +5,6 @@
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Security.Principal;
     using Microsoft.Deployment.WindowsInstaller;
 
     public class CustomActions
@@ -75,7 +74,7 @@
            RunNetsh(string.Format("http del urlacl url={0}", aclUrl));
 
            // sddl=D:(A;;GX;;;WD) maps to the same as setting user=Everyone  
-           // user=everyone fails if the OS langauge is not English,  localised look of NTAccout fails as MSI is set to English US 
+           // user=everyone fails if the OS langauge is not English,  localised lookup of NTAccount fails as MSI is set to English US 
            var addUrlAclCommand = string.Format("http add urlacl url={0} sddl=D:(A;;GX;;;WD)", aclUrl);
            var exitCode = RunNetsh(addUrlAclCommand);
            if (exitCode != 0)
@@ -99,7 +98,7 @@
                 UInt16 portNumber;
                 if (UInt16.TryParse(port, out portNumber))
                 {
-                    // Port numbder 49152 and above should no be used http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
+                    // Port number 49152 and above should no be used http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
                     if (portNumber < 49152)
                     {
                         session.Set("VALID_PORT", "TRUE");
