@@ -56,7 +56,7 @@
             {
                 var fileVersionAttribute = (AssemblyInformationalVersionAttribute)customAttributes[0];
                 var informationalVersion = fileVersionAttribute.InformationalVersion;
-                return informationalVersion.Split(' ')[0];
+                return informationalVersion.Split('+')[0];
             }
 
             return typeof(AbstractCommand).Assembly.GetName().Version.ToString(4);
