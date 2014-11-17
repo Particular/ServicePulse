@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Text.RegularExpressions;
     using Microsoft.Deployment.WindowsInstaller;
 
     public class CustomActions
@@ -112,6 +113,37 @@
             {
                 Log(session, "End custom action CheckPulsePort");
             }
+        }
+       
+        [CustomAction]
+        public static ActionResult ReadServiceControlUrlFromConfigJS(Session session)
+        {
+            try
+            {
+                Log(session, "Start custom action ReadServiceControlUrlFromConfigJS");
+                var targetPath = session.Get("APPDIR");
+                var configJsPath = Path.Combine(targetPath, @"app\config.js");
+                var uri = @"http://localhost:33333/api";
+
+                if (File.Exists(configJsPath))
+                {
+                    var pattern = new Regex(@"service_control_url:\s*'(?<sc_uri>https?://.*/api)'", RegexOptions.IgnoreCase);
+                    var matches = pattern.Match(File.ReadAllText(configJsPath));
+                    if (matches.Success)
+                    {
+                        uri = matches.Groups["sc_uri"].Value;
+                        Log(session, string.Format(@"Extracted {0} from existing config.js", uri));
+                    }
+                }
+                session.Set("INST_URI", uri);
+                return ActionResult.Success;
+            }
+            finally
+            {
+                Log(session, "End custom action ReadServiceControlUrlFromConfigJS");
+            }
+
+
         }
 
         static int RunNetsh(string command)
