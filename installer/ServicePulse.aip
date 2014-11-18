@@ -23,9 +23,9 @@
     <ROW Property="AppLogoIcon" Value="applogoicon" MultiBuildValue="DefaultBuild:ServiceInsight_Installer_Logo.png" Type="1" MsiKey="AppLogoIcon"/>
     <ROW Property="IGNORE_SERVICECONTROL_OFFLINE" Value="IDNO"/>
     <ROW Property="INST_PORT_PULSE" Value="9090" Type="4"/>
-    <ROW Property="INST_URI" Value="http://localhost:33333/api/" Type="4"/>
+    <ROW Property="INST_URI" Value="http://localhost:33333/api/"/>
     <ROW Property="Manufacturer" Value="Particular Software"/>
-    <ROW Property="ProductCode" Value="1033:{BAE534DC-0605-4EC0-8E26-561E9107485B} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{2C187DE8-0934-47D5-911D-77D57384B243} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="ServicePulse [|ProductVersion]"/>
     <ROW Property="ProductVersion" Value="1.0.0" Type="32"/>
@@ -67,14 +67,11 @@
     <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="binaries\ServicePulse.Host.exe" SelfReg="false" NextFile="Nancy.dll" DigSign="true"/>
     <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~1.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="binaries\ServicePulse.Host.pdb" SelfReg="false"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.AiRemoveFileComponent">
-    <ROW RemoveFile="_" Options="3"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="qh" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" EulaPathLocId="*"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="Output" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\Operations.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" UseLargeSchema="true" ExeName="ServicePulse"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="Output" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\Operations.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" UseLargeSchema="true" ExeName="ServicePulse" UACExecutionLevel="2"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
@@ -98,11 +95,6 @@
     <ROW Fragment="VerifyRepairDlg.aip" Path="&lt;AI_THEMES&gt;surface\fragments\VerifyRepairDlg.aip"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiActionTextComponent">
-    <ROW Action="AI_AiRemoveFilesCommit" Description="Executing file removal operations" Template="Executing file removal: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesCommit" TemplateLocId="ActionText.Template.AI_AiRemoveFilesCommit"/>
-    <ROW Action="AI_AiRemoveFilesDeferred_Permanent" Description="Preparing files for removal" Template="Preparing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred_Permanent" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred_Permanent"/>
-    <ROW Action="AI_AiRemoveFilesDeferred_Undoable" Description="Preparing files for removal" Template="Preparing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesDeferred_Undoable" TemplateLocId="ActionText.Template.AI_AiRemoveFilesDeferred_Undoable"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Description="Preparing files for removal" Template="Preparing file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesImmediate" TemplateLocId="ActionText.Template.AI_AiRemoveFilesImmediate"/>
-    <ROW Action="AI_AiRemoveFilesRollback" Description="Restoring removed files" Template="Restoring file: [1]" DescriptionLocId="ActionText.Description.AI_AiRemoveFilesRollback" TemplateLocId="ActionText.Template.AI_AiRemoveFilesRollback"/>
     <ROW Action="AI_DeleteLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
     <ROW Action="AI_DeleteRLzma" Description="Deleting files extracted from archive" DescriptionLocId="ActionText.Description.AI_DeleteLzma" TemplateLocId="-"/>
     <ROW Action="AI_ExtractFiles" Description="Extracting files from archive" DescriptionLocId="ActionText.Description.AI_ExtractLzma" TemplateLocId="-"/>
@@ -116,7 +108,6 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="ExternalUICleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ExternalUICleaner.dll"/>
     <ROW Name="Prereq.dll" SourcePath="&lt;AI_CUSTACTS&gt;Prereq.dll"/>
-    <ROW Name="ResourceCleaner.dll" SourcePath="&lt;AI_CUSTACTS&gt;ResourceCleaner.dll"/>
     <ROW Name="ServiceInsight_Installer_Logo.png" SourcePath="res\ServiceInsight_Installer_Logo.png"/>
     <ROW Name="ServicePulse.Install.CustomActions.CA.dll_1" SourcePath="customactions\ServicePulse.Install.CustomActions.CA.dll"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
@@ -156,14 +147,14 @@
     <ROW Dialog_="FilesInUse" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="900"/>
     <ROW Dialog_="InstallDlg" Control="Bitmap" Type="Bitmap" X="0" Y="0" Width="345" Height="400" Attributes="1" Text="[Background]" Order="100" MsiKey="InstallDlg#Bitmap"/>
     <ROW Dialog_="InstallDlg" Control="Description" Type="Text" X="17" Y="117" Width="299" Height="17" Attributes="589827" Text="Setup requires [PrimaryVolumeSpaceRequired] in:" Order="500" TextLocId="Control.Text.InstallDlg#DescWithSize" MsiKey="InstallDlg#Description"/>
-    <ROW Dialog_="InstallDlg" Control="FolderEdit" Type="PathEdit" X="17" Y="133" Width="290" Height="20" Attributes="7" Property="APPDIR" Text="Control.Text.InstallDlg#Edit_1" TextStyle="[InputCtrlFont]" Order="600" TextLocId="Control.Text.InstallDlg#Edit_1" MsiKey="InstallDlg#FolderEdit"/>
+    <ROW Dialog_="InstallDlg" Control="FolderEdit" Type="PathEdit" X="17" Y="133" Width="290" Height="20" Attributes="7" Property="APPDIR" Text="Control.Text.InstallDlg#Edit_1" TextStyle="[InputCtrlFont]" Order="600" TextLocId="Control.Text.InstallDlg#Edit_1" MsiKey="InstallDlg#FolderEdit" ExtAttributes="1"/>
     <ROW Dialog_="InstallDlg" Control="Browse" Type="ImageButton" X="311" Y="133" Width="21" Height="20" Attributes="3" Text="[browsebutton]" TextStyle="[MetroButtonText]" Order="700" MsiKey="InstallDlg#Browse" ExtType="ImageButton" ExtData="..." ExtDataLocId="Metro.Control.ExtData.WelcomeDlg.BrowseTxt"/>
     <ROW Dialog_="InstallDlg" Control="YouMustAgreeCtrl" Type="Hyperlink" X="18" Y="284" Width="311" Height="33" Attributes="65539" Text="You must agree to the &lt;a href=&quot;&quot;&gt;Licenses terms and conditions&lt;/a&gt; before you can install [ProductName]." TextStyle="[HyperlinkFont]" Order="800" TextLocId="Metro.Control.Text.WelcomeDlg#YouMustAgreeCtrl" MsiKey="InstallDlg#YouMustAgreeCtrl"/>
     <ROW Dialog_="InstallDlg" Control="LicenseCheckbox" Type="ImageCheckBox" X="17" Y="329" Width="311" Height="20" Attributes="3" Property="AGREE_CHECKBOX" Text="[checkbox]" Order="900" MsiKey="InstallDlg#LicenseCheckbox" ExtType="ImageCheckBox" ExtData="I agree to the License terms and conditions." ExtDataLocId="Metro.Control.Text.WelcomeDlg.AgreeToLicense"/>
     <ROW Dialog_="InstallDlg" Control="InstallButton" Type="ImageButton" X="251" Y="359" Width="78" Height="28" Attributes="3" Text="[metrobuttonimage]" TextStyle="[MetroButtonText]" Order="1100" MsiKey="InstallDlg#InstallButton" ExtType="ImageButton" ExtData="Install" ExtDataLocId="Metro.Control.ExtData.VerifyReadyDlg#InstallButton"/>
     <ROW Dialog_="InstallDlg" Control="ProductLogo" Type="Bitmap" X="17" Y="28" Width="257" Height="58" Attributes="1" Text="[AppLogoIcon]" Order="1200" MsiKey="InstallDlg#ProductLogo"/>
     <ROW Dialog_="InstallDlg" Control="Text_3" Type="Text" X="17" Y="235" Width="140" Height="18" Attributes="65539" Property="TEXT_1_PROP_1_1" Text="ServiceControl Instance URI" Order="1300"/>
-    <ROW Dialog_="InstallDlg" Control="Edit_2" Type="Edit" X="157" Y="234" Width="149" Height="18" Attributes="3" Property="INST_URI" Text="{260}" Order="1400"/>
+    <ROW Dialog_="InstallDlg" Control="Edit_2" Type="Edit" X="158" Y="231" Width="149" Height="18" Attributes="3" Property="INST_URI" Text="{260}" Order="1400"/>
     <ROW Dialog_="InstallDlg" Control="Text_2" Type="Text" X="17" Y="195" Width="140" Height="18" Attributes="65539" Property="TEXT_1_PROP_1_1_1" Text="ServicePulse Instance Port" Order="1500"/>
     <ROW Dialog_="InstallDlg" Control="Edit_3" Type="Edit" X="157" Y="195" Width="149" Height="18" Attributes="19" Property="INST_PORT_PULSE" Text="{260}" Order="1600"/>
     <ROW Dialog_="LicenseAgreementDlg" Control="AgreementText" Type="ScrollableText" X="17" Y="106" Width="312" Height="243" Attributes="3" Property="EulaRead" Text="License.rtf" Order="600" TextLocId="Control.Text.LicenseAgreementDlg#AgreementText_2" MsiKey="LicenseAgreementDlg#AgreementText"/>
@@ -235,10 +226,10 @@
     <ROW Dialog_="InstallDlg" Control_="Next" Event="SpawnDialog" Argument="OutOfRbDiskDlg" Condition="AI_INSTALL AND OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 0 AND (PROMPTROLLBACKCOST=&quot;P&quot; OR NOT PROMPTROLLBACKCOST)" Ordering="302" Options="2"/>
     <ROW Dialog_="InstallDlg" Control_="Next" Event="EnableRollback" Argument="False" Condition="AI_INSTALL AND OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 0 AND PROMPTROLLBACKCOST=&quot;D&quot;" Ordering="303" Options="2"/>
     <ROW Dialog_="InstallDlg" Control_="Next" Event="SpawnDialog" Argument="OutOfDiskDlg" Condition="AI_INSTALL AND ( (OutOfDiskSpace = 1 AND OutOfNoRbDiskSpace = 1) OR (OutOfDiskSpace = 1 AND PROMPTROLLBACKCOST=&quot;F&quot;) )" Ordering="304" Options="2"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[AI_ButtonText_Next_Orig]" Argument="[ButtonText_Next]" Condition="AI_INSTALL" Ordering="110" Options="2"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[ButtonText_Next]" Argument="[[AI_CommitButton]]" Condition="AI_INSTALL" Ordering="111" Options="2"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[AI_Text_Next_Orig]" Argument="[Text_Next]" Condition="AI_INSTALL" Ordering="112" Options="2"/>
-    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[Text_Next]" Argument="[Text_Install]" Condition="AI_INSTALL" Ordering="113" Options="2"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[AI_ButtonText_Next_Orig]" Argument="[ButtonText_Next]" Condition="AI_INSTALL" Ordering="112" Options="2"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[ButtonText_Next]" Argument="[[AI_CommitButton]]" Condition="AI_INSTALL" Ordering="113" Options="2"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[AI_Text_Next_Orig]" Argument="[Text_Next]" Condition="AI_INSTALL" Ordering="114" Options="2"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="[Text_Next]" Argument="[Text_Install]" Condition="AI_INSTALL" Ordering="115" Options="2"/>
     <ROW Dialog_="InstallDlg" Control_="YouMustAgreeCtrl" Event="[ButtonText_Next]" Argument="[AI_ButtonText_Next_Orig]" Condition="AI_INSTALL" Ordering="202" Options="2"/>
     <ROW Dialog_="InstallDlg" Control_="YouMustAgreeCtrl" Event="[Text_Next]" Argument="[AI_Text_Next_Orig]" Condition="AI_INSTALL" Ordering="203" Options="2"/>
     <ROW Dialog_="InstallDlg" Control_="Back" Event="[ButtonText_Next]" Argument="[AI_ButtonText_Next_Orig]" Condition="AI_INSTALL" Ordering="0" Options="2"/>
@@ -288,6 +279,8 @@
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Check_SP_PORT" Condition="AI_INSTALL" Ordering="91"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="Invalid_ServicePulseUrl_Msg" Condition="VALID_PORT = &quot;FALSE&quot;" Ordering="93"/>
     <ROW Dialog_="InstallDlg" Control_="InstallButton" Event="DoAction" Argument="AI_DATA_SETTER_3" Condition="VALID_PORT = &quot;FALSE&quot;" Ordering="92"/>
+    <ROW Dialog_="BrowseDlg" Control_="OK" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="1" Ordering="201"/>
+    <ROW Dialog_="InstallDlg" Control_="InstallDlgDialogInitializer" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="AI_INSTALL" Ordering="99"/>
     <ATTRIBUTE name="DeletedRows" value="MaintenanceTypeDlg#MetroRepairButton#[AiEventsControl]#RepairButton#1@MaintenanceTypeDlg#MetroModifyButton#[AiEventsControl]#ChangeButton#1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
@@ -295,11 +288,6 @@
     <ROW Directory_="APPDIR" Component_="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
-    <ROW Action="AI_AiRemoveFilesCommit" Type="11777" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesCommit" WithoutSeq="true"/>
-    <ROW Action="AI_AiRemoveFilesDeferred_Permanent" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesPermanent" WithoutSeq="true"/>
-    <ROW Action="AI_AiRemoveFilesDeferred_Undoable" Type="11265" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesUndoable" WithoutSeq="true"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Type="1" Source="ResourceCleaner.dll" Target="OnAiRemoveFilesImmediate"/>
-    <ROW Action="AI_AiRemoveFilesRollback" Type="11521" Source="ResourceCleaner.dll" Target="OnAiUndoRemoveFiles"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_ChooseTextStyles" Type="1" Source="aicustact.dll" Target="ChooseTextStyles"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
@@ -337,11 +325,12 @@
     <ROW Action="Invalid_ServiceControlUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_4"/>
     <ROW Action="Invalid_ServicePulseUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_3"/>
     <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]&amp;localURL=http://localhost:[INST_PORT_PULSE]" Options="1"/>
+    <ROW Action="ReadServiceControlUrlFromConfigJS" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ReadServiceControlUrlFromConfigJS" WithoutSeq="true"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[ProgramMenuFolder]\Particular Software\"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
     <ROW Action="SetUrlAcl" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="SetUrlAcl"/>
-    <ROW Action="Start_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
+    <ROW Action="Start_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
     <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
     <ROW Action="Warning_ServiceControl_Unavail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_1"/>
@@ -371,19 +360,17 @@
     <ROW Action="AI_FindExeLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="196" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
-    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
+    <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6598" Builds="DefaultBuild"/>
     <ROW Action="AI_ExtractFiles" Sequence="3998" Builds="DefaultBuild"/>
     <ROW Action="AI_DATA_SETTER" Sequence="3997"/>
     <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
     <ROW Action="Install_Service" Condition="( NOT Installed )" Sequence="6402"/>
-    <ROW Action="AI_AiRemoveFilesRollback" Sequence="3099"/>
     <ROW Action="Start_Service" Condition="( NOT Installed )" Sequence="6403"/>
     <ROW Action="Uninstall_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) ) AND ( AI_SERVICE_STATE&lt;&gt;&quot;Not Found&quot; )" Sequence="1603"/>
     <ROW Action="DetectService" Sequence="1602"/>
     <ROW Action="AI_DATA_SETTER_2" Sequence="1601"/>
     <ROW Action="Stop_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) )" Sequence="211"/>
     <ROW Action="SetUrlAcl" Condition="( NOT Installed )" Sequence="6401"/>
-    <ROW Action="AI_AiRemoveFilesImmediate" Sequence="3499"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
