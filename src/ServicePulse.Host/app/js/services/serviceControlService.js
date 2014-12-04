@@ -172,5 +172,17 @@ angular.module('services.serviceControlService', [])
                         return results;
                     });
             };
+
+            this.getScaleoutGroups = function () {
+                return $http.get(scConfig.service_control_url + '/scaleoutgroups').then(function (response) {
+                    return response.data;
+                });
+            };
+
+            this.getScaleoutGroup = function (groupId) {
+                return $http.get(scConfig.service_control_url + '/scaleoutgroup/' + groupId).then(function (response) {
+                    return response.data;
+                });
+            };
         }
     ]);
