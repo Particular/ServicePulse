@@ -145,6 +145,8 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
+    <Content Include="app\js\scaleout\scaleout.js" />
+    <Content Include="app\js\scaleout\scaleout.tpl.html" />
     <Content Include="app\js\configuration\configuration.js" />
     <Content Include="app\js\configuration\configuration.tpl.html" />
     <Content Include="app\js\directives\eat.click.js" />
@@ -214,5 +216,5 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)..\BuildSupport\GitVersionTask\Build\GitVersionTask.targets" /> 
+  <Import Project="$(SolutionDir)..\BuildSupport\GitVersionTask\Build\GitVersionTask.targets" />
 </Project>

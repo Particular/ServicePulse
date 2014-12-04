@@ -19,10 +19,11 @@ angular.module('sc', [
     'endpoints',
     'customChecks',
     'configuration',
+    'scaleout',
     'dashboard']);
 
 angular.module('sc')
-    .constant('version', '1.2.0')
+    .constant('version', '1.1.0-unstable.114')
     .constant('scConfig', SC.config);
 
 angular.module('sc')
