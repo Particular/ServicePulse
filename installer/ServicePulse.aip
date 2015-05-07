@@ -25,7 +25,7 @@
     <ROW Property="INST_PORT_PULSE" Value="9090" Type="4"/>
     <ROW Property="INST_URI" Value="http://localhost:33333/api/"/>
     <ROW Property="Manufacturer" Value="Particular Software"/>
-    <ROW Property="ProductCode" Value="1033:{2C187DE8-0934-47D5-911D-77D57384B243} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{BAE534DC-0605-4EC0-8E26-561E9107485B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="ServicePulse [|ProductVersion]"/>
     <ROW Property="ProductVersion" Value="1.0.0" Type="32"/>
