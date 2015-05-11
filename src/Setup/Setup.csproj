@@ -35,10 +35,13 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <ItemGroup />
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="chocolatey\chocolateyInstall.ps1" />
+    <None Include="chocolatey\chocolateyUninstall.ps1" />
+    <None Include="chocolatey\elevatedUninstall.ps1" />
     <None Include="packages.config" />
+    <None Include="ServicePulse.aip" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
