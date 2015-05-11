@@ -1,4 +1,4 @@
-nugets
+ugets
 build32
 binaries
 obj
@@ -36,3 +36,5 @@ logs
 run-git.cmd
 src/Chocolatey/Build/*
 App_Packages
+src/Setup/ServicePulse-Cache/*
+chocos/*
