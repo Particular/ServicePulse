@@ -5,16 +5,19 @@ angular.module('failedMessages', [])
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
     .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig) {
-
-        $scope.model = { total: 0, failedMessages: [], failedMessagesStats: [], selectedIds:[], newMessages: 0 };
+        var page = 1;
+        $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
+        
+        $scope.model = { exceptionGroups: [], failedMessages: [], failedMessagesStats: [], selectedIds: [], newMessages: 0 };
         $scope.loadingData = false;
         $scope.disableLoadingData = false;
+        $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
         
-        var page = 1;
-
         function init() {
             page = 1;
             $scope.model.failedMessages = [];
+            $scope.model.exceptionGroups = [];
+            $scope.model.failedMessagesStats = [];
             $scope.model.selectedIds = [];
             $scope.disableLoadingData = false;
         }
@@ -23,23 +26,27 @@ angular.module('failedMessages', [])
             if ($scope.loadingData) {
                 return;
             }
-
-            $scope.loadingData = true;
             
+            $scope.loadingData = true;
+
+            serviceControlService.getExceptionGroups().then(function (response) {
+                $scope.model.exceptionGroups = response.data;
+            });
+            
+            serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
+                $scope.model.failedMessagesStats = failedMessagesStats;
+            });
+
             serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
                 $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
-                $scope.model.total = response.total;
+                $scope.allFailedMessagesGroup.count = response.total;
 
-                if ($scope.model.failedMessages.length >= $scope.model.total) {
+                if ($scope.model.failedMessages.length >= $scope.allFailedMessagesGroup.count) {
                     $scope.disableLoadingData = true;
                 }
                 
                 $scope.loadingData = false;
                 page++;
-            });
-            
-            serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
-                $scope.model.failedMessagesStats = failedMessagesStats;
             });
         };
 
@@ -63,9 +70,51 @@ angular.module('failedMessages', [])
             row.panel = panelnum;
             return false;
         };
-        
-        $scope.loadMoreResults = function () {
-            load(); 
+
+        $scope.loadForGroup = function (group) {
+            $scope.model.failedMessages = [];
+            $scope.selectedExceptionGroup = group;
+            page = 1;
+            $scope.disableLoadingData = false;
+            
+            $scope.loadMoreResults(group);
+        };
+
+        $scope.loadMoreResults = function (group) {
+            if ($scope.model.failedMessages.length >= group.count) {
+                $scope.disableLoadingData = true;
+            }
+
+            if ($scope.disableLoadingData || $scope.loadingData) {
+                return;
+            }
+            
+            $scope.loadingData = true;
+
+            if (group && group.id) {
+                serviceControlService.getFailedMessagesForExceptionGroup(group.id, $routeParams.sort, page).then(function(response) {
+                    $scope.model.failedMessages = response.data;
+
+                    if ($scope.model.failedMessages.length >= $scope.model.total) {
+                        $scope.disableLoadingData = true;
+                    }
+
+                    $scope.loadingData = false;
+                    page++;
+                });
+            } else {
+                serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
+                    $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
+                    $scope.model.total = response.total;
+
+                    if ($scope.model.failedMessages.length >= $scope.model.total) {
+                        $scope.disableLoadingData = true;
+                    }
+
+                    $scope.loadingData = false;
+                    page++;
+                });
+            }
         };
         
         $scope.toggleRowSelect = function (row) {
@@ -106,16 +155,34 @@ angular.module('failedMessages', [])
 
         $scope.retrySelected = function () {
             serviceControlService.retryFailedMessages($scope.model.selectedIds);
-
             $scope.model.selectedIds = [];
-            
+
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                 if ($scope.model.failedMessages[i].selected) {
                     $scope.model.failedMessages[i].selected = false;
                     $scope.model.failedMessages[i].retried = true;
                 }
             }
+            
             $scope.refreshResults();
+        };
+
+        $scope.retryExceptionGroup = function (group) {
+            serviceControlService.retryExceptionGroup(group.id, group.count);
+
+            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                $scope.model.failedMessages[i].retried = true;
+            }
+            
+            $scope.refreshResults();
+        };
+
+        $scope.archiveExceptionGroup = function (group) {
+            serviceControlService.archiveExceptionGroup(group.id, group.count);
+
+            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                $scope.model.failedMessages[i].archived = true;
+            }
         };
         
         $scope.archiveSelected = function () {
@@ -187,4 +254,6 @@ angular.module('failedMessages', [])
             streamService.unsubscribe($scope, 'MessageFailed');
             streamService.unsubscribe($scope, 'MessageFailureResolved');
         });
+
+        $scope.refreshResults();
     }]);

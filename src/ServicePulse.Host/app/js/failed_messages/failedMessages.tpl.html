@@ -1,15 +1,4 @@
-﻿<div>
-    <hr>
-    <ul class="breadcrumb">
-        <li>
-            <a href="/">Home</a> <span class="divider">/</span>
-        </li>
-        <li>Failed Messages</li>
-    </ul>
-    <hr>
-</div>
-<h3>Total number of messages in the error queue: {{model.total}}</h3>
-<div class="row-fluid">
+﻿<div class="row-fluid">
     <div class="box span12">
         <div class="box-header" data-original-title>
             <h2><i class="fa fa-info-circle"></i><span class="break"></span>Summary statistics</h2>
@@ -44,15 +33,59 @@
         </div>
     </div>
 </div>
+
+<!-- Failed messages groups -->
+﻿<div class="row-fluid">
+    <div class="box span12">
+    <div ng-show="model.exceptionGroups.length > 0">
+        <div class="box-header" data-original-title>
+            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.exceptionGroups.length + 1}} failed message(s) groups</h2>
+        </div>
+        <div class="box-content">
+            <div class="scRow">
+                <div class="row-fluid">
+                    <div class="span3 rowText"><h3>Group name</h3></div>
+                    <div class="span1 rowText"><h3>Count</h3></div>
+                    <div class="span2 rowText"><h3>First failure</h3></div>
+                    <div class="span2 rowText"><h3>Last failure</h3></div>
+                    <div class="span2 rowText"><h3></h3></div>
+                    <div class="span2 rowText"><h3></h3></div>
+                </div>
+            </div>
+            <div class="scRow">
+                <div class="row-fluid">
+                    <div class="span3 rowText"><a href="javascript://" ng-click="loadForGroup(allFailedMessagesGroup)">All failed messages</a></div>
+                    <div class="span1 rowText">{{allFailedMessagesGroup.count}}</></div>
+                    <div class="span2 rowText"></div>
+                    <div class="span2 rowText"></div>
+                    <div class="span2 rowText"><button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-asterisk"></i> Retry all messages</button></div>
+                    <div class="span2 rowText"></div>
+                </div>
+            </div>
+            <div class="scRow" ng-repeat="excGroup in model.exceptionGroups">
+                <div class="row-fluid">
+                    <div class="span3 rowText"><a href="javascript://" ng-click="loadForGroup(excGroup)">{{excGroup.title}}</a></div>
+                    <div class="span1 rowText">{{excGroup.count}}</div>
+                    <div class="span2 rowText">{{excGroup.first}}</div>
+                    <div class="span2 rowText">{{excGroup.last}}</div>
+                    <div class="span2 rowText"><button class="btn" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-asterisk"></i> Retry all from this group</button></div>
+                    <div class="span2 rowText"><button class="btn" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-asterisk"></i><i class="icon-archive-messages"></i> Archive all from this group</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Failes messages from the currently selected group -->
 <div class="row-fluid">
     <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.failedMessages.length}} message(s) <i ng-show="!disableLoadingData">(scroll down to load more)</i></h2>
+            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.failedMessages.length}} failed messages in group '{{selectedExceptionGroup.title}}'<i ng-show="!disableLoadingData">(scroll down to load more)</i></h2>
         </div>
         <div class="box-content">
             <div class="btn-toolbar">
                 <button class="btn" ng-click="retrySelected()" ng-disabled="model.selectedIds.length == 0"><i class="icon-repeat"></i> Retry {{model.selectedIds.length}} selected</button>
-                <button class="btn" ng-click="retryAll()" ng-disabled="model.total == 0"><i class="icon-asterisk"></i> Retry all messages</button>
                 <button tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn" ng-click="archiveSelected()" ng-disabled="model.selectedIds.length == 0"><i class="icon-archive-messages"></i> Archive {{model.selectedIds.length}} selected</button>
                 <div class="btn-group pull-right">
                     <a class="btn btn-link dropdown-toggle"
@@ -69,7 +102,7 @@
             </div>
             <div class="newMessages" ng-show="model.newMessages > 1" ng-click="refreshResults()"><p class="text-center">{{model.newMessages}} new messages</p></div>
             <div class="newMessages" ng-show="model.newMessages == 1" ng-click="refreshResults()"><p class="text-center">{{model.newMessages}} new message</p></div>
-            <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
+            <div infinite-scroll="loadMoreResults(selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
                 <div class="scRow" ng-repeat="row in model.failedMessages">
                     <div class="row-fluid scSelectableRow" ng-class="{rowSelected: row.selected == true}" ng-click="toggleRowSelect(row)" style="cursor: pointer;">
                         <div class="span1 check"><input type="checkbox" ng-disabled="row.retried || row.archived" ng-checked="row.selected"></div>
@@ -114,7 +147,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="alert alert-success" ng-show='!loadingData && model.total == 0'>No failed messages</div>
+                <div class="alert alert-success" ng-show='!loadingData && $scope.allFailedMessagesGroup.count == 0'>No failed messages</div>
                 <div class="loading" ng-show='loadingData'></div>
             </div>
         </div>

@@ -34,6 +34,23 @@ angular.module('services.serviceControlService', [])
                 });
             };
 
+            this.getExceptionGroups = function () {
+                return $http.get(scConfig.service_control_url + '/exceptionGroups').then(function (response) {
+                    return {
+                        data: response.data
+                    };
+                });
+            };
+
+            this.getFailedMessagesForExceptionGroup = function (groupId, sortBy, page) {
+                return $http.get(scConfig.service_control_url + '/exceptionGroups/' + groupId + '/errors?status=unresolved&page=' + page + '&sort=' + sortBy).then(function (response) {
+                    return {
+                        data: response.data,
+                        total: response.headers('Total-Count')
+                    };
+                });
+            };
+
             this.getMessageBody = function(messageId) {
                 return $http.get(scConfig.service_control_url + '/messages/' + messageId + "/body").then(function(response) {
                     return {
@@ -107,6 +124,16 @@ angular.module('services.serviceControlService', [])
                     });
             };
 
+            this.retryExceptionGroup = function(id, count) {
+                $http.post(scConfig.service_control_url + '/exceptionGroups/'+ id +'/errors/retry')
+                   .success(function () {
+                       notifications.pushForCurrentRoute('Retrying ' + count + ' messages...', 'info');
+                   })
+                   .error(function () {
+                       notifications.pushForCurrentRoute('Retrying messages failed', 'error');
+                   });
+            };
+            
             this.archiveFailedMessages = function(selectedMessages) {
                 $http({
                         url: scConfig.service_control_url + '/errors/archive',
@@ -119,6 +146,16 @@ angular.module('services.serviceControlService', [])
                     .error(function() {
                         notifications.pushForCurrentRoute('Archiving messages failed', 'error');
                     });
+            };
+
+            this.archiveExceptionGroup = function(id, count) {
+                $http.post(scConfig.service_control_url + '/exceptionGroup/' + id + '/errors/archive')
+                   .success(function () {
+                       notifications.pushForCurrentRoute('Archiving ' + count + ' messages...', 'info');
+                   })
+                   .error(function () {
+                       notifications.pushForCurrentRoute('Retrying messages failed', 'error');
+                   });
             };
 
             this.getHeartbeatStats = function() {
