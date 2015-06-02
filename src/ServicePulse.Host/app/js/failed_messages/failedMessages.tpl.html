@@ -39,7 +39,7 @@
     <div class="box span12">
     <div ng-show="model.exceptionGroups.length > 0">
         <div class="box-header" data-original-title>
-            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.exceptionGroups.length + 1}} failed message(s) groups</h2>
+            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.exceptionGroups.length + 1}} failed messages groups</h2>
         </div>
         <div class="box-content">
             <div class="scRow">
@@ -52,6 +52,7 @@
                     <div class="span2 rowText"><h3></h3></div>
                 </div>
             </div>
+            <div class="narrow-scrollbar failedMessages-groupsBox">
             <div class="scRow">
                 <div class="row-fluid">
                     <div class="span3 rowText"><a href="javascript://" ng-click="loadMoreResults(allFailedMessagesGroup, true)">All failed messages</a></div>
