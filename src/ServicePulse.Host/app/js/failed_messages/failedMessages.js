@@ -5,6 +5,7 @@ angular.module('failedMessages', [])
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
     .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig) {
+        var scVersionSupportingExceptionGroups = '1.6.0';
         var page = 1;
         $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
         
@@ -12,6 +13,24 @@ angular.module('failedMessages', [])
         $scope.loadingData = false;
         $scope.disableLoadingData = false;
         $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
+        
+        function cmpVersion(a, b) {
+            var i, cmp, len, re = /(\.0)+[^\.]*$/;
+            a = (a + '').replace(re, '').split('.');
+            b = (b + '').replace(re, '').split('.');
+            len = Math.min(a.length, b.length);
+            for (i = 0; i < len; i++) {
+                cmp = parseInt(a[i], 10) - parseInt(b[i], 10);
+                if (cmp !== 0) {
+                    return cmp;
+                }
+            }
+            return a.length - b.length;
+        }
+
+        function gteVersion(a, b) {
+            return cmpVersion(a, b) >= 0;
+        }
         
         function init() {
             page = 1;
@@ -28,11 +47,15 @@ angular.module('failedMessages', [])
             }
             
             $scope.loadingData = true;
-
-            serviceControlService.getExceptionGroups().then(function (response) {
-                $scope.model.exceptionGroups = response.data;
-            });
             
+            serviceControlService.getVersion().then(function (sc_version) {
+                if (gteVersion(sc_version, scVersionSupportingExceptionGroups)) {
+                    serviceControlService.getExceptionGroups().then(function (response) {
+                        $scope.model.exceptionGroups = response.data;
+                    });
+                }
+            });
+
             serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
                 $scope.model.failedMessagesStats = failedMessagesStats;
             });

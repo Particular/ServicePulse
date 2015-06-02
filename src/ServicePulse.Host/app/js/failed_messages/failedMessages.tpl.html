@@ -36,9 +36,8 @@
 
 <!-- Failed messages groups -->
 ﻿<div class="row-fluid">
-    <div class="box span12">
-    <div ng-show="model.exceptionGroups.length > 0">
-        <div class="box-header" data-original-title>
+    <div class="box span12" ng-show="model.exceptionGroups.length > 0">
+    <div class="box-header" data-original-title>
             <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.exceptionGroups.length + 1}} failed messages groups</h2>
         </div>
         <div class="box-content">
@@ -74,7 +73,6 @@
                 </div>
             </div>
         </div>
-    </div>
 </div>
 </div>
 
@@ -82,7 +80,7 @@
 <div class="row-fluid">
     <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.failedMessages.length}} failed messages in group '{{selectedExceptionGroup.title}}'<i ng-show="!disableLoadingData">(scroll down to load more)</i></h2>
+            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.failedMessages.length}} out of {{selectedExceptionGroup.count}} failed messages in group '{{selectedExceptionGroup.title}}'<i ng-show="!disableLoadingData">(scroll down to load more)</i></h2>
         </div>
         <div class="box-content">
             <div class="btn-toolbar">
