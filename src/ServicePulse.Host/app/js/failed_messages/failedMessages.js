@@ -51,7 +51,6 @@ angular.module('failedMessages', [])
         };
 
         $scope.togglePanel = function (row, panelnum) {
-
             if (row.messageBody === undefined) {
                 serviceControlService.getMessageBody(row.message_id).then(function (message) {
                     row.messageBody = message.data;
@@ -71,16 +70,14 @@ angular.module('failedMessages', [])
             return false;
         };
 
-        $scope.loadForGroup = function (group) {
-            $scope.model.failedMessages = [];
-            $scope.selectedExceptionGroup = group;
-            page = 1;
-            $scope.disableLoadingData = false;
+        $scope.loadMoreResults = function (group, isFirstPage, sort) {
+            if (isFirstPage) {
+                $scope.model.failedMessages = [];
+                $scope.selectedExceptionGroup = group;
+                page = 1;
+                $scope.disableLoadingData = false;
+            }
             
-            $scope.loadMoreResults(group);
-        };
-
-        $scope.loadMoreResults = function (group) {
             if ($scope.model.failedMessages.length >= group.count) {
                 $scope.disableLoadingData = true;
             }
@@ -92,7 +89,7 @@ angular.module('failedMessages', [])
             $scope.loadingData = true;
 
             if (group && group.id) {
-                serviceControlService.getFailedMessagesForExceptionGroup(group.id, $routeParams.sort, page).then(function(response) {
+                serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page).then(function (response) {
                     $scope.model.failedMessages = response.data;
 
                     if ($scope.model.failedMessages.length >= $scope.model.total) {
@@ -212,10 +209,8 @@ angular.module('failedMessages', [])
         };
 
         streamService.subscribe($scope, 'MessageFailed', function (event) {
-
             var failedMessageId = event.failed_message_id;
-
-            $scope.model.total++;
+            $scope.allFailedMessagesGroup.count++;
 
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                 var existingFailure = $scope.model.failedMessages[i];
@@ -223,7 +218,6 @@ angular.module('failedMessages', [])
                     existingFailure.retried = false;
                     return;
                 }
-                
             }
 
             $scope.model.newMessages++;
@@ -232,10 +226,8 @@ angular.module('failedMessages', [])
         });
         
         streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
-
             var failedMessageId = event.failed_message_id;
-
-            $scope.model.total--;
+            $scope.allFailedMessagesGroup.count--;
 
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                 var existingFailure = $scope.model.failedMessages[i];

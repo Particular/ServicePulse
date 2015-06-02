@@ -22,7 +22,7 @@ angular.module('sc', [
     'dashboard']);
 
 angular.module('sc')
-    .constant('version', '1.2.0-unstable.15')
+    .constant('version', '1.2.0-Requirements_#272_-_Grouping_of_failed_messages_by_exception_type')
     .constant('scConfig', SC.config);
 
 angular.module('sc')
