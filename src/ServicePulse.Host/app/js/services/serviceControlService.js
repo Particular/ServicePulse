@@ -35,7 +35,7 @@ angular.module('services.serviceControlService', [])
             };
 
             this.getExceptionGroups = function () {
-                return $http.get(scConfig.service_control_url + '/exceptionGroups').then(function (response) {
+                return $http.get(scConfig.service_control_url + '/recoverability/groups').then(function (response) {
                     return {
                         data: response.data
                     };
@@ -43,7 +43,7 @@ angular.module('services.serviceControlService', [])
             };
 
             this.getFailedMessagesForExceptionGroup = function (groupId, sortBy, page) {
-                return $http.get(scConfig.service_control_url + '/exceptionGroups/' + groupId + '/errors?status=unresolved&page=' + page + '&sort=' + sortBy).then(function (response) {
+                return $http.get(scConfig.service_control_url + '/recoverability/groups/' + groupId + '/errors').then(function (response) {
                     return {
                         data: response.data,
                         total: response.headers('Total-Count')
@@ -125,7 +125,7 @@ angular.module('services.serviceControlService', [])
             };
 
             this.retryExceptionGroup = function(id, count) {
-                $http.post(scConfig.service_control_url + '/exceptionGroups/'+ id +'/errors/retry')
+                $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry')
                    .success(function () {
                        notifications.pushForCurrentRoute('Retrying ' + count + ' messages...', 'info');
                    })
@@ -149,7 +149,7 @@ angular.module('services.serviceControlService', [])
             };
 
             this.archiveExceptionGroup = function(id, count) {
-                $http.post(scConfig.service_control_url + '/exceptionGroup/' + id + '/errors/archive')
+                $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive')
                    .success(function () {
                        notifications.pushForCurrentRoute('Archiving ' + count + ' messages...', 'info');
                    })
