@@ -4,7 +4,8 @@ angular.module('failedMessages', [])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig) {
+    .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications',
+        function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig, notifications) {
         var scVersionSupportingExceptionGroups = '1.6.0';
         var page = 1;
         $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
@@ -244,8 +245,8 @@ angular.module('failedMessages', [])
             }
 
             $scope.model.newMessages++;
-            $scope.refreshResults();
-
+            notifications.removeAll();
+            notifications.pushForCurrentRoute('Refresh page to see ' + $scope.model.newMessages + ' new failed messages', 'info');
         });
         
         streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
