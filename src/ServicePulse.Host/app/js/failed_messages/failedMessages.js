@@ -188,7 +188,13 @@ angular.module('failedMessages', [])
             $scope.refreshResults();
         };
 
+        var retryWarningDisplayed = [];
         $scope.retryExceptionGroup = function (group) {
+            if (group.count > 2 && retryWarningDisplayed.indexOf(group.id) === -1) {
+                notifications.pushForCurrentRoute('You are about to retry ' + group.count + ' messages. This make take a while. Are you sure?');
+                retryWarningDisplayed.push(group.id);
+                return;
+            }
             serviceControlService.retryExceptionGroup(group.id, group.count);
 
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
@@ -244,8 +250,14 @@ angular.module('failedMessages', [])
                 }
             }
 
+            var prevText = 'Refresh page to see ' + $scope.model.newMessages + ' new failed messages';
+            var prevNotifications = notifications.getCurrent().filter(function (not) {
+                return not.message === prevText;
+            });
+            prevNotifications.forEach(function(notification) {
+                notifications.remove(notification);
+            });
             $scope.model.newMessages++;
-        //    notifications.removeAll();
             notifications.pushForCurrentRoute('Refresh page to see ' + $scope.model.newMessages + ' new failed messages', 'info');
         });
         
@@ -267,7 +279,10 @@ angular.module('failedMessages', [])
             
 
         streamService.subscribe($scope, 'NewFailedMessagesGroupCreated', function (event) {
-            notifications.pushForCurrentRoute('New failure group detected: \'' + event.id + '\'. Reload the page to see it.', 'info');
+            var text = 'New failure group detected: \'' + event.id + '\'. Reload the page to see it.';
+            if (notifications.getCurrent().filter(function (not) { return not.message === text; }).length === 0) {
+                notifications.pushForCurrentRoute(text, 'info');
+            }
         });
         
         $scope.$on('$destroy', function () {
