@@ -54,6 +54,9 @@ angular.module('failedMessages', [])
                     serviceControlService.getExceptionGroups().then(function (response) {
                         $scope.model.exceptionGroups = response.data;
                     });
+                } else {
+                    notifications.pushForCurrentRoute('You are using Service Control version ' + sc_version +
+                        '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to access full functionality of Service Pulse.', 'error');
                 }
             });
 
