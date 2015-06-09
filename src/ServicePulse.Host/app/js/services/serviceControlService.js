@@ -43,7 +43,7 @@ angular.module('services.serviceControlService', [])
             };
 
             this.getFailedMessagesForExceptionGroup = function (groupId, sortBy, page) {
-                return $http.get(scConfig.service_control_url + '/recoverability/groups/' + groupId + '/errors').then(function (response) {
+                return $http.get(scConfig.service_control_url + '/recoverability/groups/' + groupId + '/errors?page=' + page + '&sort=' + sortBy).then(function (response) {
                     return {
                         data: response.data,
                         total: response.headers('Total-Count')
