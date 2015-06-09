@@ -117,12 +117,7 @@ angular.module('failedMessages', [])
 
             if (group && group.id) {
                 serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page).then(function (response) {
-                    $scope.model.failedMessages = response.data;
-
-                    if ($scope.model.failedMessages.length >= $scope.model.total) {
-                        $scope.disableLoadingData = true;
-                    }
-
+                    $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
                     $scope.loadingData = false;
                     page++;
                 });
@@ -130,11 +125,6 @@ angular.module('failedMessages', [])
                 serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
                     $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
                     $scope.model.total = response.total;
-
-                    if ($scope.model.failedMessages.length >= $scope.model.total) {
-                        $scope.disableLoadingData = true;
-                    }
-
                     $scope.loadingData = false;
                     page++;
                 });
