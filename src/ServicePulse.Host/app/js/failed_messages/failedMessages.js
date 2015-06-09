@@ -275,17 +275,15 @@ angular.module('failedMessages', [])
         });
             
 
-        streamService.subscribe($scope, 'NewFailedMessagesGroupCreated', function (event) {
+        streamService.subscribe($scope, 'NewFailureGroupDetected', function (event) {
             var text = 'New failure group detected: \'' + event.id + '\'. Reload the page to see it.';
-            if (notifications.getCurrent().filter(function (not) { return not.message === text; }).length === 0) {
-                notifications.pushForCurrentRoute(text, 'info');
-            }
+            notifications.pushForCurrentRoute(text, 'info');
         });
         
         $scope.$on('$destroy', function () {
             streamService.unsubscribe($scope, 'MessageFailed');
             streamService.unsubscribe($scope, 'MessageFailureResolved');
-            streamService.unsubscribe($scope, 'NewFailedMessagesGroupCreated');
+            streamService.unsubscribe($scope, 'NewFailureGroupDetected');
         });
 
         $scope.refreshResults();
