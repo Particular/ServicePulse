@@ -266,7 +266,7 @@ angular.module('failedMessages', [])
             
 
         streamService.subscribe($scope, 'NewFailureGroupDetected', function (event) {
-            var text = 'New failure group detected: \'' + event.id + '\'. Reload the page to see it.';
+            var text = 'New failure group detected: \'' + event.group_name + '\'. Reload the page to see it.';
             notifications.pushForCurrentRoute(text, 'info');
         });
         
