@@ -2,7 +2,7 @@
 
 angular.module('services.serviceControlService', [])
     .service('serviceControlService', [
-        '$http', 'scConfig', 'notifications', function($http, scConfig, notifications) {
+        '$http', 'scConfig', 'notifications', function ($http, scConfig, notifications) {
 
             this.getVersion = function() {
                 return $http.get(scConfig.service_control_url).then(function(response) {
@@ -138,10 +138,10 @@ angular.module('services.serviceControlService', [])
                     });
             };
 
-            this.archiveExceptionGroup = function(id, count) {
+            this.archiveExceptionGroup = function(id, successText) {
                 $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive')
                    .success(function () {
-                       notifications.pushForCurrentRoute('Archiving ' + count + ' messages...', 'info');
+                       notifications.pushForCurrentRoute(successText, 'info');
                    })
                    .error(function () {
                        notifications.pushForCurrentRoute('Retrying messages failed', 'error');

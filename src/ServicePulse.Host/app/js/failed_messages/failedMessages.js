@@ -4,8 +4,8 @@ angular.module('failedMessages', [])
     .config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications',
-        function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig, notifications) {
+    .controller('FailedMessagesCtrl', ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications',
+        function ($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications) {
         var scVersionSupportingExceptionGroups = '1.6.0';
         var page = 1;
         $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0 };
@@ -166,12 +166,28 @@ angular.module('failedMessages', [])
         };
 
         $scope.archiveExceptionGroup = function (group) {
-            serviceControlService.archiveExceptionGroup(group.id, group.count);
+            var notificationText = 'Archiving messages from group ' + group.title;
+            serviceControlService.archiveExceptionGroup(group.id, notificationText);
             if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
                 for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                     $scope.model.failedMessages[i].archived = true;
                 }
             }
+
+            streamService.subscribe($scope, 'FailedMessageGroupArchived', function () {
+                for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
+                    var exGroup = $scope.model.exceptionGroups[j];
+                    if (group.title == exGroup.title) {
+                        $scope.model.exceptionGroups.splice(j, 1);
+                    }
+                }
+                notifications.removeByText(notificationText);
+                var notification = notifications.pushForCurrentRoute('Messages from group \'' + group.title + '\' were successfully archived.', 'info');
+                $timeout(function () {
+                    notifications.remove(notification);
+                }, 10000);
+                streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
+            });
         };
         
         $scope.archiveSelected = function () {
@@ -211,11 +227,7 @@ angular.module('failedMessages', [])
                 }
             }
 
-            var prevText = $scope.model.newMessages + ' new failed messages. Refresh the page to see them.';
-            var prevNotification = notifications.getCurrent().filter(function (not) {
-                return not.message === prevText;
-            })[0];
-            notifications.remove(prevNotification);
+            notifications.removeByText($scope.model.newMessages + ' new failed messages. Refresh the page to see them.');
             $scope.model.newMessages++;
             notifications.pushForCurrentRoute($scope.model.newMessages + ' new failed messages. Refresh the page to see them.', 'info');
         });
@@ -239,11 +251,12 @@ angular.module('failedMessages', [])
             var text = 'New failure group detected: \'' + event.group_name + '\'. Refresh the page to see it.';
             notifications.pushForCurrentRoute(text, 'info');
         });
-        
+
         $scope.$on('$destroy', function () {
             streamService.unsubscribe($scope, 'MessageFailed');
             streamService.unsubscribe($scope, 'MessageFailureResolved');
             streamService.unsubscribe($scope, 'NewFailureGroupDetected');
+            streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
         });
 
         $scope.init();
