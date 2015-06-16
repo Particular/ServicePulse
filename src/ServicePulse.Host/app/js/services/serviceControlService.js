@@ -123,16 +123,6 @@ angular.module('services.serviceControlService', [])
                         notifications.pushForCurrentRoute('Retrying messages failed', 'error');
                     });
             };
-
-            this.retryExceptionGroup = function(id, count) {
-                $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry')
-                   .success(function () {
-                       notifications.pushForCurrentRoute('Retrying ' + count + ' messages...', 'info');
-                   })
-                   .error(function () {
-                       notifications.pushForCurrentRoute('Retrying messages failed', 'error');
-                   });
-            };
             
             this.archiveFailedMessages = function(selectedMessages) {
                 $http({

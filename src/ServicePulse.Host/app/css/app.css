@@ -121,6 +121,6 @@
 }
 
 .failedMessages-groupsBox {
-    max-height: 130px; 
+    max-height: 180px; 
     overflow-y: auto
 }

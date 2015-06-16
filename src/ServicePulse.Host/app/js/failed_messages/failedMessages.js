@@ -8,14 +8,14 @@ angular.module('failedMessages', [])
         function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig, notifications) {
         var scVersionSupportingExceptionGroups = '1.6.0';
         var page = 1;
-        $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
-        
-        $scope.model = { exceptionGroups: [], failedMessages: [], failedMessagesStats: [], selectedIds: [], newMessages: 0 };
+        $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0 };
         $scope.loadingData = false;
-        $scope.disableLoadingData = false;
+        $scope.allMessagesLoaded = false;
+            
+        $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
         $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
         
-        function cmpVersion(a, b) {
+        function isSecondGreaterVersion(a, b) {
             var i, cmp, len, re = /(\.0)+[^\.]*$/;
             a = (a + '').replace(re, '').split('.');
             b = (b + '').replace(re, '').split('.');
@@ -26,31 +26,25 @@ angular.module('failedMessages', [])
                     return cmp;
                 }
             }
-            return a.length - b.length;
-        }
-
-        function gteVersion(a, b) {
-            return cmpVersion(a, b) >= 0;
+            return a.length - b.length >= 0;
         }
         
-        function init() {
+        $scope.init = function () {
             page = 1;
             $scope.model.failedMessages = [];
             $scope.model.exceptionGroups = [];
-            $scope.model.failedMessagesStats = [];
             $scope.model.selectedIds = [];
-            $scope.disableLoadingData = false;
-        }
-        
-        function load() {
+            $scope.allMessagesLoaded = false;
+            $scope.model.newMessages = 0;
+
             if ($scope.loadingData) {
                 return;
             }
-            
+
             $scope.loadingData = true;
-            
+
             serviceControlService.getVersion().then(function (sc_version) {
-                if (gteVersion(sc_version, scVersionSupportingExceptionGroups)) {
+                if (isSecondGreaterVersion(sc_version, scVersionSupportingExceptionGroups)) {
                     serviceControlService.getExceptionGroups().then(function (response) {
                         $scope.model.exceptionGroups = response.data;
                     });
@@ -60,22 +54,16 @@ angular.module('failedMessages', [])
                 }
             });
 
-            serviceControlService.getFailedMessageStats().then(function (failedMessagesStats) {
-                $scope.model.failedMessagesStats = failedMessagesStats;
-            });
-
             serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
                 $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
                 $scope.allFailedMessagesGroup.count = response.total;
 
-                if ($scope.model.failedMessages.length >= $scope.allFailedMessagesGroup.count) {
-                    $scope.disableLoadingData = true;
-                }
-                
+                $scope.allMessagesLoaded = ($scope.model.failedMessages.length >= $scope.allFailedMessagesGroup.count);
+
                 $scope.loadingData = false;
                 page++;
             });
-        };
+        }
 
         $scope.togglePanel = function (row, panelnum) {
             if (row.messageBody === undefined) {
@@ -102,14 +90,12 @@ angular.module('failedMessages', [])
                 $scope.model.failedMessages = [];
                 $scope.selectedExceptionGroup = group;
                 page = 1;
-                $scope.disableLoadingData = false;
-            }
-            
-            if ($scope.model.failedMessages.length >= group.count) {
-                $scope.disableLoadingData = true;
+                $scope.allMessagesLoaded = false;
             }
 
-            if ($scope.disableLoadingData || $scope.loadingData) {
+            $scope.allMessagesLoaded = $scope.model.failedMessages.length >= group.count;
+
+            if ($scope.allMessagesLoaded || $scope.loadingData) {
                 return;
             }
             
@@ -118,13 +104,14 @@ angular.module('failedMessages', [])
             if (group && group.id) {
                 serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page).then(function (response) {
                     $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
+                    $scope.allMessagesLoaded = $scope.model.failedMessages.length >= group.count;
                     $scope.loadingData = false;
                     page++;
                 });
             } else {
                 serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
                     $scope.model.failedMessages = $scope.model.failedMessages.concat(response.data);
-                    $scope.model.total = response.total;
+                    $scope.allMessagesLoaded = $scope.model.failedMessages.length >= group.count;
                     $scope.loadingData = false;
                     page++;
                 });
@@ -132,7 +119,6 @@ angular.module('failedMessages', [])
         };
         
         $scope.toggleRowSelect = function (row) {
-            
             if (row.retried || row.archived) {
                 return;
             }
@@ -146,25 +132,13 @@ angular.module('failedMessages', [])
             }
         };
 
-        $scope.getId = function (row) {        
+        $scope.getId = function (row) {
             return row.message_id;
-        };
-        
-        $scope.refreshResults = function () {
-            init();
-            load();
-            
-            $scope.model.newMessages = 0;
         };
         
         $scope.retryAll = function() {
             serviceControlService.retryAllFailedMessages();
-
-            init();
-            delete $scope.model.failedMessagesStats; 
-            $scope.model.total = 0;
-            $scope.model.newMessages = 0;
-            $scope.refreshResults();
+            $scope.init();
         };
 
         $scope.retrySelected = function () {
@@ -178,7 +152,7 @@ angular.module('failedMessages', [])
                 }
             }
             
-            $scope.refreshResults();
+            $scope.init();
         };
 
         $scope.retryExceptionGroup = function (group) {
@@ -188,20 +162,20 @@ angular.module('failedMessages', [])
                 $scope.model.failedMessages[i].retried = true;
             }
             
-            $scope.refreshResults();
+            $scope.init();
         };
 
         $scope.archiveExceptionGroup = function (group) {
             serviceControlService.archiveExceptionGroup(group.id, group.count);
-
-            for (var i = 0; i < $scope.model.failedMessages.length; i++) {
-                $scope.model.failedMessages[i].archived = true;
+            if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
+                for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                    $scope.model.failedMessages[i].archived = true;
+                }
             }
         };
         
         $scope.archiveSelected = function () {
             serviceControlService.archiveFailedMessages($scope.model.selectedIds);
-
             $scope.model.selectedIds = [];
 
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
@@ -237,15 +211,13 @@ angular.module('failedMessages', [])
                 }
             }
 
-            var prevText = 'Refresh page to see ' + $scope.model.newMessages + ' new failed messages';
-            var prevNotifications = notifications.getCurrent().filter(function (not) {
+            var prevText = $scope.model.newMessages + ' new failed messages. Refresh the page to see them.';
+            var prevNotification = notifications.getCurrent().filter(function (not) {
                 return not.message === prevText;
-            });
-            prevNotifications.forEach(function(notification) {
-                notifications.remove(notification);
-            });
+            })[0];
+            notifications.remove(prevNotification);
             $scope.model.newMessages++;
-            notifications.pushForCurrentRoute('Refresh page to see ' + $scope.model.newMessages + ' new failed messages', 'info');
+            notifications.pushForCurrentRoute($scope.model.newMessages + ' new failed messages. Refresh the page to see them.', 'info');
         });
         
         streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
@@ -255,18 +227,16 @@ angular.module('failedMessages', [])
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                 var existingFailure = $scope.model.failedMessages[i];
                 if (failedMessageId == existingFailure.id) {
-                    //remove the item
                     $scope.model.failedMessages.splice(i, 1);
                     return;
                 }
             }
-
-            $scope.model.newMessages--;
-        });
             
+            $scope.model.newMessages--;
+        }); 
 
         streamService.subscribe($scope, 'NewFailureGroupDetected', function (event) {
-            var text = 'New failure group detected: \'' + event.group_name + '\'. Reload the page to see it.';
+            var text = 'New failure group detected: \'' + event.group_name + '\'. Refresh the page to see it.';
             notifications.pushForCurrentRoute(text, 'info');
         });
         
@@ -276,5 +246,5 @@ angular.module('failedMessages', [])
             streamService.unsubscribe($scope, 'NewFailureGroupDetected');
         });
 
-        $scope.refreshResults();
+        $scope.init();
     }]);
