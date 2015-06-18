@@ -28,7 +28,7 @@ angular.module('failedMessages', [])
             }
             return a.length - b.length >= 0;
         }
-        
+
         $scope.init = function () {
             page = 1;
             $scope.model.failedMessages = [];
@@ -49,8 +49,8 @@ angular.module('failedMessages', [])
                         $scope.model.exceptionGroups = response.data;
                     });
                 } else {
-                    notifications.pushForCurrentRoute('You are using Service Control version ' + sc_version +
-                        '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to access full functionality of Service Pulse.', 'error');
+                    var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version +'. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to access full functionality of Service Pulse.';
+                    notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'error');
                 }
             });
 
@@ -63,7 +63,7 @@ angular.module('failedMessages', [])
                 $scope.loadingData = false;
                 page++;
             });
-        }
+        };
 
         $scope.togglePanel = function (row, panelnum) {
             if (row.messageBody === undefined) {
@@ -187,6 +187,8 @@ angular.module('failedMessages', [])
                     notifications.remove(notification);
                 }, 10000);
                 streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
+                $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
+                $scope.loadMoreResults($scope.allFailedMessagesGroup, true);
             });
         };
         
@@ -227,9 +229,9 @@ angular.module('failedMessages', [])
                 }
             }
 
-            notifications.removeByText($scope.model.newMessages + ' new failed messages. Refresh the page to see them.');
+            notifications.removeByText($scope.model.newMessages + ' new failed messages. Refresh the page to see them.', 'error');
             $scope.model.newMessages++;
-            notifications.pushForCurrentRoute($scope.model.newMessages + ' new failed messages. Refresh the page to see them.', 'info');
+            notifications.pushForCurrentRoute($scope.model.newMessages + ' new failed messages. Refresh the page to see them.', 'error');
         });
         
         streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
@@ -249,14 +251,13 @@ angular.module('failedMessages', [])
 
         streamService.subscribe($scope, 'NewFailureGroupDetected', function (event) {
             var text = 'New failure group detected: \'' + event.group_name + '\'. Refresh the page to see it.';
-            notifications.pushForCurrentRoute(text, 'info');
+            notifications.pushForCurrentRoute(text, 'error');
         });
 
         $scope.$on('$destroy', function () {
             streamService.unsubscribe($scope, 'MessageFailed');
             streamService.unsubscribe($scope, 'MessageFailureResolved');
             streamService.unsubscribe($scope, 'NewFailureGroupDetected');
-            streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
         });
 
         $scope.init();

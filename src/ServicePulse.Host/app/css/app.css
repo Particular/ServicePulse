@@ -46,6 +46,7 @@
 
 .scSelectableRow {
     border: 1px solid #fcfcfc;
+    cursor: pointer;
 }
 
 .rowSelected {
@@ -120,7 +121,38 @@
     -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.1); 
 }
 
-.failedMessages-groupsBox {
-    max-height: 180px; 
+.failedMessages-header {
+    width: 100%;
+    display: inline-block;
+}
+
+.failedMessages-headerText {
+    width: 70%;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.failedMessagesGroups-box {
+    max-height: 220px; 
     overflow-y: auto
+}
+.failedMessagesGroups-headerScrollText {
+    display: inline-block;
+    float: right;
+}
+
+.failedMessagesGroup {
+    padding: 6px;
+}
+
+.failedMessagesGroupSelected {
+    border: 1px solid #6BA6E1;
+    background-color: #f2f6fc !important;
+}
+
+.failedMessagesGroup-row { 
+    display: inline-block;
+    width: 100%;
 }

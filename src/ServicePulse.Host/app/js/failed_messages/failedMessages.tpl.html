@@ -1,39 +1,30 @@
 ﻿<!-- Failed messages groups -->
 ﻿<div class="row-fluid">
     <div class="box span12" ng-show="model.exceptionGroups.length > 0">
-    <div class="box-header" data-original-title>
-            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.exceptionGroups.length + 1}} failed messages groups</h2>
+        <div class="box-header" data-original-title>
+            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.exceptionGroups.length + 1}} failed messages groups. Messages are grouped by exception type and exception line of code.</h2>
         </div>
         <div class="box-content">
-            <div class="scRow">
-                <div class="row-fluid">
-                    <div class="span5 rowText"><h3>Group name</h3></div>
-                    <div class="span1 rowText"><h3>Count</h3></div>
-                    <div class="span2 rowText"><h3>First failure</h3></div>
-                    <div class="span2 rowText"><h3>Last failure</h3></div>
-                    <div class="span2 rowText"><h3></h3></div>
+            <div class="narrow-scrollbar failedMessagesGroups-box">
+                <div class="scRow failedMessagesGroup-row">
+                    <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: allFailedMessagesGroup.id === selectedExceptionGroup.id}" ng-click="loadMoreResults(allFailedMessagesGroup, true)">
+                        <div class="span10 rowText"><strong>Group:</strong> All failed messages</div>
+                        <div class="span2 rowText">
+                            <button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-asterisk"></i>Retry all</button></div>
+                        <div class="span2 rowText"><strong>Total count:</strong> {{allFailedMessagesGroup.count}}</div>
+                    </div>
+                </div>
+                <div class="scRow failedMessagesGroup-row" ng-repeat="excGroup in model.exceptionGroups">
+                    <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}" ng-click="loadMoreResults(excGroup, true)">
+                        <div class="span10 rowText"><strong>Group:</strong> {{excGroup.title}}</div>
+                        <div class="span2 rowText">
+                            <button class="btn" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i>Archive group</button></div>
+                        <div class="span2 rowText"><strong>Total count:</strong> {{excGroup.count}}</div>
+                        <div class="span4 rowText"><strong>First failure:</strong> {{excGroup.first | date:'dd MMM yyyy hh:mm:ss'}}</div>
+                        <div class="span4 rowText"><strong>Last failure:</strong> {{excGroup.last | date:'dd MMM yyyy  hh:mm:ss'}}</div>
+                    </div>
                 </div>
             </div>
-            <div class="narrow-scrollbar failedMessages-groupsBox">
-            <div class="scRow">
-                <div class="row-fluid">
-                    <div class="span5 rowText"><a href="javascript://" ng-click="loadMoreResults(allFailedMessagesGroup, true)">All failed messages</a></div>
-                    <div class="span1 rowText">{{allFailedMessagesGroup.count}}</></div>
-                    <div class="span2 rowText"></div>
-                    <div class="span2 rowText"></div>
-                    <div class="span2 rowText"><button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-asterisk"></i> Retry all messages</button></div>
-                </div>
-            </div>
-            <div class="scRow" ng-repeat="excGroup in model.exceptionGroups">
-                <div class="row-fluid">
-                    <div class="span5 rowText"><a href="javascript://" ng-click="loadMoreResults(excGroup, true)">{{excGroup.title}}</a></div>
-                    <div class="span1 rowText">{{excGroup.count}}</div>
-                    <div class="span2 rowText">{{excGroup.first | date:'dd MMM yyyy hh:mm:ss:sss'}}</div>
-                    <div class="span2 rowText">{{excGroup.last | date:'dd MMM yyyy  hh:mm:ss:sss'}}</div>
-                    <div class="span2 rowText"><button class="btn" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i> Archive this group</button></div>
-                </div>
-            </div>
-        </div>
 </div>
 </div>
 
@@ -41,7 +32,7 @@
 <div class="row-fluid">
     <div class="box span12">
         <div class="box-header" data-original-title>
-            <h2><i class="fa fa-envelope"></i><span class="break"></span>Showing {{model.failedMessages.length}} out of {{selectedExceptionGroup.count}} failed messages in group '{{selectedExceptionGroup.title}}'<i ng-show="!allMessagesLoaded">(scroll down to load more)</i></h2>
+            <h2 class="failedMessages-header"><i class="fa fa-envelope"></i><span class="break"></span><span class="failedMessages-headerText">Showing {{model.failedMessages.length}} out of {{selectedExceptionGroup.count}} failed messages in group '{{selectedExceptionGroup.title}}'</span><i ng-show="!allMessagesLoaded" class="failedMessages-headerScrollText">(scroll down to load more)</i></h2>
         </div>
         <div class="box-content">
             <div class="btn-toolbar">
