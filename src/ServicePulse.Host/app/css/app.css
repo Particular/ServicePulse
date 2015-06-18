@@ -138,7 +138,7 @@
     max-height: 220px; 
     overflow-y: auto
 }
-.failedMessagesGroups-headerScrollText {
+.failedMessages-headerScrollText {
     display: inline-block;
     float: right;
 }

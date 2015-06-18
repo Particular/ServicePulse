@@ -87,6 +87,9 @@ angular.module('failedMessages', [])
             };
 
             $scope.selectGroup = function (group, sort) {
+                if ($scope.loadingData)
+                    return;
+                
                 $scope.model.failedMessages = [];
                 $scope.selectedExceptionGroup = group;
                 $scope.allMessagesLoaded = false;
@@ -163,7 +166,8 @@ angular.module('failedMessages', [])
                 $scope.init();
             };
 
-            $scope.archiveExceptionGroup = function (group) {
+            $scope.archiveExceptionGroup = function ($event, group) {
+                $event.stopPropagation();
                 var notificationText = 'Archiving messages from group ' + group.title;
                 serviceControlService.archiveExceptionGroup(group.id, notificationText);
                 if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
@@ -215,7 +219,7 @@ angular.module('failedMessages', [])
             };
 
             var updateCountForFailedMessageNotification = function (previousCount, newCount) {
-                var notificationText = '{count} new failed messages. Refresh the page to see them.';
+                var notificationText = ' new failed messages. Refresh the page to see them.';
                 notifications.removeByText(previousCount + notificationText);
                 notifications.pushForCurrentRoute(newCount + notificationText, 'error');
 
@@ -233,7 +237,7 @@ angular.module('failedMessages', [])
                     }
                 }
                 
-                updateCountForFailedMessageNotification($scope.model.newMessages, $scope.model.newMessages++);
+                updateCountForFailedMessageNotification($scope.model.newMessages, ++$scope.model.newMessages);
             });
 
             streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
