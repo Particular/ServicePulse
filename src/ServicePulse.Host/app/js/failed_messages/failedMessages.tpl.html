@@ -7,7 +7,7 @@
         <div class="box-content">
             <div class="narrow-scrollbar failedMessagesGroups-box">
                 <div class="scRow failedMessagesGroup-row">
-                    <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: allFailedMessagesGroup.id === selectedExceptionGroup.id}" ng-click="loadMoreResults(allFailedMessagesGroup, true)">
+                    <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: allFailedMessagesGroup.id === selectedExceptionGroup.id}" ng-click="selectGroup(allFailedMessagesGroup)">
                         <div class="span10 rowText"><strong>Group:</strong> All failed messages</div>
                         <div class="span2 rowText">
                             <button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-asterisk"></i>Retry all</button></div>
@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="scRow failedMessagesGroup-row" ng-repeat="excGroup in model.exceptionGroups">
-                    <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}" ng-click="loadMoreResults(excGroup, true)">
+                    <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}" ng-click="selectGroup(excGroup)">
                         <div class="span10 rowText"><strong>Group:</strong> {{excGroup.title}}</div>
                         <div class="span2 rowText">
                             <button class="btn" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i>Archive group</button></div>
@@ -46,8 +46,8 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="javascript://" ng-click="loadMoreResults(selectedExceptionGroup, true, 'message_type')">Message Type</a></li>
-                        <li><a href="javascript://" ng-click="loadMoreResults(selectedExceptionGroup, true, 'time_sent')">Time Sent</a></li>
+                        <li><a href="javascript://" ng-click="selectGroup(selectedExceptionGroup, 'message_type')">Message Type</a></li>
+                        <li><a href="javascript://" ng-click="selectGroup(selectedExceptionGroup, 'time_sent')">Time Sent</a></li>
                     </ul>
                 </div>
             </div>
