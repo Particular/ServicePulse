@@ -9,11 +9,13 @@ angular.module('sc', [
     'infinite-scroll',
     'services.streamService',
     'services.serviceControlService',
+    'services.platformUpdateService',
     'services.notifications',
     'services.exceptionHandler',
     'directives.moment',
     'directives.hud',
     'directives.eatClick',
+    'directives.productVersion',
     'eventLogItems',
     'failedMessages',
     'endpoints',
@@ -22,7 +24,7 @@ angular.module('sc', [
     'dashboard']);
 
 angular.module('sc')
-    .constant('version', '1.2.0')
+    .constant('version', '1.2.0-unstable.15')
     .constant('scConfig', SC.config);
 
 angular.module('sc')

@@ -19,6 +19,5 @@
     </div>
 </div>
 <div class="row-fluid" ng-include="'js/event_log_items/eventLogItems.tpl.html'"></div>
-<div class="row-fluid text-right">
-    <small>Version: {{Version}} | Service Control Version: {{SCVersion}}</small>
-</div>
+
+<product-version version="{{Version}}" scversion="{{SCVersion}}"></product-version>
