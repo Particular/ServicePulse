@@ -10,6 +10,7 @@ angular.module('sc', [
     'services.streamService',
     'services.serviceControlService',
     'services.platformUpdateService',
+    'services.semverService',
     'services.notifications',
     'services.exceptionHandler',
     'directives.moment',
@@ -24,7 +25,7 @@ angular.module('sc', [
     'dashboard']);
 
 angular.module('sc')
-    .constant('version', '1.2.0-unstable.15')
+    .constant('version', '1.2.0-productversion')
     .constant('scConfig', SC.config);
 
 angular.module('sc')

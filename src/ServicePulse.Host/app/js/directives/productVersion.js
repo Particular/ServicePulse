@@ -8,7 +8,8 @@
             restrict: 'AEM',
             replace: true,
             templateUrl: 'js/directives/productVersion.tpl.html',
-            controller: ['$scope', 'platformUpdateService', function ($scope, platformUpdateService) {
+            controller: ['$scope', 'platformUpdateService', 'semverService',
+                function ($scope, platformUpdateService, semverService) {
                
                 var init = function () {
 
@@ -20,17 +21,8 @@
    
 
                             if (result.data.length > 0) {
-            
-                                var r = window.semverUtils.parse(result.data[0]['tag']);
-                                var i = window.semverUtils.parse($scope.version);
 
-//                                i.major = '1';
-//                                i.minor = '1';
-//                                i.patch = '1';
-
-                                var upgrade = !(   r['major'] === i['major']
-                                                && r['minor'] === i['minor']
-                                                && r['patch'] === i['patch']);
+                                var upgrade = semverService.isUpgradeAvailable($scope.version, result.data[0]['tag']);
 
                                 if (upgrade) {
                                     $scope.newversion = true;

@@ -167,6 +167,7 @@
     <Content Include="app\js\failed_messages\failedMessages.js" />
     <Content Include="app\js\endpoints\endpoints.js" />
     <Content Include="app\js\services\platformUpdateService.js" />
+    <Content Include="app\js\services\semverService.js" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />
@@ -187,7 +188,6 @@
     <Content Include="app\js\app.js" />
     <Content Include="app\js\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
-    <Content Include="app\lib\semver-utils.js" />
     <Content Include="app\lib\ZeroClipboard.min.js" />
     <Content Include="app\lib\ZeroClipboard.swf" />
     <Content Include="app\notifications.tpl.html" />

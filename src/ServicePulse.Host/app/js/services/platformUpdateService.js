@@ -2,7 +2,7 @@
 
 angular.module('services.platformUpdateService', [])
     .service('platformUpdateService', [
-            '$http', 'scConfig', 'notifications', function ($http, scConfig, notifications) {
+            '$http', 'scConfig', function ($http, scConfig) {
 
                 this.getReleases = function () {
                     return $http
