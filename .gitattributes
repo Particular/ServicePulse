@@ -55,9 +55,11 @@
 *.fs text
 *.fsx text
 *.hs text
-
+*.targets text
 *.psm1 text
 *.ps1 text
+*.md text
+*.DotSettings text
 *.txt text eol=crlf
 *.bat text eol=crlf
 
@@ -71,13 +73,3 @@
 *.snk 	-text -diff
 *.cub 	-text -diff
 *.wixlib	-text -diff
-
-# fonts
-*.eot binary
-*.ttf binary 
-*.woff binary
-*.otf binary
-
-# flash 
-*.swf binary
-
