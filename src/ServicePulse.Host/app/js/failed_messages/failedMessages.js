@@ -2,7 +2,10 @@
 
 angular.module('failedMessages', [])
     .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
+        $routeProvider.when('/failedMessages', {
+            templateUrl: 'js/failed_messages/failedMessages.tpl.html',
+            controller: 'FailedMessagesCtrl'
+        });
     }])
     .controller('FailedMessagesCtrl', ['$scope', '$window', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', function ($scope, $window, serviceControlService, streamService, $routeParams, scConfig) {
 
