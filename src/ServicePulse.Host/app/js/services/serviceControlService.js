@@ -138,8 +138,18 @@ angular.module('services.serviceControlService', [])
                     });
             };
 
-            this.archiveExceptionGroup = function(id, successText) {
+            this.archiveExceptionGroup = function (id, successText) {
                 $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive')
+                   .success(function () {
+                       notifications.pushForCurrentRoute(successText, 'info');
+                   })
+                   .error(function () {
+                       notifications.pushForCurrentRoute('Archiving messages failed', 'error');
+                   });
+            };
+
+            this.retryExceptionGroup = function (id, successText) {
+                $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry')
                    .success(function () {
                        notifications.pushForCurrentRoute(successText, 'info');
                    })

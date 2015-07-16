@@ -156,41 +156,61 @@ angular.module('failedMessages', [])
                 $scope.init();
             };
 
-            $scope.retryExceptionGroup = function (group) {
-                serviceControlService.retryExceptionGroup(group.id, group.count);
+//            $scope.retryExceptionGroup = function (group) {
+//                serviceControlService.retryExceptionGroup(group.id, group.count);
+//
+//                for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+//                    $scope.model.failedMessages[i].retried = true;
+//                }
+//
+//                $scope.init();
+//            };
 
-                for (var i = 0; i < $scope.model.failedMessages.length; i++) {
-                    $scope.model.failedMessages[i].retried = true;
+            var removeGroup = function (group) {
+                //remove group
+                for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
+                    var exGroup = $scope.model.exceptionGroups[j];
+                    if (group.title === exGroup.title) {
+                        $scope.model.exceptionGroups.splice(j, 1);
+                    }
                 }
+            }
 
-                $scope.init();
-            };
+            var markMessage = function (group, property) {
+                //mark messages as retried
+                if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
+                    for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                        $scope.model.failedMessages[i][property] = true;
+                    }
+                }
+            }
+
+            var selectAllFailedMessagesGroup = function () {
+                // move focus
+                $scope.selectGroup($scope.allFailedMessagesGroup);
+            }
+
+            $scope.retryExceptionGroup = function($event, group) {
+                $event.stopPropagation();
+               
+                var notificationText = 'Retrying messages from group ' + group.title;
+                serviceControlService.retryExceptionGroup(group.id, notificationText);
+
+                removeGroup(group);
+                markMessage(group, 'retried');
+                selectAllFailedMessagesGroup();
+            }
+
+           
 
             $scope.archiveExceptionGroup = function ($event, group) {
                 $event.stopPropagation();
                 var notificationText = 'Archiving messages from group ' + group.title;
                 serviceControlService.archiveExceptionGroup(group.id, notificationText);
-                if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
-                    for (var i = 0; i < $scope.model.failedMessages.length; i++) {
-                        $scope.model.failedMessages[i].archived = true;
-                    }
-                }
 
-                streamService.subscribe($scope, 'FailedMessageGroupArchived', function () {
-                    for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
-                        var exGroup = $scope.model.exceptionGroups[j];
-                        if (group.title == exGroup.title) {
-                            $scope.model.exceptionGroups.splice(j, 1);
-                        }
-                    }
-                    notifications.removeByText(notificationText);
-                    var notification = notifications.pushForCurrentRoute('Messages from group \'' + group.title + '\' were successfully archived.', 'info');
-                    $timeout(function () {
-                        notifications.remove(notification);
-                    }, 10000);
-                    streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
-                    $scope.selectGroup($scope.allFailedMessagesGroup);
-                });
+                removeGroup(group);
+                markMessage(group, 'archived');
+                selectAllFailedMessagesGroup();
             };
 
             $scope.archiveSelected = function () {
@@ -260,10 +280,15 @@ angular.module('failedMessages', [])
                 notifications.pushForCurrentRoute(text, 'error');
             });
 
+            streamService.subscribe($scope, 'FailedMessageGroupArchived', function () {
+                notifications.pushForCurrentRoute('Messages from group \'' + group.title + '\' were successfully archived.', 'info');
+            });
+
             $scope.$on('$destroy', function () {
                 streamService.unsubscribe($scope, 'MessageFailed');
                 streamService.unsubscribe($scope, 'MessageFailureResolved');
                 streamService.unsubscribe($scope, 'NewFailureGroupDetected');
+                streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
             });
 
             $scope.init();

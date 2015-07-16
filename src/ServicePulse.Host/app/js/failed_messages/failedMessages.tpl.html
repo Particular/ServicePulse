@@ -8,17 +8,24 @@
             <div class="narrow-scrollbar failedMessagesGroups-box">
                 <div class="scRow failedMessagesGroup-row">
                     <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: allFailedMessagesGroup.id === selectedExceptionGroup.id}" ng-click="selectGroup(allFailedMessagesGroup)">
-                        <div class="span10 rowText"><strong>Group:</strong> All failed messages</div>
-                        <div class="span2 rowText">
-                            <button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-asterisk"></i>Retry all</button></div>
+                        <div class="span8 rowText"><strong>Group:</strong> All failed messages</div>
+                        <div class="span4">
+                            <div class="btn-toolbar pull-right">
+                                <button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-repeat"></i> Retry all</button>
+                            </div>
+                        </div>
                         <div class="span2 rowText"><strong>Total count:</strong> {{allFailedMessagesGroup.count}}</div>
                     </div>
                 </div>
                 <div class="scRow failedMessagesGroup-row" ng-repeat="excGroup in model.exceptionGroups">
                     <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}" ng-click="selectGroup(excGroup)">
-                        <div class="span10 rowText"><strong>Group:</strong> {{excGroup.title}}</div>
-                        <div class="span2 rowText">
-                            <button class="btn" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i>Archive group</button></div>
+                        <div class="span8 rowText"><strong>Group:</strong> {{excGroup.title}}</div>
+                        <div class="span4">
+                            <div class="btn-toolbar pull-right">
+                                <button class="btn" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-repeat"></i> Retry group</button>
+                                <button class="btn" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i> Archive group</button>
+                            </div>
+                        </div>
                         <div class="span2 rowText"><strong>Total count:</strong> {{excGroup.count}}</div>
                         <div class="span4 rowText"><strong>First failure:</strong> {{excGroup.first | date:'dd MMM yyyy hh:mm:ss'}}</div>
                         <div class="span4 rowText"><strong>Last failure:</strong> {{excGroup.last | date:'dd MMM yyyy  hh:mm:ss'}}</div>
