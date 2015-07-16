@@ -11,7 +11,7 @@
                         <div class="span8 rowText"><strong>Group:</strong> All failed messages</div>
                         <div class="span4">
                             <div class="btn-toolbar pull-right">
-                                <button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-repeat"></i> Retry all</button>
+                                <button class="btn" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0"><i class="icon-repeat"></i> Retry</button>
                             </div>
                         </div>
                         <div class="span2 rowText"><strong>Total count:</strong> {{allFailedMessagesGroup.count}}</div>
@@ -22,8 +22,8 @@
                         <div class="span8 rowText"><strong>Group:</strong> {{excGroup.title}}</div>
                         <div class="span4">
                             <div class="btn-toolbar pull-right">
-                                <button class="btn" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-repeat"></i> Retry group</button>
-                                <button class="btn" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i> Archive group</button>
+                                <button class="btn" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i> Archive</button>
+                                <button class="btn" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-repeat"></i> Retry</button>
                             </div>
                         </div>
                         <div class="span2 rowText"><strong>Total count:</strong> {{excGroup.count}}</div>
