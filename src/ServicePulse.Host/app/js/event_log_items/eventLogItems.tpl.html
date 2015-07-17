@@ -12,9 +12,16 @@
                 <div class="span2" title="Severity: {{eventLogItem.severity}}"><span ng-class="{'label label-success': eventLogItem.severity == 'info', 'label label-important':  eventLogItem.severity == 'error'}">{{eventLogItem.severity}}</span></div>
                 <div class="span4" title="Category: {{eventLogItem.category}}">{{eventLogItem.category}}</div>
                 <div class="span6" title="Related to: {{eventLogItem.related_to[0]}}">
-                    <div ng-repeat="r in eventLogItem.related_to">
-                        {{r}}
+                    <div ng-init="limit = 5">
+                        <div ng-repeat="r in eventLogItem.related_to | limitTo: limit">
+                            {{r}}
+                        </div>
                     </div>
+                    <a ng-hide="limit >= eventLogItem.related_to.length"
+                       ng-click="limit = limit +eventLogItem.related_to.length-5">
+                        show more...
+                    </a>
+
                 </div>
             </div>
         </div>
