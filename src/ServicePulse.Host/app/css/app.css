@@ -156,3 +156,7 @@
     display: inline-block;
     width: 100%;
 }
+
+.white, .white a {
+  color: #fff;
+}

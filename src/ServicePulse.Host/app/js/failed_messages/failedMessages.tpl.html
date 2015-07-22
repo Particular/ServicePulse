@@ -1,4 +1,15 @@
-﻿﻿<div class="row-fluid">
+﻿<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#">Home</a> <span class="divider">/</span>
+        </li>
+        <li>Failed Messages</li>
+    </ul>
+    <hr>
+</div>
+﻿
+<div class="row-fluid">
     <ul class="nav nav-tabs">
         <li ng-show="model.exceptionGroups.length > 0" ng-class="{active: model.activePageTab == 'groups'}">
             <a ng-click="model.activePageTab = 'groups'">Error Groups</a>
@@ -38,19 +49,20 @@
                             <div class="span1">
                                 {{excGroup.last | date:'dd MMM yyyy  hh:mm:ss'}}
                             </div>
-                            <div class="span1 btn-group">
-                                <button type="button" class="btn btn-mini" tooltip="Archive Message Group" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i></button>
-                                <button type="button" class="btn btn-mini" tooltip="Retry Message Group" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-repeat"></i></button>
+                            <div class="span1 btn-toolbar">
+                                <button type="button" class="btn btn-small" tooltip="Archive Message Group" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i></button>
+                                <button type="button" class="btn btn-small" tooltip="Retry Message Group" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                             </div>
                         </div>
                     </div>
 
                 </div>
 
+                <p><br/></p>
 
                 <div class="alert alert-error alert-block">
                     <p class="pull-right">
-                        <button class="btn btn-danger" type="button" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0" tooltip="All failed messages will be Retried"><i class="icon-repeat"></i> Retry {{allFailedMessagesGroup.count}} Failed Messages</button>
+                        <button class="btn btn-danger" type="button" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0" tooltip="All failed messages will be Retried"><i class="fa fa-refresh white"></i> Retry {{allFailedMessagesGroup.count}} Failed Messages</button>
                     </p>
                     <p><H4>Warning!</H4> Retrying all messages can be a time consuming operation. Take care when doing this.</p>
                 </div>
