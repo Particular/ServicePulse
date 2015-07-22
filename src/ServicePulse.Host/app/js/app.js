@@ -11,6 +11,7 @@ angular.module('sc', [
     'services.serviceControlService',
     'services.notifications',
     'services.exceptionHandler',
+    'ui.particular',
     'directives.moment',
     'directives.hud',
     'directives.eatClick',

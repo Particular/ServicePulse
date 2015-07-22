@@ -26,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -152,6 +153,7 @@
     <Content Include="app\js\configuration\configuration.tpl.html" />
     <Content Include="app\js\directives\eat.click.js" />
     <Content Include="app\js\directives\ngClip.js" />
+    <Content Include="app\js\directives\ui.particular.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\custom_checks\customChecks.js" />
     <Content Include="app\js\custom_checks\customChecks.tpl.html" />
@@ -196,7 +198,7 @@
     <Content Include="app\lib\angular\angular.min.js" />
     <Content Include="app\lib\bootstrap.js" />
     <Content Include="app\lib\bootstrap.min.js" />
-    <Content Include="app\js\directives\moment.min.js" />
+    <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\dashboard\dashboard.tpl.html" />
     <Content Include="app\js\endpoints\endpoints.tpl.html" />
