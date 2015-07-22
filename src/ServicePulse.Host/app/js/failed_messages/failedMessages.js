@@ -8,7 +8,7 @@ angular.module('failedMessages', [])
         function ($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications) {
             $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
             $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
-            $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0 };
+            $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0, activePageTab:"" };
             $scope.loadingData = false;
             $scope.allMessagesLoaded = false;
             var scVersionSupportingExceptionGroups = '1.6.0';
@@ -42,6 +42,7 @@ angular.module('failedMessages', [])
                 $scope.model.selectedIds = [];
                 $scope.allMessagesLoaded = false;
                 $scope.model.newMessages = 0;
+                $scope.model.activePageTab = "messages";
 
                 if ($scope.loadingData) {
                     return;
@@ -49,16 +50,24 @@ angular.module('failedMessages', [])
 
                 $scope.loadingData = true;
 
-                serviceControlService.getVersion().then(function (sc_version) {
-                    if (isSupportedInServiceControl(sc_version, scVersionSupportingExceptionGroups)) {
-                        serviceControlService.getExceptionGroups().then(function (response) {
-                            $scope.model.exceptionGroups = response.data;
-                        });
-                    } else {
-                        var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to access full functionality of Service Pulse.';
-                        notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'error');
-                    }
-                });
+                serviceControlService.getVersion()
+                    .then(function (sc_version) {
+                        if (isSupportedInServiceControl(sc_version, scVersionSupportingExceptionGroups)) {
+                            serviceControlService.getExceptionGroups()
+                                .then(function (response) {
+                                    $scope.model.exceptionGroups = response.data;
+                                })
+                                .then(function () {
+                                    if ($scope.model.exceptionGroups.length > 0) {
+                                        $scope.model.activePageTab = "groups";
+                                    }
+                                })
+                            ;
+                        } else {
+                            var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to access full functionality of Service Pulse.';
+                            notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'error');
+                        }
+                    });
 
                 serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
                     $scope.allFailedMessagesGroup.count = response.total;
@@ -89,7 +98,7 @@ angular.module('failedMessages', [])
             $scope.selectGroup = function (group, sort) {
                 if ($scope.loadingData)
                     return;
-                
+                $scope.model.activePageTab = "messages";
                 $scope.model.failedMessages = [];
                 $scope.selectedExceptionGroup = group;
                 $scope.allMessagesLoaded = false;
