@@ -154,52 +154,39 @@ angular.module('failedMessages', [])
                 $scope.init();
             };
 
-//            $scope.retryExceptionGroup = function (group) {
-//                serviceControlService.retryExceptionGroup(group.id, group.count);
-//
-//                for (var i = 0; i < $scope.model.failedMessages.length; i++) {
-//                    $scope.model.failedMessages[i].retried = true;
-//                }
-//
-//                $scope.init();
-//            };
-
-            var removeGroup = function (group) {
-                //remove group
+            var removeGroup = function(group) {
                 for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
                     var exGroup = $scope.model.exceptionGroups[j];
                     if (group.title === exGroup.title) {
                         $scope.model.exceptionGroups.splice(j, 1);
                     }
                 }
-            }
+            };
 
-            var markMessage = function (group, property) {
+            var markMessage = function(group, property) {
                 //mark messages as retried
                 if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
                     for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                         $scope.model.failedMessages[i][property] = true;
                     }
                 }
-            }
+            };
 
-            var selectAllFailedMessagesGroup = function () {
+            var selectAllFailedMessagesGroup = function() {
                 // move focus
                 $scope.selectGroup($scope.allFailedMessagesGroup);
-            }
+            };
 
             $scope.retryExceptionGroup = function($event, group) {
                 $event.stopPropagation();
-               
+
                 var notificationText = 'Retrying messages from group ' + group.title;
                 serviceControlService.retryExceptionGroup(group.id, notificationText);
 
                 removeGroup(group);
                 markMessage(group, 'retried');
                 selectAllFailedMessagesGroup();
-            }
-
-           
+            };
 
             $scope.archiveExceptionGroup = function ($event, group) {
                 $event.stopPropagation();
@@ -240,7 +227,6 @@ angular.module('failedMessages', [])
                 var notificationText = ' new failed messages. Refresh the page to see them.';
                 notifications.removeByText(previousCount + notificationText);
                 notifications.pushForCurrentRoute(newCount + notificationText, 'error');
-
             };
             
             streamService.subscribe($scope, 'MessageFailed', function (event) {
