@@ -37,19 +37,19 @@
                     </div>
                     <div class="scRow failedMessagesGroup-row" ng-repeat="excGroup in model.exceptionGroups">
                         <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}" ng-click="selectGroup(excGroup)">
-                            <div class="span8">
+                            <div class="span8 blue text-ellipsis">
                                 {{excGroup.title}}
                             </div>
-                            <div class="span1">
+                            <div class="span1 red">
                                 {{excGroup.count}}
                             </div>
-                            <div class="span1">
-                                {{excGroup.first | date:'dd MMM yyyy hh:mm:ss'}}
+                            <div class="span1" >
+                                <sp-moment date="{{excGroup.first}}" />
+                            </div>
+                            <div class="span1 red">
+                                <sp-moment date="{{excGroup.last}}" />
                             </div>
                             <div class="span1">
-                                {{excGroup.last | date:'dd MMM yyyy  hh:mm:ss'}}
-                            </div>
-                            <div class="span1 btn-toolbar">
                                 <button type="button" class="btn btn-small" tooltip="Archive Message Group" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i></button>
                                 <button type="button" class="btn btn-small" tooltip="Retry Message Group" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                             </div>
@@ -63,6 +63,7 @@
                 <div class="alert alert-error alert-block">
                     <p class="pull-right">
                         <button class="btn btn-danger" type="button" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0" tooltip="All failed messages will be Retried"><i class="fa fa-refresh white"></i> Retry {{allFailedMessagesGroup.count}} Failed Messages</button>
+                        <button class="btn" type="button" ng-click="selectGroup(allFailedMessagesGroup)" tooltip="Review all Messages"><i class="fa fa-envelope"></i> View All Failed Messages</button>
                     </p>
                     <p><H4>Warning!</H4> Retrying all messages can be a time consuming operation. Take care when doing this.</p>
                 </div>

@@ -160,3 +160,19 @@
 .white, .white a {
   color: #fff;
 }
+
+.blue, .blue a {
+  color: #6BA6E1;
+}
+
+.red, .red a {
+  color: #f00;
+}
+
+
+ellipsis, .text-ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
+}
