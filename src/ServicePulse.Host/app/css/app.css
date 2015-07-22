@@ -46,6 +46,7 @@
 
 .scSelectableRow {
     border: 1px solid #fcfcfc;
+    cursor: pointer;
 }
 
 .rowSelected {
@@ -107,4 +108,75 @@
 
 .column-centre {
     text-align: center;
+}
+
+.narrow-scrollbar::-webkit-scrollbar {
+    width: 10px;
+}
+ 
+.narrow-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    -webkit-border-radius: 10px;
+}
+ 
+.narrow-scrollbar::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    -webkit-box-shadow: inset 0 0 1px rgba(0,0,0,0.1); 
+}
+
+.failedMessages-header {
+    width: 100%;
+    display: inline-block;
+}
+
+.failedMessages-headerText {
+    width: 70%;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.failedMessagesGroups-box {
+    max-height: 220px; 
+    overflow-y: auto
+}
+.failedMessages-headerScrollText {
+    display: inline-block;
+    float: right;
+}
+
+.failedMessagesGroup {
+    padding: 6px;
+}
+
+.failedMessagesGroupSelected {
+    border: 1px solid #6BA6E1;
+    background-color: #f2f6fc !important;
+}
+
+.failedMessagesGroup-row { 
+    display: inline-block;
+    width: 100%;
+}
+
+.white, .white a {
+  color: #fff;
+}
+
+.blue, .blue a {
+  color: #6BA6E1;
+}
+
+.red, .red a {
+  color: #f00;
+}
+
+
+ellipsis, .text-ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    display: block;
 }

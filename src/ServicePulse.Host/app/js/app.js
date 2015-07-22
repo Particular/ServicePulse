@@ -13,6 +13,7 @@ angular.module('sc', [
     'services.semverService',
     'services.notifications',
     'services.exceptionHandler',
+    'ui.particular',
     'directives.moment',
     'directives.hud',
     'directives.eatClick',
@@ -25,7 +26,7 @@ angular.module('sc', [
     'dashboard']);
 
 angular.module('sc')
-    .constant('version', '1.2.0-productversion')
+    .constant('version', '1.2.0-unstable.20')
     .constant('scConfig', SC.config);
 
 angular.module('sc')
