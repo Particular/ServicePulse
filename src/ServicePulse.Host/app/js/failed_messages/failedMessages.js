@@ -7,8 +7,8 @@ angular.module('failedMessages', [])
             controller: 'FailedMessagesCtrl'
         });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications',
-        function ($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications) {
+    .controller('FailedMessagesCtrl', ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', 'semverService', '$routeParams', 'scConfig', 'notifications',
+        function ($scope, $window, $timeout, serviceControlService, streamService, semverService, $routeParams, scConfig, notifications) {
             $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
             $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
             $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0, activePageTab:"" };
@@ -16,21 +16,7 @@ angular.module('failedMessages', [])
             $scope.allMessagesLoaded = false;
             var scVersionSupportingExceptionGroups = '1.6.0';
             var page = 1;
-
-            var isSupportedInServiceControl = function(currentScVersion, minVersion) {
-                var i, cmp, len, re = /(\.0)+[^\.]*$/;
-                currentScVersion = (currentScVersion + '').replace(re, '').split('.');
-                minVersion = (minVersion + '').replace(re, '').split('.');
-                len = Math.min(currentScVersion.length, minVersion.length);
-                for (i = 0; i < len; i++) {
-                    cmp = parseInt(currentScVersion[i], 10) - parseInt(minVersion[i], 10);
-                    if (cmp !== 0) {
-                        return cmp;
-                    }
-                }
-                return currentScVersion.length - minVersion.length >= 0;
-            };
-
+            
             var processLoadedMessages = function (data) {
                 $scope.model.failedMessages = $scope.model.failedMessages.concat(data);
                 $scope.allMessagesLoaded = ($scope.model.failedMessages.length >= $scope.selectedExceptionGroup.count);
@@ -55,7 +41,7 @@ angular.module('failedMessages', [])
 
                 serviceControlService.getVersion()
                     .then(function (sc_version) {
-                        if (isSupportedInServiceControl(sc_version, scVersionSupportingExceptionGroups)) {
+                        if (semverService.isSupported(sc_version, scVersionSupportingExceptionGroups)) {
                             serviceControlService.getExceptionGroups()
                                 .then(function (response) {
                                     $scope.model.exceptionGroups = response.data;

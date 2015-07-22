@@ -59,6 +59,16 @@ angular.module('services.semverService', [])
 
             }
 
+            this.isSupported = function (currentVersion, minSupportedVersion) {
+                var min = this.parse(minSupportedVersion);
+                var cur = this.parse(currentVersion);
+
+                var minInt = parseInt(min['major'] + min['minor'] + min['patch'], 10);
+                var curInt = parseInt(cur['major'] + cur['minor'] + cur['patch'], 10);
+
+                return minInt <= curInt;
+            };
+
             this.parse = function (version)
             {
                 // semver, major, minor, patch
