@@ -1,4 +1,9 @@
-﻿'use strict';
+﻿
+
+// anonymous function to tie down scope
+(function() {
+
+    'use strict';
 
 angular.module('failedMessages', [])
     .config(['$routeProvider', function ($routeProvider) {
@@ -165,16 +170,6 @@ angular.module('failedMessages', [])
                 $scope.init();
             };
 
-//            $scope.retryExceptionGroup = function (group) {
-//                serviceControlService.retryExceptionGroup(group.id, group.count);
-//
-//                for (var i = 0; i < $scope.model.failedMessages.length; i++) {
-//                    $scope.model.failedMessages[i].retried = true;
-//                }
-//
-//                $scope.init();
-//            };
-
             var removeGroup = function (group) {
                 //remove group
                 for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
@@ -297,3 +292,5 @@ angular.module('failedMessages', [])
 
             $scope.init();
         }]);
+
+}());
