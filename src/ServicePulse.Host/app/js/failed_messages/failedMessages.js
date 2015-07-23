@@ -284,13 +284,8 @@ angular.module('failedMessages', [])
                 $scope.model.newMessages--;
             });
 
-            streamService.subscribe($scope, 'NewFailureGroupDetected', function (event) {
-                var text = 'New failure group detected: \'' + event.group_name + '\'. Refresh the page to see it.';
-                notifications.pushForCurrentRoute(text, 'error');
-            });
-
-            streamService.subscribe($scope, 'FailedMessageGroupArchived', function () {
-                notifications.pushForCurrentRoute('Messages from group \'' + group.title + '\' were successfully archived.', 'info');
+            streamService.subscribe($scope, 'FailedMessageGroupArchived', function (event) {
+                notifications.pushForCurrentRoute('Messages from group \'' + event.group_name + '\' were successfully archived.', 'info');
             });
 
             $scope.$on('$destroy', function () {
