@@ -106,6 +106,10 @@
     background-position: center;
 }
 
+.column-centre {
+    text-align: center;
+}
+
 .narrow-scrollbar::-webkit-scrollbar {
     width: 10px;
 }
