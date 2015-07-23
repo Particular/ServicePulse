@@ -43,8 +43,8 @@ function SemVer(obj) {
 
     this.isUpgradeAvailable = function (myVersion, latestVersion) {
 
-        var r = this.parse(latestVersion);
-        var i = this.parse(myVersion);
+        var r = this.parse(latestVersion.split('-')[0]);
+        var i = this.parse(myVersion.split('-')[0]);
 
         var upgrade = !(r['major'] === i['major']
             && r['minor'] === i['minor']
@@ -68,7 +68,9 @@ function SemVer(obj) {
         // https://github.com/mojombo/semver/issues/32
         // https://github.com/isaacs/node-semver/issues/10
         // optional v
-        var m = this.reSemver.exec(version) || [], ver = new SemVer({
+        var m = this.reSemver.exec(version) || [];
+
+        var ver = new SemVer({
             semver: m[0],
             version: m[1],
             major: m[2],
