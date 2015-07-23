@@ -101,6 +101,8 @@ angular.module('failedMessages', [])
             };
 
             $scope.selectGroup = function (group, sort) {
+
+
                 if ($scope.loadingData)
                     return;
                 $scope.model.activePageTab = "messages";
@@ -208,6 +210,7 @@ angular.module('failedMessages', [])
            
 
             $scope.archiveExceptionGroup = function ($event, group) {
+               
                 $event.stopPropagation();
                 var notificationText = 'Archiving messages from group ' + group.title;
                 serviceControlService.archiveExceptionGroup(group.id, notificationText);

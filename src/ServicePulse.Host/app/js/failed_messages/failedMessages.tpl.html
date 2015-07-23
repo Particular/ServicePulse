@@ -36,17 +36,17 @@
                         <div class="span1"><strong>Action</strong></div>
                     </div>
                     <div class="scRow failedMessagesGroup-row" ng-repeat="excGroup in model.exceptionGroups">
-                        <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}" ng-click="selectGroup(excGroup)">
-                            <div class="span8 blue text-ellipsis">
+                        <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}" >
+                            <div class="span8 blue text-ellipsis" ng-click="selectGroup(excGroup)">
                                 {{excGroup.title}}
                             </div>
-                            <div class="span1 red">
+                            <div class="span1 red" ng-click="selectGroup($event, excGroup)">
                                 {{excGroup.count}}
                             </div>
-                            <div class="span1" >
+                            <div class="span1" ng-click="selectGroup($event, excGroup)">
                                 <sp-moment date="{{excGroup.first}}" />
                             </div>
-                            <div class="span1 red">
+                            <div class="span1 red" ng-click="selectGroup($event, excGroup)">
                                 <sp-moment date="{{excGroup.last}}" />
                             </div>
                             <div class="span1">
@@ -58,7 +58,7 @@
 
                 </div>
 
-                <p><br/></p>
+                <p><br /></p>
 
                 <div class="alert alert-error alert-block">
                     <p class="pull-right">
