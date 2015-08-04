@@ -10,7 +10,7 @@
 </div>
 ﻿
 <div class="row-fluid">
-    <ul class="nav nav-tabs">
+    <ul class="nav nav-tabs" >
         <li ng-show="model.exceptionGroups.length > 0" ng-class="{active: model.activePageTab == 'groups'}">
             <a ng-click="model.activePageTab = 'groups'">Error Groups</a>
         </li>
@@ -50,8 +50,8 @@
                                 <sp-moment date="{{excGroup.last}}" />
                             </div>
                             <div class="span1">
-                                <button type="button" class="btn btn-small" tooltip="Archive Message Group" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i></button>
-                                <button type="button" class="btn btn-small" tooltip="Retry Message Group" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
+                                <button type="button" class="btn btn-small" tooltip="Archive Group" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="icon-archive-messages"></i></button>
+                                <button type="button" class="btn btn-small" tooltip="Retry Group" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                             </div>
                         </div>
                     </div>

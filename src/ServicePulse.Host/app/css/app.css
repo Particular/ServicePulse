@@ -180,3 +180,7 @@ ellipsis, .text-ellipsis {
     overflow: hidden;
     display: block;
 }
+
+ul.nav-tabs > li > a {
+    cursor: default;
+}
