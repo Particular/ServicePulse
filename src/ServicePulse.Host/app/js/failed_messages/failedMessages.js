@@ -289,7 +289,6 @@ angular.module('failedMessages', [])
             $scope.$on('$destroy', function () {
                 streamService.unsubscribe($scope, 'MessageFailed');
                 streamService.unsubscribe($scope, 'MessageFailureResolved');
-                streamService.unsubscribe($scope, 'NewFailureGroupDetected');
                 streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
             });
 
