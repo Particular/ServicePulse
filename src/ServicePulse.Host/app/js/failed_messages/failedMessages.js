@@ -1,14 +1,16 @@
-﻿'use strict';
+﻿
+
+// anonymous function to tie down scope
+(function() {
+
+    'use strict';
 
 angular.module('failedMessages', [])
-    .config(['$routeProvider', function($routeProvider) {
-        $routeProvider.when('/failedMessages', {
-            templateUrl: 'js/failed_messages/failedMessages.tpl.html',
-            controller: 'FailedMessagesCtrl'
-        });
+    .config(['$routeProvider', function ($routeProvider) {
+        $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', 'semverService', '$routeParams', 'scConfig', 'notifications',
-        function ($scope, $window, $timeout, serviceControlService, streamService, semverService, $routeParams, scConfig, notifications) {
+    .controller('FailedMessagesCtrl', ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications',
+        function ($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications) {
             $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
             $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
             $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0, activePageTab:"" };
@@ -16,7 +18,21 @@ angular.module('failedMessages', [])
             $scope.allMessagesLoaded = false;
             var scVersionSupportingExceptionGroups = '1.6.0';
             var page = 1;
-            
+
+            var isSupportedInServiceControl = function(currentScVersion, minVersion) {
+                var i, cmp, len, re = /(\.0)+[^\.]*$/;
+                currentScVersion = (currentScVersion + '').replace(re, '').split('.');
+                minVersion = (minVersion + '').replace(re, '').split('.');
+                len = Math.min(currentScVersion.length, minVersion.length);
+                for (i = 0; i < len; i++) {
+                    cmp = parseInt(currentScVersion[i], 10) - parseInt(minVersion[i], 10);
+                    if (cmp !== 0) {
+                        return cmp;
+                    }
+                }
+                return currentScVersion.length - minVersion.length >= 0;
+            };
+
             var processLoadedMessages = function (data) {
                 $scope.model.failedMessages = $scope.model.failedMessages.concat(data);
                 $scope.allMessagesLoaded = ($scope.model.failedMessages.length >= $scope.selectedExceptionGroup.count);
@@ -41,7 +57,7 @@ angular.module('failedMessages', [])
 
                 serviceControlService.getVersion()
                     .then(function (sc_version) {
-                        if (semverService.isSupported(sc_version, scVersionSupportingExceptionGroups)) {
+                        if (isSupportedInServiceControl(sc_version, scVersionSupportingExceptionGroups)) {
                             serviceControlService.getExceptionGroups()
                                 .then(function (response) {
                                     $scope.model.exceptionGroups = response.data;
@@ -85,6 +101,8 @@ angular.module('failedMessages', [])
             };
 
             $scope.selectGroup = function (group, sort) {
+
+
                 if ($scope.loadingData)
                     return;
                 $scope.model.activePageTab = "messages";
@@ -154,41 +172,45 @@ angular.module('failedMessages', [])
                 $scope.init();
             };
 
-            var removeGroup = function(group) {
+            var removeGroup = function (group) {
+                //remove group
                 for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
                     var exGroup = $scope.model.exceptionGroups[j];
                     if (group.title === exGroup.title) {
                         $scope.model.exceptionGroups.splice(j, 1);
                     }
                 }
-            };
+            }
 
-            var markMessage = function(group, property) {
+            var markMessage = function (group, property) {
                 //mark messages as retried
                 if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
                     for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                         $scope.model.failedMessages[i][property] = true;
                     }
                 }
-            };
+            }
 
-            var selectAllFailedMessagesGroup = function() {
+            var selectAllFailedMessagesGroup = function () {
                 // move focus
                 $scope.selectGroup($scope.allFailedMessagesGroup);
-            };
+            }
 
             $scope.retryExceptionGroup = function($event, group) {
                 $event.stopPropagation();
-
+               
                 var notificationText = 'Retrying messages from group ' + group.title;
                 serviceControlService.retryExceptionGroup(group.id, notificationText);
 
                 removeGroup(group);
                 markMessage(group, 'retried');
                 selectAllFailedMessagesGroup();
-            };
+            }
+
+           
 
             $scope.archiveExceptionGroup = function ($event, group) {
+               
                 $event.stopPropagation();
                 var notificationText = 'Archiving messages from group ' + group.title;
                 serviceControlService.archiveExceptionGroup(group.id, notificationText);
@@ -227,6 +249,7 @@ angular.module('failedMessages', [])
                 var notificationText = ' new failed messages. Refresh the page to see them.';
                 notifications.removeByText(previousCount + notificationText);
                 notifications.pushForCurrentRoute(newCount + notificationText, 'error');
+
             };
             
             streamService.subscribe($scope, 'MessageFailed', function (event) {
@@ -259,13 +282,8 @@ angular.module('failedMessages', [])
                 $scope.model.newMessages--;
             });
 
-            streamService.subscribe($scope, 'NewFailureGroupDetected', function (event) {
-                var text = 'New failure group detected: \'' + event.group_name + '\'. Refresh the page to see it.';
-                notifications.pushForCurrentRoute(text, 'error');
-            });
-
-            streamService.subscribe($scope, 'FailedMessageGroupArchived', function () {
-                notifications.pushForCurrentRoute('Messages from group \'' + group.title + '\' were successfully archived.', 'info');
+            streamService.subscribe($scope, 'FailedMessageGroupArchived', function (event) {
+                notifications.pushForCurrentRoute('Messages from group \'' + event.group_name + '\' were successfully archived.', 'info');
             });
 
             $scope.$on('$destroy', function () {
@@ -277,3 +295,5 @@ angular.module('failedMessages', [])
 
             $scope.init();
         }]);
+
+}());

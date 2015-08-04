@@ -1,4 +1,6 @@
-﻿angular.module('directives.productVersion', [])
+﻿(function () {
+
+angular.module('directives.productVersion', [])
     .directive('productVersion', function () {
         return {
             scope: {
@@ -43,3 +45,4 @@
             }
         };
     });
+}());

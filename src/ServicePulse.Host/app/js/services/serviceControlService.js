@@ -123,7 +123,7 @@ angular.module('services.serviceControlService', [])
                         notifications.pushForCurrentRoute('Retrying messages failed', 'error');
                     });
             };
-
+            
             this.archiveFailedMessages = function(selectedMessages) {
                 $http({
                         url: scConfig.service_control_url + '/errors/archive',
