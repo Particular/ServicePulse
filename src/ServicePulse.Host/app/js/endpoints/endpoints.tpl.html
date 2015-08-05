@@ -16,7 +16,7 @@
         </div>
         <div class="box-content">
             <div class="well well-small" ng-repeat="endpoint in model.active | orderBy:'name'">
-                <h4 style="word-break:break-all;">{{endpoint.name}}@{{endpoint.host_display_name}}</h4>
+                <h4 class="hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}}</h4>
                 <p>Latest heartbeat received: <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}" /></p>
             </div>
             <div class="alert alert-success" ng-show='model.active.length == 0'>No active endpoints</div>
@@ -28,7 +28,7 @@
         </div>
         <div class="box-content">
             <div class="well well-small" ng-repeat="endpoint in model.inactive | orderBy:'name'">
-                <h4 style="word-break:break-all;">{{endpoint.name}}@{{endpoint.host_display_name}}</h4>
+                <h4 class="hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}}</h4>
                 <p ng-show="endpoint.heartbeat_information">Latest heartbeat received: <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}" /></p>
                 <p ng-show="!endpoint.heartbeat_information">No plugin installed</p>
             </div>

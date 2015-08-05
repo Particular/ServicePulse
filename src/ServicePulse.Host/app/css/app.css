@@ -184,3 +184,8 @@ ellipsis, .text-ellipsis {
 ul.nav-tabs > li > a {
     cursor: default;
 }
+
+.hard-wrap {
+    word-wrap: break-word;
+    word-break: break-all;
+}
