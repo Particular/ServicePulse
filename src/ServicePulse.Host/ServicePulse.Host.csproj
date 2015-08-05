@@ -155,6 +155,7 @@
     <Content Include="app\js\directives\ngClip.js" />
     <Content Include="app\js\directives\productVersion.js" />
     <Content Include="app\js\directives\productVersion.tpl.html" />
+    <Content Include="app\js\directives\ui.particular.confirmclick.js" />
     <Content Include="app\js\directives\ui.particular.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\custom_checks\customChecks.js" />
