@@ -2,7 +2,7 @@
 
 angular.module('services.serviceControlService', [])
     .service('serviceControlService', [
-        '$http', 'scConfig', 'notifications', function($http, scConfig, notifications) {
+        '$http', 'scConfig', 'notifications', function ($http, scConfig, notifications) {
 
             this.getVersion = function() {
                 return $http.get(scConfig.service_control_url).then(function(response) {
@@ -27,6 +27,23 @@ angular.module('services.serviceControlService', [])
 
             this.getFailedMessages = function(sortBy, page) {
                 return $http.get(scConfig.service_control_url + '/errors?status=unresolved&page=' + page + '&sort=' + sortBy).then(function(response) {
+                    return {
+                        data: response.data,
+                        total: response.headers('Total-Count')
+                    };
+                });
+            };
+
+            this.getExceptionGroups = function () {
+                return $http.get(scConfig.service_control_url + '/recoverability/groups').then(function (response) {
+                    return {
+                        data: response.data
+                    };
+                });
+            };
+
+            this.getFailedMessagesForExceptionGroup = function (groupId, sortBy, page) {
+                return $http.get(scConfig.service_control_url + '/recoverability/groups/' + groupId + '/errors?page=' + page + '&sort=' + sortBy).then(function (response) {
                     return {
                         data: response.data,
                         total: response.headers('Total-Count')
@@ -106,7 +123,7 @@ angular.module('services.serviceControlService', [])
                         notifications.pushForCurrentRoute('Retrying messages failed', 'error');
                     });
             };
-
+            
             this.archiveFailedMessages = function(selectedMessages) {
                 $http({
                         url: scConfig.service_control_url + '/errors/archive',
@@ -119,6 +136,26 @@ angular.module('services.serviceControlService', [])
                     .error(function() {
                         notifications.pushForCurrentRoute('Archiving messages failed', 'error');
                     });
+            };
+
+            this.archiveExceptionGroup = function (id, successText) {
+                $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive')
+                   .success(function () {
+                       notifications.pushForCurrentRoute(successText, 'info');
+                   })
+                   .error(function () {
+                       notifications.pushForCurrentRoute('Archiving messages failed', 'error');
+                   });
+            };
+
+            this.retryExceptionGroup = function (id, successText) {
+                $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry')
+                   .success(function () {
+                       notifications.pushForCurrentRoute(successText, 'info');
+                   })
+                   .error(function () {
+                       notifications.pushForCurrentRoute('Retrying messages failed', 'error');
+                   });
             };
 
             this.getHeartbeatStats = function() {

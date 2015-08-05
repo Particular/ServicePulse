@@ -3,6 +3,7 @@
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <NuGetPackageImportStamp>c5251156</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -25,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>5</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,11 +40,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Nancy">
-      <HintPath>..\packages\Nancy.0.23.0\lib\net40\Nancy.dll</HintPath>
+    <Reference Include="Nancy, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.1.2.0\lib\net40\Nancy.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Nancy.Hosting.Self">
-      <HintPath>..\packages\Nancy.Hosting.Self.0.23.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+    <Reference Include="Nancy.Hosting.Self, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nancy.Hosting.Self.1.2.0\lib\net40\Nancy.Hosting.Self.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration.Install" />
@@ -149,6 +153,10 @@
     <Content Include="app\js\configuration\configuration.tpl.html" />
     <Content Include="app\js\directives\eat.click.js" />
     <Content Include="app\js\directives\ngClip.js" />
+    <Content Include="app\js\directives\productVersion.js" />
+    <Content Include="app\js\directives\productVersion.tpl.html" />
+    <Content Include="app\js\directives\ui.particular.confirmclick.js" />
+    <Content Include="app\js\directives\ui.particular.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\custom_checks\customChecks.js" />
     <Content Include="app\js\custom_checks\customChecks.tpl.html" />
@@ -161,6 +169,8 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\failed_messages\failedMessages.js" />
     <Content Include="app\js\endpoints\endpoints.js" />
+    <Content Include="app\js\services\platformUpdateService.js" />
+    <Content Include="app\js\services\semverService.js" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />
@@ -193,7 +203,7 @@
     <Content Include="app\lib\angular\angular.min.js" />
     <Content Include="app\lib\bootstrap.js" />
     <Content Include="app\lib\bootstrap.min.js" />
-    <Content Include="app\js\directives\moment.min.js" />
+    <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\dashboard\dashboard.tpl.html" />
     <Content Include="app\js\endpoints\endpoints.tpl.html" />
@@ -211,8 +221,16 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)..\BuildSupport\GitVersionTask\Build\GitVersionTask.targets" /> 
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\GitVersionTask.2.0.1\Build\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.2.0.1\Build\GitVersionTask.targets'))" />
+  </Target>
+  <Import Project="..\packages\GitVersionTask.2.0.1\Build\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.2.0.1\Build\GitVersionTask.targets')" />
 </Project>

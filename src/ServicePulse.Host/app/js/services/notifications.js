@@ -53,6 +53,16 @@ angular.module('services.notifications', []).factory('notifications', ['$rootSco
     });
   };
 
+  notificationsService.removeByText = function (text) {
+      var self = this;
+      var prevNotifications = self.getCurrent().filter(function (notification) {
+          return notification.message === text;
+      });
+      prevNotifications.forEach(function (notification) {
+          self.remove(notification);
+      });
+  };
+
   notificationsService.removeAll = function(){
     angular.forEach(notifications, function (notificationsByType) {
       notificationsByType.length = 0;

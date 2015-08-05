@@ -5,16 +5,22 @@
 #endif
     using System.IO;
     using global::Nancy;
+    using global::Nancy.Bootstrapper;
     using global::Nancy.Conventions;
     using global::Nancy.Diagnostics;
     using global::Nancy.Responses;
+    using global::Nancy.TinyIoc;
 
     public class PulseBootstrapper : DefaultNancyBootstrapper
     {
+        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        {
+            DiagnosticsHook.Disable(pipelines);
+        }
+
         protected override void ConfigureConventions(NancyConventions conventions)
         {
             base.ConfigureConventions(conventions);
-           
             conventions.StaticContentsConventions.Clear();
             conventions.StaticContentsConventions.Add((ctx, root) =>
             {

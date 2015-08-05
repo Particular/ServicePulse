@@ -5,7 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Security.Principal;
+    using System.Text.RegularExpressions;
     using Microsoft.Deployment.WindowsInstaller;
 
     public class CustomActions
@@ -73,9 +73,8 @@
            var aclUrl =  string.Format("http://+:{0}/", port);
            
            RunNetsh(string.Format("http del urlacl url={0}", aclUrl));
-
            // sddl=D:(A;;GX;;;WD) maps to the same as setting user=Everyone  
-           // user=everyone fails if the OS langauge is not English,  localised look of NTAccout fails as MSI is set to English US 
+           // user=everyone fails if the OS language is not English,  localised lookup of NTAccount fails as MSI is set to English US 
            var addUrlAclCommand = string.Format("http add urlacl url={0} sddl=D:(A;;GX;;;WD)", aclUrl);
            var exitCode = RunNetsh(addUrlAclCommand);
            if (exitCode != 0)
@@ -84,7 +83,7 @@
                 Log(session, "End custom action SetUrlAcl");
                 return ActionResult.Failure;
             }
-            Log(session, string.Format("Executed: 'netsh.exe {0}'", addUrlAclCommand));
+            Log(session, string.Format("Success :Executed: 'netsh.exe {0}'", addUrlAclCommand));
             Log(session, "End custom action SetUrlAcl");
             return ActionResult.Success;
         }
@@ -99,7 +98,7 @@
                 UInt16 portNumber;
                 if (UInt16.TryParse(port, out portNumber))
                 {
-                    // Port numbder 49152 and above should no be used http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
+                    // Port number 49152 and above should no be used http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
                     if (portNumber < 49152)
                     {
                         session.Set("VALID_PORT", "TRUE");
@@ -112,6 +111,43 @@
             finally
             {
                 Log(session, "End custom action CheckPulsePort");
+            }
+        }
+       
+        [CustomAction]
+        public static ActionResult ReadServiceControlUrlFromConfigJS(Session session)
+        {
+            try
+            {
+                Log(session, "Start custom action ReadServiceControlUrlFromConfigJS");
+                var targetPath = session.Get("APPDIR");
+                var configJsPath = Path.Combine(targetPath, @"app\config.js");
+                var uri = @"http://localhost:33333/api/";
+
+                if (File.Exists(configJsPath))
+                {
+                    var pattern = new Regex(@"service_control_url:\s*'(?<sc_uri>.*)'", RegexOptions.IgnoreCase);
+                    var matches = pattern.Match(File.ReadAllText(configJsPath));
+                    if (matches.Success)
+                    {
+                        uri = matches.Groups["sc_uri"].Value;
+                        Log(session, string.Format(@"Extracted {0} from existing config.js", uri));
+                    }
+                    else
+                    {
+                        Log(session, "No URI found - using default");
+                    }
+                }
+                else
+                {
+                    Log(session, string.Format("File not found {0}", configJsPath));
+                }
+                session.Set("INST_URI", uri);
+                return ActionResult.Success;
+            }
+            finally
+            {
+                Log(session, "End custom action ReadServiceControlUrlFromConfigJS");
             }
         }
 
@@ -159,7 +195,7 @@
         public static Action<Session, string, string> SetAction = (s, key, value) => s[key] = value;
     }
 
-    public static class SessionExtentions
+    public static class SessionExtensions
     {
         public static string Get(this Session session, string key)
         {
