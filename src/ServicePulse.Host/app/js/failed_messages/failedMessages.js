@@ -9,8 +9,8 @@ angular.module('failedMessages', [])
     .config(['$routeProvider', function ($routeProvider) {
         $routeProvider.when('/failedMessages', { templateUrl: 'js/failed_messages/failedMessages.tpl.html', controller: 'FailedMessagesCtrl' });
     }])
-    .controller('FailedMessagesCtrl', ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications',
-        function ($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications) {
+    .controller('FailedMessagesCtrl', ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications', 'semverService',
+        function ($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications, semverService) {
             $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
             $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
             $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0, activePageTab:"" };
@@ -18,20 +18,6 @@ angular.module('failedMessages', [])
             $scope.allMessagesLoaded = false;
             var scVersionSupportingExceptionGroups = '1.6.0';
             var page = 1;
-
-            var isSupportedInServiceControl = function(currentScVersion, minVersion) {
-                var i, cmp, len, re = /(\.0)+[^\.]*$/;
-                currentScVersion = (currentScVersion + '').replace(re, '').split('.');
-                minVersion = (minVersion + '').replace(re, '').split('.');
-                len = Math.min(currentScVersion.length, minVersion.length);
-                for (i = 0; i < len; i++) {
-                    cmp = parseInt(currentScVersion[i], 10) - parseInt(minVersion[i], 10);
-                    if (cmp !== 0) {
-                        return cmp;
-                    }
-                }
-                return currentScVersion.length - minVersion.length >= 0;
-            };
 
             var processLoadedMessages = function (data) {
                 $scope.model.failedMessages = $scope.model.failedMessages.concat(data);
@@ -57,7 +43,7 @@ angular.module('failedMessages', [])
 
                 serviceControlService.getVersion()
                     .then(function (sc_version) {
-                        if (isSupportedInServiceControl(sc_version, scVersionSupportingExceptionGroups)) {
+                        if (semverService.isSupported(sc_version, scVersionSupportingExceptionGroups)) {
                             serviceControlService.getExceptionGroups()
                                 .then(function (response) {
                                     $scope.model.exceptionGroups = response.data;
@@ -69,8 +55,8 @@ angular.module('failedMessages', [])
                                 })
                             ;
                         } else {
-                            var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to access full functionality of Service Pulse.';
-                            notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'error');
+                            var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to unlock new functionality in ServicePulse.';
+                            notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'info');
                         }
                     });
 
@@ -236,7 +222,7 @@ angular.module('failedMessages', [])
                 var messageId = $scope.model.failedMessages[index].message_id;
                 var dnsName = scConfig.service_control_url.toLowerCase();
 
-                if (dnsName.indexOf("https") == 0) {
+                if (dnsName.indexOf("https") === 0) {
                     dnsName = dnsName.replace("https://", "");
                 } else {
                     dnsName = dnsName.replace("http://", "");
@@ -248,7 +234,7 @@ angular.module('failedMessages', [])
             var updateCountForFailedMessageNotification = function (previousCount, newCount) {
                 var notificationText = ' new failed messages. Refresh the page to see them.';
                 notifications.removeByText(previousCount + notificationText);
-                notifications.pushForCurrentRoute(newCount + notificationText, 'error');
+                notifications.pushForCurrentRoute(newCount + notificationText, 'info');
 
             };
             
@@ -258,7 +244,7 @@ angular.module('failedMessages', [])
 
                 for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                     var existingFailure = $scope.model.failedMessages[i];
-                    if (failedMessageId == existingFailure.id && existingFailure.retried) {
+                    if (failedMessageId === existingFailure.id && existingFailure.retried) {
                         existingFailure.retried = false;
                         return;
                     }
@@ -273,7 +259,7 @@ angular.module('failedMessages', [])
 
                 for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                     var existingFailure = $scope.model.failedMessages[i];
-                    if (failedMessageId == existingFailure.id) {
+                    if (failedMessageId === existingFailure.id) {
                         $scope.model.failedMessages.splice(i, 1);
                         return;
                     }

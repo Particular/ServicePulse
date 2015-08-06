@@ -22,7 +22,6 @@
             };
 
             this.reSemver = /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?(?:\+([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?$/;
-            this.reSemverRange = /\s*((\|\||\-)|(([<>~]?=?)\s*(v)?([0-9]+)(\.(x|\*|[0-9]+))?(\.(x|\*|[0-9]+))?(([\-+])([a-zA-Z0-9\.]+))?))\s*/g;
 
             this.stringify = function (obj) {
                 var str = '';
@@ -41,24 +40,30 @@
                 return str;
             };
 
-            this.isUpgradeAvailable = function (myVersion, latestVersion) {
+            this.isUpgradeAvailable = function (currentVersion, latestVersion) {
 
-                var r = this.parse(latestVersion.split('-')[0]);
-                var i = this.parse(myVersion.split('-')[0]);
+                var latest = this.parse(latestVersion.split('-')[0]);
+                var current = this.parse(currentVersion.split('-')[0]);
 
-                var upgrade = !(r['major'] === i['major']
-                    && r['minor'] === i['minor']
-                    && r['patch'] === i['patch']);
-
-                return upgrade;
+                if (latest.major !== current.major) {
+                    return latest.major > current.major ? true : false;
+                }
+                if (latest.minor !== current.minor) {
+                    return latest.minor > current.minor ? true : false;
+                }
+                if (latest.patch !== current.patch) {
+                    return latest.patch > current.patch ? true : false;
+                }
+                
+                return false;
             };
 
             this.isSupported = function (currentVersion, minSupportedVersion) {
                 var min = this.parse(minSupportedVersion);
                 var cur = this.parse(currentVersion);
 
-                var minInt = parseInt(min['major'] + min['minor'] + min['patch'], 10);
-                var curInt = parseInt(cur['major'] + cur['minor'] + cur['patch'], 10);
+                var minInt = min.major + min.minor + min.patch;
+                var curInt = cur.major + cur.minor + cur.patch;
 
                 return minInt <= curInt;
             };
@@ -70,16 +75,21 @@
                 // optional v
                 var m = this.reSemver.exec(version) || [];
 
+                function defaultToZero(num) {
+                    var n = parseInt(num, 10);
+
+                    return isNaN(n) ? 0 : n;
+                }
+
                 var ver = new SemVer({
                     semver: m[0],
                     version: m[1],
-                    major: m[2],
-                    minor: m[3],
-                    patch: m[4],
+                    major: defaultToZero(m[2]),
+                    minor: defaultToZero(m[3]),
+                    patch: defaultToZero(m[4]),
                     release: m[5],
                     build: m[6]
                 });
-
                 if (0 === m.length) {
                     ver = null;
                 }
