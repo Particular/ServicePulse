@@ -46,26 +46,34 @@
                 var current = this.parse(currentVersion.split('-')[0]);
 
                 if (latest.major !== current.major) {
-                    return latest.major > current.major ? true : false;
+                    return latest.major > current.major;
                 }
                 if (latest.minor !== current.minor) {
-                    return latest.minor > current.minor ? true : false;
+                    return latest.minor > current.minor;
                 }
                 if (latest.patch !== current.patch) {
-                    return latest.patch > current.patch ? true : false;
+                    return latest.patch > current.patch;
                 }
                 
                 return false;
             };
 
             this.isSupported = function (currentVersion, minSupportedVersion) {
-                var min = this.parse(minSupportedVersion);
-                var cur = this.parse(currentVersion);
 
-                var minInt = min.major + min.minor + min.patch;
-                var curInt = cur.major + cur.minor + cur.patch;
+                var minSupported = this.parse(minSupportedVersion);
+                var current = this.parse(currentVersion);
 
-                return minInt <= curInt;
+                if (minSupported.major !== current.major) {
+                    return minSupported.major <= current.major;
+                }
+                if (minSupported.minor !== current.minor) {
+                    return minSupported.minor <= current.minor;
+                }
+                if (minSupported.patch !== current.patch) {
+                    return minSupported.patch <= current.patch;
+                }
+
+                return false;
             };
 
             this.parse = function (version) {
