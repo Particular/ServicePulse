@@ -55,8 +55,8 @@ angular.module('failedMessages', [])
                                 })
                             ;
                         } else {
-                            var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to access full functionality of Service Pulse.';
-                            notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'error');
+                            var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to unlock new functionality in ServicePulse.';
+                            notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'info');
                         }
                     });
 
@@ -234,7 +234,7 @@ angular.module('failedMessages', [])
             var updateCountForFailedMessageNotification = function (previousCount, newCount) {
                 var notificationText = ' new failed messages. Refresh the page to see them.';
                 notifications.removeByText(previousCount + notificationText);
-                notifications.pushForCurrentRoute(newCount + notificationText, 'error');
+                notifications.pushForCurrentRoute(newCount + notificationText, 'info');
 
             };
             
