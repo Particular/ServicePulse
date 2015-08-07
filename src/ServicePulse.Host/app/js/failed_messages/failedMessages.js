@@ -92,18 +92,26 @@ angular.module('failedMessages', [])
                 return false;
             };
 
-            $scope.selectGroup = function (group, sort) {
-
-
-                if ($scope.loadingData)
+            var selectGroupInternal = function (group, sort, changeToMessagesTab) {
+                if ($scope.loadingData) {
                     return;
-                $scope.model.activePageTab = "messages";
+                }
+
+                if (changeToMessagesTab) {
+                    $scope.model.activePageTab = "messages";
+                }
+
                 $scope.model.failedMessages = [];
                 $scope.selectedExceptionGroup = group;
                 $scope.allMessagesLoaded = false;
                 page = 1;
 
                 $scope.loadMoreResults(group, sort);
+            }
+
+            $scope.selectGroup = function (group, sort) {
+
+                selectGroupInternal(group, sort, true);
             };
 
             $scope.loadMoreResults = function (group, sort) {
@@ -183,31 +191,34 @@ angular.module('failedMessages', [])
                 }
             }
 
-            var selectAllFailedMessagesGroup = function () {
-                // move focus
-                $scope.selectGroup($scope.allFailedMessagesGroup);
-            }
-
-            $scope.retryExceptionGroup = function($event, group) {
-                $event.stopPropagation();
-               
+            $scope.retryExceptionGroup = function(group) {
                 var notificationText = 'Retrying messages from group ' + group.title;
                 serviceControlService.retryExceptionGroup(group.id, notificationText);
 
                 removeGroup(group);
+
+                if ($scope.model.exceptionGroups.length === 0) {
+                    $scope.model.failedMessages = [];
+                    return;
+                }
+
                 markMessage(group, 'retried');
-                selectAllFailedMessagesGroup();
+                selectGroupInternal($scope.allFailedMessagesGroup, null, false);
             }
 
-            $scope.archiveExceptionGroup = function ($event, group) {
-               
-                $event.stopPropagation();
+            $scope.archiveExceptionGroup = function (group) {
                 var notificationText = 'Archiving messages from group ' + group.title;
                 serviceControlService.archiveExceptionGroup(group.id, notificationText);
 
                 removeGroup(group);
+
+                if ($scope.model.exceptionGroups.length === 0) {
+                    $scope.model.failedMessages = [];
+                    return;
+                }
+
                 markMessage(group, 'archived');
-                selectAllFailedMessagesGroup();
+                selectGroupInternal($scope.allFailedMessagesGroup, null, false);
             };
 
             $scope.archiveSelected = function () {

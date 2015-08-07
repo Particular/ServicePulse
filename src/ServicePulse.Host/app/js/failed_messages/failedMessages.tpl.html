@@ -62,8 +62,8 @@
                                 <sp-moment date="{{excGroup.last}}" />
                             </div>
                             <div class="span1">
-                                <button type="button" class="btn btn-small" tooltip="Archive Group" ng-click="archiveExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
-                                <button type="button" class="btn btn-small" tooltip="Retry Group" ng-click="retryExceptionGroup($event, excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
+                                <button type="button" class="btn btn-small" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
+                                <button type="button" class="btn btn-small" tooltip="Retry Group" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,7 @@
 
                 <div class="alert alert-error alert-block">
                     <p class="pull-right">
-                        <button class="btn btn-danger" type="button" confirm-click="Are you really sure you want to retry {{allFailedMessagesGroup.count}} messages?" ng-click="retryAll()" ng-disabled="allFailedMessagesGroup.count == 0" tooltip="All failed messages will be Retried"><i class="fa fa-refresh white"></i> Retry {{allFailedMessagesGroup.count}} Failed Messages</button>
+                        <button class="btn btn-danger" type="button" confirm-click="Are you really sure you want to retry all failed messages?" ng-click="retryAll()" tooltip="All failed messages will be Retried"><i class="fa fa-refresh white"></i> Retry All Failed Messages</button>
                         <button class="btn" type="button" ng-click="selectGroup(allFailedMessagesGroup)" tooltip="Review all Messages"><i class="fa fa-envelope"></i> View All Failed Messages</button>
                     </p>
                     <p><H4>Warning!</H4> Retrying all messages can be a time consuming operation. Take care when doing this.</p>
