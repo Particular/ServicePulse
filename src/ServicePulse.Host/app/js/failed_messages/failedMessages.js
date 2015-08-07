@@ -13,7 +13,7 @@ angular.module('failedMessages', [])
         function ($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications, semverService) {
             $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
             $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
-            $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0, activePageTab:"" };
+            $scope.model = { exceptionGroups: [], failedMessages: [], selectedIds: [], newMessages: 0, activePageTab: '', displayGroupsTab: false };
             $scope.loadingData = false;
             $scope.allMessagesLoaded = false;
             var scVersionSupportingExceptionGroups = '1.6.0';
@@ -25,6 +25,20 @@ angular.module('failedMessages', [])
                 $scope.loadingData = false;
                 page++;
             };
+
+            var autoGetExceptionGroups = function() {
+                serviceControlService.getExceptionGroups()
+                    .then(function (response) {
+                        if (response.data.length > 0) {
+                            $scope.model.exceptionGroups = response.data;
+                            return;
+                        }
+
+                        $timeout(function () {
+                            autoGetExceptionGroups();
+                        }, 2000);
+                    });
+            }
 
             $scope.init = function () {
                 page = 1;
@@ -44,16 +58,9 @@ angular.module('failedMessages', [])
                 serviceControlService.getVersion()
                     .then(function (sc_version) {
                         if (semverService.isSupported(sc_version, scVersionSupportingExceptionGroups)) {
-                            serviceControlService.getExceptionGroups()
-                                .then(function (response) {
-                                    $scope.model.exceptionGroups = response.data;
-                                })
-                                .then(function () {
-                                    if ($scope.model.exceptionGroups.length > 0) {
-                                        $scope.model.activePageTab = "groups";
-                                    }
-                                })
-                            ;
+                            $scope.model.displayGroupsTab = true;
+                            $scope.model.activePageTab = "groups";
+                            autoGetExceptionGroups();
                         } else {
                             var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to unlock new functionality in ServicePulse.';
                             notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'info');
@@ -65,7 +72,6 @@ angular.module('failedMessages', [])
                     processLoadedMessages(response.data);
                 });
             };
-
             $scope.togglePanel = function (row, panelnum) {
                 if (row.messageBody === undefined) {
                     serviceControlService.getMessageBody(row.message_id).then(function (message) {
@@ -192,8 +198,6 @@ angular.module('failedMessages', [])
                 markMessage(group, 'retried');
                 selectAllFailedMessagesGroup();
             }
-
-           
 
             $scope.archiveExceptionGroup = function ($event, group) {
                
