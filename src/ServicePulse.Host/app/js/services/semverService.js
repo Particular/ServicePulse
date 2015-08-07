@@ -73,7 +73,7 @@
                     return minSupported.patch <= current.patch;
                 }
 
-                return false;
+                return true;
             };
 
             this.parse = function (version) {
