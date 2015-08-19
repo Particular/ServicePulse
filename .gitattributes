@@ -73,3 +73,12 @@
 *.snk 	-text -diff
 *.cub 	-text -diff
 *.wixlib	-text -diff
+
+# fonts
+*.eot binary
+*.ttf binary 
+*.woff binary
+*.otf binary
+
+# flash 
+*.swf binary
