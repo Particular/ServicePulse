@@ -9,8 +9,10 @@
     {
         public override void Execute(HostArguments args)
         {
+#if !DEBUG
             ExtractApp(args.OutputPath);
             UpdateVersion(args.OutputPath);
+#endif
         }
 
         static void ExtractApp(string directoryPath)
