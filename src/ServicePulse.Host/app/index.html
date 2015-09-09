@@ -47,51 +47,13 @@
             </p>
         </div>
     </noscript>
-    <div class="navbar">
-        <div class="navbar-inner">
-            <div class="container-fluid">
-                <a class="brand" href="/">
-                    <img alt="Service Pulse" src="img/logo.png" /> <span class="hidden-phone"></span>
-                </a>
-            </div>
-        </div>
-    </div>
+    <ng-include src="'layout/topbar.html'"></ng-include>
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span2 main-menu-span">
-                <div class="nav-collapse sidebar-nav">
-                    <ul class="nav nav-tabs nav-stacked main-menu">
-                        <li>
-                            <a href="/#/dashboard">
-                                <i class="fa fa-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/#/endpoints">
-                                <i class="fa fa-heart icon-white"></i><span class="hidden-tablet"> Endpoints Overview</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/#/failedMessages">
-                                <i class="fa fa-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/#/customChecks">
-                                <i class="fa fa-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/#/configuration">
-                                <i class="fa fa-cog icon-white"></i><span class="hidden-tablet"> Configuration</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <div class="span2 main-menu-span" ng-include="'layout/sidebar.html'"></div>
             <div id="content" class="span10">
                 <div class="clearfix"></div>
-                <div ng-include="'notifications.tpl.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
+                <div ng-include="'layout/notifications.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
                 <div id="view" ng-view></div>
             </div>
         </div>
@@ -107,20 +69,21 @@
     <script src="lib/page-width-functions.js"></script>
     <script src="lib/ZeroClipboard.min.js"></script>
     <script src="lib/moment.min.js"></script>
-    <!-- Vendor -->
+    <!-- Global -->
     <script src="config.js"></script>
     <!-- App -->
     <script src="js/app.js"></script>
     <script src="js/app.constants.js"></script>
     <script src="js/app.route.js"></script>
     <script src="js/app.controller.js"></script>
-    <!-- App -->
+    <!-- Services -->
     <script src="js/services/exceptionHandler.js"></script>
     <script src="js/services/notifications.js"></script>
     <script src="js/services/platformUpdateService.js"></script>
     <script src="js/services/semverService.js"></script>
     <script src="js/services/serviceControlService.js"></script>
     <script src="js/services/streamService.js"></script>
+    <!-- Directives -->
     <script src="js/directives/ngClip.js"></script>
     <script src="js/directives/moment.js"></script>
     <script src="js/directives/ui-bootstrap-custom-tpls-0.6.0.min.js"></script>
@@ -129,31 +92,28 @@
     <script src="js/directives/ui.particular.js"></script>
     <script src="js/directives/ui.particular.confirmclick.js"></script>
     <script src="js/directives/eat.click.js"></script>
+    <!-- Mystery -->
     <script src="js/event_log_items/eventLogItems.js"></script>
     <!-- Dashboard -->
     <script src="js/dashboard/dashboard.module.js"></script>
     <script src="js/dashboard/dashboard.route.js"></script>
     <script src="js/dashboard/dashboard.controller.js"></script>
-    <!-- Dashboard -->
     <!-- Failed Messages -->
     <script src="js/failed_messages/failedMessages.module.js"></script>
     <script src="js/failed_messages/failedMessages.route.js"></script>
     <script src="js/failed_messages/failedMessages.controller.js"></script>
-    <!-- Failed Messages -->
+    <script src="js/failed_messages/failedMessage.directive.js"></script>
     <!-- Custom Checks -->
     <script src="js/custom_checks/customChecks.module.js"></script>
     <script src="js/custom_checks/customChecks.route.js"></script>
     <script src="js/custom_checks/customChecks.controller.js"></script>
-    <!-- Custom Checks -->
     <!-- Endpoints -->
     <script src="js/endpoints/endpoints.module.js"></script>
     <script src="js/endpoints/endpoints.route.js"></script>
     <script src="js/endpoints/endpoints.controller.js"></script>
-    <!-- Endpoints -->
     <!-- Configuration -->
     <script src="js/configuration/configuration.module.js"></script>
     <script src="js/configuration/configuration.route.js"></script>
     <script src="js/configuration/configuration.controller.js"></script>
-    <!-- Configuration -->
 </body>
 </html>

@@ -181,11 +181,15 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\endpoints\endpoints.module.js" />
+    <Content Include="app\js\failed_messages\failedMessage.directive.js" />
+    <Content Include="app\js\failed_messages\failedMessage.directive.tpl.html" />
     <Content Include="app\js\failed_messages\failedMessages.controller.js" />
     <Content Include="app\js\failed_messages\failedMessages.module.js" />
     <Content Include="app\js\failed_messages\failedMessages.route.js" />
     <Content Include="app\js\services\platformUpdateService.js" />
     <Content Include="app\js\services\semverService.js" />
+    <Content Include="app\layout\topbar.html" />
+    <Content Include="app\layout\sidebar.html" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />
@@ -208,7 +212,7 @@
     <Content Include="app\js\directives\moment.js" />
     <Content Include="app\lib\ZeroClipboard.min.js" />
     <Content Include="app\lib\ZeroClipboard.swf" />
-    <Content Include="app\notifications.tpl.html" />
+    <Content Include="app\layout\notifications.html" />
     <Content Include="app\js\services\breadcrumbs.js" />
     <Content Include="app\js\services\exceptionHandler.js" />
     <Content Include="app\js\services\notifications.js" />
@@ -248,9 +252,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="app\layout\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
