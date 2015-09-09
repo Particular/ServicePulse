@@ -1,24 +1,23 @@
-﻿'use strict';
+﻿
 
-angular.module('endpoints', [])
-    .config([
-        '$routeProvider', function($routeProvider) {
-            $routeProvider.when('/endpoints', { templateUrl: 'js/endpoints/endpoints.tpl.html', controller: 'EndpointsCtrl' });
-        }
-    ])
+(function () {
+    'use strict';
+
+    angular.module('endpoints')
+
     .controller('EndpointsCtrl', [
-        '$scope', 'serviceControlService', '$timeout', function($scope, serviceControlService, $timeout) {
+        '$scope', 'serviceControlService', '$timeout', function ($scope, serviceControlService, $timeout) {
 
             var timeoutId;
 
             $scope.model = { active: [], inactive: [] };
 
-            $scope.$on('$destroy', function() {
+            $scope.$on('$destroy', function () {
                 $timeout.cancel(timeoutId);
             });
 
             function updateUI() {
-                serviceControlService.getEndpoints().then(function(endpoints) {
+                serviceControlService.getEndpoints().then(function (endpoints) {
                     $scope.model.active = [];
                     $scope.model.inactive = [];
 
@@ -36,7 +35,7 @@ angular.module('endpoints', [])
                         }
                     }
 
-                    timeoutId = $timeout(function() {
+                    timeoutId = $timeout(function () {
                         updateUI();
                     }, 5000);
                 });
@@ -45,3 +44,5 @@ angular.module('endpoints', [])
             updateUI();
         }
     ]);
+
+})();

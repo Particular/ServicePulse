@@ -1,35 +1,58 @@
 ﻿<!DOCTYPE html>
 <html lang="en" ng-app="sc">
 <head>
-    <meta charset="utf-8">
+    <style>
+        /* This helps the ng-show/ng-hide animations start at the right place. */
+        /* Since Angular has this but needs to load, this gives us the class early. */
+        .ng-hide {
+            display: none !important;
+        }
+    </style>
+
     <title>Service Pulse</title>
+
+    <meta charset="utf-8">
     <meta name="description" content="An Operations Manager’s Best Friend">
     <meta name="author" content="Particular Software">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link id="bootstrap-style" href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link id="base-style" href="css/style.css" rel="stylesheet">
-    <link id="base-style-responsive" href="css/style-responsive.css" rel="stylesheet">
-    <link href="css/app.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/select2.css" />
+
     <link rel="shortcut icon" href="img/ServicePulse.ico">
+
+    <!-- 3rd Party Library Styles -->
+    <link rel="stylesheet" id="bootstrap-style" href="css/bootstrap.css" />
+    <link rel="stylesheet" id="bootstrap-style-responsive" href="css/bootstrap-responsive.css" />
+    <link rel="stylesheet" id="animate-css-style" href="css/animate-css/animate.min.css" />
+
+    <!-- Theme Styles -->
+    <link rel="stylesheet" id="base-style" href="css/style.css" />
+    <link rel="stylesheet" id="base-style-responsive" href="css/style-responsive.css" />
+
+    <!-- Particular Styles -->
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="css/select2.css" />
+
     <!--[if lt IE 9 ]>
-    <script type="text/javascript">
-        window.location = '/NoIE.html';
-    </script>
+        <script type="text/javascript">
+            window.location = '/NoIE.html';
+        </script>
     <![endif]-->
+
 </head>
 <body ng-controller="AppCtrl">
     <noscript>
         <div class="alert alert-block span10">
-            <h4 class="alert-heading">Warning!</h4>
-            <p>You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.</p>
+            <h4>Warning!</h4>
+            <p>
+                You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.
+            </p>
         </div>
     </noscript>
     <div class="navbar">
         <div class="navbar-inner">
             <div class="container-fluid">
-                <a class="brand" href="/"> <img alt="Service Pulse" src="img/logo.png" /> <span class="hidden-phone"></span></a>
+                <a class="brand" href="/">
+                    <img alt="Service Pulse" src="img/logo.png" /> <span class="hidden-phone"></span>
+                </a>
             </div>
         </div>
     </div>
@@ -38,11 +61,31 @@
             <div class="span2 main-menu-span">
                 <div class="nav-collapse sidebar-nav">
                     <ul class="nav nav-tabs nav-stacked main-menu">
-                        <li><a href="/#/dashboard"><i class="fa fa-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span></a></li>
-                        <li><a href="/#/endpoints"><i class="fa fa-heart icon-white"></i><span class="hidden-tablet"> Endpoints Overview</span></a></li>
-                        <li><a href="/#/failedMessages"><i class="fa fa-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span></a></li>
-                        <li><a href="/#/customChecks"><i class="fa fa-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span></a></li>
-                        <li><a href="/#/configuration"><i class="fa fa-cog icon-white"></i><span class="hidden-tablet"> Configuration</span></a></li>
+                        <li>
+                            <a href="/#/dashboard">
+                                <i class="fa fa-dashboard icon-white"></i><span class="hidden-tablet"> Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/endpoints">
+                                <i class="fa fa-heart icon-white"></i><span class="hidden-tablet"> Endpoints Overview</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/failedMessages">
+                                <i class="fa fa-envelope icon-white"></i><span class="hidden-tablet"> Failed Messages</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/customChecks">
+                                <i class="fa fa-check icon-white"></i><span class="hidden-tablet"> Custom Checks</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/#/configuration">
+                                <i class="fa fa-cog icon-white"></i><span class="hidden-tablet"> Configuration</span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -53,6 +96,7 @@
             </div>
         </div>
     </div>
+    <!-- Vendor -->
     <script src="lib/jquery-1.10.2.min.js"></script>
     <script src="lib/angular/angular.js"></script>
     <script src="lib/angular/angular-route.js"></script>
@@ -63,6 +107,7 @@
     <script src="lib/page-width-functions.js"></script>
     <script src="lib/ZeroClipboard.min.js"></script>
     <script src="lib/moment.min.js"></script>
+    <!-- Vendor -->
     <script src="config.js"></script>
     <script src="js/app.js"></script>
     <script src="js/services/exceptionHandler.js"></script>
@@ -80,10 +125,30 @@
     <script src="js/directives/ui.particular.confirmclick.js"></script>
     <script src="js/directives/eat.click.js"></script>
     <script src="js/event_log_items/eventLogItems.js"></script>
-    <script src="js/dashboard/dashboard.js"></script>
-    <script src="js/failed_messages/failedMessages.js"></script>
-    <script src="js/custom_checks/customChecks.js"></script>
-    <script src="js/endpoints/endpoints.js"></script>
-    <script src="js/configuration/configuration.js"></script>
+    <!-- Dashboard -->
+    <script src="js/dashboard/dashboard.module.js"></script>
+    <script src="js/dashboard/dashboard.route.js"></script>
+    <script src="js/dashboard/dashboard.controller.js"></script>
+    <!-- Dashboard -->
+    <!-- Failed Messages -->
+    <script src="js/failed_messages/failedMessages.module.js"></script>
+    <script src="js/failed_messages/failedMessages.route.js"></script>
+    <script src="js/failed_messages/failedMessages.controller.js"></script>
+    <!-- Failed Messages -->
+    <!-- Custom Checks -->
+    <script src="js/custom_checks/customChecks.module.js"></script>
+    <script src="js/custom_checks/customChecks.route.js"></script>
+    <script src="js/custom_checks/customChecks.controller.js"></script>
+    <!-- Custom Checks -->
+    <!-- Endpoints -->
+    <script src="js/endpoints/endpoints.module.js"></script>
+    <script src="js/endpoints/endpoints.route.js"></script>
+    <script src="js/endpoints/endpoints.controller.js"></script>
+    <!-- Endpoints -->
+    <!-- Configuration -->
+    <script src="js/configuration/configuration.module.js"></script>
+    <script src="js/configuration/configuration.route.js"></script>
+    <script src="js/configuration/configuration.controller.js"></script>
+    <!-- Configuration -->
 </body>
 </html>

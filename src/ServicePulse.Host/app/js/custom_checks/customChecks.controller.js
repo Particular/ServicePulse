@@ -1,15 +1,14 @@
-'use strict';
+﻿
+(function () {
+    'use strict';
 
-angular.module('customChecks', [])
-    .config(['$routeProvider', function ($routeProvider) {
-        $routeProvider.when('/customChecks', { templateUrl: 'js/custom_checks/customChecks.tpl.html', controller: 'CustomChecksCtrl' });
-    }])
-    .controller('CustomChecksCtrl', ['$scope', 'serviceControlService',  'streamService', function ($scope, serviceControlService, streamService) {
+    angular.module('customChecks')
+    .controller('CustomChecksCtrl', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
 
-        $scope.model = { data: [], total: 0};
+        $scope.model = { data: [], total: 0 };
         $scope.loadingData = false;
         $scope.disableLoadingData = false;
-        
+
         var page = 1;
 
         $scope.loadMoreResults = function () {
@@ -21,7 +20,7 @@ angular.module('customChecks', [])
             load(page++);
         };
 
-        $scope.mute = function(row) {
+        $scope.mute = function (row) {
             serviceControlService.muteCustomChecks(row);
         };
 
@@ -39,14 +38,14 @@ angular.module('customChecks', [])
         });
 
 
-    function reloadData() {
-        $scope.loadingData = true;
-        $scope.model = { data: [], total: 0 };
-        $scope.disableLoadingData = false;
-        load(1);
-    }
+        function reloadData() {
+            $scope.loadingData = true;
+            $scope.model = { data: [], total: 0 };
+            $scope.disableLoadingData = false;
+            load(1);
+        }
 
-    function load(page) {
+        function load(page) {
             serviceControlService.getFailingCustomChecks(page).then(function (response) {
 
                 $scope.loadingData = false;
@@ -60,3 +59,5 @@ angular.module('customChecks', [])
             });
         };
     }]);
+
+})();

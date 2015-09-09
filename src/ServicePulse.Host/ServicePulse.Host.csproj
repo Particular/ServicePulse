@@ -82,12 +82,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\config.js" />
+    <Content Include="app\css\animate-css\animate.css" />
+    <Content Include="app\css\animate-css\animate.min.css" />
     <Content Include="app\css\bootstrap-responsive.css" />
     <Content Include="app\css\bootstrap-responsive.min.css" />
     <Content Include="app\css\bootstrap.css" />
     <Content Include="app\css\bootstrap.min.css" />
-    <Content Include="app\css\font-awesome.css" />
-    <Content Include="app\css\font-awesome.min.css" />
+    <Content Include="app\css\font-awesome\css\font-awesome.css" />
+    <Content Include="app\css\font-awesome\css\font-awesome.min.css" />
+    <Content Include="app\css\font-awesome\fonts\fontawesome-webfont.svg" />
     <Content Include="app\css\select2.css" />
     <Content Include="app\css\style-ie.css" />
     <Content Include="app\css\style-responsive.css" />
@@ -149,26 +152,35 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
-    <Content Include="app\js\configuration\configuration.js" />
+    <Content Include="app\js\configuration\configuration.controller.js" />
+    <Content Include="app\js\configuration\configuration.module.js" />
+    <Content Include="app\js\configuration\configuration.route.js" />
     <Content Include="app\js\configuration\configuration.tpl.html" />
+    <Content Include="app\js\custom_checks\customChecks.controller.js" />
+    <Content Include="app\js\custom_checks\customChecks.module.js" />
+    <Content Include="app\js\custom_checks\customChecks.route.js" />
+    <Content Include="app\js\dashboard\dashboard.module.js" />
+    <Content Include="app\js\dashboard\dashboard.route.js" />
     <Content Include="app\js\directives\eat.click.js" />
     <Content Include="app\js\directives\ngClip.js" />
     <Content Include="app\js\directives\productVersion.js" />
     <Content Include="app\js\directives\productVersion.tpl.html" />
     <Content Include="app\js\directives\ui.particular.confirmclick.js" />
     <Content Include="app\js\directives\ui.particular.js" />
+    <Content Include="app\js\endpoints\endpoints.controller.js" />
+    <Content Include="app\js\endpoints\endpoints.route.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
-    <Content Include="app\js\custom_checks\customChecks.js" />
     <Content Include="app\js\custom_checks\customChecks.tpl.html" />
-    <Content Include="app\js\dashboard\dashboard.js" />
     <Content Include="app\js\directives\hud.js" />
     <Content Include="app\js\directives\hud.tpl.html" />
     <Content Include="app\js\directives\ui-bootstrap-custom-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-0.6.0.min.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
-    <Content Include="app\js\failed_messages\failedMessages.js" />
-    <Content Include="app\js\endpoints\endpoints.js" />
+    <Content Include="app\js\endpoints\endpoints.module.js" />
+    <Content Include="app\js\failed_messages\failedMessages.controller.js" />
+    <Content Include="app\js\failed_messages\failedMessages.module.js" />
+    <Content Include="app\js\failed_messages\failedMessages.route.js" />
     <Content Include="app\js\services\platformUpdateService.js" />
     <Content Include="app\js\services\semverService.js" />
     <Content Include="app\lib\angular\angular-animate.js" />
@@ -221,9 +233,20 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\js\dashboard\dashboard.controller.js" />
+    <None Include="app\css\font-awesome\css\font-awesome.css.map" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.eot" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
+    <None Include="bundleconfig.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app\layout\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
