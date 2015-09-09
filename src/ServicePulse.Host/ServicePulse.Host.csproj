@@ -152,6 +152,9 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
+    <Content Include="app\js\app.constants.js" />
+    <Content Include="app\js\app.controller.js" />
+    <Content Include="app\js\app.route.js" />
     <Content Include="app\js\configuration\configuration.controller.js" />
     <Content Include="app\js\configuration\configuration.module.js" />
     <Content Include="app\js\configuration\configuration.route.js" />
