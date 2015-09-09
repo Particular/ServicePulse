@@ -2,8 +2,7 @@
 (function () {
     'use strict';
 
-    angular.module('customChecks')
-    .controller('CustomChecksCtrl', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
+    function controller ($scope, serviceControlService, streamService) {
 
         $scope.model = { data: [], total: 0 };
         $scope.loadingData = false;
@@ -58,6 +57,15 @@
                 }
             });
         };
-    }]);
+    };
+
+    controller.$inject = [
+        '$scope',
+        'serviceControlService',
+        'streamService'
+    ];
+
+    angular.module('customChecks')
+        .controller('CustomChecksCtrl', controller);
 
 })();

@@ -3,7 +3,16 @@
 
     'use strict';
 
-    function FailedMessagesCtrl($scope, $window, $timeout, serviceControlService, streamService, $routeParams, scConfig, notifications, semverService) {
+    function controller(
+        $scope,
+        $window,
+        $timeout,
+        $routeParams,
+        scConfig,
+        notifications,
+        semverService,
+        serviceControlService,
+        streamService) {
 
         $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
         $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
@@ -293,11 +302,21 @@
         $scope.init();
     };
 
-    FailedMessagesCtrl.$inject = ['$scope', '$window', '$timeout', 'serviceControlService', 'streamService', '$routeParams', 'scConfig', 'notifications', 'semverService'];
+    controller.$inject = [
+        '$scope',
+        '$window',
+        '$timeout',
+        '$routeParams',
+        'scConfig',
+        'notifications',
+        'semverService',
+        'serviceControlService',
+        'streamService'
+    ];
 
     angular
         .module('failedMessages')
-        .controller('FailedMessagesCtrl', FailedMessagesCtrl);
+        .controller('FailedMessagesCtrl', controller);
 
 
 

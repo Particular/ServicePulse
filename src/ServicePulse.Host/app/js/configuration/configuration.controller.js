@@ -1,7 +1,7 @@
 ﻿(function () {
     'use strict';
 
-    function ConfigurationCtrl($scope, serviceControlService) {
+    function controller ($scope, serviceControlService) {
 
         $scope.model = { endpoints: [], changes: {} };
 
@@ -17,10 +17,10 @@
             });
     };
 
-    ConfigurationCtrl.$inject = ['$scope', 'serviceControlService'];
+    controller.$inject = ['$scope', 'serviceControlService'];
 
     angular.module('configuration')
-        .controller('ConfigurationCtrl', ConfigurationCtrl);
+        .controller('ConfigurationCtrl', controller);
 
     
 
