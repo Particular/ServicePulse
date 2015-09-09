@@ -26,6 +26,8 @@
                 }
 
                 self.select = function (selectedTab) {
+                    if (selectedTab.disabled) { return }
+
                     angular.forEach(self.tabs, function(tab) {
                         if (tab.active && tab !== selectedTab) {
                             tab.active = false;
