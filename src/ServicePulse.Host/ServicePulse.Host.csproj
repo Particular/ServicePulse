@@ -170,6 +170,9 @@
     <Content Include="app\js\directives\productVersion.tpl.html" />
     <Content Include="app\js\directives\ui.particular.confirmclick.js" />
     <Content Include="app\js\directives\ui.particular.js" />
+    <Content Include="app\js\directives\ui.particular.tab.js" />
+    <Content Include="app\js\directives\ui.particular.tabset.js" />
+    <Content Include="app\js\directives\ui.particular.tabset.tpl.html" />
     <Content Include="app\js\endpoints\endpoints.controller.js" />
     <Content Include="app\js\endpoints\endpoints.route.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
@@ -181,8 +184,7 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\endpoints\endpoints.module.js" />
-    <Content Include="app\js\failed_messages\failedMessage.directive.js" />
-    <Content Include="app\js\failed_messages\failedMessage.directive.tpl.html" />
+    <Content Include="app\js\failed_messages\failedMessages.html" />
     <Content Include="app\js\failed_messages\failedMessages.controller.js" />
     <Content Include="app\js\failed_messages\failedMessages.module.js" />
     <Content Include="app\js\failed_messages\failedMessages.route.js" />
@@ -192,26 +194,33 @@
     <Content Include="app\layout\sidebar.html" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
+    <Content Include="app\lib\angular\angular-breadcrumb.js" />
+    <Content Include="app\lib\angular\angular-breadcrumb.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />
     <Content Include="app\lib\angular\angular-route.min.js" />
     <Content Include="app\lib\angular\angular-sanitize.js" />
     <Content Include="app\lib\angular\angular-sanitize.min.js" />
-    <Content Include="app\lib\jquery-1.10.2.min.js" />
-    <Content Include="app\lib\jquery.signalR-1.1.3.min.js" />
+    <Content Include="app\lib\jQuery\jquery.js" />
+    <Content Include="app\lib\jQuery\jquery.min.js" />
+    <Content Include="app\lib\jQuery\jquery.signalR-1.1.3.min.js" />
+    <Content Include="app\lib\jQuery\jquery.signalr-2.2.0.js" />
+    <Content Include="app\lib\jQuery\jquery.signalr-2.2.0.min.js" />
     <Content Include="app\lib\ng-infinite-scroll.min.js" />
     <Content Include="app\lib\page-width-functions.js" />
-    <Content Include="app\js\failed_messages\failedMessages.html" />
+    <Content Include="app\js\failed_messages\failedMessages.2.html" />
     <EmbeddedResource Include="Hosting\Help.txt" />
     <Content Include="app\fonts\fontawesome-webfont.eot" />
     <Content Include="app\fonts\fontawesome-webfont.ttf" />
     <Content Include="app\fonts\fontawesome-webfont.woff" />
-    <Content Include="app\lib\jquery-1.10.2.min.map" />
     <Content Include="app\css\app.css" />
     <Content Include="app\js\app.js" />
     <Content Include="app\js\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
-    <Content Include="app\lib\ZeroClipboard.min.js" />
-    <Content Include="app\lib\ZeroClipboard.swf" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.swf" />
     <Content Include="app\layout\notifications.html" />
     <Content Include="app\js\services\breadcrumbs.js" />
     <Content Include="app\js\services\exceptionHandler.js" />
@@ -231,7 +240,6 @@
     <Content Include="app\lib\angular\angular-route.min.js.map" />
     <Content Include="app\lib\angular\angular-sanitize.min.js.map" />
     <Content Include="app\lib\angular\angular.min.js.map" />
-    <Content Include="app\lib\ZeroClipboard.min.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
@@ -247,6 +255,9 @@
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff" />
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
+    <None Include="app\lib\jQuery\jquery.min.map" />
+    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.map" />
+    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.map" />
     <None Include="bundleconfig.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>

@@ -1,5 +1,5 @@
 ﻿// anonymous function to tie down scope
-(function() {
+(function(window, angular, undefined) {
 
     'use strict';
 
@@ -318,6 +318,4 @@
         .module('failedMessages')
         .controller('FailedMessagesCtrl', controller);
 
-
-
-}());
+}(window, window.angular));

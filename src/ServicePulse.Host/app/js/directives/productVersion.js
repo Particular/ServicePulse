@@ -1,7 +1,6 @@
-﻿(function () {
+﻿(function(window, angular, undefined) {
 
-angular.module('directives.productVersion', [])
-    .directive('productVersion', function () {
+    function Directive() {
         return {
             scope: {
                 version: '@',
@@ -11,38 +10,38 @@ angular.module('directives.productVersion', [])
             replace: true,
             templateUrl: 'js/directives/productVersion.tpl.html',
             controller: ['$scope', 'platformUpdateService', 'semverService',
-                function ($scope, platformUpdateService, semverService) {
-               
-                var init = function () {
 
-                    $scope.newversion = undefined;
+                function($scope, platformUpdateService, semverService) {
+                    var init = function() {
 
-                    platformUpdateService
-                        .getReleases()
-                        .then(function (result) {
-   
+                        $scope.newversion = undefined;
 
-                            if (result.data.length > 0) {
+                        platformUpdateService
+                            .getReleases()
+                            .then(function(result) {
 
-                                var upgrade = semverService.isUpgradeAvailable($scope.version, result.data[0]['tag']);
+                                if (result.data.length > 0) {
 
-                                if (upgrade) {
-                                    $scope.newversion = true;
-                                    $scope.newversionlink = result.data[0]['release'];
+                                    var upgrade = semverService.isUpgradeAvailable($scope.version, result.data[0]['tag']);
+
+                                    if (upgrade) {
+                                        $scope.newversion = true;
+                                        $scope.newversionlink = result.data[0]['release'];
+                                    }
                                 }
+                            });
+                    };
 
-                            }
-  
-                            
-                        });
-                };
-           
-                init();
-            }],
-            link: function (scope, element) {
-
-               
-            }
+                    init();
+                }
+            ],
+            link: function(scope, element) {}
         };
-    });
-}());
+    };
+
+    Directive.$inject = [];
+
+    angular.module('directives.productVersion', [])
+        .directive('productVersion', Directive);
+
+}(window, window.angular));

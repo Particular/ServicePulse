@@ -1,6 +1,4 @@
-﻿
-
-(function () {
+﻿(function (window, angular, undefined) {
     'use strict';
 
     function controller ($scope, serviceControlService, $timeout) {
@@ -48,4 +46,4 @@
     angular.module('endpoints')
         .controller('EndpointsCtrl', controller );
 
-})();
+}(window, window.angular));

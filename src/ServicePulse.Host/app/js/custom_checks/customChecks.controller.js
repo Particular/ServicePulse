@@ -1,5 +1,4 @@
-﻿
-(function () {
+﻿(function (window, angular, undefined) {
     'use strict';
 
     function controller ($scope, serviceControlService, streamService) {
@@ -68,4 +67,4 @@
     angular.module('customChecks')
         .controller('CustomChecksCtrl', controller);
 
-})();
+}(window, window.angular));

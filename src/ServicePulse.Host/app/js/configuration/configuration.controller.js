@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function (window, angular, undefined) {
     'use strict';
 
     function controller ($scope, serviceControlService) {
@@ -22,9 +22,5 @@
     angular.module('configuration')
         .controller('ConfigurationCtrl', controller);
 
-    
-
-   
-
-})();
+}(window, window.angular));
 

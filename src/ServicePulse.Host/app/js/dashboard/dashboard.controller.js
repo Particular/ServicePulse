@@ -1,4 +1,4 @@
-﻿(function() {
+﻿(function (window, angular, undefined) {
     'use strict';
 
     function controller (
@@ -84,4 +84,4 @@
         .controller('DashboardCtrl', controller);
 
 
-})();
+}(window, window.angular));

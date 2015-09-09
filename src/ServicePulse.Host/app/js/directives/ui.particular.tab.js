@@ -1,0 +1,31 @@
+﻿(function (window, angular, undefined) {
+    'use strict';
+
+    function link(scope, element, attrs) {
+    }
+    
+    function Directive($window) {
+
+        var directive = {
+            restrict: 'E',
+            transclude: true,
+            template: '<div role="tabpanel" ng-show="active" ng-transclude></div>',
+            require: '^tabset',
+            scope: {
+                heading: '@'
+            },
+            link: function (scope, elem, attr, tabsetCtrl) {
+                scope.active = false;
+                tabsetCtrl.addTab(scope);
+            }
+        };
+        return directive;
+    }
+
+    Directive.$inject = ['$window'];
+
+    angular
+        .module('ui.particular.tab', [])
+        .directive('tab', Directive);
+
+}(window, window.angular));

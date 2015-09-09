@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function (window, angular, undefined) {
     'use strict';
 
     function routeProvider($routeProvider) {
@@ -16,4 +16,4 @@
     angular.module('dashboard')
            .config(routeProvider);
    
-})();
+}(window, window.angular));

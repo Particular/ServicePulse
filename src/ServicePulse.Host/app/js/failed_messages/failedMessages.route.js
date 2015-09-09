@@ -1,5 +1,4 @@
-﻿(function () {
-    'use strict';
+﻿(function (window, angular, undefined) { 'use strict';
 
     function routeProvider ($routeProvider) {
         $routeProvider.when('/failedMessages', {
@@ -16,4 +15,5 @@
     angular.module('failedMessages')
            .config(routeProvider);
 
-})();
+
+}(window, window.angular));

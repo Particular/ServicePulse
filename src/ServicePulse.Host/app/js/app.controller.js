@@ -1,4 +1,4 @@
-﻿(function () {
+﻿(function (window, angular, undefined) {
     'use strict';
 
     function controller (
@@ -37,4 +37,4 @@
 
     angular.module('sc').controller('AppCtrl', controller);
 
-})();
+}(window, window.angular));
