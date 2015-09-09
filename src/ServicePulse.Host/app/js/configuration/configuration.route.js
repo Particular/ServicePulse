@@ -4,8 +4,9 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/configuration', {
-            templateUrl: 'js/configuration/configuration.tpl.html',
-            controller: 'ConfigurationCtrl'
+            templateUrl: 'js/configuration/configuration.html',
+            controller: 'ConfigurationCtrl',
+            controllerAs: 'vm'
         });
     };
 

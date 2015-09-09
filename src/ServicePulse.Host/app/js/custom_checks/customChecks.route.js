@@ -3,8 +3,9 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/customChecks', {
-            templateUrl: 'js/custom_checks/customChecks.tpl.html',
-            controller: 'CustomChecksCtrl'
+            templateUrl: 'js/custom_checks/customChecks.html',
+            controller: 'CustomChecksCtrl',
+            controllerAs: 'vm'
         });
     };
 

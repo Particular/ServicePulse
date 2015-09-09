@@ -3,8 +3,9 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/dashboard', {
-            templateUrl: 'js/dashboard/dashboard.tpl.html',
-            controller: 'DashboardCtrl'
+            templateUrl: 'js/dashboard/dashboard.html',
+            controller: 'DashboardCtrl',
+            controllerAs: 'vm'
         });
     };
 
