@@ -207,3 +207,24 @@ ul.nav-tabs > li > a {
     -o-animation: fadeOutRight 1s;
     animation: fadeOutRight 1s;
 }
+
+
+
+.animate-switch {
+  padding:10px;
+}
+
+.animate-switch.ng-animate {
+   
+   
+}
+
+.animate-switch.ng-leave.ng-leave-active,
+.animate-switch.ng-enter {
+    display: none;
+}
+
+.animate-switch.ng-leave,
+.animate-switch.ng-enter.ng-enter-active {
+     display: none;
+}

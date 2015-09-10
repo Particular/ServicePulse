@@ -1,5 +1,4 @@
-﻿// anonymous function to tie down scope
-(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
 
     'use strict';
 
@@ -31,11 +30,21 @@
             page++;
         };
 
+ 
+
         var autoGetExceptionGroups = function () {
             serviceControlService.getExceptionGroups()
                 .then(function (response) {
                     if (response.data.length > 0) {
-                        $scope.model.exceptionGroups = response.data;
+                        // nedo map in some ui state for controlling animations
+                        var exgroups = response.data.map(function (obj) {
+                            var nObj = obj;
+                            nObj.workflow_state = { status: 'ready', message: '' }
+                            return nObj;
+                        });
+
+                        $scope.model.exceptionGroups = exgroups;
+
                         return;
                     }
 
@@ -199,19 +208,13 @@
 
         $scope.testSuccess = function (group) {
 
+            group.workflow_state = { status: 'working', message: 'working' }
+
             var response = failedMessagesService.wait()
                 .then(function (message) {
-
-                    $timeout(function () {
-                        removeGroup(group);
-                    }, 1500);
-
+                    group.workflow_state = { status: 'success', message: message };
                 }, function (message) {
-
-                    $timeout(function () {
-
-                    }, 1000);
-
+                    group.workflow_state = { status: 'success', message: message };
                 })
                 .finally(function () {
 
@@ -220,23 +223,29 @@
 
         $scope.testFail = function (group) {
 
+            group.workflow_state = { status: 'working', message: 'working' }
+
             var response = failedMessagesService.wait()
                 .then(function (message) {
-
-                    $timeout(function () {
-                        
-                    }, 1500);
-
+                    group.workflow_state = { status: 'error', message: message };
                 }, function (message) {
-
-                    $timeout(function () {
-
-                    }, 1000);
-
+                    group.workflow_state = { status: 'error', message: message };
                 })
                 .finally(function () {
 
                 });
+        }
+
+        $scope.dismiss = function(group) {
+            
+            switch(group.workflow_state.status) {
+                case 'error':
+                    group.workflow_state = { status: 'ready', message: '' }
+                    break;
+                case 'success':
+                    removeGroup(group);
+                    break;
+            }
         }
 
         $scope.retryExceptionGroup = function (group) {

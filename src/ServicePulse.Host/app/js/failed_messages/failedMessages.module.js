@@ -1,7 +1,6 @@
-﻿(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
 
     angular.module('failedMessages', []);
 
-
-}(window, window.angular));
+} (window, window.angular));

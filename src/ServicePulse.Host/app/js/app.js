@@ -1,4 +1,4 @@
-(function (window, angular, undefined) {
+; (function (window, angular, undefined) {
     'use strict';
 
     angular.module('sc', [
@@ -31,4 +31,4 @@
             $rootScope.$log = $log;
         }]);
 
-}(window, window.angular));
+} (window, window.angular));
