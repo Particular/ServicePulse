@@ -1,5 +1,5 @@
 ﻿// anonymous function to tie down scope
-(function(window, angular, undefined) {
+(function (window, angular, undefined) {
 
     'use strict';
 
@@ -12,6 +12,7 @@
         notifications,
         semverService,
         serviceControlService,
+        failedMessagesService,
         streamService) {
 
         $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
@@ -195,6 +196,49 @@
                 }
             }
         };
+
+        $scope.testSuccess = function (group) {
+
+            var response = failedMessagesService.wait()
+                .then(function (message) {
+
+                    $timeout(function () {
+                        removeGroup(group);
+                    }, 1500);
+
+                }, function (message) {
+
+                    $timeout(function () {
+
+                    }, 1000);
+
+                })
+                .finally(function () {
+
+                });
+        }
+
+        $scope.testFail = function (group) {
+
+            var response = failedMessagesService.wait()
+                .then(function (message) {
+
+                    $timeout(function () {
+                        
+                    }, 1500);
+
+                }, function (message) {
+
+                    $timeout(function () {
+
+                    }, 1000);
+
+                })
+                .finally(function () {
+
+                });
+        }
+
         $scope.retryExceptionGroup = function (group) {
             var notificationText = 'Retrying messages from group ' + group.title;
             serviceControlService.retryExceptionGroup(group.id, notificationText);
@@ -311,6 +355,7 @@
         'notifications',
         'semverService',
         'serviceControlService',
+        'failedMessagesService',
         'streamService'
     ];
 
@@ -318,4 +363,4 @@
         .module('failedMessages')
         .controller('FailedMessagesCtrl', controller);
 
-}(window, window.angular));
+} (window, window.angular));

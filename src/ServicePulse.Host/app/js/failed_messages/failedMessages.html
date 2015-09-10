@@ -59,8 +59,9 @@
                             <strong>Action</strong>
                         </div>
                     </div>
-                    <div class="scRow failedMessagesGroup-row" ng-repeat="excGroup in model.exceptionGroups">
-                        <div class="row-fluid scSelectableRow span12 failedMessagesGroup" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}">
+                    <div class="scRow failedMessagesGroup-row interactiveList" ng-repeat="excGroup in model.exceptionGroups">
+                        <div class="row-fluid scSelectableRow span12 failedMessagesGroup "
+                             ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}">
                             <div class="span8 blue text-ellipsis" ng-click="selectGroup(excGroup)">
                                 {{excGroup.title}}
                             </div>
@@ -74,6 +75,8 @@
                                 <sp-moment date="{{excGroup.last}}"/>
                             </div>
                             <div class="span1">
+                                <!--<button type="button" class="btn btn-small" tooltip="TEST" ng-click="testFail(excGroup)"><i class="fa fa-frown-o"></i></button>
+                                <button type="button" class="btn btn-small" tooltip="TEST" ng-click="testSuccess(excGroup)"><i class="fa fa-smile-o"></i></button>-->
                                 <button type="button" class="btn btn-small" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
                                 <button type="button" class="btn btn-small" tooltip="Retry Group" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                             </div>

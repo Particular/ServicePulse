@@ -188,6 +188,7 @@
     <Content Include="app\js\failed_messages\failedMessages.controller.js" />
     <Content Include="app\js\failed_messages\failedMessages.module.js" />
     <Content Include="app\js\failed_messages\failedMessages.route.js" />
+    <Content Include="app\js\failed_messages\failedMessages.service.js" />
     <Content Include="app\js\services\platformUpdateService.js" />
     <Content Include="app\js\services\semverService.js" />
     <Content Include="app\layout\topbar.html" />

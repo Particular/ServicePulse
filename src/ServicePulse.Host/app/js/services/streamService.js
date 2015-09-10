@@ -1,20 +1,20 @@
-(function() {
-
+; (function (window, angular, $, undefined) {
     'use strict';
 
-    function service (notifications, $log, $rootScope, scConfig) {
+    function Service (notifications, $log, $rootScope, scConfig) {
         var prefix = 'signalr::';
        
         var registrations = {};
 
-
         var connection = $.connection(scConfig.service_control_url + '/messagestream');
 
-        connection.received(function(data) {
+        connection.received(function (data) {
+
             for (var i in data.types) {
                 var type = data.types[i];
                 $rootScope.$broadcast(prefix + type, data.message);
             }
+
         });
 
         connection
@@ -73,11 +73,11 @@
         };
     };
 
-    service.$inject = ['notifications', '$log', '$rootScope', 'scConfig'];
+    Service.$inject = ['notifications', '$log', '$rootScope', 'scConfig'];
 
     angular
         .module('services.streamService', [])
-        .factory('streamService', service);
+        .factory('streamService', Service);
 
 
-})();
+}(window, window.angular, jQuery));
