@@ -207,7 +207,6 @@
     <Content Include="app\lib\jQuery\jquery.signalr-2.2.0.min.js" />
     <Content Include="app\lib\ng-infinite-scroll.min.js" />
     <Content Include="app\lib\page-width-functions.js" />
-    <Content Include="app\js\failed_messages\failedMessages.2.html" />
     <EmbeddedResource Include="Hosting\Help.txt" />
     <Content Include="app\fonts\fontawesome-webfont.eot" />
     <Content Include="app\fonts\fontawesome-webfont.ttf" />
