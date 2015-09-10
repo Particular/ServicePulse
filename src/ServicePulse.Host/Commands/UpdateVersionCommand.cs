@@ -19,9 +19,9 @@
         {
             var assembly = Assembly.GetExecutingAssembly();
 
-            using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\app.js"))
+            using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\app.constants.js"))
             {
-                var destinationPath = Path.Combine(directoryPath, "js/app.js");
+                var destinationPath = Path.Combine(directoryPath, "js/app.constants.js");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
@@ -40,7 +40,7 @@
 
         static void UpdateVersion(string directoryPath)
         {
-            var appJsPath = Path.Combine(directoryPath, "js/app.js");
+            var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
 
             var updatedContent = Regex.Replace(appJsCode, @"(constant\('version', ')([\w:/.-]*)(')", "${1}" + GetFileVersion() + "$3");

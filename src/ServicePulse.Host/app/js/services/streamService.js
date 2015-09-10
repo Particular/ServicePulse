@@ -1,22 +1,26 @@
-'use strict';
+; (function (window, angular, $, undefined) {
+    'use strict';
 
-angular.module('services.streamService', [])
-    .factory('streamService', ['notifications', '$log', '$rootScope', 'scConfig', function(notifications, $log, $rootScope, scConfig) {
+    function Service (notifications, $log, $rootScope, scConfig) {
         var prefix = 'signalr::';
-        var connection = $.connection(scConfig.service_control_url + '/messagestream');
+       
         var registrations = {};
 
-        connection.received(function(data) {
+        var connection = $.connection(scConfig.service_control_url + '/messagestream');
+
+        connection.received(function (data) {
 
             for (var i in data.types) {
                 var type = data.types[i];
-                
                 $rootScope.$broadcast(prefix + type, data.message);
             }
+
         });
 
-        connection.start()
-            .done(function() {
+        connection
+            .start()
+            .done(function () {
+
                 $log.info('SignalR started');
 
                 connection.error(function(error) {
@@ -34,7 +38,9 @@ angular.module('services.streamService', [])
                         console.log('The server is offline');
                     }
                 });
-            }).fail(function() {
+
+            })
+            .fail(function () {
                 notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'error', { url: scConfig.service_control_url });
             });
 
@@ -65,4 +71,13 @@ angular.module('services.streamService', [])
                 connection.send(JSON.stringify({ message: message, type: messageType }));
             }
         };
-    }]);
+    };
+
+    Service.$inject = ['notifications', '$log', '$rootScope', 'scConfig'];
+
+    angular
+        .module('services.streamService', [])
+        .factory('streamService', Service);
+
+
+}(window, window.angular, jQuery));
