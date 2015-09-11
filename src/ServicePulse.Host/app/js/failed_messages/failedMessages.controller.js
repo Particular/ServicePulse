@@ -206,36 +206,6 @@
             }
         };
 
-        $scope.testSuccess = function (group) {
-
-            group.workflow_state = { status: 'working', message: 'working' }
-
-            var response = failedMessagesService.wait()
-                .then(function (message) {
-                    group.workflow_state = { status: 'success', message: message };
-                }, function (message) {
-                    group.workflow_state = { status: 'success', message: message };
-                })
-                .finally(function () {
-
-                });
-        }
-
-        $scope.testFail = function (group) {
-
-            group.workflow_state = { status: 'working', message: 'working' }
-
-            var response = failedMessagesService.wait()
-                .then(function (message) {
-                    group.workflow_state = { status: 'error', message: message };
-                }, function (message) {
-                    group.workflow_state = { status: 'error', message: message };
-                })
-                .finally(function () {
-
-                });
-        }
-
         $scope.dismiss = function(group) {
             
             switch(group.workflow_state.status) {
@@ -244,38 +214,56 @@
                     break;
                 case 'success':
                     removeGroup(group);
+
+                    if ($scope.model.exceptionGroups.length === 0) {
+                        $scope.model.failedMessages = [];
+                    }
+
                     break;
             }
         }
 
         $scope.retryExceptionGroup = function (group) {
-            var notificationText = 'Retrying messages from group ' + group.title;
-            serviceControlService.retryExceptionGroup(group.id, notificationText);
 
-            removeGroup(group);
+            group.workflow_state = { status: 'working', message: 'working' }
 
-            if ($scope.model.exceptionGroups.length === 0) {
-                $scope.model.failedMessages = [];
-                return;
-            }
+            var response = failedMessagesService.retry(group.Id)
+                .then(function (message) {
 
-            markMessage(group, 'retried');
-            selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+                    group.workflow_state = { status: 'success', message: message };
+
+                    markMessage(group, 'retried');
+                    selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+
+                }, function (message) {
+                    group.workflow_state = { status: 'error', message: message };
+                })
+                .finally(function () {
+
+                });
+
         };
 
         $scope.archiveExceptionGroup = function (group) {
-            var notificationText = 'Archiving messages from group ' + group.title;
-            serviceControlService.archiveExceptionGroup(group.id, notificationText);
 
-            removeGroup(group);
 
-            if ($scope.model.exceptionGroups.length === 0) {
-                $scope.model.failedMessages = [];
-                return;
-            }
+            group.workflow_state = { status: 'working', message: 'working' }
 
-            markMessage(group, 'archived');
-            selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+            var response = failedMessagesService.retry(group.Id)
+                .then(function (message) {
+
+                    group.workflow_state = { status: 'success', message: message };
+
+                    markMessage(group, 'archived');
+                    selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+
+                }, function (message) {
+                    group.workflow_state = { status: 'error', message: message };
+                })
+                .finally(function () {
+
+                });
+
         };
 
         $scope.archiveSelected = function () {

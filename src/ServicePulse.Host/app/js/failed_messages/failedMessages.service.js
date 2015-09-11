@@ -1,10 +1,9 @@
 ﻿;(function (window, angular, undefined) { 'use strict';
 
-    function Service($http, $timeout, $q, scService) {
+    function Service($http, $timeout, $q, scConfig) {
 
         function getData() { }
 
-        function retry() { }
 
         function wait() {
 
@@ -23,9 +22,28 @@
 
         }
 
+        function postPromise(url, success, error) {
+
+            var defer = $q.defer();
+
+            success = success || 'success';
+            error = error || 'error';
+
+            $http.post(url)
+                .success(function (response) {
+                    defer.resolve(success + ':' + response);
+                })
+                .error(function (response) {
+                    defer.reject(error + ':' + response);
+                });
+
+            return defer.promise;
+        }
+
         var service = {
             getData: getData,
-            retry: retry,
+            retry: function (id) { return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry') },
+            archive: function (id) { return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive') },
             wait: wait
         };
 
@@ -33,7 +51,7 @@
 
     }
 
-    Service.$inject = ['$http', '$timeout', '$q', 'serviceControlService' ];
+    Service.$inject = ['$http', '$timeout', '$q', 'scConfig'];
 
     angular.module('failedMessages')
         .factory('failedMessagesService', Service);

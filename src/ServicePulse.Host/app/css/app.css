@@ -149,6 +149,7 @@
 
 .failedMessagesGroup {
     padding: 6px;
+    margin-left: 0px !important;
 }
 
 .failedMessagesGroupSelected {
@@ -159,6 +160,7 @@
 .failedMessagesGroup-row { 
     display: inline-block;
     width: 100%;
+
 }
 
 .white, .white a {
@@ -209,22 +211,19 @@ ul.nav-tabs > li > a {
 }
 
 
-
-.animate-switch {
-  padding:10px;
+.failedMessagesGroup.ng-hide-add {
+    -webkit-animation:0.5s flipOutY ease;
+    -moz-animation:0.5s flipOutY ease;
+    -ms-animation:0.5s flipOutY ease;
+    -o-animation:0.5s flipOutY ease;
+    animation:0.5s flipOutY ease;
 }
 
-.animate-switch.ng-animate {
-   
-   
-}
-
-.animate-switch.ng-leave.ng-leave-active,
-.animate-switch.ng-enter {
-    display: none;
-}
-
-.animate-switch.ng-leave,
-.animate-switch.ng-enter.ng-enter-active {
-     display: none;
+/* when showing the thing */
+.failedMessagesGroup.ng-hide-remove {
+    -webkit-animation:0.5s flipInX ease;
+    -moz-animation:0.5s flipInX ease;
+    -ms-animation:0.5s flipInX ease;
+    -o-animation:0.5s flipInX ease;
+    animation:0.5s flipInX ease;
 }

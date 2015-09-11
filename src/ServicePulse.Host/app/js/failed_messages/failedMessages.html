@@ -45,80 +45,56 @@
                         <div class="span8">
                             <strong>Title</strong>
                         </div>
-                        <div class="span1">
-                            <strong>Count</strong>
+                        <div class="span4">
+                            <div class="span3">
+                                <strong>Count</strong>
+                            </div>
+                            <div class="span3">
+                                <strong>First Fail</strong>
+                            </div>
+                            <div class="span3">
+                                <strong>Last Fail</strong>
+                            </div>
+                            <div class="span3">
+                                <strong>Action</strong>
+                            </div>
                         </div>
-                        <div class="span1">
-                            <strong>First Fail</strong>
-                        </div>
-                        <div class="span1">
-                            <strong>Last Fail</strong>
-                        </div>
-                        <div class="span1">
-                            <strong>Action</strong>
-                        </div>
-                    </div>
+                    </div>            
                     <div class="scRow failedMessagesGroup-row interactiveList" ng-repeat="excGroup in model.exceptionGroups">
-                        <ng-switch on="excGroup.workflow_state.status">
-
-                            <div ng-switch-when="working" class="row-fluid scSelectableRow span12 failedMessagesGroup animate-switch" 
+          
+                            <div class="span12 failedMessagesGroup row-fluid scSelectableRow" 
                                  ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}">
                                 <div class="span8 blue text-ellipsis" ng-click="selectGroup(excGroup)">
                                     {{excGroup.title}}
                                 </div>
-                                <div class="span4 progress progress-striped active">
+                                <div ng-show="excGroup.workflow_state.status === 'working'" class="span4 progress progress-striped active">
                                     <div class="bar" style="width: 100%;"></div>
                                 </div>
-                            </div>
-
-                            <div ng-switch-when="error" class="row-fluid scSelectableRow span12 failedMessagesGroup animate-switch" 
-                                 ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}">
-                                <div class="span8 blue text-ellipsis" ng-click="selectGroup(excGroup)">
-                                    {{excGroup.title}}
+                                <div ng-show="excGroup.workflow_state.status === 'error'" class="span4 alert alert-danger">
+                                        <button type="button" class="close" ng-click="dismiss(excGroup)">&times;</button>
+                                        <strong>Warning!</strong> {{excGroup.workflow_state.message}}
                                 </div>
-                                <div class="span4 alert alert-danger">
-                                    <button type="button" ng-click="dismiss(excGroup)">&times;</button>
-                                    <strong>Warning!</strong> {{excGroup.workflow_state.message}}
-                                </div>
-                            </div>
-
-                            <div ng-switch-when="success" class="row-fluid scSelectableRow span12 failedMessagesGroup animate-switch" 
-                                 ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}">
-                                <div class="span8 blue text-ellipsis" ng-click="selectGroup(excGroup)">
-                                    {{excGroup.title}}
-                                </div>
-                                <div class="span4 alert alert-success">
-                                    <button type="button" ng-click="dismiss(excGroup)">&times;</button>
+                                <div ng-show="excGroup.workflow_state.status === 'success'" class="span4 alert alert-success">
+                                    <button type="button" class="close" ng-click="dismiss(excGroup)">&times;</button>
                                     <strong>Success!</strong> {{excGroup.workflow_state.message}}
                                 </div>
-                            </div>
-
-                            <div ng-switch-when="ready" class="row-fluid scSelectableRow span12 failedMessagesGroup "
-                                 ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}">
-                                <div class="span8 blue text-ellipsis" ng-click="selectGroup(excGroup)">
-                                    {{excGroup.title}} [{{excGroup.workflow_state}}][{{excGroup.workflow_state.status}}]
-                                </div>
-                                <div class="span1 red" ng-click="selectGroup($event, excGroup)">
-                                    {{excGroup.count}}
-                                </div>
-                                <div class="span1" ng-click="selectGroup($event, excGroup)">
-                                    <sp-moment date="{{excGroup.first}}"/>
-                                </div>
-                                <div class="span1 red" ng-click="selectGroup($event, excGroup)">
-                                    <sp-moment date="{{excGroup.last}}"/>
-                                </div>
-                                <div class="span1">
-                                    <button type="button" class="btn btn-small" tooltip="TEST" ng-click="testFail(excGroup)"><i class="fa fa-frown-o"></i></button>
-                                    <button type="button" class="btn btn-small" tooltip="TEST" ng-click="testSuccess(excGroup)"><i class="fa fa-smile-o"></i></button>
-                                    <button type="button" class="btn btn-small" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
-                                    <button type="button" class="btn btn-small" tooltip="Retry Group" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
+                                <div ng-show="excGroup.workflow_state.status === 'ready'" class="span4">
+                                    <div class="span3 red">
+                                        {{excGroup.count}}
+                                    </div>
+                                    <div class="span3">
+                                        <sp-moment date="{{excGroup.first}}" />
+                                    </div>
+                                    <div class="span3 red">
+                                        <sp-moment date="{{excGroup.last}}" />
+                                    </div>
+                                    <div class="span3">
+                                        <button type="button" class="btn btn-small" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
+                                        <button type="button" class="btn btn-small" tooltip="Retry Group" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
+                                    </div>
                                 </div>
                             </div>
 
-                            <ng-switch-default>
-                            </ng-switch-default>
-
-                        </ng-switch>
                     </div>
                 </div>
 
