@@ -1,4 +1,4 @@
-(function (window, angular, undefined) {
+; (function (window, angular, undefined) {
     'use strict';
 
     angular.module('customChecks', []);

@@ -1,9 +1,9 @@
 angular.module('services.notifications', []).factory('notifications', ['$rootScope', '$interpolate', function ($rootScope, $interpolate) {
 
   var notifications = {
-    'STICKY' : [],
-    'ROUTE_CURRENT' : [],
-    'ROUTE_NEXT' : []
+    'STICKY': [],
+    'ROUTE_CURRENT': [],
+    'ROUTE_NEXT': []
   };
   var notificationsService = {};
 
@@ -14,12 +14,12 @@ angular.module('services.notifications', []).factory('notifications', ['$rootSco
     notificationsArray.push(notificationObj);
     return notificationObj;
   };
-    
+
   var prepareNotification = function (message, type, interpolateParams, otherProperties) {
-      return angular.extend({
-          message: $interpolate(message)(interpolateParams),
-          type: type
-      }, otherProperties);
+    return angular.extend({
+      message: $interpolate(message)(interpolateParams),
+      type: type
+    }, otherProperties);
   };
 
   $rootScope.$on('$routeChangeSuccess', function () {
@@ -28,42 +28,42 @@ angular.module('services.notifications', []).factory('notifications', ['$rootSco
     notifications.ROUTE_NEXT.length = 0;
   });
 
-  notificationsService.getCurrent = function(){
+  notificationsService.getCurrent = function () {
     return [].concat(notifications.STICKY, notifications.ROUTE_CURRENT);
   };
-    
-  notificationsService.pushSticky = function(message, type, interpolateParams, otherProperties) {
-      return addNotification(notifications.STICKY, angular.extend(prepareNotification(message, type, interpolateParams, otherProperties), { disableClosing: true }));
+
+  notificationsService.pushSticky = function (message, type, interpolateParams, otherProperties) {
+    return addNotification(notifications.STICKY, angular.extend(prepareNotification(message, type, interpolateParams, otherProperties), { disableClosing: true }));
   };
 
-  notificationsService.pushForCurrentRoute = function(message, type, interpolateParams, otherProperties) {
-        return addNotification(notifications.ROUTE_CURRENT, prepareNotification(message, type, interpolateParams, otherProperties));
+  notificationsService.pushForCurrentRoute = function (message, type, interpolateParams, otherProperties) {
+    return addNotification(notifications.ROUTE_CURRENT, prepareNotification(message, type, interpolateParams, otherProperties));
   };
 
-  notificationsService.pushForNextRoute = function(message, type, interpolateParams, otherProperties) {
-        return addNotification(notifications.ROUTE_NEXT, prepareNotification(message, type, interpolateParams, otherProperties));
+  notificationsService.pushForNextRoute = function (message, type, interpolateParams, otherProperties) {
+    return addNotification(notifications.ROUTE_NEXT, prepareNotification(message, type, interpolateParams, otherProperties));
   };
 
-  notificationsService.remove = function(notification){
+  notificationsService.remove = function (notification) {
     angular.forEach(notifications, function (notificationsByType) {
       var idx = notificationsByType.indexOf(notification);
-      if (idx>-1){
-        notificationsByType.splice(idx,1);
+      if (idx > -1) {
+        notificationsByType.splice(idx, 1);
       }
     });
   };
 
   notificationsService.removeByText = function (text) {
-      var self = this;
-      var prevNotifications = self.getCurrent().filter(function (notification) {
-          return notification.message === text;
-      });
-      prevNotifications.forEach(function (notification) {
-          self.remove(notification);
-      });
+    var self = this;
+    var prevNotifications = self.getCurrent().filter(function (notification) {
+      return notification.message === text;
+    });
+    prevNotifications.forEach(function (notification) {
+      self.remove(notification);
+    });
   };
 
-  notificationsService.removeAll = function(){
+  notificationsService.removeAll = function () {
     angular.forEach(notifications, function (notificationsByType) {
       notificationsByType.length = 0;
     });

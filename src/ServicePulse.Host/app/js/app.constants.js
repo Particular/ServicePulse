@@ -2,6 +2,6 @@
 
     angular.module('sc')
         .constant('version', '1.2.0')
-        .constant('scConfig', SC.config);
+        .constant('scConfig', window.SC.config);
 
 }(window, window.angular));

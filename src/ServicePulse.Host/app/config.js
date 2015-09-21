@@ -1,9 +1,12 @@
-﻿'use strict';
+﻿; (function (window, undefined) {
+    'use strict';
 
-var SC = SC || {};
+    window.SC = window.SC || {};
 
-SC.config = {
-    service_control_url: 'http://localhost:33333/api',
-    service_pulse_url: 'http://platformupdate.particular.net/servicepulse.txt'
-   
-};
+    window.SC.config = {
+        service_control_url: 'http://localhost:33333/api',
+        service_pulse_url: 'http://platformupdate.particular.net/servicepulse.txt'
+    };
+
+
+} (window));

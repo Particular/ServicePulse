@@ -194,13 +194,13 @@ ul.nav-tabs > li > a {
 
 
 
-.interactiveList.ng-enter {
+/*.interactiveList.ng-enter {
     -webkit-animation: fadeInLeft 1s;
     -moz-animation: fadeInLeft 1s;
     -ms-animation: fadeInLeft 1s;
     -o-animation: fadeInLeft 1s;
     animation: fadeInLeft 1s;
-}
+}*/
 
 .interactiveList.ng-leave {
     -webkit-animation: fadeOutRight 1s;
@@ -211,19 +211,19 @@ ul.nav-tabs > li > a {
 }
 
 
-.failedMessagesGroup.ng-hide-add {
-    -webkit-animation:0.5s flipOutY ease;
-    -moz-animation:0.5s flipOutY ease;
-    -ms-animation:0.5s flipOutY ease;
+.animate-box.ng-hide-add {
+    -webkit-animation:1s flipOutY ease;
+    -moz-animation:1s flipOutY ease;
+    -ms-animation:1s flipOutY ease;
     -o-animation:0.5s flipOutY ease;
-    animation:0.5s flipOutY ease;
+    animation:1s flipOutY ease;
 }
 
 /* when showing the thing */
-.failedMessagesGroup.ng-hide-remove {
+.animate-box.ng-hide-remove {
     -webkit-animation:0.5s flipInX ease;
     -moz-animation:0.5s flipInX ease;
     -ms-animation:0.5s flipInX ease;
     -o-animation:0.5s flipInX ease;
-    animation:0.5s flipInX ease;
+    animation: 1s flipInX ease;
 }

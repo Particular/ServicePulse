@@ -1,8 +1,8 @@
-﻿(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
-    
 
-    function Controller  () {
+
+    function Controller() {
         var self = this;
         self.tabs = [];
 
@@ -10,7 +10,7 @@
             self.tabs.push(tab);
 
             if (self.tabs.length === 1) {
-          
+
                 tab.active = true;
             }
         }
@@ -18,7 +18,7 @@
         self.select = function (selectedTab) {
             if (selectedTab.disabled) { return }
 
-            angular.forEach(self.tabs, function(tab) {
+            angular.forEach(self.tabs, function (tab) {
                 if (tab.active && tab !== selectedTab) {
                     tab.active = false;
                 }
@@ -28,8 +28,8 @@
         }
     }
 
-    function link  (scope, element, attrs) {
-      
+    function link(scope, element, attrs) {
+
     }
 
     function Directive($window) {
@@ -38,7 +38,7 @@
             restrict: 'E',
             transclude: true,
             scope: {
-               
+
             },
             templateUrl: 'js/directives/ui.particular.tabset.tpl.html',
             bindToController: true,
@@ -56,5 +56,5 @@
         .module('ui.particular.tabset', [])
         .directive('tabset', Directive);
 
-}(window, window.angular));
+} (window, window.angular));
 

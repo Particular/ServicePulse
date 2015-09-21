@@ -1,7 +1,7 @@
-﻿(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
 
-    function controller ($scope, serviceControlService, streamService) {
+    function controller($scope, serviceControlService, streamService) {
 
         $scope.model = { data: [], total: 0 };
         $scope.loadingData = false;
@@ -67,4 +67,4 @@
     angular.module('customChecks')
         .controller('CustomChecksCtrl', controller);
 
-}(window, window.angular));
+} (window, window.angular));

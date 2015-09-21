@@ -1,9 +1,9 @@
-﻿(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
 
     function link(scope, element, attrs) {
     }
-    
+
     function Directive($window) {
 
         var directive = {
@@ -21,7 +21,7 @@
 
                 scope.disabled = false;
                 if (attr.disable) {
-                    attr.$observe('disable', function(value) {
+                    attr.$observe('disable', function (value) {
                         scope.disabled = (value !== 'false');
                     });
                 }
@@ -35,7 +35,7 @@
     Directive.$inject = ['$window'];
 
     angular
-        .module('ui.particular.tab', [])
+        .module('ui.particular.tabset')
         .directive('tab', Directive);
 
-}(window, window.angular));
+} (window, window.angular));

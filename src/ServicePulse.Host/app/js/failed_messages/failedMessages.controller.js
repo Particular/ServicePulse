@@ -30,16 +30,16 @@
             page++;
         };
 
- 
+
 
         var autoGetExceptionGroups = function () {
             serviceControlService.getExceptionGroups()
                 .then(function (response) {
                     if (response.data.length > 0) {
-                        // nedo map in some ui state for controlling animations
+                        // need a map in some ui state for controlling animations
                         var exgroups = response.data.map(function (obj) {
                             var nObj = obj;
-                            nObj.workflow_state = { status: 'ready', message: '' }
+                            nObj.workflow_state = { status: 'ready', message: '', total: 0, count:0 }
                             return nObj;
                         });
 
@@ -206,9 +206,9 @@
             }
         };
 
-        $scope.dismiss = function(group) {
-            
-            switch(group.workflow_state.status) {
+        $scope.dismiss = function (group) {
+
+            switch (group.workflow_state.status) {
                 case 'error':
                     group.workflow_state = { status: 'ready', message: '' }
                     break;
@@ -223,17 +223,34 @@
             }
         }
 
+        $scope.testSuccess = function (group) {
+
+            group.workflow_state = { status: 'working', message: 'working' }
+
+            var response = failedMessagesService.wait()
+                .then(function (message) {
+                    group.workflow_state = { status: 'success', message: message };
+                }, function (message) {
+                    group.workflow_state = { status: 'error', message: message };
+                })
+                .finally(function () {
+
+                });
+
+        };
+
+
         $scope.retryExceptionGroup = function (group) {
 
             group.workflow_state = { status: 'working', message: 'working' }
 
-            var response = failedMessagesService.retry(group.Id)
+            var response = failedMessagesService.retryGroup(group.id)
                 .then(function (message) {
-
-                    group.workflow_state = { status: 'success', message: message };
+                    // We are going to have to wait for service control to tell us the job has been done
+                    group.workflow_state = { status: 'working', message: message };
 
                     markMessage(group, 'retried');
-                    selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+                    //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
 
                 }, function (message) {
                     group.workflow_state = { status: 'error', message: message };
@@ -249,13 +266,13 @@
 
             group.workflow_state = { status: 'working', message: 'working' }
 
-            var response = failedMessagesService.retry(group.Id)
+            var response = failedMessagesService.archiveGroup(group.id)
                 .then(function (message) {
 
                     group.workflow_state = { status: 'success', message: message };
 
                     markMessage(group, 'archived');
-                    selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+                    //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
 
                 }, function (message) {
                     group.workflow_state = { status: 'error', message: message };
@@ -320,7 +337,7 @@
 
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                 var existingFailure = $scope.model.failedMessages[i];
-                if (failedMessageId === existingFailure.id) {
+                if (failedMessageId === existingFailure.id) {              
                     $scope.model.failedMessages.splice(i, 1);
                     return;
                 }

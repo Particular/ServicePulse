@@ -1,4 +1,4 @@
-﻿;(function (window, angular, undefined) { 'use strict';
+﻿; (function (window, angular, undefined) { 'use strict';
 
     function Service($http, $timeout, $q, scConfig) {
 
@@ -42,8 +42,12 @@
 
         var service = {
             getData: getData,
-            retry: function (id) { return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry') },
-            archive: function (id) { return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive') },
+            retryGroup: function(id, success, error) {
+                return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry', success, error);
+            },
+            archiveGroup: function (id, success, error) {
+                return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive', success, error);
+            },
             wait: wait
         };
 
