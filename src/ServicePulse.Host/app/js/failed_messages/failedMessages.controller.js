@@ -1,4 +1,5 @@
-﻿; (function (window, angular, undefined) {
+﻿;
+(function(window, angular, undefined) {
 
     'use strict';
 
@@ -23,7 +24,7 @@
         var scVersionSupportingExceptionGroups = '1.6.0';
         var page = 1;
 
-        var processLoadedMessages = function (data) {
+        var processLoadedMessages = function(data) {
             $scope.model.failedMessages = $scope.model.failedMessages.concat(data);
             $scope.allMessagesLoaded = ($scope.model.failedMessages.length >= $scope.selectedExceptionGroup.count);
             $scope.loadingData = false;
@@ -31,15 +32,14 @@
         };
 
 
-
-        var autoGetExceptionGroups = function () {
+        var autoGetExceptionGroups = function() {
             serviceControlService.getExceptionGroups()
-                .then(function (response) {
+                .then(function(response) {
                     if (response.data.length > 0) {
                         // need a map in some ui state for controlling animations
-                        var exgroups = response.data.map(function (obj) {
+                        var exgroups = response.data.map(function(obj) {
                             var nObj = obj;
-                            nObj.workflow_state = { status: 'ready', message: '', total: 0, count:0 }
+                            nObj.workflow_state = { status: 'ready', message: '', total: 0, count: 0 };
                             return nObj;
                         });
 
@@ -48,13 +48,13 @@
                         return;
                     }
 
-                    $timeout(function () {
+                    $timeout(function() {
                         autoGetExceptionGroups();
                     }, 2000);
                 });
         };
 
-        $scope.init = function () {
+        $scope.init = function() {
             page = 1;
 
             $scope.model.failedMessages = [];
@@ -71,7 +71,7 @@
             $scope.loadingData = true;
 
             serviceControlService.getVersion()
-                .then(function (sc_version) {
+                .then(function(sc_version) {
                     if (semverService.isSupported(sc_version, scVersionSupportingExceptionGroups)) {
                         $scope.model.displayGroupsTab = true;
                         $scope.model.activePageTab = "groups";
@@ -82,25 +82,25 @@
                     }
                 });
 
-            serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
+            serviceControlService.getFailedMessages($routeParams.sort, page).then(function(response) {
                 $scope.allFailedMessagesGroup.count = response.total;
                 processLoadedMessages(response.data);
             });
         };
 
-        $scope.togglePanel = function (row, panelnum) {
+        $scope.togglePanel = function(row, panelnum) {
             if (row.messageBody === undefined) {
-                serviceControlService.getMessageBody(row.message_id).then(function (message) {
+                serviceControlService.getMessageBody(row.message_id).then(function(message) {
                     row.messageBody = message.data;
-                }, function () {
+                }, function() {
                     row.bodyUnavailable = "message body unavailable";
                 });
             }
 
             if (row.messageHeaders === undefined) {
-                serviceControlService.getMessageHeaders(row.message_id).then(function (message) {
+                serviceControlService.getMessageHeaders(row.message_id).then(function(message) {
                     row.messageHeaders = message.data[0].headers;
-                }, function () {
+                }, function() {
                     row.headersUnavailable = "message headers unavailable";
                 });
             }
@@ -108,7 +108,7 @@
             return false;
         };
 
-        var selectGroupInternal = function (group, sort, changeToMessagesTab) {
+        var selectGroupInternal = function(group, sort, changeToMessagesTab) {
             if ($scope.loadingData) {
                 return;
             }
@@ -125,12 +125,12 @@
             $scope.loadMoreResults(group, sort);
         };
 
-        $scope.selectGroup = function (group, sort) {
+        $scope.selectGroup = function(group, sort) {
 
             selectGroupInternal(group, sort, true);
         };
 
-        $scope.loadMoreResults = function (group, sort) {
+        $scope.loadMoreResults = function(group, sort) {
             $scope.allMessagesLoaded = $scope.model.failedMessages.length >= group.count;
 
             if ($scope.allMessagesLoaded || $scope.loadingData) {
@@ -141,17 +141,17 @@
 
             var allExceptionsGroupSelected = (!group || !group.id);
             if (allExceptionsGroupSelected) {
-                serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
+                serviceControlService.getFailedMessages($routeParams.sort, page).then(function(response) {
                     processLoadedMessages(response.data);
                 });
             } else {
-                serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page).then(function (response) {
+                serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page).then(function(response) {
                     processLoadedMessages(response.data);
                 });
             }
         };
 
-        $scope.toggleRowSelect = function (row) {
+        $scope.toggleRowSelect = function(row) {
             if (row.retried || row.archived) {
                 return;
             }
@@ -165,16 +165,16 @@
             }
         };
 
-        $scope.getId = function (row) {
+        $scope.getId = function(row) {
             return row.message_id;
         };
 
-        $scope.retryAll = function () {
+        $scope.retryAll = function() {
             serviceControlService.retryAllFailedMessages();
             $scope.init();
         };
 
-        $scope.retrySelected = function () {
+        $scope.retrySelected = function() {
             serviceControlService.retryFailedMessages($scope.model.selectedIds);
             $scope.model.selectedIds = [];
 
@@ -188,7 +188,7 @@
             $scope.init();
         };
 
-        var removeGroup = function (group) {
+        var removeGroup = function(group) {
             //remove group
             for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
                 var exGroup = $scope.model.exceptionGroups[j];
@@ -197,7 +197,7 @@
                 }
             }
         };
-        var markMessage = function (group, property) {
+        var markMessage = function(group, property) {
             //mark messages as retried
             if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
                 for (var i = 0; i < $scope.model.failedMessages.length; i++) {
@@ -206,84 +206,83 @@
             }
         };
 
-        $scope.dismiss = function (group) {
+        $scope.dismiss = function(group) {
 
             switch (group.workflow_state.status) {
-                case 'error':
-                    group.workflow_state = { status: 'ready', message: '' }
-                    break;
-                case 'success':
-                    removeGroup(group);
+            case 'error':
+                group.workflow_state = { status: 'ready', message: '' };
+                break;
+            case 'success':
+                removeGroup(group);
 
-                    if ($scope.model.exceptionGroups.length === 0) {
-                        $scope.model.failedMessages = [];
-                    }
+                if ($scope.model.exceptionGroups.length === 0) {
+                    $scope.model.failedMessages = [];
+                }
 
-                    break;
+                break;
             }
-        }
+        };
+        $scope.testSuccess = function(group) {
 
-        $scope.testSuccess = function (group) {
-
-            group.workflow_state = { status: 'working', message: 'working' }
-
+            group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessagesService.wait()
-                .then(function (message) {
+                .then(function(message) {
                     group.workflow_state = { status: 'success', message: message };
-                }, function (message) {
+                }, function(message) {
                     group.workflow_state = { status: 'error', message: message };
+                }, function(e) {
+                    group.workflow_state = { status: 'working', message: 'working', count: e, total: 10 };
                 })
-                .finally(function () {
+                .finally(function() {
 
                 });
+
 
         };
 
 
-        $scope.retryExceptionGroup = function (group) {
+        $scope.retryExceptionGroup = function(group) {
 
-            group.workflow_state = { status: 'working', message: 'working' }
-
+            group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessagesService.retryGroup(group.id)
-                .then(function (message) {
+                .then(function(message) {
                     // We are going to have to wait for service control to tell us the job has been done
                     group.workflow_state = { status: 'working', message: message };
 
                     markMessage(group, 'retried');
                     //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
 
-                }, function (message) {
+                }, function(message) {
                     group.workflow_state = { status: 'error', message: message };
                 })
-                .finally(function () {
+                .finally(function() {
 
                 });
 
         };
 
-        $scope.archiveExceptionGroup = function (group) {
+        $scope.archiveExceptionGroup = function(group) {
 
 
-            group.workflow_state = { status: 'working', message: 'working' }
-
+            group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessagesService.archiveGroup(group.id)
-                .then(function (message) {
+                .then(function(message) {
 
                     group.workflow_state = { status: 'success', message: message };
 
                     markMessage(group, 'archived');
                     //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
 
-                }, function (message) {
+                }, function(message) {
                     group.workflow_state = { status: 'error', message: message };
                 })
-                .finally(function () {
+                .finally(function() {
 
                 });
 
         };
 
-        $scope.archiveSelected = function () {
+        $scope.archiveSelected = function() {
             serviceControlService.archiveFailedMessages($scope.model.selectedIds);
             $scope.model.selectedIds = [];
 
@@ -295,7 +294,7 @@
             }
         };
 
-        $scope.debugInServiceInsight = function (index) {
+        $scope.debugInServiceInsight = function(index) {
             var messageId = $scope.model.failedMessages[index].message_id;
             var dnsName = scConfig.service_control_url.toLowerCase();
 
@@ -308,14 +307,14 @@
             $window.open("si://" + dnsName + "?search=" + messageId);
         };
 
-        var updateCountForFailedMessageNotification = function (previousCount, newCount) {
+        var updateCountForFailedMessageNotification = function(previousCount, newCount) {
             var notificationText = ' new failed messages. Refresh the page to see them.';
             notifications.removeByText(previousCount + notificationText);
             notifications.pushForCurrentRoute(newCount + notificationText, 'info');
 
         };
 
-        streamService.subscribe($scope, 'MessageFailed', function (event) {
+        streamService.subscribe($scope, 'MessageFailed', function(event) {
             var failedMessageId = event.failed_message_id;
             $scope.allFailedMessagesGroup.count++;
 
@@ -330,14 +329,14 @@
             updateCountForFailedMessageNotification($scope.model.newMessages, ++$scope.model.newMessages);
         });
 
-        streamService.subscribe($scope, 'MessageFailureResolved', function (event) {
+        streamService.subscribe($scope, 'MessageFailureResolved', function(event) {
 
             var failedMessageId = event.failed_message_id;
             $scope.allFailedMessagesGroup.count--;
 
             for (var i = 0; i < $scope.model.failedMessages.length; i++) {
                 var existingFailure = $scope.model.failedMessages[i];
-                if (failedMessageId === existingFailure.id) {              
+                if (failedMessageId === existingFailure.id) {
                     $scope.model.failedMessages.splice(i, 1);
                     return;
                 }
@@ -347,11 +346,11 @@
 
         });
 
-        streamService.subscribe($scope, 'FailedMessageGroupArchived', function (event) {
+        streamService.subscribe($scope, 'FailedMessageGroupArchived', function(event) {
             notifications.pushForCurrentRoute('Messages from group \'' + event.group_name + '\' were successfully archived.', 'info');
         });
 
-        $scope.$on('$destroy', function () {
+        $scope.$on('$destroy', function() {
             streamService.unsubscribe($scope, 'MessageFailed');
             streamService.unsubscribe($scope, 'MessageFailureResolved');
             streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
@@ -377,4 +376,4 @@
         .module('failedMessages')
         .controller('FailedMessagesCtrl', controller);
 
-} (window, window.angular));
+}(window, window.angular));

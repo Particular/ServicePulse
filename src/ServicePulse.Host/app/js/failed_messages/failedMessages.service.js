@@ -1,8 +1,27 @@
-﻿; (function (window, angular, undefined) { 'use strict';
+﻿;
+(function(window, angular, undefined) {
+    'use strict';
 
     function Service($http, $timeout, $q, scConfig) {
 
-        function getData() { }
+        function getData() {}
+
+
+        function notify_loop(notify, done, index, length, waitTime) {
+
+            length = length || 10;
+            waitTime = waitTime || 500;
+
+            setTimeout(function() {
+                index++;
+                if (index < length) {
+                    notify(index);
+                    notify_loop(notify, done, index, length, waitTime);
+                } else {
+                    done();
+                }
+            }, waitTime);
+        };
 
 
         function wait() {
@@ -12,11 +31,24 @@
             // simulated async function
             $timeout(function() {
                 if (Math.round(Math.random())) {
-                    defer.resolve('data received!');
+                    //  we are working now
+
+                    var index = 0;
+                    notify_loop(
+                        function (progress) {
+                             defer.notify(progress);
+                        },
+                        function() {
+                             defer.resolve('data received!');
+                        },
+                        index);
+                 
+                    
+
                 } else {
                     defer.reject('oh no an error! try again');
                 }
-            }, 3000);
+            }, 1000);
 
             return defer.promise;
 
@@ -30,10 +62,10 @@
             error = error || 'error';
 
             $http.post(url)
-                .success(function (response) {
+                .success(function(response) {
                     defer.resolve(success + ':' + response);
                 })
-                .error(function (response) {
+                .error(function(response) {
                     defer.reject(error + ':' + response);
                 });
 
@@ -45,7 +77,7 @@
             retryGroup: function(id, success, error) {
                 return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry', success, error);
             },
-            archiveGroup: function (id, success, error) {
+            archiveGroup: function(id, success, error) {
                 return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive', success, error);
             },
             wait: wait
