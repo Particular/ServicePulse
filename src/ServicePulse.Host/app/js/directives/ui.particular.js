@@ -3,7 +3,10 @@
 
     angular.module('ui.particular', [
         'ui.particular.tabset',
-        'ui.particular.confirmClick'
+        'ui.particular.confirmClick',
+        'ui.particular.eatClick',
+        'ui.particular.hud',
+        'ui.particular.productVersion'
     ]);
 
 } (window, window.angular));

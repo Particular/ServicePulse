@@ -1,5 +1,9 @@
-﻿angular.module('directives.hud', [])
-    .directive('spHud', function ($timeout, $animate) {
+﻿;
+(function(window, angular, undefined) {
+    'use strict';
+
+    function Directive($timeout, $animate) {
+
         return {
             scope: {
                 href: '@',
@@ -9,10 +13,10 @@
             },
             restrict: 'E',
             replace: true,
-            templateUrl: 'js/directives/hud.tpl.html',
-            link: function (scope, element) {
-                
-                scope.$watch('totalFailures', function (newValue, oldValue) {
+            templateUrl: 'js/directives/ui.particular.hud.tpl.html',
+            link: function(scope, element) {
+
+                scope.$watch('totalFailures', function(newValue, oldValue) {
                     if (newValue === 0) {
                         $animate.removeClass(element, 'quick-button-animate');
                     } else if (newValue > oldValue) {
@@ -22,4 +26,12 @@
                 });
             }
         };
-    });
+    }
+
+    Directive.$inject = ['$timeout', '$animate'];
+
+    angular
+        .module('ui.particular.hud', [])
+        .directive('spHud', Directive);
+
+}(window, window.angular));

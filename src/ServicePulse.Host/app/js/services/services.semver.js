@@ -88,7 +88,6 @@
                 return ver;
             };
 
-
             function SemVer(obj) {
                 if (!obj) {
                     return;
@@ -104,6 +103,7 @@
             SemVer.prototype.toString = function () {
                 return this.stringify(this);
             };
+         
         });
 
 } (window, window.angular, window.jQuery));
