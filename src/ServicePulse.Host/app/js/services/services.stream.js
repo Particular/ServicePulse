@@ -24,7 +24,7 @@
                 $log.info('SignalR started');
 
                 connection.error(function (error) {
-                    notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'error', { error: error });
+                    notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'danger', { error: error });
                 });
 
                 connection.reconnected(function () {
@@ -41,7 +41,7 @@
 
             })
             .fail(function () {
-                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'error', { url: scConfig.service_control_url });
+                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scConfig.service_control_url });
             });
 
         function onSubscribe($scope, messageType, handler) {

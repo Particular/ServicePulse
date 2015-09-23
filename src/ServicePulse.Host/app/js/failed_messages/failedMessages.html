@@ -16,7 +16,6 @@
     <h2 class="text-center">Well done, no error messages!</h2>
 </div>
 
-
 <div class="row" ng-show="model.failedMessages.length > 0">
     <ul class="nav nav-tabs">
         <li ng-show="model.displayGroupsTab" ng-class="{active: model.activePageTab == 'groups'}">
@@ -67,18 +66,21 @@
                             <div class="blue text-ellipsis col-sm-8 col-md-8" ng-click="selectGroup(excGroup)">
                                 {{excGroup.title}}
                             </div>
+
                             <div ng-show="excGroup.workflow_state.status === 'working'" class="animate-box col-sm-4 col-md-4">
-                                <progressbar class="progress-striped active" max="excGroup.workflow_state.total" value="excGroup.workflow_state.count"><i>{{excGroup.workflow_state.count}} / {{excGroup.workflow_state.total}}</i></progressbar>
+                                <progressbar class="progress-striped active" max="excGroup.workflow_state.total" value="excGroup.workflow_state.count"><i ng-show="excGroup.workflow_state.count">{{excGroup.workflow_state.count}} / {{excGroup.workflow_state.total}}</i></progressbar>
                             </div>
 
-                            <div ng-show="excGroup.workflow_state.status === 'error'" class="animate-box alert alert-warning col-sm-4 col-md-4 alert-dismissable">
-                                <button type="button" class="close" ng-click="dismiss(excGroup)">×</button>
+                            <div ng-show="excGroup.workflow_state.status === 'error'" role="alert" class="animate-box alert alert-warning alert-dismissable col-sm-4 col-md-4 ">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="dismiss(excGroup)">×</button>
                                 <strong>Warning!</strong> {{excGroup.workflow_state.message}}
                             </div>
-                            <div ng-show="excGroup.workflow_state.status === 'success'" class="animate-box alert alert-info col-sm-4 col-md-4 alert-dismissable">
-                                <button type="button" class="close" ng-click="dismiss(excGroup)">×</button>
+
+                            <div ng-show="excGroup.workflow_state.status === 'success'" role="alert" class="animate-box alert alert-info alert-dismissable col-sm-4 col-md-4 ">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="dismiss(excGroup)">×</button>
                                 <strong>Success!</strong> {{excGroup.workflow_state.message}}
                             </div>
+
                             <div ng-show="excGroup.workflow_state.status === 'ready'" class="animate-box col-sm-4 col-md-4">
                                 <div class="red col-sm-3 col-md-3">
                                     {{excGroup.count}}
@@ -93,7 +95,6 @@
                                 </div>
                                 <div class="col-sm-3 col-md-3">
                                     <button type="button" class="btn btn-default btn-sm" tooltip="Test" ng-click="testSuccess(excGroup)"><i class="fa fa-smile-o"></i></button>
-
                                     <button type="button" class="btn btn-default btn-sm" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
                                     <button type="button" class="btn btn-default btn-sm" tooltip="Retry Group" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                                 </div>
@@ -141,7 +142,7 @@
                         </div>
                     </div>
                     <div infinite-scroll="loadMoreResults(selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
-                        <div class="scRow" ng-repeat="row in model.failedMessages">
+                        <div class="scRow interactiveList" ng-repeat="row in model.failedMessages">
                             <div class="row scSelectableRow" ng-class="{rowSelected: row.selected == true}" ng-click="toggleRowSelect(row)" style="cursor: pointer;">
                                 <div class="check col-sm-1 col-md-1">
                                     <input type="checkbox" ng-disabled="row.retried || row.archived" ng-checked="row.selected">
@@ -170,7 +171,7 @@
                                     <pre ng-show="row.panel === 1">{{ row.exception.stack_trace }}</pre>
                                     <table class="table" ng-show="row.panel === 2 && row.messageHeaders">
                                         <tbody>
-                                            <tr ng-repeat="header in row.messageHeaders">
+                                            <tr class="interactiveList" ng-repeat="header in row.messageHeaders">
                                                 <td nowrap="nowrap">{{header.key}}</td>
                                                 <td><pre>{{header.value}}</pre></td>
                                             </tr>
@@ -203,5 +204,4 @@
 
 <script>
     $('.js-clipboard').on('mousedown')
-
 </script>

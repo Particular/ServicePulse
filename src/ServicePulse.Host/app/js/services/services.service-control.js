@@ -100,7 +100,7 @@
                     notifications.pushForCurrentRoute('"{{item.custom_check_id}}" custom check muted', 'info', { item: customCheck });
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'error', { item: customCheck });
+                    notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'danger', { item: customCheck });
                 });
         };
 
@@ -110,7 +110,7 @@
                     notifications.pushForCurrentRoute('Retrying all messages...', 'info');
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Retrying all messages failed', 'error');
+                    notifications.pushForCurrentRoute('Retrying all messages failed', 'danger');
                 });
         };
 
@@ -120,7 +120,7 @@
                     notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Retrying messages failed', 'error');
+                    notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         };
 
@@ -134,7 +134,7 @@
                     notifications.pushForCurrentRoute('Archiving {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Archiving messages failed', 'error');
+                    notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
         };
 
@@ -144,7 +144,7 @@
                     notifications.pushForCurrentRoute(successText, 'info');
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Archiving messages failed', 'error');
+                    notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
         };
 
@@ -154,7 +154,7 @@
                     notifications.pushForCurrentRoute(successText, 'info');
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Retrying messages failed', 'error');
+                    notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         };
 
@@ -171,7 +171,7 @@
                     notifications.pushForCurrentRoute('{{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint removed', 'info', { item: endpoint });
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Failed to remove {{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint', 'error', { item: endpoint });
+                    notifications.pushForCurrentRoute('Failed to remove {{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint', 'danger', { item: endpoint });
                 });
         };
 
@@ -185,7 +185,7 @@
                     notifications.pushForCurrentRoute('Endpoint updated', 'info');
                 })
                 .error(function () {
-                    notifications.pushForCurrentRoute('Failed to update endpoint', 'error');
+                    notifications.pushForCurrentRoute('Failed to update endpoint', 'danger');
                 });
         };
 

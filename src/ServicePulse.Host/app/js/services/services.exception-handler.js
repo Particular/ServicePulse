@@ -12,7 +12,7 @@ angular.module('services.exceptionHandler').factory('exceptionHandlerFactory', [
             $delegate(exception, cause);
 
             // Push a notification error
-            notifications.pushForCurrentRoute('error.fatal', 'error', {}, {
+            notifications.pushForCurrentRoute('error.fatal', 'danger', {}, {
                 exception: exception,
                 cause: cause
             });

@@ -21,7 +21,7 @@
                     <th>Latest Heartbeat</th>
                     <th><span tooltip="Monitor the endpoint, and send alert if heartbeats are not received.">Monitor</span></th>
                 </tr>
-                <tr ng-repeat="e in model.endpoints | orderBy:'name'">
+                <tr class="interactiveList" ng-repeat="e in model.endpoints | orderBy:'name'">
                     <td>{{e.name}}</td>
                     <td>{{e.host_display_name}}</td>
                     <td ng-show="e.heartbeat_information"><sp-moment date="{{e.heartbeat_information.last_report_at}}" /></td>

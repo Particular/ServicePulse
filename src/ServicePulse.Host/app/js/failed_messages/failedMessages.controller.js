@@ -247,7 +247,7 @@
             var response = failedMessagesService.retryGroup(group.id)
                 .then(function(message) {
                     // We are going to have to wait for service control to tell us the job has been done
-                    group.workflow_state = { status: 'working', message: message };
+                    group.workflow_state = { status: 'success', message: message };
 
                     markMessage(group, 'retried');
                     //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
