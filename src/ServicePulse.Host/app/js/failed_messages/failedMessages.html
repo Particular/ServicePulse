@@ -131,10 +131,10 @@
                         <button class="btn btn-default" ng-click="retrySelected()" ng-disabled="model.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{model.selectedIds.length}} selected</button>
                         <button tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn btn-default" ng-click="archiveSelected()" ng-disabled="model.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{model.selectedIds.length}} selected</button>
                         <div class="btn-group pull-right">
-                            <a class="btn btn-link dropdown-toggle btn-default" data-toggle="dropdown" href="#">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Sort by
-                                <b class="caret"></b>
-                            </a>
+                                <span class="caret"></span>
+                            </button>
                             <ul class="dropdown-menu">
                                 <li><a href="javascript://" ng-click="selectGroup(selectedExceptionGroup, 'message_type')">Message Type</a></li>
                                 <li><a href="javascript://" ng-click="selectGroup(selectedExceptionGroup, 'time_sent')">Time Sent</a></li>
