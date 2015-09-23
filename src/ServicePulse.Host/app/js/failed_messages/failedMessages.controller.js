@@ -246,7 +246,7 @@
         $scope.retryExceptionGroup = function(group) {
 
             group.workflow_state = { status: 'working', message: 'working' };
-            var response = failedMessagesService.retryGroup(group.id)
+            var response = failedMessagesService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function(message) {
                     // We are going to have to wait for service control to tell us the job has been done
                     group.workflow_state = { status: 'success', message: message };
@@ -267,7 +267,7 @@
 
 
             group.workflow_state = { status: 'working', message: 'working' };
-            var response = failedMessagesService.archiveGroup(group.id)
+            var response = failedMessagesService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function(message) {
 
                     group.workflow_state = { status: 'success', message: message };

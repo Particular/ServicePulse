@@ -73,12 +73,12 @@
 
                             <div ng-show="excGroup.workflow_state.status === 'error'" role="alert" class="animate-box alert alert-warning alert-dismissable col-sm-4 col-md-4 ">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="dismiss(excGroup)">×</button>
-                                <strong>Warning!</strong> {{excGroup.workflow_state.message}}
+                                {{excGroup.workflow_state.message}}
                             </div>
 
                             <div ng-show="excGroup.workflow_state.status === 'success'" role="alert" class="animate-box alert alert-info alert-dismissable col-sm-4 col-md-4 ">
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="dismiss(excGroup)">×</button>
-                                <strong>Success!</strong> {{excGroup.workflow_state.message}}
+                                {{excGroup.workflow_state.message}}
                             </div>
 
                             <div ng-show="excGroup.workflow_state.status === 'ready'" class="animate-box col-sm-4 col-md-4">
