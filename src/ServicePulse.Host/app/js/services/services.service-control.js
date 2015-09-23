@@ -107,7 +107,7 @@
         function retryAllFailedMessages() {
             $http.post(scConfig.service_control_url + '/errors/retry/all')
                 .success(function () {
-                    notifications.pushForCurrentRoute('Retrying all messages...', 'info');
+                   // notifications.pushForCurrentRoute('Retrying all messages...', 'info');
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Retrying all messages failed', 'danger');
@@ -117,7 +117,7 @@
         function retryFailedMessages(selectedMessages) {
             $http.post(scConfig.service_control_url + '/errors/retry', selectedMessages)
                 .success(function () {
-                    notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
+                   // notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
@@ -131,7 +131,7 @@
                 method: "PATCH",
             })
                 .success(function () {
-                    notifications.pushForCurrentRoute('Archiving {{num}} messages...', 'info', { num: selectedMessages.length });
+                   // notifications.pushForCurrentRoute('Archiving {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
@@ -141,7 +141,7 @@
         function archiveExceptionGroup(id, successText) {
             $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive')
                 .success(function () {
-                    notifications.pushForCurrentRoute(successText, 'info');
+                   // notifications.pushForCurrentRoute(successText, 'info');
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
@@ -151,7 +151,7 @@
         function retryExceptionGroup(id, successText) {
             $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry')
                 .success(function () {
-                    notifications.pushForCurrentRoute(successText, 'info');
+                 //   notifications.pushForCurrentRoute(successText, 'info');
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
@@ -168,7 +168,7 @@
         function removeEndpoint(endpoint) {
             $http.delete(scConfig.service_control_url + '/heartbeats/' + endpoint.id)
                 .success(function () {
-                    notifications.pushForCurrentRoute('{{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint removed', 'info', { item: endpoint });
+                  //  notifications.pushForCurrentRoute('{{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint removed', 'info', { item: endpoint });
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Failed to remove {{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint', 'danger', { item: endpoint });
@@ -182,7 +182,7 @@
                 method: "PATCH",
             })
                 .success(function () {
-                    notifications.pushForCurrentRoute('Endpoint updated', 'info');
+                  //  notifications.pushForCurrentRoute('Endpoint updated', 'info');
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Failed to update endpoint', 'danger');
