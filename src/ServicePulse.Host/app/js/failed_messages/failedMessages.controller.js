@@ -224,6 +224,8 @@
         };
         $scope.testSuccess = function(group) {
 
+          //  <!--<button type="button" class="btn btn-default btn-sm" tooltip="Test" ng-click="testSuccess(excGroup)"><i class="fa fa-smile-o"></i></button>-->
+
             group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessagesService.wait()
                 .then(function(message) {
