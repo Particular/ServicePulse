@@ -3,6 +3,10 @@
 
     'use strict';
 
+    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal, optionalCount) {
+        return { status: optionalStatus || 'working', message: optionalMessage || 'working', total: optionalTotal || 0, count: optionalCount || 0 };
+    }
+
     function controller(
         $scope,
         $window,
@@ -39,7 +43,7 @@
                         // need a map in some ui state for controlling animations
                         var exgroups = response.data.map(function(obj) {
                             var nObj = obj;
-                            nObj.workflow_state = { status: 'ready', message: '', total: 0, count: 0 };
+                            nObj.workflow_state = createWorkflowState('ready',  '');
                             return nObj;
                         });
 
@@ -210,7 +214,7 @@
 
             switch (group.workflow_state.status) {
             case 'error':
-                group.workflow_state = { status: 'ready', message: '' };
+                group.workflow_state = createWorkflowState('ready', '');;
                 break;
             case 'success':
                 removeGroup(group);
@@ -229,11 +233,11 @@
             group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessagesService.wait()
                 .then(function(message) {
-                    group.workflow_state = { status: 'success', message: message };
+                    group.workflow_state = createWorkflowState('success',  message);
                 }, function(message) {
-                    group.workflow_state = { status: 'error', message: message };
+                    group.workflow_state = createWorkflowState('error',  message);
                 }, function(e) {
-                    group.workflow_state = { status: 'working', message: 'working', count: e, total: 10 };
+                    group.workflow_state = createWorkflowState('working',  'working',  10, e);
                 })
                 .finally(function() {
 
@@ -249,13 +253,13 @@
             var response = failedMessagesService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function(message) {
                     // We are going to have to wait for service control to tell us the job has been done
-                    group.workflow_state = { status: 'success', message: message };
+                    group.workflow_state = createWorkflowState('success', message);
 
                     markMessage(group, 'retried');
                     //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
 
                 }, function(message) {
-                    group.workflow_state = { status: 'error', message: message };
+                    group.workflow_state = createWorkflowState('error', message);
                 })
                 .finally(function() {
 
@@ -270,13 +274,13 @@
             var response = failedMessagesService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function(message) {
 
-                    group.workflow_state = { status: 'success', message: message };
+                    group.workflow_state = createWorkflowState('success', message);
 
                     markMessage(group, 'archived');
                     //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
 
                 }, function(message) {
-                    group.workflow_state = { status: 'error', message: message };
+                    group.workflow_state = createWorkflowState('error', message);
                 })
                 .finally(function() {
 
