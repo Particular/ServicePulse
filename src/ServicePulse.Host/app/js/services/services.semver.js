@@ -1,25 +1,8 @@
-﻿(function() {
-
+﻿; (function (window, angular, $, undefined) {
     'use strict';
 
     angular.module('services.semverService', [])
         .service('semverService', function () {
-
-            function SemVer(obj) {
-                if (!obj) {
-                    return;
-                }
-
-                var me = this;
-
-                Object.keys(obj).forEach(function (key) {
-                    me[key] = obj[key];
-                });
-            }
-
-            SemVer.prototype.toString = function () {
-                return stringify(this);
-            };
 
             this.reSemver = /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?(?:\+([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?$/;
 
@@ -54,7 +37,7 @@
                 if (latest.patch !== current.patch) {
                     return latest.patch > current.patch;
                 }
-                
+
                 return false;
             };
 
@@ -104,6 +87,23 @@
 
                 return ver;
             };
+
+            function SemVer(obj) {
+                if (!obj) {
+                    return;
+                }
+
+                var me = this;
+
+                Object.keys(obj).forEach(function (key) {
+                    me[key] = obj[key];
+                });
+            }
+
+            SemVer.prototype.toString = function () {
+                return this.stringify(this);
+            };
+         
         });
 
-}());
+} (window, window.angular, window.jQuery));

@@ -1,9 +1,9 @@
 angular.module('services.exceptionHandler', ['services.notifications']);
 
-angular.module('services.exceptionHandler').factory('exceptionHandlerFactory', ['$injector', function($injector) {
-    return function($delegate) {
+angular.module('services.exceptionHandler').factory('exceptionHandlerFactory', ['$injector', function ($injector) {
+    return function ($delegate) {
 
-        return function(exception, cause) {
+        return function (exception, cause) {
             // Lazy load notifications to get around circular dependency
             // Circular dependency: $rootScope <- notifications <- $exceptionHandler
             var notifications = $injector.get('notifications');
@@ -12,7 +12,7 @@ angular.module('services.exceptionHandler').factory('exceptionHandlerFactory', [
             $delegate(exception, cause);
 
             // Push a notification error
-            notifications.pushForCurrentRoute('error.fatal', 'error', {}, {
+            notifications.pushForCurrentRoute('error.fatal', 'danger', {}, {
                 exception: exception,
                 cause: cause
             });
@@ -20,8 +20,8 @@ angular.module('services.exceptionHandler').factory('exceptionHandlerFactory', [
     };
 }]);
 
-angular.module('services.exceptionHandler').config(['$provide', function($provide) {
-    $provide.decorator('$exceptionHandler', ['$delegate', 'exceptionHandlerFactory', function($delegate, exceptionHandlerFactory) {
+angular.module('services.exceptionHandler').config(['$provide', function ($provide) {
+    $provide.decorator('$exceptionHandler', ['$delegate', 'exceptionHandlerFactory', function ($delegate, exceptionHandlerFactory) {
         return exceptionHandlerFactory($delegate);
     }]);
 }]);

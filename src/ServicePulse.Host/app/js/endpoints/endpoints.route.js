@@ -1,4 +1,6 @@
-﻿(function (window, angular, undefined) { 'use strict';
+﻿; (function (window, angular, undefined) {
+
+    'use strict';
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/endpoints', {
@@ -15,4 +17,4 @@
     angular.module('endpoints')
         .config(routeProvider);
 
-}(window, window.angular));
+} (window, window.angular));

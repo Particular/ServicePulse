@@ -1,4 +1,4 @@
-﻿(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
 
     function routeProvider($routeProvider) {
@@ -10,6 +10,6 @@
     ];
 
     angular.module('sc')
-         .config(routeProvider);
+        .config(routeProvider);
 
-}(window, window.angular));
+} (window, window.angular));

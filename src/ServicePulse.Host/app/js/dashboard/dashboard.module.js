@@ -1,8 +1,8 @@
-﻿(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
 
     angular.module('dashboard', []);
 
-}(window, window.angular));
+} (window, window.angular));
 
 

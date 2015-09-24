@@ -1,7 +1,7 @@
-﻿(function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
 
-    function controller ($scope, serviceControlService) {
+    function controller($scope, serviceControlService) {
 
         $scope.model = { endpoints: [], changes: {} };
 
@@ -22,5 +22,5 @@
     angular.module('configuration')
         .controller('ConfigurationCtrl', controller);
 
-}(window, window.angular));
+} (window, window.angular));
 

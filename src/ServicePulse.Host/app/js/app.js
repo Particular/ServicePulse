@@ -1,4 +1,4 @@
-(function (window, angular, undefined) {
+; (function (window, angular, undefined) {
     'use strict';
 
     angular.module('sc', [
@@ -8,17 +8,9 @@
         'ngClipboard',
         'ui.bootstrap',
         'infinite-scroll',
-        'services.streamService',
-        'services.serviceControlService',
-        'services.platformUpdateService',
-        'services.semverService',
-        'services.notifications',
-        'services.exceptionHandler',
+        'services',
         'ui.particular',
         'directives.moment',
-        'directives.hud',
-        'directives.eatClick',
-        'directives.productVersion',
         'eventLogItems',
         'failedMessages',
         'endpoints',
@@ -31,4 +23,4 @@
             $rootScope.$log = $log;
         }]);
 
-}(window, window.angular));
+} (window, window.angular));

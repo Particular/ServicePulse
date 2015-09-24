@@ -1,9 +1,9 @@
 ; (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service (notifications, $log, $rootScope, scConfig) {
+    function Service(notifications, $log, $rootScope, scConfig) {
         var prefix = 'signalr::';
-       
+
         var registrations = {};
 
         var connection = $.connection(scConfig.service_control_url + '/messagestream');
@@ -23,15 +23,15 @@
 
                 $log.info('SignalR started');
 
-                connection.error(function(error) {
-                    notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'error', { error: error });
+                connection.error(function (error) {
+                    notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'danger', { error: error });
                 });
 
-                connection.reconnected(function() {
+                connection.reconnected(function () {
                     notifications.pushForCurrentRoute('Reconnected to ServiceControl', 'info');
                 });
 
-                connection.stateChanged(function(change) {
+                connection.stateChanged(function (change) {
                     console.log('SignalR state changed to=' + change.newState);
 
                     if (change.newState === $.signalR.connectionState.disconnected) {
@@ -41,12 +41,12 @@
 
             })
             .fail(function () {
-                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'error', { url: scConfig.service_control_url });
+                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scConfig.service_control_url });
             });
 
-        var onSubscribe = function($scope, messageType, handler) {
-            var deregFunc = $scope.$on(prefix + messageType, function(event, message) {
-                $scope.$apply(function() {
+        function onSubscribe($scope, messageType, handler) {
+            var deregFunc = $scope.$on(prefix + messageType, function (event, message) {
+                $scope.$apply(function () {
                     handler(message);
                 });
             });
@@ -54,7 +54,7 @@
             registrations[messageType + $scope.$id] = deregFunc;
         };
 
-        var onUnsubscribe = function($scope, messageType) {
+        function onUnsubscribe($scope, messageType) {
             var deregFunc = registrations[messageType + $scope.$id];
 
             if (deregFunc !== null) {
@@ -67,7 +67,7 @@
         return {
             subscribe: onSubscribe,
             unsubscribe: onUnsubscribe,
-            send: function(messageType, message) {
+            send: function (messageType, message) {
                 connection.send(JSON.stringify({ message: message, type: messageType }));
             }
         };
@@ -80,4 +80,4 @@
         .factory('streamService', Service);
 
 
-}(window, window.angular, jQuery));
+} (window, window.angular, window.jQuery));
