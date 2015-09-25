@@ -31,21 +31,21 @@
 			customChecksUpdated.resetToNow();
 		});
 
-        var cleanupMethods = [];
+        var subscriptionDisposalMethods = [];
 
-		cleanupMethods.push(streamService.subscribe('CustomChecksUpdated', function (message) {
+		subscriptionDisposalMethods.push(streamService.subscribe('CustomChecksUpdated', function (message) {
 			customChecksUpdated.runIfLatest(message, function () {
 				$scope.model.number_of_failed_checks = message.failed;
 			});
 		}));
 
-		cleanupMethods.push(streamService.subscribe('MessageFailuresUpdated', function (message) {
+		subscriptionDisposalMethods.push(streamService.subscribe('MessageFailuresUpdated', function (message) {
 			failedMessageUpdated.runIfLatest(message, function () {
 				$scope.model.number_of_failed_messages = message.total;
 			});
 		}));
 
-		cleanupMethods.push(streamService.subscribe('HeartbeatsUpdated', function (message) {
+		subscriptionDisposalMethods.push(streamService.subscribe('HeartbeatsUpdated', function (message) {
 			heartbeatsUpdated.runIfLatest(message, function () {
 				$scope.model.failing_endpoints = message.failing;
 				$scope.model.active_endpoints = message.active;
@@ -53,8 +53,8 @@
 		}));
 
 		$scope.$on('$destroy', function () {
-            for (var i = 0; i < cleanupMethods.length; i++) {
-                cleanupMethods[i]();
+            for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
+                subscriptionDisposalMethods[i]();
             }
 		});
 

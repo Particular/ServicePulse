@@ -23,7 +23,6 @@
             $rootScope.$log = $log;
         }]);
 
-    angular.module('sc')
-    .value('$jquery', $);
+    angular.module('sc').value('$jquery', $);
 
-} (window, window.angular, window.jQuery));
+}(window, window.angular, window.jQuery));

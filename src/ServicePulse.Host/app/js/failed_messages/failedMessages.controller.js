@@ -319,9 +319,9 @@
 
         };
 
-        var cleanupMethods = [];
+        var subscriptionDisposalMethods = [];
 
-        cleanupMethods.push(streamService.subscribe('MessageFailed', function(event) {
+        subscriptionDisposalMethods.push(streamService.subscribe('MessageFailed', function(event) {
             var failedMessageId = event.failed_message_id;
             $scope.allFailedMessagesGroup.count++;
 
@@ -336,7 +336,7 @@
             updateCountForFailedMessageNotification($scope.model.newMessages, ++$scope.model.newMessages);
         }));
 
-        cleanupMethods.push(streamService.subscribe('MessageFailureResolved', function(event) {
+        subscriptionDisposalMethods.push(streamService.subscribe('MessageFailureResolved', function(event) {
 
             var failedMessageId = event.failed_message_id;
             $scope.allFailedMessagesGroup.count--;
@@ -353,13 +353,13 @@
 
         }));
 
-        cleanupMethods.push(streamService.subscribe('FailedMessageGroupArchived', function(event) {
+        subscriptionDisposalMethods.push(streamService.subscribe('FailedMessageGroupArchived', function(event) {
             notifications.pushForCurrentRoute('Messages from group \'' + event.group_name + '\' were successfully archived.', 'info');
         }));
 
         $scope.$on('$destroy', function () {
-            for (var i = 0; i < cleanupMethods.length; i++) {
-                cleanupMethods[i]();
+            for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
+                subscriptionDisposalMethods[i]();
             }
         });
 
