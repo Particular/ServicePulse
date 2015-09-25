@@ -13,12 +13,12 @@
                 $scope.loadingData = false;
             });
 
-            streamService.subscribe($scope, 'EventLogItemAdded', function (message) {
+            var subscriptionDisposalMethod = streamService.subscribe('EventLogItemAdded', function (message) {
                 processMessage(message);
             });
 
             $scope.$on('$destroy', function () {
-                streamService.unsubscribe($scope, 'EventLogItemAdded');
+                subscriptionDisposalMethod();
             });
 
             function processMessage(message) {

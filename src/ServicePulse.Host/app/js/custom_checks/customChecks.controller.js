@@ -22,19 +22,21 @@
             serviceControlService.muteCustomChecks(row);
         };
 
-        streamService.subscribe($scope, 'CustomChecksUpdated', function () {
-            reloadData();
-        });
+        var subscriptionDisposalMethods = [];
 
-        streamService.subscribe($scope, 'CustomCheckDeleted', function () {
+        subscriptionDisposalMethods.push(streamService.subscribe('CustomChecksUpdated', function () {
             reloadData();
-        });
+        }));
+
+        subscriptionDisposalMethods.push(streamService.subscribe('CustomCheckDeleted', function () {
+            reloadData();
+        }));
 
         $scope.$on('$destroy', function () {
-            streamService.unsubscribe($scope, 'CustomChecksUpdated');
-            streamService.unsubscribe($scope, 'CustomCheckDeleted');
+            for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
+                subscriptionDisposalMethods[i]();
+            }
         });
-
 
         function reloadData() {
             $scope.loadingData = true;

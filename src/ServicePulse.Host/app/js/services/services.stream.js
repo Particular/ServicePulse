@@ -1,20 +1,16 @@
-; (function (window, angular, $, undefined) {
+; (function (window, angular, undefined) {
     'use strict';
 
-    function Service(notifications, $log, $rootScope, scConfig) {
-        var prefix = 'signalr::';
+    function Service(notifications, $log, $rootScope, scConfig, $jquery) {
 
-        var registrations = {};
+        var subscriberRegistry = {}, registryKey = 1;
 
-        var connection = $.connection(scConfig.service_control_url + '/messagestream');
+        var connection = $jquery.connection(scConfig.service_control_url + '/messagestream');
 
         connection.received(function (data) {
-
             for (var i in data.types) {
-                var type = data.types[i];
-                $rootScope.$broadcast(prefix + type, data.message);
+                callSubscribers(data.types[i], data.message);
             }
-
         });
 
         connection
@@ -34,7 +30,7 @@
                 connection.stateChanged(function (change) {
                     console.log('SignalR state changed to=' + change.newState);
 
-                    if (change.newState === $.signalR.connectionState.disconnected) {
+                    if (change.newState === $jquery.signalR.connectionState.disconnected) {
                         console.log('The server is offline');
                     }
                 });
@@ -44,40 +40,51 @@
                 notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scConfig.service_control_url });
             });
 
-        function onSubscribe($scope, messageType, handler) {
-            var deregFunc = $scope.$on(prefix + messageType, function (event, message) {
-                $scope.$apply(function () {
-                    handler(message);
-                });
-            });
-
-            registrations[messageType + $scope.$id] = deregFunc;
-        };
-
-        function onUnsubscribe($scope, messageType) {
-            var deregFunc = registrations[messageType + $scope.$id];
-
-            if (deregFunc !== null) {
-                deregFunc();
+        function callSubscribers(messageType, message) {
+            if (!subscriberRegistry[messageType]) {
+                return;
             }
 
-            delete registrations[messageType + $scope.$id];
+            var subscriberDictionary = subscriberRegistry[messageType];
+
+            for (var key in subscriberDictionary) {
+                if ($jquery.isFunction(subscriberDictionary[key])) {
+                    subscriberDictionary[key].call(undefined, message);
+                }
+            }
+        };
+
+        function onSubscribe(messageType, handler) {
+            if (!subscriberRegistry[messageType]) {
+                subscriberRegistry[messageType] = {};
+            }
+
+            var uniqueKey = registryKey++;
+
+            subscriberRegistry[messageType][uniqueKey] = function (event, message) {
+                handler(message);
+            };
+
+            var unsubscribeAction = function() {
+                delete subscriberRegistry[messageType][uniqueKey];
+            };
+
+            return unsubscribeAction;
         };
 
         return {
             subscribe: onSubscribe,
-            unsubscribe: onUnsubscribe,
             send: function (messageType, message) {
                 connection.send(JSON.stringify({ message: message, type: messageType }));
             }
         };
     };
 
-    Service.$inject = ['notifications', '$log', '$rootScope', 'scConfig'];
+    Service.$inject = ['notifications', '$log', '$rootScope', 'scConfig', '$jquery'];
 
     angular
         .module('services.streamService', [])
         .factory('streamService', Service);
 
 
-} (window, window.angular, window.jQuery));
+}(window, window.angular));

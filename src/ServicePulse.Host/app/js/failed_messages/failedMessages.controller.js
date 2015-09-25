@@ -226,6 +226,7 @@
                 break;
             }
         };
+
         $scope.testSuccess = function(group) {
 
           //  <!--<button type="button" class="btn btn-default btn-sm" tooltip="Test" ng-click="testSuccess(excGroup)"><i class="fa fa-smile-o"></i></button>-->
@@ -242,8 +243,6 @@
                 .finally(function() {
 
                 });
-
-
         };
 
 
@@ -320,7 +319,9 @@
 
         };
 
-        streamService.subscribe($scope, 'MessageFailed', function(event) {
+        var subscriptionDisposalMethods = [];
+
+        subscriptionDisposalMethods.push(streamService.subscribe('MessageFailed', function(event) {
             var failedMessageId = event.failed_message_id;
             $scope.allFailedMessagesGroup.count++;
 
@@ -333,9 +334,9 @@
             }
 
             updateCountForFailedMessageNotification($scope.model.newMessages, ++$scope.model.newMessages);
-        });
+        }));
 
-        streamService.subscribe($scope, 'MessageFailureResolved', function(event) {
+        subscriptionDisposalMethods.push(streamService.subscribe('MessageFailureResolved', function(event) {
 
             var failedMessageId = event.failed_message_id;
             $scope.allFailedMessagesGroup.count--;
@@ -350,16 +351,16 @@
 
             $scope.model.newMessages--;
 
-        });
+        }));
 
-        streamService.subscribe($scope, 'FailedMessageGroupArchived', function(event) {
+        subscriptionDisposalMethods.push(streamService.subscribe('FailedMessageGroupArchived', function(event) {
             notifications.pushForCurrentRoute('Messages from group \'' + event.group_name + '\' were successfully archived.', 'info');
-        });
+        }));
 
-        $scope.$on('$destroy', function() {
-            streamService.unsubscribe($scope, 'MessageFailed');
-            streamService.unsubscribe($scope, 'MessageFailureResolved');
-            streamService.unsubscribe($scope, 'FailedMessageGroupArchived');
+        $scope.$on('$destroy', function () {
+            for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
+                subscriptionDisposalMethods[i]();
+            }
         });
 
         $scope.init();

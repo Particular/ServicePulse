@@ -31,29 +31,31 @@
 			customChecksUpdated.resetToNow();
 		});
 
-		streamService.subscribe($scope, 'CustomChecksUpdated', function (message) {
+        var subscriptionDisposalMethods = [];
+
+		subscriptionDisposalMethods.push(streamService.subscribe('CustomChecksUpdated', function (message) {
 			customChecksUpdated.runIfLatest(message, function () {
 				$scope.model.number_of_failed_checks = message.failed;
 			});
-		});
+		}));
 
-		streamService.subscribe($scope, 'MessageFailuresUpdated', function (message) {
+		subscriptionDisposalMethods.push(streamService.subscribe('MessageFailuresUpdated', function (message) {
 			failedMessageUpdated.runIfLatest(message, function () {
 				$scope.model.number_of_failed_messages = message.total;
 			});
-		});
+		}));
 
-		streamService.subscribe($scope, 'HeartbeatsUpdated', function (message) {
+		subscriptionDisposalMethods.push(streamService.subscribe('HeartbeatsUpdated', function (message) {
 			heartbeatsUpdated.runIfLatest(message, function () {
 				$scope.model.failing_endpoints = message.failing;
 				$scope.model.active_endpoints = message.active;
 			});
-		});
+		}));
 
 		$scope.$on('$destroy', function () {
-			streamService.unsubscribe($scope, 'HeartbeatsUpdated');
-			streamService.unsubscribe($scope, 'CustomChecksUpdated');
-			streamService.unsubscribe($scope, 'MessageFailuresUpdated');
+            for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
+                subscriptionDisposalMethods[i]();
+            }
 		});
 
 		function OutOfOrderPurger() {
