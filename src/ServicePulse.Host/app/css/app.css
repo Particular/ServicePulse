@@ -187,7 +187,7 @@ ul.nav-tabs > li > a {
     cursor: pointer;
 }
 
-.hard-wrap {
+.hard-wrap, .popover-inner > div  {
     word-wrap: break-word;
     word-break: break-all;
 }
