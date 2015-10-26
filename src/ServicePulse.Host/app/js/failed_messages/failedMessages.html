@@ -63,7 +63,7 @@
                     <div class="scRow failedMessagesGroup-row interactiveList" ng-repeat="excGroup in model.exceptionGroups">
 
                         <div class="failedMessagesGroup row scSelectableRow col-sm-12 col-md-12" ng-class="{failedMessagesGroupSelected: excGroup.id === selectedExceptionGroup.id}">
-                            <div class="blue text-ellipsis col-sm-8 col-md-8" ng-click="selectGroup(excGroup)">
+                            <div class="blue hard-wrap col-sm-8 col-md-8" ng-click="selectGroup(excGroup)">
                                 {{excGroup.title}}
                             </div>
 
