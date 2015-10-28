@@ -5,7 +5,7 @@
     using System.Reflection;
     using Hosting;
 
-    internal class UpdateConfigCommand : AbstractCommand
+    class UpdateConfigCommand : AbstractCommand
     {
         public override void Execute(HostArguments args)
         {
@@ -22,10 +22,10 @@
         static void ExtractConfig(string directoryPath)
         {
             var assembly = Assembly.GetExecutingAssembly();
-            
-            using (var resourceStream = assembly.GetManifestResourceStream(@"app\config.js"))
+
+            using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\app.constants.js"))
             {
-                var destinationPath = Path.Combine(directoryPath, "config.js");
+                var destinationPath = Path.Combine(directoryPath, "js/app.constants.js");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
@@ -41,5 +41,8 @@
                 }
             }
         }
+
+
+      
     }
 }

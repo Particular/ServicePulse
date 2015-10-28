@@ -10,7 +10,7 @@
 
         public static void UpdateConfig(string directoryPath, string serviceControlUrl)
         {
-            var appJsPath = Path.Combine(directoryPath, "config.js");
+            var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
 
             File.WriteAllText(appJsPath,
