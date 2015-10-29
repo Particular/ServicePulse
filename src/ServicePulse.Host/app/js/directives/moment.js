@@ -1,24 +1,14 @@
-'use strict';
+;
+(function(window, angular, undefined) {
+    'use strict';
 
-angular.module('directives.moment', [])
-    .directive('spMoment', ['$timeout', function($timeout) {
+    function Directive($timeout) {
         return {
             restrict: 'E',
             link: function(scope, element, attrs) {
-                var minDate = "0001-01-01T00:00:00";
+                var minDate = '0001-01-01T00:00:00';
                 var timeoutId = null;
                 var m;
-                
-                attrs.$observe('date', function (value) {
-                    if (value && attrs.date !== minDate) {
-                        m = moment(attrs.date);
-                        element.attr('title', m.format('LLLL'));
-                        updateText();
-                        updateLoop();
-                    } else {
-                        element.text('TimeSent value unknown');
-                    }
-                });
 
                 function updateText() {
                     element.text(m.fromNow());
@@ -31,6 +21,17 @@ angular.module('directives.moment', [])
                     }, 5000);
                 }
 
+                attrs.$observe('date', function(value) {
+                    if (value && attrs.date !== minDate) {
+                        m = moment(attrs.date);
+                        element.attr('title', m.format('LLLL'));
+                        updateText();
+                        updateLoop();
+                    } else {
+                        element.text('TimeSent value unknown');
+                    }
+                });
+
                 element.on('$destroy', function() {
                     if (timeoutId == null) {
                         return;
@@ -40,4 +41,11 @@ angular.module('directives.moment', [])
                 });
             }
         };
-    }]);
+    }
+
+    Directive.$inject = ['$timeout'];
+
+    angular.module('directives.moment', [])
+        .directive('spMoment', Directive);
+
+}(window, window.angular));

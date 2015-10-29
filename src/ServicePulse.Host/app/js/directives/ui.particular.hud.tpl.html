@@ -1,0 +1,5 @@
+﻿<a href="{{href}}" class="quick-button col-md-2">
+    <i class="{{icon}}" ng-class="{'green': totalFailures <= 0, 'red':  totalFailures > 0}"></i>
+    <p>{{text}}</p>
+    <span ng-show="totalFailures > 0" class="notification red">{{totalFailures}}</span>
+</a>

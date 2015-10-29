@@ -1,0 +1,23 @@
+<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>Dashboard</li>
+    </ul>
+    <hr>
+</div>
+<div class="row">
+    <div class="box col-sm-12 col-md-12">
+        <div class="box-header">
+            <h2><i class="fa fa-dashboard"></i><span class="break"></span>Indicators</h2>
+        </div>
+        <div class="box-content">
+            <sp-hud href="#/endpoints" icon="fa fa-heart" text="Endpoints" total-failures="model.failing_endpoints"></sp-hud>
+            <sp-hud href="#/failedMessages" icon="fa fa-envelope" text="Failed Messages" total-failures="model.number_of_failed_messages"></sp-hud>
+            <sp-hud href="#/customChecks" icon="fa fa-check" text="Custom Checks" total-failures="model.number_of_failed_checks"></sp-hud>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+<div class="row" ng-include="'js/event_log_items/eventLogItems.tpl.html'"></div>
+
+<product-version version="{{Version}}" scversion="{{SCVersion}}"></product-version>

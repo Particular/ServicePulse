@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -62,11 +62,11 @@
     <Compile Include="Commands\CommandRunner.cs" />
     <Compile Include="Commands\ExtractCommand.cs" />
     <Compile Include="Commands\InstallCommand.cs" />
+    <Compile Include="Commands\RemoveDeprecatedOveridesCommand.cs" />
     <Compile Include="Commands\RunCommand.cs" />
     <Compile Include="Commands\ServiceCommand.cs" />
     <Compile Include="Commands\UninstallCommand.cs" />
-    <Compile Include="Commands\UpdateConfigCommand.cs" />
-    <Compile Include="Commands\UpdateVersionCommand.cs" />
+    <Compile Include="Commands\ExtractAndUpdateConstantsCommand.cs" />
     <Compile Include="Hosting\Host.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -81,18 +81,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\config.js" />
-    <Content Include="app\css\bootstrap-responsive.css" />
-    <Content Include="app\css\bootstrap-responsive.min.css" />
-    <Content Include="app\css\bootstrap.css" />
-    <Content Include="app\css\bootstrap.min.css" />
-    <Content Include="app\css\font-awesome.css" />
-    <Content Include="app\css\font-awesome.min.css" />
+    <Content Include="app\css\animate-css\animate.css" />
+    <Content Include="app\css\animate-css\animate.min.css" />
+    <Content Include="app\lib\angular\ui-bootstrap-tpls-0.14.3.min.js" />
+    <Content Include="app\css\font-awesome\css\font-awesome.css" />
+    <Content Include="app\css\font-awesome\css\font-awesome.min.css" />
+    <Content Include="app\css\font-awesome\fonts\fontawesome-webfont.svg" />
     <Content Include="app\css\select2.css" />
     <Content Include="app\css\style-ie.css" />
     <Content Include="app\css\style-responsive.css" />
     <Content Include="app\css\style.css" />
-    <Content Include="app\fonts\fontawesome-webfont.svg" />
     <Content Include="app\img\archive-errors.png" />
     <Content Include="app\img\arrows-active.png" />
     <Content Include="app\img\arrows-normal.png" />
@@ -149,70 +147,97 @@
     <Content Include="app\img\ui-icons_cd0a0a_256x240.png" />
     <Content Include="app\img\uploadify-cancel.png" />
     <Content Include="app\index.html" />
-    <Content Include="app\js\configuration\configuration.js" />
-    <Content Include="app\js\configuration\configuration.tpl.html" />
-    <Content Include="app\js\directives\eat.click.js" />
+    <Content Include="app\js\app.constants.js" />
+    <Content Include="app\js\app.controller.js" />
+    <Content Include="app\js\app.route.js" />
+    <Content Include="app\js\configuration\configuration.controller.js" />
+    <Content Include="app\js\configuration\configuration.module.js" />
+    <Content Include="app\js\configuration\configuration.route.js" />
+    <Content Include="app\js\configuration\configuration.html" />
+    <Content Include="app\js\custom_checks\customChecks.controller.js" />
+    <Content Include="app\js\custom_checks\customChecks.module.js" />
+    <Content Include="app\js\custom_checks\customChecks.route.js" />
+    <Content Include="app\js\dashboard\dashboard.module.js" />
+    <Content Include="app\js\dashboard\dashboard.route.js" />
+    <Content Include="app\js\directives\ui.particular.eatclick.js" />
     <Content Include="app\js\directives\ngClip.js" />
-    <Content Include="app\js\directives\productVersion.js" />
-    <Content Include="app\js\directives\productVersion.tpl.html" />
+    <Content Include="app\js\directives\ui.particular.productVersion.js" />
+    <Content Include="app\js\directives\ui.particular.productVersion.tpl.html" />
     <Content Include="app\js\directives\ui.particular.confirmclick.js" />
     <Content Include="app\js\directives\ui.particular.js" />
+    <Content Include="app\js\directives\ui.particular.tab.js" />
+    <Content Include="app\js\directives\ui.particular.tabset.js" />
+    <Content Include="app\js\directives\ui.particular.tabset.tpl.html" />
+    <Content Include="app\js\endpoints\endpoints.controller.js" />
+    <Content Include="app\js\endpoints\endpoints.route.js" />
     <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
-    <Content Include="app\js\custom_checks\customChecks.js" />
-    <Content Include="app\js\custom_checks\customChecks.tpl.html" />
-    <Content Include="app\js\dashboard\dashboard.js" />
-    <Content Include="app\js\directives\hud.js" />
-    <Content Include="app\js\directives\hud.tpl.html" />
+    <Content Include="app\js\custom_checks\customChecks.html" />
+    <Content Include="app\js\directives\ui.particular.hud.js" />
+    <Content Include="app\js\directives\ui.particular.hud.tpl.html" />
     <Content Include="app\js\directives\ui-bootstrap-custom-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-0.6.0.min.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
-    <Content Include="app\js\failed_messages\failedMessages.js" />
-    <Content Include="app\js\endpoints\endpoints.js" />
-    <Content Include="app\js\services\platformUpdateService.js" />
-    <Content Include="app\js\services\semverService.js" />
+    <Content Include="app\js\endpoints\endpoints.module.js" />
+    <Content Include="app\js\failed_messages\failedMessages.html" />
+    <Content Include="app\js\failed_messages\failedMessages.controller.js" />
+    <Content Include="app\js\failed_messages\failedMessages.module.js" />
+    <Content Include="app\js\failed_messages\failedMessages.route.js" />
+    <Content Include="app\js\failed_messages\failedMessages.service.js" />
+    <Content Include="app\js\services\services.platform-update.js" />
+    <Content Include="app\js\services\services.semver.js" />
+    <Content Include="app\js\services\services.module.js" />
+    <Content Include="app\js\services\services.service-control.js" />
+    <Content Include="app\layout\topbar.html" />
+    <Content Include="app\layout\sidebar.html" />
     <Content Include="app\lib\angular\angular-animate.js" />
     <Content Include="app\lib\angular\angular-animate.min.js" />
+    <Content Include="app\lib\angular\angular-breadcrumb.js" />
+    <Content Include="app\lib\angular\angular-breadcrumb.min.js" />
     <Content Include="app\lib\angular\angular-route.js" />
     <Content Include="app\lib\angular\angular-route.min.js" />
     <Content Include="app\lib\angular\angular-sanitize.js" />
     <Content Include="app\lib\angular\angular-sanitize.min.js" />
-    <Content Include="app\lib\jquery-1.10.2.min.js" />
-    <Content Include="app\lib\jquery.signalR-1.1.3.min.js" />
+    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css" />
+    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.min.css" />
+    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap.css" />
+    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap.min.css" />
+    <Content Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="app\lib\bootstrap-3.3.5\js\bootstrap.js" />
+    <Content Include="app\lib\bootstrap-3.3.5\js\bootstrap.min.js" />
+    <Content Include="app\lib\bootstrap-3.3.5\js\npm.js" />
+    <Content Include="app\lib\jQuery\jquery.js" />
+    <Content Include="app\lib\jQuery\jquery.min.js" />
+    <Content Include="app\lib\jQuery\jquery.signalR-1.1.3.min.js" />
+    <Content Include="app\lib\jQuery\jquery.signalr-2.2.0.js" />
+    <Content Include="app\lib\jQuery\jquery.signalr-2.2.0.min.js" />
     <Content Include="app\lib\ng-infinite-scroll.min.js" />
     <Content Include="app\lib\page-width-functions.js" />
-    <Content Include="app\js\failed_messages\failedMessages.tpl.html" />
     <EmbeddedResource Include="Hosting\Help.txt" />
-    <Content Include="app\fonts\fontawesome-webfont.eot" />
-    <Content Include="app\fonts\fontawesome-webfont.ttf" />
-    <Content Include="app\fonts\fontawesome-webfont.woff" />
-    <Content Include="app\lib\jquery-1.10.2.min.map" />
     <Content Include="app\css\app.css" />
     <Content Include="app\js\app.js" />
     <Content Include="app\js\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
-    <Content Include="app\lib\ZeroClipboard.min.js" />
-    <Content Include="app\lib\ZeroClipboard.swf" />
-    <Content Include="app\notifications.tpl.html" />
-    <Content Include="app\js\services\breadcrumbs.js" />
-    <Content Include="app\js\services\exceptionHandler.js" />
-    <Content Include="app\js\services\notifications.js" />
-    <Content Include="app\js\services\serviceControlService.js" />
-    <Content Include="app\js\services\streamService.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.swf" />
+    <Content Include="app\layout\notifications.html" />
+    <Content Include="app\js\services\services.breadcrumbs.js" />
+    <Content Include="app\js\services\services.exception-handler.js" />
+    <Content Include="app\js\services\services.notifications.js" />
+    <Content Include="app\js\services\services.stream.js" />
     <Content Include="app\lib\angular\angular.js" />
     <Content Include="app\lib\angular\angular.min.js" />
-    <Content Include="app\lib\bootstrap.js" />
-    <Content Include="app\lib\bootstrap.min.js" />
     <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
-    <Content Include="app\js\dashboard\dashboard.tpl.html" />
-    <Content Include="app\js\endpoints\endpoints.tpl.html" />
-    <Content Include="app\fonts\FontAwesome.otf" />
+    <Content Include="app\js\dashboard\dashboard.html" />
+    <Content Include="app\js\endpoints\endpoints.html" />
     <Content Include="app\lib\angular\angular-animate.min.js.map" />
     <Content Include="app\lib\angular\angular-route.min.js.map" />
     <Content Include="app\lib\angular\angular-sanitize.min.js.map" />
     <Content Include="app\lib\angular\angular.min.js.map" />
-    <Content Include="app\lib\ZeroClipboard.min.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
@@ -221,10 +246,28 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="app\js\dashboard\dashboard.controller.js" />
+    <None Include="app\css\font-awesome\css\font-awesome.css.map" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.eot" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.ttf" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff" />
+    <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
+    <None Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css.map" />
+    <None Include="app\lib\bootstrap-3.3.5\css\bootstrap.css.map" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.ttf" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="app\lib\jQuery\jquery.min.map" />
+    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.map" />
+    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.map" />
+    <None Include="bundleconfig.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

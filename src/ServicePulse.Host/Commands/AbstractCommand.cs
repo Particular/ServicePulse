@@ -4,17 +4,20 @@
     using System.Text.RegularExpressions;
     using Hosting;
 
-    internal abstract class AbstractCommand
+    abstract class AbstractCommand
     {
         public abstract void Execute(HostArguments args);
 
-        public static void UpdateConfig(string directoryPath, string serviceControlUrl)
+        public static void MigrateServiceControlUrl(HostArguments args, string filePath)
         {
-            var appJsPath = Path.Combine(directoryPath, "config.js");
-            var appJsCode = File.ReadAllText(appJsPath);
+            var config = File.ReadAllText(filePath);
+            var match = Regex.Match(config, @"(service_control_url: ')([\w:/]*)(')");
 
-            File.WriteAllText(appJsPath,
-                Regex.Replace(appJsCode, @"(service_control_url: ')([\w:/]*)(')", "$1" + serviceControlUrl + "$3"));
+            // if the installer was given a value use it otherwise use any existing value
+            if (match.Success && string.IsNullOrWhiteSpace(args.ServiceControlUrl))
+            {
+                args.ServiceControlUrl = match.Groups[2].Value;
+            }
         }
     }
 }
