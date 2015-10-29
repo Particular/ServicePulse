@@ -12,6 +12,13 @@
 
         static void DeleteAppJsFile(string directoryPath)
         {
+            var configPath = Path.Combine(directoryPath, "config.js");
+
+            if (File.Exists(configPath))
+            {
+                File.Delete(configPath);
+            }
+
             var destinationPath = Path.Combine(directoryPath, "js\\app.js");
 
             if (File.Exists(destinationPath))

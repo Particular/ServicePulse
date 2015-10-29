@@ -17,7 +17,7 @@ namespace ServicePulse.Host.Hosting
         {
             var executionMode = ExecutionMode.Run;
 
-            commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(UpdateConfigCommand), typeof(UpdateVersionCommand), typeof(RunCommand) };
+            commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(ExtractAndUpdateConstantsCommand), typeof(RunCommand) };
             startMode = StartMode.Automatic;
             url = "http://localhost:8081";
             ServiceName = "Particular.ServicePulse";
@@ -60,7 +60,7 @@ namespace ServicePulse.Host.Hosting
                     @"Extract files to be installed in a Web Server."
                     , s =>
                     {
-                        commands = new List<Type> { typeof(UpdateConfigCommand), typeof(UpdateVersionCommand), typeof(ExtractCommand) };
+                        commands = new List<Type> { typeof(ExtractAndUpdateConstantsCommand), typeof(ExtractCommand) };
                         executionMode = ExecutionMode.Extract;
                     }
                 },
@@ -109,7 +109,7 @@ namespace ServicePulse.Host.Hosting
                     @"Install the endpoint as a Windows service."
                     , s =>
                     {
-                        commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(UpdateConfigCommand), typeof(UpdateVersionCommand), typeof(InstallCommand) };
+                        commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(ExtractAndUpdateConstantsCommand), typeof(InstallCommand) };
                         executionMode = ExecutionMode.Install;
                     }
                 },
