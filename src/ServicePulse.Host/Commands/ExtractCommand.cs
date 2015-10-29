@@ -17,7 +17,8 @@
                 return;
             }
 
-            UpdateConfig(args.OutputPath, args.ServiceControlUrl);
+            ExtractAndUpdateConstantsCommand.UpdateVersion(args.OutputPath);
+            ExtractAndUpdateConstantsCommand.UpdateConfig(args.OutputPath, args.ServiceControlUrl);
         }
 
         static void ExtractResources(string directoryPath)

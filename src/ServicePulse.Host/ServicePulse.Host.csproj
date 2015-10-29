@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -62,11 +62,11 @@
     <Compile Include="Commands\CommandRunner.cs" />
     <Compile Include="Commands\ExtractCommand.cs" />
     <Compile Include="Commands\InstallCommand.cs" />
+    <Compile Include="Commands\RemoveDeprecatedOveridesCommand.cs" />
     <Compile Include="Commands\RunCommand.cs" />
     <Compile Include="Commands\ServiceCommand.cs" />
     <Compile Include="Commands\UninstallCommand.cs" />
-    <Compile Include="Commands\UpdateConfigCommand.cs" />
-    <Compile Include="Commands\UpdateVersionCommand.cs" />
+    <Compile Include="Commands\ExtractAndUpdateConstantsCommand.cs" />
     <Compile Include="Hosting\Host.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -81,14 +81,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\config.js" />
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
     <Content Include="app\lib\angular\ui-bootstrap-tpls-0.14.3.min.js" />
-    <Content Include="app\lib\bootstrap-2.3.2\bootstrap-responsive.css" />
-    <Content Include="app\lib\bootstrap-2.3.2\bootstrap-responsive.min.css" />
-    <Content Include="app\lib\bootstrap-2.3.2\bootstrap.css" />
-    <Content Include="app\lib\bootstrap-2.3.2\bootstrap.min.css" />
     <Content Include="app\css\font-awesome\css\font-awesome.css" />
     <Content Include="app\css\font-awesome\css\font-awesome.min.css" />
     <Content Include="app\css\font-awesome\fonts\fontawesome-webfont.svg" />
@@ -235,8 +230,6 @@
     <Content Include="app\js\services\services.stream.js" />
     <Content Include="app\lib\angular\angular.js" />
     <Content Include="app\lib\angular\angular.min.js" />
-    <Content Include="app\lib\bootstrap-2.3.2\bootstrap.js" />
-    <Content Include="app\lib\bootstrap-2.3.2\bootstrap.min.js" />
     <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\dashboard\dashboard.html" />

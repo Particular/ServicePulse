@@ -5,28 +5,32 @@
     using System.Text.RegularExpressions;
     using Hosting;
 
-    internal class UpdateVersionCommand : AbstractCommand
+    internal class ExtractAndUpdateConstantsCommand : AbstractCommand
     {
         public override void Execute(HostArguments args)
         {
 #if !DEBUG
-            ExtractApp(args.OutputPath);
+            ExtractApp(args);
             UpdateVersion(args.OutputPath);
+            UpdateConfig(args.OutputPath, args.ServiceControlUrl);
 #endif
         }
 
-        static void ExtractApp(string directoryPath)
+        static void ExtractApp(HostArguments args)
         {
+            string directoryPath = args.OutputPath;
             var assembly = Assembly.GetExecutingAssembly();
 
             using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\app.constants.js"))
             {
-                var destinationPath = Path.Combine(directoryPath, "js/app.constants.js");
+                var destinationPath = Path.Combine(directoryPath, "js\\app.constants.js");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
                 if (File.Exists(destinationPath))
                 {
+                    MigrateServiceControlUrl(args, destinationPath);
+
                     File.Delete(destinationPath);
                 }
 
@@ -38,7 +42,17 @@
             }
         }
 
-        static void UpdateVersion(string directoryPath)
+
+        public static void UpdateConfig(string directoryPath, string serviceControlUrl)
+        {
+            var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
+            var appJsCode = File.ReadAllText(appJsPath);
+
+            File.WriteAllText(appJsPath,
+                Regex.Replace(appJsCode, @"(service_control_url: ')([\w:/]*)(')", "$1" + serviceControlUrl + "$3"));
+        }
+
+        public static void UpdateVersion(string directoryPath)
         {
             var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
