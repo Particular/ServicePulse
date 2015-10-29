@@ -10,14 +10,15 @@
         public override void Execute(HostArguments args)
         {
 #if !DEBUG
-            ExtractApp(args.OutputPath);
+            ExtractApp(args);
             UpdateVersion(args.OutputPath);
             UpdateConfig(args.OutputPath, args.ServiceControlUrl);
 #endif
         }
 
-        static void ExtractApp(string directoryPath)
+        static void ExtractApp(HostArguments args)
         {
+            string directoryPath = args.OutputPath;
             var assembly = Assembly.GetExecutingAssembly();
 
             using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\app.constants.js"))
@@ -28,6 +29,14 @@
 
                 if (File.Exists(destinationPath))
                 {
+                    var config = File.ReadAllText(destinationPath);
+                    var match = Regex.Match(config, @"(service_control_url: ')([\w:/]*)(')");
+                    // if the installer was given a value use it otherwise use any existing value
+                    if (match.Success && string.IsNullOrWhiteSpace(args.ServiceControlUrl))
+                    {
+                        args.ServiceControlUrl = match.Value.Replace("service_control_url:", "").Trim();
+                    }
+
                     File.Delete(destinationPath);
                 }
 

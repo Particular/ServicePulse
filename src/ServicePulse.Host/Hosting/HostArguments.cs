@@ -230,6 +230,7 @@ namespace ServicePulse.Host.Hosting
         public string ServiceControlUrl
         {
             get { return serviceControlUrl; }
+            set { serviceControlUrl = value; }
         }
 
         public string DisplayName { get; set; }
