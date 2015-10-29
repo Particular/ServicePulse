@@ -29,13 +29,7 @@
 
                 if (File.Exists(destinationPath))
                 {
-                    var config = File.ReadAllText(destinationPath);
-                    var match = Regex.Match(config, @"(service_control_url: ')([\w:/]*)(')");
-                    // if the installer was given a value use it otherwise use any existing value
-                    if (match.Success && string.IsNullOrWhiteSpace(args.ServiceControlUrl))
-                    {
-                        args.ServiceControlUrl = match.Groups[2].Value;
-                    }
+                    MigrateServiceControlUrl(args, destinationPath);
 
                     File.Delete(destinationPath);
                 }
