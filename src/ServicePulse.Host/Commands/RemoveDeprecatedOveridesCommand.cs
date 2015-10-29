@@ -22,10 +22,11 @@
             {
                 var config = File.ReadAllText(configPath);
                 var match =  Regex.Match(config, @"(service_control_url: ')([\w:/]*)(')")  ;
+
                 // if the installer was given a value use it otherwise use any existing value
                 if (match.Success && string.IsNullOrWhiteSpace(args.ServiceControlUrl))
                 {
-                    args.ServiceControlUrl = match.Value.Replace("service_control_url:", "").Trim();
+                    args.ServiceControlUrl = match.Groups[2].Value;
                 }
 
                 File.Delete(configPath);

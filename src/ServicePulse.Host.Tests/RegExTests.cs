@@ -10,7 +10,7 @@
     {
         [Ignore]
         [Test]
-        public void All_messages_in_group_should_be_sorted_by_time_sent()
+        public void find_service_control_url()
         {
             var pathToConfig = Path.Combine("app.constants.js");
             var config = File.ReadAllText(pathToConfig);
@@ -18,8 +18,18 @@
             var match = Regex.Match(config, @"(service_control_url: ')([\w:/]*)(')");
             Assert.IsTrue(match.Success);
             Assert.IsTrue(!string.IsNullOrWhiteSpace(match.Value));
-            var result = match.Value.Replace("service_control_url:","").Trim();
-            Assert.IsTrue(!string.IsNullOrWhiteSpace(result));
         }
+
+        [Ignore]
+        [Test]
+        public void match_service_control_url_in_string()
+        {
+            var test = "service_control_url: 'http://localhost:33333/api',";
+            var match = Regex.Match(test, @"(service_control_url: ')([\w:/]*)(')");
+            Assert.AreEqual("http://localhost:33333/api", match.Groups[2].Value);
+        }
+
+       
+
     }
 }
