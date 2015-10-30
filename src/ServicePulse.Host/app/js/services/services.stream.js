@@ -1,11 +1,13 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
-    function Service(notifications, $log, $rootScope, scConfig, $jquery) {
+    function Service(notifications, $log, $rootScope, scConfig, $jquery, uri) {
 
         var subscriberRegistry = {}, registryKey = 1;
 
-        var connection = $jquery.connection(scConfig.service_control_url + '/messagestream');
+        var url = uri.join(scConfig.service_control_url, 'messagestream');
+
+        var connection = $jquery.connection(url);
 
         connection.received(function (data) {
             for (var i in data.types) {
@@ -80,7 +82,7 @@
         };
     };
 
-    Service.$inject = ['notifications', '$log', '$rootScope', 'scConfig', '$jquery'];
+    Service.$inject = ['notifications', '$log', '$rootScope', 'scConfig', '$jquery', 'uri'];
 
     angular
         .module('services.streamService', [])

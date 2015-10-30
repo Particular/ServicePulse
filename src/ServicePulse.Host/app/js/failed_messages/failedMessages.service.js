@@ -74,11 +74,13 @@
 
         var service = {
             getData: getData,
-            retryGroup: function(id, success, error) {
-                return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry', success, error);
+            retryGroup: function (id, success, error) {
+                var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
+                return postPromise(url, success, error);
             },
             archiveGroup: function(id, success, error) {
-                return postPromise(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive', success, error);
+                var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'archive');
+                return postPromise(url, success, error);
             },
             wait: wait
         };
