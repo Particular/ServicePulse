@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -253,6 +253,7 @@
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff" />
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
+    <Content Include="app\js\services\services.uri.js" />
     <None Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css.map" />
     <None Include="app\lib\bootstrap-3.3.5\css\bootstrap.css.map" />
     <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.eot" />

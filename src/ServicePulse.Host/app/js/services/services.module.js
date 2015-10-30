@@ -7,7 +7,8 @@
         'services.platformUpdateService',
         'services.semverService',
         'services.notifications',
-        'services.exceptionHandler'
+        'services.exceptionHandler',
+        'services.uri'
     ]);
 
 

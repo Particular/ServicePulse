@@ -1,19 +1,19 @@
 ﻿namespace ServicePulse.Host.Commands
 {
     using System.IO;
-    using System.Text.RegularExpressions;
-    using ServicePulse.Host.Hosting;
+    using Hosting;
 
     class RemoveDeprecatedOveridesCommand : AbstractCommand
     {
         public override void Execute(HostArguments args)
         {
+#if !DEBUG
             DeleteAppJsFile(args);
+#endif
         }
 
         static void DeleteAppJsFile(HostArguments args)
         {
-
             var directoryPath = args.OutputPath;
 
             var configPath = Path.Combine(directoryPath, "config.js");
@@ -33,7 +33,5 @@
                 File.Delete(destinationPath);
             }
         }
-
-    
     }
 }
