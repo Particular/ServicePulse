@@ -2,7 +2,7 @@
 (function(window, angular, undefined) {
     'use strict';
 
-    function Service($http, $timeout, $q, scConfig) {
+    function Service($http, $timeout, $q, scConfig, uri) {
 
         function getData() {}
 
@@ -89,7 +89,7 @@
 
     }
 
-    Service.$inject = ['$http', '$timeout', '$q', 'scConfig'];
+    Service.$inject = ['$http', '$timeout', '$q', 'scConfig', 'uri'];
 
     angular.module('failedMessages')
         .factory('failedMessagesService', Service);
