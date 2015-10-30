@@ -2,16 +2,18 @@
     'use strict';
 
 
-    function Service($http, scConfig, notifications) {
+    function Service($http, scConfig, notifications, uri) {
 
         function getVersion() {
-            return $http.get(scConfig.service_control_url).then(function (response) {
+            var url = uri.join(scConfig.service_control_url);
+            return $http.get(url).then(function (response) {
                 return response.headers('X-Particular-Version');
             });
         };
         
         function checkLicense() {
-            return $http.get(scConfig.service_control_url + '/').then(function (response) {
+            var url = uri.join(scConfig.service_control_url);
+            return $http.get(url).then(function (response) {
                 if (response.data.license_status != "valid") {
                     return false;
                 }
@@ -20,13 +22,15 @@
         };
 
         function getEventLogItems() {
-            return $http.get(scConfig.service_control_url + '/eventlogitems').then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'eventlogitems');
+            return $http.get(url).then(function (response) {
                 return response.data;
             });
         };
 
         function getFailedMessages(sortBy, page) {
-            return $http.get(scConfig.service_control_url + '/errors?status=unresolved&page=' + page + '&sort=' + sortBy).then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved&page=' + page + '&sort=' + sortBy);
+            return $http.get(url).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -35,7 +39,8 @@
         };
 
         function getExceptionGroups() {
-            return $http.get(scConfig.service_control_url + '/recoverability/groups').then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability','groups');
+            return $http.get(url).then(function (response) {
                 return {
                     data: response.data
                 };
@@ -43,7 +48,8 @@
         };
 
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
-            return $http.get(scConfig.service_control_url + '/recoverability/groups/' + groupId + '/errors?page=' + page + '&sort=' + sortBy).then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability','groups',groupId,'errors?page=' + page + '&sort=' + sortBy);
+            return $http.get(url).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -52,7 +58,8 @@
         };
 
         function getMessageBody(messageId) {
-            return $http.get(scConfig.service_control_url + '/messages/' + messageId + "/body").then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'messages',messageId,'body' );
+            return $http.get(url).then(function (response) {
                 return {
                     data: response.data
                 };
@@ -60,7 +67,8 @@
         };
 
         function getMessageHeaders(messageId) {
-            return $http.get(scConfig.service_control_url + '/messages/search/' + messageId).then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'messages','search',messageId );
+            return $http.get(url).then(function (response) {
                 return {
                     data: response.data
                 };
@@ -68,19 +76,22 @@
         };
 
         function getTotalFailedMessages() {
-            return $http.head(scConfig.service_control_url + '/errors?status=unresolved').then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved' );
+            return $http.get(url).then(function (response) {
                 return response.headers('Total-Count');
             });
         };
 
         function getTotalFailingCustomChecks() {
-            return $http.head(scConfig.service_control_url + '/customchecks?status=fail').then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'customchecks?status=unresolved' );
+            return $http.get(url).then(function (response) {
                 return response.headers('Total-Count');
             });
         };
 
         function getFailingCustomChecks(page) {
-            return $http.get(scConfig.service_control_url + '/customchecks?status=fail&page=' + page).then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'customchecks?status=fail&page=' + page );
+            return $http.get(url).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -89,23 +100,27 @@
         };
 
         function getFailedMessageStats() {
-            return $http.get(scConfig.service_control_url + '/errors/summary').then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'errors','summary' );
+            return $http.get(url).then(function (response) {
                 return response.data;
             });
         };
         
         function muteCustomChecks(customCheck) {
-            $http.delete(scConfig.service_control_url + '/customchecks/' + customCheck.id)
-                .success(function () {
-                    notifications.pushForCurrentRoute('"{{item.custom_check_id}}" custom check muted', 'info', { item: customCheck });
-                })
-                .error(function () {
-                    notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'danger', { item: customCheck });
-                });
+            var url = uri.join(scConfig.service_control_url, 'customchecks', customCheck.id);
+
+            $http.delete(url)
+            .success(function () {
+                notifications.pushForCurrentRoute('"{{item.custom_check_id}}" custom check muted', 'info', { item: customCheck });
+            })
+            .error(function () {
+                notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'danger', { item: customCheck });
+            });
         };
 
         function retryAllFailedMessages() {
-            $http.post(scConfig.service_control_url + '/errors/retry/all')
+            var url = uri.join(scConfig.service_control_url, 'errors', 'retry', 'all');
+            $http.post(url)
                 .success(function () {
                    // notifications.pushForCurrentRoute('Retrying all messages...', 'info');
                 })
@@ -115,7 +130,8 @@
         };
 
         function retryFailedMessages(selectedMessages) {
-            $http.post(scConfig.service_control_url + '/errors/retry', selectedMessages)
+            var url = uri.join(scConfig.service_control_url, 'errors', 'retry', selectedMessages);
+            $http.post(url)
                 .success(function () {
                    // notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
@@ -125,10 +141,12 @@
         };
 
         function archiveFailedMessages(selectedMessages) {
+            var url = uri.join(scConfig.service_control_url, 'errors', 'archive');
+
             $http({
-                url: scConfig.service_control_url + '/errors/archive',
+                url: url,
                 data: selectedMessages,
-                method: "PATCH",
+                method: 'PATCH'
             })
                 .success(function () {
                    // notifications.pushForCurrentRoute('Archiving {{num}} messages...', 'info', { num: selectedMessages.length });
@@ -139,7 +157,8 @@
         };
 
         function archiveExceptionGroup(id, successText) {
-            $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/archive')
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'archive');
+            $http.post(url)
                 .success(function () {
                    // notifications.pushForCurrentRoute(successText, 'info');
                 })
@@ -149,7 +168,9 @@
         };
 
         function retryExceptionGroup(id, successText) {
-            $http.post(scConfig.service_control_url + '/recoverability/groups/' + id + '/errors/retry')
+           
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
+            $http.post(url)
                 .success(function () {
                  //   notifications.pushForCurrentRoute(successText, 'info');
                 })
@@ -159,14 +180,16 @@
         };
 
         function getHeartbeatStats() {
-            return $http.get(scConfig.service_control_url + '/heartbeats/stats').then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'heartbeats', 'stats');
+            return $http.get(url).then(function (response) {
                 return response.data;
             });
         };
 
 
         function removeEndpoint(endpoint) {
-            $http.delete(scConfig.service_control_url + '/heartbeats/' + endpoint.id)
+            var url = uri.join(scConfig.service_control_url, 'heartbeats', endpoint.id);
+            $http.delete(url)
                 .success(function () {
                   //  notifications.pushForCurrentRoute('{{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint removed', 'info', { item: endpoint });
                 })
@@ -176,8 +199,10 @@
         };
 
         function updateEndpoint(id, data) {
+            var url = uri.join(scConfig.service_control_url, 'endpoints', id);
+
             return $http({
-                url: scConfig.service_control_url + '/endpoints/' + id,
+                url: url,
                 data: data,
                 method: "PATCH",
             })
@@ -190,7 +215,8 @@
         };
 
         function getEndpoints() {
-            return $http.get(scConfig.service_control_url + '/endpoints').then(function (response) {
+            var url = uri.join(scConfig.service_control_url, 'endpoints');
+            return $http.get(url).then(function (response) {
                 return response.data;
             });
         };
@@ -201,7 +227,8 @@
                 .then(function (endpoints) {
                     var results = [];
                     endpoints.forEach(function (item) {
-                        $http.get(scConfig.service_control_url + '/endpoints/' + item.name + '/sla').then(function (response) {
+                        var url = uri.join(scConfig.service_control_url, 'endpoints', item.name, 'sla');
+                        $http.get(url).then(function (response) {
                             angular.extend(item, { sla: response.data.current });
                             results.push(item);
                         });
@@ -243,7 +270,7 @@
 
     }
 
-    Service.$inject = ['$http', 'scConfig', 'notifications'];
+    Service.$inject = ['$http', 'scConfig', 'notifications', 'uri'];
 
 
     angular.module('services.serviceControlService', [])
