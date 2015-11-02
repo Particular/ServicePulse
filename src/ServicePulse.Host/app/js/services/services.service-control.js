@@ -130,8 +130,8 @@
         };
 
         function retryFailedMessages(selectedMessages) {
-            var url = uri.join(scConfig.service_control_url, 'errors', 'retry', selectedMessages);
-            $http.post(url)
+            var url = uri.join(scConfig.service_control_url, 'errors', 'retry');
+            $http.post(url, selectedMessages)
                 .success(function () {
                    // notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
@@ -204,10 +204,10 @@
             return $http({
                 url: url,
                 data: data,
-                method: "PATCH",
+                method: 'PATCH',
             })
                 .success(function () {
-                  //  notifications.pushForCurrentRoute('Endpoint updated', 'info');
+                    notifications.pushForCurrentRoute('Endpoint updated', 'info');
                 })
                 .error(function () {
                     notifications.pushForCurrentRoute('Failed to update endpoint', 'danger');
