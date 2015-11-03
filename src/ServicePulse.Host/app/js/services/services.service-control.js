@@ -187,51 +187,6 @@
             });
         };
 
-        function updateEndpoint(id, data) {
-            var url = uri.join(scConfig.service_control_url, 'endpoints', id);
-
-            return $http({
-                    url: url,
-                    data: data,
-                    method: 'PATCH',
-                })
-                .success(function() {
-                    notifications.pushForCurrentRoute('Endpoint updated', 'info');
-                })
-                .error(function(data, status, headers, config) {
-                    if (status === '304') {
-                        notifications.pushForCurrentRoute('Endpoint updated', 'info');
-                    } else {
-                        notifications.pushForCurrentRoute('Failed to update endpoint', 'danger');
-                    }
-                });
-        };
-
-        function getEndpoints() {
-            var url = uri.join(scConfig.service_control_url, 'endpoints');
-            return $http.get(url).then(function(response) {
-                return response.data;
-            });
-        };
-
-        function getEndpointsWithSla() {
-            return this
-                .getEndpoints()
-                .then(function(endpoints) {
-                    var results = [];
-                    endpoints.forEach(function(item) {
-                        var url = uri.join(scConfig.service_control_url, 'endpoints', item.name, 'sla');
-                        $http.get(url).then(function(response) {
-                            angular.extend(item, { sla: response.data.current });
-                            results.push(item);
-                        });
-                    });
-
-                    return results;
-                });
-        };
-
-
         var service = {
             getVersion: getVersion,
             checkLicense: checkLicense,
@@ -253,8 +208,8 @@
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
             updateEndpoint: updateEndpoint,
-            getEndpoints: getEndpoints,
-            getEndpointsWithSla: getEndpointsWithSla
+            getEndpoints: getEndpoints
+         
 
         };
 

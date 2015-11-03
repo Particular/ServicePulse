@@ -27,14 +27,14 @@
                     <td>{{e.host_display_name}}</td>
                     <td ng-show="e.heartbeat_information"><sp-moment date="{{e.heartbeat_information.last_report_at}}" /></td>
                     <td ng-show="!e.heartbeat_information">N/A</td>
-                    <td><span ng-show="e.monitor_heartbeat"><i class="fa fa-check"></i></span></td>
+                    <td><span ng-show="e.monitor_heartbeat"><i class="fa fa-check"></i></span><span ng-show="!e.monitor_heartbeat"><i class="fa fa-times"></i></span></td>
                     <td>
                         <div ng-show="e.workflow_state.status !== 'ready'" class="animate-box">
                             {{e.workflow_state.message}}
                         </div>
 
                         <div ng-show="e.workflow_state.status === 'ready'" class="switch">
-                            <button class="btn btn-default"  ng-click="update(e.id, !e.monitor_heartbeat)">{{e.monitor_heartbeat ? "Disable" : "Enable"}}</button>
+                            <button class="btn " ng-class="{'btn-warning' : e.monitor_heartbeat, 'btn-default': !e.monitor_heartbeat}"  ng-click="update(e.id, !e.monitor_heartbeat)">{{e.monitor_heartbeat ? "Disable" : "Enable"}}</button>
                         </div>
 
                     </td>
