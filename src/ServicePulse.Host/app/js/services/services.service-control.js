@@ -187,6 +187,24 @@
             });
         };
 
+        function getEndpointsWithSla() {
+            return this
+                .getEndpoints()
+                .then(function(endpoints) {
+                    var results = [];
+                    endpoints.forEach(function(item) {
+                        var url = uri.join(scConfig.service_control_url, 'endpoints', item.name, 'sla');
+                        $http.get(url).then(function(response) {
+                            angular.extend(item, { sla: response.data.current });
+                            results.push(item);
+                        });
+                    });
+
+                    return results;
+                });
+        };
+
+
         var service = {
             getVersion: getVersion,
             checkLicense: checkLicense,
@@ -206,9 +224,8 @@
             archiveFailedMessages: archiveFailedMessages,
             archiveExceptionGroup: archiveExceptionGroup,
             retryExceptionGroup: retryExceptionGroup,
-            getHeartbeatStats: getHeartbeatStats,
-            updateEndpoint: updateEndpoint,
-            getEndpoints: getEndpoints
+            getHeartbeatStats: getHeartbeatStats
+
          
 
         };
