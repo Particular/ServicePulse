@@ -94,7 +94,7 @@
                                     </sp-moment>
                                 </div>
                                 <div class="col-sm-3 col-md-3">
-                                   
+
                                     <button type="button" class="btn btn-default btn-sm" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
                                     <button type="button" class="btn btn-default btn-sm" tooltip="Retry Group" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                                 </div>
@@ -144,50 +144,53 @@
                     <div infinite-scroll="loadMoreResults(selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
                         <div class="scRow interactiveList" ng-repeat="row in model.failedMessages">
                             <div class="row scSelectableRow" ng-class="{rowSelected: row.selected == true}" ng-click="toggleRowSelect(row)" style="cursor: pointer;">
-                                <div class="check col-sm-1 col-md-1">
+                                <div class="check col-md-1">
                                     <input type="checkbox" ng-disabled="row.retried || row.archived" ng-checked="row.selected">
                                 </div>
-                            </div>
-                            <div class="col-sm-11 col-md-11" ng-init="row.panel = 0">
-                                <a eat-click="" ng-show="row.panel === 1" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide stacktrace</a>
-                                <a eat-click="" ng-hide="row.panel === 1" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 1)"><i class="fa fa-plus-square action_icon"></i> Show stacktrace</a>
-                                <a eat-click="" ng-show="row.panel === 2" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide headers</a>
-                                <a eat-click="" ng-hide="row.panel === 2" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 2)"><i class="fa fa-plus-square action_icon"></i> Show headers</a>
-                                <a eat-click="" ng-show="row.panel === 3" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide message body</a>
-                                <a eat-click="" ng-hide="row.panel === 3" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 3)"><i class="fa fa-plus-square action_icon"></i> Show message body</a>
-                                <a eat-click="" clip-copy="" data-clipboard-text="{{row.message_id}}" class="btn btn-link btn-default btn-sm"><span><i class="fa fa-clipboard action_icon"></i> Copy Id to clipboard</span></a>
-                                <a eat-click="" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-default btn-sm" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
-                            </div>
-                            <div class=" row">
-                                <div class="rowText hard-wrap col-sm-10 col-md-10">{{row.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</div>
-                                <div class="text-right col-sm-2 col-md-2">
-                                    <sp-moment date="{{row.time_sent}}">
-                                    </sp-moment>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-8 col-md-8">
-                                    <pre ng-show="row.panel === 0">{{ row.exception.message }}</pre>
-                                    <pre ng-show="row.panel === 1">{{ row.exception.stack_trace }}</pre>
-                                    <table class="table" ng-show="row.panel === 2 && row.messageHeaders">
-                                        <tbody>
-                                            <tr class="interactiveList" ng-repeat="header in row.messageHeaders">
-                                                <td nowrap="nowrap">{{header.key}}</td>
-                                                <td><pre>{{header.value}}</pre></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <div class="alert alert-info" ng-show="row.panel === 2 && row.headersUnavailable">{{row.headersUnavailable}}</div>
-                                    <pre ng-show="row.panel === 3 && row.messageBody">{{row.messageBody}}</pre>
-                                    <div class="alert alert-info" ng-show="row.panel === 3 && row.bodyUnavailable">{{row.bodyUnavailable}}</div>
-                                </div>
-                                <div class="text-right hard-wrap col-sm-4 col-md-4" title="In: {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.host}}">in {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.host}}</div>
-                            </div>
-                            <div class="row">
-                                <div class="text-left col-sm-6 col-md-6">
-                                    <span ng-if="row.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
-                                    <span ng-if="row.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
-                                    <span ng-if="row.number_of_processing_attempts > 1" tooltip="This message has already failed {{row.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
+                                <div class="col-md-11">
+                                    <div ng-init="row.panel = 0">
+                                        <a eat-click="" ng-show="row.panel === 1" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide stacktrace</a>
+                                        <a eat-click="" ng-hide="row.panel === 1" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 1)"><i class="fa fa-plus-square action_icon"></i> Show stacktrace</a>
+                                        <a eat-click="" ng-show="row.panel === 2" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide headers</a>
+                                        <a eat-click="" ng-hide="row.panel === 2" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 2)"><i class="fa fa-plus-square action_icon"></i> Show headers</a>
+                                        <a eat-click="" ng-show="row.panel === 3" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide message body</a>
+                                        <a eat-click="" ng-hide="row.panel === 3" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 3)"><i class="fa fa-plus-square action_icon"></i> Show message body</a>
+                                        <a eat-click="" clip-copy="" data-clipboard-text="{{row.message_id}}" class="btn btn-link btn-default btn-sm"><span><i class="fa fa-clipboard action_icon"></i> Copy Id to clipboard</span></a>
+                                        <a eat-click="" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-default btn-sm" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
+                                    </div>
+
+                                    <div class=" row">
+                                        <div class="rowText hard-wrap col-md-10">{{row.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</div>
+                                        <div class="text-right col-md-2">
+                                            <sp-moment date="{{row.time_sent}}">
+                                            </sp-moment>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <pre ng-show="row.panel === 0">{{ row.exception.message }}</pre>
+                                            <pre ng-show="row.panel === 1">{{ row.exception.stack_trace }}</pre>
+                                            <table class="table" ng-show="row.panel === 2 && row.messageHeaders">
+                                                <tbody>
+                                                    <tr class="interactiveList" ng-repeat="header in row.messageHeaders">
+                                                        <td nowrap="nowrap">{{header.key}}</td>
+                                                        <td><pre>{{header.value}}</pre></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="alert alert-info" ng-show="row.panel === 2 && row.headersUnavailable">{{row.headersUnavailable}}</div>
+                                            <pre ng-show="row.panel === 3 && row.messageBody">{{row.messageBody}}</pre>
+                                            <div class="alert alert-info" ng-show="row.panel === 3 && row.bodyUnavailable">{{row.bodyUnavailable}}</div>
+                                        </div>
+                                        <div class="text-right hard-wrap col-sm-4 col-md-4" title="In: {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.host}}">in {{row.receiving_endpoint.name}} on {{row.receiving_endpoint.host}}</div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="text-left col-md-6">
+                                            <span ng-if="row.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
+                                            <span ng-if="row.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
+                                            <span ng-if="row.number_of_processing_attempts > 1" tooltip="This message has already failed {{row.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

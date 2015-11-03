@@ -187,18 +187,6 @@
             });
         };
 
-
-        function removeEndpoint(endpoint) {
-            var url = uri.join(scConfig.service_control_url, 'heartbeats', endpoint.id);
-            $http.delete(url)
-                .success(function() {
-                    notifications.pushForCurrentRoute('{{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint removed', 'info', { item: endpoint });
-                })
-                .error(function() {
-                    notifications.pushForCurrentRoute('Failed to remove {{item.originating_endpoint.name}}@{{item.originating_endpoint.machine}} endpoint', 'danger', { item: endpoint });
-                });
-        };
-
         function updateEndpoint(id, data) {
             var url = uri.join(scConfig.service_control_url, 'endpoints', id);
 
@@ -210,8 +198,12 @@
                 .success(function() {
                     notifications.pushForCurrentRoute('Endpoint updated', 'info');
                 })
-                .error(function() {
-                    notifications.pushForCurrentRoute('Failed to update endpoint', 'danger');
+                .error(function(data, status, headers, config) {
+                    if (status === '304') {
+                        notifications.pushForCurrentRoute('Endpoint updated', 'info');
+                    } else {
+                        notifications.pushForCurrentRoute('Failed to update endpoint', 'danger');
+                    }
                 });
         };
 
@@ -260,7 +252,6 @@
             archiveExceptionGroup: archiveExceptionGroup,
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
-            removeEndpoint: removeEndpoint,
             updateEndpoint: updateEndpoint,
             getEndpoints: getEndpoints,
             getEndpointsWithSla: getEndpointsWithSla
