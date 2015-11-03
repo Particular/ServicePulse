@@ -14,7 +14,7 @@
         function checkLicense() {
             var url = uri.join(scConfig.service_control_url);
             return $http.get(url).then(function (response) {
-                if (response.data.license_status != "valid") {
+                if (response.data.license_status !== 'valid') {
                     return false;
                 }
                 return true;
