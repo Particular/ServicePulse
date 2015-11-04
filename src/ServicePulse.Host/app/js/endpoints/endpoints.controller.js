@@ -17,8 +17,10 @@
                 $scope.model.active = [];
                 $scope.model.inactive = [];
 
-                for (var j = 0; j < endpoints.length; j++) {
-                    var item = endpoints[j];
+                var endpointList = endpoints.data;
+
+                for (var j = 0; j < endpointList.length; j++) {
+                    var item = endpointList[j];
 
                     if (!item.monitor_heartbeat) {
                         continue;
