@@ -8,7 +8,7 @@
                 // Split the inputs into a list of path commands.
                 var parts = [];
                 for (var i = 0; i < arguments.length; i++) {
-                    parts = parts.concat(arguments[i].replace(/\/$/, ''));
+                    parts = parts.concat(('' + arguments[i]).replace(/\/$/, ''));
                 }
 
                 // Turn back into a single string path.
