@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function controller($scope, serviceControlService, $timeout) {
+    function controller($scope, $timeout, configurationService) {
 
         var timeoutId;
 
@@ -13,7 +13,7 @@
         });
 
         function updateUI() {
-            serviceControlService.getEndpoints().then(function (endpoints) {
+            configurationService.getData().then(function (endpoints) {
                 $scope.model.active = [];
                 $scope.model.inactive = [];
 
@@ -41,7 +41,7 @@
     };
 
     controller.$inject = [
-        '$scope', 'serviceControlService', '$timeout',
+        '$scope', '$timeout' , 'configurationService'
     ];
 
     angular.module('endpoints')
