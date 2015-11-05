@@ -58,13 +58,14 @@
     <Content Include="css\jasmine.css" />
     <Content Include="tests\js\angular.js" />
     <Content Include="tests\js\angular_tests.js" />
+    <Content Include="tests\js\configuration\configuration.service.spec.js" />
     <Content Include="tests\js\jasmine_test_example.js" />
     <Content Include="tests\js\jasmine_test_example_tests.js" />
     <Content Include="tests\js\angular-mocks.js" />
     <Content Include="tests\js\_references.js" />
     <Content Include="Scripts\jasmine-html.js" />
     <Content Include="Scripts\jasmine.js" />
-    <Content Include="tests\js\services\services.uri.tests.js" />
+    <Content Include="tests\js\services\services.uri.spec.js" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

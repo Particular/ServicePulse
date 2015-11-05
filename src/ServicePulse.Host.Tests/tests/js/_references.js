@@ -8,6 +8,8 @@
 /// <reference path="../../../servicepulse.host/app/lib/page-width-functions.js" />
 /// <reference path="../../../servicepulse.host/app/lib/zeroclipboard-2.2.0/zeroclipboard.core.min.js" />
 /// <reference path="../../../servicepulse.host/app/lib/moment.min.js" />
+/// <reference path="../../../servicepulse.host/app/lib/angular/ui-bootstrap-tpls-0.14.3.min.js" />
+
 
 /// <reference path="../../../servicepulse.host/app/js/app.js" />
 /// <reference path="../../../servicepulse.host/app/js/app.constants.js" />
@@ -58,3 +60,7 @@
 /// <reference path="../../../servicepulse.host/app/js/configuration/configuration.controller.js" />
 
 /// <reference path="angular-mocks.js" />
+
+
+var scConfig = scConfig || {};
+scConfig.service_control_url = 'http://localhost:33333/api/';

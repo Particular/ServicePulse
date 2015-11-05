@@ -1,8 +1,5 @@
 ﻿/// <reference path="../_references.js" />
 
-var scConfig = scConfig || {};
-scConfig.service_control_url = 'http://localhost:33333/api/';
-
 describe("Unit: Uri Service ", function() {
 
     it('should load angular', function() {

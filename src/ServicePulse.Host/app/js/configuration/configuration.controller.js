@@ -64,7 +64,7 @@
         '$interval',
         'configurationService'];
 
-    angular.module('configuration')
+    angular.module('configuration.controller')
         .controller('ConfigurationCtrl', controller);
 
 } (window, window.angular, window.jQuery));
