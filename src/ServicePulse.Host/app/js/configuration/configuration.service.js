@@ -53,7 +53,7 @@
 
     Service.$inject = ['$http', '$q', 'scConfig', 'uri'];
 
-    angular.module('configuration')
+    angular.module('configuration.service', [])
         .factory('configurationService', Service);
 
 
