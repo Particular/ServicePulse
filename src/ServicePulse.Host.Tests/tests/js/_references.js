@@ -58,9 +58,7 @@
 /// <reference path="../../../servicepulse.host/app/js/configuration/configuration.module.js" />
 /// <reference path="../../../servicepulse.host/app/js/configuration/configuration.route.js" />
 /// <reference path="../../../servicepulse.host/app/js/configuration/configuration.controller.js" />
+/// <reference path="../../../servicepulse.host/app/js/configuration/configuration.service.js" />
 
 /// <reference path="angular-mocks.js" />
 
-
-var scConfig = scConfig || {};
-scConfig.service_control_url = 'http://localhost:33333/api/';
