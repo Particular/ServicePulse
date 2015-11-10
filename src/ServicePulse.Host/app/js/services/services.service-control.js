@@ -84,7 +84,7 @@
         };
 
         function getTotalFailingCustomChecks() {
-            var url = uri.join(scConfig.service_control_url, 'customchecks?status=unresolved');
+            var url = uri.join(scConfig.service_control_url, 'customchecks?status=fail');
             return $http.get(url).then(function(response) {
                 return response.headers('Total-Count');
             });
