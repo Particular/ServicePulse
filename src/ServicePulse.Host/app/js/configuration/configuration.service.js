@@ -20,7 +20,7 @@
                     defer.resolve(success + ':' + response);
                 })
                 .error(function (response, status, headers, config) {
-                    if (status === '304') {
+                    if (status === '304' || status === 304) {
                         defer.resolve(success + ':' + response);
                     } else {
                         defer.reject(error + ':' + response);

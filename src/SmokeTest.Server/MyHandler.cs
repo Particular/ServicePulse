@@ -1,5 +1,4 @@
 ﻿using System;
-
 using NServiceBus;
 
 public class MyHandler : IHandleMessages<MyMessage>
