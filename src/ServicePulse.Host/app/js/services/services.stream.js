@@ -9,6 +9,8 @@
 
         var connection = $jquery.connection(url);
 
+        connection.logging = true;
+
         connection.received(function (data) {
             for (var i in data.types) {
                 callSubscribers(data.types[i], data.message);

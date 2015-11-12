@@ -28,15 +28,10 @@ class Program
                     return;
                 }
                 listener.Close();
-                if (isReturningOk)
-                {
-                    Console.WriteLine("\r\nCurrently returning success");
-                }
-                else
-                {
-                    Console.WriteLine("\r\nCurrently returning error");
-                }
+                
                 isReturningOk = !isReturningOk;
+
+                Console.WriteLine("Currently returning {0}!", isReturningOk ? "Success" : "Error");
             }
         }
     }
