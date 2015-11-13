@@ -13,7 +13,7 @@
         '$routeProvider'
     ];
 
-    angular.module('configuration')
+    angular.module('configuration.route', [])
         .config(routeProvider);
 
 } (window, window.angular));

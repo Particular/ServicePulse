@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{113A09CC-9665-4E87-9FC7-7E5C8C0AFE71}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{A9B109A2-71C7-40C5-B1F4-D637D3808796}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServicePulse.Host.Tests</RootNamespace>
-    <AssemblyName>ServicePulse.Host.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>SmokeTest.Client</RootNamespace>
+    <AssemblyName>SmokeTest.Client</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,8 +33,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    <Reference Include="NServiceBus.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=9fc386479f8a226c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NServiceBus.5.2.9\lib\net45\NServiceBus.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ServiceControl.Plugin.Nsb5.CustomChecks, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceControl.Plugin.Nsb5.CustomChecks.1.0.1\lib\net45\ServiceControl.Plugin.Nsb5.CustomChecks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ServiceControl.Plugin.Nsb5.Heartbeat, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ServiceControl.Plugin.Nsb5.Heartbeat.2.0.0\lib\net45\ServiceControl.Plugin.Nsb5.Heartbeat.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -45,46 +55,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="VerifyAppConstantsJSTextReplacement.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\packages\PhantomJS.2.0.0\tools\phantomjs\phantomjs.exe">
-      <Link>phantomjs.exe</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\ServicePulse.Host\app\js\app.constants.js">
-      <Link>app.constants.js</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Content\jasmine\jasmine.css" />
-    <Content Include="Content\jasmine\jasmine_favicon.png" />
-    <Content Include="phantomjs-license.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Scripts\jasmine-samples\Player.js" />
-    <Content Include="Scripts\jasmine-samples\PlayerSpec.js" />
-    <Content Include="Scripts\jasmine-samples\Song.js" />
-    <Content Include="Scripts\jasmine-samples\SpecHelper.js" />
-    <Content Include="Scripts\jasmine\boot.js" />
-    <Content Include="Scripts\jasmine\console.js" />
-    <Content Include="Scripts\jasmine\jasmine-html.js" />
-    <Content Include="Scripts\jasmine\jasmine.js" />
-    <Content Include="Scripts\run-jasmine.js" />
-    <Content Include="SpecsRunner.html" />
-    <Content Include="tests\js\angular.js" />
-    <Content Include="tests\js\angular_tests.js" />
-    <Content Include="tests\js\configuration\configuration.spec.js" />
-    <Content Include="tests\js\jasmine_test_example.js" />
-    <Content Include="tests\js\jasmine_test_example_tests.js" />
-    <Content Include="tests\js\angular-mocks.js" />
-    <Content Include="tests\js\_references.js" />
-    <Content Include="tests\js\services\services.spec.js" />
+    <ProjectReference Include="..\SmokeTest.Shared\SmokeTest.Shared.csproj">
+      <Project>{122ad54a-b249-41c7-858f-cb75e7c0f463}</Project>
+      <Name>SmokeTest.Shared</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -90,7 +90,7 @@
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DigCertStoreComponent">
-    <ROW TimeStampUrl="http://timestamp.verisign.com/scripts/timstamp.dll" SignerDescription="NServiceBus installer" DescriptionUrl="http://www.nservicebus.com/" SignOptions="7" SignTool="0" Thumbprint="acfab957ce84ba76b9cddcbc7d901ae8983b6536 Subject: NServiceBus Ltd.&#10;Issuer: VeriSign Class 3 Code Signing 2010 CA&#10;Valid from 08/27/2013 to 11/11/2015"/>
+    <ROW TimeStampUrl="http://timestamp.verisign.com/scripts/timstamp.dll" SignerDescription="NServiceBus installer" DescriptionUrl="http://www.nservicebus.com/" SignOptions="7" SignTool="0" Thumbprint="be71091fdbc50425ddac13edd5629b0a3b240985 Subject: NServiceBus Ltd.&#10;Issuer: Symantec Class 3 SHA256 Code Signing CA&#10;Valid from 09/22/2015 to 12/22/2017"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
@@ -338,6 +338,7 @@
     <ROW Action="Invalid_ServiceControlUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_4"/>
     <ROW Action="Invalid_ServicePulseUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_3"/>
     <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]&amp;localURL=http://localhost:[INST_PORT_PULSE]" Options="1"/>
+    <ROW Action="ReadExistingConfigs" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ReadServiceControlUrlFromConfigJS"/>
     <ROW Action="ReadServiceControlUrlFromConfigJS" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ReadServiceControlUrlFromConfigJS" WithoutSeq="true"/>
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFilesFolder]\Particular Software\ServicePulse\"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]" MultiBuildTarget="DefaultBuild:[ProgramMenuFolder]\Particular Software\"/>
@@ -384,6 +385,7 @@
     <ROW Action="AI_DATA_SETTER_2" Sequence="1601"/>
     <ROW Action="Stop_Service" Condition="( Installed AND ( REMOVE = &quot;ALL&quot; OR AI_INSTALL_MODE = &quot;Remove&quot; ) )" Sequence="211"/>
     <ROW Action="SetUrlAcl" Condition="( NOT Installed )" Sequence="6401"/>
+    <ROW Action="ReadExistingConfigs" Condition="( NOT Installed ) AND ( UILevel &lt; 5 )" Sequence="1201"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>

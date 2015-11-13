@@ -1,4 +1,5 @@
-﻿; (function (window, angular, undefined) {
+﻿;
+(function(window, angular, undefined) {
 
     'use strict';
 
@@ -8,32 +9,67 @@
 
         $scope.model = { active: [], inactive: [] };
 
-        $scope.$on('$destroy', function () {
+        $scope.$on('$destroy', function() {
             $timeout.cancel(timeoutId);
         });
 
         function updateUI() {
-            configurationService.getData().then(function (endpoints) {
-                $scope.model.active = [];
-                $scope.model.inactive = [];
+            configurationService.getData().then(function(endpoints) {
 
                 var endpointList = endpoints.data;
 
-                for (var j = 0; j < endpointList.length; j++) {
-                    var item = endpointList[j];
+                // remove unmonitored
+                var unmonitored = endpointList.filter(function(umi) {
+                    return !umi.monitor_heartbeat;
+                });
 
-                    if (!item.monitor_heartbeat) {
-                        continue;
-                    }
+                var i, obj;
 
-                    if (item.hasOwnProperty('heartbeat_information') && item.heartbeat_information.reported_status === 'beating') {
-                        $scope.model.active.push(item);
-                    } else {
-                        $scope.model.inactive.push(item);
+                for (i = 0; i < $scope.model.active.length; i++) {
+                    obj = $scope.model.active[i];
+                    if (unmonitored.indexOf(obj.id) !== -1) {
+                        $scope.model.active.splice(i, 1);
+                        i--; // we just made the array 1 shorter
                     }
                 }
 
-                timeoutId = $timeout(function () {
+                for (i = 0; i < $scope.model.inactive.length; i++) {
+                    obj = $scope.model.inactive[i];
+                    if (unmonitored.indexOf(obj.id) !== -1) {
+                        $scope.model.inactive.splice(i, 1);
+                        i--;
+                    }
+                }
+
+                var monitored = endpointList.filter(function(mi) {
+                    return mi.monitor_heartbeat;
+                });
+
+                for (var j = 0; j < monitored.length; j++) {
+                    var item = monitored[j];
+
+                    var activeIndex = $scope.model.active.map(function(bi) { return bi.id; }).indexOf(item.id);
+                    var inactiveIndex = $scope.model.inactive.map(function(bi) { return bi.id; }).indexOf(item.id);
+
+                    if (item.hasOwnProperty('heartbeat_information') && item.heartbeat_information.reported_status === 'beating') {
+                        if (activeIndex === -1) {
+                            $scope.model.active.push(item);
+                        }
+                        if (inactiveIndex !== -1) {
+                            $scope.model.inactive.splice(inactiveIndex, 1);
+                        }
+                    } else {
+                        if (inactiveIndex === -1) {
+                            $scope.model.inactive.push(item);
+                        }
+                        if (activeIndex !== -1) {
+                            $scope.model.active.splice(activeIndex, 1);
+                        }
+
+                    }
+                }
+
+                timeoutId = $timeout(function() {
                     updateUI();
                 }, 5000);
             });
@@ -43,10 +79,10 @@
     };
 
     controller.$inject = [
-        '$scope', '$timeout' , 'configurationService'
+        '$scope', '$timeout', 'configurationService'
     ];
 
     angular.module('endpoints')
         .controller('EndpointsCtrl', controller);
 
-} (window, window.angular));
+}(window, window.angular));
