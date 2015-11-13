@@ -9,11 +9,9 @@
     {
         public override void Execute(HostArguments args)
         {
-#if !DEBUG
             ExtractApp(args);
             UpdateVersion(args.OutputPath);
             UpdateConfig(args.OutputPath, args.ServiceControlUrl);
-#endif
         }
 
         static void ExtractApp(HostArguments args)
@@ -41,24 +39,19 @@
                 }
             }
         }
-
-
+        
         public static void UpdateConfig(string directoryPath, string serviceControlUrl)
         {
             var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
-
-            File.WriteAllText(appJsPath,
-                Regex.Replace(appJsCode, @"(service_control_url: ')([\w:/]*)(')", "$1" + serviceControlUrl + "$3"));
+            File.WriteAllText(appJsPath, Regex.Replace(appJsCode, @"(service_control_url\s*\:\s*['""])(.*?)(['""])", "$1" + serviceControlUrl + "$3"));
         }
 
         public static void UpdateVersion(string directoryPath)
         {
             var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
-
-            var updatedContent = Regex.Replace(appJsCode, @"(constant\('version', ')([\w:/.-]*)(')", "${1}" + GetFileVersion() + "$3");
-
+            var updatedContent = Regex.Replace(appJsCode, @"(constant\(\s*'version'\s*,\s*')(.*?)(')", "${1}" + GetFileVersion() + "$3");
             File.WriteAllText(appJsPath, updatedContent);
         }
 
