@@ -17,7 +17,7 @@ namespace ServicePulse.Host.Hosting
         {
             var executionMode = ExecutionMode.Run;
 
-            commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(ExtractAndUpdateConstantsCommand), typeof(RunCommand) };
+            commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand),  typeof(RunCommand) };
             startMode = StartMode.Automatic;
             url = "http://localhost:8081";
             ServiceName = "Particular.ServicePulse";

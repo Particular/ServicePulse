@@ -121,34 +121,51 @@
             {
                 Log(session, "Start custom action ReadServiceControlUrlFromConfigJS");
                 var targetPath = session.Get("APPDIR");
-                var configJsPath = Path.Combine(targetPath, @"app\config.js");
-                var uri = @"http://localhost:33333/api/";
-
-                if (File.Exists(configJsPath))
+                var configFiles = new[]
                 {
-                    var pattern = new Regex(@"service_control_url:\s*'(?<sc_uri>.*)'", RegexOptions.IgnoreCase);
-                    var matches = pattern.Match(File.ReadAllText(configJsPath));
-                    if (matches.Success)
+                    @"app\config.js",   /* Pre SC 1.3 path */
+                    @"app\js\app.constants.js"  /* Post SC 1.3 path */
+                };
+
+                string uri = null;
+
+                foreach (var file in configFiles)
+                {
+                    var filePath = Path.Combine(targetPath, file);
+                    if (!File.Exists(filePath))
                     {
-                        uri = matches.Groups["sc_uri"].Value;
-                        Log(session, string.Format(@"Extracted {0} from existing config.js", uri));
+                        Log(session, string.Format("File {0} does not exist - skipping", filePath));
+                        continue;
+                    }
+                    var extracted = ExtractServiceControlURI(filePath);
+                    if (extracted == null)
+                    {
+                        Log(session, string.Format("No URI found in {0}", filePath));
                     }
                     else
                     {
-                        Log(session, "No URI found - using default");
+                        Log(session, string.Format(@"Extracted {0} from {1}", extracted, filePath));
+                        uri = extracted;
                     }
                 }
-                else
+
+                if (uri != null)
                 {
-                    Log(session, string.Format("File not found {0}", configJsPath));
+                    session.Set("INST_URI", uri);
                 }
-                session.Set("INST_URI", uri);
                 return ActionResult.Success;
             }
             finally
             {
                 Log(session, "End custom action ReadServiceControlUrlFromConfigJS");
             }
+        }
+        
+        static string ExtractServiceControlURI(string file)
+        {
+            var pattern = new Regex(@"(service_control_url\s*\:\s*['""])(.*?)(['""])");
+            var matches = pattern.Match(File.ReadAllText(file));
+            return matches.Success ? matches.Groups[2].Value : null;
         }
 
         static int RunNetsh(string command)
