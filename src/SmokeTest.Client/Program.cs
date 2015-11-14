@@ -19,24 +19,42 @@ class Program
             Console.WriteLine("Press enter to send a message");
             Console.WriteLine("Press any key to exit");
 
-            while (true)
+
+            var exit = false;
+            var emulateFailures = false;
+            var count = 1;
+            do
             {
-                var killMe = false;
-                var count = 1;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("-------------------------------------");
+                Console.WriteLine("[ A ] Send 1 good Message");
+                Console.WriteLine("[ B ] Send 10 bad Messages");
+                Console.WriteLine("[ Q ] Quit");
+                Console.WriteLine("-------------------------------------");
+                Console.Write("Make a Choice: ");
 
                 var key = Console.ReadKey();
+                Console.WriteLine();
                 switch (key.Key)
                 {
-                    case ConsoleKey.Enter:
-                        killMe = true;
+                    case ConsoleKey.A:
+                        emulateFailures = false;
+                        count = 1;
+                        break;
+                    case ConsoleKey.B:
+                        emulateFailures = true;
                         count = 10;
                         break;
-                    case ConsoleKey.Spacebar:
-                        killMe = true;
-                        break;
                     case ConsoleKey.Q:
-                        return;
+                        exit = true;
+                        break;
+                    default:
+                        Console.WriteLine("Option not valid, Try again.");
+                        continue;
+                        
                 }
+
+                Console.ForegroundColor = ConsoleColor.Gray;
 
                 var text = wordblob.LoremIpsum(5, 5, 1, 1, 1);
                 for (var i = 0; i < count; i++)
@@ -46,14 +64,14 @@ class Program
                     bus.Send("SmokeTest.Server", new MyMessage
                     {
                         Id = id,
-                        KillMe = killMe,
+                        KillMe = emulateFailures,
                         SomeText = text
                     });
 
                     Console.WriteLine("Sent a new message with id: {0}", id.ToString("N"));
                 }
-             
-            }
+
+            } while (!exit);
         }
     }
 }

@@ -12,7 +12,7 @@ public class MyHandler : IHandleMessages<MyMessage>
             return;
         }
 
-        if (!Program.KillMe)
+        if (!Program.emulateFailures)
         {
             return;
         }

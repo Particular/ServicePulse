@@ -9,7 +9,7 @@ abstract class Monitor : PeriodicCheck
     static ILog logger = LogManager.GetLogger<Monitor>();
 
     protected Monitor(Uri uri, TimeSpan interval)
-        : base(string.Format("Monitor {0}", uri), "Monitor 3rd Party ", interval)
+        : base($"Monitor {uri}", "Monitor 3rd Party ", interval)
     {
         this.uri = uri;
     }
@@ -29,14 +29,14 @@ abstract class Monitor : PeriodicCheck
                     logger.InfoFormat("Succeeded in contacting {0}", uri);
                     return CheckResult.Pass;
                 }
-                string error = string.Format("Failed to contact '{0}'. HttpStatusCode: {1}", uri, response.StatusCode);
+                string error = $"Failed to contact '{uri}'. HttpStatusCode: {response.StatusCode}";
                 logger.Info(error);
                 return CheckResult.Failed(error);
             }
         }
         catch (Exception exception)
         {
-            string error = string.Format("Failed to contact '{0}'. Error: {1}", uri, exception.Message);
+            string error = $"Failed to contact '{uri}'. Error: {exception.Message}";
             logger.Info(error);
             return CheckResult.Failed(error);
         }
