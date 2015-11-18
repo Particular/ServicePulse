@@ -4,7 +4,7 @@ using NServiceBus.Features;
 
 class Program
 {
-    public static bool KillMe = false;
+    public static bool emulateFailures = false;
     static void Main()
     {
         var busConfiguration = new BusConfiguration();
@@ -19,23 +19,39 @@ class Program
        
         using (var bus = Bus.Create(busConfiguration).Start())
         {
-            while (true)
+            var exit = false;
+            do
             {
+                Console.Clear();
+                Console.WriteLine("-------------------------------------");
+                Console.ForegroundColor = emulateFailures ? ConsoleColor.Red : ConsoleColor.Green;
+                Console.WriteLine("Throw Exceptions To Emulate Failures {0}!", emulateFailures ? "On" : "Off");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("-------------------------------------");
+                Console.WriteLine("[ A ] Emulate Failures");
+                Console.WriteLine("[ B ] Process Messages Normally");
+                Console.WriteLine("[ Q ] Quit");
+                Console.WriteLine("-------------------------------------");
+                Console.Write("Make a Choice: ");
+
                 var key = Console.ReadKey();
+                Console.WriteLine();
                 switch (key.Key)
                 {
-                    case ConsoleKey.Enter:
-                        KillMe = true;
-                        Console.WriteLine("Allow Exception Processing");
+                    case ConsoleKey.A:
+                        emulateFailures = true;
                         break;
-                    case ConsoleKey.Spacebar:
-                        Console.WriteLine("Stop Exception Processing");
-                        KillMe = false;
+                    case ConsoleKey.B:
+                        emulateFailures = false;
                         break;
                     case ConsoleKey.Q:
-                        return;
+                        exit = true;
+                        break;
+                    default:
+                        Console.WriteLine("Option not valid, Try again.");
+                        break;
                 }
-            }
+            } while (!exit);
         }
     }
 }
