@@ -54,7 +54,7 @@
             for (var key in subscriberDictionary) {
                 if (subscriberDictionary.hasOwnProperty(key)) {
                     if ($jquery.isFunction(subscriberDictionary[key])) {
-                        subscriberDictionary[key].call(undefined, messageType, message);
+                        subscriberDictionary[key].call(undefined, message);
                     }
                 }
             }
@@ -67,7 +67,7 @@
 
             var uniqueKey = registryKey++;
 
-            subscriberRegistry[messageType][uniqueKey] = function (event, message) {
+            subscriberRegistry[messageType][uniqueKey] = function (message) {
                 handler(message);
             };
 
