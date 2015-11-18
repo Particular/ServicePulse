@@ -52,8 +52,10 @@
             var subscriberDictionary = subscriberRegistry[messageType];
 
             for (var key in subscriberDictionary) {
-                if ($jquery.isFunction(subscriberDictionary[key])) {
-                    subscriberDictionary[key].call(undefined, message);
+                if (subscriberDictionary.hasOwnProperty(key)) {
+                    if ($jquery.isFunction(subscriberDictionary[key])) {
+                        subscriberDictionary[key].call(undefined, messageType, message);
+                    }
                 }
             }
         };
