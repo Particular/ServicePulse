@@ -6,17 +6,18 @@ namespace ServicePulse.Host.Hosting
     using System.Diagnostics;
 #endif
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.ServiceProcess;
     using System.Text;
     using Commands;
-
+    
     internal class HostArguments
     {
+        public ExecutionMode executionMode = ExecutionMode.Run;
+
         public HostArguments(string[] args)
         {
-            var executionMode = ExecutionMode.Run;
-
             commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand),  typeof(RunCommand) };
             startMode = StartMode.Automatic;
             url = "http://localhost:8081";
@@ -27,21 +28,17 @@ namespace ServicePulse.Host.Hosting
             Username = String.Empty;
             Password = String.Empty;
             OutputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
+            
 #if DEBUG
             if (Debugger.IsAttached)
             {
                 OutputPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\app"));
             }     
 #endif
-            var runOptions = new OptionSet
+            var runOptions = new CaseLessOptionSet
             {
                 {
                     "?|h|help", "Help about the command line options.", key => { Help = true; }
-                },
-                {
-                    "serviceControlUrl=",
-                    @"Configures the service control url."
-                    , s => { serviceControlUrl = s; }
                 },
                 {
                     "url=",
@@ -50,7 +47,7 @@ namespace ServicePulse.Host.Hosting
                 }
             };
 
-            extractOptions = new OptionSet
+            extractOptions = new CaseLessOptionSet
             {
                 {
                     "?|h|help", "Help about the command line options.", key => { Help = true; }
@@ -65,18 +62,18 @@ namespace ServicePulse.Host.Hosting
                     }
                 },
                 {
-                    "serviceControlUrl=",
+                    "servicecontrolurl=",
                     @"Configures the service control url."
                     , s => { serviceControlUrl = s; }
                 },
                 {
-                    "outPath=",
+                    "outpath=",
                     @"The output path to extract files to. By default it extracts to the current directory."
                     , s => { OutputPath = s; }
                 }
             };
 
-            uninstallOptions = new OptionSet
+            uninstallOptions = new CaseLessOptionSet
             {
                 {
                     "?|h|help", "Help about the command line options.", key => { Help = true; }
@@ -91,13 +88,13 @@ namespace ServicePulse.Host.Hosting
                     }
                 },
                 {
-                    "serviceName=",
+                    "servicename=",
                     @"Specify the service name for the installed service."
                     , s => { ServiceName = s; }
                 }
             };
 
-            installOptions = new OptionSet
+            installOptions = new CaseLessOptionSet
             {
                 {
                     "?|h|help",
@@ -114,12 +111,12 @@ namespace ServicePulse.Host.Hosting
                     }
                 },
                 {
-                    "serviceName=",
+                    "servicename=",
                     @"Specify the service name for the installed service."
                     , s => { ServiceName = s; }
                 },
                 {
-                    "displayName=",
+                    "displayname=",
                     @"Friendly name for the installed service."
                     , s => { DisplayName = s; }
                 },
@@ -174,7 +171,7 @@ namespace ServicePulse.Host.Hosting
                     , s => { startMode = StartMode.Manual; }
                 },
                 {
-                    "serviceControlUrl=",
+                    "servicecontrolurl=",
                     @"Configures the service control url."
                     , s => { serviceControlUrl = s; }
                 },
@@ -187,30 +184,79 @@ namespace ServicePulse.Host.Hosting
 
             try
             {
-                installOptions.Parse(args);
+                List<string> unknownArgsList;
+
+                unknownArgsList = installOptions.Parse(args);
                 if (executionMode == ExecutionMode.Install)
                 {
+                    ThrowIfUnknownArgs(unknownArgsList);
+                    ValidateArgs();
                     return;
                 }
 
-                uninstallOptions.Parse(args);
+                unknownArgsList = uninstallOptions.Parse(args);
                 if (executionMode == ExecutionMode.Uninstall)
                 {
+                    ThrowIfUnknownArgs(unknownArgsList);
                     return;
                 }
 
-                extractOptions.Parse(args);
+                unknownArgsList =  extractOptions.Parse(args);
                 if (executionMode == ExecutionMode.Extract)
                 {
+                    ThrowIfUnknownArgs(unknownArgsList);
+                    ValidateArgs();
                     return;
                 }
 
-                runOptions.Parse(args);
+                unknownArgsList = runOptions.Parse(args);
+                ThrowIfUnknownArgs(unknownArgsList);
+                ValidateArgs();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 Help = true;
+            }
+        }
+
+        void ThrowIfUnknownArgs(List<string> unknownArgsList)
+        {
+            if (unknownArgsList.Count > 0)
+            {
+                throw new ApplicationException(string.Format("Unknown command line argument(s) : {0} ", string.Join(" ", unknownArgsList)));
+            }
+        }
+
+        void ValidateArgs()
+        {
+            var validProtocols = new[]
+            {
+                "http",
+                "https"
+            };
+
+            switch (executionMode)
+            {
+                case ExecutionMode.Extract:
+                case ExecutionMode.Install:
+                    if (!string.IsNullOrEmpty(ServiceControlUrl))  // param for sc url is optional. 
+                    {
+                        Uri scUri;
+                        if ((!Uri.TryCreate(ServiceControlUrl, UriKind.Absolute, out scUri)) || (!validProtocols.Contains(scUri.Scheme, StringComparer.OrdinalIgnoreCase)))
+                        {
+                            throw new Exception("The value specified for 'serviceControlUrl' is not a valid URL");
+                        }
+                    }
+                    goto case ExecutionMode.Run;
+
+                case ExecutionMode.Run:
+                    Uri spUri;
+                    if (!(Uri.TryCreate(Url, UriKind.Absolute, out spUri)) || (!validProtocols.Contains(spUri.Scheme, StringComparer.OrdinalIgnoreCase)))
+                    {
+                        throw new Exception("The value specified for 'url' is not a valid URL");
+                    }
+                    break;
             }
         }
 
@@ -251,10 +297,7 @@ namespace ServicePulse.Host.Hosting
             var sb = new StringBuilder();
 
             var helpText = String.Empty;
-            using (
-                var stream =
-                    Assembly.GetCallingAssembly()
-                        .GetManifestResourceStream("ServicePulse.Host.Hosting.Help.txt"))
+            using (var stream =Assembly.GetCallingAssembly().GetManifestResourceStream("ServicePulse.Host.Hosting.Help.txt"))
             {
                 if (stream != null)
                 {

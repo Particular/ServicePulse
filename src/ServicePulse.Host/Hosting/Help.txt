@@ -5,6 +5,8 @@ USAGE:
    ServicePulse.Host.exe --uninstall [options]
    ServicePulse.Host.exe --extract [options]
    ServicePulse.Host.exe [--url="http://localhost:9090"] [--serviceControlUrl="http://localhost:8080/api"]
+
+Command line arguments are case-insensitive. 
 																
 INSTALL OPTIONS:
 

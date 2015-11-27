@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineTests\CaseLessOptionSetTests.cs" />
+    <Compile Include="CommandLineTests\HostArgsTests.cs" />
     <Compile Include="VerifyAppConstantsJSTextReplacement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -84,7 +86,12 @@
     <Content Include="tests\js\_references.js" />
     <Content Include="tests\js\services\services.spec.js" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ServicePulse.Host\ServicePulse.Host.csproj">
+      <Project>{d120b791-bd1b-4e06-b4e1-69801a73209b}</Project>
+      <Name>ServicePulse.Host</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
