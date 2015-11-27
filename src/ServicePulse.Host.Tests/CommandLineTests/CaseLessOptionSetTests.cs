@@ -65,20 +65,16 @@
         [Test]
         public void Ensure_MultiSet_Option_Work()
         {
-            bool Help;
+            
             const string validUrl = @"http://localhost:1010/sp/";
             var executionMode = ExecutionMode.Run;
-            string serviceControlUrl;
-            string OutputPath;
-            string url;
-            string ServiceName;
-
+            
             var installOptions = new CaseLessOptionSet
             {
                 {
                     "?|h|help",
                     "Help about the command line options.",
-                    key => { Help = true; }
+                    key => { }
                 },
                 {
                     "i|install",
@@ -88,17 +84,17 @@
                 {
                     "servicename=",
                     @"Specify the service name for the installed service.",
-                    s => { ServiceName = s; }
+                    s => {  }
                 },
                 {
                     "servicecontrolurl=",
-                    @"Configures the service control url."
-                    , s => { serviceControlUrl = s; }
+                    @"Configures the service control url.",
+                    s => {  }
                 },
                 {
                     "url=",
-                    @"Configures ServicePulse to listen on the specified url."
-                    , s => { url = s; }
+                    @"Configures ServicePulse to listen on the specified url.",
+                    s => {  }
                 }
             };
 
@@ -106,26 +102,24 @@
             var extractOptions = new CaseLessOptionSet
             {
                 {
-                    "?|h|help", "Help about the command line options.", key => { Help = true; }
+                    "?|h|help",
+                    "Help about the command line options.",
+                    key => { }
                 },
                 {
                     "e|extract",
-                    @"Extract files to be installed in a Web Server."
-                    , s =>
-                    {
-                      
-                        executionMode = ExecutionMode.Extract;
-                    }
+                    @"Extract files to be installed in a Web Server.",
+                    s => {executionMode = ExecutionMode.Extract;}
                 },
                 {
                     "servicecontrolurl=",
-                    @"Configures the service control url."
-                    , s => { serviceControlUrl = s; }
+                    @"Configures the service control url.",
+                    s => { }
                 },
                 {
                     "outpath=",
-                    @"The output path to extract files to. By default it extracts to the current directory."
-                    , s => { OutputPath = s; }
+                    @"The output path to extract files to. By default it extracts to the current directory.",
+                    s => {  }
                 }
             };
 
@@ -148,8 +142,6 @@
         [Test]
         public void ReturnsUnknownArguments()
         {
-            
-
             var unknownArgs = testOptions.Parse(new[] { "-test", "-unknown" });
             Assert.IsTrue(unknownArgs.Count == 1, "Unknown argument was not detected");
             Assert.IsTrue(unknownArgs[0].Equals("-unknown"), "Unknown argument was not returned");

@@ -1,7 +1,6 @@
-namespace ServicePulse.Host
+namespace ServicePulse.Host.Hosting
 {
     using System;
-    using ServicePulse.Host.Hosting;
 
     /// <summary>
     /// Extend the NDESK Optionset to be case insensitive
