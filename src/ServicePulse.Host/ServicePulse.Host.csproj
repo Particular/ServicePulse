@@ -67,6 +67,7 @@
     <Compile Include="Commands\ServiceCommand.cs" />
     <Compile Include="Commands\UninstallCommand.cs" />
     <Compile Include="Commands\ExtractAndUpdateConstantsCommand.cs" />
+    <Compile Include="Hosting\CaseLessOptionSet.cs" />
     <Compile Include="Hosting\Host.cs">
       <SubType>Component</SubType>
     </Compile>
