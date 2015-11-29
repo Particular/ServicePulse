@@ -3,6 +3,7 @@
 
     function controller(
         $scope,
+        $location,
         notifications,
         serviceControlService,
         version
@@ -18,6 +19,11 @@
             }
         });
 
+        $scope.isActive = function (viewLocation) {
+            var active = (viewLocation === $location.path());
+            return active;
+        };
+
         $scope.Version = version;
 
         $scope.notifications = notifications;
@@ -32,7 +38,7 @@
     };
 
     controller.$inject = [
-        '$scope', 'notifications', 'serviceControlService', 'version'
+        '$scope', '$location', 'notifications', 'serviceControlService', 'version'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

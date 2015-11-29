@@ -1,6 +1,6 @@
 ﻿<div class="sidebar-nav navbar-collapse">
     <ul class="nav nav-tabs nav-stacked main-menu">
-        <li>
+        <li ng-class="{ active: isActive('/dashboard') }">
             <a href="/#/dashboard">
                 <i class="fa fa-dashboard icon-white"></i>
                 <span class="hidden-sm">
@@ -8,7 +8,7 @@
                 </span>
             </a>
         </li>
-        <li>
+        <li ng-class="{ active: isActive('/endpoints') }">
             <a href="/#/endpoints">
                 <i class="fa fa-heart icon-white"></i>
                 <span class="hidden-sm">
@@ -16,7 +16,7 @@
                 </span>
             </a>
         </li>
-        <li>
+        <li ng-class="{ active: isActive('/failedMessages') }">
             <a href="/#/failedMessages">
                 <i class="fa fa-envelope icon-white"></i>
                 <span class="hidden-sm">
@@ -24,7 +24,7 @@
                 </span>
             </a>
         </li>
-        <li>
+        <li ng-class="{ active: isActive('/customChecks') }">
             <a href="/#/customChecks">
                 <i class="fa fa-check icon-white"></i>
                 <span class="hidden-sm">
@@ -32,7 +32,7 @@
                 </span>
             </a>
         </li>
-        <li>
+        <li ng-class="{ active: isActive('/configuration') }">
             <a href="/#/configuration">
                 <i class="fa fa-cog icon-white"></i>
                 <span class="hidden-sm">

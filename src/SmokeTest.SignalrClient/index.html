@@ -77,8 +77,6 @@
                 connection.error(function(error) {
                     console.log(error);
                     $('#discussion').append("<div class='card-panel orange'><span class='white-text'>" + error + "</span></div>");
-
-
                 });
 
                 connection.reconnected(function() {
