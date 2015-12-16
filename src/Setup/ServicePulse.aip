@@ -129,16 +129,17 @@
     <ROW Dialog_="Configuration" Control="TemplateSeqDlgDialogInitializer" Type="DialogInitializer" X="0" Y="0" Width="0" Height="0" Attributes="0" Order="-1" TextLocId="-" HelpLocId="-" ExtDataLocId="-"/>
     <ROW Dialog_="Configuration" Control="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Next]" Order="100" TextLocId="-" Options="1"/>
     <ROW Dialog_="Configuration" Control="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Order="200" TextLocId="-" Options="1"/>
-    <ROW Dialog_="Configuration" Control="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Attributes="1" Text="[ButtonText_Back]" Order="300" TextLocId="-" Options="1"/>
+    <ROW Dialog_="Configuration" Control="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Back]" Order="300" TextLocId="-" Options="1"/>
     <ROW Dialog_="Configuration" Control="BottomLine" Type="Line" X="0" Y="234" Width="372" Height="0" Attributes="1" Order="400"/>
     <ROW Dialog_="Configuration" Control="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Attributes="1048577" Text="[BannerBitmap]" Order="500"/>
-    <ROW Dialog_="Configuration" Control="Title" Type="Text" X="20" Y="15" Width="200" Height="15" Attributes="196611" Text="Configuration" TextStyle="[DlgTitleFont]" Order="600" TextLocId="Control.Text.ProgressDlg#Title"/>
-    <ROW Dialog_="Configuration" Control="Text_1" Type="Text" X="20" Y="96" Width="53" Height="8" Attributes="65539" Property="TEXT_1_PROP" Text="Port" TextStyle="DlgFontBold8" Order="700"/>
-    <ROW Dialog_="Configuration" Control="Edit_1" Type="Edit" X="79" Y="96" Width="32" Height="14" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="800"/>
-    <ROW Dialog_="Configuration" Control="Edit_2" Type="Edit" X="79" Y="159" Width="267" Height="14" Attributes="3" Property="INST_URI" Text="{260}" Order="900"/>
-    <ROW Dialog_="Configuration" Control="Text_2" Type="Text" X="20" Y="159" Width="59" Height="8" Attributes="65539" Property="TEXT_2_PROP" Text="Instance URI" TextStyle="DlgFontBold8" Order="1000"/>
-    <ROW Dialog_="Configuration" Control="Text_3" Type="Text" X="20" Y="74" Width="272" Height="22" Attributes="65539" Property="TEXT_3_PROP" Text="Specify the port number ServicePulse will listen on" Order="1100"/>
-    <ROW Dialog_="Configuration" Control="Text_4" Type="Text" X="20" Y="137" Width="272" Height="22" Attributes="65539" Property="TEXT_3_PROP_1" Text="Specify the URI that ServicePulse should use to connect to  ServiceControl" Order="1200"/>
+    <ROW Dialog_="Configuration" Control="Text_1" Type="Text" X="20" Y="96" Width="53" Height="31" Attributes="65539" Property="TEXT_1_PROP" Text="Port" TextStyle="DlgFontBold8" Order="600"/>
+    <ROW Dialog_="Configuration" Control="Edit_1" Type="Edit" X="47" Y="96" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
+    <ROW Dialog_="Configuration" Control="Edit_2" Type="Edit" X="109" Y="159" Width="237" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
+    <ROW Dialog_="Configuration" Control="Text_2" Type="Text" X="20" Y="159" Width="89" Height="53" Attributes="65539" Property="TEXT_2_PROP" Text="ServiceControl URI" TextStyle="DlgFontBold8" Order="900"/>
+    <ROW Dialog_="Configuration" Control="Text_3" Type="Text" X="20" Y="74" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP" Text="Specify the port number ServicePulse will listen on" Order="1000"/>
+    <ROW Dialog_="Configuration" Control="Text_4" Type="Text" X="20" Y="137" Width="272" Height="18" Attributes="65539" Property="TEXT_3_PROP_1" Text="Specify the URI that ServicePulse should use to connect to ServiceControl" Order="1100"/>
+    <ROW Dialog_="Configuration" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="ServicePulse Configuration" TextStyle="[DlgTitleFont]" Order="1200" TextLocId="Control.Text.FolderDlg#Title"/>
+    <ROW Dialog_="Configuration" Control="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Attributes="196611" Text="Adjust configuration settings" Order="1300" TextLocId="Control.Text.FolderDlg#Description"/>
     <ROW Dialog_="ExitDialog" Control="Title" Type="Text" X="135" Y="9" Width="220" Height="60" Attributes="196611" Text="Completing the [ProductName] [Wizard]" TextStyle="VerdanaBold13" Order="700" TextLocId="Control.Text.ExitDialog#Title" MsiKey="ExitDialog#Title"/>
     <ROW Dialog_="FatalError" Control="Title" Type="Text" X="135" Y="9" Width="220" Height="60" Attributes="196611" Text="The [ProductName] [Wizard] ended prematurely" TextStyle="VerdanaBold13" Order="800" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
     <ROW Dialog_="FolderDlg" Control="FolderLabel" Type="Text" X="18" Y="156" Width="348" Height="12" Attributes="3" Text="&amp;Folder:" Help="|" Order="200" TextLocId="Control.Text.FolderDlg#FolderLabel" HelpLocId="Control.Help.FolderDlg#FolderLabel" MsiKey="FolderDlg#FolderLabel"/>
