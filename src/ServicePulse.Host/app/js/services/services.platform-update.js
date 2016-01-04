@@ -12,7 +12,10 @@
                 .then(function(response) {
                     return response;
                 }, function(response) {
-                    return response;
+                    return {
+                        // suppress error
+                        data: []
+                    };
                 });
         };
 

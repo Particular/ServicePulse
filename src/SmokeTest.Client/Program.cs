@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NServiceBus;
 
 class Program
@@ -29,21 +30,38 @@ class Program
                 Console.WriteLine("-------------------------------------");
                 Console.WriteLine("[ A ] Send 1 good Message");
                 Console.WriteLine("[ B ] Send 10 bad Messages");
+                Console.WriteLine("[ C ] Send Infinite bad Messages ");
                 Console.WriteLine("[ Q ] Quit");
                 Console.WriteLine("-------------------------------------");
                 Console.Write("Make a Choice: ");
 
                 var key = Console.ReadKey();
                 Console.WriteLine();
+
+
+                var text = wordblob.LoremIpsum(5, 5, 1, 1, 1);
+
                 switch (key.Key)
                 {
                     case ConsoleKey.A:
-                        emulateFailures = false;
-                        count = 1;
+                        SendMessage(bus, false, text);
                         break;
                     case ConsoleKey.B:
-                        emulateFailures = true;
-                        count = 10;
+                        
+                        for (var i = 0; i < 10; i++)
+                        {
+                            SendMessage(bus, true, text);
+                        }
+                        break;
+                    case ConsoleKey.C:
+                        
+                        while (!Console.KeyAvailable)
+                        {
+                            SendMessage(bus, true, text);
+                            Task.Delay(200).Wait(); // 5 messages a second
+                            Console.WriteLine("Press any key to stop sending messages");
+                        }
+
                         break;
                     case ConsoleKey.Q:
                         exit = true;
@@ -54,24 +72,25 @@ class Program
                         
                 }
 
-                Console.ForegroundColor = ConsoleColor.Gray;
-
-                var text = wordblob.LoremIpsum(5, 5, 1, 1, 1);
-                for (var i = 0; i < count; i++)
-                {
-                    var id = Guid.NewGuid();
-
-                    bus.Send("SmokeTest.Server", new MyMessage
-                    {
-                        Id = id,
-                        KillMe = emulateFailures,
-                        SomeText = text
-                    });
-
-                    Console.WriteLine("Sent a new message with id: {0}", id.ToString("N"));
-                }
+                
+                
+                
 
             } while (!exit);
         }
+    }
+
+    private static void SendMessage(IBus bus, bool emulateFailures, string text)
+    {
+        var id = Guid.NewGuid();
+
+        bus.Send("SmokeTest.Server", new MyMessage
+        {
+            Id = id,
+            KillMe = emulateFailures,
+            SomeText = text
+        });
+
+        Console.WriteLine("Sent a new message with id: {0}", id.ToString("N"));
     }
 }
