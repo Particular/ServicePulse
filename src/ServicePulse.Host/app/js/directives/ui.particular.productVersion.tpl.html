@@ -6,9 +6,15 @@
             <li><a href="#" target="_blank">ServicePulse</a> <span class="greyNote"> <span class="vWord">Version</span> {{version}}</span></li>
         </ul>
 
-        <span ng-show="newversion == true">
+        <span ng-show="newspversion == true">
             <span class="newVersionLink">
-                <a href="{{newversionlink}}" title="Download ServicePulse" target="_blank">Get new version!</a>
+                <a href="{{newspversionlink}}" title="Download ServicePulse" target="_blank">Upgrade ServicePulse!</a>
+            </span>
+        </span>
+        
+        <span ng-show="newscversion == true">
+            <span class="newVersionLink">
+                <a href="{{newscversionlink}}" title="Download ServiceControl" target="_blank">Upgrade ServiceControl!</a>
             </span>
         </span>
 
