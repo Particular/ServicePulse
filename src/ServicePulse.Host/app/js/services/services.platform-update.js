@@ -7,12 +7,12 @@
         function getReleases() {
 
 
-            var service_product_urls = [
+            var serviceProductUrls = [
                 { product:'SP', url: '//platformupdate.particular.net/servicepulse.txt' },
                 { product: 'SC', url: '//platformupdate.particular.net/servicecontrol.txt' }
             ];
 
-            return $q.all(service_product_urls.map(function (item) {
+            return $q.all(serviceProductUrls.map(function (item) {
                 return $http({
                     method: 'GET',
                     url: item.url
@@ -21,7 +21,7 @@
           .then(function (results) {
               var resultObj = {};
               results.forEach(function (val, i) {
-                  resultObj[service_product_urls[i].product] = val.data;
+                  resultObj[serviceProductUrls[i].product] = val.data;
               });
               return resultObj;
           });
@@ -34,7 +34,7 @@
     }
 
     service.$inject = [
-        "$http", "$q", "scConfig"
+        "$http", "$q"
     ];
 
 
