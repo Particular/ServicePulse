@@ -19,11 +19,10 @@
                     });
                 }))
                 .then(function(results) {
-                    var resultObj = {};
-                    results.forEach(function(val, i) {
-                        resultObj[serviceProductUrls[i].product] = val.data;
-                    });
-                    return resultObj;
+                    return results.reduce(function (acc, val, i) {
+                        acc[serviceProductUrls[i].product] = val.data;
+                        return acc;
+                    }, {});
                 }, function () {
                     // swallow errors
                     return {};
