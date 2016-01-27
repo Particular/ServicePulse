@@ -14,10 +14,14 @@ public class MyHandler : IHandleMessages<MyMessage>
 
         if (!Program.emulateFailures)
         {
-            return;
+            RandomException(message.SomeText);
+        }
+        else
+        {
+            throw new InvalidOperationException(message + "Uh oh...Nulls are bad MK");
         }
 
-        RandomException(message.SomeText);
+        
     }
 
     static void RandomException(string message)

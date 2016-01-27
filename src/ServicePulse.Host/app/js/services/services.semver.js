@@ -28,6 +28,9 @@
                 var latest = this.parse(latestVersion.split('-')[0]);
                 var current = this.parse(currentVersion.split('-')[0]);
 
+                if (latest == null) return false;
+                if (current == null) return false;
+
                 if (latest.major !== current.major) {
                     return latest.major > current.major;
                 }

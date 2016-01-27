@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Host", "ServicePulse.Host\ServicePulse.Host.csproj", "{D120B791-BD1B-4E06-B4E1-69801A73209B}"
 EndProject
@@ -10,11 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "Setup\Setup.csproj", "{FA2792B9-B82D-4936-871E-16812FA60D13}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{CBD21A52-A2D6-45FF-B921-A0743CFB13F7}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chocolatey", "Chocolatey", "{13874AA4-8651-4C10-88B0-B7D390F31E9E}"
-	ProjectSection(SolutionItems) = preProject
-		..\packaging\chocolatey\Setup.Install.nuspec = ..\packaging\chocolatey\Setup.Install.nuspec
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Host.Tests", "ServicePulse.Host.Tests\ServicePulse.Host.Tests.csproj", "{113A09CC-9665-4E87-9FC7-7E5C8C0AFE71}"
 EndProject
