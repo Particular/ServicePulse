@@ -299,19 +299,6 @@
             }
         };
 
-        $scope.debugInServiceInsight = function(index) {
-            var messageId = $scope.model.failedMessages[index].message_id;
-            var dnsName = scConfig.service_control_url.toLowerCase();
-
-            if (dnsName.indexOf("https") === 0) {
-                dnsName = dnsName.replace("https://", "");
-            } else {
-                dnsName = dnsName.replace("http://", "");
-            }
-
-            $window.open("si://" + dnsName + "?search=" + messageId);
-        };
-
         var updateCountForFailedMessageNotification = function(previousCount, newCount) {
             var notificationText = ' new failed messages. Refresh the page to see them.';
             notifications.removeByText(previousCount + notificationText);

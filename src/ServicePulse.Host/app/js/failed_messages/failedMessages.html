@@ -156,7 +156,6 @@
                                         <a eat-click="" ng-show="row.panel === 3" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 0)"><i class="fa fa-minus-square action_icon"></i> Hide message body</a>
                                         <a eat-click="" ng-hide="row.panel === 3" class="btn btn-link btn-default btn-sm" ng-click="togglePanel(row, 3)"><i class="fa fa-plus-square action_icon"></i> Show message body</a>
                                         <a eat-click="" clip-copy="" data-clipboard-text="{{row.message_id}}" class="btn btn-link btn-default btn-sm"><span><i class="fa fa-clipboard action_icon"></i> Copy Id to clipboard</span></a>
-                                        <a eat-click="" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-default btn-sm" ng-click="debugInServiceInsight($index)"><i class="icon-service-insight"></i> Open in ServiceInsight</a>
                                     </div>
 
                                     <div class=" row">
