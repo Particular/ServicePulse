@@ -10,13 +10,17 @@
                 .getReleases()
                 .then(function (result) {
 
-                    if (result.data.length > 0) {
+                    if (result.hasOwnProperty('SP')) {
+                        if (semverService.isUpgradeAvailable($scope.version, result.SP[0]['tag'])) {
+                            $scope.newspversion = true;
+                            $scope.newspversionlink = result.SP[0]['release'];
+                        }
+                    }
 
-                        var upgrade = semverService.isUpgradeAvailable($scope.version, result.data[0]['tag']);
-
-                        if (upgrade) {
-                            $scope.newversion = true;
-                            $scope.newversionlink = result.data[0]['release'];
+                    if (result.hasOwnProperty('SC')) {
+                        if (semverService.isUpgradeAvailable($scope.scversion, result.SC[0]['tag'])) {
+                            $scope.newscversion = true;
+                            $scope.newscversionlink = result.SC[0]['release'];
                         }
                     }
                 });
