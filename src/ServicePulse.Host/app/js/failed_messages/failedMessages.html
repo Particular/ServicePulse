@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="col-sm-3 col-md-3">
 
-                                    <button type="button" class="btn btn-default btn-sm" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-archive"></i></button>
+                                    <button type="button" class="btn btn-default btn-sm" tooltip="Archive Group" ng-click="archiveExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry."><i class="fa fa-archive"></i></button>
                                     <button type="button" class="btn btn-default btn-sm" tooltip="Retry Group" ng-click="retryExceptionGroup(excGroup)" ng-disabled="excGroup.count == 0"><i class="fa fa-refresh"></i></button>
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
                 <div class="box-content">
                     <div class="btn-toolbar">
                         <button class="btn btn-default" ng-click="retrySelected()" ng-disabled="model.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{model.selectedIds.length}} selected</button>
-                        <button tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn btn-default" ng-click="archiveSelected()" ng-disabled="model.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{model.selectedIds.length}} selected</button>
+                        <button tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn btn-default" ng-click="archiveSelected()" ng-disabled="model.selectedIds.length == 0"  confirm-click="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry."><i class="fa fa-archive"></i> Archive {{model.selectedIds.length}} selected</button>
                         <div class="btn-group pull-right">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Sort by
