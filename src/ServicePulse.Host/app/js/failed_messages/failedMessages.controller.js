@@ -112,7 +112,7 @@
             return false;
         };
 
-        var selectGroupInternal = function(group, sort, changeToMessagesTab) {
+        var selectGroupInternal = function (group, sort, direction, changeToMessagesTab) {
             if ($scope.loadingData) {
                 return;
             }
@@ -126,15 +126,14 @@
             $scope.allMessagesLoaded = false;
             page = 1;
 
-            $scope.loadMoreResults(group, sort);
+            $scope.loadMoreResults(group, sort, direction);
         };
 
-        $scope.selectGroup = function(group, sort) {
-
-            selectGroupInternal(group, sort, true);
+        $scope.selectGroup = function (group, sort, direction) {
+            selectGroupInternal(group, sort, direction, true);
         };
 
-        $scope.loadMoreResults = function(group, sort) {
+        $scope.loadMoreResults = function (group, sort, direction) {
             $scope.allMessagesLoaded = $scope.model.failedMessages.length >= group.count;
 
             if ($scope.allMessagesLoaded || $scope.loadingData) {
@@ -145,11 +144,11 @@
 
             var allExceptionsGroupSelected = (!group || !group.id);
             if (allExceptionsGroupSelected) {
-                serviceControlService.getFailedMessages($routeParams.sort, page).then(function(response) {
+                serviceControlService.getFailedMessages(sort || $routeParams.sort, page, direction).then(function (response) {
                     processLoadedMessages(response.data);
                 });
             } else {
-                serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page).then(function(response) {
+                serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page, direction).then(function (response) {
                     processLoadedMessages(response.data);
                 });
             }
