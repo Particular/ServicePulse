@@ -58,6 +58,10 @@
                 });
         };
 
+        var setSortButtonText = function (sort, direction) {
+            $scope.model.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Sent") + " " + (direction === 'asc' ? "ASC" : "DESC");
+        }
+
         $scope.init = function() {
             page = 1;
 
@@ -68,7 +72,9 @@
             $scope.model.newMessages = 0;
             $scope.model.activePageTab = "messages";
             $scope.model.sort = "time_sent";
-            $scope.model.direction = "asc";
+            $scope.model.direction = "desc";
+
+            setSortButtonText($scope.model.sort, $scope.model.direction);
 
             if ($scope.loadingData) {
                 return;
@@ -117,6 +123,7 @@
         var selectGroupInternal = function (group, sort, direction, changeToMessagesTab) {
             $scope.model.sort = sort;
             $scope.model.direction = direction;
+            setSortButtonText(sort, direction);
 
             if ($scope.loadingData) {
                 return;
