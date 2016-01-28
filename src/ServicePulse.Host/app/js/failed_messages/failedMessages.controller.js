@@ -43,7 +43,7 @@
                         // need a map in some ui state for controlling animations
                         var exgroups = response.data.map(function(obj) {
                             var nObj = obj;
-                            nObj.workflow_state = createWorkflowState('ready',  '');
+                            nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;
                         });
 
@@ -58,6 +58,10 @@
                 });
         };
 
+        var setSortButtonText = function (sort, direction) {
+            $scope.model.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Sent") + " " + (direction === 'asc' ? "ASC" : "DESC");
+        }
+
         $scope.init = function() {
             page = 1;
 
@@ -67,6 +71,10 @@
             $scope.allMessagesLoaded = false;
             $scope.model.newMessages = 0;
             $scope.model.activePageTab = "messages";
+            $scope.model.sort = "time_sent";
+            $scope.model.direction = "desc";
+
+            setSortButtonText($scope.model.sort, $scope.model.direction);
 
             if ($scope.loadingData) {
                 return;
@@ -112,7 +120,11 @@
             return false;
         };
 
-        var selectGroupInternal = function(group, sort, changeToMessagesTab) {
+        var selectGroupInternal = function (group, sort, direction, changeToMessagesTab) {
+            $scope.model.sort = sort;
+            $scope.model.direction = direction;
+            setSortButtonText(sort, direction);
+
             if ($scope.loadingData) {
                 return;
             }
@@ -126,15 +138,14 @@
             $scope.allMessagesLoaded = false;
             page = 1;
 
-            $scope.loadMoreResults(group, sort);
+            $scope.loadMoreResults(group, sort, direction);
         };
 
-        $scope.selectGroup = function(group, sort) {
-
-            selectGroupInternal(group, sort, true);
+        $scope.selectGroup = function(group, sort, direction) {
+            selectGroupInternal(group, sort, direction, true);
         };
 
-        $scope.loadMoreResults = function(group, sort) {
+        $scope.loadMoreResults = function(group) {
             $scope.allMessagesLoaded = $scope.model.failedMessages.length >= group.count;
 
             if ($scope.allMessagesLoaded || $scope.loadingData) {
@@ -145,11 +156,18 @@
 
             var allExceptionsGroupSelected = (!group || !group.id);
             if (allExceptionsGroupSelected) {
-                serviceControlService.getFailedMessages($routeParams.sort, page).then(function(response) {
+                serviceControlService.getFailedMessages(
+                    $scope.model.sort,
+                    page,
+                    $scope.model.direction).then(function (response) {
                     processLoadedMessages(response.data);
                 });
             } else {
-                serviceControlService.getFailedMessagesForExceptionGroup(group.id, sort || $routeParams.sort, page).then(function(response) {
+                serviceControlService.getFailedMessagesForExceptionGroup(
+                    group.id,
+                    $scope.model.sort,
+                    page,
+                    $scope.model.direction).then(function (response) {
                     processLoadedMessages(response.data);
                 });
             }
@@ -229,16 +247,16 @@
 
         $scope.testSuccess = function(group) {
 
-          //  <!--<button type="button" class="btn btn-default btn-sm" tooltip="Test" ng-click="testSuccess(excGroup)"><i class="fa fa-smile-o"></i></button>-->
+            //  <!--<button type="button" class="btn btn-default btn-sm" tooltip="Test" ng-click="testSuccess(excGroup)"><i class="fa fa-smile-o"></i></button>-->
 
             group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessagesService.wait()
                 .then(function(message) {
-                    group.workflow_state = createWorkflowState('success',  message);
+                    group.workflow_state = createWorkflowState('success', message);
                 }, function(message) {
-                    group.workflow_state = createWorkflowState('error',  message);
+                    group.workflow_state = createWorkflowState('error', message);
                 }, function(e) {
-                    group.workflow_state = createWorkflowState('working',  'working',  10, e);
+                    group.workflow_state = createWorkflowState('working', 'working', 10, e);
                 })
                 .finally(function() {
 
@@ -357,7 +375,7 @@
             notifications.pushForCurrentRoute('Messages from group \'' + event.group_name + '\' were successfully archived.', 'info');
         }));
 
-        $scope.$on('$destroy', function () {
+        $scope.$on('$destroy', function() {
             for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
                 subscriptionDisposalMethods[i]();
             }

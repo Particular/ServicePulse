@@ -578,7 +578,7 @@ a.brand span {
   	z-index: 1000;
   	display: none;
   	float: left;
-  	min-width: 160px;
+  	min-width: 240px;
 	max-width: 300px;
   	padding: 0px 0;
   	margin: 2px 0 0;
@@ -2300,4 +2300,18 @@ footer p {
 
 .icon-red {
   background-image: url("../img/glyphicons-halflings-red.png");
+}
+
+.versionInfo {
+    margin-top: 18px;
+    margin-left: 16px;
+}
+
+.newVersionLink {
+    color: #646464;
+    margin-bottom: 12px;
+}
+
+.newVersionLink a {
+    color: #ddd;
 }
