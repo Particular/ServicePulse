@@ -29,8 +29,8 @@
             });
         };
 
-        function getFailedMessages(sortBy, page) {
-            var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved&page=' + page + '&sort=' + sortBy);
+        function getFailedMessages(sortBy, page, direction) {
+            var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
             return $http.get(url).then(function(response) {
                 return {
                     data: response.data,
