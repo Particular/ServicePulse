@@ -2,30 +2,40 @@
 (function(window, angular, undefined) {
     "use strict";
 
-    function service($http, scConfig) {
+    function service($http, $q) {
 
-        function _getReleases() {
-            return $http
-                .get(scConfig.service_pulse_url, {
-                     responseType: "json"
-                })
-                .then(function(response) {
-                    return response;
-                }, function(response) {
-                    return {
-                        // suppress error
-                        data: []
-                    };
+        function getReleases() {
+
+
+            var serviceProductUrls = [
+                { product: 'SP', url: '//platformupdate.particular.net/servicepulse.txt' },
+                { product: 'SC', url: '//platformupdate.particular.net/servicecontrol.txt' }
+            ];
+
+            return $q.all(serviceProductUrls.map(function(item) {
+                    return $http({
+                        method: 'GET',
+                        url: item.url
+                    });
+                }))
+                .then(function(results) {
+                    return results.reduce(function (acc, val, i) {
+                        acc[serviceProductUrls[i].product] = val.data;
+                        return acc;
+                    }, {});
+                }, function () {
+                    // swallow errors
+                    return {};
                 });
         };
 
         return {
-            getReleases: _getReleases
+            getReleases: getReleases
         };
     }
 
     service.$inject = [
-        "$http", "scConfig"
+        "$http", "$q"
     ];
 
 

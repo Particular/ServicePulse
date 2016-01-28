@@ -36,13 +36,15 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="chocolatey\chocolateyInstall.ps1" />
     <None Include="chocolatey\chocolateyUninstall.ps1" />
     <None Include="chocolatey\elevatedUninstall.ps1" />
     <None Include="packages.config" />
     <None Include="ServicePulse.aip" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceFiles Include="res\**\*.*" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'Release' ">
@@ -51,7 +53,7 @@
       <AdvancedInstallerExe>"$(AdvancedInstallerPath)bin\x86\AdvancedInstaller.com"</AdvancedInstallerExe>
     </PropertyGroup>
     <Copy SourceFiles="ServicePulse.aip" DestinationFolder="$(IntermediateOutputPath)" />
-    <Copy SourceFiles="res\ServicePulse.ico" DestinationFolder="$(IntermediateOutputPath)res\" />
+    <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(IntermediateOutputPath)res\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)ServicePulse.aip /NewPathVariable -name PROJECT_PATH -value $(SolutionDir)Setup -valuetype Folder" />
     <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)ServicePulse.aip /NewPathVariable -name SP_PATH -value $(SolutionDir)ServicePulse.Host\bin\$(Configuration) -valuetype Folder" />
     <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)ServicePulse.aip /NewPathVariable -name CUSTOMACTIONS_PATH -value $(SolutionDir)ServicePulse.Install.CustomActions\bin\$(Configuration) -valuetype Folder" />
