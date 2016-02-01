@@ -2,13 +2,30 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
-    function Service($rootScope, $interpolate) {
+    function Service($rootScope, $interpolate,  toastr) {
 
         var notifications = {
             'STICKY': [],
             'ROUTE_CURRENT': [],
             'ROUTE_NEXT': []
         };
+
+
+        function success(message, title) {
+            toastr.success(message, title || 'Success');
+        }
+
+        function info(message, title) {
+            toastr.info(message, title || 'Information');
+        }
+        
+        function warning(message, title) {
+            toastr.warning(message, title || 'Warning');
+        }
+
+        function error(message, title) {
+            toastr.error(message, title || 'Error');
+        }
 
         function addNotification(notificationsArray, notificationObj) {
             
@@ -92,13 +109,18 @@
             pushForNextRoute: pushForNextRoute,
             remove: remove,
             removeByText: removeByText,
-            removeAll: removeAll
+            removeAll: removeAll,
+            // ------ toastr
+            success: success,
+            info: info,
+            warning: warning,
+            error: error
         };
 
         return service;
     }
 
-    Service.$inject = ['$rootScope', '$interpolate'];
+    Service.$inject = ['$rootScope', '$interpolate', 'toastr'];
 
     angular.module('services.notifications', [])
         .factory('notifications', Service);

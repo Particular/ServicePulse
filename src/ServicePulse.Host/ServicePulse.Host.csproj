@@ -85,6 +85,12 @@
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
     <Content Include="app\js\configuration\configuration.service.js" />
+    <Content Include="app\lib\angular\angular-toastr.css" />
+    <Content Include="app\lib\angular\angular-toastr.js" />
+    <Content Include="app\lib\angular\angular-toastr.min.css" />
+    <Content Include="app\lib\angular\angular-toastr.min.js" />
+    <Content Include="app\lib\angular\angular-toastr.tpls.js" />
+    <Content Include="app\lib\angular\angular-toastr.tpls.min.js" />
     <Content Include="app\lib\angular\ui-bootstrap-tpls-0.14.3.min.js" />
     <Content Include="app\css\font-awesome\css\font-awesome.css" />
     <Content Include="app\css\font-awesome\css\font-awesome.min.css" />

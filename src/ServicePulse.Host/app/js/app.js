@@ -6,6 +6,7 @@
         'ngAnimate',
         'ngSanitize',
         'ngClipboard',
+        'toastr',
         'ui.bootstrap',
         'infinite-scroll',
         'services',
