@@ -227,3 +227,21 @@ ul.nav-tabs > li > a {
     -o-animation:0.5s flipInX ease;
     animation: 1s flipInX ease;
 }
+
+
+/* Sidebar version update colour*/
+
+
+.versionInfo {
+    margin-top: 18px;
+    margin-left: 16px;
+}
+
+.newVersionLink {
+    color: #646464;
+    margin-bottom: 12px;
+}
+
+.newVersionLink a {
+    color: #ddd;
+}

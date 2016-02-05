@@ -54,6 +54,9 @@
                     if (item.hasOwnProperty('heartbeat_information') && item.heartbeat_information.reported_status === 'beating') {
                         if (activeIndex === -1) {
                             $scope.model.active.push(item);
+                        } else {
+                            var activeitem = $scope.model.active[activeIndex];
+                            activeitem.heartbeat_information.last_report_at = item.heartbeat_information.last_report_at;
                         }
                         if (inactiveIndex !== -1) {
                             $scope.model.inactive.splice(inactiveIndex, 1);
