@@ -2301,17 +2301,3 @@ footer p {
 .icon-red {
   background-image: url("../img/glyphicons-halflings-red.png");
 }
-
-.versionInfo {
-    margin-top: 18px;
-    margin-left: 16px;
-}
-
-.newVersionLink {
-    color: #646464;
-    margin-bottom: 12px;
-}
-
-.newVersionLink a {
-    color: #ddd;
-}
