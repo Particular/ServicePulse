@@ -84,7 +84,11 @@
   <ItemGroup>
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
+    <Content Include="app\js\app.logging.js" />
     <Content Include="app\js\configuration\configuration.service.js" />
+    <Content Include="app\js\services\factory.listener.js" />
+    <Content Include="app\js\services\factory.notifier.js" />
+    <Content Include="app\js\services\service.toast.js" />
     <Content Include="app\lib\angular\ui-bootstrap-tpls-0.14.3.min.js" />
     <Content Include="app\css\font-awesome\css\font-awesome.css" />
     <Content Include="app\css\font-awesome\css\font-awesome.min.css" />
@@ -220,6 +224,8 @@
     <Content Include="app\js\app.js" />
     <Content Include="app\js\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
+    <Content Include="app\lib\toaster.min.css" />
+    <Content Include="app\lib\toaster.min.js" />
     <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.js" />
     <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.js" />
     <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.js" />
