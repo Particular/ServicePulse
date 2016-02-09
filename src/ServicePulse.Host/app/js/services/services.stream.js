@@ -24,11 +24,11 @@
                 $log.info('SignalR started');
 
                 connection.error(function (error) {
-                    notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'danger', { error: error });
+                    notifications.error('Lost connection to ServiceControl! Error: '+error);
                 });
 
                 connection.reconnected(function () {
-                    notifications.pushForCurrentRoute('Reconnected to ServiceControl', 'info');
+                    notifications.info('Reconnected to ServiceControl');
                 });
 
                 connection.stateChanged(function (change) {
@@ -41,7 +41,7 @@
 
             })
             .fail(function () {
-                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scConfig.service_control_url });
+                notifications.error('Can\'t connect to ServiceControl ' + scConfig.service_control_url );
             });
 
         function callSubscribers(messageType, message) {

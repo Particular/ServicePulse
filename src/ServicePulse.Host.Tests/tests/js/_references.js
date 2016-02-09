@@ -4,6 +4,7 @@
 /// <reference path="../../../servicepulse.host/app/lib/angular/angular-route.js" />
 /// <reference path="../../../servicepulse.host/app/lib/angular/angular-animate.js" />
 /// <reference path="../../../servicepulse.host/app/lib/angular/angular-sanitize.js" />
+/// <reference path="../../../servicepulse.host/app/lib/angular/angular-toastr.tpls.js" />
 /// <reference path="../../../servicepulse.host/app/lib/ng-infinite-scroll.min.js" />
 /// <reference path="../../../servicepulse.host/app/lib/page-width-functions.js" />
 /// <reference path="../../../servicepulse.host/app/lib/zeroclipboard-2.2.0/zeroclipboard.core.min.js" />
