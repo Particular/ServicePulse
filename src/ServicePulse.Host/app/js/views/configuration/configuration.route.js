@@ -1,11 +1,10 @@
 ﻿; (function (window, angular, undefined) {
-    
     'use strict';
 
     function routeProvider($routeProvider) {
-        $routeProvider.when('/dashboard', {
-            templateUrl: 'js/dashboard/dashboard.html',
-            controller: 'DashboardCtrl',
+        $routeProvider.when('/configuration', {
+            templateUrl: 'js/views/configuration/configuration.html',
+            controller: 'ConfigurationCtrl',
             controllerAs: 'vm'
         });
     };
@@ -14,7 +13,7 @@
         '$routeProvider'
     ];
 
-    angular.module('dashboard')
+    angular.module('configuration.route', [])
         .config(routeProvider);
 
 } (window, window.angular));

@@ -12,7 +12,7 @@ describe("Unit: Uri Service ", function() {
 
         it('should contain a uri service',
             inject(function(uri) {
-                expect(typeof (uri) == typeof(undefined)).toEqual(false);;
+                expect(typeof (uri) == typeof(undefined)).toEqual(false);
             }));
 
         it('should make a url for eventlogitems', inject(function(uri) {

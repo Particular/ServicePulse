@@ -85,7 +85,7 @@
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
     <Content Include="app\js\app.logging.js" />
-    <Content Include="app\js\configuration\configuration.service.js" />
+    <Content Include="app\js\views\configuration\configuration.service.js" />
     <Content Include="app\js\services\factory.listener.js" />
     <Content Include="app\js\services\factory.notifier.js" />
     <Content Include="app\js\services\service.toast.js" />
@@ -156,15 +156,15 @@
     <Content Include="app\js\app.constants.js" />
     <Content Include="app\js\app.controller.js" />
     <Content Include="app\js\app.route.js" />
-    <Content Include="app\js\configuration\configuration.controller.js" />
-    <Content Include="app\js\configuration\configuration.module.js" />
-    <Content Include="app\js\configuration\configuration.route.js" />
-    <Content Include="app\js\configuration\configuration.html" />
-    <Content Include="app\js\custom_checks\customChecks.controller.js" />
-    <Content Include="app\js\custom_checks\customChecks.module.js" />
-    <Content Include="app\js\custom_checks\customChecks.route.js" />
-    <Content Include="app\js\dashboard\dashboard.module.js" />
-    <Content Include="app\js\dashboard\dashboard.route.js" />
+    <Content Include="app\js\views\configuration\configuration.controller.js" />
+    <Content Include="app\js\views\configuration\configuration.module.js" />
+    <Content Include="app\js\views\configuration\configuration.route.js" />
+    <Content Include="app\js\views\configuration\configuration.html" />
+    <Content Include="app\js\views\custom_checks\customChecks.controller.js" />
+    <Content Include="app\js\views\custom_checks\customChecks.module.js" />
+    <Content Include="app\js\views\custom_checks\customChecks.route.js" />
+    <Content Include="app\js\views\dashboard\dashboard.module.js" />
+    <Content Include="app\js\views\dashboard\dashboard.route.js" />
     <Content Include="app\js\directives\ui.particular.eatclick.js" />
     <Content Include="app\js\directives\ngClip.js" />
     <Content Include="app\js\directives\ui.particular.productVersion.js" />
@@ -174,22 +174,22 @@
     <Content Include="app\js\directives\ui.particular.tab.js" />
     <Content Include="app\js\directives\ui.particular.tabset.js" />
     <Content Include="app\js\directives\ui.particular.tabset.tpl.html" />
-    <Content Include="app\js\endpoints\endpoints.controller.js" />
-    <Content Include="app\js\endpoints\endpoints.route.js" />
-    <Content Include="app\js\event_log_items\eventLogItems.tpl.html" />
-    <Content Include="app\js\custom_checks\customChecks.html" />
+    <Content Include="app\js\views\endpoints\endpoints.controller.js" />
+    <Content Include="app\js\views\endpoints\endpoints.route.js" />
+    <Content Include="app\js\views\event_log_items\eventLogItems.tpl.html" />
+    <Content Include="app\js\views\custom_checks\customChecks.html" />
     <Content Include="app\js\directives\ui.particular.hud.js" />
     <Content Include="app\js\directives\ui.particular.hud.tpl.html" />
     <Content Include="app\js\directives\ui-bootstrap-custom-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-0.6.0.min.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
-    <Content Include="app\js\endpoints\endpoints.module.js" />
-    <Content Include="app\js\failed_messages\failedMessages.html" />
-    <Content Include="app\js\failed_messages\failedMessages.controller.js" />
-    <Content Include="app\js\failed_messages\failedMessages.module.js" />
-    <Content Include="app\js\failed_messages\failedMessages.route.js" />
-    <Content Include="app\js\failed_messages\failedMessages.service.js" />
+    <Content Include="app\js\views\endpoints\endpoints.module.js" />
+    <Content Include="app\js\views\failed_messages\failedMessages.html" />
+    <Content Include="app\js\views\failed_messages\failedMessages.controller.js" />
+    <Content Include="app\js\views\failed_messages\failedMessages.module.js" />
+    <Content Include="app\js\views\failed_messages\failedMessages.route.js" />
+    <Content Include="app\js\views\failed_messages\failedMessages.service.js" />
     <Content Include="app\js\services\services.platform-update.js" />
     <Content Include="app\js\services\services.semver.js" />
     <Content Include="app\js\services\services.module.js" />
@@ -222,7 +222,7 @@
     <EmbeddedResource Include="Hosting\Help.txt" />
     <Content Include="app\css\app.css" />
     <Content Include="app\js\app.js" />
-    <Content Include="app\js\event_log_items\eventLogItems.js" />
+    <Content Include="app\js\views\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
     <Content Include="app\lib\toaster.min.css" />
     <Content Include="app\lib\toaster.min.js" />
@@ -240,8 +240,8 @@
     <Content Include="app\lib\angular\angular.min.js" />
     <Content Include="app\lib\moment.min.js" />
     <Content Include="app\NoIE.html" />
-    <Content Include="app\js\dashboard\dashboard.html" />
-    <Content Include="app\js\endpoints\endpoints.html" />
+    <Content Include="app\js\views\dashboard\dashboard.html" />
+    <Content Include="app\js\views\endpoints\endpoints.html" />
     <Content Include="app\lib\angular\angular-animate.min.js.map" />
     <Content Include="app\lib\angular\angular-route.min.js.map" />
     <Content Include="app\lib\angular\angular-sanitize.min.js.map" />
@@ -254,7 +254,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app\js\dashboard\dashboard.controller.js" />
+    <Content Include="app\js\views\dashboard\dashboard.controller.js" />
     <None Include="app\css\font-awesome\css\font-awesome.css.map" />
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.eot" />
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.ttf" />

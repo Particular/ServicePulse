@@ -3,7 +3,7 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/customChecks', {
-            templateUrl: 'js/custom_checks/customChecks.html',
+            templateUrl: 'js/views/custom_checks/customChecks.html',
             controller: 'CustomChecksCtrl',
             controllerAs: 'vm'
         });

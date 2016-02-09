@@ -2,7 +2,7 @@
 
     function routeProvider ($routeProvider) {
         $routeProvider.when('/failedMessages', {
-            templateUrl: 'js/failed_messages/failedMessages.html',
+            templateUrl: 'js/views/failed_messages/failedMessages.html',
             controller: 'FailedMessagesCtrl',
             controllerAs: 'vm'
         });
