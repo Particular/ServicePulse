@@ -17,7 +17,10 @@
         semverService,
         serviceControlService,
         failedMessagesService,
-        streamService) {
+        streamService,
+        notifyService) {
+
+        var notifier = notifyService();
 
         $scope.allFailedMessagesGroup = { 'id': undefined, 'title': 'All failed messages', 'count': 0 };
         $scope.selectedExceptionGroup = $scope.allFailedMessagesGroup;
@@ -94,7 +97,8 @@
                     }
                 });
 
-            serviceControlService.getFailedMessages($routeParams.sort, page).then(function(response) {
+            serviceControlService.getFailedMessages($routeParams.sort, page).then(function (response) {
+                notifier.notify('MessageFailuresUpdated', response.total);
                 $scope.allFailedMessagesGroup.count = response.total;
                 processLoadedMessages(response.data);
             });
@@ -394,7 +398,8 @@
         'semverService',
         'serviceControlService',
         'failedMessagesService',
-        'streamService'
+        'streamService',
+        'notifyService'
     ];
 
     angular

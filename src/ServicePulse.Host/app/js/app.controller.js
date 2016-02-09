@@ -2,7 +2,6 @@
     'use strict';
 
     function controller(
-        $rootScope,
         $scope,
         $log,
         $timeout,
@@ -46,7 +45,7 @@
         function customChecksUpdated(event, data) {
             $timeout(function () { //http://davidburgosonline.com/dev/2014/correctly-fix-angularjs-error-digest-already-in-progress/
                 data = (data === 0 || data === '0') ? undefined : data;
-                $rootScope.failedcustomchecks = data;
+                $scope.failedcustomchecks = data;
                 logit(data);
             });
         }
@@ -54,7 +53,7 @@
         function messageFailuresUpdated(event, data) {
             $timeout(function () {
                 data = (data === 0 || data === '0') ? undefined : data;
-                $rootScope.failedmessages = data;
+                $scope.failedmessages = data;
                 logit(data);
             });
         }
@@ -62,7 +61,7 @@
         function heartbeatsUpdated(event, data) {
             $timeout(function () {
                 data = (data === 0 || data === '0') ? undefined : data;
-                $rootScope.failedheartbeats = data.failing;
+                $scope.failedheartbeats = data.failing;
                 logit(data);
             });
         }
@@ -75,7 +74,7 @@
         var notifier = notifyService();
 
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
-        notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated')
+        notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
         notifier.subscribe($scope, function (event, data) { logit(data); }, 'SignalREvent');
         notifier.subscribe($scope, function (event, data) { logit(data); }, 'SignalRError');
@@ -118,7 +117,6 @@
     };
 
     controller.$inject = [
-        '$rootScope',
         '$scope',
         '$log',
         '$timeout',

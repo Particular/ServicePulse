@@ -3,84 +3,50 @@
     'use strict';
 
     function controller(
+        $scope,
 		$log,
-		$scope,
-		streamService,
-		serviceControlService
+		serviceControlService,
+        notifyService
 		) {
+
+        var notifier = notifyService();
 
 		$scope.model = { active_endpoints: 0, failing_endpoints: 0, number_of_failed_messages: 0, number_of_failed_checks: 0 };
 
-		var heartbeatsUpdated = new OutOfOrderPurger();
-		var failedMessageUpdated = new OutOfOrderPurger();
-		var customChecksUpdated = new OutOfOrderPurger();
-
 		serviceControlService.getHeartbeatStats().then(function (stat) {
-			$scope.model.active_endpoints = stat.active;
-			$scope.model.failing_endpoints = stat.failing;
-			heartbeatsUpdated.resetToNow();
+		    notifier.notify('HeartbeatsUpdated', {
+		        failing: stat.failing,
+		        active: stat.active
+		    });
 		});
 
 		serviceControlService.getTotalFailedMessages().then(function (response) {
-			$scope.model.number_of_failed_messages = response;
-			failedMessageUpdated.resetToNow();
+		    notifier.notify('MessageFailuresUpdated', response);
 		});
 
 		serviceControlService.getTotalFailingCustomChecks().then(function (response) {
-			$scope.model.number_of_failed_checks = response;
-			customChecksUpdated.resetToNow();
+		    notifier.notify('CustomChecksUpdated', response);
 		});
 
-        var subscriptionDisposalMethods = [];
+		notifier.subscribe($scope, function(event, data) {
+		     $scope.model.number_of_failed_checks = data;
+		}, 'CustomChecksUpdated');
 
-		subscriptionDisposalMethods.push(streamService.subscribe('CustomChecksUpdated', function (message) {
-			customChecksUpdated.runIfLatest(message, function () {
-				$scope.model.number_of_failed_checks = message.failed;
-			});
-		}));
+		notifier.subscribe($scope, function(event, data) {
+		     $scope.model.number_of_failed_messages = data;
+		}, 'MessageFailuresUpdated');
 
-		subscriptionDisposalMethods.push(streamService.subscribe('MessageFailuresUpdated', function (message) {
-			failedMessageUpdated.runIfLatest(message, function () {
-				$scope.model.number_of_failed_messages = message.total;
-			});
-		}));
-
-		subscriptionDisposalMethods.push(streamService.subscribe('HeartbeatsUpdated', function (message) {
-			heartbeatsUpdated.runIfLatest(message, function () {
-				$scope.model.failing_endpoints = message.failing;
-				$scope.model.active_endpoints = message.active;
-			});
-		}));
-
-		$scope.$on('$destroy', function () {
-            for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
-                subscriptionDisposalMethods[i]();
-            }
-		});
-
-		function OutOfOrderPurger() {
-			var latestData = Date.now();
-
-			this.resetToNow = function () {
-				latestData = Date.now();
-			};
-
-			this.runIfLatest = function (message, func) {
-				var raisedAt = new Date(Date.parse(message.raised_at));
-
-				if (raisedAt > latestData) {
-					latestData = raisedAt;
-					func();
-				}
-			};
-		}
+		notifier.subscribe($scope, function (event, data) {
+		    $scope.model.active_endpoints = data.active;
+		    $scope.model.failing_endpoints = data.failing;
+		}, 'HeartbeatsUpdated');
     }
 
     controller.$inject = [
+        '$scope',
         '$log',
-		'$scope',
-		'streamService',
-		'serviceControlService'
+		'serviceControlService',
+        'notifyService'
     ];
 
     angular.module('dashboard')
