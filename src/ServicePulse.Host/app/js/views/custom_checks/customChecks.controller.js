@@ -1,7 +1,10 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
-    function controller($scope, serviceControlService, streamService) {
+    function controller(
+        $scope,
+        serviceControlService,
+        notifyService) {
 
         $scope.model = { data: [], total: 0 };
         $scope.loadingData = false;
@@ -22,21 +25,9 @@
             serviceControlService.muteCustomChecks(row);
         };
 
-        var subscriptionDisposalMethods = [];
-
-        subscriptionDisposalMethods.push(streamService.subscribe('CustomChecksUpdated', function () {
-            reloadData();
-        }));
-
-        subscriptionDisposalMethods.push(streamService.subscribe('CustomCheckDeleted', function () {
-            reloadData();
-        }));
-
-        $scope.$on('$destroy', function () {
-            for (var i = 0; i < subscriptionDisposalMethods.length; i++) {
-                subscriptionDisposalMethods[i]();
-            }
-        });
+        var notifier = notifyService();
+        notifier.subscribe($scope, function (event, data) { reloadData(); }, 'CustomChecksUpdated');
+        notifier.subscribe($scope, function (event, data) { reloadData(); }, 'CustomCheckDeleted');
 
         function reloadData() {
             $scope.loadingData = true;
@@ -63,7 +54,7 @@
     controller.$inject = [
         '$scope',
         'serviceControlService',
-        'streamService'
+        'notifyService'
     ];
 
     angular.module('customChecks')

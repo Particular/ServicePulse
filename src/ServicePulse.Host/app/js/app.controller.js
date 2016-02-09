@@ -6,7 +6,6 @@
         $log,
         $timeout,
         $location,
-        notifications,
         serviceControlService,
         version,
         toastService,
@@ -21,7 +20,7 @@
 
         serviceControlService.checkLicense().then(function (isValid) {
             if (!isValid) {
-                notifications.pushSticky('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>', 'danger');
+                toastService.showToast('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>', 'error');
             }
         });
 
@@ -32,14 +31,8 @@
 
         $scope.Version = version;
 
-        $scope.notifications = notifications;
-
-        $scope.removeNotification = function (notification) {
-            notifications.remove(notification);
-        };
-
         $scope.$on('$routeChangeError', function (event, current, previous, rejection) {
-            notifications.pushForCurrentRoute('Route change error', 'danger', {}, { rejection: rejection });
+            toastService.showToast('Route change error', 'error');
         });
 
         function customChecksUpdated(event, data) {
@@ -67,7 +60,6 @@
         }
 
         function logit(data) {
-            toastService.showToast(data);
             $log.debug(data);
         }
 
@@ -76,16 +68,23 @@
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
-        notifier.subscribe($scope, function (event, data) { logit(data); }, 'SignalREvent');
-        notifier.subscribe($scope, function (event, data) { logit(data); }, 'SignalRError');
-        notifier.subscribe($scope, function (event, data) { logit('There was a problem retrieving your data'); }, 'HttpError');
+
+        notifier.subscribe($scope, function(event, data) {
+             logit(data);
+        }, 'SignalREvent');
+
+        notifier.subscribe($scope, function(event, data) {
+             logit(data);
+        }, 'SignalRError');
+
+        notifier.subscribe($scope, function(event, data) {
+             logit('There was a problem retrieving your data');
+        }, 'HttpError');
 
 
         // signalR Listener
         //var listener = signalRListener(scConfig.service_control_url);
         var listener = signalRListener('http://localhost:33333/api/messagestream');
-
-            
 
         listener.subscribe($scope, function (message) {
             notifier.notify('messageArrived', {
@@ -95,6 +94,15 @@
 
             toastService.showToast(message.title);
         });
+        
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify('SignalREvent', message);
+        }, 'SignalREvent');
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify('SignalREvent', message);
+        }, 'SignalREvent');
 
         listener.subscribe($scope, function (message) {
             notifier.notify('CustomChecksUpdated', message.failed);
@@ -121,7 +129,6 @@
         '$log',
         '$timeout',
         '$location',
-        'notifications',
         'serviceControlService',
         'version',
         'toastService',

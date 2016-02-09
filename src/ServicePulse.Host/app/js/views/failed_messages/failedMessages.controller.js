@@ -86,14 +86,14 @@
             $scope.loadingData = true;
 
             serviceControlService.getVersion()
-                .then(function(sc_version) {
-                    if (semverService.isSupported(sc_version, scVersionSupportingExceptionGroups)) {
+                .then(function(scVersion) {
+                    if (semverService.isSupported(scVersion, scVersionSupportingExceptionGroups)) {
                         $scope.model.displayGroupsTab = true;
                         $scope.model.activePageTab = "groups";
                         autoGetExceptionGroups();
                     } else {
-                        var SCneedsUpgradeMessage = 'You are using Service Control version ' + sc_version + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to unlock new functionality in ServicePulse.';
-                        notifications.pushForCurrentRoute(SCneedsUpgradeMessage, 'info');
+                        var scNeedsUpgradeMessage = 'You are using Service Control version ' + scVersion + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to unlock new functionality in ServicePulse.';
+                        notifications.pushForCurrentRoute(scNeedsUpgradeMessage, 'info');
                     }
                 });
 

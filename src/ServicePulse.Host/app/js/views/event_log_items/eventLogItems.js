@@ -1,29 +1,33 @@
-; (function (window, angular, undefined) {
+;
+(function(window, angular, undefined) {
 
-    'use strict';
+    "use strict";
 
-    angular.module('eventLogItems', [])
-        .controller('EventLogItemsCtrl', ['$scope', 'serviceControlService', 'streamService', function ($scope, serviceControlService, streamService) {
+    function controller(
+        $scope,
+        serviceControlService,
+        notifyService) {
+        $scope.model = [];
+        $scope.loadingData = true;
 
-            $scope.model = [];
-            $scope.loadingData = true;
+        serviceControlService.getEventLogItems().then(function(eventLogItems) {
+            $scope.model = eventLogItems;
+            $scope.loadingData = false;
+        });
 
-            serviceControlService.getEventLogItems().then(function (eventLogItems) {
-                $scope.model = eventLogItems;
-                $scope.loadingData = false;
-            });
+        var notifier = notifyService();
+        notifier.subscribe($scope, function(event, data) {
+            $scope.model.push(angular.extend(data));
+        }, "EventLogItemAdded");
+    };
 
-            var subscriptionDisposalMethod = streamService.subscribe('EventLogItemAdded', function (message) {
-                processMessage(message);
-            });
+    controller.$inject = [
+        "$scope",
+        "serviceControlService",
+        "notifyService"
+    ];
 
-            $scope.$on('$destroy', function () {
-                subscriptionDisposalMethod();
-            });
+    angular.module("eventLogItems", [])
+        .controller("EventLogItemsCtrl", controller);
 
-            function processMessage(message) {
-                $scope.model.push(angular.extend(message));
-            }
-        }]);
-
-} (window, window.angular));
+}(window, window.angular));
