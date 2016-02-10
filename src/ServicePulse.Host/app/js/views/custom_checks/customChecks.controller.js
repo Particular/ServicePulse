@@ -26,8 +26,8 @@
         };
 
         var notifier = notifyService();
-        notifier.subscribe($scope, function (event, data) { reloadData(); }, 'CustomChecksUpdated');
-        notifier.subscribe($scope, function (event, data) { reloadData(); }, 'CustomCheckDeleted');
+        notifier.subscribe($scope, reloadData(), 'CustomChecksUpdated');
+        notifier.subscribe($scope, reloadData(), 'CustomCheckDeleted');
 
         function reloadData() {
             $scope.loadingData = true;

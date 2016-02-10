@@ -10,7 +10,7 @@
 
             function callSubscribers(eventName, message) {
                 var anon = (function (message) {
-                    this(message)
+                    this(message);
                 });
 
                 if (subscriptions.hasOwnProperty(eventName)) {
@@ -43,7 +43,7 @@
                         notifier.notify('SignalREvent', 'SignalR started');
 
                         connection.error(function (error) {
-                            notifier.notify('SignalRError', error);
+                            notifier.notify('SignalRError', "The was a problem communicating with ServiceControl.");
                         });
 
                         connection.reconnected(function () {
@@ -53,12 +53,12 @@
                         connection.stateChanged(function (change) {
 
                             if (change.newState === $jquery.signalR.connectionState.disconnected) {
-                                notifier.notify('SignalREvent', 'The server is offline');
+                                notifier.notify('SignalRError', 'The server is offline');
                             }
                         });
                     })
                     .fail(function () {
-                        notifier.notify('SignalREvent', 'Can not connect');
+                        notifier.notify('SignalRError', 'Can not connect to ServiceControl');
                     });
             }
 
