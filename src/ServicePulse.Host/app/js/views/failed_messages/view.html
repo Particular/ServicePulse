@@ -1,0 +1,42 @@
+﻿<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#/dashboard">Home</a>
+        </li>
+        <li>
+            <a href="#/failedGroups">Failed Messages</a>
+        </li>
+        <li>
+            {{vm.group.title}}
+        </li>
+    </ul>
+    <hr>
+</div>
+
+<div class="row">
+
+    <div class="failure-group failure-group-info" ng-show="vm.failedMessages.length === 0">
+        <h3>No Message Failures</h3>
+        <p>
+            There are currently no message failures
+        </p>
+    </div>
+
+    <div ng-show="vm.failedMessages.length > 0">
+        <h2>
+            Showing {{vm.failedMessages.length}} failed messages.
+        </h2>
+    </div>
+
+    <div class="failure-group failure-group-danger" ng-show="vm.failedMessages.length > 0" ng-repeat="message in vm.failedMessages">
+        <h3>{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</h3>
+        <p class="small">
+            <sp-moment date="{{message.time_sent}}">
+            </sp-moment>
+            <button type="button" class="btn btn-link pull-right" tooltip="Archive Group" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry."><i>Archive</i></button>
+            <button type="button" class="btn btn-link pull-right" tooltip="Retry Group" ><i>Retry</i></button>
+        </p>
+    </div>
+
+</div>

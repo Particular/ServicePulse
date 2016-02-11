@@ -1,7 +1,7 @@
 ﻿;(function (window, angular, undefined) { 'use strict';
 
     function routeProvider ($routeProvider) {
-        $routeProvider.when('/failedMessages', {
+        $routeProvider.when('/failedMessages/:groupID', {
             templateUrl: 'js/views/failed_messages/failedMessages.html',
             controller: 'FailedMessagesCtrl',
             controllerAs: 'vm'

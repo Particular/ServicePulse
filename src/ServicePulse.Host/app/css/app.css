@@ -245,3 +245,35 @@ ul.nav-tabs > li > a {
 .newVersionLink a {
     color: #ddd;
 }
+
+
+
+.failure-group {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: white;
+    border-color: #eee;
+    border-image: none;
+    border-radius: 3px;
+    border-style: solid;
+    border-width: 1px 1px 1px 5px;
+    margin: 20px 0;
+    padding: 0px 20px 10px 20px
+}
+
+.failure-group + .failure-group {
+    margin-top: -5px;
+}
+.failure-group-info {
+    border-left-color: #1b809e;
+}
+
+.failure-group-warning {
+    border-left-color: #aa6708;
+}
+
+.failure-group-danger {
+    border-left-color: #ce4844;
+}

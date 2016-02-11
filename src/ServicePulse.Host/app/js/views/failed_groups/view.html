@@ -1,0 +1,38 @@
+﻿<div>
+    <hr>
+    <ul class="breadcrumb">
+        <li>
+            <a href="#/dashboard">Home</a>
+        </li>
+        <li>
+            <a href="#/failedGroups">Failed Messages</a>
+        </li>
+    </ul>
+    <hr>
+</div>
+
+<div class="row">
+
+    <div class="failure-group failure-group-info" ng-show="vm.exceptionGroups.length === 0">
+        <h3>No Message Failures</h3>
+        <p>
+            There are currently no grouped message failures
+        </p>
+    </div>
+
+    <div ng-show="vm.exceptionGroups.length > 0">
+        <h2>
+            Showing {{vm.exceptionGroups.length}} failed messages groups. Messages are grouped by exception type and exception line of code.
+        </h2>
+    </div>
+
+    <div class="failure-group failure-group-danger" ng-show="vm.exceptionGroups.length > 0" ng-repeat="group in vm.exceptionGroups">
+        <h3><a ng-disabled="group.count == 0" ng-click="vm.viewExceptionGroup(group)"> {{group.title}}</a></h3>
+        <p class="small">
+            contains messages from <sp-moment date="{{group.last}}"></sp-moment> to <sp-moment date="{{group.first}}"></sp-moment>
+            <button type="button" class="btn btn-link pull-right" tooltip="Archive Group" ng-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry."><i>Archive Group</i></button>
+            <button type="button" class="btn btn-link pull-right" tooltip="Retry Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0"><i>Retry Group</i></button>
+        </p>
+    </div>
+
+</div>

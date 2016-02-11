@@ -11,11 +11,19 @@
         toastService,
         signalRListener,
         notifyService,
+        semverService,
         scConfig
         ) {
 
-        serviceControlService.getVersion().then(function (sc_version) {
-            $scope.SCVersion = sc_version;
+        var scVersionSupportingExceptionGroups = '1.6.0';
+
+        serviceControlService.getVersion()
+            .then(function (scVersion) {
+                $scope.SCVersion = scVersion;
+                if (!semverService.isSupported(scVersion, scVersionSupportingExceptionGroups)) {
+                    var scNeedsUpgradeMessage = 'You are using Service Control version ' + scVersion + '. Please, upgrade to version ' + scVersionSupportingExceptionGroups + ' or higher to unlock new functionality in ServicePulse.';
+                    toastService.showError(scNeedsUpgradeMessage);
+                }
         });
 
         serviceControlService.checkLicense().then(function (isValid) {
@@ -71,7 +79,11 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(data);
-            toastService.showWarning(data);
+            if (data === 'SignalR started') {
+                toastService.showInfo(data);
+            } else {
+                toastService.showWarning(data);
+            }
         }, 'SignalREvent');
 
         notifier.subscribe($scope, function(event, data) {
@@ -137,6 +149,7 @@
         'toastService',
         'signalRListener',
         'notifyService',
+        'semverService',
         'scConfig'
     ];
 
