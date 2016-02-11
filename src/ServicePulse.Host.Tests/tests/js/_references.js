@@ -4,6 +4,7 @@
 /// <reference path="../../../servicepulse.host/app/lib/angular/angular-route.js" />
 /// <reference path="../../../servicepulse.host/app/lib/angular/angular-animate.js" />
 /// <reference path="../../../servicepulse.host/app/lib/angular/angular-sanitize.js" />
+/// <reference path="../../../servicepulse.host/app/lib/angular/ngStorage.min.js" />
 /// <reference path="../../../servicepulse.host/app/lib/toaster.min.js" />
 /// <reference path="../../../servicepulse.host/app/lib/ng-infinite-scroll.min.js" />
 /// <reference path="../../../servicepulse.host/app/lib/page-width-functions.js" />
@@ -26,6 +27,9 @@
 /// <reference path="../../../servicepulse.host/app/js/services/services.service-control.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/services.stream.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/services.uri.js" />
+/// <reference path="../../../servicepulse.host/app/js/services/factory.listener.js" />
+/// <reference path="../../../servicepulse.host/app/js/services/factory.notifier.js" />
+/// <reference path="../../../servicepulse.host/app/js/services/factory.shareddata.js" />
 
 /// <reference path="../../../servicepulse.host/app/js/directives/ngclip.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/moment.js" />
@@ -44,10 +48,14 @@
 /// <reference path="../../../servicepulse.host/app/js/views/dashboard/dashboard.route.js" />
 /// <reference path="../../../servicepulse.host/app/js/views/dashboard/dashboard.controller.js" />
 
-/// <reference path="../../../servicepulse.host/app/js/views/failed_messages/failedmessages.module.js" />
-/// <reference path="../../../servicepulse.host/app/js/views/failed_messages/failedmessages.route.js" />
-/// <reference path="../../../servicepulse.host/app/js/views/failed_messages/failedmessages.controller.js" />
-/// <reference path="../../../servicepulse.host/app/js/views/failed_messages/failedmessages.service.js" />
+
+/// <reference path="../../../servicepulse.host/app/js/views/failed_groups/route.js" />
+/// <reference path="../../../servicepulse.host/app/js/views/failed_groups/controller.js" />
+/// <reference path="../../../servicepulse.host/app/js/views/failed_groups/service.js" />
+
+/// <reference path="../../../servicepulse.host/app/js/views/failed_messages/route.js" />
+/// <reference path="../../../servicepulse.host/app/js/views/failed_messages/controller.js" />
+/// <reference path="../../../servicepulse.host/app/js/views/failed_messages/service.js" />
 
 /// <reference path="../../../servicepulse.host/app/js/views/custom_checks/customchecks.module.js" />
 /// <reference path="../../../servicepulse.host/app/js/views/custom_checks/customchecks.route.js" />
