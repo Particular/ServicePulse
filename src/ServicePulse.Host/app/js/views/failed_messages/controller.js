@@ -26,10 +26,39 @@
 
 
         var processLoadedMessages = function (data) {
-            vm.failedMessages = vm.failedMessages.concat(data);
-            vm.allMessagesLoaded = (vm.failedMessages.length >= vm.group.count);
+            if (data.length > 0) {
+                var exgroups = data.map(function(obj) {
+                    var nObj = obj;
+                    nObj.panel = 0;
+                    return nObj;
+                });
+
+                vm.failedMessages = vm.failedMessages.concat(exgroups);
+                vm.allMessagesLoaded = (vm.failedMessages.length >= vm.group.count);
+                vm.page++;
+            }
             vm.loadingData = false;
-            vm.page++;
+        };
+
+
+        vm.togglePanel = function (message, panelnum) {
+            if (message.messageBody === undefined) {
+                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
+                    msg.messageBody = msg.data;
+                }, function () {
+                    message.bodyUnavailable = "message body unavailable";
+                });
+            }
+
+            if (message.messageHeaders === undefined) {
+                serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
+                    message.messageHeaders = msg.data[0].headers;
+                }, function () {
+                    message.headersUnavailable = "message headers unavailable";
+                });
+            }
+            message.panel = panelnum;
+            return false;
         };
 
         vm.loadMoreResults = function (group) {

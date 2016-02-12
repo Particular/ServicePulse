@@ -260,11 +260,18 @@ ul.nav-tabs > li > a {
     border-style: solid;
     border-width: 1px 1px 1px 5px;
     margin: 20px 0;
-    padding: 0px 20px 10px 20px
+    padding: 10px 20px;
 }
 
 .failure-group + .failure-group {
     margin-top: -5px;
+}
+
+.failure-group-heading {
+    font-size: 18px;
+    display: block;
+    color: #555;
+    text-align:left;
 }
 .failure-group-info {
     border-left-color: #1b809e;
@@ -276,4 +283,21 @@ ul.nav-tabs > li > a {
 
 .failure-group-danger {
     border-left-color: #ce4844;
+}
+
+.failure-group-count {
+    font-size: 15px;
+    display: block;
+    color: #777;
+    text-align: center;
+}
+.failure-group-count-text {
+    font-size: 10px;
+    display: block;
+    color: #777;
+    text-align: center;
+}
+
+pre {
+    white-space:pre-wrap;
 }
