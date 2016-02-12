@@ -30,10 +30,11 @@
     </div>
 
     <div class="failure-group failure-group-danger" ng-show="vm.failedMessages.length > 0" ng-repeat="message in vm.failedMessages">
-        <h2><strong>{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </strong><sp-moment date="{{message.time_sent}}"> </sp-moment></h2>
+        <h2><strong>{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</strong> failed <sp-moment date="{{message.time_sent}}"> </sp-moment>
+        </h2>
         <p class="small" title="In: {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}">in {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</p>
 
-        <p class="small">
+        <p class="small" ng-init="message.panel = 0">
 
             <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
                 <i>Hide stacktrace</i>
@@ -72,10 +73,10 @@
         <pre ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
         <table class="table" ng-show="message.panel === 2 && message.messageHeaders">
             <tbody>
-                <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
-                    <td nowrap="nowrap">{{header.key}}</td>
-                    <td><pre>{{header.value}}</pre></td>
-                </tr>
+            <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
+                <td nowrap="nowrap">{{header.key}}</td>
+                <td><pre>{{header.value}}</pre></td>
+            </tr>
             </tbody>
         </table>
         <div class="alert alert-info" ng-show="message.panel === 2 && message.headersUnavailable">{{message.headersUnavailable}}</div>
@@ -88,3 +89,6 @@
         </p>
     </div>
 </div>
+
+<div class="alert alert-success" ng-show="!vm.loadingData && vm.allFailedMessagesGroup.count == 0">No failed messages</div>
+<div class="loading" ng-show="vm.loadingData"></div>
