@@ -3,6 +3,7 @@
 
     function controller(
         $scope,
+        sharedDataService,
         serviceControlService,
         notifyService) {
 
@@ -53,6 +54,7 @@
 
     controller.$inject = [
         '$scope',
+        'sharedDataService',
         'serviceControlService',
         'notifyService'
     ];

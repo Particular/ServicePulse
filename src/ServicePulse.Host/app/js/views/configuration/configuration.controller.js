@@ -11,7 +11,7 @@
     function controller(
         $scope,
         $window,
-        $timeout,
+        sharedDataService,
         configurationService) {
 
         $scope.model = { endpoints: [] };
@@ -61,7 +61,7 @@
     controller.$inject = [
         '$scope',
         '$window',
-        '$interval',
+        'sharedDataService',
         'configurationService'];
 
     angular.module('configuration.controller', [])

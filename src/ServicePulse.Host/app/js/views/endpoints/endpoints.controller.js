@@ -3,7 +3,11 @@
 
     'use strict';
 
-    function controller($scope, $timeout, configurationService) {
+    function controller(
+        $scope,
+        $timeout,
+        sharedDataService,
+        configurationService) {
 
         var timeoutId;
 
@@ -82,7 +86,10 @@
     };
 
     controller.$inject = [
-        '$scope', '$timeout', 'configurationService'
+        '$scope',
+        '$timeout',
+        'sharedDataService',
+        'configurationService'
     ];
 
     angular.module('endpoints')

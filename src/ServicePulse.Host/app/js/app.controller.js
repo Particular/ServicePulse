@@ -12,7 +12,8 @@
         signalRListener,
         notifyService,
         semverService,
-        scConfig
+        scConfig,
+        sharedDataService
         ) {
 
         var scVersionSupportingExceptionGroups = '1.6.0';
@@ -150,7 +151,8 @@
         'signalRListener',
         'notifyService',
         'semverService',
-        'scConfig'
+        'scConfig',
+        'sharedDataService'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);
