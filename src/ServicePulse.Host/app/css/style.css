@@ -17,8 +17,6 @@
 =================================================================== */
 
 body {
-	background: url(../img/bg.jpg) repeat-y top right, 
-				url(../img/dbg.jpg) repeat top left;
 	color: #646464;
 	border: none;
 }

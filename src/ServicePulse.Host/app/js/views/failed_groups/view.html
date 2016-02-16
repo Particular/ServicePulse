@@ -1,5 +1,5 @@
-﻿<div>
-    <hr>
+﻿<div class="row">
+  
     <ul class="breadcrumb">
         <li>
             <a href="#/dashboard">Home</a>
@@ -8,7 +8,7 @@
             <a href="#/failedGroups">Failed Messages</a>
         </li>
     </ul>
-    <hr>
+ 
 </div>
 
 <div class="row">
@@ -28,41 +28,42 @@
 
     <div class="failure-group failure-group-danger" ng-show="vm.exceptionGroups.length > 0" ng-repeat="group in vm.exceptionGroups">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12 col-sm-12">
                 <span>
                     <button type="button" class="btn btn-link failure-group-heading" ng-disabled="group.count == 0" ng-click="vm.viewExceptionGroup(group)"> {{group.title}}</button>
                 </span>
             </div>
-            <div class="col-md-4">
+        </div>
+        <div class="row">
+            <div class="col-md-2 col-sm-4">
+                <span class="failure-group-count-text hidden-sm-down">failures in group</span>
+                <span class="failure-group-count" title="failures in group">
+                    {{group.count}}
+                </span>
+            </div>
+            <div class="col-md-2 col-sm-4">
+                <span class="failure-group-count-text hidden-sm-down">first fail</span>
+                <span class="failure-group-count" title="first fail">
+                    <sp-moment date="{{group.first}}"></sp-moment>
+                </span>
+            </div>
+            <div class="col-md-2 col-sm-4">
+                <span class="failure-group-count-text hidden-sm-down">last fail</span>
+                <span class="failure-group-count" title="last fail">
+                    <sp-moment date="{{group.last}}"></sp-moment>
+                </span>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
                 <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive Group" ng-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
                     <i>Archive Group</i>
                 </button>
                 <button type="button" class="btn btn-link btn-sm  pull-right" tooltip="Retry Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0">
                     <i>Retry Group</i>
                 </button>
-                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
+                <button type="button" class="btn btn-link btn-sm pull-right  hidden-sm-down" tooltip="Archive Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
                     <i>View Group</i>
                 </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-1">
-                <span class="failure-group-count-text">failures in group</span>
-                <span class="failure-group-count">
-                    {{group.count}}
-                </span>
-            </div>
-            <div class="col-md-2">
-                <span class="failure-group-count-text">first fail</span>
-                <span class="failure-group-count">
-                    <sp-moment date="{{group.first}}"></sp-moment>
-                </span>
-            </div>
-            <div class="col-md-2">
-                <span class="failure-group-count-text">last fail</span>
-                <span class="failure-group-count">
-                    <sp-moment date="{{group.last}}"></sp-moment>
-                </span>
             </div>
         </div>
     </div>

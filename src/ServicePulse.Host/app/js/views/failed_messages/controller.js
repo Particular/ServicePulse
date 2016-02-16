@@ -44,7 +44,7 @@
         vm.togglePanel = function (message, panelnum) {
             if (message.messageBody === undefined) {
                 serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    msg.messageBody = msg.data;
+                    message.messageBody = msg.data;
                 }, function () {
                     message.bodyUnavailable = "message body unavailable";
                 });

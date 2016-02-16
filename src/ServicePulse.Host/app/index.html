@@ -22,9 +22,6 @@
     <link rel="stylesheet" id="animate-css-style" href="css/animate-css/animate.min.css">
     <link rel="stylesheet" id="angular-toast-style" href="lib/toaster.min.css">
 
-    <!-- Theme Styles -->
-    <link rel="stylesheet" id="base-style" href="css/style.css">
-    <link rel="stylesheet" id="base-style-responsive" href="css/style-responsive.css">
 
     <!-- Particular Styles -->
     <link rel="stylesheet" href="css/select2.css">
@@ -49,17 +46,10 @@
         </div>
     </div>
 </noscript>
-<ng-include src="'layout/topbar.html'"></ng-include>
-<div class="container-fluid">
-    <div class="row">
-        <div class="main-menu-span col-sm-2 col-md-2" ng-include="'layout/sidebar.html'"></div>
-        <div id="content" class="col-sm-10 col-md-10">
-            <div class="clearfix"></div>
-            <div ng-include="'layout/notifications.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
-            <div id="view" ng-view=""></div>
-        </div>
 
-    </div>
+<ng-include src="'layout/navbar.html'"></ng-include>
+<div class="container-fluid">
+    <div id="view" ng-view=""></div>
 </div>
 
 <toaster-container toaster-options="{'position-class': 'toast-bottom-left'}">
