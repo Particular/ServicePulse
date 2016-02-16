@@ -14,7 +14,7 @@
         <div class="row">
             <div class="col-md-12">
                 <h5>endpoints configuration</h5>
-                <div class="row box"  ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
+                <div class="row box" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-sm-1">
@@ -28,7 +28,8 @@
                                 <div class="row box-header">
                                     <div class="col-md-12">
                                         <p class="lead">{{e.host_display_name}} ({{e.name}}) </p>
-                                        <p ng-show="e.heartbeat_information">last hearbeat reported at <sp-moment date="{{e.heartbeat_information.last_report_at}}" /></p>
+                                        <p ng-show="e.heartbeat_information">last hearbeat reported at <sp-moment date="{{e.heartbeat_information.last_report_at}}"/>
+                                        </p>
                                         <p ng-show="!e.heartbeat_information">no recent heartbeat information available</p>
                                     </div>
                                 </div>
@@ -37,6 +38,23 @@
                                 <button type="button" class="btn btn-link btn-sm pull-right" ng-click="update(e.id, !e.monitor_heartbeat)">{{e.monitor_heartbeat ? "disable" : "enable"}}</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div class="row box box-info" ng-show="model.endpoints.length == 0">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
+                            </div>
+                            <div class="col-sm-11">
+                                <div class="row box-header">
+                                    <div class="col-md-12">
+                                        <p class="lead hard-wrap">Nothing to configure</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

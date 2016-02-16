@@ -19,17 +19,32 @@
             <div class="col-md-12" ng-show="vm.exceptionGroups.length === 0">
 
 
-                <h5>No Message Failures</h5>
-                <div class="row box">
+                <h5>message Failures</h5>
+    
+                <div class="row box box-info">
                     <div class="col-md-12">
-                        There are currently no grouped message failures
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
+                            </div>
+                            <div class="col-sm-11">
+                                <div class="row box-header">
+                                    <div class="col-md-12">
+                                        <p class="lead hard-wrap">There are currently no grouped message failures</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-
             </div>
+
+
+
             <div class="col-md-12" ng-show="vm.exceptionGroups.length > 0">
                 <h5>
-                    Showing {{vm.exceptionGroups.length}} failed messages groups. Messages are grouped by exception type and exception line of code.
+                    showing {{vm.exceptionGroups.length}} failed messages groups. Messages are grouped by exception type and exception line of code.
                 </h5>
                 <div class="row box box-danger" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-md-12">
