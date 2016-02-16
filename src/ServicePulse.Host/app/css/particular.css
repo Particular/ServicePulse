@@ -1,0 +1,74 @@
+﻿@import url("font-awesome/css/font-awesome.min.css");
+
+/* app css stylesheet */
+
+body {
+    min-height: 2000px;
+    padding-top: 60px;
+    background-color: #e9eaed;
+}
+
+pre {
+    white-space:pre-wrap;
+}
+
+.box {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: white;
+    border-color: #eee;
+    border-style: solid;
+    border-width: 1px 1px 1px 5px;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.subdued {
+    color: #666666;
+}
+
+.info {
+    color: #1b809e;
+}
+
+.warning {
+    color: #aa6708;
+}
+
+.danger {
+    color: #ce4844;
+}
+
+.box-info {
+    border-left-color: #1b809e;
+}
+
+.box-warning {
+    border-left-color: #aa6708;
+}
+
+.box-danger {
+    border-left-color: #ce4844;
+}
+
+.box-header {
+    padding-bottom: 3px;
+}
+
+.box-body{}
+
+
+
+.label-important,
+.badge-important {
+  	border-color: #FA5833;
+	background-color: #FA603D;
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, hsl(11, 95%, 76%)), color-stop(100%, hsl(11, 95%, 61%)));
+	background-image: -webkit-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+	background-image: -moz-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+	background-image: -ms-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+	background-image: -o-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+	background-image: linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+}

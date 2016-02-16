@@ -24,10 +24,10 @@
 
 
     <!-- Particular Styles -->
-    <link rel="stylesheet" href="css/select2.css">
-    <link rel="stylesheet" href="css/app.css">
+    <!--<link rel="stylesheet" href="css/select2.css">
+    <link rel="stylesheet" href="css/app.css">-->
 
-
+    <link rel="stylesheet" href="css/particular.css">
     <!--[if lt IE 9 ]>
         <script type="text/javascript">
             window.location = '/NoIE.html';
@@ -37,17 +37,20 @@
 </head>
 <body ng-controller="AppCtrl">
 <noscript>
-    <div class="row">
-        <div class="alert col-sm-10 col-md-10 alert-warning">
-            <h4>Warning!</h4>
-            <p>
-                You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.
-            </p>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="alert col-sm-10 col-md-10 alert-warning">
+                <h4>Warning!</h4>
+                <p>
+                    You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.
+                </p>
+            </div>
         </div>
     </div>
 </noscript>
 
 <ng-include src="'layout/navbar.html'"></ng-include>
+
 <div class="container-fluid">
     <div id="view" ng-view=""></div>
 </div>

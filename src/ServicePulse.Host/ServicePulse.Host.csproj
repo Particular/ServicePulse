@@ -84,6 +84,7 @@
   <ItemGroup>
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
+    <Content Include="app\css\particular.css" />
     <Content Include="app\js\app.logging.js" />
     <Content Include="app\js\directives\ui.particular.confirmclick.tpl.html" />
     <Content Include="app\js\services\factory.shareddata.js" />
@@ -101,6 +102,7 @@
     <Content Include="app\js\views\failed_messages\view.html" />
     <Content Include="app\layout\footer.html" />
     <Content Include="app\layout\navbar.html" />
+    <Content Include="app\layout\row.tmpl.html" />
     <Content Include="app\lib\angular\ngStorage.min.js" />
     <Content Include="app\lib\angular\ui-bootstrap-tpls-0.14.3.min.js" />
     <Content Include="app\css\font-awesome\css\font-awesome.css" />

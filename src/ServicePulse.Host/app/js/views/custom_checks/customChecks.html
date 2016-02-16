@@ -1,37 +1,50 @@
 <div class="row">
-   
+
     <ul class="breadcrumb">
         <li>
-            <a href="#/dashboard">Home</a> 
+            <a href="#/dashboard">Home</a>
         </li>
         <li>Custom Checks</li>
     </ul>
- 
+
 </div>
-<div class="row">
-    <div class="box col-sm-12 col-md-12">
-        <div class="box-header" data-original-title="">
-            <h2><i class="fa fa-check"></i><span class="break"></span>Showing {{model.total}} failed custom check(s)</h2>
-        </div>
-        <div class="box-content">
-            <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
-                <div class="scRow interactiveList" ng-repeat="item in model.data | orderBy: '-reported_at'">
-                    <div class="row">
-                        <div class="col-sm-4 col-md-4" title="Id: {{item.custom_check_id}}"><strong>{{item.custom_check_id}}</strong></div>
-                        <div class="col-sm-4 col-md-4" title="Category: {{item.category}}">{{item.category}}</div>
-                        <div class="text-right col-sm-4 col-md-4"><sp-moment date="{{item.reported_at}}"></sp-moment></div>
+
+<div class="container">
+    <section name="custom_checks">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>Showing {{model.total}} failed custom check(s)</h5>
+                <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
+                    <div class="row box box-warning" ng-repeat="item in model.data | orderBy: '-reported_at'">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    <span class="subdued glyphicon glyphicon-ok fa-2x" aria-hidden="true"></span>
+                                    {{item.category}}
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="row box-header">
+                                        <div class="col-md-12">
+                                            <p class="lead">{{item.failure_reason}}</p>
+                                            <p>{{item.custom_check_id}} </p>
+                                            <p>reported by {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}} <sp-moment date="{{item.reported_at}}"></sp-moment></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Mute this custom check so it doesn't show up as an alert" ng-click="mute(item)">
+                                        <i>Mute</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="row">
-                        <div class="text-info col-sm-9 col-md-9"><pre>{{item.failure_reason}}</pre></div>
-                        <div class="text-right col-sm-3 col-md-3" title="In: {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}}">in {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}}</div>
-                    </div>
-                    <div class="row">
-                        <div class="text-right col-sm-12 col-md-12"><a tooltip="Mute this custom check so it doesn't show up as an alert" class="btn btn-link btn-default btn-sm" ng-click="mute(item)"><i class="icon-volume-off"></i> Mute</a></div>
-                    </div>
+
+                    <div class="alert alert-success" ng-show="!loadingData && model.total == 0">No failed custom checks</div>
+                    <div class="loading" ng-show="loadingData"></div>
+
                 </div>
-                <div class="alert alert-success" ng-show="!loadingData && model.total == 0">No failed custom checks</div>
-                <div class="loading" ng-show="loadingData"></div>
             </div>
         </div>
-    </div>
+    </section>
 </div>

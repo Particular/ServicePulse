@@ -1,70 +1,69 @@
 ﻿<div class="row">
-  
+
     <ul class="breadcrumb">
         <li>
             <a href="#/dashboard">Home</a>
         </li>
         <li>
-            <a href="#/failedGroups">Failed Messages</a>
+            Failed Messages
         </li>
     </ul>
- 
+
 </div>
 
-<div class="row">
 
-    <div class="failure-group failure-group-info" ng-show="vm.exceptionGroups.length === 0">
-        <h3>No Message Failures</h3>
-        <p>
-            There are currently no grouped message failures
-        </p>
-    </div>
+<div class="container">
+    <section name="message_groups">
 
-    <div ng-show="vm.exceptionGroups.length > 0">
-        <h2>
-            Showing {{vm.exceptionGroups.length}} failed messages groups. Messages are grouped by exception type and exception line of code.
-        </h2>
-    </div>
-
-    <div class="failure-group failure-group-danger" ng-show="vm.exceptionGroups.length > 0" ng-repeat="group in vm.exceptionGroups">
         <div class="row">
-            <div class="col-md-12 col-sm-12">
-                <span>
-                    <button type="button" class="btn btn-link failure-group-heading" ng-disabled="group.count == 0" ng-click="vm.viewExceptionGroup(group)"> {{group.title}}</button>
-                </span>
+            <div class="col-md-12" ng-show="vm.exceptionGroups.length === 0">
+
+
+                <h5>No Message Failures</h5>
+                <div class="row box">
+                    <div class="col-md-12">
+                        There are currently no grouped message failures
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-12" ng-show="vm.exceptionGroups.length > 0">
+                <h5>
+                    Showing {{vm.exceptionGroups.length}} failed messages groups. Messages are grouped by exception type and exception line of code.
+                </h5>
+                <div class="row box box-danger" ng-repeat="group in vm.exceptionGroups">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <span class="subdued glyphicon glyphicon-envelope fa-2x" aria-hidden="true"></span>
+
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="row box-header">
+                                    <div class="col-md-12" ng-click="vm.viewExceptionGroup(group)">
+                                        <p class="lead"> {{group.title}}</p>
+                                        <p>There are currently {{group.count}} message<span ng-show="group.count >1">s</span> in this group</p>
+                                        <p>The most recent failure occured <sp-moment date="{{group.last}}"></sp-moment> with the first failure occuring <sp-moment date="{{group.first}}"></sp-moment>.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-link btn-sm pull-right  hidden-sm-down" tooltip="Archive Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
+                                    <i>View Group</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm  pull-right" tooltip="Retry Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0">
+                                    <i>Retry Group</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive Group" ng-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
+                                    <i>Archive Group</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-2 col-sm-4">
-                <span class="failure-group-count-text hidden-sm-down">failures in group</span>
-                <span class="failure-group-count" title="failures in group">
-                    {{group.count}}
-                </span>
-            </div>
-            <div class="col-md-2 col-sm-4">
-                <span class="failure-group-count-text hidden-sm-down">first fail</span>
-                <span class="failure-group-count" title="first fail">
-                    <sp-moment date="{{group.first}}"></sp-moment>
-                </span>
-            </div>
-            <div class="col-md-2 col-sm-4">
-                <span class="failure-group-count-text hidden-sm-down">last fail</span>
-                <span class="failure-group-count" title="last fail">
-                    <sp-moment date="{{group.last}}"></sp-moment>
-                </span>
-            </div>
 
-            <div class="col-md-4 col-sm-4">
-                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive Group" ng-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
-                    <i>Archive Group</i>
-                </button>
-                <button type="button" class="btn btn-link btn-sm  pull-right" tooltip="Retry Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0">
-                    <i>Retry Group</i>
-                </button>
-                <button type="button" class="btn btn-link btn-sm pull-right  hidden-sm-down" tooltip="Archive Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
-                    <i>View Group</i>
-                </button>
-            </div>
-        </div>
-    </div>
+    </section>
 </div>

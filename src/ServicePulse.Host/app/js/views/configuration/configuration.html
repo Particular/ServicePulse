@@ -1,46 +1,47 @@
 <div class="row">
- 
+
     <ul class="breadcrumb">
         <li>
-            <a href="#/dashboard">Home</a> 
+            <a href="#/dashboard">Home</a>
         </li>
         <li>Configuration</li>
     </ul>
-   
-</div>
-<div class="row">
-    <div class="box span12">
-        <div class="box-header" data-original-title>
-            <h2><i class="fa fa-cog"></i><span class="break"></span>Endpoints Configuration</h2>
-        </div>
-        <div class="box-content">
-            <table class="table">
-                <tr>
-                    <th>Name</th>
-                    <th>Host</th>
-                    <th>Latest Heartbeat</th>
-                    <th>Enabled</th>
-                    <th><span tooltip="Monitor the endpoint, and send alert if heartbeats are not received.">Monitor</span></th>
-                </tr>
-                <tr ng-repeat="e in model.endpoints | orderBy:'name'">
-                    <td>{{e.name}}</td>
-                    <td>{{e.host_display_name}}</td>
-                    <td ng-show="e.heartbeat_information"><sp-moment date="{{e.heartbeat_information.last_report_at}}" /></td>
-                    <td ng-show="!e.heartbeat_information">N/A</td>
-                    <td><span ng-show="e.monitor_heartbeat"><i class="fa fa-check"></i></span><span ng-show="!e.monitor_heartbeat"><i class="fa fa-times"></i></span></td>
-                    <td>
-                        <div ng-show="e.workflow_state.status !== 'ready'" class="animate-box">
-                            {{e.workflow_state.message}}
-                        </div>
 
-                        <div ng-show="e.workflow_state.status === 'ready'" class="switch">
-                            <button class="btn " ng-class="{'btn-warning' : e.monitor_heartbeat, 'btn-default': !e.monitor_heartbeat}"  ng-click="update(e.id, !e.monitor_heartbeat)">{{e.monitor_heartbeat ? "Disable" : "Enable"}}</button>
-                        </div>
-
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </div>
 </div>
+
+<div class="container">
+    <section name="configuration">
+        <div class="row">
+            <div class="col-md-12">
+                <h5>endpoints configuration</h5>
+                <div class="row box"  ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <span ng-show="e.monitor_heartbeat" class="subdued glyphicon glyphicon-ok fa-2x" aria-hidden="true"></span>
+                                <span ng-show="e.monitor_heartbeat" >enabled</span>
+                                <span ng-show="!e.monitor_heartbeat" class="subdued glyphicon glyphicon-remove fa-2x" aria-hidden="true"></span>
+                                <span ng-show="!e.monitor_heartbeat">disabled</span>
+                       
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="row box-header">
+                                    <div class="col-md-12">
+                                        <p class="lead">{{e.host_display_name}} ({{e.name}}) </p>
+                                        <p ng-show="e.heartbeat_information">last hearbeat reported at <sp-moment date="{{e.heartbeat_information.last_report_at}}" /></p>
+                                        <p ng-show="!e.heartbeat_information">no recent heartbeat information available</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <button type="button" class="btn btn-link btn-sm pull-right" ng-click="update(e.id, !e.monitor_heartbeat)">{{e.monitor_heartbeat ? "disable" : "enable"}}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
 
