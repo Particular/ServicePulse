@@ -4,12 +4,47 @@
 
 body {
     min-height: 2000px;
-    padding-top: 60px;
+    padding-top: 120px;
     background-color: #e9eaed;
 }
 
 pre {
     white-space:pre-wrap;
+}
+
+
+
+.navbar-default {
+  	min-height: 40px;
+  	padding-right: 20px;
+  	padding-left: 20px;
+    padding-top:15px;
+    padding-bottom: 10px;
+    background: url(../img/dbg.jpg);
+	border-left: 0px solid #0a0c0e;
+	border-right: 0px solid #0a0c0e;
+	border-top: 1px solid #0a0c0e;
+  	border-bottom: 2px solid #0a0c0e;
+	filter: none;
+	text-shadow: 1px 1px 1px #0a0c0e;
+	color: #fff;
+  	-webkit-border-radius: 0px;
+       -moz-border-radius: 0px;
+          	border-radius: 0px;
+  	*zoom: 1;
+  	-webkit-box-shadow: 0 4px 0 rgba(0,0,0,.1);
+	   -moz-box-shadow: 0 4px 0 rgba(0,0,0,.1);
+            box-shadow: 0 4px 0 rgba(0,0,0,.1);
+	
+	z-index: 2;
+}
+.breadcrumb-fixed {
+      position: fixed;
+  right: 0;
+  left: 0;
+  z-index: 1;
+    top: 77px;
+    border-radius: 0px;
 }
 
 .box {
@@ -21,6 +56,7 @@ pre {
     border-color: #eee;
     border-style: solid;
     border-width: 1px 1px 1px 5px;
+    border-left-color: #666666;
     padding: 5px;
     margin-bottom: 5px;
 }
