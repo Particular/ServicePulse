@@ -78,6 +78,12 @@
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
 
+        notifier.subscribe($scope, function (event, data) {
+            logit(data);
+            toastService.showWarning(data);
+        }, 'MessagesSubmittedForRetry');
+     
+
         notifier.subscribe($scope, function(event, data) {
             logit(data);
             if (data === 'SignalR started') {

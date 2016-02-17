@@ -26,12 +26,39 @@
         vm.exceptionGroups = [];
         vm.selectedExceptionGroup = {};
 
+        var markMessage = function (group, property) {
+            //mark messages as retried
+            if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
+                for (var i = 0; i < $scope.model.failedMessages.length; i++) {
+                    $scope.model.failedMessages[i][property] = true;
+                }
+            }
+        };
+
         vm.viewExceptionGroup = function (group) {
             sharedDataService.set(group);
             $location.path('/failedMessages'); 
         }
 
-        vm.archiveExceptionGroup = function (group) { }
+        vm.archiveExceptionGroup = function(group) {
+
+            group.workflow_state = { status: 'working', message: 'working' };
+            var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+                .then(function (message) {
+
+                    group.workflow_state = createWorkflowState('success', message);
+
+                    markMessage(group, 'archived');
+                    //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+
+                }, function (message) {
+                    group.workflow_state = createWorkflowState('error', message);
+                })
+                .finally(function () {
+
+                });
+        }
+
         vm.retryExceptionGroup = function(group) {
             group.workflow_state = { status: 'working', message: 'working' };
 

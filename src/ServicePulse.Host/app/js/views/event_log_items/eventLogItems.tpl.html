@@ -12,9 +12,7 @@
                                 <span ng-show="eventLogItem.category === 'CustomChecks'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-ok fa-2x" aria-hidden="true"></span>
                                 <span ng-show="eventLogItem.category === 'EndpointControl'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-heart fa-2x" aria-hidden="true"></span>
                                 <span ng-show="eventLogItem.category === 'MessageFailures'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-envelope fa-2x" aria-hidden="true"></span>
-
-                                
-
+                                <span ng-show="eventLogItem.category === 'Recoverability'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-magnet fa-2x" aria-hidden="true"></span>
                             </div>
                             <div class="col-sm-9">
                                 <div class="row box-header">
@@ -24,7 +22,8 @@
                                             <a ng-show="eventLogItem.category === 'HeartbeatMonitoring'" title="{{eventLogItem.category}}" href="/#/endpoints">GO TO ENDPOINT MANAGEMENT</a>
                                             <a ng-show="eventLogItem.category === 'CustomChecks'" title="{{eventLogItem.category}}" href="/#/customChecks">GO TO CUSTOM CHECK MANAGEMENT</a>
                                             <a ng-show="eventLogItem.category === 'EndpointControl'" title="{{eventLogItem.category}}" href="/#/endpoints">GO TO ENDPOINT MANAGEMENT</a>
-                                            <a ng-show="eventLogItem.category === 'MessageFailures'" title="{{eventLogItem.category}}" href="/#/failedGroups">GO TO FAILED MESSAGE MANAGEMENT</a>
+                                            <a ng-show="eventLogItem.category === 'MessageFailures'" title="{{eventLogItem.category}}" href="/#/failedGroups">GO TO RECOVERABILTY MANAGEMENT</a>
+                                            <a ng-show="eventLogItem.category === 'Recoverability'" title="{{eventLogItem.category}}" href="/#/failedGroups">GO TO RECOVERABILTY MANAGEMENT</a>
                                         </p>
                                     </div>
                                 </div>
