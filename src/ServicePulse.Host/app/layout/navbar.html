@@ -1,4 +1,4 @@
-﻿    <!-- Fixed navbar -->
+﻿<!-- Fixed navbar -->
 <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
@@ -8,9 +8,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/#/"><img alt="Service Pulse" src="img/logo.png" style="margin-top: -13px;"></a>
+            <a class="navbar-brand" href="/#/">
+                <img alt="Service Pulse" src="img/logo.png" style="margin-top: -13px;">
+            </a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
+
             <ul class="nav navbar-nav  navbar-right">
                 <li ng-class="{ active: isActive('/dashboard') }">
                     <a href="/#/dashboard">
@@ -28,7 +31,7 @@
                         </span>
                     </a>
                 </li>
-                <li ng-class="{ active: isActive('/failedGroups') }">
+                <li ng-class="{ active: isActive('/failedGroups') || isActive('/failedMessages') }">
                     <a href="/#/failedGroups">
                         <i class="fa fa-envelope icon-white"></i>
                         <span class="hidden-sm">
@@ -53,8 +56,9 @@
                     </a>
                 </li>
             </ul>
+       
+            <product-version version="{{Version}}" scversion="{{SCVersion}}"></product-version>
+      
         </div><!--/.nav-collapse -->
     </div>
 </nav>
-
-

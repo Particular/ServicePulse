@@ -4,17 +4,11 @@
             <div class="col-md-12">
                 <h5>recent events</h5>
 
-                <div class="row box" ng-class="{'box-info': eventLogItem.severity == 'info', 'box-danger':  eventLogItem.severity == 'error'}" ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10">
+                <div class="row box" ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-sm-1">
-                                <span ng-show="eventLogItem.category === 'HeartbeatMonitoring'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-heart fa-2x" aria-hidden="true"></span>
-                                <span ng-show="eventLogItem.category === 'CustomChecks'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-ok fa-2x" aria-hidden="true"></span>
-                                <span ng-show="eventLogItem.category === 'EndpointControl'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-heart fa-2x" aria-hidden="true"></span>
-                                <span ng-show="eventLogItem.category === 'MessageFailures'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-envelope fa-2x" aria-hidden="true"></span>
-                                <span ng-show="eventLogItem.category === 'Recoverability'" title="{{eventLogItem.category}}" class="subdued glyphicon glyphicon-magnet fa-2x" aria-hidden="true"></span>
-                            </div>
-                            <div class="col-sm-9">
+   
+                            <div class="col-sm-10">
                                 <div class="row box-header">
                                     <div class="col-md-12">
                                         <p class="lead">{{eventLogItem.description}} </p>
@@ -47,6 +41,7 @@
                         <div class="row box-header">
                             <div class="col-md-12">
                                 <p class="lead hard-wrap">No events</p>
+                                <p>&nbsp;</p>
                             </div>
                         </div>
                     </div>

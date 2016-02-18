@@ -19,10 +19,22 @@
         <div class="row">
             <div class="col-md-12" ng-show="vm.failedMessages.length === 0">
 
-                <h5>No Message Failures</h5>
+                <h5>message failures</h5>
+
                 <div class="row box">
                     <div class="col-md-12">
-                        There are currently no message failures
+                        <div class="row">
+
+                            <div class="col-sm-12">
+                                <div class="row box-header">
+                                    <div class="col-md-12">
+                                        <p class="lead hard-wrap">There are currently no message failures</p>
+                                        <p>&nbsp;</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -30,39 +42,60 @@
             <div class="col-md-12" ng-show="vm.failedMessages.length > 0">
                 <h5>
                     Showing {{vm.failedMessages.length}} failed messages.
+
+                    <a confirm-message="Close dialog and loose all changes?" confirm-click="alert('ACK')">Close</a>
                 </h5>
-                <div class="row box box-danger" ng-repeat="message in vm.failedMessages">
+
+                <div class="row box">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-sm-1">
-                                
-                                <span class="subdued glyphicon glyphicon-envelope fa-2x" aria-hidden="true"></span>
-               
-                                <p class="small">
-                                    <span ng-if="message.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
-                                    <span ng-if="message.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
-                                    <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
-                                </p>
+                            <div class="btn-toolbar">
+                                <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
+                                <button type="button" tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn btn-default" confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry."><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
+                                <div class="btn-group pull-right">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Sorted by {{vm.sortButtonText}}
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a></li>
+                                        <li><a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a></li>
+                                        <li><a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Sent (ascending)</a></li>
+                                        <li><a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Sent (descending)</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row box" ng-repeat="message in vm.failedMessages">
+                    <div class="col-md-12">
+                        <div class="row"ng-class="{rowSelected: message.selected == true}" ng-click="vm.toggleRowSelect(message)" style="cursor: pointer;">
+                            <div class="check col-md-1">
+                                <input type="checkbox" ng-disabled="message.retried || message.archived" ng-checked="message.selected">
                             </div>
                             <div class="col-sm-9">
                                 <div class="row box-header">
                                     <div class="col-md-12">
                                         <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
+
                                         <p>
                                             failed <sp-moment date="{{message.time_sent}}">, </sp-moment> reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}
+                                       
                                         </p>
 
-                                      
+
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2">
-                                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
-                                    <i>Archive</i>
-                                </button>
-                                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Retry">
-                                    <i>Retry</i>
-                                </button>
+                                <span class="small">
+                                    <span ng-if="message.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
+                                    <span ng-if="message.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
+                                    <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
+                                </span>
                             </div>
                         </div>
                         <div class="row">
@@ -125,4 +158,7 @@
         <div class="alert alert-success" ng-show="!vm.loadingData && vm.allFailedMessagesGroup.count == 0">No failed messages</div>
         <div class="loading" ng-show="vm.loadingData"></div>
     </section>
+
+
+
 </div>

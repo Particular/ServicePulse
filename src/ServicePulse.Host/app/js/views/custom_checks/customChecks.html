@@ -18,16 +18,13 @@
                     <div class="row box box-warning" ng-repeat="item in model.data | orderBy: '-reported_at'">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-sm-1">
-                                    <span class="subdued glyphicon glyphicon-ok fa-2x" aria-hidden="true"></span>
-                                    {{item.category}}
-                                </div>
-                                <div class="col-sm-9">
+                              
+                                <div class="col-sm-10">
                                     <div class="row box-header">
                                         <div class="col-md-12">
                                             <p class="lead">{{item.failure_reason}}</p>
                                             <p>{{item.custom_check_id}} </p>
-                                            <p>reported by {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}} <sp-moment date="{{item.reported_at}}"></sp-moment></p>
+                                            <p>{{item.category}} reported by {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}} <sp-moment date="{{item.reported_at}}"></sp-moment></p>
                                         </div>
                                     </div>
                                 </div>
@@ -39,16 +36,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row box box-info" ng-show="!loadingData && model.total == 0">
+                    <div class="row box " ng-show="!loadingData && model.total == 0">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-sm-1">
-                                    <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
-                                </div>
-                                <div class="col-sm-11">
+                              
+                                <div class="col-sm-12">
                                     <div class="row box-header">
                                         <div class="col-md-12">
                                             <p class="lead hard-wrap">No failed custom checks</p>
+                                            <p>&nbsp;</p>
                                         </div>
                                     </div>
                                 </div>

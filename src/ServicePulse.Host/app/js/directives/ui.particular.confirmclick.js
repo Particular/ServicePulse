@@ -1,52 +1,59 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
-    var modalcontroller = function ($scope, $uibModalInstance, message) {
+    function modalController($scope, $uibModalInstance, confirmMessage, confirmClick) {
 
         $scope.title = 'Confirm action';
 
-        $scope.message = message;
+        $scope.message = confirmMessage;
+
         $scope.ok = function () {
-            $uibModalInstance.close('ok');
+            confirmClick();
+            $uibModalInstance.dismiss('cancel');
         };
 
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
-    }
-
+    };
 
     function directive($log, $uibModal) {
 
         return {
             priority: -1,
+            restrict: 'A',
+            scope: {
+                confirmMessage: '@',
+                confirmClick: '&'
+            },
             link: function (scope, element, attrs) {
                 element.bind('click', function (e) {
-               
-      
-                    var modalInstance =  $uibModal.open({
+                    var modalInstance = $uibModal.open({
                         animation: true,
+           
                         templateUrl: 'js/directives/ui.particular.confirmClick.tpl.html',
-                        controller: modalcontroller,
+                        controller: modalController,
                         resolve: {
-                                message: function () {
-                                    return attrs.confirmClick;
+                            confirmMessage: function () {
+                                return scope.confirmMessage;
+                            },
+                            confirmClick: function () {
+                                return scope.confirmClick;
                             }
                         }
                     });
-                        
-                    modalInstance.result.then(function (ok) {
-                        $log.info('Modal close with ok at: ' + new Date());
-                    }, function () {
-                        $log.info('Modal close with cancel at: ' + new Date());
-                        e.stopImmediatePropagation();
-                        e.preventDefault();
-                    });
 
-                
+                    //modalInstance.result.then(function (ok) {
+                    //    $log.info('Modal close with ok at: ' + new Date());
+                    //}, function () {
+                    //    $log.info('Modal close with cancel at: ' + new Date());
+                    //    e.stopImmediatePropagation();
+                    //    e.preventDefault();
+                    //});
+
+
                 });
-            },
-            restrict: 'EA'
+            }
         };
     }
 
@@ -57,4 +64,4 @@
         .module('ui.particular.confirmClick', [])
         .directive('confirmClick', directive);
 
-} (window, window.angular));
+}(window, window.angular));

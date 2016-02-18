@@ -1,20 +1,28 @@
-﻿<div class="versionInfo">
-    
-    <div ng-show="scversion !== ''" class="newVersionLink">
-        ServiceControl <span class="greyNote"> <span class="vWord">V</span> {{scversion}}</span>
-        <span ng-show="newscversion == true">
-            <span>
-                <a href="{{newscversionlink}}" title="Download ServiceControl" target="_blank">Upgrade Available!</a>
-            </span>
-        </span>
-    </div>
+﻿<span class="">
 
-    <div ng-show="version !== ''" class="newVersionLink">
-        ServicePulse <span class="greyNote"> <span class="vWord">V</span> {{version}}</span>
-        <span ng-show="newspversion == true">
+    <span ng-show="version !== ''" >
+        <span ng-show="!newspversion">
             <span>
-                <a href="{{newspversionlink}}" title="Download ServicePulse" target="_blank">Upgrade Available!</a>
+                ServicePulse V {{version}}
             </span>
         </span>
-    </div>
-</div>
+        <span ng-show="newspversion">
+            <span>
+                <a href="{{newspversionlink}}" title="Download ServicePulse" target="_blank">ServicePulse V {{version}}</a>
+            </span>
+        </span>
+    </span>
+
+    <span ng-show="scversion !== ''" >
+        <span ng-show="!newscversion">
+            <span>
+                ServiceControl <span class="greyNote"> <span class="vWord">V</span> {{scversion}}</span>
+            </span>
+        </span>
+        <span ng-show="newscversion">
+            <span>
+                <a href="{{newscversionlink}}" title="Download ServiceControl" target="_blank"> ServiceControl <span class="greyNote"> <span class="vWord">V</span> {{scversion}}</span></a>
+            </span>
+        </span>
+    </span>
+</span>

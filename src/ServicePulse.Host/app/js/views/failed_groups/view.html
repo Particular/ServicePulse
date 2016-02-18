@@ -13,24 +13,60 @@
 
 
 <div class="container">
+
+    <section name="global_message_management">
+
+
+        <div class="row">
+            <div class="col-md-12" ng-show="vm.exceptionGroups.length > 0">
+
+
+                <h5>global message failure management</h5>
+
+                <div class="row alert-danger box box-danger">
+                    <div class="col-md-12">
+                        <div class="row">
+
+                            <div class="col-sm-12">
+                                <div class="row box-header">
+                                    <div class="col-md-12">
+                                        <p class="pull-right">
+                                            <button class="btn btn-danger" type="button" confirm-message="Are you really sure you want to retry all failed messages?" confirm-click="retryAll()" tooltip="All failed messages will be Retried"><i class="fa fa-refresh white"></i> Retry All Failed Messages</button>
+                                            <button class="btn btn-default" type="button" ng-click="selectGroup(allFailedMessagesGroup)" tooltip="Review all Messages"><i class="fa fa-envelope"></i> View All Failed Messages</button>
+                                        </p>
+                                        <p>
+                                        </p><h4>Warning!</h4> Retrying all messages can be a time consuming operation. Take care when doing this.
+                                        <p></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
     <section name="message_groups">
 
         <div class="row">
             <div class="col-md-12" ng-show="vm.exceptionGroups.length === 0">
 
 
-                <h5>message Failures</h5>
-    
-                <div class="row box box-info">
+                <h5>message failures</h5>
+
+                <div class="row box">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-sm-1">
-                                <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
-                            </div>
-                            <div class="col-sm-11">
+
+                            <div class="col-sm-12">
                                 <div class="row box-header">
                                     <div class="col-md-12">
                                         <p class="lead hard-wrap">There are currently no grouped message failures</p>
+                                        <p>&nbsp;</p>
                                     </div>
                                 </div>
                             </div>
@@ -46,19 +82,18 @@
                 <h5>
                     showing {{vm.exceptionGroups.length}} failed messages groups. Messages are grouped by exception type and exception line of code.
                 </h5>
-                <div class="row box box-danger" ng-repeat="group in vm.exceptionGroups">
+                <div class="row box" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-md-12">
                         <div class="row">
-                            <div class="col-sm-1">
-                                <span class="subdued glyphicon glyphicon-envelope fa-2x" aria-hidden="true"></span>
 
-                            </div>
-                            <div class="col-sm-9">
+                            <div class="col-sm-10">
                                 <div class="row box-header">
                                     <div class="col-md-12" ng-click="vm.viewExceptionGroup(group)">
                                         <p class="lead"> {{group.title}}</p>
-                                        <p>There are currently {{group.count}} message<span ng-show="group.count >1">s</span> in this group</p>
-                                        <p>The most recent failure occured <sp-moment date="{{group.last}}"></sp-moment> with the first failure occuring <sp-moment date="{{group.first}}"></sp-moment>.</p>
+                                        <p>There are currently {{group.count}} message<span ng-show="group.count >1">s</span> in this group
+                                        </p>
+                                        <p>The most recent failure occured <sp-moment date="{{group.last}}"></sp-moment> with the first failure occuring <sp-moment date="{{group.first}}"></sp-moment>.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -69,7 +104,7 @@
                                 <button type="button" class="btn btn-link btn-sm  pull-right" tooltip="Retry Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0">
                                     <i>Retry Group</i>
                                 </button>
-                                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive Group" ng-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0" confirm-click="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
+                                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0" confirm-message="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
                                     <i>Archive Group</i>
                                 </button>
                             </div>
@@ -81,4 +116,8 @@
         </div>
 
     </section>
+    <p>
+        <br>
+    </p>
+
 </div>

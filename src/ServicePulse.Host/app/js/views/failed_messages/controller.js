@@ -6,12 +6,14 @@
         $scope,
         $timeout,
         $location,
+        scConfig,
         sharedDataService,
         notifyService,
         serviceControlService,
         failedMessagesService) {
 
         var vm = this;
+
         vm.group = sharedDataService.get();
         if (!vm.group.hasOwnProperty('title')) {
             $location.path('/failedGroups');
@@ -20,9 +22,13 @@
         vm.sort = "time_sent";
         vm.direction = "desc";
         vm.failedMessages = [];
+        vm.selectedIds = [];
+        vm.sort = "time_sent";
+        vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.page = 1;
+
 
 
         var processLoadedMessages = function (data) {
@@ -40,6 +46,13 @@
             vm.loadingData = false;
         };
 
+        var init = function() {
+            vm.failedMessages = [];
+            vm.selectedIds = [];
+            vm.page = 1;
+
+            vm.loadMoreResults(vm.group);
+        }
 
         vm.togglePanel = function (message, panelnum) {
             if (message.messageBody === undefined) {
@@ -61,6 +74,59 @@
             return false;
         };
 
+        vm.toggleRowSelect = function (row) {
+            if (row.retried || row.archived) {
+                return;
+            }
+
+            row.selected = !row.selected;
+
+            if (row.selected) {
+                vm.selectedIds.push(row.id);
+            } else {
+                vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
+            }
+        };
+
+
+        vm.retrySelected = function () {
+            serviceControlService.retryFailedMessages(vm.selectedIds);
+            vm.selectedIds = [];
+
+            for (var i = 0; i < vm.failedMessages.length; i++) {
+                if (vm.failedMessages[i].selected) {
+                    vm.failedMessages[i].selected = false;
+                    vm.failedMessages[i].retried = true;
+                }
+            }
+        };
+
+        vm.archiveSelected = function () {
+            serviceControlService.archiveFailedMessages(vm.selectedIds);
+            vm.selectedIds = [];
+
+            for (var i = 0; i < vm.failedMessages.length; i++) {
+                if (vm.failedMessages[i].selected) {
+                    vm.failedMessages[i].selected = false;
+                    vm.failedMessages[i].archived = true;
+                }
+            }
+        };
+
+        vm.debugInServiceInsight = function (index) {
+            var messageId = vm.failedMessages[index].message_id;
+            var dnsName = scConfig.service_control_url.toLowerCase();
+
+            if (dnsName.indexOf("https") === 0) {
+                dnsName = dnsName.replace("https://", "");
+            } else {
+                dnsName = dnsName.replace("http://", "");
+            }
+
+            $window.open("si://" + dnsName + "?search=" + messageId);
+        };
+
+
         vm.loadMoreResults = function (group) {
             vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
 
@@ -79,13 +145,14 @@
             });
         }
 
-        vm.loadMoreResults(vm.group);
+        init();
     }
 
     controller.$inject = [
         "$scope",
         "$timeout",
         "$location",
+        "scConfig",
         "sharedDataService",
         "notifyService",
         "serviceControlService",
