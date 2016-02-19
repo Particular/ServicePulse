@@ -25,6 +25,7 @@
 
         vm.exceptionGroups = [];
         vm.selectedExceptionGroup = {};
+        vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
 
         var markMessage = function (group, property) {
             //mark messages as retried
@@ -82,8 +83,12 @@
             serviceControlService.getExceptionGroups()
                 .then(function (response) {
                     if (response.data.length > 0) {
+
+                        vm.allFailedMessagesGroup.count = 0;
+
                         // need a map in some ui state for controlling animations
                         var exgroups = response.data.map(function (obj) {
+                            vm.allFailedMessagesGroup.count += obj.count;
                             var nObj = obj;
                             nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;

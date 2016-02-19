@@ -14,8 +14,8 @@
 
         var vm = this;
 
-        vm.group = sharedDataService.get();
-        if (!vm.group.hasOwnProperty('title')) {
+        vm.selectedExceptionGroup = sharedDataService.get();
+        if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
             $location.path('/failedGroups');
         }
 
@@ -23,13 +23,16 @@
         vm.direction = "desc";
         vm.failedMessages = [];
         vm.selectedIds = [];
+        vm.sortButtonText = '';
         vm.sort = "time_sent";
         vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.page = 1;
 
-
+        var setSortButtonText = function (sort, direction) {
+            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Sent") + " " + (direction === 'asc' ? "ASC" : "DESC");
+        }
 
         var processLoadedMessages = function (data) {
             if (data.length > 0) {
@@ -40,7 +43,7 @@
                 });
 
                 vm.failedMessages = vm.failedMessages.concat(exgroups);
-                vm.allMessagesLoaded = (vm.failedMessages.length >= vm.group.count);
+                vm.allMessagesLoaded = (vm.failedMessages.length >= vm.selectedExceptionGroup.count);
                 vm.page++;
             }
             vm.loadingData = false;
@@ -50,8 +53,8 @@
             vm.failedMessages = [];
             vm.selectedIds = [];
             vm.page = 1;
-
-            vm.loadMoreResults(vm.group);
+            setSortButtonText(vm.sort, vm.direction);
+            vm.loadMoreResults(vm.selectedExceptionGroup);
         }
 
         vm.togglePanel = function (message, panelnum) {
@@ -126,6 +129,33 @@
             $window.open("si://" + dnsName + "?search=" + messageId);
         };
 
+        var selectGroupInternal = function (group, sort, direction, changeToMessagesTab) {
+            vm.sort = sort;
+            vm.direction = direction;
+            setSortButtonText(sort, direction);
+
+            if ($scope.loadingData) {
+                return;
+            }
+
+            if (changeToMessagesTab) {
+                vm.activePageTab = "messages";
+            }
+
+            vm.failedMessages = [];
+            vm.selectedExceptionGroup = group;
+            vm.allMessagesLoaded = false;
+            vm.page = 1;
+
+            vm.loadMoreResults(group, sort, direction);
+        };
+
+        vm.selectGroup = function (group, sort, direction) {
+            selectGroupInternal(group, sort, direction, true);
+        };
+
+
+
 
         vm.loadMoreResults = function (group) {
             vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
@@ -136,13 +166,26 @@
 
             vm.loadingData = true;
 
-            serviceControlService.getFailedMessagesForExceptionGroup(
-                group.id,
-                vm.sort,
-                vm.page,
-                vm.direction).then(function (response) {
-                processLoadedMessages(response.data);
-            });
+            var allExceptionsGroupSelected = (!group || !group.id);
+            if (allExceptionsGroupSelected) {
+                serviceControlService.getFailedMessages(
+                    vm.sort,
+                    vm.page,
+                    vm.direction).then(function (response) {
+                        processLoadedMessages(response.data);
+                    });
+            } else {
+                serviceControlService.getFailedMessagesForExceptionGroup(
+                    group.id,
+                    vm.sort,
+                    vm.page,
+                    vm.direction).then(function (response) {
+                        processLoadedMessages(response.data);
+                    });
+            }
+
+
+            
         }
 
         init();

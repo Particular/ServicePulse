@@ -108,3 +108,10 @@ pre {
 	background-image: -o-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
 	background-image: linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
 }
+
+.loading {
+    background-image: url('/img/loader_spinner.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 65px;
+}
