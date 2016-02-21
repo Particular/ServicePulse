@@ -13,6 +13,7 @@
                                     <div class="col-md-12">
                                         <p class="lead">{{eventLogItem.description}} </p>
                                         <p>
+                                            <a ng-show="eventLogItem.category === 'Endpoints'" title="{{eventLogItem.category}}" href="/#/configuration">GO TO CONFIGURATION MANAGEMENT</a>
                                             <a ng-show="eventLogItem.category === 'HeartbeatMonitoring'" title="{{eventLogItem.category}}" href="/#/endpoints">GO TO ENDPOINT MANAGEMENT</a>
                                             <a ng-show="eventLogItem.category === 'CustomChecks'" title="{{eventLogItem.category}}" href="/#/customChecks">GO TO CUSTOM CHECK MANAGEMENT</a>
                                             <a ng-show="eventLogItem.category === 'EndpointControl'" title="{{eventLogItem.category}}" href="/#/endpoints">GO TO ENDPOINT MANAGEMENT</a>
