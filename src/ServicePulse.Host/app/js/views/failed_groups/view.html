@@ -83,14 +83,18 @@
                 <div class="row box" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-md-12">
                         <div class="row">
-
-                            <div class="col-sm-10">
+                            <div class="check col-md-1">
+                                
+                            </div>
+                            <div class="col-sm-9">
                                 <div class="row box-header">
                                     <div class="col-md-12" ng-click="vm.viewExceptionGroup(group)">
                                         <p class="lead"> {{group.title}}</p>
-                                        <p>There are currently {{group.count}} message<span ng-show="group.count >1">s</span> in this group
+                                        <p>
+                                            There are currently {{group.count}} message<span ng-show="group.count >1">s</span> in this group
                                         </p>
-                                        <p>The most recent failure occured <sp-moment date="{{group.last}}"></sp-moment> with the first failure occuring <sp-moment date="{{group.first}}"></sp-moment>.
+                                        <p>
+                                            The most recent failure occured <sp-moment date="{{group.last}}"></sp-moment> with the first failure occuring <sp-moment date="{{group.first}}"></sp-moment>.
                                         </p>
                                     </div>
                                 </div>
