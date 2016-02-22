@@ -7,4 +7,37 @@
     
 </div>
 
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            <h5>system status</h5>
+            <div class="row box">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <a href="/#/endpoints">
+                                <span ng-show="failedheartbeats > 0">{{failedheartbeats}} Failed Heartbeats</span>
+                                <span ng-show="failedheartbeats === 0">No Failed Heartbeats</span>
+                            </a>
+                        </div>
+                        <div class="col-sm-4">
+                            <a href="/#/failedGroups">
+                                <span ng-show="failedmessages > 0">{{failedmessages}} Failed Messages</span>
+                                <span ng-show="failedmessages === 0">No Failed Messages</span>
+                            </a>
+                        </div>
+                        <div class="col-sm-4">
+                            <a href="/#/customChecks">
+                                <span ng-show="failedcustomchecks > 0">{{failedcustomchecks}} Custom Checks</span>
+                                <span ng-show="failedcustomchecks === 0">No Failed Custom Checks</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row" ng-include="'js/views/event_log_items/eventLogItems.tpl.html'"></div>

@@ -6,12 +6,87 @@ body {
     padding-top: 120px;
     background-color: #e9eaed;
     overflow-y: scroll;
+    margin: 0 0 150px; /* bottom = more than footer height */
 }
 
 pre {
     white-space: pre-wrap;
 }
 
+.footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    /* Set the fixed height of the footer here */
+    height: 130px;
+    width: 100%;
+	text-align: left;
+	font: bold 16px sans-serif;
+	padding: 5px 0;
+	margin-top: 10px;
+
+    background-color: #292c2f;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.12);
+	box-sizing: border-box;
+	
+    z-index: 1;
+}
+
+
+.footer  i{
+	background-color:  #33383b;
+	color: #ffffff;
+	font-size: 25px;
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
+	text-align: center;
+	line-height: 42px;
+	margin: 10px 15px;
+	vertical-align: middle;
+}
+
+footer  i.warning{
+	background-color: #aa6708;
+	
+}
+
+.footer  i.fa-envelope{
+	font-size: 17px;
+	line-height: 38px;
+}
+.footer  i.fa-code-fork{
+	font-size: 17px;
+	line-height: 38px;
+}
+.footer  i.fa-book{
+	font-size: 17px;
+	line-height: 38px;
+}
+.footer  i.fa-external-link{
+	font-size: 17px;
+	line-height: 38px;
+}
+
+.footer  p{
+	display: inline-block;
+	color: #ffffff;
+	vertical-align: middle;
+	margin:0;
+}
+
+.footer  p span{
+	display:block;
+	font-weight: normal;
+	font-size:14px;
+	line-height:2;
+}
+
+.footer  p a{
+	color:  #5383d3;
+	text-decoration: none;;
+}
 
 
 .navbar-default {
@@ -180,3 +255,6 @@ pre {
     -moz-border-radius: 0px;
     border-radius: 0px;
 }
+
+
+
