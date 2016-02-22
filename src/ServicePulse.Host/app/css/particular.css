@@ -165,7 +165,8 @@ footer  i.warning{
 .box-body {
 }
 
-
+/* fixed bus with repeat list transition lag */
+.ng-animate { transition: none; }
 
 .label-important,
 .badge-important {
@@ -240,4 +241,28 @@ footer  i.warning{
 }
 
 
+.wf-working {
+opacity: .5;
+position: relative;
+}
+.wf-working::after {
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+content: ' ';
+}
+
+.wf-success {
+opacity: .5;
+position: relative;
+}
+
+.wf-success::after {
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+content: ' ';
+}
 

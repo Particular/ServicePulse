@@ -1,5 +1,5 @@
 ﻿;
-(function(window, angular, undefined) {
+(function (window, angular, undefined) {
     "use strict";
 
     function createWorkflowState(optionalStatus, optionalMessage, optionalTotal, optionalCount) {
@@ -14,6 +14,7 @@
     function controller(
         $scope,
         $timeout,
+        $interval,
         $location,
         sharedDataService,
         notifyService,
@@ -27,6 +28,7 @@
         vm.selectedExceptionGroup = {};
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
 
+
         var markMessage = function (group, property) {
             //mark messages as retried
             if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
@@ -38,10 +40,10 @@
 
         vm.viewExceptionGroup = function (group) {
             sharedDataService.set(group);
-            $location.path('/failedMessages'); 
+            $location.path('/failedMessages');
         }
 
-        vm.archiveExceptionGroup = function(group) {
+        vm.archiveExceptionGroup = function (group) {
 
             group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
@@ -50,36 +52,51 @@
                     group.workflow_state = createWorkflowState('success', message);
 
                     markMessage(group, 'archived');
-                    //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+
+                    notifier.notify('ArchiveGroupRequestAccepted', group);
 
                 }, function (message) {
                     group.workflow_state = createWorkflowState('error', message);
+                    notifier.notify('ArchiveGroupRequestRejected', group);
+
                 })
                 .finally(function () {
 
                 });
         }
 
-        vm.retryExceptionGroup = function(group) {
+        vm.retryExceptionGroup = function (group) {
             group.workflow_state = { status: 'working', message: 'working' };
 
             var response = failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function (message) {
                     // We are going to have to wait for service control to tell us the job has been done
                     group.workflow_state = createWorkflowState('success', message);
-
                     markMessage(group, 'retried');
-                    //selectGroupInternal($scope.allFailedMessagesGroup, null, false);
+                    notifier.notify('RetryGroupRequestAccepted', group);
 
                 }, function (message) {
                     group.workflow_state = createWorkflowState('error', message);
+                    notifier.notify('RetryGroupRequestRejected', group);
+
                 })
                 .finally(function () {
 
                 });
         }
 
+        var removeGroup = function (group) {
+            //remove group
+            for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
+                var exGroup = $scope.model.exceptionGroups[j];
+                if (group.title === exGroup.title) {
+                    $scope.model.exceptionGroups.splice(j, 1);
+                }
+            }
+        };
+
         var autoGetExceptionGroups = function () {
+
             serviceControlService.getExceptionGroups()
                 .then(function (response) {
                     if (response.data.length > 0) {
@@ -87,23 +104,22 @@
                         vm.allFailedMessagesGroup.count = 0;
 
                         // need a map in some ui state for controlling animations
-                        var exgroups = response.data.map(function (obj) {
+                        vm.exceptionGroups = response.data.map(function (obj) {
                             vm.allFailedMessagesGroup.count += obj.count;
                             var nObj = obj;
                             nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;
                         });
-
-                        vm.exceptionGroups = exgroups;
-
-                        return;
                     }
-
-                    $timeout(function () {
-                        autoGetExceptionGroups();
-                    }, 2000);
                 });
+
         };
+
+        notifier.subscribe($scope, function (event, data) {
+            $timeout(function () {
+                autoGetExceptionGroups();
+            }, 5000);
+        }, 'MessagesSubmittedForRetry');
 
         // INIT
         autoGetExceptionGroups();
@@ -112,6 +128,7 @@
     controller.$inject = [
         "$scope",
         "$timeout",
+        "$interval",
         "$location",
         "sharedDataService",
         "notifyService",

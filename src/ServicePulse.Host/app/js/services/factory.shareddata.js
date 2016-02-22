@@ -53,7 +53,8 @@
         return {
             set: set,
             get: get,
-            getstats: getstats
+            getstats: getstats,
+            submittedForRetry: storage.submittedForRetry
         };
 
     }

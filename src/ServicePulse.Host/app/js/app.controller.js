@@ -77,6 +77,37 @@
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
+        notifier.subscribe($scope, function (event, data) {
+            logit(data);
+            toastService.showInfo('Group ' + data.title + ' Archive Request Accepted');
+        }, 'ArchiveGroupRequestAccepted');
+        
+        notifier.subscribe($scope, function (event, data) {
+            logit(data);
+            toastService.showError('Group' + data.title + ' Archive Request Rejected');
+        }, 'ArchiveGroupRequestRejected');
+
+        notifier.subscribe($scope, function (event, data) {
+            logit(data);
+            toastService.showInfo('Group ' + data.title + ' Retry Request Accepted');
+        }, 'RetryGroupRequestAccepted');
+
+        notifier.subscribe($scope, function (event, data) {
+            logit(data);
+            toastService.showError('Group' + data.title + ' Retry Request Rejected');
+        }, 'RetryGroupRequestRejected');
+
+        
+        
+        notifier.subscribe($scope, function (event, data) {
+            logit(data);
+            toastService.showInfo('Message Failed Repeatedly');
+        }, 'MessageFailedRepeatedly');
+
+        notifier.subscribe($scope, function (event, data) {
+            logit(data);
+            toastService.showInfo('Message Failed');
+        }, 'MessageFailed');
 
         notifier.subscribe($scope, function (event, data) {
             logit(data);
@@ -144,6 +175,10 @@
         listener.subscribe($scope, function (message) {
             notifier.notify('EventLogItemAdded', message);
         }, 'EventLogItemAdded');
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify('MessagesSubmittedForRetry', message);
+        }, 'MessagesSubmittedForRetry');
     };
 
     controller.$inject = [
