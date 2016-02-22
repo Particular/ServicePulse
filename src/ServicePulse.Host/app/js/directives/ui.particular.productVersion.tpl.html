@@ -1,5 +1,5 @@
-﻿<div class="col-sm-4">
-    <div ng-show="version !== ''">
+﻿<div >
+    <div class="col-sm-3" ng-show="version !== ''">
 
         <i ng-show="!newspversion" class="fa fa-code-fork"></i>
         <p ng-show="!newspversion">
@@ -13,20 +13,18 @@
 
     </div>
 
-    <div ng-show="scversion !== ''">
+    <div class="col-sm-3">
+        <div ng-show="scversion !== ''">
 
-        <i ng-show="!newscversion" class="fa fa-code-fork"></i>
-        <p ng-show="!newscversion">
-            ServiceControl V {{scversion}}
-        </p>
+            <i ng-show="!newscversion" class="fa fa-code-fork"></i>
+            <p ng-show="!newscversion">
+                ServiceControl V {{scversion}}
+            </p>
 
-        <i ng-show="newscversion" class="fa fa-external-link warning"></i>
-        <p ng-show="newscversion">
-            <a href="{{newscversionlink}}" title="Download ServiceControl" target="_blank">ServiceControl V {{scversion}}</a>
-        </p>
-
+            <i ng-show="newscversion" class="fa fa-external-link warning"></i>
+            <p ng-show="newscversion">
+                <a href="{{newscversionlink}}" title="Download ServiceControl" target="_blank">ServiceControl V {{scversion}}</a>
+            </p>
+        </div>
     </div>
-
-
-
 </div>

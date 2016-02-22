@@ -18,41 +18,41 @@
                 <li ng-class="{ active: isActive('/dashboard') }">
                     <a href="/#/dashboard">
                         <i class="fa fa-dashboard icon-white"></i>
-                        <span class="hidden-sm">
-                            <span class="hidden-md">  Dashboard</span>
-                        </span>
+
+                        <span class="visible-lg-inline">  Dashboard</span>
+
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/endpoints') }">
                     <a href="/#/endpoints">
                         <i class="fa fa-heart icon-white"></i>
-                        <span class="hidden-sm">
-                            <span class="hidden-md">  Endpoints Overview</span> <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats}}</span>
-                        </span>
+
+                        <span class="visible-lg-inline">  Endpoints Overview</span> <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats}}</span>
+
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/failedGroups') || isActive('/failedMessages') }">
                     <a href="/#/failedGroups">
                         <i class="fa fa-envelope icon-white"></i>
-                        <span class="hidden-sm">
-                            <span class="hidden-md">  Failed Messages</span> <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages}}</span>
-                        </span>
+
+                        <span class="visible-lg-inline">  Failed Messages</span> <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages}}</span>
+
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/customChecks') }">
                     <a href="/#/customChecks">
                         <i class="fa fa-check icon-white"></i>
-                        <span class="hidden-sm">
-                            <span class="hidden-md"> Custom Check</span> <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks}}</span>
-                        </span>
+
+                        <span class="visible-lg-inline"> Custom Check</span> <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks}}</span>
+
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/configuration') }">
                     <a href="/#/configuration">
                         <i class="fa fa-cog icon-white"></i>
-                        <span class="hidden-sm">
-                            <span class="hidden-md"> Configuration</span>
-                        </span>
+
+                        <span class="visible-lg-inline"> Configuration</span>
+
                     </a>
                 </li>
             </ul>

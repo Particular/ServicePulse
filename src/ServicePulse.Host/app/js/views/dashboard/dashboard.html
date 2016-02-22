@@ -4,7 +4,7 @@
             Home
         </li>
     </ul>
-    
+
 </div>
 
 <div class="container">
@@ -17,20 +17,26 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <a href="/#/endpoints">
-                                <span ng-show="failedheartbeats > 0">{{failedheartbeats}} Failed Heartbeats</span>
-                                <span ng-show="failedheartbeats === 0">No Failed Heartbeats</span>
+
+                                <span ng-show="!failedheartbeats || failedheartbeats == 0">No Failed Heartbeats</span>
+                                <span ng-show="failedheartbeats == 1">{{failedheartbeats}} Failed Heartbeat</span>
+                                <span ng-show="failedheartbeats > 1">{{failedheartbeats}} Failed Heartbeats</span>
                             </a>
                         </div>
                         <div class="col-sm-4">
                             <a href="/#/failedGroups">
-                                <span ng-show="failedmessages > 0">{{failedmessages}} Failed Messages</span>
-                                <span ng-show="failedmessages === 0">No Failed Messages</span>
+
+                                <span ng-show="!failedmessages || failedmessages == 0">No Failed Messages</span>
+                                <span ng-show="failedmessages == 1">{{failedmessages}} Failed Message</span>
+                                <span ng-show="failedmessages > 1">{{failedmessages}} Failed Messages</span>
                             </a>
                         </div>
                         <div class="col-sm-4">
                             <a href="/#/customChecks">
-                                <span ng-show="failedcustomchecks > 0">{{failedcustomchecks}} Custom Checks</span>
-                                <span ng-show="failedcustomchecks === 0">No Failed Custom Checks</span>
+
+                                <span ng-show="!failedcustomchecks || failedcustomchecks == 0">No Failed Custom Checks</span>
+                                <span ng-show="failedcustomchecks == 1">1 Failed Custom Check</span>
+                                <span ng-show="failedcustomchecks > 1">{{failedcustomchecks}} Failed Custom Checks</span>
                             </a>
                         </div>
                     </div>
