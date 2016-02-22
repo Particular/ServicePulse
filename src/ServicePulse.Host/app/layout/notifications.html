@@ -1,4 +1,0 @@
-<div ng-class="['interactiveList', 'alert', 'alert-'+notification.type]" ng-repeat="notification in notifications.getCurrent()">
-    <button  class="close" data-dismiss="alert" aria-label="Close" ng-click="removeNotification(notification)" ng-hide="disableClosing">&times;</button>
-    <span ng-bind-html="notification.message"></span>
-</div>
