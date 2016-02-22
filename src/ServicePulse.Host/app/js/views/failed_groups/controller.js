@@ -23,7 +23,7 @@
 
         var vm = this;
         var notifier = notifyService();
-
+        vm.loadingData = false;
         vm.exceptionGroups = [];
         vm.selectedExceptionGroup = {};
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
@@ -96,7 +96,7 @@
         };
 
         var autoGetExceptionGroups = function () {
-
+            vm.loadingData = true;
             serviceControlService.getExceptionGroups()
                 .then(function (response) {
                     if (response.data.length > 0) {
@@ -110,6 +110,8 @@
                             nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;
                         });
+
+                        vm.loadingData = false;
                     }
                 });
 
