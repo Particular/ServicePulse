@@ -95,7 +95,7 @@
                                     <span class="small">
                                         <span ng-if="message.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
                                         <span ng-if="message.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
-                                        <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label label-important">Repeated Failure</span>
+                                        <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label label-important">{{message.number_of_processing_attempts}} Repeated Failures</span>
                                     </span>
                                 </div>
                             </div>

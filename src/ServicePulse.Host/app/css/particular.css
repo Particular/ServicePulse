@@ -160,9 +160,17 @@ footer  i.warning{
 
 .box-header {
     padding-bottom: 3px;
+    white-space: nowrap;
+  overflow: hidden;
+    -moz-text-overflow: ellipsis;
+    text-overflow: ellipsis;
 }
 
 .box-body {
+    white-space: nowrap;
+  overflow: hidden;
+    -moz-text-overflow: ellipsis;
+    text-overflow: ellipsis;
 }
 
 /* fixed bus with repeat list transition lag */
@@ -266,3 +274,9 @@ height: 100%;
 content: ' ';
 }
 
+.truncate {
+    white-space: nowrap;
+  overflow: hidden;
+    -moz-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
