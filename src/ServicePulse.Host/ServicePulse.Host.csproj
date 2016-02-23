@@ -207,6 +207,8 @@
     <Content Include="app\lib\angular\angular-route.min.js" />
     <Content Include="app\lib\angular\angular-sanitize.js" />
     <Content Include="app\lib\angular\angular-sanitize.min.js" />
+    <Content Include="app\lib\bootcards-desktop.css" />
+    <Content Include="app\lib\bootcards-desktop.min.css" />
     <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css" />
     <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.min.css" />
     <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap.css" />
@@ -263,6 +265,7 @@
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="app\js\services\services.uri.js" />
+    <None Include="app\lib\bootcards-desktop.css.map" />
     <None Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css.map" />
     <None Include="app\lib\bootstrap-3.3.5\css\bootstrap.css.map" />
     <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.eot" />

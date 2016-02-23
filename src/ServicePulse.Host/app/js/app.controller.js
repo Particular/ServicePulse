@@ -79,7 +79,6 @@
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
         notifier.subscribe($scope, function (event, data) {
             logit(data);
-            toastService.showInfo('Group ' + data.title + ' Archive Request Accepted');
         }, 'ArchiveGroupRequestAccepted');
         
         notifier.subscribe($scope, function (event, data) {
@@ -89,7 +88,6 @@
 
         notifier.subscribe($scope, function (event, data) {
             logit(data);
-            toastService.showInfo('Group ' + data.title + ' Retry Request Accepted');
         }, 'RetryGroupRequestAccepted');
 
         notifier.subscribe($scope, function (event, data) {
@@ -101,17 +99,15 @@
         
         notifier.subscribe($scope, function (event, data) {
             logit(data);
-            toastService.showInfo('Message Failed Repeatedly');
         }, 'MessageFailedRepeatedly');
 
         notifier.subscribe($scope, function (event, data) {
             logit(data);
-            toastService.showInfo('Message Failed');
         }, 'MessageFailed');
 
         notifier.subscribe($scope, function (event, data) {
             logit(data);
-            toastService.showWarning(data);
+           // toastService.showWarning(data);
         }, 'MessagesSubmittedForRetry');
      
 
@@ -138,16 +134,6 @@
 
         // signalR Listener
         var listener = signalRListener(scConfig.service_control_url + 'messagestream');
-
-        //listener.subscribe($scope, function (message) {
-        //    notifier.notify('messageArrived', {
-        //        title: message.title,
-        //        body: JSON.stringify(message)
-        //    });
-
-        //    toastService.showToast(message.title);
-        //});
-        
 
         listener.subscribe($scope, function (message) {
             notifier.notify('SignalREvent', message);

@@ -98,8 +98,9 @@ footer  i.warning{
 
 .breadcrumb-fixed {
     position: fixed;
-    right: 0;
-    left: 0;
+    /*right: 0;
+    left: 0;*/
+    background: none;
     z-index: 1;
     top: 77px;
     border-radius: 0px;
@@ -243,7 +244,7 @@ footer  i.warning{
 
 
 .wf-working {
-opacity: .5;
+    opacity: .5;
 position: relative;
 }
 .wf-working::after {
@@ -255,8 +256,8 @@ content: ' ';
 }
 
 .wf-success {
-opacity: .5;
-position: relative;
+    opacity: .5;
+    position: relative;
 }
 
 .wf-success::after {

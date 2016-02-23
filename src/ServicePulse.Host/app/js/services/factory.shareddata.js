@@ -18,22 +18,22 @@
 
         serviceControlService.getHeartbeatStats().then(function (stat) {
             notifier.notify('HeartbeatsUpdated', {
-                failing: stat.failing,
-                active: stat.active
+                failing: stat.failing || 0,
+                active: stat.active || 0
             });
 
-            stats.failing_endpoints = stat.failing;
-            stats.active_endpoints = stat.active;
+            stats.failing_endpoints = stat.failing || 0;
+            stats.active_endpoints = stat.active || 0;
         });
 
         serviceControlService.getTotalFailedMessages().then(function (response) {
             notifier.notify('MessageFailuresUpdated', response);
-            stats.number_of_failed_messages = response;
+            stats.number_of_failed_messages = response || 0;
         });
 
         serviceControlService.getTotalFailingCustomChecks().then(function (response) {
-            notifier.notify('CustomChecksUpdated', response);
-            stats.number_of_failed_checks = response;
+            notifier.notify('CustomChecksUpdated', response || 0);
+            stats.number_of_failed_checks = response || 0;
         });
 
         var storage = $localStorage.$default({});

@@ -18,7 +18,7 @@
 		}, 'CustomChecksUpdated');
 
 		notifier.subscribe($scope, function(event, data) {
-		     $scope.model.number_of_failed_messages = data;
+		    $scope.model.number_of_failed_messages = data;
 		}, 'MessageFailuresUpdated');
 
 		notifier.subscribe($scope, function (event, data) {

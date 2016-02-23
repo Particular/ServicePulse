@@ -1,19 +1,17 @@
-﻿<div class="row">
+﻿<div class="container">
+    <div class="row">
 
-    <ul class="breadcrumb breadcrumb-fixed">
-        <li>
-            <a href="#/dashboard">Home</a>
-        </li>
-        <li>
-            Failed Messages
-        </li>
-    </ul>
+        <ul class="breadcrumb breadcrumb-fixed">
+   
+            <li>
+                Failed Messages
+            </li>
+        </ul>
+
+    </div>
 
 </div>
-
-
 <div class="container">
-
 
 
     <section name="message_groups">
@@ -57,12 +55,12 @@
                                     <div class="col-md-12">
                                         <p class="lead">Processing Group {{group.title}}</p>
                                         <p>It can take some time for these messages to be processed by your system. Please be patient. </p>
-                                        <p>If you leave this screen messages my appear as if they have not been processed when you return. </p>
+                                        <p><strong>If you leave this screen messages my appear as if they have not been processed when you return. </strong></p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2">
-
+                                <i class="fa fa-spinner fa-pulse fa-5x pull-right"></i>
                             </div>
                         </div>
                         <div class="row" ng-show="group.workflow_state.status ==='ready'">
