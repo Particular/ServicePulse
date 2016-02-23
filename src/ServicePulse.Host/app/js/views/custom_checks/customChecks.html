@@ -1,11 +1,9 @@
-<div class="row">
+<div class="container">
+    <div class="row">
 
-    <ul class="breadcrumb breadcrumb-fixed">
-        <li>
-            <a href="#/dashboard">Home</a>
-        </li>
-        <li>Custom Checks</li>
-    </ul>
+        <h1>Custom checks</h1>
+
+    </div>
 
 </div>
 
@@ -13,7 +11,6 @@
     <section name="custom_checks">
         <div class="row">
             <div class="col-md-12">
-                <h5>Showing {{model.total}} failed custom check(s)</h5>
                 <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
                     <div class="row box box-warning" ng-repeat="item in model.data | orderBy: '-reported_at'">
                         <div class="col-md-12">

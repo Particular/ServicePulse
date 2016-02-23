@@ -1,12 +1,7 @@
 ﻿<div class="container">
     <div class="row">
 
-        <ul class="breadcrumb breadcrumb-fixed">
-   
-            <li>
-                Failed Messages
-            </li>
-        </ul>
+        <h1>Failed Messages</h1>
 
     </div>
 
@@ -42,7 +37,7 @@
 
             <div class="col-md-12" ng-show="vm.exceptionGroups.length > 0">
                 <h5>
-                    showing {{vm.exceptionGroups.length}} failed messages groups. Messages are grouped by exception type and exception line of code.
+                    {{vm.exceptionGroups.length}} failed message groups
                 </h5>
                 <div class="row box wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-md-12">
@@ -106,8 +101,6 @@
         <div class="row">
             <div class="col-md-12">
 
-
-                <h5>global message failure management</h5>
 
                 <div class="row alert-danger box box-danger">
                     <div class="col-md-12">

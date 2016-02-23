@@ -1,11 +1,9 @@
-<div class="row">
+<div class="container">
+    <div class="row">
 
-    <ul class="breadcrumb breadcrumb-fixed">
-        <li>
-            <a href="#/dashboard">Home</a>
-        </li>
-        <li>Configuration</li>
-    </ul>
+        <h1>Endpoints configuration</h1>
+        
+    </div>
 
 </div>
 
@@ -13,7 +11,6 @@
     <section name="configuration">
         <div class="row">
             <div class="col-md-12">
-                <h5>endpoints configuration</h5>
                 <div class="row box" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
                     <div class="col-md-12">
                         <div class="row">
