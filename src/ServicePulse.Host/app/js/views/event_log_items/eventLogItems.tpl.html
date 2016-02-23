@@ -4,16 +4,17 @@
             <div class="col-md-12">
                 <h5>recent events</h5>
 
-                <div class="row box" ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10">
+                <div ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10" class="row box">
                     <div class="col-md-12" ng-click="viewCategory(eventLogItem)">
                         <div class="row">
                             <div class="col-sm-1">
-                                <i ng-show="eventLogItem.category === 'Endpoints'" title="{{eventLogItem.category}}" class="fa fa-heart fa-2x"></i>
-                                <i ng-show="eventLogItem.category === 'HeartbeatMonitoring'" title="{{eventLogItem.category}}" class="fa fa-heart fa-2x"></i>
-                                <i ng-show="eventLogItem.category === 'CustomChecks'" title="{{eventLogItem.category}}" class="fa fa-check fa-2x"></i>
-                                <i ng-show="eventLogItem.category === 'EndpointControl'" title="{{eventLogItem.category}}" class="fa fa-heart  fa-2x"></i>
-                                <i ng-show="eventLogItem.category === 'MessageFailures'" title="{{eventLogItem.category}}" class="fa fa-envelope fa-2x"></i>
-                                <i ng-show="eventLogItem.category === 'Recoverability'" title="{{eventLogItem.category}}" class="fa fa-envelope fa-2x"></i>
+                                <i title="{{eventLogItem.category}}" class="fa fa-2x"
+                                   ng-class="{
+                                   'info': eventLogItem.severity === 'info',
+                                   'danger': eventLogItem.severity === 'error',
+                                   'fa-heart': eventLogItem.category === 'Endpoints' || eventLogItem.category === 'EndpointControl' || eventLogItem.category === 'HeartbeatMonitoring',
+                                   'fa-check': eventLogItem.category === 'CustomChecks',
+                                   'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability'}"></i>
                             </div>
                             <div class="col-sm-9">
                                 <div class="row box-header">

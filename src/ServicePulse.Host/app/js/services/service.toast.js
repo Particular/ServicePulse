@@ -8,6 +8,7 @@
                 type: type || 'info',
                 title: title || 'Message',
                 body: text,
+                bodyOutputType: 'trustedHtml',
                 timeout: sticky ? 0 : 5000,
                 showCloseButton: sticky
             });

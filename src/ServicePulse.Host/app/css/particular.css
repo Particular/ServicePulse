@@ -132,6 +132,10 @@ footer  i.warning{
     box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
+.fa {
+    color: #929e9e;
+}
+
 .subdued {
     color: #666666;
 }
@@ -303,9 +307,7 @@ body {
     color: #777f7f !important;
 }
 
-.fa {
-    color: #929e9e !important;
-}
+
 
 .bootcards-summary-item {
     background: #fff;

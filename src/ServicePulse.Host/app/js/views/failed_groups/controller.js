@@ -85,16 +85,6 @@
                 });
         }
 
-        var removeGroup = function (group) {
-            //remove group
-            for (var j = 0; j < $scope.model.exceptionGroups.length; j++) {
-                var exGroup = $scope.model.exceptionGroups[j];
-                if (group.title === exGroup.title) {
-                    $scope.model.exceptionGroups.splice(j, 1);
-                }
-            }
-        };
-
         var autoGetExceptionGroups = function () {
             vm.loadingData = true;
             serviceControlService.getExceptionGroups()
