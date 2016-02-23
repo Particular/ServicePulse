@@ -14,7 +14,6 @@
         <div class="row">
             <div class="col-md-12" ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData">
 
-
                 <h5>message failures</h5>
 
                 <div class="row box">
@@ -95,7 +94,7 @@
 
     </section>
 
-    <section name="global_message_management">
+    <section name="global_message_management" ng-show="vm.exceptionGroups.length > 0">
 
 
         <div class="row">
@@ -128,8 +127,13 @@
         </div>
 
     </section>
-    <p>
-        <br>
-    </p>
-
+    <div class="row">
+        <div class="col-md-12" ng-show="vm.loadingData">
+            <div class="row box">
+                <div class="col-md-12">
+                    <div class="loading"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

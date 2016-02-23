@@ -33,10 +33,6 @@
             if (!isValid) {
                 toastService.showError('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>');
             }
-
-            toastService.showError('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support" target="_blank">http://particular.net/support</a>');
-
-
         });
 
         $scope.isActive = function(viewLocation) {
@@ -104,7 +100,7 @@
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
             if (data === "SignalR started") {
-                toastService.showInfo(data);
+                toastService.showInfo('Connected to ServiceControl');
             } else {
                 toastService.showWarning(data);
             }
@@ -155,6 +151,12 @@
         listener.subscribe($scope, function(message) {
             notifier.notify("MessagesSubmittedForRetry", message);
         }, "MessagesSubmittedForRetry");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("FailedMessageGroupArchived", message);
+        }, "FailedMessageGroupArchived");
+
+        
     };
 
     controller.$inject = [

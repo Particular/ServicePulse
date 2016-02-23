@@ -183,9 +183,6 @@
                         processLoadedMessages(response.data);
                     });
             }
-
-
-            
         }
 
         init();

@@ -78,7 +78,6 @@
                 }, function (message) {
                     group.workflow_state = createWorkflowState('error', message);
                     notifier.notify('RetryGroupRequestRejected', group);
-
                 })
                 .finally(function () {
 
@@ -100,9 +99,9 @@
                             nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;
                         });
-
-                        vm.loadingData = false;
                     }
+
+                    vm.loadingData = false;
                 });
 
         };
@@ -112,6 +111,13 @@
                 autoGetExceptionGroups();
             }, 5000);
         }, 'MessagesSubmittedForRetry');
+
+
+        notifier.subscribe($scope, function (event, data) {
+            $timeout(function () {
+                autoGetExceptionGroups();
+            }, 3000);
+        }, 'FailedMessageGroupArchived');
 
         // INIT
         autoGetExceptionGroups();
