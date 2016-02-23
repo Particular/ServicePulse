@@ -14,41 +14,7 @@
 
 <div class="container">
 
-    <section name="global_message_management">
 
-
-        <div class="row">
-            <div class="col-md-12" >
-
-
-                <h5>global message failure management</h5>
-
-                <div class="row alert-danger box box-danger">
-                    <div class="col-md-12">
-                        <div class="row">
-
-                            <div class="col-sm-12">
-                                <div class="row box-header">
-                                    <div class="col-md-12">
-                                        <p class="pull-right">
-                                            <button class="btn btn-danger" type="button" ng-show="vm.exceptionGroups.length > 0" confirm-message="Are you really sure you want to retry all failed messages?" confirm-click="retryAll()" tooltip="All failed messages will be Retried"><i class="fa fa-refresh white"></i> Retry All Failed Messages</button>
-                                            <button class="btn btn-default" type="button" ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" tooltip="Review all Messages"><i class="fa fa-envelope"></i> View All Failed Messages</button>
-                                        </p>
-                                        <p>
-                                        </p><h4>Warning!</h4> Retrying all messages can be a time consuming operation. Take care when doing this.
-                                        <p></p>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </section>
 
     <section name="message_groups">
 
@@ -117,13 +83,13 @@
                                 </div>
                             </div>
                             <div class="col-sm-2">
-                                <button type="button" class="btn btn-link btn-sm pull-right  hidden-sm-down" tooltip="Archive Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
-                                    <i>View Group</i>
+                                <button type="button" class="btn btn-link btn-sm pull-right  hidden-sm-down" tooltip="View messages in this Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
+                                    <i>View Messages</i>
                                 </button>
-                                <button type="button" class="btn btn-link btn-sm  pull-right" tooltip="Retry Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'">
+                                <button type="button" class="btn btn-link btn-sm  pull-right" tooltip="Retry messages in this Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'">
                                     <i>Retry Group</i>
                                 </button>
-                                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-message="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
+                                <button type="button" class="btn btn-link btn-sm pull-right" tooltip="Archive messages in this Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-message="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
                                     <i>Archive Group</i>
                                 </button>
                             </div>
@@ -131,6 +97,42 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+    </section>
+
+    <section name="global_message_management">
+
+
+        <div class="row">
+            <div class="col-md-12">
+
+
+                <h5>global message failure management</h5>
+
+                <div class="row alert-danger box box-danger">
+                    <div class="col-md-12">
+                        <div class="row">
+
+                            <div class="col-sm-12">
+                                <div class="row box-header">
+                                    <div class="col-md-12">
+                                        <p class="pull-right">
+                                            <button class="btn btn-danger" type="button" ng-show="vm.exceptionGroups.length > 0" confirm-message="Are you really sure you want to retry all failed messages?" confirm-click="retryAll()" tooltip="All failed messages will be Retried"><i class="fa fa-refresh white"></i> Retry All Failed Messages</button>
+                                            <button class="btn btn-default" type="button" ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" tooltip="Review all Messages"><i class="fa fa-envelope"></i> View All Failed Messages</button>
+                                        </p>
+                                        <p>
+                                        </p><h4>Warning!</h4> Retrying all messages can be a time consuming operation. Take care when doing this.
+                                        <p></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
 
