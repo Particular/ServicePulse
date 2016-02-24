@@ -14,7 +14,7 @@
     <section name="configuration">
         <div class="row">
             <div class="col-md-12">
-                <div class="row box" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
+                <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-sm-1">
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row box box-info" ng-show="model.endpoints.length == 0">
+                <div class="row box box-info box-no-click" ng-show="model.endpoints.length == 0">
                     <div class="col-md-12">
                         <div class="row">
                             <div class="col-sm-1">

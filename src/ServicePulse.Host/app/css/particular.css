@@ -7,7 +7,7 @@ body {
     background-color: #e9eaed;
     overflow-y: scroll;
     margin: 0 0 150px; /* bottom = more than footer height */
-    color: #000;
+    color: #181919;
 }
 
 pre {
@@ -310,11 +310,24 @@ section.events > div > div > div > div {
     padding-bottom: 8px !important;
 }
 
+.box-no-click {
+     background:none;
+     cursor:default;
+     border-left:none;
+     border-right:none;
+     border-bottom: 1px solid #ced6d3;
+ }
+
+.box-no-click:first-child {
+     border-top: 1px solid #ced6d3;
+ }
+
+
 .lead {
     font-size: 18px !important;
     margin-bottom: 0px;
     font-weight: bold;
-    color: #000 !important;
+    color: #181919 !important;
 }
 
 sp-moment {
@@ -353,7 +366,7 @@ h5 {
     text-transform: uppercase;
     font-size: 14px;
     font-weight: bold;
-    color: #777f7f;
+    color: #929e9e;
 }
 
 .system-status:hover {
@@ -387,6 +400,7 @@ h5 {
 h1 {
     font-weight: bold;
     margin: 0 0 2px;
+    font-size: 30px;
 }
 
 .padded {
@@ -406,4 +420,53 @@ h1 {
     font-size: 14px;
     font-weight: bold;
     color: #00a3c4;
+}
+
+.box-no-click {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.box-no-click:hover {
+     background:none !important;
+     cursor:default;
+     border-left:none;
+     border-right:none;
+     border-bottom: 1px solid #ced6d3 !important;
+     border-top: none;
+     padding-top: 21px;
+ }
+
+.box-no-click:first-child:hover {
+     border-top: 1px solid #ced6d3 !important;
+     padding-top: 20px;
+ }
+
+.box-no-click > div > div {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.box-no-click > div > div > div {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+a {
+    color: #00a3c4;
+    font-weight: bold;
+}
+
+a:hover {
+    color: #00a3c4;
+    font-weight: bold;
+}
+
+.fake-link {
+    color: #00a3c4;
+    font-weight: bold;
+}
+
+.btn-toolbar {
+    margin-bottom:12px;
 }

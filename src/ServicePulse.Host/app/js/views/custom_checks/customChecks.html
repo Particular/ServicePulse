@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
-                    <div class="row box box-warning" ng-repeat="item in model.data | orderBy: '-reported_at'">
+                    <div class="row box box-warning box-no-click" ng-repeat="item in model.data | orderBy: '-reported_at'">
                         <div class="col-md-12">
                             <div class="row">
                               
@@ -36,7 +36,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row box " ng-show="!loadingData && model.total == 0">
+                    <div class="row box box-no-click" ng-show="!loadingData && model.total == 0">
                         <div class="col-md-12">
                             <div class="row">
                               

@@ -42,41 +42,46 @@
                     </div>
 
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-md-12" ng-show="vm.failedMessages.length > 0">
                     <h5>
                         Showing {{vm.failedMessages.length}} of {{vm.selectedExceptionGroup.count}} failed messages.
                     </h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
 
-                    <div class="row box">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="btn-toolbar">
-                                    <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
-                                    <button type="button" tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn btn-default" confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry."><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
-                                    <div class="btn-group pull-right">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Sorted by {{vm.sortButtonText}}
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li>
-                                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Sent (ascending)</a>
-                                            </li>
-                                            <li>
-                                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Sent (descending)</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="btn-toolbar">
+                        <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
+                        <button type="button" tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn btn-default" confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry."><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
+                        <button class="btn btn-danger" type="button" ng-show="vm.exceptionGroups.length > 0" confirm-message="Are you really sure you want to retry all failed messages?" confirm-click="retryAll()" tooltip="All failed messages will be retried"><i class="fa fa-refresh white"></i> Retry all</button>
+                        <div class="btn-group pull-right">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Sorted by {{vm.sortButtonText}}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a>
+                                </li>
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a>
+                                </li>
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Sent (ascending)</a>
+                                </li>
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Sent (descending)</a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
+
+                </div>
+            </div>
+                    
                     <div infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
 
                         <div class="row box" ng-repeat="message in vm.failedMessages">
