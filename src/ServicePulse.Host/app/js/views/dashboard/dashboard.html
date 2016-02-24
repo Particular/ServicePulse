@@ -18,22 +18,31 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-sm-4">
-                            <a class="bootcards-summary-item" ng-class="{  'alert-danger' : failedheartbeats > 0 }" href="/#/endpoints">
-                                <i class="fa fa-heart fa-3x "></i>
-                                <h3>{{failedheartbeats}} <span>Failed Heartbeats</span></h3>
+                            <a class="summary-item" ng-class="{  'summary-danger' : failedheartbeats > 0 , 'summary-info' : failedheartbeats === 0 || !failedheartbeats  }" href="/#/endpoints">
+                                <i class="fa fa-heart fa-3x"></i>
+                                <h4>
+                                    Heartbeats
+                                    <span ng-show="failedheartbeats > 0" class="badge badge-important">{{failedheartbeats}}</span>
+                                </h4>
                             </a>
                        
                         </div>
                         <div class="col-sm-4">
-                            <a class="bootcards-summary-item" ng-class="{  'alert-danger'  : failedmessages > 0 }" href="/#/failedGroups">
+                            <a class="summary-item" ng-class="{  'summary-danger'  : failedmessages > 0 , 'summary-info' : failedmessages === 0 || !failedmessages }" href="/#/failedGroups">
                                 <i class="fa fa-envelope fa-3x "></i>
-                                <h3>{{failedmessages}} <span>Failed Messages</span></h3>
+                                <h4>
+                                     Messages
+                                    <span ng-show="failedmessages > 0" class="badge badge-important">{{failedmessages}}</span>
+                                </h4>
                             </a>
                         </div>
                         <div class="col-sm-4">
-                            <a class="bootcards-summary-item" ng-class="{  'alert-danger'  : failedcustomchecks > 0}" href="/#/customChecks">
+                            <a class="summary-item" ng-class="{  'summary-danger'  : failedcustomchecks > 0, 'summary-info' : failedcustomchecks === 0 || !failedcustomchecks }" href="/#/customChecks">
                                 <i class="fa fa-check  fa-3x "></i>
-                                <h3>{{failedcustomchecks}}<span> Failed Custom Checks</span></h3>
+                                <h4>
+                                    Custom Checks
+                                    <span ng-show="failedcustomchecks > 0"class="badge badge-important">{{failedcustomchecks}}</span>
+                                </h4>
                             </a>
                         
                         </div>
