@@ -8,13 +8,21 @@
                     <div class="col-md-12" ng-click="viewCategory(eventLogItem)">
                         <div class="row">
                             <div class="col-sm-1">
-                                <i title="{{eventLogItem.category}}" class="fa fa-2x"
-                                   ng-class="{
+
+                                <span class="fa-stack fa-lg">
+                                    <i title="{{eventLogItem.category}}" class="fa fa-stack-2x"
+                                       ng-class="{
                                    'normal': eventLogItem.severity === 'info',
                                    'danger': eventLogItem.severity === 'error',
                                    'fa-heart': eventLogItem.category === 'Endpoints' || eventLogItem.category === 'EndpointControl' || eventLogItem.category === 'HeartbeatMonitoring',
                                    'fa-check': eventLogItem.category === 'CustomChecks',
                                    'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability'}"></i>
+
+                                    <i ng-show="eventLogItem.severity === 'error'" class="fa fa-exclamation fa-o fa-stack-1x fa-inverse"></i>
+                                </span>
+
+
+                                
                             </div>
                             <div class="col-sm-9">
                                 <div class="row box-header">

@@ -407,3 +407,11 @@ h1 {
     font-weight: bold;
     color: #00a3c4;
 }
+
+.fa-o {
+    color: #666;
+    left: -1.2em;
+    position: relative;
+    text-shadow: 0 0 1px black;
+    top: -0.5em;
+}
