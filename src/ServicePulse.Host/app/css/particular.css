@@ -165,6 +165,7 @@ footer  i.warning{
 }
 
 .box-header {
+    padding-top: 2px;
     padding-bottom: 3px;
 }
 
@@ -290,21 +291,37 @@ body {
     background-color: #f2f6f7 !important;
 }
 
-/*Dashboard overrides*/
+
+
+
+
+.box {
+    margin: 0;
+    box-shadow: none;
+    padding-bottom:10px;
+}
+
+.box p {
+    font-size: 14px;
+    color: #777f7f;
+}
+
+section.events > div > div > div > div {
+    padding-bottom: 8px !important;
+}
 
 .lead {
-    font-size: 18px;
-    margin-bottom: 0;
-
+    font-size: 18px !important;
+    margin-bottom: 0px;
+    font-weight: bold;
+    color: #000 !important;
 }
 
-.lead p {
-    margin-bottom: 0;
-}
-
-.sp-moment {
-    font-size: 16px;
+sp-moment {
+    display: inline-block;
+    font-size: 14px;
     color: #777f7f !important;
+    padding-top: 6px;
 }
 
 
@@ -312,8 +329,8 @@ body {
 .bootcards-summary-item {
     background: #fff;
     color: #777f7f;
+    border: 1px solid #fff;
 }
-
 .alert-danger {
     color: red !important;
 }
@@ -323,13 +340,11 @@ h3 {
     font-weight: bold;
 }
 
-.box {
-    margin: 0;
-    box-shadow: none;
-}
 
-.box:hover {
-    background-color: #f2f6f7;
+
+.box:hover, .bootcards-summary-item:hover {
+    border-color: #00a3c4 !important;
+    background-color: #edf6f7;
     cursor: pointer;
 }
 
@@ -339,4 +354,56 @@ h5 {
     font-size: 14px;
     font-weight: bold;
     color: #777f7f;
+}
+
+.system-status:hover {
+    background-color: #fff;
+    border-color: #eee !important;
+    cursor: default;
+}
+
+.normal {
+    color: #a8b3b1;
+}
+
+
+/* Failed messages overrides*/
+
+.breadcrumb {
+    background:none;
+    padding-left:0;
+    margin-bottom:0;
+}
+
+.breadcrumb > li a {
+    color: #00a3c4; 
+}
+
+.breadcrumb > li:nth-child(2) {
+    font-weight: bold;
+    color: #777F7F;
+}
+
+h1 {
+    font-weight: bold;
+    margin: 0 0 2px;
+}
+
+.padded {
+    padding-bottom: 30px;
+}
+
+.metadata {
+    padding: 0 20px;
+}
+
+.metadata:first-child {
+    padding-left: 0;
+}
+
+.btn-sm {
+    padding: 0 36px 10px 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #00a3c4;
 }
