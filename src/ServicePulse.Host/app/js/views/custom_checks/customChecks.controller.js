@@ -28,13 +28,14 @@
 
         var notifier = notifyService();
         notifier.subscribe($scope, reloadData(), 'CustomChecksUpdated');
-        notifier.subscribe($scope, reloadData(), 'CustomCheckDeleted');
+        //notifier.subscribe($scope, reloadData(), 'CustomCheckDeleted');
 
         function reloadData() {
+            page = 1;
             $scope.loadingData = true;
             $scope.model = { data: [], total: 0 };
             $scope.disableLoadingData = false;
-            load(1);
+            load(page);
         }
 
         function load(page) {
