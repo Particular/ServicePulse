@@ -45,9 +45,15 @@
             </div>
             <div class="row">
                 <div class="col-md-12" ng-show="vm.failedMessages.length > 0">
-                    <h5>
-                        Showing {{vm.failedMessages.length}} of {{vm.selectedExceptionGroup.count}} failed messages.
-                    </h5>
+                    
+                    <div class="tabs">
+                    
+                     <h5><a href="#/failedGroups">Failed message groups ({{vm.exceptionGroups.length}})</a></h5>
+
+                     <h5 class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
+
+                    </div>
+
                 </div>
             </div>
             <div class="row">

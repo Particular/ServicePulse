@@ -1,6 +1,16 @@
 ﻿@import url("font-awesome/css/font-awesome.min.css");
 /* app css stylesheet */
 /* navbar */
+
+a {
+    color: #00a3c4;
+    font-weight: bold;
+}
+a:hover {
+    color: #00a3c4;
+    font-weight: bold;
+}
+
 .navbar {
     height: 60px;
 }
@@ -18,6 +28,15 @@
 .navbar-toggle { 
     margin-top: 13px;
 }
+
+.navbar a {
+    font-weight: normal;
+}
+
+.navbar a:hover {
+    font-weight: normal;
+}
+
 .label-important,
 .badge-important {
     border-color: #FA5833;
@@ -292,8 +311,9 @@ h3 {
 }
 .summary-item .badge, .summary-item .label {
     position: absolute;
-    font-size: 22px;
-    top: 10px;
+    font-size: 18px;
+    top: 2px;
+    margin-left: 12px;
 }
 .summary-info, .summary-info > .fa {
     color: #1b809e;
@@ -307,12 +327,37 @@ h3 {
     cursor: pointer;
 }
 h5 {
-    margin-top: 40px;
+    margin-top: 30px;
+    margin-bottom: 10px;
     text-transform: uppercase;
     font-size: 14px;
     font-weight: bold;
-    color: #929e9e;
+    color: #777f7f;   
+    margin-right: 30px;
 }
+
+.tabs {
+    padding: 30px 0 20px;
+    border-bottom: 1px solid #ced6d3;
+}
+
+.tabs h5 {
+    display: inline;
+    padding-bottom: 3px;
+}
+
+.tabs h5.active {
+    border-bottom: 3px solid #181919;
+}
+
+.tabs a {
+    color: #a8b3b1;
+}
+
+.tabs a:hover {
+    color: #00a3c4;
+}
+
 .system-status:hover {
     background-color: #fff;
     border-color: #eee !important;
@@ -379,25 +424,19 @@ h1 {
     padding-left: 0;
     padding-right: 0;
 }
-a {
-    color: #00a3c4;
-    font-weight: bold;
-}
-a:hover {
-    color: #00a3c4;
-    font-weight: bold;
-}
-.fake-link {
-    color: #00a3c4;
-    font-weight: bold;
-}
 .btn-toolbar {
+    margin-top:12px;
     margin-bottom:12px;
 }
 .fa-o {
-    color: #666;
-    left: -1.2em;
+    color: #CE4844;
+    bottom: -1.2em;
+    left: 1.2em;
     position: relative;
-    text-shadow: 0 0 1px black;
-    top: -0.5em;
+}
+
+.badge.badge-important {
+    border: none;
+    background-image:none;
+    background-color: #CE4844;
 }
