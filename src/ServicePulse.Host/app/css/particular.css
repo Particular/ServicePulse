@@ -2,6 +2,65 @@
 
 /* app css stylesheet */
 
+/* navbar */
+.navbar {
+    height: 60px;
+}
+
+.navbar > .navbar-right {
+    margin-right: -15px;
+}
+
+.navbar-brand {
+    height: 60px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+.navbar-nav > li > a > span{
+   margin-left: 4px;
+}
+
+.navbar-toggle { 
+    margin-top: 13px;
+}
+
+.label-important,
+.badge-important {
+    border-color: #FA5833;
+    background-color: #FA603D;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, hsl(11, 95%, 76%)), color-stop(100%, hsl(11, 95%, 61%)));
+    background-image: -webkit-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+    background-image: -moz-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+    background-image: -ms-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+    background-image: -o-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+    background-image: linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
+}
+
+@media (min-width: 768px) {
+    .navbar-nav > li.active > a {
+        border-bottom: 4px solid #00A3C4;
+        background: transparent !important;
+    }   
+    
+    .navbar-label {
+        display: none;
+    }
+    
+    .navbar-nav > li > a {
+        padding-top: 20px;
+        padding-bottom: 16px;
+    }
+}
+
+@media only screen and (min-width : 1072px) {
+    .navbar-label {
+            display: inline;
+    }
+}
+
+/* end navbar */
+
 body {
     padding-top: 120px;
     background-color: #e9eaed;
@@ -70,31 +129,6 @@ footer i.warning {
         color: #00A3C4;
         text-decoration: none;
     }
-
-
-.navbar-default {
-    min-height: 40px;
-    padding-right: 20px;
-    padding-left: 20px;
-    padding-top: 15px;
-    padding-bottom: 0;
-    background: url(../img/dbg.jpg);
-    border-left: 0px solid #0a0c0e;
-    border-right: 0px solid #0a0c0e;
-    border-top: 1px solid #0a0c0e;
-    border-bottom: 2px solid #0a0c0e;
-    filter: none;
-    text-shadow: 1px 1px 1px #0a0c0e;
-    color: #fff;
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-    *zoom: 1;
-    -webkit-box-shadow: 0 4px 0 rgba(0,0,0,.1);
-    -moz-box-shadow: 0 4px 0 rgba(0,0,0,.1);
-    box-shadow: 0 4px 0 rgba(0,0,0,.1);
-    z-index: 2;
-}
 
 .breadcrumb-fixed {
     position: fixed;
@@ -206,60 +240,6 @@ footer i.warning {
     background-repeat: no-repeat;
     height: 65px;
 }
-
-#navbar > ul > li > a {
-    margin: 1px 0px 0px 0px;
-    padding-left: 20px;
-    color: #ccc;
-    border-top: 1px solid #212121;
-    border-bottom: 1px solid #0a0c0e;
-    border-left: none;
-    border-right: none;
-    background: transparent;
-    text-shadow: 0px 1px 1px #000;
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-}
-
-
-
-
-    #navbar > ul > li > a:hover {
-        margin: 1px 0px 0px 0px;
-        color: #fff;
-        border-top: 1px solid transparent;
-        border-bottom: 1px solid #0a0c0e;
-        border-left: none;
-        border-right: none;
-        background: rgba(0,0,0,.25);
-        filter: none;
-        text-shadow: 0px 1px 1px #000;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.45), inset 0 0px 1px rgba(0,0,0,0.25);
-        -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.45), inset 0 0px 1px rgba(0,0,0,0.25);
-        box-shadow: inset 0 1px 1px rgba(0,0,0,0.45), inset 0 0px 1px rgba(0,0,0,0.25);
-        -webkit-border-radius: 0px;
-        -moz-border-radius: 0px;
-        border-radius: 0px;
-    }
-
-#navbar > ul > li.active > a {
-    margin: 1px 0px 0px 0px;
-    border-top: 1px solid transparent;
-    border-bottom: 4px solid #00A3C4;
-    border-left: none;
-    border-right: none;
-    color: #fff;
-    /*background: rgba(0,0,0,.45);*/
-    text-shadow: 0px 1px 1px #000;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.45), inset 0 0px 1px rgba(0,0,0,0.25);
-    -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.45), inset 0 0px 1px rgba(0,0,0,0.25);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,0.45), inset 0 0px 1px rgba(0,0,0,0.25);
-    -webkit-border-radius: 0px;
-    -moz-border-radius: 0px;
-    border-radius: 0px;
-}
-
 
 .wf-working {
     opacity: .5;
