@@ -1,48 +1,29 @@
 ﻿<div class="container">
     <div class="row">
-
         <div class="col-md-12">
             <h1>Failed Messages</h1>
-
         </div>
-
     </div>
-
 </div>
 <div class="container">
-
     <section name="global_message_management" ng-show="vm.exceptionGroups.length > 0">
-
-
         <div class="row">
             <div class="col-md-12">
-
-
                 <div class="row">
                     <div class="col-md-12">
                         <div class="row">
-
                             <div class="col-sm-12">
                                 <div class="row box-header">
                                     <div class="col-md-12">
-                                        <h5>There are XXX ungrouped messages</h5>
-
-                                        <p>Messages processed with ServiceControl versions below v1.6 cannot be grouped.</p>
-                                        
-                                        <p>To also see ServiceControl v1.6 messages, <a ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" tooltip="Review all Messages">switch to all failed messages view</a>.</p>
-
-                                        
+                                        <p><a ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" tooltip="Review all Messages">switch to all failed messages view</a>.</p>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
-
     </section>
 
     <section name="message_groups">
