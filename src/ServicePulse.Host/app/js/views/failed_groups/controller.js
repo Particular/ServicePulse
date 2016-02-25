@@ -28,16 +28,6 @@
         vm.selectedExceptionGroup = {};
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
 
-
-        var markMessage = function (group, property) {
-            //mark messages as retried
-            if ($scope.selectedExceptionGroup && group.id === $scope.selectedExceptionGroup.id) {
-                for (var i = 0; i < $scope.model.failedMessages.length; i++) {
-                    $scope.model.failedMessages[i][property] = true;
-                }
-            }
-        };
-
         vm.viewExceptionGroup = function (group) {
             sharedDataService.set(group);
             $location.path('/failedMessages');
@@ -48,17 +38,12 @@
             group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
-
                     group.workflow_state = createWorkflowState('success', message);
-
-                    markMessage(group, 'archived');
-
                     notifier.notify('ArchiveGroupRequestAccepted', group);
 
                 }, function (message) {
                     group.workflow_state = createWorkflowState('error', message);
                     notifier.notify('ArchiveGroupRequestRejected', group);
-
                 })
                 .finally(function () {
 
@@ -72,7 +57,6 @@
                 .then(function (message) {
                     // We are going to have to wait for service control to tell us the job has been done
                     group.workflow_state = createWorkflowState('success', message);
-                    markMessage(group, 'retried');
                     notifier.notify('RetryGroupRequestAccepted', group);
 
                 }, function (message) {

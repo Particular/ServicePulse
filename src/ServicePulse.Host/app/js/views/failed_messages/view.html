@@ -1,10 +1,11 @@
 ﻿<div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <h1>Failed Messages</h1>
+    <section name="failed_messages">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Failed Messages</h1>
+            </div>
         </div>
-    </div>
-    <div class="row">
+        <div class="row">
             <div class="col-md-12">
                 <ul class="breadcrumb ">
                     <li>
@@ -15,165 +16,146 @@
                     </li>
                 </ul>
             </div>
-     </div>
-</div>
-
-    <div class="container">
-        <section name="failed_messages">
-            <div class="row">
-                <div class="col-md-12" ng-show="vm.failedMessages.length === 0 && !vm.loadingData">
-
-                    <h5>message failures</h5>
-
-                    <div class="row box">
-                        <div class="col-md-12">
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="row box-header">
-                                        <div class="col-md-12">
-                                            <p class="lead hard-wrap">There are currently no message failures</p>
-                                            <p>&nbsp;</p>
-                                        </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" ng-show="vm.failedMessages.length === 0 && !vm.loadingData">
+                <h5>message failures</h5>
+                <div class="row box">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row box-header">
+                                    <div class="col-md-12">
+                                        <p class="lead hard-wrap">There are currently no message failures</p>
+                                        <p>&nbsp;</p>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
             </div>
+        </div>
+        <div>
             <div class="row">
                 <div class="col-md-12" ng-show="vm.failedMessages.length > 0">
-                    
+
                     <div class="tabs">
-                    
-                     <h5><a href="#/failedGroups">Failed message groups ({{vm.exceptionGroups.length}})</a></h5>
 
-                     <h5 class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
+                        <h5><a href="#/failedGroups">Failed message groups ({{vm.exceptionGroups.length}})</a></h5>
+
+                        <h5 class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
 
                     </div>
 
                 </div>
             </div>
-            <div class="row">
+        </div>
+       
+        <div class="row">
+            <div class="col-md-12">
+                <div class="btn-toolbar">
+                    <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
+                    <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry." tooltip="All selected failed messages will be archived and will not be available for Retry" confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
+                    <button type="button" class="btn btn-danger" confirm-message="Are you really sure you want to retry this group?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)" tooltip="All failed messages in this group will will be retried"><i class="fa fa-refresh white"></i> Retry Group</button>
+                    <button type="button" class="btn btn-warning" ng-show="vm.selectedExceptionGroup.id" confirm-message="Are you really sure you want to archive this group?" confirm-click="vm.archiveExceptionGroup(vm.selectedExceptionGroup)" tooltip="All failed messages in this group will will be Archived"><i class="fa fa-archive white"></i> Archive Group</button>
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Sorted by {{vm.sortButtonText}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Sent (ascending)</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Sent (descending)</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
+            <div class="row box" ng-repeat="message in vm.failedMessages">
                 <div class="col-md-12">
-
-                    <div class="btn-toolbar">
-                        <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
-                        <button type="button" tooltip="All selected failed messages will be archived and will not be available for Retry" class="btn btn-default" confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry."><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
-                        <button class="btn btn-danger" type="button" ng-show="vm.exceptionGroups.length > 0" confirm-message="Are you really sure you want to retry all failed messages?" confirm-click="retryAll()" tooltip="All failed messages will be retried"><i class="fa fa-refresh white"></i> Retry all</button>
-                        <div class="btn-group pull-right">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Sorted by {{vm.sortButtonText}}
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Sent (ascending)</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_sent', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Sent (descending)</a>
-                                </li>
-                            </ul>
+                    <div class="row" ng-class="{rowSelected: message.selected == true}" ng-click="vm.toggleRowSelect(message)" style="cursor: pointer;">
+                        <div class="check col-md-1">
+                            <input type="checkbox" ng-disabled="message.retried || message.archived" ng-checked="message.selected">
                         </div>
-                    </div>
-
-                </div>
-            </div>
-                    
-                    <div infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
-
-                        <div class="row box" ng-repeat="message in vm.failedMessages">
-                            <div class="col-md-12">
-                                <div class="row" ng-class="{rowSelected: message.selected == true}" ng-click="vm.toggleRowSelect(message)" style="cursor: pointer;">
-                                    <div class="check col-md-1">
-                                        <input type="checkbox" ng-disabled="message.retried || message.archived" ng-checked="message.selected">
-                                    </div>
-                                    <div class="col-sm-9">
-                                        <div class="row box-header">
-                                            <div class="col-md-12">
-                                                <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
-                                                <p>
-                                                    failed <sp-moment date="{{message.time_sent}}">, </sp-moment> reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2">
-                                        <span class="small">
-                                            <span ng-if="message.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
-                                            <span ng-if="message.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
-                                            <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label label-important">{{message.number_of_processing_attempts}} Repeated Failures</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-offset-1 col-sm-11">
-                                        <p class="small" ng-init="message.panel = 0">
-
-                                            <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
-                                                <i>Hide stacktrace</i>
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
-                                                <i> Show stacktrace</i>
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
-                                                <i>Hide headers</i>
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
-                                                <i>Show headers</i>
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
-                                                <i>Hide message body</i>
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
-                                                <i>Show message body</i>
-                                            </button>
-                                            <button type="button" clip-copy="" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
-                                                <i>Copy Id to clipboard</i>
-                                            </button>
-                                            <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
-                                                <i>Open in ServiceInsight</i>
-                                            </button>
-
-
-                                        </p>
-
-                                        <pre ng-show="message.panel === 0">{{ message.exception.message }}</pre>
-                                        <pre ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
-                                        <table class="table" ng-show="message.panel === 2 && message.messageHeaders">
-                                            <tbody>
-                                                <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
-                                                    <td nowrap="nowrap">{{header.key}}</td>
-                                                    <td>
-                                                        <pre>{{header.value}}</pre>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="alert alert-info" ng-show="message.panel === 2 && message.headersUnavailable">{{message.headersUnavailable}}</div>
-                                        <pre ng-show="message.panel === 3 && message.messageBody">{{message.messageBody}}</pre>
-                                        <div class="alert alert-info" ng-show="message.panel === 3 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
-                                    </div>
+                        <div class="col-sm-9">
+                            <div class="row box-header">
+                                <div class="col-md-12">
+                                    <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
+                                    <p>
+                                        failed <sp-moment date="{{message.time_sent}}">, </sp-moment> reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}
+                                    </p>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-2">
+                            <span class="small">
+                                <span ng-if="message.retried" tooltip="Message is being retried" class="label label-info">Retried</span>
+                                <span ng-if="message.archived" tooltip="Message is being archived" class="label label-info">Archived</span>
+                                <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label label-important">{{message.number_of_processing_attempts}} Repeated Failures</span>
+                            </span>
+                        </div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm-offset-1 col-sm-11">
+                            <p class="small" ng-init="message.panel = 0">
 
+                                <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
+                                    <i>Hide stacktrace</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
+                                    <i> Show stacktrace</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
+                                    <i>Hide headers</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
+                                    <i>Show headers</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
+                                    <i>Hide message body</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
+                                    <i>Show message body</i>
+                                </button>
+                                <button type="button" clip-copy="" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
+                                    <i>Copy Id to clipboard</i>
+                                </button>
+                                <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
+                                    <i>Open in ServiceInsight</i>
+                                </button>
+                            </p>
+                            <pre ng-show="message.panel === 0">{{ message.exception.message }}</pre>
+                            <pre ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
+                            <table class="table" ng-show="message.panel === 2 && message.messageHeaders">
+                                <tbody>
+                                <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
+                                    <td nowrap="nowrap">{{header.key}}</td>
+                                    <td>
+                                        <pre>{{header.value}}</pre>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="alert alert-info" ng-show="message.panel === 2 && message.headersUnavailable">{{message.headersUnavailable}}</div>
+                            <pre ng-show="message.panel === 3 && message.messageBody">{{message.messageBody}}</pre>
+                            <div class="alert alert-info" ng-show="message.panel === 3 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
+                        </div>
+                    </div>
                 </div>
-
-
             </div>
-
-
-        </section>
+        </div>
         <div class="row">
             <div class="col-md-12" ng-show="vm.loadingData">
                 <div class="row box">
@@ -183,4 +165,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+</div>

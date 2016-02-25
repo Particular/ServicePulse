@@ -10,10 +10,10 @@
         sharedDataService,
         notifyService,
         serviceControlService,
-        failedMessagesService) {
+        failedMessageGroupsService) {
 
         var vm = this;
-
+        var notifier = notifyService();
         vm.selectedExceptionGroup = sharedDataService.get();
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
             $location.path('/failedGroups');
@@ -56,6 +56,13 @@
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults(vm.selectedExceptionGroup);
         }
+
+
+        var markMessage = function (property) {
+                for (var i = 0; i < vm.failedMessages.length; i++) {
+                    vm.failedMessages[i][property] = true;
+                }
+        };
 
         vm.togglePanel = function (message, panelnum) {
             if (message.messageBody === undefined) {
@@ -115,6 +122,41 @@
                 }
             }
         };
+
+        vm.archiveExceptionGroup = function (group) {
+            
+
+            var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+                .then(function (message) {
+                    notifier.notify('ArchiveGroupRequestAccepted', group);
+                    markMessage('archived');
+                }, function (message) {
+                    notifier.notify('ArchiveGroupRequestRejected', group);
+                })
+                .finally(function () {
+
+                });
+        }
+
+        vm.retryExceptionGroup = function (group) {
+            markMessage('retried');
+
+            if (!group.id) {
+                serviceControlService.retryAllFailedMessages();
+                return;
+            }
+
+            var response = failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
+                .then(function (message) {
+                    notifier.notify('RetryGroupRequestAccepted', group);
+                }, function (message) {
+                    notifier.notify('RetryGroupRequestRejected', group);
+                })
+                .finally(function () {
+
+                });
+        }
+
 
         vm.debugInServiceInsight = function (index) {
             var messageId = vm.failedMessages[index].message_id;
@@ -196,7 +238,7 @@
         "sharedDataService",
         "notifyService",
         "serviceControlService",
-        "failedMessagesService"
+        "failedMessageGroupsService"
     ];
 
     angular.module("sc")
