@@ -27,12 +27,13 @@
         vm.exceptionGroups = [];
         vm.selectedExceptionGroup = {};
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
+        vm.stats = sharedDataService.getstats();
 
         vm.viewExceptionGroup = function (group) {
             sharedDataService.set(group);
             $location.path('/failedMessages');
         }
-
+        
         vm.archiveExceptionGroup = function (group) {
 
             group.workflow_state = { status: 'working', message: 'working' };
@@ -89,6 +90,10 @@
                 });
 
         };
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_failed_messages = data;
+        }, 'MessageFailuresUpdated');
 
         notifier.subscribe($scope, function (event, data) {
             $timeout(function () {

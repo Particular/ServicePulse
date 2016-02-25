@@ -5,20 +5,24 @@
                 <h1>Failed Messages</h1>
             </div>
         </div>
-        <div class="row">
+        <div class="row" ng-show="vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
             <div class="col-md-12">
-                <ul class="breadcrumb ">
-                    <li>
-                        <a href="#/failedGroups">All Failed Message Groups</a>
-                    </li>
-                    <li>
-                        {{vm.selectedExceptionGroup.title}}
-                    </li>
-                </ul>
+                <div class="tabs">
+                    <h5><a href="#/failedGroups">Failed Message Groups</a></h5>
+                    <h5 class="active">{{vm.selectedExceptionGroup.title}} ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12" ng-show="vm.failedMessages.length === 0 && !vm.loadingData">
+        <div class="row" ng-show="!vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
+            <div class="col-md-12">
+                <div class="tabs">
+                    <h5><a href="#/failedGroups">Failed message groups</a></h5>
+                    <h5 class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
+                </div>
+            </div>
+        </div>
+        <div class="row" ng-show="vm.failedMessages.length === 0 && !vm.loadingData">
+            <div class="col-md-12">
                 <h5>message failures</h5>
                 <div class="row box">
                     <div class="col-md-12">
@@ -36,23 +40,7 @@
                 </div>
             </div>
         </div>
-        <div>
-            <div class="row">
-                <div class="col-md-12" ng-show="vm.failedMessages.length > 0">
-
-                    <div class="tabs">
-
-                        <h5><a href="#/failedGroups">Failed message groups ({{vm.exceptionGroups.length}})</a></h5>
-
-                        <h5 class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-       
-        <div class="row">
+        <div class="row" ng-show="vm.failedMessages.length > 0">
             <div class="col-md-12">
                 <div class="btn-toolbar">
                     <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
@@ -82,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <div infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
+        <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
             <div class="row box" ng-repeat="message in vm.failedMessages">
                 <div class="col-md-12">
                     <div class="row" ng-class="{rowSelected: message.selected == true}" ng-click="vm.toggleRowSelect(message)" style="cursor: pointer;">
@@ -156,8 +144,8 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12" ng-show="vm.loadingData">
+        <div class="row" ng-show="vm.loadingData">
+            <div class="col-md-12">
                 <div class="row box">
                     <div class="col-md-12">
                         <div class="loading"></div>

@@ -9,15 +9,12 @@
 
     <section name="message_groups">
 
-        <div class="row">
-            <div class="col-md-12" ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData">
-
+        <div class="row" ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData">
+            <div class="col-md-12">
                 <h5>message failures</h5>
-
                 <div class="row box">
                     <div class="col-md-12">
                         <div class="row">
-
                             <div class="col-sm-12">
                                 <div class="row box-header">
                                     <div class="col-md-12">
@@ -31,21 +28,19 @@
                     </div>
                 </div>
             </div>
-
+        </div>
+        <div class="row">
             <div class="col-md-12" ng-show="vm.exceptionGroups.length > 0">
-                
+
                 <div class="tabs">
-
                     <h5 class="active">Failed message groups ({{vm.exceptionGroups.length}})</h5>
-
-                    <h5><a ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" tooltip="Review all Messages">All failed messages ({{vm.selectedExceptionGroup.count}})</a></h5>
-
+                    <h5><a ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" tooltip="Review all Messages">All failed messages ({{vm.stats.number_of_failed_messages}})</a></h5>
                 </div>
 
                 <div class="row box wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-md-12">
                         <div class="row" ng-show="group.workflow_state.status !=='ready'">
-                            
+
                             <div class="col-md-10">
                                 <div class="row box-header">
                                     <div class="col-md-12">
@@ -71,21 +66,21 @@
 
                                             <span class="metadata"><i class="fa fa-clock-o"></i> First failure: <sp-moment date="{{group.first}}"></sp-moment></span>
                                         </p>
-                                        
-                                        
+
+
                                     </div>
                                 </div>
                                 <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-link btn-sm hidden-sm-down" title="View messages in this Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
-                                                   View Messages
-                                            </button>
-                                            <button type="button" class="btn btn-link btn-sm" title="Retry messages in this Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'">
-                                                   Retry Group
-                                             </button>
-                                            <button type="button" class="btn btn-link btn-sm" title="Archive messages in this Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-message="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
-                                                   Archive Group
-                                            </button>
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-link btn-sm hidden-sm-down" title="View messages in this Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
+                                            View Messages
+                                        </button>
+                                        <button type="button" class="btn btn-link btn-sm" title="Retry messages in this Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'">
+                                            Retry Group
+                                        </button>
+                                        <button type="button" class="btn btn-link btn-sm" title="Archive messages in this Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-message="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
+                                            Archive Group
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +93,7 @@
 
     </section>
 
-    
+
     <div class="row">
         <div class="col-md-12" ng-show="vm.loadingData">
             <div class="row box">
