@@ -48,6 +48,9 @@ a:hover {
     background-image: -o-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
     background-image: linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
 }
+
+
+
 @media (min-width: 768px) {
     .navbar-nav > li.active > a {
         border-bottom: 4px solid #00A3C4;
@@ -163,6 +166,21 @@ footer i.warning {
 .fa {
     color: #929e9e;
 }
+
+.sidebar-label {
+    margin-top: 3px;
+    box-shadow: none;
+    display: block;
+    font-size: 12px;
+    max-width: 100%;
+    padding: 6px 10px;
+    color: #ffffff;
+}
+
+    .sidebar-label > .fa {
+        color: #ffffff;
+    }
+
 .white {
     color: #ffffff;
 }
@@ -220,6 +238,19 @@ footer i.warning {
     background-image: -o-linear-gradient(top, hsl(194, 95%, 76%), hsl(194, 95%, 61%));
     background-image: linear-gradient(top, hsl(194, 95%, 76%), hsl(194, 95%, 61%));
 }
+
+.label-warning,
+.badge-warning {
+    border-color: #aa6708;
+    background-color: #aa6708;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, hsl(35, 95%, 76%)), color-stop(100%, hsl(35, 95%, 61%)));
+    background-image: -webkit-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
+    background-image: -moz-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
+    background-image: -ms-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
+    background-image: -o-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
+    background-image: linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
+}
+
 .loading {
     background-image: url('/img/loader_spinner.gif');
     background-position: center;

@@ -23,6 +23,7 @@
 
         var vm = this;
         var notifier = notifyService();
+       
         vm.loadingData = false;
         vm.exceptionGroups = [];
         vm.selectedExceptionGroup = {};
@@ -85,27 +86,34 @@
                             return nObj;
                         });
                     }
-
                     vm.loadingData = false;
                 });
-
         };
 
         notifier.subscribe($scope, function (event, data) {
             vm.stats.number_of_failed_messages = data;
         }, 'MessageFailuresUpdated');
 
-        notifier.subscribe($scope, function (event, data) {
-            $timeout(function () {
+        var localtimeout;
+        var startTimer = function (time) {
+            time = time || 5000;
+            localtimeout = $timeout(function () {
                 autoGetExceptionGroups();
-            }, 5000);
+            }, time);
+        }
+
+        $scope.$on("$destroy", function (event) {
+            $timeout.cancel(localtimeout);
+        });
+
+        notifier.subscribe($scope, function (event, data) {
+            $timeout.cancel(localtimeout);
+            startTimer();
         }, 'MessagesSubmittedForRetry');
-
-
+        
         notifier.subscribe($scope, function (event, data) {
-            $timeout(function () {
-                autoGetExceptionGroups();
-            }, 3000);
+            $timeout.cancel(localtimeout);
+            startTimer();
         }, 'FailedMessageGroupArchived');
 
         // INIT
