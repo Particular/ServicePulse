@@ -73,9 +73,12 @@
         <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
             <div class="row box" ng-repeat="message in vm.failedMessages">
                 <div class="col-md-12">
-                    <div class="row" ng-class="{rowSelected: message.selected == true}" ng-click="vm.toggleRowSelect(message)" style="cursor: pointer;">
+                    <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                         <div class="check col-md-1">
-                            <input type="checkbox" ng-disabled="message.retried || message.archived" ng-checked="message.selected">
+                            <div class="onoffswitch">
+                                <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" class="onoffswitch-checkbox" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                                <label class="onoffswitch-label" for="onoffswitch{{$id}}"></label>
+                            </div>
                         </div>
                         <div class="col-sm-9">
                             <div class="row box-header">
