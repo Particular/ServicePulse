@@ -456,8 +456,8 @@ h1 {
     .onoffswitch-label {
         display: block; overflow: hidden; cursor: pointer;
         height: 36px; padding: 0; line-height: 36px;
-        border: 2px solid #CCCCCC; border-radius: 36px;
-        background-color: #FFFFFF;
+        border: 2px solid #Fcc; border-radius: 36px;
+        background-color: #F00;
         transition: background-color 0.3s ease-in;
     }
     .onoffswitch-label:before {

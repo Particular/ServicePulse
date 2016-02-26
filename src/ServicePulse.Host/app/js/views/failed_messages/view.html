@@ -75,10 +75,7 @@
                 <div class="col-md-12">
                     <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                         <div class="check col-md-1">
-                            <div class="onoffswitch">
-                                <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" class="onoffswitch-checkbox" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
-                                <label class="onoffswitch-label" for="onoffswitch{{$id}}"></label>
-                            </div>
+                            <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}"  ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                         </div>
                         <div class="col-sm-9">
                             <div class="row box-header">
