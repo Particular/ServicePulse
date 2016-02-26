@@ -1,30 +1,33 @@
-﻿<div >
-    <div class="col-sm-3" ng-show="version !== ''">
+﻿
 
-        <i ng-show="!newspversion" class="fa fa-code-fork"></i>
-        <p ng-show="!newspversion">
-            ServicePulse V {{version}}
-        </p>
 
-        <i ng-show="newspversion" class="fa fa-external-link warning"></i>
-        <p ng-show="newspversion">
-            <a href="{{newspversionlink}}" title="New ServicePulse Version Available for Download" target="_blank">ServicePulse V {{version}}</a>
-        </p>
+<div class="text-center">
+
+    <div class="version-info" ng-show="version !== ''">
+
+        <span ng-show="!newspversion">
+            ServicePulse v{{version}}
+        </span>
+
+
+        <span ng-show="newspversion">
+            ServicePulse v{{version}} (<i ng-show="newspversion" class="fa fa-external-link fake-link"></i> <a href="{{newspversionlink}}" target="_blank">update available</a>)
+        </span>
 
     </div>
 
-    <div class="col-sm-3">
-        <div ng-show="scversion !== ''">
 
-            <i ng-show="!newscversion" class="fa fa-code-fork"></i>
-            <p ng-show="!newscversion">
-                ServiceControl V {{scversion}}
-            </p>
+    <div class="version-info" ng-show="scversion !== ''">
 
-            <i ng-show="newscversion" class="fa fa-external-link warning"></i>
-            <p ng-show="newscversion">
-                <a href="{{newscversionlink}}" title="New ServiceControl Version Available for Download" target="_blank">ServiceControl V {{scversion}}</a>
-            </p>
-        </div>
+
+            <span ng-show="!newscversion">
+                ServiceControl v{{scversion}}
+            </span>
+
+
+            <span ng-show="newscversion">
+                ServiceControl v{{scversion}} (<i ng-show="newspversion" class="fa fa-external-link fake-link"></i> <a href="{{newscversionlink}}" target="_blank">update available</a>)
+            </span>
     </div>
+
 </div>
