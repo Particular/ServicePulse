@@ -42,26 +42,10 @@
 
             </div>
         </div>
-        <div class="row box box-info" ng-show="!loadingData && model.length == 0">
-            <div class="col-sm-12">
-                <div class="row">
-                    <div class="col-sm-1">
-                        <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
-                    </div>
-                    <div class="col-sm-11">
-                        <div class="row box-header">
-                            <div class="col-sm-12">
-                                <p class="lead hard-wrap">No events</p>
-                                <p>&nbsp;</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-            </div>
-        </div>
+        <busy ng-show="loadingData" message="fetching more data"></busy>
 
-        <div class="loading" ng-show="loadingData"></div>
+        <no-data ng-show="!loadingData && model.length == 0" message="No events"></no-data>
 
     </section>
 </div>
