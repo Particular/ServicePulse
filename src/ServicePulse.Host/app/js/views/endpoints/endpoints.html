@@ -1,14 +1,10 @@
 <div class="container">
     <div class="row">
-
         <div class="col-sm-12">
             <h1>Endpoint heartbeats</h1>
         </div>
-    
     </div>
-
 </div>
-
 
 <div class="container">
     <section name="active_endpoints">
@@ -39,10 +35,8 @@
 
             </div>
         </div>
- 
     </section>
     <section name="inactive_endpoints">
-        
         <div class="row">
             <div class="col-sm-12">
                 <h5>inactive endpoints</h5>
@@ -51,11 +45,9 @@
         <no-data ng-show="model.inactive.length == 0" message="No inactive endpoints"></no-data>
         <div class="row">
             <div class="col-sm-12">
-                <h5>inactive endpoints</h5>
                 <div class="row box box-no-click" ng-repeat="endpoint in model.inactive | orderBy:'name'">
                     <div class="col-sm-12">
                         <div class="row">
-
                             <div class="col-sm-12">
                                 <div class="row box-header">
                                     <div class="col-sm-12">
@@ -67,15 +59,10 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
-              
             </div>
         </div>
-
     </section>
-    
- 
 </div>

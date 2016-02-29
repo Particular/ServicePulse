@@ -27,8 +27,7 @@
         };
 
         var notifier = notifyService();
-        notifier.subscribe($scope, reloadData(), 'CustomChecksUpdated');
-        //notifier.subscribe($scope, reloadData(), 'CustomCheckDeleted');
+        notifier.subscribe($scope, reloadData, 'CustomChecksUpdated');
 
         function reloadData() {
             page = 1;
