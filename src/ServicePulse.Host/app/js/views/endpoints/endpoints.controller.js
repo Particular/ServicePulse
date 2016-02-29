@@ -11,6 +11,7 @@
 
         var timeoutId;
 
+ 
         $scope.model = { active: [], inactive: [] };
 
         $scope.$on('$destroy', function() {

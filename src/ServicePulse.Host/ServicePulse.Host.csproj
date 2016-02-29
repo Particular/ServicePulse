@@ -87,6 +87,10 @@
     <Content Include="app\css\particular.css" />
     <Content Include="app\js\app.logging.js" />
     <Content Include="app\js\directives\ui.particular.confirmclick.tpl.html" />
+    <Content Include="app\js\directives\ui.particular.busy.js" />
+    <Content Include="app\js\directives\ui.particular.busy.tpl.html" />
+    <Content Include="app\js\directives\ui.particular.nodata.js" />
+    <Content Include="app\js\directives\ui.particular.nodata.tpl.html" />
     <Content Include="app\js\services\factory.shareddata.js" />
     <Content Include="app\js\views\configuration\configuration.service.js" />
     <Content Include="app\js\services\factory.listener.js" />
@@ -102,6 +106,7 @@
     <Content Include="app\js\views\failed_messages\view.html" />
     <Content Include="app\layout\footer.html" />
     <Content Include="app\layout\navbar.html" />
+    <Content Include="app\lib\angular\ng-page-title.js" />
     <Content Include="app\lib\angular\ngStorage.min.js" />
     <Content Include="app\lib\angular\ui-bootstrap-tpls-0.14.3.min.js" />
     <Content Include="app\css\font-awesome\css\font-awesome.css" />

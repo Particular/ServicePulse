@@ -39,7 +39,6 @@
             var active = (viewLocation === $location.path());
             return active;
         };
-
         $scope.Version = version;
 
         $scope.$on("$routeChangeError", function(event, current, previous, rejection) {
@@ -99,11 +98,20 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            if (data === "SignalR started") {
-                toastService.showInfo('Connected to ServiceControl');
-            } else {
-                toastService.showWarning(data);
+
+            switch(data) {
+                case 'SignalR started':
+                    toastService.showInfo('Connected to ServiceControl');
+                    break;
+                case 'Reconnected':
+                    toastService.showInfo('Reconnected to ServiceControl');
+                    break;
+                default:
+                    toastService.showWarning(data);
+                    break;
             }
+
+       
         }, "SignalREvent");
 
         notifier.subscribe($scope, function(event, data) {

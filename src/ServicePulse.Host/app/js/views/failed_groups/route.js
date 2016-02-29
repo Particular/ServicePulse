@@ -3,7 +3,9 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/failedGroups', {
-            title: 'Failed Groups',
+            data: {
+                pageTitle: 'Failed Groups'
+            },
             templateUrl: 'js/views/failed_groups/view.html',
             controller: 'failedMessageGroupsController',
             controllerAs: 'vm'

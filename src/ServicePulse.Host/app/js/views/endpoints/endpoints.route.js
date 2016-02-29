@@ -4,6 +4,9 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/endpoints', {
+            data: {
+                pageTitle: 'Endpoints'
+            },
             templateUrl: 'js/views/endpoints/endpoints.html',
             controller: 'EndpointsCtrl',
             controllerAs: 'vm'

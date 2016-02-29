@@ -1,55 +1,36 @@
 ﻿<div class="container">
     <section name="failed_messages">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
                 <h1>Failed Messages</h1>
             </div>
         </div>
-        <div class="row" ng-show="vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
-            <div class="col-md-12">
-                <div class="tabs">
-                    <h5><a href="#/failedGroups">Failed Message Groups</a></h5>
-                    <h5 class="active">{{vm.selectedExceptionGroup.title}} ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
-                </div>
-            </div>
-        </div>
-        <div class="row" ng-show="!vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
-            <div class="col-md-12">
-                <div class="tabs">
-                    <h5><a href="#/failedGroups">Failed message groups</a></h5>
-                    <h5 class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</h5>
-                </div>
-            </div>
-        </div>
-        <div class="row" ng-show="vm.failedMessages.length === 0 && !vm.loadingData">
-            <div class="col-md-12">
-                <h5>message failures</h5>
-                <div class="row box box-no-click">
-                    <div class="col-md-12">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="row box-header">
-                                    <div class="col-md-12">
-                                        <p class="lead hard-wrap">There are currently no message failures</p>
-                                        <p>&nbsp;</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <div class="row" ng-show="vm.failedMessages.length > 0">
-            <div class="col-md-12">
+            <div class="col-sm-12">
+                <ol class="breadcrumb">
+                    <li><a href="#/failedGroups">Failed Message Groups</a></li>
+                    <li ng-show="!vm.selectedExceptionGroup.id" class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</li>
+                    <li ng-show="vm.selectedExceptionGroup.id" class="active">{{vm.selectedExceptionGroup.title}} ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</li>
+                </ol>
+            </div>
+        </div>
+
+        <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+   
+
+        <no-data ng-show="vm.failedMessages.length === 0 && !vm.loadingData" title="message failures" message="There are currently no message failures"></no-data>
+
+        <div class="row" ng-show="vm.failedMessages.length > 0">
+            <div class="col-sm-12">
                 <div class="btn-toolbar">
                     <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
                     <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry." tooltip="All selected failed messages will be archived and will not be available for Retry" confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
-                    <button type="button" class="btn btn-default" confirm-message="Are you really sure you want to retry this group?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)" tooltip="All failed messages in this group will will be retried"><i class="fa fa-refresh"></i> Retry Group</button>
+                    <button type="button" class="btn btn-default" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)" tooltip="All failed messages in this group will will be retried"><i class="fa fa-refresh"></i> Retry Group</button>
                     <button type="button" class="btn btn-default" ng-show="vm.selectedExceptionGroup.id" confirm-message="Are you really sure you want to archive this group?" confirm-click="vm.archiveExceptionGroup(vm.selectedExceptionGroup)" tooltip="All failed messages in this group will will be Archived"><i class="fa fa-archive"></i> Archive Group</button>
                     <div class="btn-group pull-right">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Sorted by {{vm.sortButtonText}}
+                            <span class="hidden-xs hidden-sm">Sorted by </span>{{vm.sortButtonText}}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
@@ -72,14 +53,14 @@
         </div>
         <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
             <div class="row box" ng-repeat="message in vm.failedMessages">
-                <div class="col-md-12">
+                <div class="col-sm-12">
                     <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                         <div class="check col-md-1">
-                            <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}"  ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                            <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                         </div>
                         <div class="col-sm-9">
                             <div class="row box-header">
-                                <div class="col-md-12">
+                                <div class="col-sm-12">
                                     <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
                                     <p>
                                         failed <sp-moment date="{{message.time_sent}}">, </sp-moment> reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}
@@ -144,15 +125,8 @@
                 </div>
             </div>
         </div>
-        <div class="row" ng-show="vm.loadingData">
-            <div class="col-md-12">
-                <div class="row box">
-                    <div class="col-md-12">
-                        <div class="loading"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
+        
     </section>
 
 </div>

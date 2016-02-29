@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
 
-        <div class="col-md-12 padded">
+        <div class="col-sm-12 padded">
             <h1>Endpoints configuration</h1>
 
         </div>
@@ -13,9 +13,9 @@
 <div class="container">
     <section name="configuration">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-sm-12">
                 <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
-                    <div class="col-md-12">
+                    <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-1">
                                 <div class="onoffswitch">
@@ -26,7 +26,7 @@
                             </div>
                             <div class="col-sm-11">
                                 <div class="row box-header">
-                                    <div class="col-md-12">
+                                    <div class="col-sm-12">
                                         <p class="lead">{{e.host_display_name}} ({{e.name}}) </p>
                                         <p ng-show="e.heartbeat_information">last hearbeat reported at <sp-moment date="{{e.heartbeat_information.last_report_at}}"/>
                                         </p>
@@ -39,14 +39,14 @@
                     </div>
                 </div>
                 <div class="row box box-info box-no-click" ng-show="model.endpoints.length == 0">
-                    <div class="col-md-12">
+                    <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-1">
                                 <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
                             </div>
                             <div class="col-sm-11">
                                 <div class="row box-header">
-                                    <div class="col-md-12">
+                                    <div class="col-sm-12">
                                         <p class="lead hard-wrap">Nothing to configure</p>
                                     </div>
                                 </div>

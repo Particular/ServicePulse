@@ -7,6 +7,7 @@
         'ngSanitize',
         'ngClipboard',
         'ngStorage',
+        'ngPageTitle',
         'toaster',
         'ui.bootstrap',
         'infinite-scroll',
@@ -20,7 +21,7 @@
         'dashboard']);
 
     angular.module('sc')
-        .run(['$rootScope', '$log', function ($rootScope, $log) {
+        .run(['$rootScope', '$location', '$log', function ($rootScope, $location, $log) {
             $rootScope.$log = $log;
         }]);
 

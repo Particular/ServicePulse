@@ -10,7 +10,6 @@
 		) {
 
         var notifier = notifyService();
-
         $scope.model = sharedDataService.getstats();
 
 		notifier.subscribe($scope, function(event, data) {

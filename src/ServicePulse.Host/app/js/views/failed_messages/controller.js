@@ -13,6 +13,7 @@
         failedMessageGroupsService) {
 
         var vm = this;
+  
         var notifier = notifyService();
         vm.selectedExceptionGroup = sharedDataService.get();
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {

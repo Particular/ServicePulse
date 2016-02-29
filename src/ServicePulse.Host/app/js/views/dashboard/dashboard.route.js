@@ -4,6 +4,9 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/dashboard', {
+            data: {
+                pageTitle: "Dashboard"
+            },
             templateUrl: 'js/views/dashboard/dashboard.html',
             controller: 'DashboardCtrl',
             controllerAs: 'vm'

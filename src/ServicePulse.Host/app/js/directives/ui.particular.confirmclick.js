@@ -28,7 +28,7 @@
             },
             link: function (scope, element, attrs) {
                 element.bind('click', function (e) {
-                    var modalInstance = $uibModal.open({
+                    $uibModal.open({
                         animation: true,
            
                         templateUrl: 'js/directives/ui.particular.confirmClick.tpl.html',
@@ -42,16 +42,6 @@
                             }
                         }
                     });
-
-                    //modalInstance.result.then(function (ok) {
-                    //    $log.info('Modal close with ok at: ' + new Date());
-                    //}, function () {
-                    //    $log.info('Modal close with cancel at: ' + new Date());
-                    //    e.stopImmediatePropagation();
-                    //    e.preventDefault();
-                    //});
-
-
                 });
             }
         };
