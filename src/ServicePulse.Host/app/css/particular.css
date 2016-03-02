@@ -368,6 +368,7 @@ h5 {
 
 .tabs a {
     color: #a8b3b1;
+    cursor: pointer;
 }
 
 .tabs a:hover {

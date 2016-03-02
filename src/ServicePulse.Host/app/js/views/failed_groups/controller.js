@@ -72,6 +72,7 @@
 
         var autoGetExceptionGroups = function () {
             vm.loadingData = true;
+            vm.exceptionGroups = [];
             serviceControlService.getExceptionGroups()
                 .then(function (response) {
                     if (response.data.length > 0) {
