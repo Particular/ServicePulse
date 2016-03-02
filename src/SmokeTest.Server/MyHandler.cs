@@ -7,7 +7,7 @@ public class MyHandler : IHandleMessages<MyMessage>
     {
         Console.WriteLine(@"Message received. Id: {0}", message.Id);
 
-        if (!message.KillMe)
+        if (Program.goodretries || !message.KillMe)
         {
             return;
         }

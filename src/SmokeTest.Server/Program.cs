@@ -5,6 +5,7 @@ using NServiceBus.Features;
 class Program
 {
     public static bool emulateFailures = false;
+    public static bool goodretries = false;
     static void Main()
     {
         var busConfiguration = new BusConfiguration();
@@ -30,6 +31,7 @@ class Program
                 Console.WriteLine("-------------------------------------");
                 Console.WriteLine("[ A ] Emulate Failures");
                 Console.WriteLine("[ B ] Process Messages Normally");
+                Console.WriteLine("[ C ] Allow Retries {0}", goodretries);
                 Console.WriteLine("[ Q ] Quit");
                 Console.WriteLine("-------------------------------------");
                 Console.Write("Make a Choice: ");
@@ -43,6 +45,9 @@ class Program
                         break;
                     case ConsoleKey.B:
                         emulateFailures = false;
+                        break;
+                    case ConsoleKey.C:
+                        goodretries = !goodretries;
                         break;
                     case ConsoleKey.Q:
                         exit = true;
