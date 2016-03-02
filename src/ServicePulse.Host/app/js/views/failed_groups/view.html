@@ -1,0 +1,83 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="col-sm-12 padded">
+            <h1>Failed Messages</h1>
+        </div>
+    </div>
+</div>
+<div class="container">
+
+    <section name="message_groups">
+
+        <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+
+        <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+
+        <div class="row">
+            <div class="col-sm-12" ng-show="vm.exceptionGroups.length > 0">
+
+                <div class="tabs">
+                    <h5 class="active">Failed message groups ({{vm.exceptionGroups.length}})</h5>
+                    <h5><a ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" tooltip="Review all Messages">All failed messages ({{vm.stats.number_of_failed_messages}})</a></h5>
+                </div>
+
+                <div class="row box wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
+                    <div class="col-sm-12">
+                        <div class="row" ng-show="group.workflow_state.status !=='ready'">
+
+                            <div class="col-md-10">
+                                <div class="row box-header">
+                                    <div class="col-sm-12">
+                                        <p class="lead">Processing Group {{group.title}}</p>
+                                        <p>It can take some time for these messages to be processed by your system. Please be patient. </p>
+                                        <p><strong>If you leave this screen or refresh the data in this list, messages may appear as if they have not been processed when you return. </strong>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <i class="fa fa-spinner fa-pulse fa-5x pull-right"></i>
+                            </div>
+                        </div>
+                        <div class="row" ng-show="group.workflow_state.status ==='ready'">
+                            <div class="col-sm-12">
+                                <div class="row box-header">
+                                    <div class="col-sm-12" ng-click="vm.viewExceptionGroup(group)">
+                                        <p class="lead"> {{group.title}}</p>
+                                        <p>
+                                            <span class="metadata"><i class="fa fa-envelope"></i> {{group.count}} message<span ng-show="group.count >1">s</span></span>
+
+                                            <span class="metadata"><i class="fa fa-clock-o"></i> Latest failure: <sp-moment date="{{group.last}}"></sp-moment></span>
+
+                                            <span class="metadata"><i class="fa fa-clock-o"></i> First failure: <sp-moment date="{{group.first}}"></sp-moment></span>
+                                        </p>
+
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <button type="button" class="btn btn-link btn-sm hidden-sm-down" title="View messages in this Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
+                                            View Messages
+                                        </button>
+                                        <button type="button" class="btn btn-link btn-sm" title="Retry messages in this Group" ng-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'">
+                                            Retry Group
+                                        </button>
+                                        <button type="button" class="btn btn-link btn-sm" title="Archive messages in this Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-message="Are you sure you want to archive this group of messages? If you do, they will not be available for Retry.">
+                                            Archive Group
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+
+
+
+</div>

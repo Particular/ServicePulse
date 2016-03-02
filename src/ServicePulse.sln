@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.Shared", "SmokeTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.SignalrClient", "SmokeTest.SignalrClient\SmokeTest.SignalrClient.csproj", "{C23C4E96-744E-49F6-A4AB-9324E43A166A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.ClientNoHeartbeat", "SmokeTest.ClientNoHeartbeat\SmokeTest.ClientNoHeartbeat.csproj", "{02E77C87-7BA9-4142-A87A-928D419ABE91}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,10 @@ Global
 		{C23C4E96-744E-49F6-A4AB-9324E43A166A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C23C4E96-744E-49F6-A4AB-9324E43A166A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C23C4E96-744E-49F6-A4AB-9324E43A166A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02E77C87-7BA9-4142-A87A-928D419ABE91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02E77C87-7BA9-4142-A87A-928D419ABE91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02E77C87-7BA9-4142-A87A-928D419ABE91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02E77C87-7BA9-4142-A87A-928D419ABE91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,5 +84,6 @@ Global
 		{267DA5B2-2F82-4F26-A8B3-E164B226FA98} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
 		{122AD54A-B249-41C7-858F-CB75E7C0F463} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
 		{C23C4E96-744E-49F6-A4AB-9324E43A166A} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
+		{02E77C87-7BA9-4142-A87A-928D419ABE91} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
 	EndGlobalSection
 EndGlobal

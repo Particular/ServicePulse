@@ -4,12 +4,10 @@
     <style>
         /* This helps the ng-show/ng-hide animations start at the right place. */
         /* Since Angular has this but needs to load, this gives us the class early. */
-        .ng-hide {
-            display: none !important;
-        }
+        .ng-hide { display: none !important; }
     </style>
 
-    <title>Service Pulse</title>
+    <title page-title pattern="%s • ServicePulse"></title>
 
     <meta charset="utf-8">
     <meta name="description" content="An Operations Manager’s Best Friend">
@@ -20,18 +18,11 @@
 
     <!-- 3rd Party Library Styles -->
     <link rel="stylesheet" id="bootstrap" href="lib/bootstrap-3.3.5/css/bootstrap.css">
-    <link rel="stylesheet" id="bootstrap-style" href="lib/bootstrap-3.3.5/css/bootstrap-theme.css">
     <link rel="stylesheet" id="animate-css-style" href="css/animate-css/animate.min.css">
-
-    <!-- Theme Styles -->
-    <link rel="stylesheet" id="base-style" href="css/style.css">
-    <link rel="stylesheet" id="base-style-responsive" href="css/style-responsive.css">
+    <link rel="stylesheet" id="angular-toast-style" href="lib/toaster.min.css">
 
     <!-- Particular Styles -->
-    <link rel="stylesheet" href="css/select2.css">
-    <link rel="stylesheet" href="css/app.css">
-
-
+    <link rel="stylesheet" href="css/particular.css">
     <!--[if lt IE 9 ]>
         <script type="text/javascript">
             window.location = '/NoIE.html';
@@ -41,26 +32,29 @@
 </head>
 <body ng-controller="AppCtrl">
     <noscript>
-        <div class="row">
-            <div class="alert col-sm-10 col-md-10 alert-warning">
-                <h4>Warning!</h4>
-                <p>
-                    You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.
-                </p>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="alert col-sm-10 col-md-10 alert-warning">
+                    <h4>Warning!</h4>
+                    <p>
+                        You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.
+                    </p>
+                </div>
             </div>
         </div>
     </noscript>
-    <ng-include src="'layout/topbar.html'"></ng-include>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="main-menu-span col-sm-2 col-md-2" ng-include="'layout/sidebar.html'"></div>
-            <div id="content" class="col-sm-10 col-md-10">
-                <div class="clearfix"></div>
-                <div ng-include="'layout/notifications.html'" class="container-fluid" ng-show="notifications.getCurrent().length"></div>
-                <div id="view" ng-view=""></div>
-            </div>
-        </div>
-    </div>
+
+    <ng-include src="'layout/navbar.html'"></ng-include>
+
+<div class="container-fluid">
+    <a id="pagetop"></a>
+    <div id="view" ng-view=""></div>
+</div>
+
+    <ng-include src="'layout/footer.html'"></ng-include>
+
+    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
+    </toaster-container>
 
     <!-- Vendor -->
     <script src="lib/jQuery/jquery.min.js"></script>
@@ -69,6 +63,9 @@
     <script src="lib/angular/angular-route.js"></script>
     <script src="lib/angular/angular-animate.js"></script>
     <script src="lib/angular/angular-sanitize.js"></script>
+    <script src="lib/angular/ngStorage.min.js"></script>
+    <script src="lib/angular/ng-page-title.js"></script>
+    <script src="lib/toaster.min.js"></script>
     <script src="lib/ng-infinite-scroll.min.js"></script>
     <script src="lib/bootstrap-3.3.5/js/bootstrap.min.js"></script>
     <script src="lib/angular/ui-bootstrap-tpls-0.14.3.min.js"></script>
@@ -81,6 +78,7 @@
     <script src="js/app.constants.js"></script>
     <script src="js/app.route.js"></script>
     <script src="js/app.controller.js"></script>
+    <script src="js/app.logging.js"></script>
 
     <!-- Services -->
     <script src="js/services/services.module.js"></script>
@@ -91,6 +89,10 @@
     <script src="js/services/services.service-control.js"></script>
     <script src="js/services/services.stream.js"></script>
     <script src="js/services/services.uri.js"></script>
+    <script src="js/services/service.toast.js"></script>
+    <script src="js/services/factory.listener.js"></script>
+    <script src="js/services/factory.notifier.js"></script>
+    <script src="js/services/factory.shareddata.js"></script>
 
     <!-- Directives -->
     <script src="js/directives/ngClip.js"></script>
@@ -99,39 +101,45 @@
     <script src="js/directives/ui.particular.js"></script>
     <script src="js/directives/ui.particular.hud.js"></script>
     <script src="js/directives/ui.particular.productVersion.js"></script>
+    <script src="js/directives/ui.particular.busy.js"></script>
+    <script src="js/directives/ui.particular.nodata.js"></script>
     <script src="js/directives/ui.particular.confirmclick.js"></script>
     <script src="js/directives/ui.particular.tabset.js"></script>
     <script src="js/directives/ui.particular.tab.js"></script>
     <script src="js/directives/ui.particular.eatclick.js"></script>
 
     <!-- Mystery -->
-    <script src="js/event_log_items/eventLogItems.js"></script>
+    <script src="js/views/event_log_items/eventLogItems.js"></script>
 
     <!-- Dashboard -->
-    <script src="js/dashboard/dashboard.module.js"></script>
-    <script src="js/dashboard/dashboard.route.js"></script>
-    <script src="js/dashboard/dashboard.controller.js"></script>
+    <script src="js/views/dashboard/dashboard.module.js"></script>
+    <script src="js/views/dashboard/dashboard.route.js"></script>
+    <script src="js/views/dashboard/dashboard.controller.js"></script>
+
+    <!-- Failed Groups -->
+    <script src="js/views/failed_groups/route.js"></script>
+    <script src="js/views/failed_groups/controller.js"></script>
+    <script src="js/views/failed_groups/service.js"></script>
 
     <!-- Failed Messages -->
-    <script src="js/failed_messages/failedMessages.module.js"></script>
-    <script src="js/failed_messages/failedMessages.route.js"></script>
-    <script src="js/failed_messages/failedMessages.controller.js"></script>
-    <script src="js/failed_messages/failedMessages.service.js"></script>
+    <script src="js/views/failed_messages/route.js"></script>
+    <script src="js/views/failed_messages/controller.js"></script>
+    <script src="js/views/failed_messages/service.js"></script>
 
     <!-- Custom Checks -->
-    <script src="js/custom_checks/customChecks.module.js"></script>
-    <script src="js/custom_checks/customChecks.route.js"></script>
-    <script src="js/custom_checks/customChecks.controller.js"></script>
+    <script src="js/views/custom_checks/customChecks.module.js"></script>
+    <script src="js/views/custom_checks/customChecks.route.js"></script>
+    <script src="js/views/custom_checks/customChecks.controller.js"></script>
 
     <!-- Endpoints -->
-    <script src="js/endpoints/endpoints.module.js"></script>
-    <script src="js/endpoints/endpoints.route.js"></script>
-    <script src="js/endpoints/endpoints.controller.js"></script>
+    <script src="js/views/endpoints/endpoints.module.js"></script>
+    <script src="js/views/endpoints/endpoints.route.js"></script>
+    <script src="js/views/endpoints/endpoints.controller.js"></script>
 
     <!-- Configuration -->
-    <script src="js/configuration/configuration.module.js"></script>
-    <script src="js/configuration/configuration.route.js"></script>
-    <script src="js/configuration/configuration.controller.js"></script>
-    <script src="js/configuration/configuration.service.js"></script>
+    <script src="js/views/configuration/configuration.module.js"></script>
+    <script src="js/views/configuration/configuration.route.js"></script>
+    <script src="js/views/configuration/configuration.controller.js"></script>
+    <script src="js/views/configuration/configuration.service.js"></script>
 </body>
 </html>

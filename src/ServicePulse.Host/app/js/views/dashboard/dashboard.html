@@ -1,0 +1,69 @@
+<div class="container">
+    <div class="row">
+
+        <div class="col-sm-12">
+            <h1>Dashboard</h1>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <h5>system status</h5>
+            <div class="row box system-status">
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <a class="summary-item" ng-class="{  'summary-danger' : failedheartbeats > 0 , 'summary-info' : failedheartbeats === 0 || !failedheartbeats  }" href="/#/endpoints">
+                                <i class="fa fa-heart fa-3x"></i>
+                                <span ng-show="failedheartbeats > 0" class="badge badge-important">{{failedheartbeats}}</span>
+                                <h4>
+                                    Heartbeats
+                                    
+                                </h4>
+                            </a>
+                       
+                        </div>
+                        <div class="col-sm-4">
+                            <a class="summary-item" ng-class="{  'summary-danger'  : failedmessages > 0 , 'summary-info' : failedmessages === 0 || !failedmessages }" href="/#/failedGroups">
+                                <i class="fa fa-envelope fa-3x "></i>
+                                <span ng-show="failedmessages > 0" class="badge badge-important">{{failedmessages}}</span>
+                                <h4>
+                                    Failed Messages
+                                    
+                                </h4>
+                            </a>
+                        </div>
+                        <div class="col-sm-4">
+                            <a class="summary-item" ng-class="{  'summary-danger'  : failedcustomchecks > 0, 'summary-info' : failedcustomchecks === 0 || !failedcustomchecks }" href="/#/customChecks">
+                                <i class="fa fa-check  fa-3x "></i>
+                                <span ng-show="failedcustomchecks > 0" class="badge badge-important">{{failedcustomchecks}}</span>
+                                <h4>
+                                    Custom Checks
+                                    
+                                </h4>
+                            </a>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 version-info">
+                    <span>
+                        <product-version version="{{Version}}" scversion="{{SCVersion}}"></product-version>
+                    </span>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="row" ng-include="'js/views/event_log_items/eventLogItems.tpl.html'"></div>

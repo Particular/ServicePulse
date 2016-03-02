@@ -6,7 +6,9 @@
         'ui.particular.confirmClick',
         'ui.particular.eatClick',
         'ui.particular.hud',
-        'ui.particular.productVersion'
+        'ui.particular.productVersion',
+        'ui.particular.busy',
+        'ui.particular.nodata'
     ]);
 
 } (window, window.angular));

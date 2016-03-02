@@ -3,8 +3,8 @@
 <head>
     <title>Jasmine Spec Runner</title>
 
-    <link rel="shortcut" type="image/png" href="content/jasmine/jasmine_favicon.png"/>
-    <link href="content/jasmine/jasmine.css" rel="stylesheet"/>
+    <link rel="shortcut" type="image/png" href="content/jasmine/jasmine_favicon.png" />
+    <link href="content/jasmine/jasmine.css" rel="stylesheet" />
 
     <script src="scripts/jasmine/jasmine.js"></script>
     <script src="scripts/jasmine/jasmine-html.js"></script>
@@ -13,70 +13,95 @@
     <script src="tests/js/angular.js"></script>
 
 
-    <!-- angular app files -->
+    <script src="tests/js/angular-mocks.js" ></script>
 
-    <script src="../servicepulse.host/app/lib/jquery/jquery.min.js"></script>
-    <script src="../servicepulse.host/app/lib/jquery/jquery.signalr-1.1.3.min.js"></script>
+    <!-- Vendor -->
+    <script src="../servicepulse.host/app/lib/jQuery/jquery.min.js"></script>
+    <script src="../servicepulse.host/app/lib/jQuery/jquery.signalR-1.1.3.min.js"></script>
+    <script src="../servicepulse.host/app/lib/angular/angular.js"></script>
     <script src="../servicepulse.host/app/lib/angular/angular-route.js"></script>
     <script src="../servicepulse.host/app/lib/angular/angular-animate.js"></script>
     <script src="../servicepulse.host/app/lib/angular/angular-sanitize.js"></script>
+    <script src="../servicepulse.host/app/lib/angular/ngStorage.min.js"></script>
+    <script src="../servicepulse.host/app/lib/angular/ng-page-title.js"></script>
+    <script src="../servicepulse.host/app/lib/toaster.min.js"></script>
     <script src="../servicepulse.host/app/lib/ng-infinite-scroll.min.js"></script>
-    <script src="../servicepulse.host/app/lib/page-width-functions.js"></script>
-    <script src="../servicepulse.host/app/lib/zeroclipboard-2.2.0/zeroclipboard.core.min.js"></script>
-    <script src="../servicepulse.host/app/lib/moment.min.js"></script>
+    <script src="../servicepulse.host/app/lib/bootstrap-3.3.5/js/bootstrap.min.js"></script>
     <script src="../servicepulse.host/app/lib/angular/ui-bootstrap-tpls-0.14.3.min.js"></script>
-    <script src="tests/js/angular-mocks.js"></script>
+    <script src="../servicepulse.host/app/lib/page-width-functions.js"></script>
+    <script src="../servicepulse.host/app/lib/zeroclipboard-2.2.0/ZeroClipboard.min.js"></script>
+    <script src="../servicepulse.host/app/lib/moment.min.js"></script>
 
+    <!-- App -->
     <script src="../servicepulse.host/app/js/app.js"></script>
     <script src="../servicepulse.host/app/js/app.constants.js"></script>
     <script src="../servicepulse.host/app/js/app.route.js"></script>
     <script src="../servicepulse.host/app/js/app.controller.js"></script>
+    <script src="../servicepulse.host/app/js/app.logging.js"></script>
 
+    <!-- Services -->
     <script src="../servicepulse.host/app/js/services/services.module.js"></script>
     <script src="../servicepulse.host/app/js/services/services.exception-handler.js"></script>
     <script src="../servicepulse.host/app/js/services/services.notifications.js"></script>
     <script src="../servicepulse.host/app/js/services/services.platform-update.js"></script>
-
     <script src="../servicepulse.host/app/js/services/services.semver.js"></script>
     <script src="../servicepulse.host/app/js/services/services.service-control.js"></script>
     <script src="../servicepulse.host/app/js/services/services.stream.js"></script>
     <script src="../servicepulse.host/app/js/services/services.uri.js"></script>
-    <script src="../servicepulse.host/app/js/directives/ngclip.js"></script>
+    <script src="../servicepulse.host/app/js/services/service.toast.js"></script>
+    <script src="../servicepulse.host/app/js/services/factory.listener.js"></script>
+    <script src="../servicepulse.host/app/js/services/factory.notifier.js"></script>
+    <script src="../servicepulse.host/app/js/services/factory.shareddata.js"></script>
+
+    <!-- Directives -->
+    <script src="../servicepulse.host/app/js/directives/ngClip.js"></script>
     <script src="../servicepulse.host/app/js/directives/moment.js"></script>
-    
+
     <script src="../servicepulse.host/app/js/directives/ui.particular.js"></script>
     <script src="../servicepulse.host/app/js/directives/ui.particular.hud.js"></script>
-    <script src="../servicepulse.host/app/js/directives/ui.particular.productversion.js"></script>
+    <script src="../servicepulse.host/app/js/directives/ui.particular.productVersion.js"></script>
+    <script src="../servicepulse.host/app/js/directives/ui.particular.busy.js"></script>
+    <script src="../servicepulse.host/app/js/directives/ui.particular.nodata.js"></script>
     <script src="../servicepulse.host/app/js/directives/ui.particular.confirmclick.js"></script>
     <script src="../servicepulse.host/app/js/directives/ui.particular.tabset.js"></script>
     <script src="../servicepulse.host/app/js/directives/ui.particular.tab.js"></script>
     <script src="../servicepulse.host/app/js/directives/ui.particular.eatclick.js"></script>
-    
-    <script src="../servicepulse.host/app/js/event_log_items/eventlogitems.js"></script>
-    
-    <script src="../servicepulse.host/app/js/dashboard/dashboard.module.js"></script>
-    <script src="../servicepulse.host/app/js/dashboard/dashboard.route.js"></script>
-    <script src="../servicepulse.host/app/js/dashboard/dashboard.controller.js"></script>
-    
-    <script src="../servicepulse.host/app/js/failed_messages/failedmessages.module.js"></script>
-    <script src="../servicepulse.host/app/js/failed_messages/failedmessages.route.js"></script>
-    <script src="../servicepulse.host/app/js/failed_messages/failedmessages.controller.js"></script>
-    <script src="../servicepulse.host/app/js/failed_messages/failedmessages.service.js"></script>
-    
-    <script src="../servicepulse.host/app/js/custom_checks/customchecks.module.js"></script>
-    <script src="../servicepulse.host/app/js/custom_checks/customchecks.route.js"></script>
-    <script src="../servicepulse.host/app/js/custom_checks/customchecks.controller.js"></script>
-    
-    <script src="../servicepulse.host/app/js/endpoints/endpoints.module.js"></script>
-    <script src="../servicepulse.host/app/js/endpoints/endpoints.route.js"></script>
-    <script src="../servicepulse.host/app/js/endpoints/endpoints.controller.js"></script>
 
-    <script src="../servicepulse.host/app/js/configuration/configuration.module.js"></script>
-    <script src="../servicepulse.host/app/js/configuration/configuration.route.js"></script>
-    <script src="../servicepulse.host/app/js/configuration/configuration.controller.js"></script>
+    <!-- Mystery -->
+    <script src="../servicepulse.host/app/js/views/event_log_items/eventLogItems.js"></script>
 
-    <script src="../servicepulse.host/app/js/configuration/configuration.service.js"></script>
-    
+    <!-- Dashboard -->
+    <script src="../servicepulse.host/app/js/views/dashboard/dashboard.module.js"></script>
+    <script src="../servicepulse.host/app/js/views/dashboard/dashboard.route.js"></script>
+    <script src="../servicepulse.host/app/js/views/dashboard/dashboard.controller.js"></script>
+
+    <!-- Failed Groups -->
+    <script src="../servicepulse.host/app/js/views/failed_groups/route.js"></script>
+    <script src="../servicepulse.host/app/js/views/failed_groups/controller.js"></script>
+    <script src="../servicepulse.host/app/js/views/failed_groups/service.js"></script>
+
+    <!-- Failed Messages -->
+    <script src="../servicepulse.host/app/js/views/failed_messages/route.js"></script>
+    <script src="../servicepulse.host/app/js/views/failed_messages/controller.js"></script>
+    <script src="../servicepulse.host/app/js/views/failed_messages/service.js"></script>
+
+    <!-- Custom Checks -->
+    <script src="../servicepulse.host/app/js/views/custom_checks/customChecks.module.js"></script>
+    <script src="../servicepulse.host/app/js/views/custom_checks/customChecks.route.js"></script>
+    <script src="../servicepulse.host/app/js/views/custom_checks/customChecks.controller.js"></script>
+
+    <!-- Endpoints -->
+    <script src="../servicepulse.host/app/js/views/endpoints/endpoints.module.js"></script>
+    <script src="../servicepulse.host/app/js/views/endpoints/endpoints.route.js"></script>
+    <script src="../servicepulse.host/app/js/views/endpoints/endpoints.controller.js"></script>
+
+    <!-- Configuration -->
+    <script src="../servicepulse.host/app/js/views/configuration/configuration.module.js"></script>
+    <script src="../servicepulse.host/app/js/views/configuration/configuration.route.js"></script>
+    <script src="../servicepulse.host/app/js/views/configuration/configuration.controller.js"></script>
+    <script src="../servicepulse.host/app/js/views/configuration/configuration.service.js"></script>
+
+
     <!-- test files -->
     <script src="tests/js/configuration/configuration.spec.js"></script>
     <script src="tests/js/services/services.spec.js"></script>

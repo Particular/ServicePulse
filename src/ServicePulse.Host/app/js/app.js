@@ -6,20 +6,22 @@
         'ngAnimate',
         'ngSanitize',
         'ngClipboard',
+        'ngStorage',
+        'ngPageTitle',
+        'toaster',
         'ui.bootstrap',
         'infinite-scroll',
         'services',
         'ui.particular',
         'directives.moment',
         'eventLogItems',
-        'failedMessages',
         'endpoints',
         'customChecks',
         'configuration',
         'dashboard']);
 
     angular.module('sc')
-        .run(['$rootScope', '$log', function ($rootScope, $log) {
+        .run(['$rootScope', '$location', '$log', function ($rootScope, $location, $log) {
             $rootScope.$log = $log;
         }]);
 
