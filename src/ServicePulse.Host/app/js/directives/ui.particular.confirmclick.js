@@ -31,7 +31,7 @@
                     $uibModal.open({
                         animation: true,
            
-                        templateUrl: 'js/directives/ui.particular.confirmClick.tpl.html',
+                        templateUrl: 'js/directives/ui.particular.confirmclick.tpl.html',
                         controller: modalController,
                         resolve: {
                             confirmMessage: function () {
