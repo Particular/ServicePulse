@@ -25,7 +25,7 @@
         var notifier = notifyService();
 
         vm.loadingData = false;
-        vm.archives = [];
+        vm.archives = [{}];
 
     }
 

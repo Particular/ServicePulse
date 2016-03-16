@@ -11,7 +11,7 @@
                 <ol class="breadcrumb">
                     <li><a href="#/failedGroups">Failed Message Groups</a></li>
                     <li ng-show="!vm.selectedExceptionGroup.id" class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</li>
-                    <li ng-show="vm.selectedExceptionGroup.id" class="active">{{vm.selectedExceptionGroup.title}} ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</li>
+                    <li ng-show="vm.selectedExceptionGroup.id" class="active break">{{vm.selectedExceptionGroup.title}} ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}})</li>
                 </ol>
             </div>
         </div>
