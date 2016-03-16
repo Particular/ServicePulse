@@ -1,0 +1,40 @@
+﻿<div class="container">
+    <section name="failed_messages">
+        <div class="row">
+            <div class="col-sm-12 padded">
+                <h1>Archived Messages</h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <ol class="breadcrumb">
+                    <li><a href="#/failedGroups">Failed Message Groups</a></li>
+                    <li class="active">Archived Messages</li>
+                </ol>
+            </div>
+        </div>
+
+        <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+
+        <no-data ng-show="vm.archives.length === 0 && !vm.loadingData" title="message failures" message="There are currently no archived messages"></no-data>
+
+        <div class="row">
+            <div class="col-sm-12" ng-show="vm.archives.length > 0">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="fromdate">From</label>
+                        <input type="datetime-local" class="form-control" id="fromdate" placeholder="1/3/1969">
+                    </div>
+                    <div class="form-group">
+                        <label for="todate">To </label>
+                        <input type="datetime-local" class="form-control" id="todate" placeholder="1/6/1969">
+                    </div>
+                    <button class="btn btn-default">Send Range Back</button>
+                </form>
+            </div>
+        </div>
+
+    </section>
+
+</div>

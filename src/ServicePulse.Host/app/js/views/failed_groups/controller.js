@@ -35,6 +35,10 @@
             $location.path('/failedMessages');
         }
         
+        vm.viewArchive = function () {
+            $location.path('/archived');
+        }
+
         vm.archiveExceptionGroup = function (group) {
 
             group.workflow_state = { status: 'working', message: 'working' };
