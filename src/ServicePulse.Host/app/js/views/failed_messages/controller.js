@@ -20,8 +20,6 @@
             $location.path('/failedGroups');
         }
 
-        vm.sort = "time_sent";
-        vm.direction = "desc";
         vm.failedMessages = [];
         vm.selectedIds = [];
         vm.sortButtonText = '';

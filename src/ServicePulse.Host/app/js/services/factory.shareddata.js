@@ -14,7 +14,17 @@
             number_of_failed_messages: 0,
             number_of_failed_checks: 0
         };
-        
+
+        var configuration = {
+            data_retention: {
+                audit_retention_period: '00:00:00',
+                error_retention_period: "00:00:00"
+        }};
+
+        serviceControlService.getConfiguration().then(function (response) {
+            notifier.notify('ConfigurationUpdated', response);
+            configuration = response || configuration;
+        });
 
         serviceControlService.getHeartbeatStats().then(function (stat) {
             notifier.notify('HeartbeatsUpdated', {
@@ -50,10 +60,15 @@
             return stats;
         }
 
+        function getconfiguration() {
+            return configuration;
+        }
+
         return {
             set: set,
             get: get,
             getstats: getstats,
+            getConfiguration: getconfiguration,
             submittedForRetry: storage.submittedForRetry
         };
 

@@ -24,14 +24,35 @@
                 <form class="form-inline">
                     <div class="form-group">
                         <label for="fromdate">From</label>
-                        <input type="datetime-local" class="form-control" id="fromdate" placeholder="1/3/1969">
+                        <input type="datetime-local" class="form-control" id="fromdate" placeholder="Range Start Time" ng-model="vm.startRange">
                     </div>
                     <div class="form-group">
                         <label for="todate">To </label>
-                        <input type="datetime-local" class="form-control" id="todate" placeholder="1/6/1969">
+                        <input type="datetime-local" class="form-control" id="todate" placeholder="Range End Time" ng-model="vm.endRange">
                     </div>
-                    <button class="btn btn-default">Send Range Back</button>
+                    <button class="btn btn-default" title="Un archive all messages in the selected date range">un-archive range</button>
                 </form>
+            </div>
+        </div>
+
+        <div ng-show="vm.archives.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
+            <div class="row box" ng-repeat="message in vm.archives">
+                <div class="col-sm-12">
+                    <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
+                        <div class="col-sm-12">
+                            <div class="row box-header">
+                                <div class="col-sm-12">
+                                    <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
+                                    <p>
+                                        <span class="metadata"><i class="fa fa-clock-o"></i> Archived <sp-moment date="{{message.last_modified}}"></sp-moment></span>
+                                        <span class="metadata"><i class="fa fa-trash-o"></i> Will be deleted <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+          
+                    </div>
+                </div>
             </div>
         </div>
     </section>
