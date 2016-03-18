@@ -7,47 +7,45 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/#/">
+            <a class="navbar-brand" href="#/">
                 <img alt="Service Pulse" src="img/logo.png" />
             </a>
         </div>
         <div id="navbar" class="collapse navbar-collapse navbar-right navbar-inverse">
             <ul class="nav navbar-nav navbar-inverse">
                 <li ng-class="{ active: isActive('/dashboard') }">
-                    <a href="/#/dashboard">
+                    <a href="#/dashboard">
                         <i class="fa fa-dashboard icon-white"></i>
                         <span class="navbar-label">Dashboard</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/endpoints') }">
-                    <a href="/#/endpoints">
+                    <a href="#/endpoints">
                         <i class="fa fa-heart icon-white"></i>
                         <span class="navbar-label">Endpoints Overview</span>
                         <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/failedGroups') || isActive('/failedMessages') }">
-                    <a href="/#/failedGroups">
+                    <a href="#/failedGroups">
                         <i class="fa fa-envelope icon-white"></i>
                         <span class="navbar-label">Failed Messages</span>
                         <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/customChecks') }">
-                    <a href="/#/customChecks">
+                    <a href="#/customChecks">
                         <i class="fa fa-check icon-white"></i>
                         <span class="navbar-label">Custom Check</span>
                         <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/configuration') }">
-                    <a href="/#/configuration">
+                    <a href="#/configuration">
                         <i class="fa fa-cog icon-white"></i>
                         <span class="navbar-label">Configuration</span>
                     </a>
                 </li>
-                <!--<li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>-->
             </ul>
         </div><!--/.nav-collapse -->
     </div>
