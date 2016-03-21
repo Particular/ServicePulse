@@ -7,12 +7,14 @@
 </div>
 
 <div class="container">
-    <section name="active_endpoints">
-        <div class="row">
-            <div class="col-sm-12">
-                <h5>active endpoints</h5>
-            </div>
-        </div>
+
+
+    <div class="tabs">
+        <h5 ng-class="{active: isActiveEndpoints != true}"><a ng-click="isActiveEndpoints = false">Inactive Endpoints ({{model.inactive.length}})</a></h5>
+        <h5 ng-class="{active: isActiveEndpoints == true}"><a ng-click="isActiveEndpoints = true">Active Endpoints ({{model.active.length}})</a></h5>
+    </div>
+
+    <section ng-show="isActiveEndpoints" name="active_endpoints">
         <no-data ng-show="model.active.length == 0" message="No active endpoints"></no-data>
         <div class="row">
             <div class="col-sm-12">
@@ -24,7 +26,9 @@
                                 <div class="row box-header">
                                     <div class="col-sm-12">
                                         <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} </p>
-                                        <p>latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment></p>
+                                        <p>
+                                            latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -36,12 +40,8 @@
             </div>
         </div>
     </section>
-    <section name="inactive_endpoints">
-        <div class="row">
-            <div class="col-sm-12">
-                <h5>inactive endpoints</h5>
-            </div>
-        </div>
+
+    <section ng-show="!isActiveEndpoints" name="inactive_endpoints">
         <no-data ng-show="model.inactive.length == 0" message="No inactive endpoints"></no-data>
         <div class="row">
             <div class="col-sm-12">
