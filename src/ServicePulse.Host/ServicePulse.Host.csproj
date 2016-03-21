@@ -85,6 +85,7 @@
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
     <Content Include="app\css\particular.css" />
+    <Content Include="app\js\app.http.js" />
     <Content Include="app\js\app.logging.js" />
     <Content Include="app\js\directives\ui.particular.confirmclick.tpl.html" />
     <Content Include="app\js\directives\ui.particular.busy.js" />

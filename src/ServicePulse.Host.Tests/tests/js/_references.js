@@ -21,6 +21,7 @@
 /// <reference path="../../../servicepulse.host/app/js/app.route.js" />
 /// <reference path="../../../servicepulse.host/app/js/app.controller.js" />
 /// <reference path="../../../servicepulse.host/app/js/app.logging.js" />
+/// <reference path="../../../servicepulse.host/app/js/app.http.js" />
 /// <!-- Services -->
 /// <reference path="../../../servicepulse.host/app/js/services/services.module.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/services.exception-handler.js" />

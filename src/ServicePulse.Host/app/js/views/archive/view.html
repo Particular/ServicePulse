@@ -22,15 +22,12 @@
         <div class="row">
             <div class="col-sm-12" ng-show="vm.archives.length > 0">
                 <form class="form-inline">
-                    <div class="form-group">
-                        <label for="fromdate">From</label>
-                        <input type="datetime-local" class="form-control" id="fromdate" placeholder="Range Start Time" ng-model="vm.startRange">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" confirm-click="vm.restore(2, 'hours')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last 2 hours</button>
+                        <button type="button" confirm-click="vm.restore(1, 'days')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last Day</button>
+                        <button type="button" confirm-click="vm.restore(7, 'days')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last 7 Days</button>
+                        <button type="button" confirm-click="vm.restore(14, 'days')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last 14 Days</button>
                     </div>
-                    <div class="form-group">
-                        <label for="todate">To </label>
-                        <input type="datetime-local" class="form-control" id="todate" placeholder="Range End Time" ng-model="vm.endRange">
-                    </div>
-                    <button class="btn btn-default" title="Un archive all messages in the selected date range">un-archive range</button>
                 </form>
             </div>
         </div>
@@ -43,14 +40,24 @@
                             <div class="row box-header">
                                 <div class="col-sm-12">
                                     <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
+                                    <p><pre ng-show="message.exception">{{ message.exception.message }}</pre></p>
                                     <p>
+                                        <span class="metadata"><i class="fa fa-clock-o"></i> Time Sent <sp-moment date="{{message.time_sent}}"></s></sp-moment></span>
                                         <span class="metadata"><i class="fa fa-clock-o"></i> Archived <sp-moment date="{{message.last_modified}}"></sp-moment></span>
                                         <span class="metadata"><i class="fa fa-trash-o"></i> Will be deleted <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
                                     </p>
                                 </div>
                             </div>
                         </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
           
+                        <button type="button" class="btn btn-link btn-sm" title="Restore this message"  confirm-click="vm.restoreMessage(message.id)" confirm-message="Are you sure you want to un-archive this message?">
+                            Restore
+                        </button>
                     </div>
                 </div>
             </div>
