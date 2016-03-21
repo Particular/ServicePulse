@@ -293,6 +293,24 @@ section.events > div > div > div > div {
 .box-no-click:first-child {
      border-top: 1px solid #ced6d3;
  }
+
+.section-header {
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    color: #777f7f;
+    display: flex;
+    line-height: 24px;
+    margin: 20px 0 8px;
+    padding: 0 24px;
+}
+
+.section-header-heading {
+    -ms-flex: 1 1 0;
+    -webkit-flex: 1 1 0;
+    flex: 1 1 0;
+    margin-right: 48px;
+}
+
 .lead {
     font-size: 16px !important;
     -ms-word-wrap: break-word;

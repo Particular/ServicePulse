@@ -19,23 +19,17 @@
 
         <no-data ng-show="vm.archives.length === 0 && !vm.loadingData" title="message failures" message="There are currently no archived messages"></no-data>
 
-        <div class="row">
-            <div class="col-sm-12" ng-show="vm.archives.length > 0">
-                <form class="form-inline">
-                    <div class="btn-group" role="group" aria-label="...">
-                        <button type="button" confirm-click="vm.restore(2, 'hours')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last 2 hours</button>
-                        <button type="button" confirm-click="vm.restore(1, 'days')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last Day</button>
-                        <button type="button" confirm-click="vm.restore(7, 'days')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last 7 Days</button>
-                        <button type="button" confirm-click="vm.restore(14, 'days')" class="btn btn-default" confirm-message="Are you sure you want to un-archive these messages?">Restore Last 14 Days</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <div ng-show="vm.archives.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
-            <div class="row box" ng-repeat="message in vm.archives">
+
+            <div class="row " ng-repeat="message in vm.archives">
+              
+                <div class="row section-header" ng-show="vm.showGroupLabel(message.timeGroup.label)">
+                    <div class="section-header-heading" role="heading" aria-level="1">{{message.timeGroup.label}}</div>
+                    <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup.amount, message.timeGroup.unit)" confirm-message="Are you sure you want to Un-archive these messages {{message.timeGroup.label}}?"><i class="fa fa-reply"></i></button>
+                </div>
+
                 <div class="col-sm-12">
-                    <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
+                    <div class="row box" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                         <div class="col-sm-12">
                             <div class="row box-header">
                                 <div class="col-sm-12">
@@ -49,17 +43,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-sm-12">
 
+                            <button type="button" class="btn btn-link btn-sm" title="Restore this message" confirm-click="vm.restoreMessage(message.id)" confirm-message="Are you sure you want to un-archive this message?">
+                                Restore
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-          
-                        <button type="button" class="btn btn-link btn-sm" title="Restore this message"  confirm-click="vm.restoreMessage(message.id)" confirm-message="Are you sure you want to un-archive this message?">
-                            Restore
-                        </button>
-                    </div>
-                </div>
+     
             </div>
         </div>
     </section>
