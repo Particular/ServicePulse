@@ -10,8 +10,8 @@
 
 
     <div class="tabs">
-        <h5 ng-click="isActiveEndpoints = false" ng-class="{active: isActiveEndpoints != true}">Inactive Endpoints ({{model.inactive.length}})</h5>
-        <h5 ng-click="isActiveEndpoints = true" ng-class="{active: isActiveEndpoints == true}">Active Endpoints ({{model.active.length}})</h5>
+        <h5 ng-class="{active: isActiveEndpoints != true}"><a ng-click="isActiveEndpoints = false" > Inactive Endpoints ({{model.inactive.length}})</a></h5>
+        <h5 ng-class="{active: isActiveEndpoints == true}"><a ng-click="isActiveEndpoints = true">Active Endpoints ({{model.active.length}})</a></h5>
     </div>
 
     <section ng-show="isActiveEndpoints" name="active_endpoints">
