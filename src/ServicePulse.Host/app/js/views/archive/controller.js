@@ -70,11 +70,11 @@
             return timeGroup;
         }
 
+        var currentGroupLabel = '';
+
         var processLoadedMessages = function(data) {
 
             if (data && data.length > 0) {
-
-                var currentGroupLabel = '';
 
                 var exgroups = data.map(function(obj) {
                     var nObj = obj;
