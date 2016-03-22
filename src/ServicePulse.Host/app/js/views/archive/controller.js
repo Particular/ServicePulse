@@ -25,9 +25,8 @@
         var vm = this;
         var notifier = notifyService();
 
-
         vm.sortButtonText = '';
-        vm.sort = "time_sent";
+        vm.sort = "modified";
         vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
@@ -37,19 +36,16 @@
 
         vm.currentGroupLabel = '';
         vm.showGroupLabel = function (label) {
-
-            if (vm.currentGroupLabel !== label) {
+            if (vm.sort === 'modified' && vm.currentGroupLabel !== label) {
                 vm.currentGroupLabel = label;
                 return true;
             }
-
             return false;
         }
 
         var setSortButtonText = function(sort, direction) {
-            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Sent") + " " + (direction === 'asc' ? "ASC" : "DESC");
+            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Archived") + " " + (direction === 'asc' ? "ASC" : "DESC");
         }
-
 
         var determineTimeGrouping = function(lastModified) {
 
@@ -81,12 +77,13 @@
         var processLoadedMessages = function(data) {
 
             if (data && data.length > 0) {
+
                 var exgroups = data.map(function(obj) {
                     var nObj = obj;
                     nObj.panel = 0;
-
-                    nObj.timeGroup = determineTimeGrouping(nObj.last_modified);
-
+                    if (vm.sort === 'modified') {
+                        nObj.timeGroup = determineTimeGrouping(nObj.last_modified);
+                    }
                     nObj.deleted_in = $moment(nObj.last_modified).add(vm.error_retention_period, 'hours').format();
                     return nObj;
                 });

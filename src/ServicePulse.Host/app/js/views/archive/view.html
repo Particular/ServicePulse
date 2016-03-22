@@ -25,7 +25,7 @@
               
                 <div class="row section-header" ng-show="vm.showGroupLabel(message.timeGroup.label)">
                     <div class="section-header-heading" role="heading" aria-level="1">{{message.timeGroup.label}}</div>
-                    <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup.amount, message.timeGroup.unit)" confirm-message="Are you sure you want to Un-archive these messages {{message.timeGroup.label}}?"><i class="fa fa-reply"></i></button>
+                    <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup.amount, message.timeGroup.unit)" confirm-message="Are you sure you want to Un-archive all these messages {{message.timeGroup.label}}? This will Un-archive this group and ALL groups earlier in the timeline."><i class="fa fa-reply"></i></button>
                 </div>
 
                 <div class="col-sm-12">
