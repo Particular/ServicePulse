@@ -35,13 +35,7 @@
         vm.archives = [{}];
         vm.error_retention_period = $moment.duration("10.00:00:00").asHours();
 
-        notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_failed_messages = data;
-        }, 'MessageFailuresUpdated');
-
-        notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_archived_messages = data;
-        }, 'ArchivedMessagesUpdated');
+        var localtimeout;
 
         var setSortButtonText = function(sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Archived") + " " + (direction === 'asc' ? "ASC" : "DESC");
@@ -114,6 +108,13 @@
             vm.loadMoreResults();
         }
 
+        var startTimer = function (time) {
+            time = time || 3000;
+            localtimeout = $timeout(function () {
+                init();
+            }, time);
+        }
+
         vm.restore = function(amount, unit) {
             var rangeEnd = moment.utc();
             var rangeStart = moment.utc().subtract(amount, unit);
@@ -129,7 +130,7 @@
                     notifier.notify('RestoreFromArchiveRequestRejected');
                 })
                 .finally(function() {
-
+                    startTimer();
                 });
         }
 
@@ -171,6 +172,18 @@
                 processLoadedMessages(response.data);
             });
         }
+
+        $scope.$on("$destroy", function (event) {
+            $timeout.cancel(localtimeout);
+        });
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_failed_messages = data;
+        }, 'MessageFailuresUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
 
         init();
     }
