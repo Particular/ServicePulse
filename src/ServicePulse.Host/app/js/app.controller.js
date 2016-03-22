@@ -141,8 +141,13 @@
             notifier.notify("CustomChecksUpdated", message.failed);
         }, "CustomChecksUpdated");
 
-        listener.subscribe($scope, function(message) {
-            notifier.notify("MessageFailuresUpdated", message.total);
+        listener.subscribe($scope, function (message) {
+            logit(message);
+       
+            notifier.notify("MessageFailuresUpdated", message.unresolved_total || message.total);
+            notifier.notify("ArchivedMessagesUpdated", message.archived_total || 0);
+
+            
         }, "MessageFailuresUpdated");
 
         listener.subscribe($scope, function(message) {

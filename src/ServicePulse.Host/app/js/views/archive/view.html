@@ -21,9 +21,9 @@
 
         <div ng-show="vm.archives.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
 
-            <div class="row " ng-repeat="message in vm.archives">
+            <div class="row list-animation" ng-repeat="message in vm.archives">
               
-                <div class="row section-header" ng-show="message.showGroupLabel">
+                <div class="row section-header" ng-show="$first || message.showGroupLabel">
                     <div class="section-header-heading" role="heading" aria-level="1">{{message.timeGroup.label}}</div>
                     <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup.amount, message.timeGroup.unit)" confirm-message="Are you sure you want to Un-archive all these messages {{message.timeGroup.label}}? This will Un-archive this group and ALL groups earlier in the timeline."><i class="fa fa-reply"></i></button>
                 </div>
@@ -45,7 +45,7 @@
                         </div>
                         <div class="col-sm-12">
 
-                            <button type="button" class="btn btn-link btn-sm" title="Restore this message" confirm-click="vm.restoreMessage(message.id)" confirm-message="Are you sure you want to un-archive this message?">
+                            <button type="button" class="btn btn-link btn-sm" title="Restore this message" confirm-click="vm.restoreMessage(message)" confirm-message="Are you sure you want to un-archive this message?">
                                 Restore
                             </button>
                         </div>

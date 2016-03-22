@@ -84,7 +84,7 @@
         };
 
         function getTotalArchivedMessages() {
-            var url = uri.join(scConfig.service_control_url, 'errors?status=archive');
+            var url = uri.join(scConfig.service_control_url, 'errors?status=archived');
             return $http.head(url).then(function(response) {
                 return response.headers('Total-Count');
             });

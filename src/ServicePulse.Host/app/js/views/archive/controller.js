@@ -36,6 +36,10 @@
         vm.error_retention_period = $moment.duration("10.00:00:00").asHours();
 
         notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_failed_messages = data;
+        }, 'MessageFailuresUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
             vm.stats.number_of_archived_messages = data;
         }, 'ArchivedMessagesUpdated');
 
@@ -129,10 +133,14 @@
                 });
         }
 
-        vm.restoreMessage = function(id) {
+        vm.restoreMessage = function (item) {
 
-            archivedMessageService.restoreMessageFromArchive(id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
-                .then(function(message) {
+            archivedMessageService.restoreMessageFromArchive(item.id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
+                .then(function (message) {
+
+                    var index = vm.archives.indexOf(item);
+                    vm.archives.splice(index, 1);
+
                     // We are going to have to wait for service control to tell us the job has been done
                     // group.workflow_state = createWorkflowState('success', message);
                     notifier.notify('RestoreFromArchiveRequestAccepted');

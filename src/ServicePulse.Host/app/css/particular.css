@@ -578,3 +578,22 @@ h1 {
     .version-info a:hover {
         font-weight: normal;
     }
+
+
+    /* Add animation */
+.list-animation.ng-enter.ng-enter-active, 
+.list-animation.ng-leave {
+    opacity: 1;
+    -webkit-transition: opacity 300ms linear;
+    -moz-transition: opacity 300ms linear;
+    transition: opacity 300ms linear;
+}
+
+/* Remove animation */
+.list-animation.ng-leave.ng-leave-active, 
+.list-animation.ng-enter {
+    opacity: 0;
+    -webkit-transition: opacity 300ms linear;
+    -moz-transition: opacity 300ms linear;
+    transition: opacity 300ms linear;
+}

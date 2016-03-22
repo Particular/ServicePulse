@@ -13,13 +13,14 @@
         failedMessageGroupsService) {
 
         var vm = this;
-  
+
         var notifier = notifyService();
         vm.selectedExceptionGroup = sharedDataService.get();
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
             $location.path('/failedGroups');
         }
 
+        vm.stats = sharedDataService.getstats();
         vm.failedMessages = [];
         vm.selectedIds = [];
         vm.sortButtonText = '';
@@ -28,6 +29,14 @@
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.page = 1;
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_failed_messages = data;
+        }, 'MessageFailuresUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
 
         var setSortButtonText = function (sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Sent") + " " + (direction === 'asc' ? "ASC" : "DESC");
