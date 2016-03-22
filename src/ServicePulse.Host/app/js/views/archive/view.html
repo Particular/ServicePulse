@@ -10,7 +10,7 @@
             <div class="col-sm-12">
                 <ol class="breadcrumb">
                     <li><a href="#/failedGroups">Failed Message Groups</a></li>
-                    <li class="active">Archived Messages</li>
+                    <li class="active">Archived Messages ({{vm.archives.length}} / {{vm.stats.number_of_archived_messages}})</li>
                 </ol>
             </div>
         </div>
@@ -23,7 +23,7 @@
 
             <div class="row " ng-repeat="message in vm.archives">
               
-                <div class="row section-header" ng-show="vm.showGroupLabel(message.timeGroup.label)">
+                <div class="row section-header" ng-show="message.showGroupLabel">
                     <div class="section-header-heading" role="heading" aria-level="1">{{message.timeGroup.label}}</div>
                     <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup.amount, message.timeGroup.unit)" confirm-message="Are you sure you want to Un-archive all these messages {{message.timeGroup.label}}? This will Un-archive this group and ALL groups earlier in the timeline."><i class="fa fa-reply"></i></button>
                 </div>

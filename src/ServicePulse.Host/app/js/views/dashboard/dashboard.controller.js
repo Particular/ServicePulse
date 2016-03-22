@@ -21,6 +21,10 @@
 		}, 'MessageFailuresUpdated');
 
 		notifier.subscribe($scope, function (event, data) {
+		    $scope.model.number_of_archived_messages = data;
+		}, 'ArchivedMessagesUpdated');
+
+		notifier.subscribe($scope, function (event, data) {
 		    $scope.model.active_endpoints = data.active;
 		    $scope.model.failing_endpoints = data.failing;
 		}, 'HeartbeatsUpdated');

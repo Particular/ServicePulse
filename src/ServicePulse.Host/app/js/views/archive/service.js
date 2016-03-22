@@ -6,10 +6,15 @@
             $log,
             $timeout,
             $q,
+            notifyService,
             scConfig,
             uri
         ) {
        
+ 
+
+        var notifier = notifyService();
+
         function patchPromise(url, success, error, ids) {
 
             var defer = $q.defer();
@@ -35,6 +40,8 @@
                 var url = uri.join(scConfig.service_control_url, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction); // + '&modified=' = 2016-01-25T15:38:35.6767764Z...2016-11-25T15:38:36.6767764Z');
 
                 return $http.get(url).then(function (response) {
+                    notifier.notify('ArchivedMessagesUpdated', response.headers('Total-Count'));
+
                     return {
                         data: response.data,
                         total: response.headers('Total-Count')
@@ -48,6 +55,7 @@
                 var url = uri.join(scConfig.service_control_url, 'errors?status=archived');
 
                 return $http.head(url).then(function (response) {
+                    notifier.notify('ArchivedMessagesUpdated', response.headers('Total-Count'));
                     return response.headers('Total-Count');
                 });
             },
@@ -71,6 +79,7 @@
         '$log',
         '$timeout',
         '$q',
+        'notifyService',
         'scConfig',
         'uri'
     ];

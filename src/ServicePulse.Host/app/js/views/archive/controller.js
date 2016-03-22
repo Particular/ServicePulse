@@ -25,6 +25,7 @@
         var vm = this;
         var notifier = notifyService();
 
+        vm.stats = sharedDataService.getstats();
         vm.sortButtonText = '';
         vm.sort = "modified";
         vm.direction = "desc";
@@ -34,14 +35,9 @@
         vm.archives = [{}];
         vm.error_retention_period = $moment.duration("10.00:00:00").asHours();
 
-        vm.currentGroupLabel = '';
-        vm.showGroupLabel = function (label) {
-            if (vm.sort === 'modified' && vm.currentGroupLabel !== label) {
-                vm.currentGroupLabel = label;
-                return true;
-            }
-            return false;
-        }
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
 
         var setSortButtonText = function(sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Archived") + " " + (direction === 'asc' ? "ASC" : "DESC");
@@ -78,11 +74,18 @@
 
             if (data && data.length > 0) {
 
+                var currentGroupLabel = '';
+
                 var exgroups = data.map(function(obj) {
                     var nObj = obj;
                     nObj.panel = 0;
                     if (vm.sort === 'modified') {
                         nObj.timeGroup = determineTimeGrouping(nObj.last_modified);
+                        nObj.showGroupLabel = false;
+                        if (currentGroupLabel !== nObj.timeGroup.label) {
+                            currentGroupLabel = nObj.timeGroup.label;
+                            nObj.showGroupLabel = true;
+                        } 
                     }
                     nObj.deleted_in = $moment(nObj.last_modified).add(vm.error_retention_period, 'hours').format();
                     return nObj;

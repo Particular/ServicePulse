@@ -12,7 +12,8 @@
             active_endpoints: 0,
             failing_endpoints: 0,
             number_of_failed_messages: 0,
-            number_of_failed_checks: 0
+            number_of_failed_checks: 0,
+            number_of_archived_messages: 0
         };
 
         var configuration = {
@@ -45,6 +46,13 @@
             notifier.notify('CustomChecksUpdated', response || 0);
             stats.number_of_failed_checks = response || 0;
         });
+
+        serviceControlService.getTotalArchivedMessages().then(function (response) {
+            notifier.notify('ArchivedMessagesUpdated', response || 0);
+            stats.number_of_archived_messages = response || 0;
+        });
+
+
 
         var storage = $localStorage.$default({});
 

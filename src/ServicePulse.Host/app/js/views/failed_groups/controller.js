@@ -99,6 +99,10 @@
             vm.stats.number_of_failed_messages = data;
         }, 'MessageFailuresUpdated');
 
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
+
         var localtimeout;
         var startTimer = function (time) {
             time = time || 5000;
