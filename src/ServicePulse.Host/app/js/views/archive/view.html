@@ -2,7 +2,7 @@
     <section name="failed_messages">
         <div class="row">
             <div class="col-sm-12 padded">
-                <h1>Archived Messages</h1>
+                <h1>Failed Messages</h1>
             </div>
         </div>
 
@@ -25,7 +25,7 @@
               
                 <div class="row section-header" ng-show="$first || message.showGroupLabel">
                     <div class="section-header-heading" role="heading" aria-level="1">{{message.timeGroup.label}}</div>
-                    <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup.amount, message.timeGroup.unit)" confirm-message="Are you sure you want to Un-archive all these messages {{message.timeGroup.label}}? This will Un-archive this group and ALL groups earlier in the timeline."><i class="fa fa-reply"></i></button>
+                    <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup)" confirm-message="Are you sure you want to Un-archive all these messages {{message.timeGroup.label}}? This will Un-archive this group and ALL groups earlier in the timeline."><i class="fa fa-reply"></i></button>
                 </div>
 
                 <div class="col-sm-12">

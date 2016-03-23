@@ -60,6 +60,7 @@
 
                 if (current.hours() <= duration.asHours()) {
                     timeGroup = c;
+                    timeGroup.class = 'timegroup' + i;
                     timeGroup.label = 'Archived less than ' + duration.humanize() + ' ago';
                     break;
                 }
@@ -117,14 +118,16 @@
         var startTimer = function (time) {
             time = time || 3000;
             localtimeout = $timeout(function () {
+           
                 init();
             }, time);
         }
 
-        vm.restore = function(amount, unit) {
-            var rangeEnd = moment.utc();
-            var rangeStart = moment.utc().subtract(amount, unit);
+        vm.restore = function (timeGroup) {
 
+            var rangeEnd = moment.utc();
+            var rangeStart = moment.utc().subtract(timeGroup.amount, timeGroup.unit);
+            
             archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
                 .then(function(message) {
                     // We are going to have to wait for service control to tell us the job has been done
