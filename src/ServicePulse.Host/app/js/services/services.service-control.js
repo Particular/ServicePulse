@@ -49,7 +49,7 @@
         };
 
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy);
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
             return $http.get(url).then(function(response) {
                 return {
                     data: response.data,

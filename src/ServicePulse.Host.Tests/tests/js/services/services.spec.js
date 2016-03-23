@@ -23,9 +23,9 @@ describe("Unit: Uri Service ", function() {
         it('should make a url for get Failed Messages For Exception Group', inject(function (uri, scConfig) {
             var groupId = '85147b12-458c-431d-a389-35ea53abc9e1';
             var page = 1;
-            var sortBy = 'time_sent';
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy);
-            expect(url).toEqual('http://localhost:33333/api/recoverability/groups/85147b12-458c-431d-a389-35ea53abc9e1/errors?page=1&sort=time_sent');
+            var sortBy = 'time_of_failure';
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
+            expect(url).toEqual('http://localhost:33333/api/recoverability/groups/85147b12-458c-431d-a389-35ea53abc9e1/errors?page=1&sort=time_of_failure&status=unresolved');
         }));
 
 

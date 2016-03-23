@@ -24,7 +24,7 @@
         vm.failedMessages = [];
         vm.selectedIds = [];
         vm.sortButtonText = '';
-        vm.sort = "time_sent";
+        vm.sort = "time_of_failure";
         vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
@@ -39,7 +39,7 @@
         }, 'ArchivedMessagesUpdated');
 
         var setSortButtonText = function (sort, direction) {
-            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Sent") + " " + (direction === 'asc' ? "ASC" : "DESC");
+            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
         }
 
         var processLoadedMessages = function (data) {

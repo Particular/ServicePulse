@@ -399,6 +399,12 @@ h5 {
     color: #00a3c4;
 }
 
+.tabs h5.active > a:hover{
+    color: #a8b3b1;
+    cursor: default;
+    text-decoration: none;
+}
+
 .system-status:hover {
     background-color: #fff;
     border-color: #eee !important;
