@@ -38,7 +38,8 @@
                                     <p>
                                         <span class="metadata"><i class="fa fa-clock-o"></i> Time Sent <sp-moment date="{{message.time_sent}}"></s></sp-moment></span>
                                         <span class="metadata"><i class="fa fa-clock-o"></i> Archived <sp-moment date="{{message.last_modified}}"></sp-moment></span>
-                                        <span class="metadata"><i class="fa fa-trash-o"></i> Will be deleted <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
+                                        <span class="metadata warning" ng-show="message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion immediately</span>
+                                        <span class="metadata" ng-show="!message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
                                     </p>
                                 </div>
                             </div>

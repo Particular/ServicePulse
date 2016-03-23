@@ -85,7 +85,13 @@
                             nObj.showGroupLabel = true;
                         } 
                     }
-                    nObj.deleted_in = $moment(nObj.last_modified).add(vm.error_retention_period, 'hours').format();
+                    var countdown = $moment(nObj.last_modified).add(vm.error_retention_period, 'hours');
+                    // if deleted_in is negative write schedulaed for immediate deletion
+                    $log.debug($moment());
+                    $log.debug(countdown);
+
+                    nObj.delete_soon = countdown < $moment();
+                    nObj.deleted_in = countdown.format();
                     return nObj;
                 });
 
