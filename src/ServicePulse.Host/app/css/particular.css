@@ -322,6 +322,7 @@ section.events > div > div > div > div {
 .break {
      -ms-word-wrap: break-word;
     word-wrap: break-word;
+    word-break: break-all;
 }
 sp-moment {
     display: inline-block;
@@ -388,6 +389,11 @@ h5 {
 
 .tabs h5.active {
     border-bottom: 3px solid #181919;
+    color: #777F7F;
+}
+
+.tabs h5.active a {
+    color: #777F7F;
 }
 
 .tabs a {
@@ -400,7 +406,7 @@ h5 {
 }
 
 .tabs h5.active > a:hover{
-    color: #a8b3b1;
+    color: #777F7F;
     cursor: default;
     text-decoration: none;
 }
@@ -602,4 +608,17 @@ h1 {
     -webkit-transition: opacity 300ms linear;
     -moz-transition: opacity 300ms linear;
     transition: opacity 300ms linear;
+}
+
+.group-title {
+   margin: 10px 0 0;
+   font-size: 16px;
+   font-weight: bold;
+   display: inline-block
+}
+
+.group-message-count {
+   margin: 4px 0 12px;
+   font-size: 16px;
+   color: #777F7F;
 }
