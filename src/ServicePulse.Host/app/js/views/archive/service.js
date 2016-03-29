@@ -10,8 +10,6 @@
             scConfig,
             uri
         ) {
-       
- 
 
         var notifier = notifyService();
 
@@ -47,7 +45,7 @@
                         total: response.headers('Total-Count')
                     };
                 });
-    
+
             },
 
             getArchivedCount: function () {
@@ -71,6 +69,12 @@
                 var url = uri.join(scConfig.service_control_url, 'errors', 'unarchive');
                 return patchPromise(url, success, error, [id]);
             },
+
+            restoreMessagesFromArchive: function (ids, success, error) {
+
+                var url = uri.join(scConfig.service_control_url, 'errors', 'unarchive');
+                return patchPromise(url, success, error, ids);
+            }
         };
     }
 

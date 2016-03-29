@@ -11,6 +11,7 @@
         var stats = {
             active_endpoints: 0,
             failing_endpoints: 0,
+            number_of_exception_groups: 0,
             number_of_failed_messages: 0,
             number_of_failed_checks: 0,
             number_of_archived_messages: 0

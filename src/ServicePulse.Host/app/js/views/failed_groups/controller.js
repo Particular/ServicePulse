@@ -90,6 +90,8 @@
                             nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;
                         });
+
+                        vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
                     }
                     vm.loadingData = false;
                 });

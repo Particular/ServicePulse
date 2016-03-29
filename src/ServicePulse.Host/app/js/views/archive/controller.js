@@ -2,28 +2,26 @@
 (function(window, angular, undefined) {
     "use strict";
 
-    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal, optionalCount) {
-        return {
-            status: optionalStatus || 'working',
-            message: optionalMessage || 'working',
-            total: optionalTotal || 0,
-            count: optionalCount || 0
-        };
-    }
-
     function controller(
         $scope,
         $log,
         $timeout,
-        $interval,
-        $location,
         $moment,
+        $location,
+        scConfig,
         sharedDataService,
         notifyService,
+        serviceControlService,
+        failedMessageGroupsService,
         archivedMessageService) {
 
         var vm = this;
         var notifier = notifyService();
+
+
+        vm.selectedIds = [];
+        vm.sortButtonText = '';
+
 
         vm.stats = sharedDataService.getstats();
         vm.sortButtonText = '';
@@ -34,12 +32,30 @@
         vm.page = 1;
         vm.archives = [{}];
         vm.error_retention_period = $moment.duration("10.00:00:00").asHours();
+        vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
+
+        vm.viewExceptionGroup = function(group) {
+            sharedDataService.set(group);
+            $location.path('/failedMessages');
+        }
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_failed_messages = data;
+            vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
+        }, 'MessageFailuresUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
 
         var localtimeout;
 
         var setSortButtonText = function(sort, direction) {
-            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Archived") + " " + (direction === 'asc' ? "ASC" : "DESC");
+            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Archived") + " " + (direction === 'asc' ? "ASC" : "DESC");
         }
+
+
+
 
         var determineTimeGrouping = function(lastModified) {
 
@@ -71,6 +87,16 @@
 
         var currentGroupLabel = '';
 
+
+        notifier.subscribe($scope, function(event, data) {
+            vm.stats.number_of_failed_messages = data;
+        }, 'MessageFailuresUpdated');
+
+        notifier.subscribe($scope, function(event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
+
+
         var processLoadedMessages = function(data) {
 
             if (data && data.length > 0) {
@@ -84,7 +110,7 @@
                         if (currentGroupLabel !== nObj.timeGroup.label) {
                             currentGroupLabel = nObj.timeGroup.label;
                             nObj.showGroupLabel = true;
-                        } 
+                        }
                     }
                     var countdown = $moment(nObj.last_modified).add(vm.error_retention_period, 'hours');
                     // if deleted_in is negative write schedulaed for immediate deletion
@@ -105,51 +131,97 @@
         };
 
         var init = function() {
-
             vm.configuration = sharedDataService.getConfiguration();
             vm.error_retention_period = $moment.duration(vm.configuration.data_retention.error_retention_period).asHours();
             vm.total = 1;
             vm.archives = [];
             vm.page = 1;
             setSortButtonText(vm.sort, vm.direction);
+
+            vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
         }
+
 
         var startTimer = function (time) {
             time = time || 3000;
             localtimeout = $timeout(function () {
-           
+
                 init();
             }, time);
         }
 
         vm.restore = function (timeGroup) {
-
             var rangeEnd = moment.utc();
             var rangeStart = moment.utc().subtract(timeGroup.amount, timeGroup.unit);
-            
+
             archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
+
+            startTimer();
+        }
+
+        var markMessage = function(property) {
+            for (var i = 0; i < vm.failedMessages.length; i++) {
+                vm.failedMessages[i][property] = true;
+            }
+        };
+
+        vm.togglePanel = function(message, panelnum) {
+            if (message.messageBody === undefined) {
+                serviceControlService.getMessageBody(message.message_id).then(function(msg) {
+                    message.messageBody = msg.data;
+                }, function() {
+                    message.bodyUnavailable = "message body unavailable";
+                });
+            }
+
+            if (message.messageHeaders === undefined) {
+                serviceControlService.getMessageHeaders(message.message_id).then(function(msg) {
+                    message.messageHeaders = msg.data[0].headers;
+                }, function() {
+                    message.headersUnavailable = "message headers unavailable";
+                });
+            }
+            message.panel = panelnum;
+            return false;
+        };
+
+        vm.toggleRowSelect = function(row) {
+            if (row.retried || row.archived) {
+                return;
+            }
+
+            row.selected = !row.selected;
+
+            if (row.selected) {
+                vm.selectedIds.push(row.id);
+            } else {
+                vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
+            }
+        };
+
+
+        vm.retrySelected = function() {
+            serviceControlService.retryFailedMessages(vm.selectedIds);
+            vm.selectedIds = [];
+
+            for (var i = 0; i < vm.failedMessages.length; i++) {
+                if (vm.failedMessages[i].selected) {
+                    vm.failedMessages[i].selected = false;
+                    vm.failedMessages[i].retried = true;
+                }
+            }
+        };
+
+        vm.unarchiveSelected = function() {
+
+            archivedMessageService.restoreMessagesFromArchive(vm.selectedIds, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
                 .then(function(message) {
-                    // We are going to have to wait for service control to tell us the job has been done
-                    // group.workflow_state = createWorkflowState('success', message);
-                    notifier.notify('RestoreFromArchiveRequestAccepted');
 
-                }, function(message) {
-                    // group.workflow_state = createWorkflowState('error', message);
-                    notifier.notify('RestoreFromArchiveRequestRejected');
-                })
-                .finally(function() {
-                    startTimer();
-                });
-        }
-
-        vm.restoreMessage = function (item) {
-
-            archivedMessageService.restoreMessageFromArchive(item.id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
-                .then(function (message) {
-
-                    var index = vm.archives.indexOf(item);
-                    vm.archives.splice(index, 1);
+                    vm.archives.reduceRight(function(acc, obj, idx) {
+                        if (vm.selectedIds.indexOf(obj.id) > -1)
+                            vm.archives.splice(idx, 1);
+                    }, 0);
 
                     // We are going to have to wait for service control to tell us the job has been done
                     // group.workflow_state = createWorkflowState('success', message);
@@ -160,9 +232,67 @@
                     notifier.notify('RestoreFromArchiveRequestRejected');
                 })
                 .finally(function() {
+                    vm.selectedIds = [];
+                });
+
+
+        };
+
+        vm.archiveExceptionGroup = function(group) {
+
+
+            var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+                .then(function(message) {
+                    notifier.notify('ArchiveGroupRequestAccepted', group);
+                    markMessage('archived');
+                }, function(message) {
+                    notifier.notify('ArchiveGroupRequestRejected', group);
+                })
+                .finally(function() {
 
                 });
         }
+
+        vm.retryExceptionGroup = function(group) {
+            markMessage('retried');
+
+            if (!group.id) {
+                serviceControlService.retryAllFailedMessages();
+                return;
+            }
+
+            var response = failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
+                .then(function(message) {
+                    notifier.notify('RetryGroupRequestAccepted', group);
+                }, function(message) {
+                    notifier.notify('RetryGroupRequestRejected', group);
+                })
+                .finally(function() {
+
+                });
+        }
+
+
+        var selectGroupInternal = function(sort, direction) {
+            vm.sort = sort;
+            vm.direction = direction;
+            setSortButtonText(sort, direction);
+
+            if (vm.loadingData) {
+                return;
+            }
+
+            vm.archives = [];
+            vm.allMessagesLoaded = false;
+            vm.page = 1;
+
+            vm.loadMoreResults();
+        };
+
+        vm.selectGroup = function(sort, direction) {
+            selectGroupInternal(sort, direction, true);
+        };
+
 
         vm.loadMoreResults = function() {
             vm.allMessagesLoaded = vm.archives.length >= vm.total;
@@ -180,19 +310,8 @@
                 vm.total = response.total;
                 processLoadedMessages(response.data);
             });
+
         }
-
-        $scope.$on("$destroy", function (event) {
-            $timeout.cancel(localtimeout);
-        });
-
-        notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_failed_messages = data;
-        }, 'MessageFailuresUpdated');
-
-        notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_archived_messages = data;
-        }, 'ArchivedMessagesUpdated');
 
         init();
     }
@@ -201,11 +320,13 @@
         "$scope",
         "$log",
         "$timeout",
-        "$interval",
-        "$location",
         "$moment",
+        "$location",
+        "scConfig",
         "sharedDataService",
         "notifyService",
+        "serviceControlService",
+        "failedMessageGroupsService",
         "archivedMessageService"
     ];
 
