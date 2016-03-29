@@ -45,6 +45,10 @@
             toastService.showError("Route change error");
         });
 
+        $scope.showAlertBadgeOnCollapsedMenu = function () {
+            return $scope.failedcustomchecks + $scope.failedmessages + $scope.failedheartbeats > 0;
+        }
+
         function customChecksUpdated(event, data) {
             $timeout(function() { //http://davidburgosonline.com/dev/2014/correctly-fix-angularjs-error-digest-already-in-progress/
                 data = (data === 0 || data === "0") ? undefined : data;

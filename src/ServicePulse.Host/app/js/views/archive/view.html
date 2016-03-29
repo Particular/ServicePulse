@@ -61,10 +61,10 @@
 
                 <div class="row box" >
 
-                    <div class="col-sm-12">
-                        <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;" ng-click="vm.toggleRowSelect(message)">
+                    <div class="col-sm-12"  ng-click="vm.toggleRowSelect(message)">
+                        <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                             <div class="check col-md-1">
-                                <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                                <input  isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                             </div>
                             <div class="col-sm-9">
                                 <div class="row box-header">
@@ -88,22 +88,22 @@
                             <div class="col-sm-offset-1 col-sm-11">
                                 <p class="small" ng-init="message.panel = 0">
 
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
+                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide stacktrace</i>
                                     </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
+                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
                                         <i> Show stacktrace</i>
                                     </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
+                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide headers</i>
                                     </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
+                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
                                         <i>Show headers</i>
                                     </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
+                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide message body</i>
                                     </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
+                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
                                         <i>Show message body</i>
                                     </button>
                                 </p>

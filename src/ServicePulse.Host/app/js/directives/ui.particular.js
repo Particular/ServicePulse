@@ -4,6 +4,7 @@
     angular.module('ui.particular', [
         'ui.particular.tabset',
         'ui.particular.confirmClick',
+        'ui.particular.isolateClick',
         'ui.particular.eatClick',
         'ui.particular.hud',
         'ui.particular.productVersion',
