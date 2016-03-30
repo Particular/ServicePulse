@@ -188,6 +188,13 @@ footer a:hover {
     padding-top: 2px;
     padding-bottom: 3px;
 }
+
+.box-header ul {
+    list-style-type: none;
+    padding:0; 
+    margin:0;
+}
+
 .box-body {
 }
 /* fixed bus with repeat list transition lag */

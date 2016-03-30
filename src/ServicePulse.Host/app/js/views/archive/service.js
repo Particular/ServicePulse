@@ -34,8 +34,12 @@
         return {
 
             getArchivedMessages: function (sort, page, direction, start, end) {
-
-                var url = uri.join(scConfig.service_control_url, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction); // + '&modified=' = 2016-01-25T15:38:35.6767764Z...2016-11-25T15:38:36.6767764Z');
+                var url = '';
+                if (start && end) {
+                    url = uri.join(scConfig.service_control_url, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction + '&modified=' + start + '...' + end);
+                } else {
+                    url = uri.join(scConfig.service_control_url, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction);
+                } 
 
                 return $http.get(url).then(function (response) {
                     notifier.notify('ArchivedMessagesUpdated', response.headers('Total-Count'));

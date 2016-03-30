@@ -16,19 +16,14 @@
             </div>
         </div>
 
-
-        <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
-
-        <no-data ng-show="vm.archives.length === 0 && !vm.loadingData" title="message failures" message="There are currently no archived messages"></no-data>
-
-        <div class="row" ng-show="vm.archives.length > 0">
+        <div class="row" ng-show="!vm.loadingData">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
                     <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry." tooltip="All selected failed messages will be archived and will not be available for Retry" confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> UnArchive {{vm.selectedIds.length}} selected</button>
 
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="hidden-xs hidden-sm">Show </span>{{vm.selectedTimeGroup}}
+                            <span class="hidden-xs hidden-sm">Show </span>{{vm.timeGroup.buttonText}}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
@@ -70,23 +65,36 @@
                 </div>
             </div>
         </div>
+
+        <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+
+        <no-data ng-show="vm.archives.length === 0 && !vm.loadingData" title="message failures" message="There are currently no archived messages"></no-data>
+
         <div ng-show="vm.archives.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
 
             <div class="row list-animation" ng-repeat="message in vm.archives">
 
-                <div class="row box" >
+                <div class="row box">
 
-                    <div class="col-sm-12"  ng-click="vm.toggleRowSelect(message)">
+                    <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)">
                         <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                             <div class="check col-md-1">
-                                <input  isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                                <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                             </div>
                             <div class="col-sm-9">
                                 <div class="row box-header">
                                     <div class="col-sm-12">
                                         <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
                                         <p>
-                                            failed <sp-moment date="{{message.time_of_failure}}">, </sp-moment> reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}
+                                            
+                                        </p>
+                                        <p>
+                                            <ul>
+                                                <li><i class="fa fa-exclamation-circle"></i> Failed <sp-moment date="{{message.time_of_failure}}">, Reported by </sp-moment> {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</li>
+                                                <li><i class="fa fa-clock-o"></i> Archived <sp-moment date="{{message.last_modified}}"></sp-moment></li>
+                                                <li class="warning" ng-show="message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion immediately</li>
+                                                <li ng-show="!message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion <sp-moment date="{{message.deleted_in}}"></sp-moment></li>
+                                            </ul>
                                         </p>
                                     </div>
                                 </div>
@@ -106,19 +114,19 @@
                                     <button isolate-click type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide stacktrace</i>
                                     </button>
-                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
+                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
                                         <i> Show stacktrace</i>
                                     </button>
-                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
+                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide headers</i>
                                     </button>
-                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
+                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
                                         <i>Show headers</i>
                                     </button>
-                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
+                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide message body</i>
                                     </button>
-                                    <button isolate-click  type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
+                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
                                         <i>Show message body</i>
                                     </button>
                                 </p>

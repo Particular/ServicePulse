@@ -20,13 +20,14 @@
 
         vm.selectedIds = [];
 
-
         vm.stats = sharedDataService.getstats();
 
         vm.sort = {
             sortby: 'modified',
             direction: 'desc',
             page: 1,
+            start: undefined,
+            end: undefined,
             buttonText: function () {
                 return (vm.sort.sortby === 'message_type' ? "Message Type" : "Time Archived") + " " + (vm.sort.direction === 'asc' ? "ASC" : "DESC");
             }
@@ -34,23 +35,21 @@
         }
 
         vm.timeGroup = {
+            amount: undefined,
+            unit: undefined,
+            buttonText: 'All',
             selected: function () {
                 return $moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
-            },
-            amount: 2,
-            unit: 'hours',
-            buttonText: function () {
-                return selected.humanize();
             }
         };
 
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
-
         vm.archives = [{}];
         vm.error_retention_period = $moment.duration("10.00:00:00").asHours();
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
 
+        var localtimeout;
 
         vm.viewExceptionGroup = function (group) {
             sharedDataService.set(group);
@@ -66,8 +65,6 @@
             vm.stats.number_of_archived_messages = data;
         }, 'ArchivedMessagesUpdated');
 
-        var localtimeout;
-
         notifier.subscribe($scope, function (event, data) {
             vm.stats.number_of_failed_messages = data;
         }, 'MessageFailuresUpdated');
@@ -76,34 +73,6 @@
             vm.stats.number_of_archived_messages = data;
         }, 'ArchivedMessagesUpdated');
 
-        var determineTimeGrouping = function (lastModified) {
-
-            // THE ORDER OF DURATIONS MATTERS
-            var categories = [
-                { amount: 2, unit: 'hours' },
-                { amount: 1, unit: 'days' },
-                { amount: 7, unit: 'days' }
-            ];
-
-            var current = $moment.duration($moment() - $moment(lastModified));
-            var last = categories[categories.length - 1];
-            var timeGroup = 'Archived more than ' + $moment.duration(last.amount, last.unit).humanize() + ' ago';
-
-            for (var i = 0; i < categories.length; i++) {
-                var c = categories[i];
-                var duration = $moment.duration(c.amount, c.unit);
-
-                if (current.hours() <= duration.asHours()) {
-                    timeGroup = c;
-                    timeGroup.class = 'timegroup' + i;
-                    timeGroup.label = 'Archived less than ' + duration.humanize() + ' ago';
-                    break;
-                }
-            }
-
-            return timeGroup;
-        }
-
         var processLoadedMessages = function (data) {
 
             if (data && data.length > 0) {
@@ -111,11 +80,7 @@
                 var exgroups = data.map(function (obj) {
                     var nObj = obj;
                     nObj.panel = 0;
-                    nObj.timeGroup = determineTimeGrouping(nObj.last_modified);
-                    if (nObj.timeGroup === vm.timeGroup.selected()) {
-                        nObj.selected = true;
-                        vm.selectedIds.push(nObj.message_id);
-                    }
+                   
                     var countdown = $moment(nObj.last_modified).add(vm.error_retention_period, 'hours');
                     nObj.delete_soon = countdown < $moment();
                     nObj.deleted_in = countdown.format();
@@ -135,7 +100,11 @@
             vm.error_retention_period = $moment.duration(vm.configuration.data_retention.error_retention_period).asHours();
             vm.total = 1;
             vm.archives = [];
+
             vm.sort.page = 1;
+            vm.sort.start = undefined;
+            vm.sort.end = undefined;
+
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
         }
@@ -272,13 +241,14 @@
 
 
         var selectGroupInternal = function (sortby, direction) {
-            vm.sort.sortby = sortby;
-            vm.sort.direction = direction;
+            vm.sort.sortby = sortby || vm.sort.sortby;
+            vm.sort.direction = direction || vm.sort.direction;
 
             if (vm.loadingData) {
                 return;
             }
 
+            vm.selectedIds = [];
             vm.archives = [];
             vm.allMessagesLoaded = false;
             vm.page = 1;
@@ -287,13 +257,28 @@
         };
 
         vm.selectGroup = function (sortby, direction) {
+
             selectGroupInternal(sortby, direction, true);
         };
 
         vm.selectTimeGroup = function (amount, unit) {
 
-        }
+            vm.timeGroup.amount = amount;
+            vm.timeGroup.unit = unit;
 
+            if (amount && unit) {
+                vm.timeGroup.buttonText = amount + ' ' + unit;
+                vm.sort.start = $moment().subtract(amount, unit).format('YYYY-MM-DDTHH:MM:ss');
+                vm.sort.end = $moment().format('YYYY-MM-DDTHH:MM:ss');
+            } else {
+                vm.timeGroup.buttonText = 'All';
+                vm.sort.start = vm.sort.end = undefined;
+            }
+
+            $log.debug(vm.sort);
+
+            selectGroupInternal();
+        }
 
         vm.loadMoreResults = function () {
             vm.allMessagesLoaded = vm.archives.length >= vm.total;
@@ -307,7 +292,9 @@
             archivedMessageService.getArchivedMessages(
                 vm.sort.sortby,
                 vm.sort.page,
-                vm.sort.direction).then(function (response) {
+                vm.sort.direction,
+                vm.sort.start,
+                vm.sort.end).then(function (response) {
                     vm.total = response.total;
                     processLoadedMessages(response.data);
                 });
