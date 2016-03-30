@@ -1,7 +1,7 @@
 ﻿<div class="container">
     <div class="row">
         <div class="col-sm-12 padded">
-            <h1>Failed Messages</h1>
+            <h1>Failed Message Groups</h1>
         </div>
     </div>
 </div>
@@ -15,7 +15,7 @@
                 <div class="tabs">
                     <h5 class="active">Failed message groups ({{vm.exceptionGroups.length}})</h5>
                     <h5 ng-show="vm.exceptionGroups.length > 0"><a ng-click="vm.viewExceptionGroup(vm.allFailedMessagesGroup)" >All failed messages ({{vm.stats.number_of_failed_messages}})</a></h5>
-                    <h5><a ng-click="vm.viewArchive()">Archived messages  ({{vm.stats.number_of_archived_messages}})</a></h5>
+                    <h5><a href="#/archived">Archived messages ({{vm.stats.number_of_archived_messages}})</a></h5>
                 </div>
             </div>
         </div>

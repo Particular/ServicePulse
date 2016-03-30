@@ -2,7 +2,7 @@
     <section name="failed_messages">
         <div class="row">
             <div class="col-sm-12 padded">
-                <h1>Failed Messages</h1>
+                <h1>Archived Messages</h1>
             </div>
         </div>
 
@@ -25,10 +25,31 @@
             <div class="col-sm-12">
                 <div class="btn-toolbar">
                     <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry." tooltip="All selected failed messages will be archived and will not be available for Retry" confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> UnArchive {{vm.selectedIds.length}} selected</button>
-                    
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="hidden-xs hidden-sm">Show </span>{{vm.selectedTimeGroup}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup()"><span class="fa fa-calendar" aria-hidden="true"></span> All</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup('2', 'hours')"><span class="fa fa-calendar" aria-hidden="true"></span> 2 Hours</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup('1', 'days')"><span class="fa fa-calendar" aria-hidden="true"></span> 1 Day</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup('7', 'days')"><span class="fa fa-calendar " aria-hidden="true"></span> 7 Days</a>
+                            </li>
+                        </ul>
+                    </div>
+
                     <div class="btn-group pull-right">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="hidden-xs hidden-sm">Sorted by </span>{{vm.sortButtonText}}
+                            <span class="hidden-xs hidden-sm">Sorted by </span>{{vm.sort.buttonText()}}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
@@ -52,12 +73,6 @@
         <div ng-show="vm.archives.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
 
             <div class="row list-animation" ng-repeat="message in vm.archives">
-
-
-                <div class="row section-header" ng-show="($first && vm.sort === 'modified' )  || message.showGroupLabel">
-                    <div class="section-header-heading" role="heading" aria-level="1">{{message.timeGroup.label}}</div>
-                    <button title="Restore these messages" confirm-click="vm.restore(message.timeGroup)" confirm-message="Are you sure you want to Un-archive all these messages {{message.timeGroup.label}}? This will Un-archive this group and ALL groups earlier in the timeline."><i class="fa fa-undo"></i> UnArchive {{message.timeGroup.label}}</button>
-                </div>
 
                 <div class="row box" >
 
