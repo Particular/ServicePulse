@@ -1,12 +1,16 @@
 ﻿;
-(function(window, angular, undefined) {
+(function (window, angular, undefined) {
     "use strict";
 
     function factory(
         $localStorage,
         serviceControlService,
-        notifyService) {
+        semverService,
+        notifyService,
+        version) {
 
+
+        var spVersion = version;
         var notifier = notifyService();
         var stats = {
             active_endpoints: 0,
@@ -21,7 +25,30 @@
             data_retention: {
                 audit_retention_period: '00:00:00',
                 error_retention_period: "00:00:00"
-        }};
+            }
+        };
+
+        var environment = {
+            sc_version: undefined,
+            minimum_supported_sc_version: "1.12.0",
+            is_compatible_with_sc: true,
+            sp_version: spVersion
+        };
+
+        serviceControlService.getVersion()
+        .then(function (scVersion) {
+            environment.sc_version = scVersion;
+            if (!semverService.isSupported(scVersion, environment.minimum_supported_sc_version)) {
+                environment.is_compatible_with_sc = false;
+            }
+            notifier.notify('EnvironmentUpdated', environment);
+        });
+
+        serviceControlService.checkLicense().then(function (isValid) {
+            if (!isValid) {
+                notifier.notify('ExpiredLicense', environment);
+            }
+        });
 
         serviceControlService.getConfiguration().then(function (response) {
             notifier.notify('ConfigurationUpdated', response);
@@ -53,8 +80,6 @@
             stats.number_of_archived_messages = response || 0;
         });
 
-
-
         var storage = $localStorage.$default({});
 
         function set(data) {
@@ -73,11 +98,16 @@
             return configuration;
         }
 
+        function getenvironment() {
+            return environment;
+        }
+
         return {
             set: set,
             get: get,
             getstats: getstats,
             getConfiguration: getconfiguration,
+            getenvironment: getenvironment,
             submittedForRetry: storage.submittedForRetry
         };
 
@@ -86,7 +116,9 @@
     factory.$inject = [
         "$localStorage",
         "serviceControlService",
-        "notifyService"
+        "semverService",
+        "notifyService",
+        "version"
     ];
 
     angular.module("sc")
