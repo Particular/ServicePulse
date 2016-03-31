@@ -5,6 +5,10 @@
                 <h1>Failed Messages</h1>
             </div>
         </div>
+        <div ng-show="!vm.selectedExceptionGroup.id">
+            <failed-message-tabs></failed-message-tabs>
+        </div>
+
 
         <div class="row" ng-show="vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
             <div class="col-sm-12 messages-nav">
@@ -14,8 +18,6 @@
                 <div class="active group-title group-message-count">{{vm.selectedExceptionGroup.count}} messages in group</div>
             </div>
         </div>
-
-        <failed-message-tabs ng-hide="vm.loadingData" ng-show="!vm.selectedExceptionGroup.id"></failed-message-tabs>
 
         <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
 
@@ -54,8 +56,8 @@
         <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
             <div class="row box" ng-repeat="message in vm.failedMessages">
                 <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)">
-                    <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;" >
-                        <div class="check col-md-1" >
+                    <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
+                        <div class="check col-md-1">
                             <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                         </div>
                         <div class="col-sm-9">
@@ -109,12 +111,12 @@
                             <pre ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
                             <table class="table" ng-show="message.panel === 2 && message.messageHeaders">
                                 <tbody>
-                                <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
-                                    <td nowrap="nowrap">{{header.key}}</td>
-                                    <td>
-                                        <pre>{{header.value}}</pre>
-                                    </td>
-                                </tr>
+                                    <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
+                                        <td nowrap="nowrap">{{header.key}}</td>
+                                        <td>
+                                            <pre>{{header.value}}</pre>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <div class="alert alert-info" ng-show="message.panel === 2 && message.headersUnavailable">{{message.headersUnavailable}}</div>
@@ -125,8 +127,8 @@
                 </div>
             </div>
         </div>
-        
-        
+
+
     </section>
 
 </div>

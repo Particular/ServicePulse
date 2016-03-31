@@ -243,6 +243,7 @@
             vm.selectedIds = [];
             vm.archives = [];
             vm.allMessagesLoaded = false;
+            vm.total = 1;
             vm.page = 1;
 
             vm.loadMoreResults();
@@ -254,14 +255,14 @@
         };
 
         vm.selectTimeGroup = function (amount, unit) {
-
+          
             vm.timeGroup.amount = amount;
             vm.timeGroup.unit = unit;
 
             if (amount && unit) {
                 vm.timeGroup.buttonText = amount + ' ' + unit;
-                vm.sort.start = $moment().subtract(amount, unit).format('YYYY-MM-DDTHH:MM:ss');
-                vm.sort.end = $moment().format('YYYY-MM-DDTHH:MM:ss');
+                vm.sort.start = $moment().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
+                vm.sort.end = $moment().format('YYYY-MM-DDTHH:mm:ss');
             } else {
                 vm.timeGroup.buttonText = 'All';
                 vm.sort.start = vm.sort.end = undefined;

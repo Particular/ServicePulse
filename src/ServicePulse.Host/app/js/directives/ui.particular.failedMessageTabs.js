@@ -38,21 +38,14 @@
         notifier.subscribe($scope, function (event, data) {
             $scope.counters.archived = data;
         }, 'ArchivedMessagesUpdated');
-
-
-        
-
     }
-
+    
     controller.$inject = ['$scope', '$location', 'sharedDataService', 'notifyService'];
 
     function directive() {
         return {
-            scope: {
-                version: '@',
-                scversion: '@'
-            },
-            restrict: 'AEM',
+            scope: {},
+            restrict: 'E',
             replace: true,
             templateUrl: 'js/directives/ui.particular.failedMessageTabs.tpl.html',
             controller: controller,
