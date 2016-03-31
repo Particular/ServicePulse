@@ -648,12 +648,9 @@ div.btn-toolbar {
 .group-message-count {
    margin: 4px 0 12px;
    font-size: 16px;
-   color: #777F7F;
+   color: #A8B3B1;
 }
 
-.messages-nav {
-    margin-top: 30px;
-}
 
 .container-fluid {
     padding-left: 0 !important;
