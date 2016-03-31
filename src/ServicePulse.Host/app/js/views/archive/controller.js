@@ -88,6 +88,7 @@
         };
 
         var init = function () {
+
             vm.configuration = sharedDataService.getConfiguration();
             vm.error_retention_period = $moment.duration(vm.configuration.data_retention.error_retention_period).asHours();
             vm.total = 1;
@@ -111,6 +112,7 @@
         }
 
         vm.restore = function (timeGroup) {
+
             var rangeEnd = moment.utc();
             var rangeStart = moment.utc().subtract(timeGroup.amount, timeGroup.unit);
 
@@ -261,8 +263,8 @@
 
             if (amount && unit) {
                 vm.timeGroup.buttonText = amount + ' ' + unit;
-                vm.sort.start = $moment().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
-                vm.sort.end = $moment().format('YYYY-MM-DDTHH:mm:ss');
+                vm.sort.start = $moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
+                vm.sort.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             } else {
                 vm.timeGroup.buttonText = 'All';
                 vm.sort.start = vm.sort.end = undefined;
