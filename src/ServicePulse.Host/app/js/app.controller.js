@@ -32,7 +32,7 @@
         });
 
         $scope.showAlertBadgeOnCollapsedMenu = function () {
-            return $scope.failedcustomchecks + $scope.failedmessages + $scope.failedheartbeats > 0;
+            return ($scope.failedcustomchecks || 0) + ($scope.failedmessages || 0) + ($scope.failedheartbeats || 0) > 0;
         }
 
         function customChecksUpdated(event, data) {
