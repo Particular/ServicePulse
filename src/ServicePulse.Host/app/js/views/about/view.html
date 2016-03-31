@@ -2,21 +2,14 @@
     <section name="about">
         <div class="row">
             <div class="col-sm-12 padded">
-                <h1>About ServicePulse</h1>
+                <h1>Unsupported ServiceControl version</h1>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
                 <div class="row box system-status">
                     <div class="col-sm-12">
-                        <p class="lead">Introduction</p>
-                        <p>
-                            ServicePulse is a web application aimed mainly at administrators. It gives a clear, near real-time, high-level overview of how a system is functioning.
-                        </p>
-                        <p>
-                            Notifications will occur when the endpoint is down or when a message fails. Custom checks can be built to get alerts for specify scenarios. The interface support performing common operations for failure recovery, such as retrying failed messages. In order to display and handle them in a custom way see subscribe to publicly exposed events.
-                        </p>
-                        <p class="alert alert-danger" ng-hide="vm.is_compatible_with_sc"><strong>Warning!</strong> You are using Service Control version {{vm.sc_version}}. Please, upgrade to version {{vm.minimum_supported_sc_version}} or higher to unlock new functionality in ServicePulse.</p>
+                         <p class="alert alert-danger" ng-hide="vm.is_compatible_with_sc">You are using ServiceControl version {{vm.sc_version}}. Please upgrade ServiceControl to version {{vm.minimum_supported_sc_version}} or higher to in order to enable ServicePulse to work.</p>
                     </div>
                 </div>
             </div>

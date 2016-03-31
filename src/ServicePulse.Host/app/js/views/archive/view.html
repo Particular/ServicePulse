@@ -70,28 +70,27 @@
 
                         <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)">
                             <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
-                                <div class="check col-md-1">
+                                <div class="check col-xs-1">
                                     <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                                 </div>
-                                <div class="col-sm-9">
+                                <div class="col-xs-11 col-sm-9">
                                     <div class="row box-header">
                                         <div class="col-sm-12">
-                                            <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
+                                            <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
                                             <p>
 
                                             </p>
-                                            <p>
-                                                <ul>
-                                                    <li><i class="fa fa-exclamation-circle"></i> Failed <sp-moment date="{{message.time_of_failure}}">, Reported by </sp-moment> {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</li>
-                                                    <li><i class="fa fa-clock-o"></i> Archived <sp-moment date="{{message.last_modified}}"></sp-moment></li>
-                                                    <li class="warning" ng-show="message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion immediately</li>
-                                                    <li ng-show="!message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion <sp-moment date="{{message.deleted_in}}"></sp-moment></li>
-                                                </ul>
+                                            <p class="metadata">                                              
+                                                    <span class="metadata"><i class="fa fa-exclamation-circle"></i> Failed <sp-moment date="{{message.time_of_failure}}">, Reported by: </sp-moment> {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</span>
+                                                    <span class="metadata"><i class="fa fa-clock-o"></i> Archived: <sp-moment date="{{message.last_modified}}"></sp-moment></span>
+                                                    <span class="metadata warning" ng-show="message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: immediately</span>
+                                                    <span class="metadata" ng-show="!message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
                                             </p>
+
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2">
+                                <div class="col-xs-12 col-sm-2">
                                     <span>
                                         <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info">Retried</span>
                                         <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning">Archived</span>

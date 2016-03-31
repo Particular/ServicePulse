@@ -63,7 +63,7 @@
                         <div class="col-sm-9">
                             <div class="row box-header">
                                 <div class="col-sm-12">
-                                    <p class="lead">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
+                                    <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
                                     <p>
                                         failed <sp-moment date="{{message.time_of_failure}}">, </sp-moment> reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}
                                     </p>
