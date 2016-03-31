@@ -1,0 +1,9 @@
+﻿<div class="row" ng-hide="vm.loadingData">
+    <div class="col-sm-12">
+        <div class="tabs">
+            <h5 ng-class="{ active: isActive('/failedGroups') }"><a href="#/failedGroups">Failed message groups ({{counters.group}})</a></h5>
+            <h5 ng-class="{ active: isActive('/failedMessages') }"><a ng-click="viewExceptionGroup()">All failed messages ({{counters.message}})</a></h5>
+            <h5 ng-class="{ active: isActive('/archived') }"><a href="#/archived">Archived messages ({{counters.archived}})</a></h5>
+        </div>
+    </div>
+</div>

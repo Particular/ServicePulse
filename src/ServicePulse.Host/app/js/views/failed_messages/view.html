@@ -15,16 +15,7 @@
             </div>
         </div>
 
-
-        <div class="row" ng-show="!vm.selectedExceptionGroup.id" ng-hide="vm.loadingData">
-            <div class="col-sm-12">
-                <div class="tabs">
-                    <h5><a href="#/failedGroups">Failed message groups ({{vm.stats.number_of_exception_groups}})</a></h5>
-                    <h5 class="active">All failed messages ({{vm.stats.number_of_failed_messages}})</h5>
-                    <h5><a href="#/archived">Archived messages  ({{vm.stats.number_of_archived_messages}})</a></h5>
-                </div>
-            </div>
-        </div>
+        <failed-message-tabs ng-hide="vm.loadingData" ng-show="!vm.selectedExceptionGroup.id"></failed-message-tabs>
 
         <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
 

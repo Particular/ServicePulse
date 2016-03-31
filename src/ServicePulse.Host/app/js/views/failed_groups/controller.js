@@ -88,6 +88,7 @@
                         });
 
                         vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
+                        notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
                     }
                     vm.loadingData = false;
                 });

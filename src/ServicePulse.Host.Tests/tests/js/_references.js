@@ -47,6 +47,7 @@
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.tabset.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.tab.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.eatclick.js" />
+/// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.failedMessageTabs.js" />
 /// <!-- Mystery -->
 /// <reference path="../../../servicepulse.host/app/js/views/event_log_items/eventLogItems.js" />
 /// <!-- Archive -->

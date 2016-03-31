@@ -5,6 +5,7 @@
         'ui.particular.tabset',
         'ui.particular.confirmClick',
         'ui.particular.isolateClick',
+        'ui.particular.failedMessageTabs',
         'ui.particular.eatClick',
         'ui.particular.hud',
         'ui.particular.productVersion',
