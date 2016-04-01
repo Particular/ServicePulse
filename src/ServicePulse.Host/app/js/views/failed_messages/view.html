@@ -26,12 +26,12 @@
         <div class="row" ng-show="vm.failedMessages.length > 0">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
-                    <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
-                    <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
-                    <button type="button" class="btn btn-default" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-refresh"></i> Retry all</button>
-                    <button type="button" class="btn btn-default" ng-show="vm.selectedExceptionGroup.id" confirm-message="Are you really sure you want to archive this group?" confirm-click="vm.archiveExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-archive"></i> Archive all</button>
+                    <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0" tooltip="All selected failed messages will be retried."><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length}} selected</button>
+                    <button type="button" class="btn btn-default" tooltip="All selected failed messages will be archived and unavailable for retry." confirm-message="Are you sure you want to archive all selected failed messages? If you do they will not be available for Retry." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length}} selected</button>
+                    <button type="button" class="btn btn-default" tooltip="Retry all failed messages." confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-refresh"></i> Retry all</button>
+                    <button type="button" class="btn btn-default" ng-show="vm.selectedExceptionGroup.id" tooltip="Archive all failed messages." confirm-message="Are you really sure you want to archive this group?" confirm-click="vm.archiveExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-archive"></i> Archive all</button>
                     <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tooltip="Change the sort order of the failed message list.">
                             <span class="hidden-xs hidden-sm">Sorted by </span>{{vm.sortButtonText}}
                             <span class="caret"></span>
                         </button>
@@ -55,7 +55,7 @@
         </div>
 
         <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
-            
+
                 <div class="row box" ng-repeat="message in vm.failedMessages">
                     <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)">
                         <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
@@ -128,7 +128,7 @@
                         </div>
                     </div>
                 </div>
-            
+
         </div>
     </section>
 
