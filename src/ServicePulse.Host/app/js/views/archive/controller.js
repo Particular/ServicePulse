@@ -31,13 +31,12 @@
             buttonText: function () {
                 return (vm.sort.sortby === 'message_type' ? "Message Type" : "Time Archived") + " " + (vm.sort.direction === 'asc' ? "ASC" : "DESC");
             }
-
         }
 
         vm.timeGroup = {
             amount: 2,
             unit: 'hours',
-            buttonText: '2 Hours',
+            buttonText: 'Archived in the last 2 Hours',
             selected: function () {
                 return $moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
             }
@@ -93,15 +92,13 @@
             vm.error_retention_period = $moment.duration(vm.configuration.data_retention.error_retention_period).asHours();
             vm.total = 1;
             vm.archives = [];
-
             vm.sort.page = 1;
-            vm.sort.start = undefined;
-            vm.sort.end = undefined;
+            vm.sort.start = $moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
+            vm.sort.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
 
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
         }
-
 
         var startTimer = function (time) {
             time = time || 3000;
@@ -112,10 +109,8 @@
         }
 
         vm.restore = function (timeGroup) {
-
             var rangeEnd = moment.utc();
             var rangeStart = moment.utc().subtract(timeGroup.amount, timeGroup.unit);
-
             archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
 
             startTimer();
@@ -175,15 +170,12 @@
         };
 
         vm.unarchiveSelected = function () {
-
             archivedMessageService.restoreMessagesFromArchive(vm.selectedIds, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
                 .then(function (message) {
-
                     vm.archives.reduceRight(function (acc, obj, idx) {
                         if (vm.selectedIds.indexOf(obj.id) > -1)
                             vm.archives.splice(idx, 1);
                     }, 0);
-
                     // We are going to have to wait for service control to tell us the job has been done
                     // group.workflow_state = createWorkflowState('success', message);
                     notifier.notify('RestoreFromArchiveRequestAccepted');
@@ -213,10 +205,6 @@
                 .finally(function () {
 
                 });
-
-            serviceControlService.getTotalExceptionGroups().then(function (response) {
-                notifier.notify('ExceptionGroupCountUpdated', response);
-            });
         }
 
         vm.retryExceptionGroup = function (group) {
@@ -236,10 +224,6 @@
                 .finally(function () {
 
                 });
-
-            serviceControlService.getTotalExceptionGroups().then(function (response) {
-                notifier.notify('ExceptionGroupCountUpdated', response);
-            });
         }
 
 
@@ -256,31 +240,39 @@
             vm.allMessagesLoaded = false;
             vm.total = 1;
             vm.page = 1;
-
             vm.loadMoreResults();
         };
 
         vm.selectGroup = function (sortby, direction) {
-
             selectGroupInternal(sortby, direction, true);
         };
 
         vm.selectTimeGroup = function (amount, unit) {
-          
             vm.timeGroup.amount = amount;
             vm.timeGroup.unit = unit;
 
             if (amount && unit) {
-                vm.timeGroup.buttonText = amount + ' ' + unit;
+
+                switch (amount) {
+                    case '2':
+                        vm.timeGroup.buttonText = 'Archived in the last 2 Hours';
+                        break;
+                    case '1':
+                        vm.timeGroup.buttonText = 'Archived in the last 1 Day';
+                        break;
+                    case '7':
+                        vm.timeGroup.buttonText = 'Archived in the last 7 Days';
+                        break;
+                    default:
+                        vm.timeGroup.buttonText = amount + ' ' + unit;
+                        break;
+                }
                 vm.sort.start = $moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
                 vm.sort.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             } else {
-                vm.timeGroup.buttonText = 'All';
+                vm.timeGroup.buttonText = 'All Archived';
                 vm.sort.start = vm.sort.end = undefined;
             }
-
-            $log.debug(vm.sort);
-
             selectGroupInternal();
         }
 
@@ -302,7 +294,6 @@
                     vm.total = response.total;
                     processLoadedMessages(response.data);
                 });
-
         }
 
         init();
