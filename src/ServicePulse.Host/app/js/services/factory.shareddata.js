@@ -3,15 +3,17 @@
     "use strict";
 
     function factory(
+        $rootScope,
+        $interval,
         $localStorage,
         serviceControlService,
         semverService,
         notifyService,
         version) {
 
-
         var spVersion = version;
         var notifier = notifyService();
+
         var stats = {
             active_endpoints: 0,
             failing_endpoints: 0,
@@ -65,20 +67,37 @@
             stats.active_endpoints = stat.active || 0;
         });
 
-        serviceControlService.getTotalFailedMessages().then(function (response) {
-            notifier.notify('MessageFailuresUpdated', response);
-            stats.number_of_failed_messages = response || 0;
-        });
-
-        serviceControlService.getTotalFailingCustomChecks().then(function (response) {
-            notifier.notify('CustomChecksUpdated', response || 0);
-            stats.number_of_failed_checks = response || 0;
+        serviceControlService.getTotalExceptionGroups().then(function (response) {
+            notifier.notify('ExceptionGroupCountUpdated', response);
         });
 
         serviceControlService.getTotalArchivedMessages().then(function (response) {
             notifier.notify('ArchivedMessagesUpdated', response || 0);
-            stats.number_of_archived_messages = response || 0;
         });
+
+        serviceControlService.getTotalFailedMessages().then(function (response) {
+            notifier.notify('MessageFailuresUpdated', response);
+        });
+
+        serviceControlService.getTotalFailingCustomChecks().then(function (response) {
+            notifier.notify('CustomChecksUpdated', response || 0);
+        });
+
+        notifier.subscribe($rootScope, function (event, data) {
+            stats.number_of_exception_groups = data || 0;
+        }, "ExceptionGroupCountUpdated");
+
+        notifier.subscribe($rootScope, function (event, data) {
+            stats.number_of_archived_messages = data || 0;
+        }, "ArchivedMessagesUpdated");
+
+        notifier.subscribe($rootScope, function (event, data) {
+            stats.number_of_failed_messages = data || 0;
+        }, "MessageFailuresUpdated");
+
+        notifier.subscribe($rootScope, function (event, data) {
+            stats.number_of_failed_checks = data || 0;
+        }, "CustomChecksUpdated");
 
         var storage = $localStorage.$default({});
 
@@ -114,6 +133,8 @@
     }
 
     factory.$inject = [
+        "$rootScope",
+        "$interval",
         "$localStorage",
         "serviceControlService",
         "semverService",

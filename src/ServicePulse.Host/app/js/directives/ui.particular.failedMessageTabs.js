@@ -3,7 +3,7 @@
     'use strict';
 
 
-    function controller($scope, $location, sharedDataService, notifyService) {
+    function controller($scope, $interval, $location, sharedDataService, notifyService, serviceControlService) {
 
         var notifier = notifyService();
 
@@ -26,6 +26,31 @@
             $location.path('/failedMessages');
         }
 
+        var exceptionPromise = $interval(function () {
+            serviceControlService.getTotalExceptionGroups().then(function (response) {
+                notifier.notify('ExceptionGroupCountUpdated', response);
+            });
+        }, 5000);
+
+        var archivePromise = $interval(function () {
+            serviceControlService.getTotalArchivedMessages().then(function (response) {
+                notifier.notify('ArchivedMessagesUpdated', response || 0);
+            });
+        }, 10000);
+
+        // Cancel interval on page changes
+        $scope.$on('$destroy', function () {
+            if (angular.isDefined(exceptionPromise)) {
+                $interval.cancel(exceptionPromise);
+                exceptionPromise = undefined;
+            }
+            if (angular.isDefined(archivePromise)) {
+                $interval.cancel(archivePromise);
+                archivePromise = undefined;
+            }
+        });
+
+
         notifier.subscribe($scope, function (event, data) {
             $scope.counters.group = data;
         }, 'ExceptionGroupCountUpdated');
@@ -37,10 +62,10 @@
 
         notifier.subscribe($scope, function (event, data) {
             $scope.counters.archived = data;
-        }, 'ArchivedMessagesUpdated');
+        }, 'ArchivedMessagesUpdated');       
     }
     
-    controller.$inject = ['$scope', '$location', 'sharedDataService', 'notifyService'];
+    controller.$inject = ['$scope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService'];
 
     function directive() {
         return {

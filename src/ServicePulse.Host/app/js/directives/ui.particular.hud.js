@@ -2,7 +2,7 @@
 (function(window, angular, undefined) {
     'use strict';
 
-    function Directive() {
+    function directive() {
 
         return {
             scope: {
@@ -19,6 +19,6 @@
 
     angular
         .module('ui.particular.hud', [])
-        .directive('spHud', Directive);
+        .directive('spHud', directive);
 
 }(window, window.angular));

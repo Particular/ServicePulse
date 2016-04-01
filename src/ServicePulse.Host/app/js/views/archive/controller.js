@@ -35,9 +35,9 @@
         }
 
         vm.timeGroup = {
-            amount: undefined,
-            unit: undefined,
-            buttonText: 'All',
+            amount: 2,
+            unit: 'hours',
+            buttonText: '2 Hours',
             selected: function () {
                 return $moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
             }
@@ -196,13 +196,14 @@
                     vm.selectedIds = [];
                 });
 
-
+            serviceControlService.getTotalExceptionGroups().then(function (response) {
+                notifier.notify('ExceptionGroupCountUpdated', response);
+            });
         };
 
         vm.archiveExceptionGroup = function (group) {
 
-
-            var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+            failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('ArchiveGroupRequestAccepted', group);
                     markMessage('archived');
@@ -212,6 +213,10 @@
                 .finally(function () {
 
                 });
+
+            serviceControlService.getTotalExceptionGroups().then(function (response) {
+                notifier.notify('ExceptionGroupCountUpdated', response);
+            });
         }
 
         vm.retryExceptionGroup = function (group) {
@@ -222,7 +227,7 @@
                 return;
             }
 
-            var response = failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
+            failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('RetryGroupRequestAccepted', group);
                 }, function (message) {
@@ -231,6 +236,10 @@
                 .finally(function () {
 
                 });
+
+            serviceControlService.getTotalExceptionGroups().then(function (response) {
+                notifier.notify('ExceptionGroupCountUpdated', response);
+            });
         }
 
 

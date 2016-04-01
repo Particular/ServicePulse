@@ -75,6 +75,13 @@
                 };
             });
         };
+        function getTotalExceptionGroups() {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
+            return $http.head(url).then(function (response) {
+                return response.headers('Total-Count');
+            });
+        };
+
 
         function getTotalFailedMessages() {
             var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved');
@@ -229,6 +236,7 @@
             getFailedMessagesForExceptionGroup: getFailedMessagesForExceptionGroup,
             getMessageBody: getMessageBody,
             getMessageHeaders: getMessageHeaders,
+            getTotalExceptionGroups: getTotalExceptionGroups,
             getTotalFailedMessages: getTotalFailedMessages,
             getTotalArchivedMessages: getTotalArchivedMessages,
             getTotalFailingCustomChecks: getTotalFailingCustomChecks,
