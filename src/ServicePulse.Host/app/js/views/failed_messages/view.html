@@ -81,37 +81,37 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-offset-1 col-sm-11">
+                            <div isolate-click  class="col-sm-offset-1 col-sm-11">
                                 <p class="small" ng-init="message.panel = 0">
 
-                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
+                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide stacktrace</i>
                                     </button>
-                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
+                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
                                         <i> Show stacktrace</i>
                                     </button>
-                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
+                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide headers</i>
                                     </button>
-                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
+                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
                                         <i>Show headers</i>
                                     </button>
-                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
+                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
                                         <i>Hide message body</i>
                                     </button>
-                                    <button isolate-click type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
+                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
                                         <i>Show message body</i>
                                     </button>
-                                    <button isolate-click type="button" clip-copy="" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
+                                    <button type="button" clip-copy="" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
                                         <i>Copy Id to clipboard</i>
                                     </button>
-                                    <button isolate-click type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
+                                    <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
                                         <i>Open in ServiceInsight</i>
                                     </button>
                                 </p>
-                                <pre ng-show="message.panel === 0">{{ message.exception.message }}</pre>
-                                <pre ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
-                                <table class="table" ng-show="message.panel === 2 && message.messageHeaders">
+                                <pre isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
+                                <pre isolate-click ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
+                                <table isolate-click class="table" ng-show="message.panel === 2 && message.messageHeaders">
                                     <tbody>
                                         <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
                                             <td nowrap="nowrap">{{header.key}}</td>
@@ -121,9 +121,9 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div class="alert alert-info" ng-show="message.panel === 2 && message.headersUnavailable">{{message.headersUnavailable}}</div>
-                                <pre ng-show="message.panel === 3 && message.messageBody">{{message.messageBody}}</pre>
-                                <div class="alert alert-info" ng-show="message.panel === 3 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
+                                <div isolate-click class="alert alert-info" ng-show="message.panel === 2 && message.headersUnavailable">{{message.headersUnavailable}}</div>
+                                <pre isolate-click ng-show="message.panel === 3 && message.messageBody">{{message.messageBody}}</pre>
+                                <div isolate-click class="alert alert-info" ng-show="message.panel === 3 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
                             </div>
                         </div>
                     </div>
