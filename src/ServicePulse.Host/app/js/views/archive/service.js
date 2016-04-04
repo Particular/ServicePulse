@@ -42,8 +42,6 @@
                 } 
 
                 return $http.get(url).then(function (response) {
-                    notifier.notify('ArchivedMessagesUpdated', response.headers('Total-Count'));
-
                     return {
                         data: response.data,
                         total: response.headers('Total-Count')
@@ -57,7 +55,7 @@
                 var url = uri.join(scConfig.service_control_url, 'errors?status=archived');
 
                 return $http.head(url).then(function (response) {
-                    notifier.notify('ArchivedMessagesUpdated', response.headers('Total-Count'));
+                   
                     return response.headers('Total-Count');
                 });
             },

@@ -7,6 +7,7 @@
         $timeout,
         $location,
         scConfig,
+        toastService,
         sharedDataService,
         notifyService,
         serviceControlService,
@@ -71,6 +72,11 @@
                     vm.failedMessages[i][property] = true;
                 }
         };
+
+        vm.clipComplete = function (messageId)
+        {
+            toastService.showInfo(messageId + ' copied to clipboard');
+        }
 
         vm.togglePanel = function (message, panelnum) {
             if (message.messageBody === undefined) {
@@ -243,6 +249,7 @@
         "$timeout",
         "$location",
         "scConfig",
+        "toastService",
         "sharedDataService",
         "notifyService",
         "serviceControlService",

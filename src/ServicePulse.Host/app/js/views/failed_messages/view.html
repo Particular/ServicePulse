@@ -102,7 +102,7 @@
                                     <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
                                         <i>Show message body</i>
                                     </button>
-                                    <button type="button" clip-copy="" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
+                                    <button type="button" clip-copy="" clip-complete="vm.clipComplete(message.message_id)" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
                                         <i>Copy Id to clipboard</i>
                                     </button>
                                     <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">

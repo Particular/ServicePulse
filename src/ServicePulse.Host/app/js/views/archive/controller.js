@@ -55,15 +55,6 @@
             $location.path('/failedMessages');
         }
 
-        notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_failed_messages = data;
-            vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
-        }, 'MessageFailuresUpdated');
-
-        notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_archived_messages = data;
-        }, 'ArchivedMessagesUpdated');
-
         var processLoadedMessages = function (data) {
 
             if (data && data.length > 0) {
