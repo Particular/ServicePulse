@@ -11,10 +11,10 @@
         <div class="row" ng-show="!vm.loadingData">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
-                    <button type="button" class="btn btn-default" confirm-message="Are you sure you want to un-archive all selected archived messages?" tooltip="All selected archived messages will be removed from the archive and available for retries." confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> Unarchive {{vm.selectedIds.length}} selected</button>
+                    <button type="button" class="btn btn-default" confirm-message="Are you sure you want to un-archive all selected archived messages?" confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> Unarchive {{vm.selectedIds.length}} selected</button>
 
                     <div class="btn-group">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tooltip="Change the scope of the archived message list.">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="hidden-xs hidden-sm"></span>Showing {{vm.timeGroup.buttonText}}
                             <span class="caret"></span>
                         </button>
@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" tooltip="Change the sort order of the archived message list.">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="hidden-xs hidden-sm">Sorted by </span>{{vm.sort.buttonText()}}
                             <span class="caret"></span>
                         </button>
