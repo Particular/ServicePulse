@@ -170,8 +170,13 @@ footer a:hover {
     color: #1b809e;
 }
 .warning {
+    color: red;
+}
+
+.warning i {
     color: #aa6708;
 }
+
 .danger {
     color: #ce4844;
 }
@@ -188,6 +193,13 @@ footer a:hover {
     padding-top: 2px;
     padding-bottom: 3px;
 }
+
+.box-header ul {
+    list-style-type: none;
+    padding:0; 
+    margin:0;
+}
+
 .box-body {
 }
 /* fixed bus with repeat list transition lag */
@@ -293,6 +305,24 @@ section.events > div > div > div > div {
 .box-no-click:first-child {
      border-top: 1px solid #ced6d3;
  }
+
+.section-header {
+    align-items: center;
+    border-bottom: 1px solid transparent;
+    color: #777f7f;
+    display: flex;
+    line-height: 24px;
+    margin: 20px 0 8px;
+    padding: 0 24px;
+}
+
+.section-header-heading {
+    -ms-flex: 1 1 0;
+    -webkit-flex: 1 1 0;
+    flex: 1 1 0;
+    margin-right: 48px;
+}
+
 .lead {
     font-size: 16px !important;
     -ms-word-wrap: break-word;
@@ -301,6 +331,11 @@ section.events > div > div > div > div {
     font-weight: bold;
     color: #181919 !important;
 }
+.break {
+     -ms-word-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+}
 sp-moment {
     display: inline-block;
     font-size: 14px;
@@ -308,7 +343,7 @@ sp-moment {
     padding-top: 4px;
 }
 .alert-danger {
-    color: red !important;
+    color: #bd362f !important;
 }
 h3 {
     font-size: 20px;
@@ -345,8 +380,8 @@ h3 {
     cursor: pointer;
 }
 h5 {
-    margin-top: 30px;
-    margin-bottom: 10px;
+    display: inline-block !important;
+    margin: 0 0 14px;
     text-transform: uppercase;
     font-size: 14px;
     font-weight: bold;
@@ -355,7 +390,7 @@ h5 {
 }
 
 .tabs {
-    padding: 30px 0 20px;
+    padding: 0;
     border-bottom: 1px solid #ced6d3;
 }
 
@@ -364,8 +399,17 @@ h5 {
     padding-bottom: 3px;
 }
 
+.tabs h5 a:hover {
+    text-decoration: none;
+}
+
 .tabs h5.active {
     border-bottom: 3px solid #181919;
+    color: #181919;
+}
+
+.tabs h5.active a {
+    color: #181919;
 }
 
 .tabs a {
@@ -375,6 +419,12 @@ h5 {
 
 .tabs a:hover {
     color: #00a3c4;
+}
+
+.tabs h5.active > a:hover{
+    color: #181919;
+    cursor: default;
+    text-decoration: none;
 }
 
 .system-status:hover {
@@ -400,14 +450,15 @@ h5 {
     }
 h1 {
     font-weight: bold;
-    margin: 0 0 2px;
+    margin: 0 0 32px;
     font-size: 30px;
 }
-.padded {
-    padding-bottom: 30px;
+p.metadata {
+    margin-bottom: 6px;
 }
-.metadata {
-    padding: 0 20px;
+span.metadata {
+    padding: 0px 20px 2px 0;
+    display: inline-block;
 }
     .metadata:first-child {
         padding-left: 0;
@@ -443,10 +494,16 @@ h1 {
     padding-left: 0;
     padding-right: 0;
 }
-.btn-toolbar {
-    margin-top:12px;
-    margin-bottom:12px;
+div.btn-toolbar {
+    margin-bottom: 12px;
 }
+.btn-toolbar button {
+    margin: 12px 0 0;
+}
+.btn-toolbar button:last-child {
+    margin-top: 0 !important;
+}
+
 .fa-o {
     color: #CE4844;
     bottom: -0.5em;
@@ -539,14 +596,14 @@ h1 {
         text-decoration: none;
     }
 
+    .version-info-container {
+        width: 100% !important;
+    }
+
     .version-info {
         display: inline-block;
         color: #777F7F;
-        margin-top: 4px;
-    }
-
-    .version-info:first-child {
-        margin-right: 30px;
+        margin: 4px 0 10px;
     }
 
     .version-info a {
@@ -555,4 +612,85 @@ h1 {
 
     .version-info a:hover {
         font-weight: normal;
+    }
+
+    .version-separator {
+        margin: 0 15px;
+        color: #BCC6C2;
+    }
+
+
+    /* Add animation */
+.list-animation.ng-enter.ng-enter-active, 
+.list-animation.ng-leave {
+    opacity: 1;
+    -webkit-transition: opacity 300ms linear;
+    -moz-transition: opacity 300ms linear;
+    transition: opacity 300ms linear;
+}
+
+/* Remove animation */
+.list-animation.ng-leave.ng-leave-active, 
+.list-animation.ng-enter {
+    opacity: 0;
+    -webkit-transition: opacity 300ms linear;
+    -moz-transition: opacity 300ms linear;
+    transition: opacity 300ms linear;
+}
+
+.group-title {
+   margin: 10px 0 0;
+   font-size: 16px;
+   font-weight: bold;
+   display: inline-block
+}
+
+.group-message-count {
+   margin: 4px 0 12px;
+   font-size: 16px;
+   color: #A8B3B1;
+}
+
+
+.container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+nav {
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+
+    @media only screen and (max-width : 1200px) {
+
+    }
+
+
+    @media only screen and (max-width : 992px) {
+
+    }
+
+
+    @media only screen and (max-width : 768px) {
+
+    }
+
+
+@media only screen and (max-width : 480px) {
+    .sidebar-label {
+        margin: 3px 0 14px;
+    }
+
+    .btn-toolbar .btn, .btn-toolbar .btn-group, .btn-toolbar .input-group {
+        float: left !important;
+    }
+
+    button.btn.btn-default.ng-binding.ng-isolate-scope {
+        margin-right: 4px !important;
+    }
+}
+    @media only screen and (max-width : 320px) {
+
     }

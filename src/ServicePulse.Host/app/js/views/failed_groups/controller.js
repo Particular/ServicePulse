@@ -86,6 +86,9 @@
                             nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;
                         });
+
+                        vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
+                        notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
                     }
                     vm.loadingData = false;
                 });
@@ -94,6 +97,10 @@
         notifier.subscribe($scope, function (event, data) {
             vm.stats.number_of_failed_messages = data;
         }, 'MessageFailuresUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
 
         var localtimeout;
         var startTimer = function (time) {

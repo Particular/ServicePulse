@@ -14,36 +14,26 @@
         signalRListener,
         notifyService,
         semverService,
-        scConfig,
-        sharedDataService
+        scConfig
     ) {
 
-        var scVersionSupportingExceptionGroups = "1.6.0";
-
-        serviceControlService.getVersion()
-            .then(function(scVersion) {
-                $scope.SCVersion = scVersion;
-                if (!semverService.isSupported(scVersion, scVersionSupportingExceptionGroups)) {
-                    var scNeedsUpgradeMessage = "You are using Service Control version " + scVersion + ". Please, upgrade to version " + scVersionSupportingExceptionGroups + " or higher to unlock new functionality in ServicePulse.";
-                    toastService.showError(scNeedsUpgradeMessage);
-                }
-            });
-
-        serviceControlService.checkLicense().then(function(isValid) {
-            if (!isValid) {
-                toastService.showError('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>');
-            }
-        });
+        $scope.SCVersion = '';
+        $scope.is_compatible_with_sc = true;
+        $scope.Version = version;
 
         $scope.isActive = function(viewLocation) {
             var active = (viewLocation === $location.path());
             return active;
         };
-        $scope.Version = version;
+       
 
         $scope.$on("$routeChangeError", function(event, current, previous, rejection) {
             toastService.showError("Route change error");
         });
+
+        $scope.showAlertBadgeOnCollapsedMenu = function () {
+            return ($scope.failedcustomchecks || 0) + ($scope.failedmessages || 0) + ($scope.failedheartbeats || 0) > 0;
+        }
 
         function customChecksUpdated(event, data) {
             $timeout(function() { //http://davidburgosonline.com/dev/2014/correctly-fix-angularjs-error-digest-already-in-progress/
@@ -79,6 +69,20 @@
         notifier.subscribe($scope, messageFailuresUpdated, "MessageFailuresUpdated");
         notifier.subscribe($scope, heartbeatsUpdated, "HeartbeatsUpdated");
         notifier.subscribe($scope, logit, "ArchiveGroupRequestAccepted");
+
+        notifier.subscribe($scope, function(event, data) {
+            $scope.SCVersion = data.sc_version;
+            $scope.is_compatible_with_sc = data.is_compatible_with_sc;
+            if (!data.is_compatible_with_sc) {
+                var scNeedsUpgradeMessage = "You are using Service Control version " + data.sc_version + ". Please, upgrade to version " + data.minimum_supported_sc_version + " or higher to unlock new functionality in ServicePulse.";
+                toastService.showError(scNeedsUpgradeMessage);
+                $location.path('/about');
+            }
+        }, "EnvironmentUpdated");
+
+        notifier.subscribe($scope, function (event, data) {
+            toastService.showError('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>');
+        }, "ExpiredLicense");
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
@@ -141,8 +145,13 @@
             notifier.notify("CustomChecksUpdated", message.failed);
         }, "CustomChecksUpdated");
 
-        listener.subscribe($scope, function(message) {
-            notifier.notify("MessageFailuresUpdated", message.total);
+        listener.subscribe($scope, function (message) {
+            logit(message);
+       
+            notifier.notify("MessageFailuresUpdated", message.unresolved_total || message.total);
+            notifier.notify("ArchivedMessagesUpdated", message.archived_total || 0);
+
+            
         }, "MessageFailuresUpdated");
 
         listener.subscribe($scope, function(message) {

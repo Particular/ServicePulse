@@ -7,32 +7,40 @@
         $timeout,
         $location,
         scConfig,
+        toastService,
         sharedDataService,
         notifyService,
         serviceControlService,
         failedMessageGroupsService) {
 
         var vm = this;
-  
+
         var notifier = notifyService();
         vm.selectedExceptionGroup = sharedDataService.get();
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
             $location.path('/failedGroups');
         }
 
-        vm.sort = "time_sent";
-        vm.direction = "desc";
+        vm.stats = sharedDataService.getstats();
         vm.failedMessages = [];
         vm.selectedIds = [];
         vm.sortButtonText = '';
-        vm.sort = "time_sent";
+        vm.sort = "time_of_failure";
         vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.page = 1;
 
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_failed_messages = data;
+        }, 'MessageFailuresUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.stats.number_of_archived_messages = data;
+        }, 'ArchivedMessagesUpdated');
+
         var setSortButtonText = function (sort, direction) {
-            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time Sent") + " " + (direction === 'asc' ? "ASC" : "DESC");
+            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
         }
 
         var processLoadedMessages = function (data) {
@@ -64,6 +72,11 @@
                     vm.failedMessages[i][property] = true;
                 }
         };
+
+        vm.clipComplete = function (messageId)
+        {
+            toastService.showInfo(messageId + ' copied to clipboard');
+        }
 
         vm.togglePanel = function (message, panelnum) {
             if (message.messageBody === undefined) {
@@ -236,6 +249,7 @@
         "$timeout",
         "$location",
         "scConfig",
+        "toastService",
         "sharedDataService",
         "notifyService",
         "serviceControlService",

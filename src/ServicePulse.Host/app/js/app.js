@@ -8,6 +8,7 @@
         'ngClipboard',
         'ngStorage',
         'ngPageTitle',
+        'angular-momentjs',
         'toaster',
         'ui.bootstrap',
         'infinite-scroll',

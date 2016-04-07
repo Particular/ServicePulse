@@ -4,7 +4,7 @@
     angular.module('services.semverService', [])
         .service('semverService', function () {
 
-            this.reSemver = /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?(?:\+([\dA-Za-z\-]+(?:\.[\dA-Za-z\-]+)*))?$/;
+            this.reSemver = /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?(?:\+([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?$/;
 
             this.stringify = function (obj) {
                 var str = '';
@@ -48,6 +48,8 @@
 
                 var minSupported = this.parse(minSupportedVersion);
                 var current = this.parse(currentVersion);
+
+                if (current == null) return false;
 
                 if (minSupported.major !== current.major) {
                     return minSupported.major <= current.major;

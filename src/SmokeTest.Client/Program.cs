@@ -20,7 +20,6 @@ class Program
             Console.WriteLine("Press enter to send a message");
             Console.WriteLine("Press any key to exit");
 
-
             var exit = false;
             var emulateFailures = false;
             var count = 1;

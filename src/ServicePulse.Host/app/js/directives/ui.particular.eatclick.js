@@ -16,3 +16,24 @@
         .directive('eatClick', Directive);
 
 }(window, window.angular, window.jQuery));
+
+; (function (window, angular, $, undefined) {
+    'use strict';
+
+    function directive() {
+
+        return {
+            link: function (scope, elem) {
+                elem.on('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+        };
+    }
+
+    angular
+        .module('ui.particular.isolateClick', [])
+        .directive('isolateClick', directive);
+
+}(window, window.angular, window.jQuery));
+

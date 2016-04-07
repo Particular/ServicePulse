@@ -2,7 +2,7 @@
 (function(window, angular, undefined) {
     'use strict';
 
-    function Directive($timeout) {
+    function Directive($timeout, $moment) {
         return {
             restrict: 'E',
             link: function(scope, element, attrs) {
@@ -23,12 +23,12 @@
 
                 attrs.$observe('date', function(value) {
                     if (value && attrs.date !== minDate) {
-                        m = moment(attrs.date);
+                        m = $moment(attrs.date);
                         element.attr('title', m.format('LLLL'));
                         updateText();
                         updateLoop();
                     } else {
-                        element.text('TimeSent value unknown');
+                        element.text('unknown');
                     }
                 });
 
@@ -43,7 +43,7 @@
         };
     }
 
-    Directive.$inject = ['$timeout'];
+    Directive.$inject = ['$timeout', '$moment'];
 
     angular.module('directives.moment', [])
         .directive('spMoment', Directive);
