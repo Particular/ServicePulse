@@ -32,7 +32,7 @@
 
         var environment = {
             sc_version: undefined,
-            minimum_supported_sc_version: "1.12.0",
+            minimum_supported_sc_version: "1.13.0",
             is_compatible_with_sc: true,
             sp_version: spVersion
         };
