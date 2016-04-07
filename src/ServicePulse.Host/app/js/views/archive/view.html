@@ -80,7 +80,7 @@
 
                                         </p>
                                         <p class="metadata">
-                                            <span class="metadata"><i class="fa fa-exclamation-circle"></i> Failed <sp-moment date="{{message.time_of_failure}}">, Reported by: </sp-moment> {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</span>
+                                            <span class="metadata"><i class="fa fa-exclamation-circle"></i> Failed <sp-moment date="{{message.time_of_failure}}"></sp-moment>, reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</span>
                                             <span class="metadata"><i class="fa fa-clock-o"></i> Archived: <sp-moment date="{{message.last_modified}}"></sp-moment></span>
                                             <span class="metadata warning" ng-show="message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: immediately</span>
                                             <span class="metadata" ng-show="!message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
