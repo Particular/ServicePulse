@@ -14,7 +14,8 @@
         signalRListener,
         notifyService,
         semverService,
-        scConfig
+        scConfig,
+        uriService
     ) {
 
         $scope.SCVersion = '';
@@ -131,7 +132,7 @@
 
 
         // signalR Listener
-        var listener = signalRListener(scConfig.service_control_url + "messagestream");
+        var listener = signalRListener(uriService.join(scConfig.service_control_url, "messagestream"));
 
         listener.subscribe($scope, function(message) {
             notifier.notify("SignalREvent", message);
@@ -189,7 +190,7 @@
         "notifyService",
         "semverService",
         "scConfig",
-        "sharedDataService"
+        "uri"
     ];
 
     angular.module("sc").controller("AppCtrl", controller);
