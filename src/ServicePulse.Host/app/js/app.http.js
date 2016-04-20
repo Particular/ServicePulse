@@ -9,10 +9,8 @@
 
         $httpProvider.defaults.headers.patch = {
             'Accept': 'application/json, text/javascript',
-            'Content-Type': 'application/json-patch+json'
+            'Content-Type': 'application/json'
         }
-
-   
     };
 
     httpProvider.$inject = [
