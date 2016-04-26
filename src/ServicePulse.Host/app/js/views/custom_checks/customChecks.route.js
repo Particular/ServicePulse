@@ -6,7 +6,7 @@
             data: {
                 pageTitle: 'Customer Checks'
             },
-            templateUrl: 'js/views/custom_checks/customChecks.html',
+            templateUrl: '/js/views/custom_checks/customChecks.html',
             controller: 'CustomChecksCtrl',
             controllerAs: 'vm'
         });
