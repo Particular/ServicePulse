@@ -242,7 +242,7 @@ footer a:hover {
 }
 
 .loading {
-    background-image: url('/img/loader_spinner.gif');
+    background-image: url('../img/loader_spinner.gif');
     background-position: center;
     background-repeat: no-repeat;
     height: 65px;
