@@ -15,7 +15,12 @@ describe("Unit: Uri Service ", function() {
                 expect(typeof (uri) == typeof(undefined)).toEqual(false);
             }));
 
-        it('should make a url for eventlogitems', inject(function(uri) {
+        it('should prevent double slashes for leading and trailing slashes', inject(function (uri) {
+            var url = uri.join('http://localhost:33333/api/', '/foo/', '/bar/');
+            expect(url).toEqual('http://localhost:33333/api/foo/bar');
+        }));
+
+        it('should make a url for eventlogitems', inject(function (uri) {
             var url = uri.join('http://localhost:33333/api/', 'eventlogitems');
             expect(url).toEqual('http://localhost:33333/api/eventlogitems');
         }));
@@ -28,13 +33,11 @@ describe("Unit: Uri Service ", function() {
             expect(url).toEqual('http://localhost:33333/api/recoverability/groups/85147b12-458c-431d-a389-35ea53abc9e1/errors?page=1&sort=time_of_failure&status=unresolved');
         }));
 
-
         it('should make a url for get Failed Messages For Exception Group', inject(function (uri, scConfig) {
             var messageId = '85147b12-458c-431d-a389-35ea53abc9e1';
             var url = uri.join(scConfig.service_control_url, 'messages', messageId, 'body');
             expect(url).toEqual('http://localhost:33333/api/messages/85147b12-458c-431d-a389-35ea53abc9e1/body');
         }));
-
 
         it('should make a url for getMessageBody', inject(function (uri, scConfig) {
             var messageId = '85147b12-458c-431d-a389-35ea53abc9e1';
@@ -49,7 +52,6 @@ describe("Unit: Uri Service ", function() {
         }));
 
         it('should make a url for getTotalFailedMessages', inject(function (uri, scConfig) {
-
             var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved');
             expect(url).toEqual('http://localhost:33333/api/errors?status=unresolved');
         }));
