@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Security.Cryptography;
     using System.Text;
@@ -14,7 +15,7 @@
             ContentType = MimeTypes.GetMimeType(Path.GetFileName(resourcePath));
             StatusCode = HttpStatusCode.OK;
 
-            var content = assembly.GetManifestResourceStream(resourcePath);
+            var content = LoadContentFromManifest(assembly, resourcePath);
             
             if (content == null)
             {
@@ -24,6 +25,22 @@
 
             this.WithHeader("ETag", GenerateETag(content));
             Contents = GetFileContent(content);
+        }
+
+        private Stream LoadContentFromManifest(Assembly assembly, string resourcePath)
+        {
+            var resource = assembly.GetManifestResourceStream(resourcePath);
+
+            if (resource != null)
+            {
+                return resource;
+            }
+
+            var matchingKey =
+                assembly.GetManifestResourceNames()
+                    .FirstOrDefault(name => string.Compare(resourcePath, name, StringComparison.OrdinalIgnoreCase) == 0);
+
+            return assembly.GetManifestResourceStream(matchingKey);
         }
 
         private static Action<Stream> GetFileContent(Stream content)
