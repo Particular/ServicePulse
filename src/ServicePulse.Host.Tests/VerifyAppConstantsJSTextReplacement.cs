@@ -1,4 +1,6 @@
-﻿namespace ServicePulse.Host.Tests
+﻿using System.Reflection;
+
+namespace ServicePulse.Host.Tests
 {
     using System;
     using System.Collections.Generic;
@@ -19,9 +21,9 @@
         [Test]
         public void app_constants_js_validation()
         {
-            var pathToConfig = Path.Combine("app.constants.js");
+            var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app.constants.js");
             Assert.IsTrue(File.Exists(pathToConfig), "app.constants.js does not exist - this will break installation code");
-
+            
             var config = File.ReadAllText(pathToConfig);
             var matchUrl = sc_url_regex.Match(config);
             Assert.IsTrue(matchUrl.Success, "regex failed to match app.constant.js for SC URI update");
