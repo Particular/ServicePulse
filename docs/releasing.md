@@ -15,6 +15,7 @@ Once you have your change merged into `master` (AVOID BUNDLING CHANGES, RELEASE 
 You are now ready to go to [OctopusDeploy](http://deploy.particular.net/app#/projects/servicepulse).
 You should have a new "Staging" build waiting to be released.  
 ![Octopus_staging](Octopus_staging.PNG)
+
 First step is to proof read the release notes that were auto generated (it is best to use an outsider for this job).  
 ![Octopus assign to me](Octopus%20assign%20to%20me.PNG)
 
