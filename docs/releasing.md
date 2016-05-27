@@ -13,9 +13,9 @@ Once you have your change merged into `master` (AVOID BUNDLING CHANGES, RELEASE 
 
 ### 3. Deploy using OctopusDeploy
 You are now ready to go to [OctopusDeploy](http://deploy.particular.net/app#/projects/servicepulse).
-You should have a new "Staging" build waiting to be released. 
+You should have a new "Staging" build waiting to be released.  
 ![Octopus_staging](Octopus_staging.PNG)
-First step is to proof read the release notes that were auto generated (it is best to use an outsider for this job).
+First step is to proof read the release notes that were auto generated (it is best to use an outsider for this job).  
 ![Octopus assign to me](Octopus%20assign%20to%20me.PNG)
 
 This release notes are generated based on the issues/PRs titles associated to a milestone that matches the version you are about to release. 
@@ -29,8 +29,8 @@ By default the release notes are very "simple", if you want you can edit them an
 You can download this release from our [website](http://particular.net/downloads).
 ```
 
-Once you happy approve them:
+Once you happy approve them:  
 ![looks good](looks%20good.PNG)
 
-And then all is left to do is "Promote to Production".
+And then all is left to do is "Promote to Production".  
 ![promote to prod](promote%20to%20prod.PNG)
