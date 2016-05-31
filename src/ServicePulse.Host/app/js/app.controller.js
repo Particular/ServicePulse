@@ -27,6 +27,11 @@
             return active;
         };
        
+        $($window.document).on('click', function (e) {
+            if ($('.navbar-collapse.in').is(':visible')) {
+                $('.navbar-collapse.in').collapse('hide');
+            }
+        });
 
         $scope.$on("$routeChangeError", function(event, current, previous, rejection) {
             toastService.showError("Route change error");
