@@ -2,7 +2,6 @@
 (function(window, angular, $, undefined) {
     'use strict';
 
-
     function Service($http, scConfig, notifications, uri) {
 
         function getVersion() {
@@ -10,7 +9,7 @@
             return $http.get(url).then(function(response) {
                 return response.headers('X-Particular-Version');
             });
-        };
+        }
 
         function checkLicense() {
             var url = uri.join(scConfig.service_control_url);
@@ -20,14 +19,14 @@
                 }
                 return true;
             });
-        };
+        }
 
         function getEventLogItems() {
             var url = uri.join(scConfig.service_control_url, 'eventlogitems');
             return $http.get(url).then(function(response) {
                 return response.data;
             });
-        };
+        }
 
         function getFailedMessages(sortBy, page, direction) {
             var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
@@ -37,7 +36,7 @@
                     total: response.headers('Total-Count')
                 };
             });
-        };
+        }
 
         function getExceptionGroups() {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
@@ -46,7 +45,7 @@
                     data: response.data
                 };
             });
-        };
+        }
 
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
@@ -56,7 +55,7 @@
                     total: response.headers('Total-Count')
                 };
             });
-        };
+        }
 
         function getMessageBody(messageId) {
             var url = uri.join(scConfig.service_control_url, 'messages', messageId, 'body');
@@ -65,7 +64,7 @@
                     data: response.data
                 };
             });
-        };
+        }
 
         function getMessageHeaders(messageId) {
             var url = uri.join(scConfig.service_control_url, 'messages', 'search', messageId);
@@ -74,28 +73,28 @@
                     data: response.data
                 };
             });
-        };
+        }
+
         function getTotalExceptionGroups() {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
             return $http.head(url).then(function (response) {
                 return response.headers('Total-Count');
             });
-        };
-
+        }
 
         function getTotalFailedMessages() {
             var url = uri.join(scConfig.service_control_url, 'errors?status=unresolved');
             return $http.head(url).then(function(response) {
                 return response.headers('Total-Count');
             });
-        };
+        }
 
         function getTotalArchivedMessages() {
             var url = uri.join(scConfig.service_control_url, 'errors?status=archived');
             return $http.head(url).then(function(response) {
                 return response.headers('Total-Count');
             });
-        };
+        }
 
         function getConfiguration() {
             var url = uri.join(scConfig.service_control_url, 'configuration');
@@ -109,7 +108,7 @@
             return $http.get(url).then(function(response) {
                 return response.headers('Total-Count');
             });
-        };
+        }
 
         function getFailingCustomChecks(page) {
             var url = uri.join(scConfig.service_control_url, 'customchecks?status=fail&page=' + page);
@@ -119,14 +118,14 @@
                     total: response.headers('Total-Count')
                 };
             });
-        };
+        }
 
         function getFailedMessageStats() {
             var url = uri.join(scConfig.service_control_url, 'errors', 'summary');
             return $http.get(url).then(function(response) {
                 return response.data;
             });
-        };
+        }
 
         function muteCustomChecks(customCheck) {
             var url = uri.join(scConfig.service_control_url, 'customchecks', customCheck.id);
@@ -138,7 +137,7 @@
                 .error(function() {
                     //  notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'danger', { item: customCheck });
                 });
-        };
+        }
 
         function retryAllFailedMessages() {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry', 'all');
@@ -149,7 +148,7 @@
                 .error(function() {
                     notifications.pushForCurrentRoute('Retrying all messages failed', 'danger');
                 });
-        };
+        }
 
         function retryFailedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry');
@@ -160,7 +159,7 @@
                 .error(function() {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
-        };
+        }
 
         function archiveFailedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'archive');
@@ -176,7 +175,7 @@
                 .error(function() {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
-        };
+        }
 
         function archiveExceptionGroup(id, successText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'archive');
@@ -187,7 +186,7 @@
                 .error(function() {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
-        };
+        }
 
         function retryExceptionGroup(id, successText) {
 
@@ -199,14 +198,14 @@
                 .error(function() {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
-        };
+        }
 
         function getHeartbeatStats() {
             var url = uri.join(scConfig.service_control_url, 'heartbeats', 'stats');
             return $http.get(url).then(function(response) {
                 return response.data;
             });
-        };
+        }
 
         function getEndpointsWithSla() {
             return this
@@ -223,8 +222,7 @@
 
                     return results;
                 });
-        };
-
+        }
 
         var service = {
             getVersion: getVersion,
@@ -252,13 +250,10 @@
         };
 
         return service;
-
     }
 
     Service.$inject = ['$http', 'scConfig', 'notifications', 'uri'];
 
-
     angular.module('services.serviceControlService', [])
         .service('serviceControlService', Service);
-
 }(window, window.angular, window.jQuery));
