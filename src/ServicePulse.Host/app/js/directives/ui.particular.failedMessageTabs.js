@@ -21,7 +21,7 @@
             archived: stats.number_of_archived_messages
         }
 
-        $scope.viewExceptionGroup= function() {
+        $scope.viewExceptionGroup = function () {
             sharedDataService.set(allFailedMessagesGroup);
             $location.path('/failedMessages');
         }

@@ -36,7 +36,6 @@
         }
         
         vm.archiveExceptionGroup = function (group) {
-
             group.workflow_state = { status: 'working', message: 'working' };
             var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {

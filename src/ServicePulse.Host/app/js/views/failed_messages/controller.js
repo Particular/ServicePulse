@@ -17,6 +17,11 @@
 
         var notifier = notifyService();
         vm.selectedExceptionGroup = sharedDataService.get();
+
+        if (!vm.selectedExceptionGroup) {
+            vm.selectedExceptionGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
+        }
+
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
             $location.path('/failedGroups');
         }
@@ -66,7 +71,6 @@
             vm.loadMoreResults(vm.selectedExceptionGroup);
         }
 
-
         var markMessage = function (property) {
                 for (var i = 0; i < vm.failedMessages.length; i++) {
                     vm.failedMessages[i][property] = true;
@@ -112,7 +116,6 @@
             }
         };
 
-
         vm.retrySelected = function () {
             serviceControlService.retryFailedMessages(vm.selectedIds);
             vm.selectedIds = [];
@@ -138,8 +141,6 @@
         };
 
         vm.archiveExceptionGroup = function (group) {
-            
-
             var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('ArchiveGroupRequestAccepted', group);
@@ -170,8 +171,7 @@
 
                 });
         }
-
-
+        
         vm.debugInServiceInsight = function (index) {
             var messageId = vm.failedMessages[index].message_id;
             var dnsName = scConfig.service_control_url.toLowerCase();
@@ -210,35 +210,28 @@
             selectGroupInternal(group, sort, direction, true);
         };
 
-
-
-
         vm.loadMoreResults = function (group) {
             vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
 
-            if (vm.allMessagesLoaded || vm.loadingData) {
+            if (!group.initialLoad && (vm.allMessagesLoaded || vm.loadingData)) {
                 return;
             }
 
             vm.loadingData = true;
+            delete group.initialLoad;
 
             var allExceptionsGroupSelected = (!group || !group.id);
+
+            var loadPromise;
             if (allExceptionsGroupSelected) {
-                serviceControlService.getFailedMessages(
-                    vm.sort,
-                    vm.page,
-                    vm.direction).then(function (response) {
-                        processLoadedMessages(response.data);
-                    });
+                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.page, vm.direction)
             } else {
-                serviceControlService.getFailedMessagesForExceptionGroup(
-                    group.id,
-                    vm.sort,
-                    vm.page,
-                    vm.direction).then(function (response) {
-                        processLoadedMessages(response.data);
-                    });
+                loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.page, vm.direction);
             }
+
+            loadPromise.then(function (response) {
+                processLoadedMessages(response.data);
+            });
         }
 
         init();
