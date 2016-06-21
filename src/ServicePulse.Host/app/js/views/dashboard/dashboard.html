@@ -20,7 +20,7 @@
                         <div class="col-sm-4">
                             <a class="summary-item" ng-class="{  'summary-danger' : failedheartbeats > 0 , 'summary-info' : failedheartbeats === 0 || !failedheartbeats  }" href="#/endpoints">
                                 <i class="fa fa-heart fa-3x"></i>
-                                <span ng-show="failedheartbeats > 0" class="badge badge-important">{{failedheartbeats}}</span>
+                                <span ng-show="failedheartbeats > 0" class="badge badge-important">{{failedheartbeats | number}}</span>
                                 <h4>
                                     Heartbeats
                                     
@@ -31,7 +31,7 @@
                         <div class="col-sm-4">
                             <a class="summary-item" ng-class="{  'summary-danger'  : failedmessages > 0 , 'summary-info' : failedmessages === 0 || !failedmessages }" href="#/failedGroups">
                                 <i class="fa fa-envelope fa-3x "></i>
-                                <span ng-show="failedmessages > 0" class="badge badge-important">{{failedmessages}}</span>
+                                <span ng-show="failedmessages > 0" class="badge badge-important">{{failedmessages | number}}</span>
                                 <h4>
                                     Failed Messages
                                     
@@ -41,7 +41,7 @@
                         <div class="col-sm-4">
                             <a class="summary-item" ng-class="{  'summary-danger'  : failedcustomchecks > 0, 'summary-info' : failedcustomchecks === 0 || !failedcustomchecks }" href="#/customChecks">
                                 <i class="fa fa-check  fa-3x "></i>
-                                <span ng-show="failedcustomchecks > 0" class="badge badge-important">{{failedcustomchecks}}</span>
+                                <span ng-show="failedcustomchecks > 0" class="badge badge-important">{{failedcustomchecks | number}}</span>
                                 <h4>
                                     Custom Checks
                                     

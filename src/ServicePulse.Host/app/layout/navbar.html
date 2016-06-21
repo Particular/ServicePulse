@@ -27,21 +27,21 @@
                     <a href="#/endpoints">
                         <i class="fa fa-heart icon-white"></i>
                         <span class="navbar-label">Endpoints Overview</span>
-                        <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats}}</span>
+                        <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | number}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/failedGroups') || isActive('/failedMessages') }">
                     <a href="#/failedGroups">
                         <i class="fa fa-envelope icon-white"></i>
                         <span class="navbar-label">Failed Messages</span>
-                        <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages}}</span>
+                        <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages | number}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/customChecks') }">
                     <a href="#/customChecks">
                         <i class="fa fa-check icon-white"></i>
                         <span class="navbar-label">Custom Checks</span>
-                        <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks}}</span>
+                        <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks | number}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/configuration') }">
