@@ -10,7 +10,8 @@
         'ui.particular.hud',
         'ui.particular.productVersion',
         'ui.particular.busy',
-        'ui.particular.nodata'
+        'ui.particular.nodata',
+        'ui.particular.configurationTabs'
     ]);
 
 } (window, window.angular));

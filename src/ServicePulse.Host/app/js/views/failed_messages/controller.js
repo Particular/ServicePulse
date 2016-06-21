@@ -224,7 +224,7 @@
 
             var loadPromise;
             if (allExceptionsGroupSelected) {
-                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.page, vm.direction)
+                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.page, vm.direction);
             } else {
                 loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.page, vm.direction);
             }
