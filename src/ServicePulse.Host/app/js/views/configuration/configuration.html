@@ -12,6 +12,9 @@
 
 <div class="container">
     <section name="configuration">
+
+        <configuration-tabs></configuration-tabs>
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
@@ -33,10 +36,14 @@
                             <div class="col-xs-9 col-sm-10 col-lg-11">
                                 <div class="row box-header">
                                     <div class="col-xs-12">
-                                        <p class="lead">{{e.name}}<span class="de-emphasize">@</span>{{e.host_display_name}} </p>
-                                        <p class="endpoint-metadata" ng-show="e.heartbeat_information"><i class="fa fa-heart"></i> <sp-moment date="{{e.heartbeat_information.last_report_at}}"/></p>
-                                        <p class="endpoint-metadata" ng-show="!e.heartbeat_information"><i class="fa fa-heart"></i> No recent heartbeat information available</p>
-                                        <p class="endpoint-metadata" ng-show="!e.heartbeat_information"><i class="fa fa-plug"></i> No heartbeat plugin installed</p>
+                                        <p class="lead">{{e.name}}<span class="de-emphasize">@</span>{{e.host_display_name}}
+                                        </p>
+                                        <p class="endpoint-metadata" ng-show="e.heartbeat_information"><i class="fa fa-heart"></i> <sp-moment date="{{e.heartbeat_information.last_report_at}}"/>
+                                        </p>
+                                        <p class="endpoint-metadata" ng-show="!e.heartbeat_information"><i class="fa fa-heart"></i> No recent heartbeat information available
+                                        </p>
+                                        <p class="endpoint-metadata" ng-show="!e.heartbeat_information"><i class="fa fa-plug"></i> No heartbeat plugin installed
+                                        </p>
                                     </div>
                                 </div>
                             </div>

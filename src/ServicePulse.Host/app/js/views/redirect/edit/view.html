@@ -1,0 +1,36 @@
+﻿<div>
+
+    <section name="redirects">
+
+        <no-data ng-show="availableEndpoints.length === 0 && !loadingData" title="redirects" message="You can't create redirect if there are no failed messages'"></no-data>
+
+        <div class="row">
+            <form class="col-sm-12" name="redirectForm" novalidate>
+                <div class="form-group">
+                    <label>From Physical Address</label>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error': redirectForm.queueNameSelect.$invalid, 'has-success': redirectForm.queueNameSelect.$valid }">
+                    <select name="queueNameSelect" class="form-control" ng-disabled="redirectId != undefined" ng-model="sourceEndpoint" ng-options="endpoint as endpoint for endpoint in availableEndpoints" required>
+                        <option value="">Select queue name...</option>
+                    </select>
+                </div>
+                <div class="row"></div>
+                <div class="form-group"><label>To Physical Address</label></div>
+                <div class="form-group" ng-class="{ 'has-error': redirectForm.targetQueue.$invalid, 'has-success': redirectForm.targetQueue.$valid }">
+                    <input type="text" class="form-control" ng-model="targetEndpoint" uib-typeahead="endpoint for endpoint in availableEndpoints | filter:$viewValue" name="targetQueue" required/>
+                </div>
+                <div class="form-group">Warning: Physical addresses are not verified. Please insure you have correct physical addresses defined.</div>
+                <div class="form-group">
+                    <input type="checkbox" ng-model="immediatelyRetry" id="immediatelyRetry" /><label for="immediatelyRetry">Immediately retry any matching failed messages</label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" ng-click="createRedirect('Redirect was created successfully', 'Failed to create redirect.')">Create</button>
+                <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+                
+            </form>
+        </div>
+    </section>
+</div>
+
+
+
