@@ -1,7 +1,7 @@
 ﻿<div class="container">
     <div class="row">
         <div class="col-sm-12">
-            <h1>Retry Redirects</h1>
+            <h1>Redirects Configuration</h1>
         </div>
     </div>
 </div>
@@ -27,10 +27,11 @@
         <div class="row">
             <div class="col-sm-12" ng-show="vm.redirects.length > 0">
 
-                <div class="row box repeat-modify" ng-repeat="redirect in vm.redirects">
-                    <div class="row">
+                <div class="row box repeat-modify" ng-repeat="redirect in vm.redirects | orderBy:'sourceEndpoint'">
+                    <div class="row" id ="{{redirect.sourceEndpoint}}">
                         <div class="col-sm-12">
-                            {{redirect.sourceEndpoint}} -> {{redirect.targetEndpoint}}
+                            <p class="lead hard-wrap">{{redirect.sourceEndpoint}}</p>
+                            <p class="lead hard-wrap">{{redirect.targetEndpoint}}</p>
                         </div>
                     </div>
                     <div class="row">
