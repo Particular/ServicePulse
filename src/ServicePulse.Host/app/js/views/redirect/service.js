@@ -46,6 +46,12 @@
                     .error(function () {
                         notifications.pushForCurrentRoute(error, 'danger');
                 });
+            },
+            getTotalRedirects: function() {
+                var url = uri.join(scConfig.service_control_url, 'redirects');
+                return $http.head(url).then(function(response) {
+                    return response.headers('Total-Count');
+                });
             }
         };
     }

@@ -30,8 +30,8 @@
                 <div class="row box repeat-modify" ng-repeat="redirect in vm.redirects | orderBy:'sourceEndpoint'">
                     <div class="row" id ="{{redirect.sourceEndpoint}}">
                         <div class="col-sm-12">
-                            <p class="lead hard-wrap">{{redirect.sourceEndpoint}}</p>
-                            <p class="lead hard-wrap">{{redirect.targetEndpoint}}</p>
+                            <p class="lead hard-wrap">Source Queue: {{redirect.sourceEndpoint}}</p>
+                            <p class="lead hard-wrap">Target Queue: {{redirect.targetEndpoint}}</p>
                         </div>
                     </div>
                     <div class="row">

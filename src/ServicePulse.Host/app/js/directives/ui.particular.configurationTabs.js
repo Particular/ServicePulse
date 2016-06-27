@@ -3,21 +3,40 @@
     'use strict';
 
 
-    function controller($scope, $interval, $location) {
+    function controller($scope, $interval, $location, redirectService) {
         
         $scope.isActive = function (viewLocation) {
             var active = (viewLocation === $location.path());
             return active;
         };
-
+        
         $scope.counters = {
             endpoints: 0,
-            redirects: 0
+            redirects: redirectService.getTotalRedirects()
         }
+
+        var redirectPromise = $interval(function () {
+            redirectService.getTotalRedirects().then(function (response) {
+                notifier.notify('RedirectMessageCountUpdated', response || 0);
+            });
+        }, 10000);
+
+        // Cancel interval on page changes
+        $scope.$on('$destroy', function () {
+            if (angular.isDefined(redirectPromise)) {
+                $interval.cancel(redirectPromise);
+                redirectPromise = undefined;
+            }
+        });
+
+
+        notifier.subscribe($scope, function (event, data) {
+            $scope.counters.redirects = data;
+        }, 'RedirectMessageCountUpdated');
         
     }
     
-    controller.$inject = ['$scope', '$interval', '$location'];
+    controller.$inject = ['$scope', '$interval', '$location', 'redirectService'];
 
     function directive() {
         return {
