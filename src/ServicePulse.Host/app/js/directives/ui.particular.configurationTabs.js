@@ -3,8 +3,9 @@
     'use strict';
 
 
-    function controller($scope, $interval, $location, redirectService) {
-        
+    function controller($scope, $interval, $location, redirectService, notifyService) {
+        var notifier = notifyService();
+
         $scope.isActive = function (viewLocation) {
             var active = (viewLocation === $location.path());
             return active;
@@ -36,7 +37,7 @@
         
     }
     
-    controller.$inject = ['$scope', '$interval', '$location', 'redirectService'];
+    controller.$inject = ['$scope', '$interval', '$location', 'redirectService', 'notifyService'];
 
     function directive() {
         return {

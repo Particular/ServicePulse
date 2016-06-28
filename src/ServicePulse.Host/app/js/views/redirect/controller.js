@@ -108,6 +108,12 @@
             }
         ];
 
+        function refreshData() {
+            redirectService.getRedirects().then(function(result) {
+                vm.redirects = result.data;
+            });
+        }
+
         vm.createRedirect = function () {
             $uibModal.open({
                 templateUrl: 'js/views/redirect/edit/view.html',
@@ -121,9 +127,8 @@
                     }
                 }
             }).result.then(function (selectedItem) {
-                //refresh data
+                refreshData();
             });
-            //redirectService.createRedirect(sourceEndpoint, targetEndpoint, success, error);
         };
 
         vm.editRedirect = function (redirect) {
@@ -139,13 +144,15 @@
                     }
                 }
             }).result.then(function (selectedItem) {
-                //refresh data
+                refreshData();
             });
         };
 
         vm.deleteRedirect = function (id, success, error) {
             redirectService.deleteRedirect(id, success, error);
+            refreshData();
         };
+        refreshData();
     }
 
     controller.$inject = [

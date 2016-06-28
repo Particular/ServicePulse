@@ -31,11 +31,11 @@
            
             createRedirect: function (sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');
-                return postPromise(url, { "sourceEndpoint": sourceEndpoint, "targetEndpoint": targetEndpoint }, success, error);
+                return postPromise(url, { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
             },
             updateRedirect: function (redirectId, sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');
-                return postPromise(url, { "id": redirectId, "sourceEndpoint": sourceEndpoint, "targetEndpoint": targetEndpoint }, success, error);
+                return postPromise(url, { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
             },
             deleteRedirect: function (id, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects', id);
@@ -52,7 +52,17 @@
                 return $http.head(url).then(function(response) {
                     return response.headers('Total-Count');
                 });
-            }
+            },
+            getRedirects: function() {
+            var url = uri.join(scConfig.service_control_url, 'redirects');
+            return $http.get(url).then(function(response) {
+                return {
+                    data: response.data,
+                    total: response.headers('Total-Count')
+                };
+            });
+        }
+
         };
     }
 
