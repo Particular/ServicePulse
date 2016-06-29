@@ -21,6 +21,7 @@
             number_of_failed_messages: 0,
             number_of_failed_checks: 0,
             number_of_archived_messages: 0,
+            number_of_pending_retries: 0,
             number_of_endpoints: 0
         };
 
@@ -84,6 +85,10 @@
             notifier.notify('CustomChecksUpdated', response || 0);
         });
 
+        serviceControlService.getTotalPendingRetries().then(function (response) {
+            notifier.notify('PendingRetriesTotalUpdated', response || 0);
+        });
+
         notifier.subscribe($rootScope, function (event, data) {
             stats.number_of_exception_groups = data || 0;
         }, "ExceptionGroupCountUpdated");
@@ -103,6 +108,10 @@
         notifier.subscribe($rootScope, function (event, data) {
             stats.number_of_endpoints = data || 0;
         }, 'EndpointCountUpdated');
+
+        notifier.subscribe($rootScope, function (event, data) {
+            stats.number_of_pending_retries = data || 0;
+        }, "PendingRetriesTotalUpdated");
 
         var storage = $localStorage.$default({});
 

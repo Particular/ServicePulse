@@ -4,6 +4,7 @@
             <h5 ng-class="{ active: isActive('/failedGroups') }"><a href="#/failedGroups">Failed message groups ({{counters.group | number}})</a></h5>
             <h5 ng-class="{ active: isActive('/failedMessages') }"><a ng-click="viewExceptionGroup()">All failed messages ({{counters.message | number}})</a></h5>
             <h5 ng-class="{ active: isActive('/archived') }"><a href="#/archived">Archived messages ({{counters.archived | number}})</a></h5>
+            <h5 ng-class="{ active: isActive('/pendingRetries') }"><a href="#/pendingRetries">Pending retries ({{counters.pendingRetries | number}})</a></h5>
         </div>
     </div>
 </div>

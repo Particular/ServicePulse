@@ -18,8 +18,9 @@
         $scope.counters = {
             group: stats.number_of_exception_groups,
             message: stats.number_of_failed_messages,
-            archived: stats.number_of_archived_messages
-        }
+            archived: stats.number_of_archived_messages,
+            pendingRetries: stats.number_of_pending_retries
+    }
 
         $scope.viewExceptionGroup = function () {
             sharedDataService.set(allFailedMessagesGroup);
@@ -38,6 +39,12 @@
             });
         }, 10000);
 
+        var pendingRetriesPromise = $interval(function () {
+            serviceControlService.getTotalPendingRetries().then(function (response) {
+                notifier.notify('PendingRetriesTotalUpdated', response || 0);
+            });
+        }, 10000);
+
         // Cancel interval on page changes
         $scope.$on('$destroy', function () {
             if (angular.isDefined(exceptionPromise)) {
@@ -47,6 +54,10 @@
             if (angular.isDefined(archivePromise)) {
                 $interval.cancel(archivePromise);
                 archivePromise = undefined;
+            }
+            if (angular.isDefined(pendingRetriesPromise)) {
+                $interval.cancel(pendingRetriesPromise);
+                pendingRetriesPromise = undefined;
             }
         });
 
@@ -62,7 +73,11 @@
 
         notifier.subscribe($scope, function (event, data) {
             $scope.counters.archived = data;
-        }, 'ArchivedMessagesUpdated');       
+        }, 'ArchivedMessagesUpdated');
+    
+        notifier.subscribe($scope, function (event, data) {
+            $scope.counters.pendingRetries = data;
+        }, 'PendingRetriesTotalUpdated');
     }
     
     controller.$inject = ['$scope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService'];

@@ -494,10 +494,10 @@ span.metadata {
     padding-left: 0;
     padding-right: 0;
 }
-div.btn-toolbar {
+div.btn-toolbar, div.form-inline {
     margin-bottom: 12px;
 }
-.btn-toolbar button {
+.btn-toolbar button, .btn-toolbar input {
     margin: 12px 0 0;
 }
 .btn-toolbar button:last-child {
