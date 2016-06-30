@@ -20,7 +20,7 @@
         }
         $scope.title = data.title;
 
-        $scope.availableEndpoints = ['queueNameA', 'queueNameB', 'queueNameC', 'queueNameD', 'queueNameE', 'queueNameF'];
+        $scope.availableEndpoints = [];
 
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');

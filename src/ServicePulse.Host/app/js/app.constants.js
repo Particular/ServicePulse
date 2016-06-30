@@ -3,7 +3,7 @@
     angular.module('sc')
         .constant('version', '1.2.0')
         .constant('scConfig', {
-            service_control_url: 'http://localhost:33334/api/'
+            service_control_url: 'http://localhost:33333/api/'
         });
 
 }(window, window.angular));
