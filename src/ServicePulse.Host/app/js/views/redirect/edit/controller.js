@@ -7,7 +7,8 @@
         $uibModalInstance,
         redirectService,
         toastService,
-        data) {
+        data,
+        serviceControlService) {
 
         $scope.loadingData = false;
         if (data.redirect) {
@@ -21,6 +22,12 @@
         $scope.title = data.title;
 
         $scope.availableEndpoints = [];
+
+        $scope.getAvailableEndpoints = function(searchPhrase) {
+            if (searchPhrase.length < 3)
+                return;
+            return serviceControlService.getQueueNames(searchPhrase);
+        };
 
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
@@ -59,7 +66,8 @@
         "$uibModalInstance",
         "redirectService",
         "toastService",
-        "data"
+        "data",
+        "serviceControlService"
     ];
 
     angular.module("sc")

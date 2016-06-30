@@ -5,7 +5,7 @@
 
     function service($http, $timeout, $q, scConfig, uri, notifications) {
 
-        function postPromise(url, data, success, error) {
+        function sendPromise(url, method, data, success, error) {
 
             var defer = $q.defer();
 
@@ -15,7 +15,7 @@
             $http({
                 url: url,
                 data: data,
-                method: 'POST'
+                method: method
             })
                 .success(function (response) {
                     defer.resolve(success + ':' + response);
@@ -31,11 +31,11 @@
            
             createRedirect: function (sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');
-                return postPromise(url, { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
+                return sendPromise(url, 'POST', { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
             },
             updateRedirect: function (redirectId, sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');
-                return postPromise(url, { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
+                return sendPromise(url, 'PUT', { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
             },
             deleteRedirect: function (id, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects', id);

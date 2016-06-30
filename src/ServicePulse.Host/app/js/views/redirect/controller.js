@@ -21,7 +21,7 @@
             });
         }
 
-        displayEditModal = function (title, redirect) {
+        function displayEditModal(title, redirect) {
             $uibModal.open({
                 templateUrl: 'js/views/redirect/edit/view.html',
                 controller: 'editRedirectController',
