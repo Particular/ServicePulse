@@ -24,6 +24,7 @@
             }
 
             this.WithHeader("ETag", GenerateETag(content));
+            this.WithHeader("X-UA-Compatible", "IE=edge,chrome=1");
             Contents = GetFileContent(content);
         }
 
