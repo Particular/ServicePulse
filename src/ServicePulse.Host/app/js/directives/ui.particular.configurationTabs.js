@@ -3,7 +3,7 @@
     'use strict';
 
 
-    function controller($scope, $interval, $location, redirectService, notifyService) {
+    function controller($scope, $interval, $location, redirectService, notifyService, sharedDataService) {
         var notifier = notifyService();
 
         $scope.isActive = function (viewLocation) {
@@ -11,9 +11,15 @@
             return active;
         };
         
+        var stats = sharedDataService.getstats();
+
+        redirectService.getTotalRedirects().then(function(response) {
+            $scope.counters.redirects = response || 0;
+        });
+
         $scope.counters = {
-            endpoints: 0,
-            redirects: redirectService.getTotalRedirects()
+            endpoints: stats.number_of_endpoints,
+            redirects: 0
         }
 
         var redirectPromise = $interval(function () {
@@ -34,10 +40,14 @@
         notifier.subscribe($scope, function (event, data) {
             $scope.counters.redirects = data;
         }, 'RedirectMessageCountUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
+            $scope.counters.endpoints = data;
+        }, 'EndpointCountUpdated');
         
     }
     
-    controller.$inject = ['$scope', '$interval', '$location', 'redirectService', 'notifyService'];
+    controller.$inject = ['$scope', '$interval', '$location', 'redirectService', 'notifyService', 'sharedDataService'];
 
     function directive() {
         return {

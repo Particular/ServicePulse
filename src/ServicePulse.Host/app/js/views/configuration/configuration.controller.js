@@ -12,14 +12,18 @@
         $scope,
         $window,
         sharedDataService,
-        configurationService) {
+        configurationService,
+        notifyService) {
 
+        var notifier = notifyService();
         $scope.model = { endpoints: [] };
 
 
         function autoGetEndPoints() {
             configurationService.getData()
                 .then(function (response) {
+                    notifier.notify('EndpointCountUpdated', response.data.length);
+
                     if (response.data.length > 0) {
                         // need a map in some ui state for controlling animations
                         var endPoints = response.data.map(function (obj) {
@@ -62,7 +66,8 @@
         '$scope',
         '$window',
         'sharedDataService',
-        'configurationService'];
+        'configurationService',
+        'notifyService'];
 
     angular.module('configuration.controller', [])
         .controller('ConfigurationCtrl', controller);
