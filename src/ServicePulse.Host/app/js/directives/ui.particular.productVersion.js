@@ -21,6 +21,7 @@
                         if (semverService.isUpgradeAvailable($scope.scversion, result.SC[0]['tag'])) {
                             $scope.newscversion = true;
                             $scope.newscversionlink = result.SC[0]['release'];
+                            $scope.newscversionnumber = result.SC[0]['tag'];
                         }
                     }
                 });
