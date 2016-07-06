@@ -12,12 +12,12 @@
 
         $scope.loadingData = false;
         if (data.redirect) {
-            $scope.sourceEndpoint = data.redirect.sourceEndpoint;
-            $scope.targetEndpoint = data.redirect.targetEndpoint;
-            $scope.redirectId = data.redirect.id;
+            $scope.from_physical_address = data.redirect.from_physical_address;
+            $scope.to_physical_address = data.redirect.to_physical_address;
+            $scope.message_redirect_id = data.redirect.message_redirect_id;
         } else {
-            $scope.sourceEndpoint = '';
-            $scope.targetEndpoint = '';
+            $scope.from_physical_address = '';
+            $scope.to_physical_address = '';
         }
         $scope.title = data.title;
 
@@ -34,13 +34,13 @@
         }
 
         $scope.createRedirect = function (success, failure) {
-            if ($scope.redirectId) {
-                redirectService.updateRedirect($scope.redirectId, $scope.sourceEndpoint, $scope.targetEndpoint, success, failure).then(function (reason) {
+            if ($scope.message_redirect_id) {
+                redirectService.updateRedirect($scope.message_redirect_id, $scope.from_physical_address, $scope.to_physical_address, success, failure).then(function (reason) {
                     toastService.showInfo(success + ":" + reason);
                     $uibModalInstance.close();
                 }, function (reason, status) {
                     if (status === '409' || status === 409) {
-                        toastService.showError('Failed to create a redirect, can not create more than one redirect for queue:' + $scope.sourceEndpoint);
+                        toastService.showError('Failed to create a redirect, can not create more than one redirect for queue: ' + $scope.from_physical_address);
                     } else {
                         toastService.showError(failure + ":" + reason);
                     }
@@ -52,7 +52,7 @@
                     $uibModalInstance.close();
                 }, function (reason, status) {
                     if (status === '409' || status === 409) {
-                        toastService.showError('Failed to create a redirect, can not create more than one redirect for queue:' + $scope.sourceEndpoint);
+                        toastService.showError('Failed to create a redirect, can not create more than one redirect for queue:' + $scope.from_physical_address);
                     } else {
                         toastService.showError(failure + ":" + reason);
                     }

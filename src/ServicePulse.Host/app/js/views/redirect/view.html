@@ -28,17 +28,21 @@
             <div class="col-sm-12" ng-show="vm.redirects.length > 0">
 
                 <div class="row box repeat-modify" ng-repeat="redirect in vm.redirects | orderBy:'sourceEndpoint'">
-                    <div class="row" id ="{{redirect.sourceEndpoint}}">
+                    <div class="row" id ="{{redirect.from_physical_address}}">
                         <div class="col-sm-12">
-                            <p class="lead hard-wrap">Source Queue: {{redirect.sourceEndpoint}}</p>
-                            <p class="lead hard-wrap">Target Queue: {{redirect.targetEndpoint}}</p>
+                            <p class="lead hard-wrap">Source Queue: {{redirect.from_physical_address}}</p>
+                            <p class="lead hard-wrap">Target Queue: {{redirect.to_physical_address}}</p>
+                            <p class="metadata">
+                                <i class="fa fa-clock-o"></i>
+                                Last modified: <sp-moment date="{{redirect.last_modified}}"></sp-moment>
+                            </p>
                         </div>
                     </div>
                     <div class="row">
                         <div isolate-click class="col-sm-11">
                             <p class="small">
 
-                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.deleteRedirect(redirect.id, 'Redirect was deleted', 'Failed to delete redirect')" confirm-message="Are you sure you want to remove redirect for {{redirect.sourceEndpoint}} queue?">
+                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.deleteRedirect(redirect.message_redirect_id, 'Redirect was deleted', 'Failed to delete redirect')" confirm-message="Are you sure you want to remove redirect for {{redirect.sourceEndpoint}} queue?">
                                     <i>Remove Redirect</i>
                                 </button>
                                 <button type="button" class="btn btn-link btn-sm" ng-click="vm.editRedirect(redirect)">
