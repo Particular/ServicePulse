@@ -13,16 +13,16 @@
             error = error || 'error';
 
             $http({
-                url: url,
-                data: data,
-                method: method
-            })
-                .success(function (response) {
-                    defer.resolve(success + ':' + response);
+                    url: url,
+                    data: data,
+                    method: method
                 })
-                .error(function (response) {
-                    defer.reject(error + ':' + response);
-                });
+                .then(function(response) {
+                        defer.resolve({ message: success, status: response.status });
+                    }, function(response) {
+                        defer.reject({ message: error + ':' + response.statusText, status: response.status, statusText: response.statusText });
+                    }
+                );
 
             return defer.promise;
         }
@@ -34,12 +34,12 @@
                 return sendPromise(url, 'POST', { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
             },
             updateRedirect: function (redirectId, sourceEndpoint, targetEndpoint, success, error) {
-                var url = uri.join(scConfig.service_control_url, 'redirects');
+                var url = uri.join(scConfig.service_control_url, 'redirects', redirectId);
                 return sendPromise(url, 'PUT', { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
             },
             deleteRedirect: function (id, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects', id);
-                $http.delete(url)
+                return $http.delete(url)
                     .success(function() {
                         notifications.pushForCurrentRoute(success, 'info');
                     })

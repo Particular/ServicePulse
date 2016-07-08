@@ -8,8 +8,10 @@
         $interval,
         $location,
         $uibModal,
-        redirectService) {
+        redirectService,
+        notifyService) {
 
+        var notifier = notifyService();
         var vm = this;
        
         vm.loadingData = false;
@@ -21,7 +23,7 @@
             });
         }
 
-        function displayEditModal(title, redirect) {
+        function displayEditModal(title, saveButtonText, success, failure, redirect) {
             $uibModal.open({
                 templateUrl: 'js/views/redirect/edit/view.html',
                 controller: 'editRedirectController',
@@ -29,27 +31,35 @@
                     data: function () {
                         return {
                             redirect: redirect,
-                            title: title
+                            title: title,
+                            saveButtonText: saveButtonText,
+                            success: success,
+                            failure: failure
                         };
                     }
                 }
-            }).result.then(function (selectedItem) {
+            }).result.then(function () {
                 refreshData();
             });
         };
 
         vm.createRedirect = function () {
-            displayEditModal("Create Redirect");
+            displayEditModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create redirect.");
         };
 
         vm.editRedirect = function (redirect) {
-            displayEditModal("Modify Redirect", redirect);
+            displayEditModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update redirect.", redirect);
         };
 
-        vm.deleteRedirect = function (id, success, error) {
-            redirectService.deleteRedirect(id, success, error);
-            refreshData();
+        vm.deleteRedirect = function (redirect, success, error) {
+            redirectService.deleteRedirect(redirect.message_redirect_id, success, error);
+            var indexToRemove = vm.redirects.indexOf(redirect);
+            vm.redirects.splice(indexToRemove, 1);
+            notifier.notify('RedirectMessageCountUpdated', vm.redirects.length);
         };
+
+        notifier.subscribe($scope, refreshData, 'RedirectMessageCountUpdated');
+
         refreshData();
     }
 
@@ -59,7 +69,8 @@
         "$interval",
         "$location",
         "$uibModal",
-        "redirectService"
+        "redirectService",
+        "notifyService"
     ];
 
     angular.module("sc")
