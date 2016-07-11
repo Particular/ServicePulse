@@ -20,7 +20,8 @@
             number_of_exception_groups: 0,
             number_of_failed_messages: 0,
             number_of_failed_checks: 0,
-            number_of_archived_messages: 0
+            number_of_archived_messages: 0,
+            number_of_endpoints: 0
         };
 
         var configuration = {
@@ -98,6 +99,10 @@
         notifier.subscribe($rootScope, function (event, data) {
             stats.number_of_failed_checks = data || 0;
         }, "CustomChecksUpdated");
+
+        notifier.subscribe($rootScope, function (event, data) {
+            stats.number_of_endpoints = data || 0;
+        }, 'EndpointCountUpdated');
 
         var storage = $localStorage.$default({});
 

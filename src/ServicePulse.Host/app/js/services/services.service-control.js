@@ -224,6 +224,17 @@
                 });
         }
 
+        function getQueueNames(search, take) {
+            var url = uri.join(scConfig.service_control_url, 'errors', 'queues', 'addresses?search=' + search);
+            if (take) {
+                url = uri.join(url, '&take=' + take);
+            }
+
+            return $http.get(url).then(function(response) {
+                return response.data;
+            });
+        }
+
         var service = {
             getVersion: getVersion,
             checkLicense: checkLicense,
@@ -246,7 +257,8 @@
             archiveFailedMessages: archiveFailedMessages,
             archiveExceptionGroup: archiveExceptionGroup,
             retryExceptionGroup: retryExceptionGroup,
-            getHeartbeatStats: getHeartbeatStats
+            getHeartbeatStats: getHeartbeatStats,
+            getQueueNames: getQueueNames
         };
 
         return service;
