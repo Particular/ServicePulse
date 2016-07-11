@@ -66,8 +66,10 @@
                                 <div class="row box-header">
                                     <div class="col-sm-12">
                                         <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
-                                        <p>
-                                            failed <sp-moment date="{{message.time_of_failure}}"></sp-moment>, reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}
+                                        <p class="metadata">
+                                            <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{message.time_of_failure}}"></sp-moment></span>
+                                            <span class="metadata"><i class="fa fa-cogs"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
+                                            <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
                                         </p>
                                     </div>
                                 </div>
