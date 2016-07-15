@@ -7,8 +7,7 @@
         var notifier = notifyService();
 
         $scope.isActive = function (viewLocation) {
-            var active = (viewLocation === $location.path());
-            return active;
+            return (viewLocation === $location.path());
         };
         
         var stats = sharedDataService.getstats();
@@ -20,9 +19,9 @@
         $scope.counters = {
             endpoints: stats.number_of_endpoints,
             redirects: 0
-        }
+        };
 
-        var redirectPromise = $interval(function () {
+        var redirectUpdatedTimer = $interval(function () {
             redirectService.getTotalRedirects().then(function (response) {
                 notifier.notify('RedirectMessageCountUpdated', response || 0);
             });
@@ -30,9 +29,9 @@
 
         // Cancel interval on page changes
         $scope.$on('$destroy', function () {
-            if (angular.isDefined(redirectPromise)) {
-                $interval.cancel(redirectPromise);
-                redirectPromise = undefined;
+            if (angular.isDefined(redirectUpdatedTimer)) {
+                $interval.cancel(redirectUpdatedTimer);
+                redirectUpdatedTimer = undefined;
             }
         });
 
@@ -58,7 +57,7 @@
             controller: controller,
             link: function (scope, element) { }
         };
-    };
+    }
 
     directive.$inject = [];
 

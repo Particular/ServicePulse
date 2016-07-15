@@ -10,7 +10,7 @@
             controller: 'redirectController',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'
