@@ -15,16 +15,12 @@
         var vm = this;
 
         var notifier = notifyService();
-
-        vm.pendingRetryMessages = [];
-        vm.selectedIds = [];
+        
         vm.sortButtonText = '';
         vm.sort = "time_of_failure";
         vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
-        vm.page = 1;
-        vm.total = 0;
         vm.searchPhrase = '';
         vm.allSelected = false;
 
@@ -73,12 +69,12 @@
             });
         };
 
-        vm.clipComplete = function (messageId) {
+        vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
-        }
+        };
 
         vm.togglePanel = function (message, panelnum) {
-            if (message.messageBody === undefined) {
+            if (angular.isDefined(message.messageBody)) {
                 serviceControlService.getMessageBody(message.message_id).then(function (msg) {
                     message.messageBody = msg.data;
                 }, function () {
@@ -86,7 +82,7 @@
                 });
             }
 
-            if (message.messageHeaders === undefined) {
+            if (angular.isDefined(message.messageHeaders)) {
                 serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
                     message.messageHeaders = msg.data[0].headers;
                 }, function () {
@@ -97,12 +93,12 @@
             return false;
         };
 
-        vm.toggleSelectAll = function() {
-            for (var i = 0; i < vm.pendingRetryMessages.length; i++) {
-                if (vm.pendingRetryMessages[i].selected !== vm.allSelected) {
-                    toggleSelect(vm.pendingRetryMessages[i]);
-                }
-            }
+        vm.toggleSelectAll = function () {
+            vm.pendingRetryMessages.filter(function (item) {
+                return item.selected !== vm.allSelected;
+            }).forEach(function (item) {
+                toggleSelect(item);
+            });
         };
 
         function toggleSelect(row) {
@@ -129,36 +125,36 @@
             serviceControlService.retryFailedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
-            for (var i = 0; i < vm.pendingRetryMessages.length; i++) {
-                if (vm.pendingRetryMessages[i].selected) {
-                    vm.pendingRetryMessages[i].selected = false;
-                    vm.pendingRetryMessages[i].retried = true;
-                }
-            }
+            vm.pendingRetryMessages.filter(function (item) {
+                return item.selected;
+            }).forEach(function (item) {
+                item.selected = false;
+                item.retried = true;
+            });
         };
 
         vm.markAsResolvedSelected = function () {
             serviceControlService.markAsResolvedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
-            for (var i = 0; i < vm.pendingRetryMessages.length; i++) {
-                if (vm.pendingRetryMessages[i].selected) {
-                    vm.pendingRetryMessages[i].selected = false;
-                    vm.pendingRetryMessages[i].resolved = true;
-                }
-            }
+            vm.pendingRetryMessages.filter(function (item) {
+                return item.selected;
+            }).forEach(function (item) {
+                item.selected = false;
+                item.resolved = true;
+            });
         };
 
         vm.archiveSelected = function () {
             serviceControlService.archiveFailedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
-            for (var i = 0; i < vm.pendingRetryMessages.length; i++) {
-                if (vm.pendingRetryMessages[i].selected) {
-                    vm.pendingRetryMessages[i].selected = false;
-                    vm.pendingRetryMessages[i].archived = true;
-                }
-            }
+            vm.pendingRetryMessages.filter(function (item) {
+                return item.selected;
+            }).forEach(function (item) {
+                item.selected = false;
+                item.archived = true;
+            });
         };
 
         vm.searchPhraseChanged = function() {
@@ -167,13 +163,13 @@
                 vm.page = 1;
                 vm.loadMoreResults();
             }
-        }
+        };
 
-        vm.onSelect = function () {
+        vm.onSelect = function() {
             vm.pendingRetryMessages = [];
             vm.page = 1;
             vm.loadMoreResults();
-        }
+        };
 
         vm.debugInServiceInsight = function (index) {
             var messageId = vm.pendingRetryMessages[index].message_id;
@@ -189,13 +185,13 @@
         };
 
         var selectGroupInternal = function (sort, direction, changeToMessagesTab) {
-            vm.sort = sort;
-            vm.direction = direction;
-            setSortButtonText(sort, direction);
-
             if ($scope.loadingData) {
                 return;
             }
+
+            vm.sort = sort;
+            vm.direction = direction;
+            setSortButtonText(sort, direction);
 
             if (changeToMessagesTab) {
                 vm.activePageTab = "messages";
@@ -212,7 +208,7 @@
             selectGroupInternal(sort, direction, true);
         };
 
-        vm.loadMoreResults = function () {
+        vm.loadMoreResults = function() {
             vm.allMessagesLoaded = vm.pendingRetryMessages.length >= vm.total;
 
             if (vm.allMessagesLoaded || vm.loadingData) {
@@ -220,11 +216,11 @@
             }
 
             vm.loadingData = true;
-            
-            serviceControlService.getPendingRetryMessages(vm.searchPhrase || '', vm.sort, vm.page, vm.direction).then(function (response) {
+
+            serviceControlService.getPendingRetryMessages(vm.searchPhrase || '', vm.sort, vm.page, vm.direction).then(function(response) {
                 processLoadedMessages(response.data);
             });
-        }
+        };
 
         init();
     }

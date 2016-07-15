@@ -43,9 +43,9 @@
 
             if (searchPhrase.length > 0) {
                 url = url + '&queueaddress=' + searchPhrase;
-            } 
-            
-            return $http.get(url).then(function (response) {
+            }
+
+            return $http.get(url).then(function(response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -92,7 +92,7 @@
 
         function getTotalExceptionGroups() {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
-            return $http.head(url).then(function (response) {
+            return $http.head(url).then(function(response) {
                 return response.headers('Total-Count');
             });
         }
@@ -127,7 +127,7 @@
 
         function getTotalPendingRetries() {
             var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued');
-            return $http.head(url).then(function (response) {
+            return $http.head(url).then(function(response) {
                 return response.headers('Total-Count');
             });
         }
@@ -164,10 +164,10 @@
         function retryPendingMessagesForQueue(queueName) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'queues', queueName, 'retry');
             $http.post(url)
-                .success(function () {
-                    notifications.pushForCurrentRoute('Retrying all pending retry messages for queue ' + queueName , 'info');
+                .success(function() {
+                    notifications.pushForCurrentRoute('Retrying all pending retry messages for queue ' + queueName, 'info');
                 })
-                .error(function () {
+                .error(function() {
                     notifications.pushForCurrentRoute('Retrying all pending retried messages for queue ' + queueName + ' failed', 'danger');
                 });
         }
@@ -198,14 +198,14 @@
             var url = uri.join(scConfig.service_control_url, 'errors', 'resolve');
 
             $http({
-                url: url,
-                data: selectedMessages,
-                method: 'PATCH'
-            })
-                .success(function () {
+                    url: url,
+                    data: selectedMessages,
+                    method: 'PATCH'
+                })
+                .success(function() {
                     notifications.pushForCurrentRoute('Resolving {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
-                .error(function () {
+                .error(function() {
                     notifications.pushForCurrentRoute('Resolving messages failed', 'danger');
                 });
         }

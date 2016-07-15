@@ -77,13 +77,12 @@
                 }
         };
 
-        vm.clipComplete = function (messageId)
-        {
+        vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
-        }
+        };
 
         vm.togglePanel = function (message, panelnum) {
-            if (message.messageBody === undefined) {
+            if (angular.isDefined(message.messageBody)) {
                 serviceControlService.getMessageBody(message.message_id).then(function (msg) {
                     message.messageBody = msg.data;
                 }, function () {
@@ -91,7 +90,7 @@
                 });
             }
 
-            if (message.messageHeaders === undefined) {
+            if (angular.isDefined(message.messageHeaders)) {
                 serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
                     message.messageHeaders = msg.data[0].headers;
                 }, function () {
@@ -120,28 +119,28 @@
             serviceControlService.retryFailedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
-            for (var i = 0; i < vm.failedMessages.length; i++) {
-                if (vm.failedMessages[i].selected) {
-                    vm.failedMessages[i].selected = false;
-                    vm.failedMessages[i].retried = true;
-                }
-            }
+            vm.pendingRetryMessages.filter(function (item) {
+                return item.selected;
+            }).forEach(function (item) {
+                item.selected = false;
+                item.retried = true;
+            });
         };
 
         vm.archiveSelected = function () {
             serviceControlService.archiveFailedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
-            for (var i = 0; i < vm.failedMessages.length; i++) {
-                if (vm.failedMessages[i].selected) {
-                    vm.failedMessages[i].selected = false;
-                    vm.failedMessages[i].archived = true;
-                }
-            }
+            vm.pendingRetryMessages.filter(function (item) {
+                return item.selected;
+            }).forEach(function (item) {
+                item.selected = false;
+                item.archived = true;
+            });
         };
 
         vm.archiveExceptionGroup = function (group) {
-            var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+            failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('ArchiveGroupRequestAccepted', group);
                     markMessage('archived');
@@ -161,7 +160,7 @@
                 return;
             }
 
-            var response = failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
+            failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('RetryGroupRequestAccepted', group);
                 }, function (message) {
@@ -186,14 +185,14 @@
         };
 
         var selectGroupInternal = function (group, sort, direction, changeToMessagesTab) {
-            vm.sort = sort;
-            vm.direction = direction;
-            setSortButtonText(sort, direction);
-
             if ($scope.loadingData) {
                 return;
             }
 
+            vm.sort = sort;
+            vm.direction = direction;
+            setSortButtonText(sort, direction);
+            
             if (changeToMessagesTab) {
                 vm.activePageTab = "messages";
             }
@@ -210,7 +209,7 @@
             selectGroupInternal(group, sort, direction, true);
         };
 
-        vm.loadMoreResults = function (group) {
+        vm.loadMoreResults = function(group) {
             vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
 
             if (!group.initialLoad && (vm.allMessagesLoaded || vm.loadingData)) {
@@ -229,10 +228,10 @@
                 loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.page, vm.direction);
             }
 
-            loadPromise.then(function (response) {
+            loadPromise.then(function(response) {
                 processLoadedMessages(response.data);
             });
-        }
+        };
 
         init();
     }
