@@ -4,14 +4,14 @@
 
 
     function controller($scope, redirectService) {
-        
-        $scope.editRedirect = function () {
-            redirectService.displayEditRedirectModal($scope.redirect);
-        }
 
-        $scope.createRedirect = function () {
+        $scope.editRedirect = function() {
+            redirectService.displayEditRedirectModal($scope.redirect);
+        };
+
+        $scope.createRedirect = function() {
             redirectService.displayCreateRedirectModal();
-        }
+        };
     }
     
     controller.$inject = ['$scope', 'redirectService'];
@@ -25,7 +25,7 @@
             controller: controller,
             link: function (scope, element) { }
         };
-    };
+    }
 
     directive.$inject = [];
 
