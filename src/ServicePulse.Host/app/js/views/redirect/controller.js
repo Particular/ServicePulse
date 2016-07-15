@@ -7,7 +7,6 @@
         $timeout,
         $interval,
         $location,
-        $uibModal,
         redirectService,
         notifyService) {
 
@@ -48,7 +47,6 @@
         "$timeout",
         "$interval",
         "$location",
-        "$uibModal",
         "redirectService",
         "notifyService"
     ];

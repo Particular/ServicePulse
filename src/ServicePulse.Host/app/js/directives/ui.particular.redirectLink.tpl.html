@@ -1,0 +1,11 @@
+﻿<span>
+    <button ng-hide="redirect" type="button" class="btn btn-link" ng-click="createRedirect()">
+        <i>Create Redirect</i>
+    </button>
+    <span class="metadata" ng-show="redirect">
+        <i class="fa fa-arrows" uib-tooltip="Redirect"></i>
+        <button type="button" class="btn btn-link" ng-click="editRedirect(redirect)">
+            <i>Redirect: {{redirect.to_physical_address}}</i>
+        </button>
+    </span>
+</span>

@@ -11,7 +11,8 @@
         'ui.particular.productVersion',
         'ui.particular.busy',
         'ui.particular.nodata',
-        'ui.particular.configurationTabs'
+        'ui.particular.configurationTabs',
+        'ui.particular.redirectLink'
     ]);
 
 } (window, window.angular));

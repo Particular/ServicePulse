@@ -3,7 +3,7 @@
 
 
 
-    function service($http, $timeout, $q, scConfig, uri, notifications) {
+    function service($http, $timeout, $q, $uibModal, scConfig, uri, notifications) {
 
         function sendPromise(url, method, data, success, error) {
 
@@ -28,7 +28,6 @@
         }
 
         return {
-           
             createRedirect: function (sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');
                 return sendPromise(url, 'POST', { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
@@ -62,12 +61,6 @@
                     };
                 });
             },
-            displayCreateRedirectModal: function () {
-                displayEditModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create redirect.");
-            },
-            displayEditRedirectModal: function (redirect) {
-                displayEditModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update redirect.", redirect);
-            },
             displayRedirectModal: function (title, saveButtonText, success, failure, redirect) {
                 $uibModal.open({
                     templateUrl: 'js/views/redirect/edit/view.html',
@@ -87,13 +80,16 @@
                     refreshData();
                 });
             },
-
-
-
+            displayCreateRedirectModal: function () {
+                this.displayRedirectModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create redirect.");
+            },
+            displayEditRedirectModal: function (redirect) {
+                this.displayRedirectModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update redirect.", redirect);
+            }
         };
     }
 
-    service.$inject = ['$http', '$timeout', '$q', 'scConfig', 'uri', 'notifications'];
+    service.$inject = ['$http', '$timeout', '$q', '$uibModal', 'scConfig', 'uri', 'notifications'];
 
     angular.module('sc')
         .service('redirectService', service);
