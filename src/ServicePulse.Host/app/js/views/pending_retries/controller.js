@@ -73,8 +73,7 @@
             });
         };
 
-        vm.clipComplete = function (messageId)
-        {
+        vm.clipComplete = function (messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
         }
 
@@ -107,7 +106,7 @@
         };
 
         function toggleSelect(row) {
-            if (row.retried || row.archived) {
+            if (row.retried || row.archived || row.resolved) {
                 return;
             }
 
