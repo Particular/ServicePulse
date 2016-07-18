@@ -1,11 +1,14 @@
-﻿<span>
+﻿<span class="version-info">
+    <i class="fa fa-arrows" uib-tooltip="Redirect"></i>
+    No redirect 
     <button ng-hide="redirect" type="button" class="btn btn-link" ng-click="createRedirect()">
-        <i>Create Redirect</i>
+        create
     </button>
-    <span class="metadata" ng-show="redirect">
+    <span ng-show="redirect">
         <i class="fa fa-arrows" uib-tooltip="Redirect"></i>
+        Redirect: {{redirect.to_physical_address}}
         <button type="button" class="btn btn-link" ng-click="editRedirect(redirect)">
-            <i>Redirect: {{redirect.to_physical_address}}</i>
+            modify
         </button>
     </span>
 </span>

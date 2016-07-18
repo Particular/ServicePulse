@@ -165,6 +165,10 @@
             }
         };
 
+        vm.clearSearchPhrase = function() {
+            vm.searchPhrase = '';
+        }
+
         vm.onSelect = function() {
             vm.pendingRetryMessages = [];
             vm.page = 1;
