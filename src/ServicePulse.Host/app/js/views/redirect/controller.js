@@ -23,11 +23,11 @@
         }
 
         vm.createRedirect = function () {
-            redirectService.displayCreateRedirectModal();
+            redirectService.displayCreateRedirectModal(refreshData);
         };
 
         vm.editRedirect = function (redirect) {
-            redirectService.displayEditRedirectModal(redirect);
+            redirectService.displayEditRedirectModal(redirect, refreshData);
         };
 
         vm.deleteRedirect = function (redirect, success, error) {

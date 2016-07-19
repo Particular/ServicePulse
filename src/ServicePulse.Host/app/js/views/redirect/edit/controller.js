@@ -42,8 +42,10 @@
         }
 
         $scope.createRedirect = function() {
-            if ($scope.redirectForm.$invalid)
+            if ($scope.redirectForm.$invalid) {
+                $scope.submitted = true;
                 return;
+            }
 
             if ($scope.message_redirect_id) {
                 redirectService.updateRedirect($scope.message_redirect_id, $scope.from_physical_address, $scope.to_physical_address, $scope.success, $scope.failure).then(function(response) {

@@ -61,7 +61,7 @@
                     };
                 });
             },
-            displayRedirectModal: function (title, saveButtonText, success, failure, redirect) {
+            displayRedirectModal: function (title, saveButtonText, success, failure, refreshData, redirect) {
                 $uibModal.open({
                     templateUrl: 'js/views/redirect/edit/view.html',
                     controller: 'editRedirectController',
@@ -77,14 +77,16 @@
                         }
                     }
                 }).result.then(function () {
-                    refreshData();
+                    if (angular.isFunction(refreshData)) {
+                        refreshData();
+                    }
                 });
             },
-            displayCreateRedirectModal: function () {
-                this.displayRedirectModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create redirect.");
+            displayCreateRedirectModal: function (refreshData) {
+                this.displayRedirectModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create the redirect.", refreshData);
             },
-            displayEditRedirectModal: function (redirect) {
-                this.displayRedirectModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update redirect.", redirect);
+            displayEditRedirectModal: function (redirect, refreshData) {
+                this.displayRedirectModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update the redirect.", refreshData, redirect);
             }
         };
     }
