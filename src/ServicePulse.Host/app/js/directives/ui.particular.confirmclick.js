@@ -1,9 +1,9 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
-    function modalController($scope, $uibModalInstance, confirmMessage, confirmClick) {
+    function modalController($scope, $uibModalInstance, confirmMessage, confirmClick, confirmTitle) {
 
-        $scope.title = 'Confirm action';
+        $scope.title = confirmTitle ? confirmTitle : 'Confirm action';
 
         $scope.message = confirmMessage;
 
@@ -23,6 +23,7 @@
             priority: -1,
             restrict: 'A',
             scope: {
+                confirmTitle: '@',
                 confirmMessage: '@',
                 confirmClick: '&'
             },
@@ -39,6 +40,9 @@
                             },
                             confirmClick: function () {
                                 return scope.confirmClick;
+                            },
+                            confirmTitle: function() {
+                                return scope.confirmTitle;
                             }
                         }
                     });
