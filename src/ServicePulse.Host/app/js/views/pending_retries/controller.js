@@ -6,6 +6,7 @@
         $scope,
         $timeout,
         $location,
+        $moment,
         scConfig,
         toastService,
         sharedDataService,
@@ -21,8 +22,16 @@
         vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
-        vm.searchPhrase = '';
         vm.allSelected = false;
+
+        vm.timeGroup = {
+            amount: 2,
+            unit: 'hours',
+            buttonText: 'Retried in the last 2 Hours',
+            selected: function () {
+                return $moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
+            }
+        };
 
         notifier.subscribe($scope, function (event, data) {
             if (vm.total !== data) {
@@ -54,6 +63,11 @@
             vm.pendingRetryMessages = [];
             vm.selectedIds = [];
             vm.page = 1;
+            vm.filter = {
+                searchPhrase: ''
+            };
+            vm.filter.start = $moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
+            vm.filter.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             vm.total = sharedDataService.getstats().number_of_pending_retries;
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults();
@@ -158,7 +172,7 @@
         };
 
         vm.searchPhraseChanged = function() {
-            if (!vm.searchPhrase) {
+            if (!vm.filter.searchPhrase) {
                 vm.pendingRetryMessages = [];
                 vm.page = 1;
                 vm.loadMoreResults();
@@ -166,7 +180,7 @@
         };
 
         vm.clearSearchPhrase = function() {
-            vm.searchPhrase = '';
+            vm.filter.searchPhrase = '';
         }
 
         vm.onSelect = function() {
@@ -188,18 +202,14 @@
             $window.open("si://" + dnsName + "?search=" + messageId);
         };
 
-        var selectGroupInternal = function (sort, direction, changeToMessagesTab) {
+        var selectGroupInternal = function (sort, direction) {
             if ($scope.loadingData) {
                 return;
             }
 
-            vm.sort = sort;
-            vm.direction = direction;
+            vm.sort = sort || vm.sort;
+            vm.direction = direction || vm.direction;
             setSortButtonText(sort, direction);
-
-            if (changeToMessagesTab) {
-                vm.activePageTab = "messages";
-            }
 
             vm.pendingRetryMessages = [];
             vm.allMessagesLoaded = false;
@@ -209,8 +219,37 @@
         };
 
         vm.selectGroup = function (sort, direction) {
-            selectGroupInternal(sort, direction, true);
+            selectGroupInternal(sort, direction);
         };
+
+        vm.selectTimeGroup = function (amount, unit) {
+            vm.timeGroup.amount = amount;
+            vm.timeGroup.unit = unit;
+
+            if (amount && unit) {
+
+                switch (amount) {
+                    case '2':
+                        vm.timeGroup.buttonText = 'Retried in the last 2 Hours';
+                        break;
+                    case '1':
+                        vm.timeGroup.buttonText = 'Retried in the last 1 Day';
+                        break;
+                    case '7':
+                        vm.timeGroup.buttonText = 'Retried in the last 7 Days';
+                        break;
+                    default:
+                        vm.timeGroup.buttonText = amount + ' ' + unit;
+                        break;
+                }
+                vm.filter.start = $moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
+                vm.filter.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+            } else {
+                vm.timeGroup.buttonText = 'All Pending Retries';
+                vm.filter.start = vm.filter.end = undefined;
+            }
+            selectGroupInternal();
+        }
 
         vm.loadMoreResults = function() {
             vm.allMessagesLoaded = vm.pendingRetryMessages.length >= vm.total;
@@ -221,7 +260,7 @@
 
             vm.loadingData = true;
 
-            serviceControlService.getPendingRetryMessages(vm.searchPhrase || '', vm.sort, vm.page, vm.direction).then(function(response) {
+            serviceControlService.getPendingRetryMessages(vm.filter.searchPhrase || '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function (response) {
                 processLoadedMessages(response.data);
             });
         };
@@ -233,6 +272,7 @@
         "$scope",
         "$timeout",
         "$location",
+        "$moment",
         "scConfig",
         "toastService",
         "sharedDataService",

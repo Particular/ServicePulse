@@ -12,7 +12,7 @@
             <div class="col-sm-12">
                 <div class="form-horizontal">
                     <div class="form-group col-sm-9">
-                        <input type="text" class="form-control" ng-model="vm.searchPhrase" placeholder="Filter by Queue Name" uib-typeahead="endpoint for endpoint in vm.getAvailableEndpoints($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults"
+                        <input type="text" class="form-control" ng-model="vm.filter.searchPhrase" placeholder="Filter by Queue Name" uib-typeahead="endpoint for endpoint in vm.getAvailableEndpoints($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults"
                                typeahead-editable="false" typeahead-on-select="vm.onSelect()" class="form-control" autocomplete="off">
                         <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
                         <div ng-show="noResults">
@@ -24,7 +24,7 @@
                         <button type="button" class="btn btn-default" ng-click="vm.clearSearchPhrase()"><i class="fa fa-times"></i> Clear</button>
                     </div>
                 </div>
-                <div class="row" ng-show="vm.pendingRetryMessages.length > 0">
+                <div class="row">
                     <div class="check col-sm-1">
                         <input isolate-click type="checkbox" id="onoffswitchAll" name="onoffswitchAll" ng-model="vm.allSelected" ng-change="vm.toggleSelectAll()">
                     </div>
@@ -32,6 +32,26 @@
                         <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length | number}} selected</button>
                         <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected retried messages? If you do they will not be available for Retry." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length | number}} selected</button>
                         <button type="button" class="btn btn-default" confirm-message="Are you sure you want to mark as resolved all selected retried messages? If you do they will not be available for Retry." confirm-click="vm.markAsResolvedSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-check-square-o"></i> Mark as resolved {{vm.selectedIds.length | number}} selected</button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="hidden-xs hidden-sm"></span>Showing {{vm.timeGroup.buttonText}}
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectTimeGroup()"><span class="fa fa-calendar" aria-hidden="true"></span> All Pending Retries</a>
+                                </li>
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectTimeGroup('2', 'hours')"><span class="fa fa-calendar" aria-hidden="true"></span> Retried in the last 2 Hours</a>
+                                </li>
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectTimeGroup('1', 'days')"><span class="fa fa-calendar" aria-hidden="true"></span> Retried in the last 1 Day</a>
+                                </li>
+                                <li>
+                                    <a href="javascript://" ng-click="vm.selectTimeGroup('7', 'days')"><span class="fa fa-calendar " aria-hidden="true"></span> Retried in the last 7 Days</a>
+                                </li>
+                            </ul>
+                        </div>
                         <div class="btn-group pull-right">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="hidden-xs hidden-sm">Sorted by </span>{{vm.sortButtonText}}

@@ -38,8 +38,12 @@
             });
         }
 
-        function getPendingRetryMessages(searchPhrase, sortBy, page, direction) {
+        function getPendingRetryMessages(searchPhrase, sortBy, page, direction, start, end) {
             var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
+
+            if (start && end) {
+                url = url + '&modified=' + start + '...' + end;
+            }
 
             if (searchPhrase.length > 0) {
                 url = url + '&queueaddress=' + searchPhrase;
