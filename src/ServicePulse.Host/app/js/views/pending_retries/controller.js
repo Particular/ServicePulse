@@ -11,7 +11,8 @@
         toastService,
         sharedDataService,
         notifyService,
-        serviceControlService) {
+        serviceControlService,
+        endpointsService) {
 
         var vm = this;
 
@@ -38,6 +39,10 @@
                 vm.loadMoreResults();
             } 
         }, 'PendingRetriesTotalUpdated');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.endpoints = data;
+        }, 'EndpointsUpdated');
 
         var setSortButtonText = function (sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure");
@@ -73,17 +78,8 @@
             vm.direction = "asc";
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults();
+            vm.endpoints = endpointsService.getQueueNames();
         }
-
-        vm.getAvailableEndpoints = function (searchPhrase) {
-            if (searchPhrase.length < 3)
-                return;
-            return serviceControlService.getQueueNames(searchPhrase).then(function(results) {
-                return results.map(function(item) {
-                    return item.physical_address;
-                });
-            });
-        };
 
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
@@ -279,7 +275,8 @@
         "toastService",
         "sharedDataService",
         "notifyService",
-        "serviceControlService"
+        "serviceControlService",
+        "endpointsService"
     ];
 
     angular.module("sc")

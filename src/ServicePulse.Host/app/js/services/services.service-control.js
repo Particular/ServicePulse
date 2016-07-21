@@ -276,16 +276,11 @@
                     return results;
                 });
         }
+        
+        function loadQueueNames() {
+            var url = uri.join(scConfig.service_control_url, 'errors', 'queues', 'addresses');
 
-        function getQueueNames(search, take) {
-            var url = uri.join(scConfig.service_control_url, 'errors', 'queues', 'addresses?search=' + search);
-            if (take) {
-                url = uri.join(url, '&take=' + take);
-            }
-
-            return $http.get(url).then(function(response) {
-                return response.data;
-            });
+            return $http.get(url);
         }
 
         var service = {
@@ -315,7 +310,7 @@
             archiveExceptionGroup: archiveExceptionGroup,
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
-            getQueueNames: getQueueNames
+            loadQueueNames: loadQueueNames
         };
 
         return service;

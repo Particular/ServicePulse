@@ -19,6 +19,7 @@
                 $location: null,
                 scConfig: null,
                 toastService: null,
+                endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function() {return {subscribe: function() {} } },
                 serviceControlService: serviceControlService
@@ -59,6 +60,7 @@
                 $location: null,
                 scConfig: null,
                 toastService: null,
+                endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function () { return { subscribe: function () { } } },
                 serviceControlService: serviceControlService
@@ -99,6 +101,7 @@
                 $location: null,
                 scConfig: null,
                 toastService: null,
+                endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function () { return { subscribe: function () { } } },
                 serviceControlService: serviceControlService
@@ -139,6 +142,7 @@
                 $location: null,
                 scConfig: null,
                 toastService: null,
+                endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function () { return { subscribe: function () { } } },
                 serviceControlService: null
@@ -237,6 +241,7 @@
                 $location: null,
                 scConfig: null,
                 toastService: null,
+                endpointService: null,
                 sharedDataService: { getstats: function() { return { number_of_pending_retries: 0 }; } },
                 notifyService: function() { return { subscribe: function() {} } },
                 serviceControlService: null

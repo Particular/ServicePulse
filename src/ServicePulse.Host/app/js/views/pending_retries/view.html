@@ -12,8 +12,8 @@
             <div class="col-sm-12">
                 <div class="row">
                     <div class="col-sm-6">
-                        <input type="text" class="form-control" ng-model="vm.filter.searchPhrase" placeholder="Filter by Queue Name" uib-typeahead="endpoint for endpoint in vm.getAvailableEndpoints($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults"
-                               typeahead-editable="false" typeahead-on-select="vm.onSelect()" class="form-control" autocomplete="off">
+                        <input type="text" class="form-control" ng-model="vm.filter.searchPhrase" placeholder="Filter by Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in vm.endpoints | filter:$viewValue" typeahead-loading="loadingLocations" typeahead-no-results="noResults"
+                               typeahead-editable="false" typeahead-on-select="vm.onSelect()" autocomplete="off">
                         <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
                         <div ng-show="noResults">
                             No Results Found
