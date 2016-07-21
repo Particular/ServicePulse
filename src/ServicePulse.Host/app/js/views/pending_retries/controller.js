@@ -18,8 +18,7 @@
         var notifier = notifyService();
         
         vm.sortButtonText = '';
-        vm.sort = "time_of_failure";
-        vm.direction = "desc";
+        vm.sortDirection = 'asc';
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.allSelected = false;
@@ -41,7 +40,8 @@
         }, 'PendingRetriesTotalUpdated');
 
         var setSortButtonText = function (sort, direction) {
-            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
+            vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure");
+            vm.sortDirection = direction;
         }
 
         var processLoadedMessages = function (data) {
@@ -69,6 +69,8 @@
             vm.filter.start = $moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
             vm.filter.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             vm.total = sharedDataService.getstats().number_of_pending_retries;
+            vm.sort = "time_of_failure";
+            vm.direction = "asc";
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults();
         }
