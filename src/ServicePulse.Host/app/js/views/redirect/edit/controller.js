@@ -7,8 +7,12 @@
         $uibModalInstance,
         redirectService,
         toastService,
+        notifyService,
         data,
-        serviceControlService) {
+        serviceControlService,
+        endpointsService) {
+
+        var notifier = notifyService();
 
         $scope.loadingData = false;
         if (data.redirect && data.redirect.message_redirect_id) {
@@ -24,19 +28,12 @@
         $scope.title = data.title;
         $scope.saveButtonText = data.saveButtonText;
 
-        $scope.availableEndpoints = [];
+        $scope.endpoints = endpointsService.getQueueNames();
 
-        $scope.getAvailableEndpoints = function(searchPhrase) {
-            if (searchPhrase.length < 3)
-                return;
-
-            return serviceControlService.getQueueNames(searchPhrase).then(function(results) {
-                return results.map(function(item) {
-                    return item.physical_address;
-                });
-            });
-        };
-
+        notifier.subscribe($scope, function (event, data) {
+            $scope.endpoints = data;
+        }, 'EndpointsUpdated');
+        
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         }
@@ -88,8 +85,10 @@
         "$uibModalInstance",
         "redirectService",
         "toastService",
+        "notifyService",
         "data",
-        "serviceControlService"
+        "serviceControlService",
+        "endpointsService"
     ];
 
     angular.module("sc")

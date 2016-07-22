@@ -3,18 +3,18 @@
     'use strict';
 
 
-    function controller($scope, redirectService) {
+    function controller($scope, redirectModalService) {
 
         $scope.editRedirect = function() {
-            redirectService.displayEditRedirectModal($scope.redirect);
+            redirectModalService.displayEditRedirectModal($scope.redirect);
         };
 
         $scope.createRedirect = function() {
-            redirectService.displayCreateRedirectModal();
+            redirectModalService.displayCreateRedirectModal();
         };
     }
     
-    controller.$inject = ['$scope', 'redirectService'];
+    controller.$inject = ['$scope', 'redirectModalService'];
 
     function directive() {
         return {

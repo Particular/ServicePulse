@@ -8,7 +8,8 @@
         $interval,
         $location,
         redirectService,
-        notifyService) {
+        notifyService,
+        redirectModalService) {
 
         var notifier = notifyService();
         var vm = this;
@@ -23,11 +24,11 @@
         }
 
         vm.createRedirect = function () {
-            redirectService.displayCreateRedirectModal(refreshData);
+            redirectModalService.displayCreateRedirectModal(refreshData);
         };
 
         vm.editRedirect = function (redirect) {
-            redirectService.displayEditRedirectModal(redirect, refreshData);
+            redirectModalService.displayEditRedirectModal(redirect, refreshData);
         };
 
         vm.deleteRedirect = function (redirect, success, error) {
@@ -48,7 +49,8 @@
         "$interval",
         "$location",
         "redirectService",
-        "notifyService"
+        "notifyService",
+        "redirectModalService"
     ];
 
     angular.module("sc")

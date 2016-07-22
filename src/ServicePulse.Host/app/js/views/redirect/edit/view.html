@@ -11,7 +11,7 @@
             </div>
             <div class="form-group"  ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid && (redirectForm.sourceQueue.$dirty || submitted), 'has-success': redirectForm.sourceQueue.$valid }">
                 <input type="text" id="sourceQueue" name="sourceQueue" ng-model="from_physical_address" ng-disabled="message_redirect_id != undefined" placeholder="Source Queue Name" 
-                       uib-typeahead="endpoint for endpoint in getAvailableEndpoints($viewValue)" typeahead-editable="false" typeahead-min-length="3" autocomplete="off"
+                       uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue" typeahead-editable="false" autocomplete="off"
                        typeahead-loading="loadingSourceQueues" typeahead-no-results="noSourceQueues" class="form-control" required>
                 <i ng-show="loadingSourceQueues" class="glyphicon glyphicon-refresh"></i>
                 <div ng-show="noSourceQueues" ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid }">
@@ -26,7 +26,7 @@
                 <i class="fa fa-info-circle" uib-tooltip="Choose a queue that is know to Service Control or provide a custom queue"></i>
             </div>
             <div class="form-group" ng-class="{ 'has-error': redirectForm.targetQueue.$invalid && (redirectForm.targetQueue.$dirty || submitted), 'has-success': redirectForm.targetQueue.$valid }">
-                <input type="text" id="targetQueue" name="targetQueue" ng-model="to_physical_address" placeholder="Target Queue Name" uib-typeahead="endpoint for endpoint in getAvailableEndpoints($viewValue)"
+                <input type="text" id="targetQueue" name="targetQueue" ng-model="to_physical_address" placeholder="Target Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue"
                        typeahead-loading="loadingTargetQueues" typeahead-no-results="noTargetQueues" class="form-control" autocomplete="off" required>
                 <i ng-show="loadingTargetQueues" class="glyphicon glyphicon-refresh"></i>
                 <div ng-show="noTargetQueues" ng-class="{ 'has-error': noTargetQueues }">

@@ -20,6 +20,8 @@
                 redirectService: redirectService,
                 toastService: null,
                 serviceControlService: null,
+                notifyService: function () { return { subscribe: function () { } } },
+                endpointService:null,
                 data: {
                     success: '',
                     error: '',
@@ -60,6 +62,8 @@
                 redirectService: redirectService,
                 toastService: null,
                 serviceControlService: null,
+                endpointService: null,
+                notifyService: function () { return { subscribe: function () { } } },
                 data: {
                     success: '',
                     error: '',
