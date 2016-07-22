@@ -3,7 +3,7 @@
     'use strict';
 
 
-    function controller($scope, $interval, $location, redirectService, notifyService, sharedDataService) {
+    function controller($scope, $location, redirectService, notifyService, sharedDataService) {
         var notifier = notifyService();
 
         $scope.isActive = function (viewLocation) {
@@ -12,29 +12,12 @@
         
         var stats = sharedDataService.getstats();
 
-        redirectService.getTotalRedirects().then(function(response) {
-            $scope.counters.redirects = response || 0;
-        });
-
         $scope.counters = {
             endpoints: stats.number_of_endpoints,
             redirects: 0
         };
 
-        var redirectUpdatedTimer = $interval(function () {
-            redirectService.getTotalRedirects().then(function (response) {
-                notifier.notify('RedirectMessageCountUpdated', response || 0);
-            });
-        }, 10000);
-
-        // Cancel interval on page changes
-        $scope.$on('$destroy', function () {
-            if (angular.isDefined(redirectUpdatedTimer)) {
-                $interval.cancel(redirectUpdatedTimer);
-                redirectUpdatedTimer = undefined;
-            }
-        });
-
+        $scope.counters.redirects = redirectService.getTotalRedirects();
 
         notifier.subscribe($scope, function (event, data) {
             $scope.counters.redirects = data;
@@ -46,7 +29,7 @@
         
     }
     
-    controller.$inject = ['$scope', '$interval', '$location', 'redirectService', 'notifyService', 'sharedDataService'];
+    controller.$inject = ['$scope', '$location', 'redirectService', 'notifyService', 'sharedDataService'];
 
     function directive() {
         return {

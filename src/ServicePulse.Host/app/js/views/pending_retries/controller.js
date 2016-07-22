@@ -7,6 +7,7 @@
         $timeout,
         $location,
         $moment,
+        $filter,
         scConfig,
         toastService,
         sharedDataService,
@@ -44,6 +45,10 @@
             vm.endpoints = data;
         }, 'EndpointsUpdated');
 
+        notifier.subscribe($scope, function (event, response) {
+            vm.redirects = response.data;
+        }, 'RedirectsUpdated');
+
         var setSortButtonText = function (sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure");
             vm.sortDirection = direction;
@@ -54,6 +59,12 @@
                 var exgroups = data.map(function(obj) {
                     var nObj = obj;
                     nObj.panel = 0;
+                    var redirectsFound = $filter('filter')(vm.redirects, { from_physical_address: nObj.queueName }, true);
+                    if (redirectsFound.length) {
+                        nObj.redirect = redirectsFound[0];
+                    } else {
+                        nObj.redirect = null;
+                    }
                     return nObj;
                 });
 
@@ -79,6 +90,7 @@
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults();
             vm.endpoints = endpointsService.getQueueNames();
+            vm.redirects = [];
         }
 
         vm.clipComplete = function(messageId) {
@@ -271,6 +283,7 @@
         "$timeout",
         "$location",
         "$moment",
+        "$filter",
         "scConfig",
         "toastService",
         "sharedDataService",

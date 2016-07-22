@@ -2,10 +2,8 @@
     'use strict';
     
     function service($http, $timeout, $q, $uibModal) {
-        
-
         return {
-            displayRedirectModal: function (title, saveButtonText, success, failure, refreshData, redirect) {
+            displayRedirectModal: function (title, saveButtonText, success, failure, redirect) {
                 $uibModal.open({
                     templateUrl: 'js/views/redirect/edit/view.html',
                     controller: 'editRedirectController',
@@ -20,17 +18,13 @@
                             };
                         }
                     }
-                }).result.then(function () {
-                    if (angular.isFunction(refreshData)) {
-                        refreshData();
-                    }
                 });
             },
-            displayCreateRedirectModal: function (refreshData) {
-                this.displayRedirectModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create the redirect.", refreshData);
+            displayCreateRedirectModal: function () {
+                this.displayRedirectModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create the redirect.");
             },
-            displayEditRedirectModal: function (redirect, refreshData) {
-                this.displayRedirectModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update the redirect.", refreshData, redirect);
+            displayEditRedirectModal: function (redirect) {
+                this.displayRedirectModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update the redirect.", redirect);
             }
         };
     }
