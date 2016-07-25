@@ -119,7 +119,7 @@
             serviceControlService.retryFailedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
-            vm.pendingRetryMessages.filter(function (item) {
+            vm.failedMessages.filter(function (item) {
                 return item.selected;
             }).forEach(function (item) {
                 item.selected = false;
@@ -131,7 +131,7 @@
             serviceControlService.archiveFailedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
-            vm.pendingRetryMessages.filter(function (item) {
+            vm.failedMessages.filter(function (item) {
                 return item.selected;
             }).forEach(function (item) {
                 item.selected = false;
