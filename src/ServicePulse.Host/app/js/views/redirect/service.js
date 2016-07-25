@@ -56,6 +56,8 @@
             return defer.promise;
         }
 
+        getData();
+
         return {
             createRedirect: function (sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');

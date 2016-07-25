@@ -13,7 +13,8 @@
         sharedDataService,
         notifyService,
         serviceControlService,
-        endpointsService) {
+        endpointsService, 
+        redirectService) {
 
         var vm = this;
 
@@ -47,6 +48,7 @@
 
         notifier.subscribe($scope, function (event, response) {
             vm.redirects = response.data;
+            refreshRedirects();
         }, 'RedirectsUpdated');
 
         var setSortButtonText = function (sort, direction) {
@@ -54,18 +56,30 @@
             vm.sortDirection = direction;
         }
 
+        function refreshRedirects() {
+            vm.pendingRetryMessages.map(function(obj) {
+                var nObj = obj;
+                return fillRedirect(nObj);
+            });
+        }
+
+        function fillRedirect(nObj) {
+            var redirectsFound = $filter('filter')(vm.redirects, { from_physical_address: nObj.queue_address }, true);
+            if (redirectsFound.length) {
+                nObj.redirect = redirectsFound[0];
+            } else {
+                nObj.redirect = null;
+            }
+            return nObj;
+        }
+
         var processLoadedMessages = function (data) {
             if (data.length > 0) {
                 var exgroups = data.map(function(obj) {
                     var nObj = obj;
                     nObj.panel = 0;
-                    var redirectsFound = $filter('filter')(vm.redirects, { from_physical_address: nObj.queueName }, true);
-                    if (redirectsFound.length) {
-                        nObj.redirect = redirectsFound[0];
-                    } else {
-                        nObj.redirect = null;
-                    }
-                    return nObj;
+
+                    return fillRedirect(nObj);
                 });
 
                 vm.pendingRetryMessages = vm.pendingRetryMessages.concat(exgroups);
@@ -90,7 +104,7 @@
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults();
             vm.endpoints = endpointsService.getQueueNames();
-            vm.redirects = [];
+            vm.redirects = redirectService.getRedirects().data;
         }
 
         vm.clipComplete = function(messageId) {
@@ -289,7 +303,8 @@
         "sharedDataService",
         "notifyService",
         "serviceControlService",
-        "endpointsService"
+        "endpointsService",
+        "redirectService"
     ];
 
     angular.module("sc")

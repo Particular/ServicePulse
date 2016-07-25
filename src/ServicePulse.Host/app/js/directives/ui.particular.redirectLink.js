@@ -10,7 +10,7 @@
         };
 
         $scope.createRedirect = function() {
-            redirectModalService.displayCreateRedirectModal();
+            redirectModalService.displayCreateRedirectModal($scope.queue_address);
         };
     }
     
@@ -18,7 +18,7 @@
 
     function directive() {
         return {
-            scope: { redirect: '='},
+            scope: { redirect: '=redirect', queue_address: '@queueAddress' },
             restrict: 'E',
             replace: true,
             templateUrl: 'js/directives/ui.particular.redirectLink.tpl.html',
