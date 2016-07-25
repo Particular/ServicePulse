@@ -8,10 +8,10 @@
         
         <failed-message-tabs></failed-message-tabs>
         
-        <div class="row box">
+        <div class="row box-no-hover">
             <div class="col-sm-12">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
                         <input type="text" class="form-control" ng-model="vm.filter.searchPhrase" placeholder="Filter by Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in vm.endpoints | filter:$viewValue" typeahead-loading="loadingLocations" typeahead-no-results="noResults"
                                typeahead-editable="false" typeahead-on-select="vm.onSelect()" autocomplete="off">
                         <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
@@ -19,69 +19,63 @@
                             No Results Found
                         </div>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-md-6 col-sm-12 col-xs-12">
                         <button type="button" class="btn btn-primary" ng-click="vm.searchPhraseChanged()"><i class="fa fa-search"></i> Search</button>
                         <button type="button" class="btn btn-default" ng-click="vm.clearSearchPhrase()"><i class="fa fa-times"></i> Clear</button>
-
-                        <div class="pull-right dropdown">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Showing {{vm.timeGroup.buttonText}}
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectTimeGroup()"><span class="fa fa-calendar" aria-hidden="true"></span> All Pending Retries</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectTimeGroup('2', 'hours')"><span class="fa fa-calendar" aria-hidden="true"></span> Retried in the last 2 Hours</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectTimeGroup('1', 'days')"><span class="fa fa-calendar" aria-hidden="true"></span> Retried in the last 1 Day</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectTimeGroup('7', 'days')"><span class="fa fa-calendar " aria-hidden="true"></span> Retried in the last 7 Days</a>
-                                </li>
-                            </ul>
-                        </div>
+                        <button type="button" class="pull-right btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{vm.timeGroup.buttonText}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup()"><span class="fa fa-calendar" aria-hidden="true"></span> All Pending Retries</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup('2', 'hours')"><span class="fa fa-calendar" aria-hidden="true"></span> Retried in the last 2 Hours</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup('1', 'days')"><span class="fa fa-calendar" aria-hidden="true"></span> Retried in the last 1 Day</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectTimeGroup('7', 'days')"><span class="fa fa-calendar " aria-hidden="true"></span> Retried in the last 7 Days</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="check col-sm-1">
+                    <div class="check col-md-1 col-sm-1">
                         <input isolate-click type="checkbox" id="onoffswitchAll" name="onoffswitchAll" ng-model="vm.allSelected" ng-change="vm.toggleSelectAll()">
                     </div>
-                    <div class="col-sm-11">
+                    <div class="col-md-11 col-sm-11">
                         <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length | number}} selected</button>
                         <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected retried messages? If you do they will not be available for Retry." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length | number}} selected</button>
                         <button type="button" class="btn btn-default" confirm-message="Are you sure you want to mark as resolved all selected retried messages? If you do they will not be available for Retry." confirm-click="vm.markAsResolvedSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-check-square-o"></i> Mark as resolved {{vm.selectedIds.length | number}} selected</button>
-                        
-                        <div class="btn-group pull-right dropdown">
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-long-arrow-down" aria-hidden="true" ng-show="vm.sortDirection === 'asc'"></i>
-                                <i class="fa fa-long-arrow-up" aria-hidden="true" ng-show="vm.sortDirection === 'desc'"></i>
-                                {{vm.sortButtonText}}
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup('message_type', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Message Type</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup('message_type', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Message Type</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup('time_of_failure', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Failure</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup('time_of_failure', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Failure</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup('last_modified', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Retry request</a>
-                                </li>
-                                <li>
-                                    <a href="javascript://" ng-click="vm.selectGroup('last_modified', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Retry request</a>
-                                </li>
-                            </ul>
-                        </div>
+                        <button type="button" class="btn btn-default dropdown-toggle pull-right" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-long-arrow-down" aria-hidden="true" ng-show="vm.sortDirection === 'asc'"></i>
+                            <i class="fa fa-long-arrow-up" aria-hidden="true" ng-show="vm.sortDirection === 'desc'"></i>
+                            {{vm.sortButtonText}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right">
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup('message_type', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Message Type</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup('message_type', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Message Type</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup('time_of_failure', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Failure</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup('time_of_failure', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Failure</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup('last_modified', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Retry request</a>
+                            </li>
+                            <li>
+                                <a href="javascript://" ng-click="vm.selectGroup('last_modified', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Retry request</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

@@ -107,7 +107,7 @@ footer a:hover { font-weight: normal; }
     z-index: 1;
 }
 
-.box {
+.box, .box-no-hover {
     -moz-border-bottom-colors: none;
     -moz-border-left-colors: none;
     -moz-border-right-colors: none;
