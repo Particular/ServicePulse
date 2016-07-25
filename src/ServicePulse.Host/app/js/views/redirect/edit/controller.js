@@ -20,7 +20,7 @@
             $scope.to_physical_address = data.redirect.to_physical_address;
             $scope.message_redirect_id = data.redirect.message_redirect_id;
         } else {
-            $scope.from_physical_address = '';
+            $scope.from_physical_address = data.queueAddress;
             $scope.to_physical_address = '';
         }
         $scope.success = data.success;

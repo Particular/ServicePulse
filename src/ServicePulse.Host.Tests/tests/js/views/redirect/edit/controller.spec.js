@@ -32,7 +32,50 @@
         });
 
         it('initiate from and to queue with empty string', function () {
-            expect($scope.from_physical_address).toEqual('');
+            expect($scope.from_physical_address).toEqual('' || undefined);
+            expect($scope.to_physical_address).toEqual('');
+        });
+
+        it('when calling createRedirect redirectService.createRedirect is being called', inject(function ($q) {
+            spyOn(redirectService, 'createRedirect').and.callFake(function () {
+                var deferred = $q.defer();
+                deferred.resolve('Remote call result');
+                return deferred.promise;
+            });;
+            $scope.redirectForm = { $invalid: false };
+
+            $scope.createRedirect();
+            expect(redirectService.createRedirect).toHaveBeenCalled();
+
+        }));
+    });
+
+    describe('add new redirect for given queue', function () {
+        var $scope, controller, redirectService;
+
+        beforeEach(function () {
+            $scope = {};
+            redirectService = { createRedirect: function () { } };
+            controller = $controller('editRedirectController', {
+                $scope: $scope,
+                $uibModalInstance: null,
+                redirectService: redirectService,
+                toastService: null,
+                serviceControlService: null,
+                notifyService: function () { return { subscribe: function () { } } },
+                endpointService: null,
+                data: {
+                    success: '',
+                    error: '',
+                    saveButtonText: '',
+                    title: '',
+                    queueAddress: 'sourceQueue'
+                }
+            });
+        });
+
+        it('initiate from with queue address and to queue with empty string', function () {
+            expect($scope.from_physical_address).toEqual('sourceQueue');
             expect($scope.to_physical_address).toEqual('');
         });
 
