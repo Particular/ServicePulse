@@ -16,13 +16,12 @@
                                    'danger': eventLogItem.severity === 'error',
                                    'fa-heart': eventLogItem.category === 'Endpoints' || eventLogItem.category === 'EndpointControl' || eventLogItem.category === 'HeartbeatMonitoring',
                                    'fa-check': eventLogItem.category === 'CustomChecks',
-                                   'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability'}"></i>
+                                   'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability',
+                                   'fa-cog': eventLogItem.category === 'MessageRedirects'
+                                       }"></i>
 
                                     <i ng-show="eventLogItem.severity === 'error'" class="fa fa-times fa-o fa-stack-1x fa-inverse"></i>
                                 </span>
-
-
-                                
                             </div>
                             <div class="col-xs-8 col-sm-9">
                                 <div class="row box-header">
