@@ -82,7 +82,7 @@
         };
 
         vm.togglePanel = function (message, panelnum) {
-            if (angular.isDefined(message.messageBody)) {
+            if (!angular.isDefined(message.messageBody)) {
                 serviceControlService.getMessageBody(message.message_id).then(function (msg) {
                     message.messageBody = msg.data;
                 }, function () {
@@ -90,7 +90,7 @@
                 });
             }
 
-            if (angular.isDefined(message.messageHeaders)) {
+            if (!angular.isDefined(message.messageHeaders)) {
                 serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
                     message.messageHeaders = msg.data[0].headers;
                 }, function () {
