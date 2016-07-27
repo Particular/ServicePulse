@@ -47,7 +47,7 @@
                         <input isolate-click type="checkbox" id="onoffswitchAll" name="onoffswitchAll" ng-model="vm.allSelected" ng-change="vm.toggleSelectAll()">
                     </div>
                     <div class="col-md-11 col-sm-11">
-                        <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length | number}} selected</button>
+                        <button type="button" class="btn btn-default" confirm-message="Are you sure you want to retry all selected retried messages? This will create a duplicate message." confirm-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> Retry {{vm.selectedIds.length | number}} selected</button>
                         <button type="button" class="btn btn-default" confirm-message="Are you sure you want to archive all selected retried messages? If you do they will not be available for Retry." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length | number}} selected</button>
                         <button type="button" class="btn btn-default" confirm-message="Are you sure you want to mark as resolved all selected retried messages? If you do they will not be available for Retry." confirm-click="vm.markAsResolvedSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-check-square-o"></i> Mark as resolved {{vm.selectedIds.length | number}} selected</button>
                         <button type="button" class="btn btn-default dropdown-toggle pull-right" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
