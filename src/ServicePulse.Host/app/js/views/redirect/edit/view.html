@@ -9,15 +9,14 @@
                 <label for="sourceQueue">From physical address</label>
                 <i class="fa fa-info-circle" uib-tooltip="Choose a queue that is known to Service Control"></i>
                 <div ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid && (redirectForm.sourceQueue.$dirty || submitted), 'has-success': redirectForm.sourceQueue.$valid }">
-                    <input type="text" id="sourceQueue" name="sourceQueue" ng-model="from_physical_address" ng-disabled="message_redirect_id != undefined" placeholder="Source Queue Name" 
-                       uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue" typeahead-editable="false" autocomplete="off"
-                       typeahead-loading="loadingSourceQueues" typeahead-no-results="noSourceQueues" class="form-control" required>
-                    <i ng-show="loadingSourceQueues" class="glyphicon glyphicon-refresh"></i>
-                    <div ng-show="noSourceQueues" ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid }">
-                        <p class="control-label">
-                            No matching queues found. You can only use a source queue that is known to Service Control.
-                        </p>
-                    </div>
+                    <ui-select name="sourceQueue" id="sourceQueue" ng-model="physicalAddress.selected" theme="bootstrap" ng-disabled="message_redirect_id != undefined">
+	                    <ui-select-match>
+	                        <span ng-bind="$select.selected.physical_address"></span>
+	                    </ui-select-match>
+	                    <ui-select-choices repeat="item in endpoints | filter: $select.search">
+	                        <span ng-bind-html="item.physical_address | highlight: $select.search"></span>
+	                    </ui-select-choices>
+	                </ui-select>
                 </div>
             </div>
             <div class="row"></div>

@@ -15,12 +15,13 @@
         var notifier = notifyService();
 
         $scope.loadingData = false;
+        $scope.physicalAddress = {};
         if (data.redirect && data.redirect.message_redirect_id) {
-            $scope.from_physical_address = data.redirect.from_physical_address;
+            $scope.physicalAddress.selected = { physical_address: data.redirect.from_physical_address };
             $scope.to_physical_address = data.redirect.to_physical_address;
             $scope.message_redirect_id = data.redirect.message_redirect_id;
         } else {
-            $scope.from_physical_address = data.queueAddress;
+            $scope.physicalAddress.selected = { physical_address: data.queueAddress };
             $scope.to_physical_address = '';
         }
         $scope.success = data.success;
@@ -38,17 +39,21 @@
             $uibModalInstance.dismiss('cancel');
         }
 
+        function isFormInvalid() {
+            return $scope.redirectForm.$invalid || !$scope.physicalAddress.selected.physical_address;
+        }
+
         $scope.createRedirect = function() {
-            if ($scope.redirectForm.$invalid) {
+            if (isFormInvalid()) {
                 $scope.submitted = true;
                 return;
             }
 
             if ($scope.message_redirect_id) {
-                redirectService.updateRedirect($scope.message_redirect_id, $scope.from_physical_address, $scope.to_physical_address, $scope.success, $scope.failure).then(function(response) {
+                redirectService.updateRedirect($scope.message_redirect_id, $scope.physicalAddress.selected.physical_address, $scope.to_physical_address, $scope.success, $scope.failure).then(function (response) {
                     toastService.showInfo(response.message);
                     if ($scope.immediatelyRetry) {
-                        serviceControlService.retryPendingMessagesForQueue($scope.from_physical_address);
+                        serviceControlService.retryPendingMessagesForQueue($scope.physicalAddress.selected.physical_address);
                     }
 
                     $uibModalInstance.close();
@@ -60,10 +65,10 @@
                     }
                 });
             } else {
-                redirectService.createRedirect($scope.from_physical_address, $scope.to_physical_address, $scope.success, $scope.failure).then(function(response) {
+                redirectService.createRedirect($scope.physicalAddress.selected.physical_address, $scope.to_physical_address, $scope.success, $scope.failure).then(function (response) {
                     toastService.showInfo(response.message);
                     if ($scope.immediatelyRetry) {
-                        serviceControlService.retryPendingMessagesForQueue($scope.from_physical_address);
+                        serviceControlService.retryPendingMessagesForQueue($scope.physicalAddress.selected.physical_address);
                     }
 
                     $uibModalInstance.close();
@@ -71,7 +76,7 @@
                     if ((response.status === '409' || response.status === 409) && response.statusText === 'Duplicate') {
                         toastService.showError('Failed to create a redirect, can not create more than one redirect for queue: ' + $scope.from_physical_address);
                     } else if ((response.status === '409' || response.status === 409) && response.statusText === 'Dependents') {
-                        toastService.showError('Failed to update a redirect, can not create redirect to a queue that already has a redirect or is a target of a redirect.');
+                        toastService.showError('Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.');
                     } else {
                         toastService.showError(response.message);
                     }

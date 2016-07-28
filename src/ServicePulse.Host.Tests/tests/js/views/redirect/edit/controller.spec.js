@@ -32,7 +32,7 @@
         });
 
         it('initiate from and to queue with empty string', function () {
-            expect($scope.from_physical_address).toEqual('' || undefined);
+            expect($scope.physicalAddress.selected.physical_address).toEqual('' || undefined);
             expect($scope.to_physical_address).toEqual('');
         });
 
@@ -41,7 +41,8 @@
                 var deferred = $q.defer();
                 deferred.resolve('Remote call result');
                 return deferred.promise;
-            });;
+            });
+            $scope.physicalAddress.selected.physical_address = 'a';
             $scope.redirectForm = { $invalid: false };
 
             $scope.createRedirect();
@@ -75,7 +76,7 @@
         });
 
         it('initiate from with queue address and to queue with empty string', function () {
-            expect($scope.from_physical_address).toEqual('sourceQueue');
+            expect($scope.physicalAddress.selected.physical_address).toEqual('sourceQueue');
             expect($scope.to_physical_address).toEqual('');
         });
 
@@ -84,7 +85,8 @@
                 var deferred = $q.defer();
                 deferred.resolve('Remote call result');
                 return deferred.promise;
-            });;
+            });
+            $scope.physicalAddress.selected.physical_address = "a";
             $scope.redirectForm = { $invalid: false };
 
             $scope.createRedirect();
@@ -122,7 +124,7 @@
         });
 
         it('initiate from and to queue with provided data', function () {
-            expect($scope.from_physical_address).toEqual('from_physical_address');
+            expect($scope.physicalAddress.selected.physical_address).toEqual('from_physical_address');
             expect($scope.to_physical_address).toEqual('to_physical_address');
             expect($scope.message_redirect_id).toEqual('messageId');
         });
@@ -132,7 +134,8 @@
                 var deferred = $q.defer();
                 deferred.resolve('Remote call result');
                 return deferred.promise;
-            });;
+            });
+            $scope.physicalAddress.selected.physical_address = "a";
             $scope.redirectForm = { $invalid: false };
 
             $scope.createRedirect();
