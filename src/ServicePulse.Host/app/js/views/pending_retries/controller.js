@@ -14,7 +14,8 @@
         notifyService,
         serviceControlService,
         endpointsService, 
-        redirectService) {
+        redirectService,
+        pendingRetryService) {
 
         var vm = this;
 
@@ -36,6 +37,10 @@
         };
 
         notifier.subscribe($scope, function (event, data) {
+            if (vm.total > data) {
+                removeResolvedMessages();
+            }
+
             if (vm.total !== data) {
                 vm.total = data;
                 vm.loadMoreResults();
@@ -54,6 +59,12 @@
         var setSortButtonText = function (sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure");
             vm.sortDirection = direction;
+        }
+
+        function removeResolvedMessages() {
+            vm.pendingRetryMessages = vm.pendingRetryMessages.filter(function (item) {
+                return !item.resolved;
+            });
         }
 
         function refreshRedirects() {
@@ -160,7 +171,7 @@
         };
 
         vm.retrySelected = function () {
-            serviceControlService.retryFailedMessages(vm.selectedIds);
+            pendingRetryService.retryPendingRetriedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
             vm.pendingRetryMessages.filter(function (item) {
@@ -172,7 +183,7 @@
         };
 
         vm.markAsResolvedSelected = function () {
-            serviceControlService.markAsResolvedMessages(vm.selectedIds);
+            pendingRetryService.markAsResolvedMessages(vm.selectedIds);
             vm.selectedIds = [];
 
             vm.pendingRetryMessages.filter(function (item) {
@@ -180,18 +191,6 @@
             }).forEach(function (item) {
                 item.selected = false;
                 item.resolved = true;
-            });
-        };
-
-        vm.archiveSelected = function () {
-            serviceControlService.archiveFailedMessages(vm.selectedIds);
-            vm.selectedIds = [];
-
-            vm.pendingRetryMessages.filter(function (item) {
-                return item.selected;
-            }).forEach(function (item) {
-                item.selected = false;
-                item.archived = true;
             });
         };
 
@@ -284,7 +283,7 @@
 
             vm.loadingData = true;
 
-            serviceControlService.getPendingRetryMessages(vm.filter.searchPhrase || '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function (response) {
+            pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase || '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function (response) {
                 processLoadedMessages(response.data);
             });
         };
@@ -304,7 +303,8 @@
         "notifyService",
         "serviceControlService",
         "endpointsService",
-        "redirectService"
+        "redirectService",
+        "pendingRetryService"
     ];
 
     angular.module("sc")

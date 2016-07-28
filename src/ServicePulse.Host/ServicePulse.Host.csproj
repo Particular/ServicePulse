@@ -108,6 +108,7 @@
     <Content Include="app\js\services\factory.listener.js" />
     <Content Include="app\js\services\factory.notifier.js" />
     <Content Include="app\js\services\service.toast.js" />
+    <Content Include="app\js\views\pending_retries\service.js" />
     <Content Include="app\js\views\redirect\controller.js" />
     <Content Include="app\js\views\redirect\edit\controller.js" />
     <Content Include="app\js\views\redirect\edit\service.js" />

@@ -8,11 +8,11 @@
     }));
 
     describe('mark rows as retried', function () {
-        var $scope, controller, serviceControlService;
+        var $scope, controller, pendingRetryService;
 
         beforeEach(function () {
             $scope = {};
-            serviceControlService = { retryFailedMessages: function() {} };
+            pendingRetryService = { retryPendingRetriedMessages: function () { } };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
@@ -22,12 +22,12 @@
                 endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function() {return {subscribe: function() {} } },
-                serviceControlService: serviceControlService
+                pendingRetryService: pendingRetryService
             });
         });
 
         it('two out of three marked as retried', inject(function ($q) {
-            spyOn(serviceControlService, 'retryFailedMessages').and.callFake(function () {
+            spyOn(pendingRetryService, 'retryPendingRetriedMessages').and.callFake(function () {
                 var deferred = $q.defer();
                 deferred.resolve('Remote call result');
                 return deferred.promise;
@@ -44,57 +44,16 @@
             expect(controller.pendingRetryMessages[0].selected).toEqual(false);
             expect(controller.pendingRetryMessages[1].selected).toEqual(false);
             expect(controller.pendingRetryMessages[2].selected).toEqual(false);
-            expect(serviceControlService.retryFailedMessages).toHaveBeenCalled();
-        }));
-    });
-
-    describe('mark rows as archived', function () {
-        var $scope, controller, serviceControlService;
-
-        beforeEach(function () {
-            $scope = {};
-            serviceControlService = { archiveFailedMessages: function () { } };
-            controller = $controller('pendingRetriesController', {
-                $scope: $scope,
-                $timeout: null,
-                $location: null,
-                scConfig: null,
-                toastService: null,
-                endpointService: null,
-                sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
-                notifyService: function () { return { subscribe: function () { } } },
-                serviceControlService: serviceControlService
-            });
-        });
-
-        it('two out of three marked as archived', inject(function ($q) {
-            spyOn(serviceControlService, 'archiveFailedMessages').and.callFake(function () {
-                var deferred = $q.defer();
-                deferred.resolve('Remote call result');
-                return deferred.promise;
-            });
-
-            controller.pendingRetryMessages = [{ id: 1, archived: false, selected: true }, { id: 2, archived: false, selected: false }, { id: 3, archived: false, selected: true }];
-            controller.selectedIds = [1, 3];
-            controller.archiveSelected();
-
-            expect(controller.selectedIds.length).toEqual(0);
-            expect(controller.pendingRetryMessages[0].archived).toEqual(true);
-            expect(controller.pendingRetryMessages[1].archived).toEqual(false);
-            expect(controller.pendingRetryMessages[2].archived).toEqual(true);
-            expect(controller.pendingRetryMessages[0].selected).toEqual(false);
-            expect(controller.pendingRetryMessages[1].selected).toEqual(false);
-            expect(controller.pendingRetryMessages[2].selected).toEqual(false);
-            expect(serviceControlService.archiveFailedMessages).toHaveBeenCalled();
+            expect(pendingRetryService.retryPendingRetriedMessages).toHaveBeenCalled();
         }));
     });
 
     describe('mark rows as resolved', function () {
-        var $scope, controller, serviceControlService;
+        var $scope, controller, pendingRetryService;
 
         beforeEach(function () {
             $scope = {};
-            serviceControlService = { markAsResolvedMessages: function () { } };
+            pendingRetryService = { markAsResolvedMessages: function () { } };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
@@ -104,12 +63,12 @@
                 endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function () { return { subscribe: function () { } } },
-                serviceControlService: serviceControlService
+                pendingRetryService: pendingRetryService
             });
         });
 
         it('two out of three marked as resolved', inject(function ($q) {
-            spyOn(serviceControlService, 'markAsResolvedMessages').and.callFake(function () {
+            spyOn(pendingRetryService, 'markAsResolvedMessages').and.callFake(function () {
                 var deferred = $q.defer();
                 deferred.resolve('Remote call result');
                 return deferred.promise;
@@ -126,7 +85,7 @@
             expect(controller.pendingRetryMessages[0].selected).toEqual(false);
             expect(controller.pendingRetryMessages[1].selected).toEqual(false);
             expect(controller.pendingRetryMessages[2].selected).toEqual(false);
-            expect(serviceControlService.markAsResolvedMessages).toHaveBeenCalled();
+            expect(pendingRetryService.markAsResolvedMessages).toHaveBeenCalled();
         }));
     });
 
