@@ -132,6 +132,8 @@
     <Content Include="app\js\views\pending_retries\view.html" />
     <Content Include="app\layout\footer.html" />
     <Content Include="app\layout\navbar.html" />
+    <Content Include="app\lib\angular-ui-select\select.css" />
+    <Content Include="app\lib\angular-ui-select\select.js" />
     <Content Include="app\lib\angular\angular-momentjs.js" />
     <Content Include="app\lib\angular\angular-momentjs.min.js" />
     <Content Include="app\lib\angular\ng-page-title.js" />

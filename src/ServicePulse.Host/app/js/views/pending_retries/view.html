@@ -15,13 +15,15 @@
                         <div class="col-md-8 col-sm-7 col-xs-12">
                             <div class="input-group">
                                 <div class="input-group-addon"><i class="fa fa-filter" aria-hidden="true"></i></div>
-                                <input type="text" class="form-control filter-messages" ng-model="vm.filter.searchPhrase" placeholder="Filter by queue name(s)" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in vm.endpoints | filter:$viewValue" typeahead-loading="loadingLocations" typeahead-no-results="noResults"
-                                       typeahead-editable="false" typeahead-on-select="vm.onSelect()" autocomplete="off">
-                            </div>
-                            <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
-                            <div ng-show="noResults">
-                                No Results Found
-                            </div>
+                                <ui-select ng-model="vm.filter.searchPhrase" theme="bootstrap">
+		                            <ui-select-match>
+		                                <span ng-bind="$select.selected.physical_address"></span>
+		                            </ui-select-match>
+		                            <ui-select-choices repeat="item in vm.endpoints | filter: $select.search">
+		                                <span ng-bind-html="item.physical_address | highlight: $select.search"></span>
+		                            </ui-select-choices>
+		                        </ui-select>
+                            </div>                           
                         </div>
                         <div class="col-md-4 col-sm-5 col-xs-12">
                              <div class="sp-pull-right">

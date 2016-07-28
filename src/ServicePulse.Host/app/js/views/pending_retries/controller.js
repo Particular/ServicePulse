@@ -1,4 +1,5 @@
-﻿;
+﻿/// <reference path="service.js" />
+;
 (function(window, angular, undefined) {
     "use strict";
 
@@ -105,7 +106,7 @@
             vm.selectedIds = [];
             vm.page = 1;
             vm.filter = {
-                searchPhrase: ''
+                searchPhrase: undefined
             };
             vm.filter.start = $moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
             vm.filter.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
@@ -195,15 +196,13 @@
         };
 
         vm.searchPhraseChanged = function() {
-            if (!vm.filter.searchPhrase) {
-                vm.pendingRetryMessages = [];
-                vm.page = 1;
-                vm.loadMoreResults();
-            }
+            vm.pendingRetryMessages = [];
+            vm.page = 1;
+            vm.loadMoreResults();
         };
 
         vm.clearSearchPhrase = function() {
-            vm.filter.searchPhrase = '';
+            vm.filter.searchPhrase = undefined;
         }
 
         vm.onSelect = function() {
@@ -283,7 +282,7 @@
 
             vm.loadingData = true;
 
-            pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase || '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function (response) {
+            pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function (response) {
                 processLoadedMessages(response.data);
             });
         };
