@@ -45,6 +45,12 @@
             });
         }, 10000);
 
+        var messageFailuresUpdatedTimer = $interval(function () {
+            serviceControlService.getTotalFailedMessages().then(function (response) {
+                notifier.notify('MessageFailuresUpdated', response || 0);
+            });
+        }, 10000);
+
         // Cancel interval on page changes
         $scope.$on('$destroy', function() {
             if (angular.isDefined(exceptionGroupCountUpdatedTimer)) {
@@ -58,6 +64,10 @@
             if (angular.isDefined(pendingRetriesUpdatedTimer)) {
                 $interval.cancel(pendingRetriesUpdatedTimer);
                 pendingRetriesUpdatedTimer = undefined;
+            }
+            if (angular.isDefined(messageFailuresUpdatedTimer)) {
+                $interval.cancel(messageFailuresUpdatedTimer);
+                messageFailuresUpdatedTimer = undefined;
             }
         });
 

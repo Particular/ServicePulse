@@ -35,17 +35,24 @@
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.page = 1;
+        vm.total = vm.stats.number_of_failed_messages;
 
         notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_failed_messages = data;
+            if (vm.total > data) {
+                removeRetriedAndArchivedMessages();
+            }
+
+            vm.total = data;
         }, 'MessageFailuresUpdated');
-
-        notifier.subscribe($scope, function (event, data) {
-            vm.stats.number_of_archived_messages = data;
-        }, 'ArchivedMessagesUpdated');
 
         var setSortButtonText = function (sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
+        }
+
+        function removeRetriedAndArchivedMessages() {
+            vm.failedMessages = vm.failedMessages.filter(function(item) {
+                return !item.archived && !item.retried;
+            });
         }
 
         var processLoadedMessages = function (data) {
