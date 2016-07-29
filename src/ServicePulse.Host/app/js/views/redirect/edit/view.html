@@ -7,41 +7,43 @@
         <form class="col-sm-12" name="redirectForm" novalidate>
             <div class="form-group">
                 <label for="sourceQueue">From physical address</label>
-                <i class="fa fa-info-circle" uib-tooltip="Choose a queue that is know to Service Control"></i>
-            </div>
-            <div class="form-group"  ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid && (redirectForm.sourceQueue.$dirty || submitted), 'has-success': redirectForm.sourceQueue.$valid }">
-                <input type="text" id="sourceQueue" name="sourceQueue" ng-model="from_physical_address" ng-disabled="message_redirect_id != undefined" placeholder="Source Queue Name" 
+                <i class="fa fa-info-circle" uib-tooltip="Choose a queue that is known to Service Control"></i>
+                <div ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid && (redirectForm.sourceQueue.$dirty || submitted), 'has-success': redirectForm.sourceQueue.$valid }">
+                    <input type="text" id="sourceQueue" name="sourceQueue" ng-model="from_physical_address" ng-disabled="message_redirect_id != undefined" placeholder="Source Queue Name" 
                        uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue" typeahead-editable="false" autocomplete="off"
                        typeahead-loading="loadingSourceQueues" typeahead-no-results="noSourceQueues" class="form-control" required>
-                <i ng-show="loadingSourceQueues" class="glyphicon glyphicon-refresh"></i>
-                <div ng-show="noSourceQueues" ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid }">
-                    <p class="control-label">
-                        No matching queues found. You can only use a source queue that is known to Service Control.
-                    </p>
+                    <i ng-show="loadingSourceQueues" class="glyphicon glyphicon-refresh"></i>
+                    <div ng-show="noSourceQueues" ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid }">
+                        <p class="control-label">
+                            No matching queues found. You can only use a source queue that is known to Service Control.
+                        </p>
+                    </div>
                 </div>
             </div>
             <div class="row"></div>
             <div class="form-group">
                 <label for="targetQueue">To physical address</label>
-                <i class="fa fa-info-circle" uib-tooltip="Choose a queue that is know to Service Control or provide a custom queue"></i>
-            </div>
-            <div class="form-group" ng-class="{ 'has-error': redirectForm.targetQueue.$invalid && (redirectForm.targetQueue.$dirty || submitted), 'has-success': redirectForm.targetQueue.$valid }">
-                <input type="text" id="targetQueue" name="targetQueue" ng-model="to_physical_address" placeholder="Target Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue"
+                <i class="fa fa-info-circle" uib-tooltip="Choose a queue that is known to Service Control or provide a custom queue"></i>
+            
+                <div ng-class="{ 'has-error': redirectForm.targetQueue.$invalid && (redirectForm.targetQueue.$dirty || submitted), 'has-success': redirectForm.targetQueue.$valid }">
+                    <input type="text" id="targetQueue" name="targetQueue" ng-model="to_physical_address" placeholder="Target Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue"
                        typeahead-loading="loadingTargetQueues" typeahead-no-results="noTargetQueues" class="form-control" autocomplete="off" required>
-                <i ng-show="loadingTargetQueues" class="glyphicon glyphicon-refresh"></i>
-                <div ng-show="noTargetQueues" ng-class="{ 'has-error': noTargetQueues }">
-                    <p class="control-label">
-                        No matching queues found. You can provide custom name, but if you didn't provide valid address the redirected message will be lost.
-                    </p>
+                    <i ng-show="loadingTargetQueues" class="glyphicon glyphicon-refresh"></i>
+                    <div ng-show="noTargetQueues" ng-class="{ 'has-error': noTargetQueues }">
+                        <p class="control-label">
+                            No known queues found. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.
+                        </p>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
-                <input type="checkbox" ng-model="immediatelyRetry" id="immediatelyRetry"/><label for="immediatelyRetry">Immediately retry any matching failed messages</label>
+                <input type="checkbox" ng-model="immediatelyRetry" class="check-label" id="immediatelyRetry"/><label for="immediatelyRetry">Immediately retry any matching failed messages</label>
             </div>
 
-            <button type="submit" class="btn btn-primary" ng-click="createRedirect()">{{saveButtonText}}</button>
-            <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" ng-click="createRedirect()">{{saveButtonText}}</button>
+                <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+            </div>
         </form>
     </div>
 </div>

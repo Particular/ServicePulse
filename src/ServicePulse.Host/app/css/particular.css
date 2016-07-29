@@ -484,17 +484,125 @@ span.metadata {
     padding-right: 0;
 }
 
+.btn-toolbar {
+    padding: 12px 0 0;
+}
+
 div.btn-toolbar, div.form-inline { margin-bottom: 12px; }
 
-.btn-toolbar button, .btn-toolbar input { margin: 12px 0 0; }
-
 .btn-toolbar button:last-child { margin-top: 0 !important; }
+
+.action-toolbar {
+    margin-top: 12px;
+}
+
+.control-label {
+    float: left;
+    padding-top: 6px;
+}
+
+.btn-toolbar .btn, .btn-toolbar .btn-group, .btn-toolbar .input-group {
+    float:none;
+}
+
+.row.filter-toolbar, .row.action-toolbar {
+    margin-left: -10px;
+    margin-right: -14px;
+}
+
+.filter-toolbar input:before {
+    font-family: 'FontAwesome';
+    width: 20px;
+    content: "\f0b0";
+}
+
+.filter-messages {
+    display: inline-block;
+}
+
+
+.control-label {
+    font-weight: normal;
+    margin-right: 6px;
+}
+
+.sp-btn-menu {
+    background: none;
+    border: none;
+    color: #00a3c4;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.sp-btn-menu:hover {
+    background: none;
+    border: none;
+    color: #00a3c4;
+    text-decoration: underline;
+}
+
+.dropdown-menu {
+    left: initial;
+}
+
+.btn.sp-btn-menu:active, .btn-default.sp-btn-menu:active, .btn-default.sp-btn-menu.active, .open > .dropdown-toggle.btn-default.sp-btn-menu {
+    background: none;
+    border: none;
+    color: #00a3c4;
+    text-decoration: underline;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.btn-default.sp-btn-menu:focus, .btn-default.focus.sp-btn-menu {
+    background: none;
+    border: none;
+    color: #00a3c4;
+    text-decoration: underline;
+}
+
+.sp-btn-menu > i {
+    color: #00a3c4;
+}
+
+.sp-pull-right {
+    float: right;
+}
+
+.sp-pull-right > .dropdown-menu {
+    right: 14px;
+}
+
+input.check {
+    margin: 11px 14px 0 0;
+    float: left;
+}
+
+input.check-label {
+    margin: 4px 6px 0 0;
+    float: left;
+}
+
+.modal-footer {
+    padding-right: 0;
+}
+
+button.btn.btn-default {
+    margin-left: 5px;
+}
 
 .fa-o {
     bottom: -0.5em;
     color: #CE4844;
     left: 1.2em;
     position: relative;
+}
+
+.msg-status {
+    position: relative;
+    display: inline-block;
+    top: -1px;
+    margin-right: 18px;
 }
 
 .badge.badge-important {
@@ -663,6 +771,16 @@ nav {
     padding-right: 15px;
 }
 
+.row.box.ng-scope {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.msg-row {
+    padding-left: 0;
+    padding-right: 0;
+}
+
 
 @media only screen and (max-width: 1200px) {
 }
@@ -673,6 +791,16 @@ nav {
 
 
 @media only screen and (max-width: 768px) {
+    div.sp-pull-right {
+        display: inline-block;
+        float: none;
+        margin-top: 4px;
+    }
+
+    button.btn.btn-default {
+        margin-left: 0;
+        margin-right: 6px;
+    }
 }
 
 
@@ -682,7 +810,25 @@ nav {
     .btn-toolbar .btn, .btn-toolbar .btn-group, .btn-toolbar .input-group { float: left !important; }
 
     button.btn.btn-default.ng-binding.ng-isolate-scope { margin-right: 4px !important; }
+
+    div.btn-toolbar, div.form-inliner {
+        margin-bottom: 12px;
+    }
+
+    .filter-toolbar, .action-toolbar {
+        margin-top: 2px;
+    }
+
+    div.sp-pull-right {
+        display: inline-block;
+        float: none;
+        margin-top: 4px;
+    }
+
 }
 
 @media only screen and (max-width: 320px) {
+    div.btn-toolbar, div.form-inliner {
+        margin-bottom: 0px;
+    }
 }
