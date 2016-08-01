@@ -583,10 +583,6 @@ input.check-label {
     float: left;
 }
 
-.modal-footer {
-    padding-right: 0;
-}
-
 button.btn.btn-default {
     margin-left: 5px;
 }
@@ -779,6 +775,10 @@ nav {
 .msg-row {
     padding-left: 0;
     padding-right: 0;
+}
+
+.modal-open {
+    overflow-y: scroll;
 }
 
 
