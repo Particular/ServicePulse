@@ -29,9 +29,9 @@
         vm.allSelected = false;
 
         vm.timeGroup = {
-            amount: 2,
-            unit: 'hours',
-            buttonText: 'Retried in the last 2 Hours',
+            amount: undefined,
+            unit: undefined,
+            buttonText: 'All Pending Retries',
             selected: function () {
                 return $moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
             }
@@ -44,6 +44,7 @@
 
             if (vm.total !== data) {
                 vm.total = data;
+                vm.loadTotalBasedOnFilters();
                 vm.loadMoreResults();
             } 
         }, 'PendingRetriesTotalUpdated');
@@ -108,9 +109,9 @@
             vm.filter = {
                 searchPhrase: undefined
             };
-            vm.filter.start = $moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
-            vm.filter.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+            vm.filter.start = vm.filter.end = undefined;
             vm.total = sharedDataService.getstats().number_of_pending_retries;
+            vm.filteredTotal = vm.total;
             vm.sort = "time_of_failure";
             vm.direction = "asc";
             setSortButtonText(vm.sort, vm.direction);
@@ -198,6 +199,7 @@
         vm.searchPhraseChanged = function() {
             vm.pendingRetryMessages = [];
             vm.page = 1;
+            vm.loadTotalBasedOnFilters();
             vm.loadMoreResults();
         };
 
@@ -237,6 +239,7 @@
             vm.allMessagesLoaded = false;
             vm.page = 1;
 
+            vm.loadTotalBasedOnFilters();
             vm.loadMoreResults(sort, direction);
         };
 
@@ -271,6 +274,12 @@
                 vm.filter.start = vm.filter.end = undefined;
             }
             selectGroupInternal();
+        }
+
+        vm.loadTotalBasedOnFilters = function() {
+            pendingRetryService.getTotalPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function (response) {
+                vm.filteredTotal = response.total;
+            });
         }
 
         vm.loadMoreResults = function() {

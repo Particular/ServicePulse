@@ -531,10 +531,6 @@ div.btn-toolbar, div.form-inline { margin-bottom: 12px; }
     padding-top: 6px;
 }
 
-.btn-toolbar .btn, .btn-toolbar .btn-group, .btn-toolbar .input-group {
-    float:none;
-}
-
 .row.filter-toolbar, .row.action-toolbar {
     margin-left: -10px;
     margin-right: -14px;

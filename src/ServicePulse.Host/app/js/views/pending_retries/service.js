@@ -24,6 +24,24 @@
             });
         }
 
+        function getTotalPendingRetryMessages(searchPhrase, start, end) {
+            var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued');
+
+            if (start && end) {
+                url = url + '&modified=' + start + '...' + end;
+            }
+
+            if (searchPhrase.length > 0) {
+                url = url + '&queueaddress=' + searchPhrase;
+            }
+
+            return $http.head(url).then(function (response) {
+                return {
+                    total: response.headers('Total-Count')
+                };
+            });
+        }
+
         function retryPendingRetriedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry');
             $http.post(url, selectedMessages)
@@ -52,6 +70,7 @@
         }
 
         return {
+            getTotalPendingRetryMessages: getTotalPendingRetryMessages,
             getPendingRetryMessages: getPendingRetryMessages,
             markAsResolvedMessages: markAsResolvedMessages,
             retryPendingRetriedMessages: retryPendingRetriedMessages
