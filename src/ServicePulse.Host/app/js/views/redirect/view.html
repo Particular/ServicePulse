@@ -16,7 +16,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
-                    <button type="button" class="btn btn-default" ng-click="vm.createRedirect()"><i class="fa fa-arrows"></i> Create Redirect</button>
+                    <button type="button" class="btn btn-default" ng-click="vm.createRedirect()"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</button>
                     <span></span>
                 </div>
             </div>
@@ -31,11 +31,11 @@
                     <div class="row" id ="{{redirect.from_physical_address}}">
                         <div class="col-sm-12">
                             <p class="lead hard-wrap">
-                                <i class="fa fa-map-marker" uib-tooltip="Source queue name"></i>
+                                <i class="fa pa-redirect-source pa-redirect-small" uib-tooltip="Source queue name"></i>
                                 {{redirect.from_physical_address}}
                             </p>
                             <p class="lead hard-wrap">
-                                <i class="fa fa-arrows" uib-tooltip="Destination queue name"></i>
+                                <i class="fa pa-redirect-destination pa-redirect-small" uib-tooltip="Destination queue name"></i>
                                 {{redirect.to_physical_address}}
                             </p>
                             <p class="metadata">

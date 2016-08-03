@@ -224,6 +224,36 @@ footer a:hover { font-weight: normal; }
     height: 65px;
 }
 
+.pa-endpoint {
+    background-image: url('../img/endpoint.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 13px;
+}
+
+.pa-redirect-source {
+    background-image: url('../img/redirect-source.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.pa-redirect-small {
+    height: 12px;
+    width: 14px;
+}
+
+.pa-redirect-large {
+    height: 30px;
+    width: 35px;
+}
+
+.pa-redirect-destination {
+    background-image: url('../img/redirect-destination.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .wf-working {
     opacity: .5;
     position: relative;
@@ -587,9 +617,12 @@ button.btn.btn-default {
     margin-left: 5px;
 }
 
+.fa-error {
+    color: #CE4844;
+}
+
 .fa-o {
     bottom: -0.5em;
-    color: #CE4844;
     left: 1.2em;
     position: relative;
 }

@@ -85,6 +85,9 @@
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
     <Content Include="app\css\particular.css" />
+    <Content Include="app\img\endpoint.svg" />
+    <Content Include="app\img\redirect-destination.svg" />
+    <Content Include="app\img\redirect-source.svg" />
     <Content Include="app\js\app.http.js" />
     <Content Include="app\js\app.logging.js" />
     <Content Include="app\js\directives\ui.particular.confirmclick.tpl.html" />
