@@ -26,7 +26,6 @@
         vm.sortDirection = 'asc';
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
-        vm.allSelected = false;
 
         vm.timeGroup = {
             amount: undefined,
@@ -144,15 +143,7 @@
             return false;
         };
 
-        vm.toggleSelectAll = function () {
-            vm.pendingRetryMessages.filter(function (item) {
-                return item.selected !== vm.allSelected;
-            }).forEach(function (item) {
-                toggleSelect(item);
-            });
-        };
-
-        function toggleSelect(row) {
+        vm.toggleRowSelect = function (row) {
             if (row.retried || row.archived || row.resolved) {
                 return;
             }
@@ -164,35 +155,57 @@
             } else {
                 vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
             }
-        }
-
-        vm.toggleRowSelect = function (row) {
-            toggleSelect(row);
-
-            vm.allSelected = vm.selectedIds.length === vm.pendingRetryMessages.length;
         };
 
         vm.retrySelected = function () {
-            pendingRetryService.retryPendingRetriedMessages(vm.selectedIds);
-            vm.selectedIds = [];
+            pendingRetryService.retryPendingRetriedMessages(vm.selectedIds).then(function() {
+                vm.selectedIds = [];
 
-            vm.pendingRetryMessages.filter(function (item) {
-                return item.selected;
-            }).forEach(function (item) {
-                item.selected = false;
-                item.retried = true;
+                vm.pendingRetryMessages.filter(function(item) {
+                    return item.selected;
+                }).forEach(function(item) {
+                    item.selected = false;
+                    item.retried = true;
+                });
+            });
+        };
+
+        vm.retryAll = function () {
+            pendingRetryService.retryAllMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function() {
+                vm.selectedIds = [];
+
+                vm.pendingRetryMessages.filter(function () {
+                    return true;
+                }).forEach(function (item) {
+                    item.selected = false;
+                    item.retried = true;
+                });
+            });
+        };
+
+        vm.markAsResolvedAll = function () {
+            pendingRetryService.markAsResolvedAllMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function() {
+                vm.selectedIds = [];
+
+                vm.pendingRetryMessages.filter(function () {
+                    return true;
+                }).forEach(function (item) {
+                    item.selected = false;
+                    item.resolved = true;
+                });
             });
         };
 
         vm.markAsResolvedSelected = function () {
-            pendingRetryService.markAsResolvedMessages(vm.selectedIds);
-            vm.selectedIds = [];
+            pendingRetryService.markAsResolvedMessages(vm.selectedIds).then(function() {
+                vm.selectedIds = [];
 
-            vm.pendingRetryMessages.filter(function (item) {
-                return item.selected;
-            }).forEach(function (item) {
-                item.selected = false;
-                item.resolved = true;
+                vm.pendingRetryMessages.filter(function(item) {
+                    return item.selected;
+                }).forEach(function(item) {
+                    item.selected = false;
+                    item.resolved = true;
+                });
             });
         };
 

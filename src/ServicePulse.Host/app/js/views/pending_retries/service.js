@@ -42,9 +42,28 @@
             });
         }
 
+        function retryAllMessages(searchPhrase, start, end) {
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry', 'all');
+
+            return $http({
+                    url: url,
+                    data: {
+                        periodfrom: start,
+                        periodto: end,
+                        queueaddress: searchPhrase
+                    },
+                    method: 'POST'
+                }).success(function() {
+                    notifications.pushForCurrentRoute('Retrying all pending retried messages...', 'info');
+                })
+                .error(function() {
+                    notifications.pushForCurrentRoute('Retrying all pending messages failed', 'danger');
+                });
+        }
+
         function retryPendingRetriedMessages(selectedMessages) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry');
-            $http.post(url, selectedMessages)
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry', 'selected');
+            return $http.post(url, selectedMessages)
                 .success(function () {
                     notifications.pushForCurrentRoute('Retrying {{num}} pending retried messages...', 'info', { num: selectedMessages.length });
                 })
@@ -53,18 +72,37 @@
                 });
         }
 
-        function markAsResolvedMessages(selectedMessages) {
-            var url = uri.join(scConfig.service_control_url, 'errors', 'resolve');
+        function markAsResolvedAllMessages(searchPhrase, start, end) {
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve', 'all');
 
-            $http({
-                url: url,
-                data: selectedMessages,
-                method: 'PATCH'
-            })
-                .success(function () {
+            return $http({
+                    url: url,
+                    data: {
+                        periodfrom: start,
+                        periodto: end,
+                        queueaddress: searchPhrase
+                    },
+                    method: 'PATCH'
+                }).success(function() {
+                    notifications.pushForCurrentRoute('Resolving all pending retried messages...', 'info');
+                })
+                .error(function() {
+                    notifications.pushForCurrentRoute('Resolving all pending messages failed', 'danger');
+                });
+        }
+
+        function markAsResolvedMessages(selectedMessages) {
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve', 'selected');
+
+            return $http({
+                    url: url,
+                    data: selectedMessages,
+                    method: 'PATCH'
+                })
+                .success(function() {
                     notifications.pushForCurrentRoute('Resolving {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
-                .error(function () {
+                .error(function() {
                     notifications.pushForCurrentRoute('Resolving messages failed', 'danger');
                 });
         }
@@ -73,7 +111,9 @@
             getTotalPendingRetryMessages: getTotalPendingRetryMessages,
             getPendingRetryMessages: getPendingRetryMessages,
             markAsResolvedMessages: markAsResolvedMessages,
-            retryPendingRetriedMessages: retryPendingRetriedMessages
+            markAsResolvedAllMessages: markAsResolvedAllMessages,
+            retryPendingRetriedMessages: retryPendingRetriedMessages,
+            retryAllMessages: retryAllMessages
         };
     }
 

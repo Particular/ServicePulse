@@ -8,10 +8,15 @@
     }));
 
     describe('mark rows as retried', function () {
-        var $scope, controller, pendingRetryService;
+        var $scope, controller, pendingRetryService, root, $httpBackend;
 
-        beforeEach(function () {
+        beforeEach(inject(function ($rootScope, $injector) {
             $scope = {};
+            root = $rootScope;
+            $httpBackend = $injector.get('$httpBackend');
+            $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
+            $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
+
             pendingRetryService = { retryPendingRetriedMessages: function () { } };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
@@ -24,18 +29,19 @@
                 notifyService: function() {return {subscribe: function() {} } },
                 pendingRetryService: pendingRetryService
             });
-        });
+        }));
 
-        it('two out of three marked as retried', inject(function ($q) {
-            spyOn(pendingRetryService, 'retryPendingRetriedMessages').and.callFake(function () {
-                var deferred = $q.defer();
-                deferred.resolve('Remote call result');
+        it('two out of three marked as retried', inject(function($q) {
+            var deferred = $q.defer();
+            spyOn(pendingRetryService, 'retryPendingRetriedMessages').and.callFake(function() {
                 return deferred.promise;
             });
 
             controller.pendingRetryMessages = [{ id: 1, retried: false, selected: true }, { id: 2, retried: false, selected: false }, { id: 3, retried: false, selected: true }];
             controller.selectedIds = [1, 3];
             controller.retrySelected();
+            
+            root.$apply(function () { deferred.resolve('Remote call result') });
 
             expect(controller.selectedIds.length).toEqual(0);
             expect(controller.pendingRetryMessages[0].retried).toEqual(true);
@@ -48,11 +54,62 @@
         }));
     });
 
-    describe('mark rows as resolved', function () {
-        var $scope, controller, pendingRetryService;
+    describe('mark all rows as retried', function () {
+        var $scope, controller, pendingRetryService, root, $httpBackend;
 
-        beforeEach(function () {
+        beforeEach(inject(function ($rootScope, $injector) {
             $scope = {};
+            root = $rootScope;
+            $httpBackend = $injector.get('$httpBackend');
+            $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
+            $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
+
+            pendingRetryService = { retryPendingRetriedMessages: function () { } };
+            controller = $controller('pendingRetriesController', {
+                $scope: $scope,
+                $timeout: null,
+                $location: null,
+                scConfig: null,
+                toastService: null,
+                endpointService: null,
+                sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
+                notifyService: function () { return { subscribe: function () { } } },
+                pendingRetryService: pendingRetryService
+            });
+        }));
+
+        it('all messages marked as retried', inject(function ($q) {
+            var deferred = $q.defer();
+            spyOn(pendingRetryService, 'retryAllMessages').and.callFake(function () {
+                return deferred.promise;
+            });
+
+            controller.pendingRetryMessages = [{ id: 1, retried: false, selected: false }, { id: 2, retried: false, selected: true }, { id: 3, retried: false, selected: false }];
+            controller.selectedIds = [2];
+            controller.retryAll();
+
+            root.$apply(function () { deferred.resolve('Remote call result') });
+
+            expect(controller.selectedIds.length).toEqual(0);
+            expect(controller.pendingRetryMessages[0].retried).toEqual(true);
+            expect(controller.pendingRetryMessages[1].retried).toEqual(true);
+            expect(controller.pendingRetryMessages[2].retried).toEqual(true);
+            expect(controller.pendingRetryMessages[0].selected).toEqual(false);
+            expect(controller.pendingRetryMessages[1].selected).toEqual(false);
+            expect(controller.pendingRetryMessages[2].selected).toEqual(false);
+            expect(pendingRetryService.retryPendingRetriedMessages).toHaveBeenCalled();
+        }));
+    });
+
+    describe('mark rows as resolved', function () {
+        var $scope, controller, pendingRetryService, root, $httpBackend;
+
+        beforeEach(inject(function ($rootScope, $injector) {
+            $scope = {};
+            root = $rootScope;
+            $httpBackend = $injector.get('$httpBackend');
+            $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
+            $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
             pendingRetryService = { markAsResolvedMessages: function () { } };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
@@ -65,22 +122,67 @@
                 notifyService: function () { return { subscribe: function () { } } },
                 pendingRetryService: pendingRetryService
             });
-        });
+        }));
 
         it('two out of three marked as resolved', inject(function ($q) {
+            var deferred = $q.defer();
             spyOn(pendingRetryService, 'markAsResolvedMessages').and.callFake(function () {
-                var deferred = $q.defer();
-                deferred.resolve('Remote call result');
                 return deferred.promise;
             });
 
             controller.pendingRetryMessages = [{ id: 1, resolved: false, selected: true }, { id: 2, resolved: false, selected: false }, { id: 3, resolved: false, selected: true }];
             controller.selectedIds = [1, 3];
             controller.markAsResolvedSelected();
+            root.$apply(function () { deferred.resolve('Remote call result') });
 
             expect(controller.selectedIds.length).toEqual(0);
             expect(controller.pendingRetryMessages[0].resolved).toEqual(true);
             expect(controller.pendingRetryMessages[1].resolved).toEqual(false);
+            expect(controller.pendingRetryMessages[2].resolved).toEqual(true);
+            expect(controller.pendingRetryMessages[0].selected).toEqual(false);
+            expect(controller.pendingRetryMessages[1].selected).toEqual(false);
+            expect(controller.pendingRetryMessages[2].selected).toEqual(false);
+            expect(pendingRetryService.markAsResolvedMessages).toHaveBeenCalled();
+        }));
+    });
+
+    describe('mark all rows as resolved', function () {
+        var $scope, controller, pendingRetryService, root, $httpBackend;
+
+        beforeEach(inject(function ($rootScope, $injector) {
+            $scope = {};
+            root = $rootScope;
+            $httpBackend = $injector.get('$httpBackend');
+            $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
+            $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
+            pendingRetryService = { markAsResolvedMessages: function () { } };
+            controller = $controller('pendingRetriesController', {
+                $scope: $scope,
+                $timeout: null,
+                $location: null,
+                scConfig: null,
+                toastService: null,
+                endpointService: null,
+                sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
+                notifyService: function () { return { subscribe: function () { } } },
+                pendingRetryService: pendingRetryService
+            });
+        }));
+
+        it('all messages marked as resolved', inject(function ($q) {
+            var deferred = $q.defer();
+            spyOn(pendingRetryService, 'markAsResolvedAllMessages').and.callFake(function () {
+                return deferred.promise;
+            });
+
+            controller.pendingRetryMessages = [{ id: 1, resolved: false, selected: false }, { id: 2, resolved: false, selected: true }, { id: 3, resolved: false, selected: false }];
+            controller.selectedIds = [2];
+            controller.markAsResolvedAll();
+            root.$apply(function () { deferred.resolve('Remote call result') });
+
+            expect(controller.selectedIds.length).toEqual(0);
+            expect(controller.pendingRetryMessages[0].resolved).toEqual(true);
+            expect(controller.pendingRetryMessages[1].resolved).toEqual(true);
             expect(controller.pendingRetryMessages[2].resolved).toEqual(true);
             expect(controller.pendingRetryMessages[0].selected).toEqual(false);
             expect(controller.pendingRetryMessages[1].selected).toEqual(false);
@@ -161,81 +263,6 @@
 
             expect(controller.selectedIds.length).toEqual(0);
             expect(row.selected).toEqual(false);
-        }));
-
-        it('allSelected should be true when all rows are selected', inject(function ($q) {
-
-            var row = { resolved: false, retried: false, archived: false, selected: false, id: 1 };
-            controller.pendingRetryMessages = [row];
-
-            controller.toggleRowSelect(row);
-
-            expect(controller.selectedIds.length).toEqual(1);
-            expect(row.selected).toEqual(true);
-            expect(controller.allSelected).toEqual(true);
-        }));
-
-        it('allSelected should be false when not all rows are selected', inject(function ($q) {
-
-            var row = { resolved: false, retried: false, archived: false, selected: false, id: 1 };
-            controller.pendingRetryMessages = [row, { resolved: false, retried: false, archived: false, selected: false, id: 2 }];
-
-            controller.toggleRowSelect(row);
-
-            expect(controller.selectedIds.length).toEqual(1);
-            expect(row.selected).toEqual(true);
-            expect(controller.allSelected).toEqual(false);
-        }));
-    });
-
-    describe('toggle select all', function() {
-        var $scope, controller;
-
-        beforeEach(function() {
-            $scope = {};
-
-            controller = $controller('pendingRetriesController', {
-                $scope: $scope,
-                $timeout: null,
-                $location: null,
-                scConfig: null,
-                toastService: null,
-                endpointService: null,
-                sharedDataService: { getstats: function() { return { number_of_pending_retries: 0 }; } },
-                notifyService: function() { return { subscribe: function() {} } },
-                serviceControlService: null
-            });
-        });
-
-        it('select all rows', inject(function($q) {
-
-            var row = { resolved: false, retried: false, archived: false, selected: false, id: 1 };
-            var rowTwo = { resolved: false, retried: false, archived: false, selected: false, id: 2 };
-            controller.pendingRetryMessages = [row, rowTwo];
-
-            controller.allSelected = true;
-            controller.toggleSelectAll();
-
-            expect(controller.selectedIds.length).toEqual(2);
-            expect(row.selected).toEqual(true);
-            expect(rowTwo.selected).toEqual(true);
-            expect(controller.allSelected).toEqual(true);
-        }));
-
-        it('unselect all rows', inject(function ($q) {
-
-            var row = { resolved: false, retried: false, archived: false, selected: true, id: 1 };
-            var rowTwo = { resolved: false, retried: false, archived: false, selected: true, id: 2 };
-            controller.pendingRetryMessages = [row, rowTwo];
-            controller.selectedIds = [row.id, rowTwo.id];
-
-            controller.allSelected = false;
-            controller.toggleSelectAll();
-
-            expect(controller.selectedIds.length).toEqual(0);
-            expect(row.selected).toEqual(false);
-            expect(rowTwo.selected).toEqual(false);
-            expect(controller.allSelected).toEqual(false);
         }));
     });
 });
