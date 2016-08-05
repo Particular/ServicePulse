@@ -52,10 +52,10 @@
                     </div>
                     <div class="row action-toolbar">
                         <div class="col-xs-12">
-                            <button type="button" class="btn btn-default" confirm-message="Are you sure you want to retry all selected messages? Ensure that selected messages were not processed previously as this will create a duplicate message." confirm-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> <span class="hidden-xs">Retry</span> ({{vm.selectedIds.length | number}})</button>
-                            <button type="button" class="btn btn-default" confirm-message="Are you sure you want to mark as resolved all selected messages? If you do they will not be available for Retry." confirm-click="vm.markAsResolvedSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-check-square-o"></i> <span class="hidden-xs">Mark as resolved</span> ({{vm.selectedIds.length | number}})</button>
-                            <button type="button" class="btn btn-default" ng-disabled="vm.filteredTotal === '0'" confirm-message="Are you sure you want to retry all {{vm.filteredTotal}} retried messages out of {{vm.total}}? {{vm.filteredTotal < vm.total ? 'If you want to retry all clear the filtering.' : ''}} Ensure that messages that will be retried were not processed previously. This will create a duplicate message." confirm-click="vm.retryAll()"><i class="fa fa-refresh"></i> <span class="hidden-xs">Retry All</span> ({{vm.filteredTotal | number}})</button>
-                            <button type="button" class="btn btn-default" ng-disabled="vm.filteredTotal === '0'" confirm-message="Are you sure you want to mark as resolved all {{vm.filteredTotal}} retried messages out of {{vm.total}}? If you do they will not be available for Retry. {{vm.filteredTotal < vm.total ? 'If you want to mark as resolved all clear the filtering.' : ''}}" confirm-click="vm.markAsResolvedAll()"><i class="fa fa-check-square-o"></i> <span class="hidden-xs">Mark as resolved All</span> ({{vm.filteredTotal | number}})</button>
+                            <button type="button" class="btn btn-default" confirm-message="Are you sure you want to retry all selected messages? Ensure that selected messages were not processed previously as this will create a duplicate message." confirm-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> <span>Retry</span> ({{vm.selectedIds.length | number}})</button>
+                            <button type="button" class="btn btn-default" confirm-message="Are you sure you want to mark as resolved all selected messages? If you do they will not be available for Retry." confirm-click="vm.markAsResolvedSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-check-square-o"></i> <span>Mark as resolved</span> ({{vm.selectedIds.length | number}})</button>
+                            <button type="button" class="btn btn-default" ng-disabled="vm.filteredTotal === '0'" confirm-message="Are you sure you want to retry all {{vm.filteredTotal}} retried messages out of {{vm.total}}? {{vm.filteredTotal < vm.total ? 'If you want to retry all clear the filtering.' : ''}} Ensure that messages that will be retried were not processed previously. This will create a duplicate message." confirm-click="vm.retryAll()"><i class="fa fa-refresh"></i> <span>Retry ALL</span> ({{vm.filteredTotal | number}})</button>
+                            <button type="button" class="btn btn-default" ng-disabled="vm.filteredTotal === '0'" confirm-message="Are you sure you want to mark as resolved all {{vm.filteredTotal}} retried messages out of {{vm.total}}? If you do they will not be available for Retry. {{vm.filteredTotal < vm.total ? 'If you want to mark as resolved all clear the filtering.' : ''}}" confirm-click="vm.markAsResolvedAll()"><i class="fa fa-check-square-o"></i> <span>Mark ALL as resolved</span> ({{vm.filteredTotal | number}})</button>
                             <div class="sp-pull-right">
                                 <label class="control-label"><i class="fa fa-sort" aria-hidden="true"></i> Sort:</label>
                                 <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -87,14 +87,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row action-toolbar">
+                    <div class="row list-count">
                         <div class="col-xs-12">
-                            Loaded {{vm.filteredTotal}} out of {{vm.total}}.
+                            {{vm.filteredTotal}} messages corresponding to filter
                         </div>
                     </div>
 
                     </div>
                 </div>
+            </div>
 
         <no-data ng-show="vm.pendingRetryMessages.length === 0 && !vm.loadingData" title="pending retries" message="There are currently no messages that were retried without receiving a confirmation."></no-data>
 
@@ -110,7 +111,7 @@
                             </div>
                             <div class="col-xs-10">
                                 <div class="row box-header">
-                                    <div class="col-sm-12">
+                                    <div class="col-sm-12 no-side-padding">
                                         <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
                                         <p class="metadata">
                                             <div class="msg-status">
@@ -118,7 +119,7 @@
                                                     <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info">Retried</span>
                                                     <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning">Archived</span>
                                                     <span ng-if="message.resolved" tooltip="Message is being marked as resolved" class="label sidebar-label label-info">Resolved</span>
-                                                    <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important">{{message.number_of_processing_attempts}} <i class="fa fa-times"></i> Retry Failures</span>
+                                                    <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important">{{message.number_of_processing_attempts}} Retry Failures</span>
                                                 </span>
                                             </div>
                                             <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{message.time_of_failure}}"></sp-moment></span>
@@ -137,28 +138,28 @@
                                 <p class="small" ng-init="message.panel = 0">
 
                                     <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide stacktrace</i>
+                                        Hide stacktrace
                                     </button>
                                     <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
-                                        <i> Show stacktrace</i>
+                                        Show stacktrace
                                     </button>
                                     <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide headers</i>
+                                        Hide headers
                                     </button>
                                     <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
-                                        <i>Show headers</i>
+                                        Show headers
                                     </button>
                                     <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide message body</i>
+                                        Hide message body
                                     </button>
                                     <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
-                                        <i>Show message body</i>
+                                        Show message body
                                     </button>
                                     <button type="button" clip-copy="" clip-complete="vm.clipComplete(message.message_id)" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
-                                        <i>Copy Id to clipboard</i>
+                                        Copy Id to clipboard
                                     </button>
                                     <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
-                                        <i>Open in ServiceInsight</i>
+                                        Open in ServiceInsight
                                     </button>
                                 </p>
                                 <pre isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>

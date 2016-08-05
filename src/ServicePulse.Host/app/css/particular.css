@@ -225,11 +225,13 @@ footer a:hover { font-weight: normal; }
 }
 
 .pa-endpoint {
+    position: relative;
+    top: 3px;
     background-image: url('../img/endpoint.svg');
     background-position: center;
     background-repeat: no-repeat;
     height: 15px;
-    width: 13px;
+    width: 15px;
 }
 
 .pa-redirect-source {
@@ -239,13 +241,14 @@ footer a:hover { font-weight: normal; }
 }
 
 .pa-redirect-small {
-    height: 12px;
+    position: relative;
+    top: 1px;
+    height: 14px;
     width: 14px;
 }
 
 .pa-redirect-large {
-    height: 30px;
-    width: 35px;
+    height: 24px;
 }
 
 .pa-redirect-destination {
@@ -341,7 +344,7 @@ section.events > div > div > div > div { padding-bottom: 8px !important; }
     color: #181919 !important;
     font-size: 16px !important;
     font-weight: bold;
-    margin-bottom: 0;
+    margin-bottom: 3px;
     word-wrap: break-word;
 }
 
@@ -613,6 +616,10 @@ button.btn.btn-default {
     margin-left: 5px;
 }
 
+.action-toolbar .btn.btn-default:first-child {
+    margin-left: 0;
+}
+
 .fa-error {
     color: #CE4844;
 }
@@ -810,6 +817,16 @@ nav {
     overflow-y: scroll;
 }
 
+.no-side-padding {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.row.list-count {
+    margin-top: 24px;
+    margin-left: -10px;
+    font-weight: bold;
+}
 
 @media only screen and (max-width: 1200px) {
 }
@@ -820,15 +837,19 @@ nav {
 
 
 @media only screen and (max-width: 768px) {
+    .filter-toolbar .input-group {
+        margin-bottom: 6px;
+    }
     div.sp-pull-right {
         display: inline-block;
         float: none;
-        margin-top: 4px;
+        margin-top: 0px;
     }
 
     button.btn.btn-default {
         margin-left: 0;
         margin-right: 6px;
+        margin-bottom: 6px;
     }
 }
 
