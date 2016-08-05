@@ -23,7 +23,7 @@
                 $timeout: null,
                 $location: null,
                 scConfig: null,
-                toastService: null,
+                toastService: { showInfo: function () {} },
                 endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function() {return {subscribe: function() {} } },
@@ -64,13 +64,13 @@
             $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
             $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
 
-            pendingRetryService = { retryPendingRetriedMessages: function () { } };
+            pendingRetryService = { retryAllMessages: function () { } };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
                 $location: null,
                 scConfig: null,
-                toastService: null,
+                toastService: { showInfo: function () {} },
                 endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function () { return { subscribe: function () { } } },
@@ -97,7 +97,7 @@
             expect(controller.pendingRetryMessages[0].selected).toEqual(false);
             expect(controller.pendingRetryMessages[1].selected).toEqual(false);
             expect(controller.pendingRetryMessages[2].selected).toEqual(false);
-            expect(pendingRetryService.retryPendingRetriedMessages).toHaveBeenCalled();
+            expect(pendingRetryService.retryAllMessages).toHaveBeenCalled();
         }));
     });
 
@@ -116,7 +116,7 @@
                 $timeout: null,
                 $location: null,
                 scConfig: null,
-                toastService: null,
+                toastService: { showInfo: function () {} },
                 endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function () { return { subscribe: function () { } } },
@@ -155,13 +155,13 @@
             $httpBackend = $injector.get('$httpBackend');
             $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
             $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
-            pendingRetryService = { markAsResolvedMessages: function () { } };
+            pendingRetryService = { markAsResolvedAllMessages: function () { } };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
                 $location: null,
                 scConfig: null,
-                toastService: null,
+                toastService: { showInfo: function () { } },
                 endpointService: null,
                 sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                 notifyService: function () { return { subscribe: function () { } } },
@@ -187,7 +187,7 @@
             expect(controller.pendingRetryMessages[0].selected).toEqual(false);
             expect(controller.pendingRetryMessages[1].selected).toEqual(false);
             expect(controller.pendingRetryMessages[2].selected).toEqual(false);
-            expect(pendingRetryService.markAsResolvedMessages).toHaveBeenCalled();
+            expect(pendingRetryService.markAsResolvedAllMessages).toHaveBeenCalled();
         }));
     });
 
@@ -212,7 +212,7 @@
 
         it('select row if it was not seleted', inject(function ($q) {
             
-            var row = { resolved: false, retried: false, archived: false, selected: false, id: 1 };
+            var row = { resolved: false, retried: false, selected: false, id: 1 };
             controller.pendingRetryMessages = [row];
             
             controller.toggleRowSelect(row);
@@ -223,7 +223,7 @@
 
         it('unselect row if it was seleted', inject(function ($q) {
             
-            var row = { resolved: false, retried: false, archived: false, selected: true, id: 1 };
+            var row = { resolved: false, retried: false, selected: true, id: 1 };
             controller.pendingRetryMessages = [row];
             controller.selectedIds = [1];
             controller.toggleRowSelect(row);
@@ -232,20 +232,9 @@
             expect(row.selected).toEqual(false);
         }));
 
-        it('do not select row if it is archived', inject(function ($q) {
-
-            var row = { resolved: false, retried: false, archived: true, selected: false, id: 1 };
-            controller.pendingRetryMessages = [row];
-
-            controller.toggleRowSelect(row);
-
-            expect(controller.selectedIds.length).toEqual(0);
-            expect(row.selected).toEqual(false);
-        }));
-
         it('do not select row if it is retried', inject(function ($q) {
 
-            var row = { resolved: false, retried: true, archived: false, selected: false, id: 1 };
+            var row = { resolved: false, retried: true, selected: false, id: 1 };
             controller.pendingRetryMessages = [row];
 
             controller.toggleRowSelect(row);
@@ -256,13 +245,115 @@
 
         it('do not select row if it is resolved', inject(function ($q) {
 
-            var row = { resolved: true, retried: false, archived: false, selected: false, id: 1 };
+            var row = { resolved: true, retried: false, selected: false, id: 1 };
             controller.pendingRetryMessages = [row];
 
             controller.toggleRowSelect(row);
 
             expect(controller.selectedIds.length).toEqual(0);
             expect(row.selected).toEqual(false);
+        }));
+    });
+
+    describe('status present', function() {
+        var $scope, controller;
+
+        beforeEach(function() {
+            $scope = {};
+
+            controller = $controller('pendingRetriesController', {
+                $scope: $scope,
+                $timeout: null,
+                $location: null,
+                scConfig: null,
+                toastService: null,
+                endpointService: null,
+                sharedDataService: { getstats: function() { return { number_of_pending_retries: 0 }; } },
+                notifyService: function() { return { subscribe: function() {} } },
+                serviceControlService: null
+            });
+        });
+
+        it('returns false when message is retried', inject(function($q) {
+
+            var message = { retried: true, number_of_processing_attempts: 1 };
+
+            var result = controller.noStatusPresent(message);
+            
+            expect(result).toEqual(false);
+        }));
+
+        it('returns false when message is resolved', inject(function ($q) {
+
+            var message = { resolved: true, number_of_processing_attempts: 1 };
+
+            var result = controller.noStatusPresent(message);
+
+            expect(result).toEqual(false);
+        }));
+
+        it('returns false when message was proccessed more than once', inject(function ($q) {
+
+            var message = { number_of_processing_attempts: 2 };
+
+            var result = controller.noStatusPresent(message);
+
+            expect(result).toEqual(false);
+        }));
+
+        it('returns true when message was processed once, is not resolved nor retried', inject(function ($q) {
+
+            var message = { number_of_processing_attempts: 1 };
+            var messageTwo = { retried: false, resolved: false, number_of_processing_attempts: 1 };
+
+            var result = controller.noStatusPresent(message);
+            var resultSecond = controller.noStatusPresent(messageTwo);
+
+            expect(result).toEqual(true);
+            expect(resultSecond).toEqual(resultSecond);
+        }));
+    });
+
+    describe('are filters selected', function() {
+        var $scope, controller;
+
+        beforeEach(function() {
+            $scope = {};
+
+            controller = $controller('pendingRetriesController', {
+                $scope: $scope,
+                $timeout: null,
+                $location: null,
+                scConfig: null,
+                toastService: null,
+                endpointService: null,
+                sharedDataService: { getstats: function() { return { number_of_pending_retries: 0 }; } },
+                notifyService: function() { return { subscribe: function() {} } },
+                serviceControlService: null
+            });
+        });
+
+        it('returns true when queue is chosen', inject(function($q) {
+
+            controller.filter.searchPhrase = 'queue1@machine';
+            var result = controller.areFiltersSelected();
+
+            expect(result).toEqual(true);
+        }));
+
+        it('returns true when start and end is filled', inject(function ($q) {
+
+            controller.filter.start = '2016/01/01';
+            controller.filter.end = '2016/02/01';
+            var result = controller.areFiltersSelected();
+
+            expect(result).toEqual(true);
+        }));
+
+        it('returns false when queue is not chosen and start/end dates are empty', inject(function ($q) {
+            var result = controller.areFiltersSelected();
+
+            expect(result).toEqual(false);
         }));
     });
 });

@@ -14,15 +14,18 @@
                     <div class="row filter-toolbar">
                         <div class="col-md-8 col-sm-7 col-xs-12">
                             <div class="input-group">
-                                <div class="input-group-addon" ng-click="vm.searchPhraseChanged()"><i class="fa fa-filter" aria-hidden="true"></i></div>
-                                <ui-select ng-model="vm.filter.searchPhrase" theme="bootstrap">
-                                    <ui-select-match>
+                                <div class="input-group-addon"><i class="fa fa-filter" aria-hidden="true"></i></div>
+                                <ui-select ng-model="vm.filter.searchPhrase" theme="bootstrap" on-select="vm.searchPhraseChanged()">
+                                    <ui-select-match placeholder="Select a queue...">
                                         <span ng-bind="$select.selected.physical_address"></span>
                                     </ui-select-match>
                                     <ui-select-choices repeat="item in vm.endpoints | filter: $select.search">
                                         <span ng-bind-html="item.physical_address | highlight: $select.search"></span>
                                     </ui-select-choices>
                                 </ui-select>
+                                <button type="button" ng-click="vm.clearSearchPhrase()" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-5 col-xs-12">
@@ -89,7 +92,9 @@
                     </div>
                     <div class="row list-count">
                         <div class="col-xs-12">
-                            {{vm.filteredTotal}} messages corresponding to filter
+                            <p ng-show="vm.areFiltersSelected()">
+                                {{vm.filteredTotal}} messages corresponding to filter
+                            </p>
                         </div>
                     </div>
 
@@ -114,7 +119,7 @@
                                     <div class="col-sm-12 no-side-padding">
                                         <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
                                         <p class="metadata">
-                                            <div class="msg-status">
+                                            <div class="msg-status" ng-hide="vm.noStatusPresent(message)">
                                                 <span>
                                                     <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info">Retried</span>
                                                     <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning">Archived</span>

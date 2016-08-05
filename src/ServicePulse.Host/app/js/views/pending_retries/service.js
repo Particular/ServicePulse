@@ -43,15 +43,10 @@
         }
 
         function retryAllMessages(searchPhrase, start, end) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry', 'all');
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'retry', start + '...' + end);
 
             return $http({
                     url: url,
-                    data: {
-                        periodfrom: start,
-                        periodto: end,
-                        queueaddress: searchPhrase
-                    },
                     method: 'POST'
                 }).success(function() {
                     notifications.pushForCurrentRoute('Retrying all pending retried messages...', 'info');
@@ -62,7 +57,7 @@
         }
 
         function retryPendingRetriedMessages(selectedMessages) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry', 'selected');
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry');
             return $http.post(url, selectedMessages)
                 .success(function () {
                     notifications.pushForCurrentRoute('Retrying {{num}} pending retried messages...', 'info', { num: selectedMessages.length });
@@ -73,15 +68,10 @@
         }
 
         function markAsResolvedAllMessages(searchPhrase, start, end) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve', 'all');
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'resolve', start + '...' + end);
 
             return $http({
                     url: url,
-                    data: {
-                        periodfrom: start,
-                        periodto: end,
-                        queueaddress: searchPhrase
-                    },
                     method: 'PATCH'
                 }).success(function() {
                     notifications.pushForCurrentRoute('Resolving all pending retried messages...', 'info');
@@ -92,7 +82,7 @@
         }
 
         function markAsResolvedMessages(selectedMessages) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve', 'selected');
+            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve');
 
             return $http({
                     url: url,

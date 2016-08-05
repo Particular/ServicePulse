@@ -119,6 +119,12 @@
             vm.redirects = redirectService.getRedirects().data;
         }
 
+        vm.noStatusPresent = function(message) {
+            return (!message.retried || !angular.isDefined(message.retried)) &&
+            (!message.resolved || !angular.isDefined(message.resolved)) && message.number_of_processing_attempts === 1;
+
+        }
+
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
         };
@@ -144,7 +150,7 @@
         };
 
         vm.toggleRowSelect = function (row) {
-            if (row.retried || row.archived || row.resolved) {
+            if (row.retried || row.resolved) {
                 return;
             }
 
@@ -167,6 +173,9 @@
                     item.selected = false;
                     item.retried = true;
                 });
+                toastService.showInfo('Selected messages were submitted for retry.');
+            }, function() {
+                toastService.showError('Failed to retry selected messages');
             });
         };
 
@@ -180,6 +189,9 @@
                     item.selected = false;
                     item.retried = true;
                 });
+                toastService.showInfo('All filtered messages were submitted for retry.');
+            }, function() {
+                toastService.showError('Failed to retry all filtered messages');
             });
         };
 
@@ -193,6 +205,9 @@
                     item.selected = false;
                     item.resolved = true;
                 });
+                toastService.showInfo('All filtered messages were marked as resolved.');
+            }, function() {
+                toastService.showError('Failed to mark as resolved all filtered messages');
             });
         };
 
@@ -206,6 +221,9 @@
                     item.selected = false;
                     item.resolved = true;
                 });
+                toastService.showInfo('Selected messages were marked as resolved.');
+            }, function() {
+                toastService.showError('Failed to mark as resolved selected messages');
             });
         };
 
@@ -218,6 +236,7 @@
 
         vm.clearSearchPhrase = function() {
             vm.filter.searchPhrase = undefined;
+            vm.searchPhraseChanged();
         }
 
         vm.onSelect = function() {
@@ -260,25 +279,25 @@
             selectGroupInternal(sort, direction);
         };
 
-        vm.selectTimeGroup = function (amount, unit) {
+        vm.selectTimeGroup = function(amount, unit) {
             vm.timeGroup.amount = amount;
             vm.timeGroup.unit = unit;
 
             if (amount && unit) {
 
                 switch (amount) {
-                    case '2':
-                        vm.timeGroup.buttonText = 'Retried in the last 2 Hours';
-                        break;
-                    case '1':
-                        vm.timeGroup.buttonText = 'Retried in the last 1 Day';
-                        break;
-                    case '7':
-                        vm.timeGroup.buttonText = 'Retried in the last 7 Days';
-                        break;
-                    default:
-                        vm.timeGroup.buttonText = amount + ' ' + unit;
-                        break;
+                case '2':
+                    vm.timeGroup.buttonText = 'Retried in the last 2 Hours';
+                    break;
+                case '1':
+                    vm.timeGroup.buttonText = 'Retried in the last 1 Day';
+                    break;
+                case '7':
+                    vm.timeGroup.buttonText = 'Retried in the last 7 Days';
+                    break;
+                default:
+                    vm.timeGroup.buttonText = amount + ' ' + unit;
+                    break;
                 }
                 vm.filter.start = $moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
                 vm.filter.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
@@ -287,13 +306,13 @@
                 vm.filter.start = vm.filter.end = undefined;
             }
             selectGroupInternal();
-        }
+        };
 
         vm.loadTotalBasedOnFilters = function() {
-            pendingRetryService.getTotalPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function (response) {
+            pendingRetryService.getTotalPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function(response) {
                 vm.filteredTotal = response.total;
             });
-        }
+        };
 
         vm.loadMoreResults = function() {
             vm.allMessagesLoaded = vm.pendingRetryMessages.length >= vm.total;
@@ -307,6 +326,10 @@
             pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function (response) {
                 processLoadedMessages(response.data);
             });
+        };
+
+        vm.areFiltersSelected = function() {
+            return !!(vm.filter.searchPhrase || vm.filter.start || vm.filter.end);
         };
 
         init();
