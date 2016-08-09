@@ -823,18 +823,54 @@ nav {
 }
 
 .row.list-count {
-    margin-top: 24px;
     margin-left: -10px;
     font-weight: bold;
 }
 
-@media only screen and (max-width: 1200px) {
+.form-control {
+    width: 100% !important;
 }
 
+.filter-period-menu, .sort-menu {
+    float:right;
+}
+
+.filter-input, .action-btns, .filter-period-menu, .sort-menu {
+    display: inline-block;
+    padding-bottom:6px;
+}
+
+.filter-input {
+    margin-left: 5px;
+}
+
+.filter-period-menu {
+    margin: 0 30px 0 6px;
+}
+
+.sort-menu {
+    margin-left: 6px;
+    padding-top: 8px;
+}
+
+@media only screen and (min-width: 993px) {
+    .filter-period-menu {
+    margin-right: 0px;
+    }
+}
 
 @media only screen and (max-width: 992px) {
+    .filter-period-menu, .sort-menu {
+    float: left !important;
+    }
+    .sort-menu {
+        margin-top: 0;
+        padding-top: 0;
+    }
+    .action-btns {
+        margin-left: 5px;
+    }
 }
-
 
 @media only screen and (max-width: 768px) {
     .filter-toolbar .input-group {
@@ -850,6 +886,9 @@ nav {
         margin-left: 0;
         margin-right: 6px;
         margin-bottom: 6px;
+    }
+    .input-group-btn button.btn.btn-default {
+    margin-right: 0;
     }
 }
 
