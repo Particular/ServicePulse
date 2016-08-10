@@ -3,7 +3,7 @@
 
 
 
-    function service($http, scConfig, notifications, uri) {
+    function service($http, $moment, scConfig, notifications, uri) {
 
         function getPendingRetryMessages(searchPhrase, sortBy, page, direction, start, end) {
             var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
@@ -24,6 +24,7 @@
             });
         }
 
+
         function getTotalPendingRetryMessages(searchPhrase, start, end) {
             var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued');
 
@@ -43,7 +44,17 @@
         }
 
         function retryAllMessages(searchPhrase, start, end) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'retry', start + '...' + end);
+            if (!start || !end) {
+                start = $moment(0).utc();
+                end = $moment.utc();
+            }
+
+            var url = null;
+            if (searchPhrase) {
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'retry', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+            } else {
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+            }
 
             return $http({
                     url: url,
@@ -68,7 +79,17 @@
         }
 
         function markAsResolvedAllMessages(searchPhrase, start, end) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'resolve', start + '...' + end);
+            if (!start || !end) {
+                start = $moment(0).utc();
+                end = $moment.utc();
+            }
+
+            var url = null;
+            if (searchPhrase) {
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'resolve', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+            } else {
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+            }
 
             return $http({
                     url: url,
@@ -107,7 +128,7 @@
         };
     }
 
-    service.$inject = ['$http', 'scConfig', 'notifications', 'uri'];
+    service.$inject = ['$http', '$moment', 'scConfig', 'notifications', 'uri'];
 
     angular.module('sc')
         .service('pendingRetryService', service);
