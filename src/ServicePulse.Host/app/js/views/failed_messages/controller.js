@@ -38,21 +38,11 @@
         vm.total = vm.stats.number_of_failed_messages;
 
         notifier.subscribe($scope, function (event, data) {
-            if (vm.total > data) {
-                removeRetriedAndArchivedMessages();
-            }
-
             vm.total = data;
         }, 'MessageFailuresUpdated');
 
         var setSortButtonText = function (sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
-        }
-
-        function removeRetriedAndArchivedMessages() {
-            vm.failedMessages = vm.failedMessages.filter(function(item) {
-                return !item.archived && !item.retried;
-            });
         }
 
         var processLoadedMessages = function (data) {
@@ -77,12 +67,6 @@
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults(vm.selectedExceptionGroup);
         }
-
-        var markMessage = function (property) {
-                for (var i = 0; i < vm.failedMessages.length; i++) {
-                    vm.failedMessages[i][property] = true;
-                }
-        };
 
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
@@ -109,9 +93,6 @@
         };
 
         vm.toggleRowSelect = function (row) {
-            if (row.retried || row.archived) {
-                return;
-            }
 
             row.selected = !row.selected;
 
@@ -124,25 +105,21 @@
 
         vm.retrySelected = function () {
             serviceControlService.retryFailedMessages(vm.selectedIds);
+            toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
             vm.selectedIds = [];
 
-            vm.failedMessages.filter(function (item) {
-                return item.selected;
-            }).forEach(function (item) {
-                item.selected = false;
-                item.retried = true;
+            vm.failedMessages = vm.failedMessages.filter(function(item) {
+                return !item.selected;
             });
         };
 
         vm.archiveSelected = function () {
             serviceControlService.archiveFailedMessages(vm.selectedIds);
+            toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
             vm.selectedIds = [];
 
-            vm.failedMessages.filter(function (item) {
-                return item.selected;
-            }).forEach(function (item) {
-                item.selected = false;
-                item.archived = true;
+            vm.failedMessages = vm.failedMessages.filter(function (item) {
+                return !item.selected;
             });
         };
 
@@ -150,31 +127,34 @@
             failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('ArchiveGroupRequestAccepted', group);
-                    markMessage('archived');
+                    vm.failedMessages = [];
                 }, function (message) {
                     notifier.notify('ArchiveGroupRequestRejected', group);
                 })
                 .finally(function () {
-
+                    
                 });
         }
 
         vm.retryExceptionGroup = function (group) {
-            markMessage('retried');
 
             if (!group.id) {
                 serviceControlService.retryAllFailedMessages();
+                toastService.showInfo('Retrying all messages...');
+                vm.failedMessages = [];
                 return;
             }
 
             failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('RetryGroupRequestAccepted', group);
+                    toastService.showInfo('Retrying all messages...');
+                    vm.failedMessages = [];
                 }, function (message) {
                     notifier.notify('RetryGroupRequestRejected', group);
                 })
                 .finally(function () {
-
+                    
                 });
         }
         
