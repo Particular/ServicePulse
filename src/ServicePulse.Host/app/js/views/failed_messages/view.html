@@ -56,7 +56,7 @@
 
         <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
 
-                <div class="row box" ng-repeat="message in vm.failedMessages">
+                <div class="row box repeat-item" ng-repeat="message in vm.failedMessages">
                     <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)">
                         <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                             <div class="check col-md-1">

@@ -112,7 +112,7 @@
 
         <div ng-show="vm.pendingRetryMessages.length > 0" infinite-scroll="vm.loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
 
-                <div class="row box" ng-repeat="message in vm.pendingRetryMessages">
+                <div class="row box repeat-item" ng-repeat="message in vm.pendingRetryMessages">
                     <div class="col-sm-12 msg-row" ng-click="vm.toggleRowSelect(message)">
                         <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                             <div class="check col-xs-1">
