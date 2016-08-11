@@ -57,7 +57,7 @@ namespace ServicePulse.Host.Hosting
                     @"Extract files to be installed in a Web Server."
                     , s =>
                     {
-                        commands = new List<Type> { typeof(ExtractAndUpdateConstantsCommand), typeof(ExtractCommand) };
+                        commands = new List<Type> { typeof(ExtractCommand), typeof(ExtractAndUpdateConstantsCommand) };
                         executionMode = ExecutionMode.Extract;
                     }
                 },
