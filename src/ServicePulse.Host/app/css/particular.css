@@ -859,9 +859,13 @@ nav {
   transition:0.5s linear all;
 }
 
-.repeat-item.ng-enter,
 .repeat-item.ng-leave.ng-leave-active {
-  opacity:0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  color: transparent;
+  overflow: hidden;
 }
 
 .repeat-item.ng-leave,
