@@ -873,6 +873,15 @@ nav {
   opacity:1;
 }
 
+.row {
+  margin-right: 0;
+  margin-left: 0;
+}
+
+.container {
+  padding-right: 0;
+  padding-left: 0;
+}
 
 @media only screen and (min-width: 993px) {
     .filter-period-menu {

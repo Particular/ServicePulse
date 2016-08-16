@@ -45,20 +45,25 @@
 
         function retryAllMessages(searchPhrase, start, end) {
             if (!start || !end) {
-                start = $moment(0).utc();
-                end = $moment.utc();
+                start = $moment(0).utc().format('YYYY-MM-DDTHH:mm:ss');
+                end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             }
 
             var url = null;
+            var data = {};
             if (searchPhrase) {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'retry', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', 'retry');
+                data.queueaddress = searchPhrase;
             } else {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry');
             }
+            data.from = start;
+            data.to = end;
 
             return $http({
                     url: url,
-                    method: 'POST'
+                    method: 'POST',
+                    data: data,
                 }).success(function() {
                     notifications.pushForCurrentRoute('Retrying all pending retried messages...', 'info');
                 })
@@ -80,20 +85,24 @@
 
         function markAsResolvedAllMessages(searchPhrase, start, end) {
             if (!start || !end) {
-                start = $moment(0).utc();
-                end = $moment.utc();
+                start = $moment(0).utc().format('YYYY-MM-DDTHH:mm:ss');
+                end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             }
-
+            var data = {};
             var url = null;
             if (searchPhrase) {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', searchPhrase, 'resolve', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', 'resolve');
+                data.queueaddress = searchPhrase;
             } else {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve', start.format('YYYY-MM-DDTHH:mm:ss') + '...' + end.format('YYYY-MM-DDTHH:mm:ss'));
+                url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve');
             }
+            data.from = start;
+            data.to = end;
 
             return $http({
                     url: url,
-                    method: 'PATCH'
+                    method: 'PATCH',
+                data: data
                 }).success(function() {
                     notifications.pushForCurrentRoute('Resolving all pending retried messages...', 'info');
                 })
@@ -107,7 +116,7 @@
 
             return $http({
                     url: url,
-                    data: selectedMessages,
+                    data: { uniquemessageids: selectedMessages },
                     method: 'PATCH'
                 })
                 .success(function() {
