@@ -1,0 +1,44 @@
+{
+  "name": "angular-momentjs",
+  "version": "0.2.2",
+  "main": "angular-momentjs.js",
+  "description": "Moment.js for Angular.js",
+  "keywords": [
+    "gdi2290",
+    "PatrickJS",
+    "angular",
+    "angularjs",
+    "angular.js",
+    "moment",
+    "momentjs",
+    "moment.js",
+    "time ago",
+    "timeago",
+    "api"
+  ],
+  "ignore": [
+    "*.yml",
+    "*.xml",
+    "node_modules",
+    "bower_components",
+    "node_modules",
+    "example",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "*",
+    "moment": "*"
+  },
+  "homepage": "https://github.com/gdi2290/angular-momentjs",
+  "_release": "0.2.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.2.2",
+    "commit": "b6c3dbbd615e7fe98f2e53542f05039db98d0632"
+  },
+  "_source": "https://github.com/gdi2290/angular-momentjs.git",
+  "_target": "0.2.2",
+  "_originalSource": "angular-momentjs"
+}

@@ -1,0 +1,34 @@
+{
+  "name": "angular-momentjs",
+  "version": "0.2.2",
+  "main": "angular-momentjs.js",
+  "description": "Moment.js for Angular.js",
+  "keywords": [
+    "gdi2290",
+    "PatrickJS",
+    "angular",
+    "angularjs",
+    "angular.js",
+    "moment",
+    "momentjs",
+    "moment.js",
+    "time ago",
+    "timeago",
+    "api"
+  ],
+  "ignore": [
+    "*.yml",
+    "*.xml",
+    "node_modules",
+    "bower_components",
+    "node_modules",
+    "example",
+    "lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "*",
+    "moment": "*"
+  }
+}
