@@ -288,6 +288,15 @@ footer a:hover { font-weight: normal; }
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: 100%;
+}
+
+.ui-select-placeholder, .ui-select-match-text {
+  width: 100%;
+  overflow: hidden;
+  display: inline-block;
+  text-overflow: ellipsis;
+  padding-right: 10px;
 }
 
 /*Global overrides*/
