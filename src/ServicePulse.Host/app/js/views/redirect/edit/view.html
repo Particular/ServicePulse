@@ -9,7 +9,7 @@
                 <i class="fa fa-info-circle" uib-tooltip="Choose a queue that is known to Service Control"></i>
                 <div ng-class="{ 'has-error': redirectForm.sourceQueue.$invalid && (redirectForm.sourceQueue.$dirty || submitted), 'has-success': redirectForm.sourceQueue.$valid }">
                     <ui-select name="sourceQueue" id="sourceQueue" ng-model="physicalAddress.selected" theme="bootstrap" ng-disabled="message_redirect_id != undefined">
-                        <ui-select-match>
+                        <ui-select-match uib-tooltip="{{$select.selected.physical_address}}">
                             <span ng-bind="$select.selected.physical_address"></span>
                         </ui-select-match>
                         <ui-select-choices repeat="item in endpoints | filter: $select.search">

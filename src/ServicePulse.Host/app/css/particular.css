@@ -299,6 +299,11 @@ footer a:hover { font-weight: normal; }
   padding-right: 10px;
 }
 
+div.tooltip
+{
+    word-wrap: break-word;
+}
+
 /*Global overrides*/
 
 html {
