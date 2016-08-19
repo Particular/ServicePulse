@@ -217,11 +217,10 @@
 
         vm.retryAllConfirmationMessage = function (){
             if (vm.isQueueSelected()) {
-                return "Are you sure you want to retry all " + vm.filteredTotal + " retried messages out of " + vm.total
-            + "? Ensure that messages that will be retried were not processed previously. This will create a duplicate message.";
+                return "Are you sure you want to retry " + vm.filteredTotal + " out of " + vm.total + " previously retried messages? If the selected messages were processed in the meanwhile, then duplicate messages will be produced.";
             }
 
-            return "You can't retry all messages without selecting a queue. This action could cause many duplicates in the system. Select first a queue and then use Retry All.";
+            return "Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.";
         }
 
         vm.markAsResolvedSelected = function () {

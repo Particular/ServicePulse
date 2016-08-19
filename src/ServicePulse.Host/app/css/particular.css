@@ -898,10 +898,11 @@ nav {
 }
 
 span.ui-select-match-text.pull-left {
-  width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    width: 95%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: absolute;
 }
 
 p.lead hard-wrap.ng-binding {
