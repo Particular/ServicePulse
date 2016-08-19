@@ -897,6 +897,17 @@ nav {
   padding-left: 0;
 }
 
+span.ui-select-match-text.pull-left {
+  width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+p.lead hard-wrap.ng-binding {
+    color: #777f7f;
+}
+
 @media only screen and (min-width: 993px) {
     .filter-period-menu {
     margin-right: 0px;
