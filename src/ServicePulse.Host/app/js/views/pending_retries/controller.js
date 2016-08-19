@@ -180,7 +180,7 @@
         };
 
         vm.retryAll = function () {
-            pendingRetryService.retryAllMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function() {
+            pendingRetryService.retryAllMessages(vm.filter.searchPhrase.physical_address, vm.filter.start, vm.filter.end).then(function() {
                 vm.selectedIds = [];
 
                 vm.pendingRetryMessages.filter(function () {
@@ -210,6 +210,19 @@
                 toastService.showError('Failed to mark as resolved all filtered messages');
             });
         };
+
+        vm.isQueueSelected = function() {
+            return !!vm.filter.searchPhrase;
+        }
+
+        vm.retryAllConfirmationMessage = function (){
+            if (vm.isQueueSelected()) {
+                return "Are you sure you want to retry all " + vm.filteredTotal + " retried messages out of " + vm.total
+            + "? Ensure that messages that will be retried were not processed previously. This will create a duplicate message.";
+            }
+
+            return "You can't retry all messages without selecting a queue. This action could cause many duplicates in the system. Select first a queue and then use Retry All.";
+        }
 
         vm.markAsResolvedSelected = function () {
             pendingRetryService.markAsResolvedMessages(vm.selectedIds).then(function() {

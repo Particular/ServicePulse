@@ -5,6 +5,6 @@
     {{message}}
 </div>
 <div class="modal-footer">
-    <button class="btn btn-primary" type="button" ng-click="ok()">Yes</button>
-    <button class="btn btn-default" type="button" ng-click="cancel()">No</button>
+    <button class="btn btn-primary" type="button" ng-click="ok()" ng-hide="{{showOkButtonOnly}}">Yes</button>
+    <button class="btn btn-default" type="button" ng-click="cancel()">{{showOkButtonOnly === true ? 'Ok' : 'No'}}</button>
 </div>

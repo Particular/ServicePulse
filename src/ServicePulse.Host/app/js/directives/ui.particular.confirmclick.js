@@ -1,11 +1,13 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
-    function modalController($scope, $uibModalInstance, confirmMessage, confirmClick, confirmTitle) {
+    function modalController($scope, $uibModalInstance, confirmMessage, confirmClick, confirmTitle, confirmOkOnly) {
 
         $scope.title = confirmTitle ? confirmTitle : 'Confirm action';
 
         $scope.message = confirmMessage;
+
+        $scope.showOkButtonOnly = confirmOkOnly ? confirmOkOnly : false;
 
         $scope.ok = function () {
             confirmClick();
@@ -25,7 +27,8 @@
             scope: {
                 confirmTitle: '@',
                 confirmMessage: '@',
-                confirmClick: '&'
+                confirmClick: '&',
+                confirmOkOnly: '@',
             },
             link: function (scope, element, attrs) {
                 element.bind('click', function (e) {
@@ -43,6 +46,9 @@
                             },
                             confirmTitle: function() {
                                 return scope.confirmTitle;
+                            },
+                            confirmOkOnly: function() {
+                                return scope.confirmOkOnly;
                             }
                         }
                     });
