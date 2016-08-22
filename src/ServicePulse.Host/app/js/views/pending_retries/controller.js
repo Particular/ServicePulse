@@ -211,17 +211,23 @@
             });
         };
 
-        vm.isQueueSelected = function() {
-            return !!vm.filter.searchPhrase;
-        }
+        vm.isQueueFilterEmpty = function() {
+            return !vm.filter.searchPhrase;
+        };
 
-        vm.retryAllConfirmationMessage = function (){
-            if (vm.isQueueSelected()) {
+        vm.retryAllConfirmationTitle = function() {
+            if (vm.isQueueFilterEmpty()) {
+                return "Select a queue first";
+            }
+        };
+
+        vm.retryAllConfirmationMessage = function () {
+            if (!vm.isQueueFilterEmpty()) {
                 return "Are you sure you want to retry " + vm.filteredTotal + " out of " + vm.total + " previously retried messages? If the selected messages were processed in the meanwhile, then duplicate messages will be produced.";
             }
 
             return "Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.";
-        }
+        };
 
         vm.markAsResolvedSelected = function () {
             pendingRetryService.markAsResolvedMessages(vm.selectedIds).then(function() {
@@ -249,7 +255,7 @@
         vm.clearSearchPhrase = function() {
             vm.filter.searchPhrase = undefined;
             vm.searchPhraseChanged();
-        }
+        };
 
         vm.onSelect = function() {
             vm.pendingRetryMessages = [];
