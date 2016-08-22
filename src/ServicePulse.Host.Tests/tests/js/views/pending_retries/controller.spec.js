@@ -78,14 +78,17 @@
             });
         }));
 
-        it('all messages marked as retried', inject(function ($q) {
+        it('all messages marked as retried', inject(function($q) {
             var deferred = $q.defer();
-            spyOn(pendingRetryService, 'retryAllMessages').and.callFake(function () {
+            spyOn(pendingRetryService, 'retryAllMessages').and.callFake(function() {
                 return deferred.promise;
             });
 
             controller.pendingRetryMessages = [{ id: 1, retried: false, selected: false }, { id: 2, retried: false, selected: true }, { id: 3, retried: false, selected: false }];
             controller.selectedIds = [2];
+            controller.filter = {
+                searchPhrase: { physical_address: '' }
+            };
             controller.retryAll();
 
             root.$apply(function () { deferred.resolve('Remote call result') });

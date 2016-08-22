@@ -856,6 +856,7 @@ nav {
 
 .filter-input {
     margin-left: 5px;
+    width: 100%;
 }
 
 .filter-period-menu {
