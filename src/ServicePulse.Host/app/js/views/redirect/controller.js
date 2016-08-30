@@ -19,7 +19,9 @@
         }, 'RedirectsUpdated');
 
         function refreshData() {
-            vm.redirects = redirectService.getRedirects().data;
+            redirectService.getRedirects().then(function(redirects) {
+                vm.redirects = redirects.data;
+            });
         }
 
         vm.createRedirect = function () {

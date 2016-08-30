@@ -17,7 +17,9 @@
             redirects: 0
         };
 
-        $scope.counters.redirects = redirectService.getTotalRedirects();
+        redirectService.getTotalRedirects().then(function(data) {
+            $scope.counters.redirects = data;
+        });
 
         notifier.subscribe($scope, function (event, data) {
             $scope.counters.redirects = data;

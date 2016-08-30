@@ -14,14 +14,14 @@
         sharedDataService,
         notifyService,
         serviceControlService,
-        endpointsService, 
+        endpointsService,
         redirectService,
         pendingRetryService) {
 
         var vm = this;
 
         var notifier = notifyService();
-        
+
         vm.sortButtonText = '';
         vm.sortDirection = 'asc';
         vm.allMessagesLoaded = false;
@@ -30,46 +30,43 @@
         vm.timeGroup = {
             amount: undefined,
             unit: undefined,
-            buttonText: 'All Pending Retries',
-            selected: function () {
-                return $moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
-            }
+            buttonText: 'All Pending Retries'
         };
 
-        notifier.subscribe($scope, function (event, data) {
-            if (vm.total > data) {
+        notifier.subscribe($scope, function (event, updatedTotalMessages) {
+            if (vm.total > updatedTotalMessages) {
                 removeResolvedMessages();
             }
 
-            if (vm.total !== data) {
-                vm.total = data;
+            if (vm.total !== updatedTotalMessages) {
+                vm.total = updatedTotalMessages;
                 vm.loadTotalBasedOnFilters();
                 vm.loadMoreResults();
-            } 
+            }
         }, 'PendingRetriesTotalUpdated');
 
-        notifier.subscribe($scope, function (event, data) {
+        notifier.subscribe($scope, function(event, data) {
             vm.endpoints = data;
         }, 'EndpointsUpdated');
 
-        notifier.subscribe($scope, function (event, response) {
+        notifier.subscribe($scope, function(event, response) {
             vm.redirects = response.data;
             refreshRedirects();
         }, 'RedirectsUpdated');
 
-        var setSortButtonText = function (sort, direction) {
+        var setSortButtonText = function(sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure");
             vm.sortDirection = direction;
-        }
+        };
 
         function removeResolvedMessages() {
-            vm.pendingRetryMessages = vm.pendingRetryMessages.filter(function (item) {
+            vm.pendingRetryMessages = vm.pendingRetryMessages.filter(function(item) {
                 return !item.resolved;
             });
         }
 
         function refreshRedirects() {
-            vm.pendingRetryMessages.map(function(obj) {
+            vm.pendingRetryMessages.forEach(function (obj) {
                 var nObj = obj;
                 return fillRedirect(nObj);
             });
@@ -85,7 +82,7 @@
             return nObj;
         }
 
-        var processLoadedMessages = function (data) {
+        var processLoadedMessages = function(data) {
             if (data.length > 0) {
                 var exgroups = data.map(function(obj) {
                     var nObj = obj;
@@ -116,32 +113,33 @@
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults();
             vm.endpoints = endpointsService.getQueueNames();
-            vm.redirects = redirectService.getRedirects().data;
+            redirectService.getRedirects().then(function(redirects) {
+                vm.redirects = redirects.data;
+            });
         }
 
         vm.noStatusPresent = function(message) {
             return (!message.retried || !angular.isDefined(message.retried)) &&
             (!message.resolved || !angular.isDefined(message.resolved)) && message.number_of_processing_attempts === 1;
-
-        }
+        };
 
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
         };
 
-        vm.togglePanel = function (message, panelnum) {
+        vm.togglePanel = function(message, panelnum) {
             if (!angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
+                serviceControlService.getMessageBody(message.message_id).then(function(msg) {
                     message.messageBody = msg.data;
-                }, function () {
+                }, function() {
                     message.bodyUnavailable = "message body unavailable";
                 });
             }
 
             if (!angular.isDefined(message.messageHeaders)) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
+                serviceControlService.getMessageHeaders(message.message_id).then(function(msg) {
                     message.messageHeaders = msg.data[0].headers;
-                }, function () {
+                }, function() {
                     message.headersUnavailable = "message headers unavailable";
                 });
             }
@@ -149,7 +147,7 @@
             return false;
         };
 
-        vm.toggleRowSelect = function (row) {
+        vm.toggleRowSelect = function(row) {
             if (row.retried || row.resolved) {
                 return;
             }
@@ -164,6 +162,7 @@
         };
 
         vm.retrySelected = function () {
+            vm.loadingData = true;
             pendingRetryService.retryPendingRetriedMessages(vm.selectedIds).then(function() {
                 vm.selectedIds = [];
 
@@ -174,40 +173,44 @@
                     item.retried = true;
                 });
                 toastService.showInfo('Selected messages were submitted for retry.');
+                vm.loadingData = false;
             }, function() {
                 toastService.showError('Failed to retry selected messages');
+                vm.loadingData = false;
             });
         };
 
         vm.retryAll = function () {
+            vm.loadingData = true;
             pendingRetryService.retryAllMessages(vm.filter.searchPhrase.physical_address, vm.filter.start, vm.filter.end).then(function() {
                 vm.selectedIds = [];
 
-                vm.pendingRetryMessages.filter(function () {
-                    return true;
-                }).forEach(function (item) {
+                vm.pendingRetryMessages.forEach(function(item) {
                     item.selected = false;
                     item.retried = true;
                 });
                 toastService.showInfo('All filtered messages were submitted for retry.');
+                vm.loadingData = false;
             }, function() {
                 toastService.showError('Failed to retry all filtered messages');
+                vm.loadingData = false;
             });
         };
 
         vm.markAsResolvedAll = function () {
+            vm.loadingData = true;
             pendingRetryService.markAsResolvedAllMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function() {
                 vm.selectedIds = [];
 
-                vm.pendingRetryMessages.filter(function () {
-                    return true;
-                }).forEach(function (item) {
+                vm.pendingRetryMessages.forEach(function(item) {
                     item.selected = false;
                     item.resolved = true;
                 });
                 toastService.showInfo('All filtered messages were marked as resolved.');
+                vm.loadingData = false;
             }, function() {
                 toastService.showError('Failed to mark as resolved all filtered messages');
+                vm.loadingData = false;
             });
         };
 
@@ -221,7 +224,7 @@
             }
         };
 
-        vm.retryAllConfirmationMessage = function () {
+        vm.retryAllConfirmationMessage = function() {
             if (!vm.isQueueFilterEmpty()) {
                 return "Are you sure you want to retry " + vm.filteredTotal + " out of " + vm.total + " previously retried messages? If the selected messages were processed in the meanwhile, then duplicate messages will be produced.";
             }
@@ -230,6 +233,7 @@
         };
 
         vm.markAsResolvedSelected = function () {
+            vm.loadingData = true;
             pendingRetryService.markAsResolvedMessages(vm.selectedIds).then(function() {
                 vm.selectedIds = [];
 
@@ -240,8 +244,10 @@
                     item.resolved = true;
                 });
                 toastService.showInfo('Selected messages were marked as resolved.');
+                vm.loadingData = false;
             }, function() {
                 toastService.showError('Failed to mark as resolved selected messages');
+                vm.loadingData = false;
             });
         };
 
@@ -263,7 +269,7 @@
             vm.loadMoreResults();
         };
 
-        vm.debugInServiceInsight = function (index) {
+        vm.debugInServiceInsight = function(index) {
             var messageId = vm.pendingRetryMessages[index].message_id;
             var dnsName = scConfig.service_control_url.toLowerCase();
 
@@ -276,7 +282,7 @@
             $window.open("si://" + dnsName + "?search=" + messageId);
         };
 
-        var selectGroupInternal = function (sort, direction) {
+        var selectGroupInternal = function(sort, direction) {
             if ($scope.loadingData) {
                 return;
             }
@@ -293,7 +299,7 @@
             vm.loadMoreResults(sort, direction);
         };
 
-        vm.selectGroup = function (sort, direction) {
+        vm.selectGroup = function(sort, direction) {
             selectGroupInternal(sort, direction);
         };
 
@@ -341,7 +347,7 @@
 
             vm.loadingData = true;
 
-            pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function (response) {
+            pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function(response) {
                 processLoadedMessages(response.data);
             });
         };

@@ -152,6 +152,18 @@
         }, "CustomChecksUpdated");
 
         listener.subscribe($scope, function (message) {
+            notifier.notify("MessageRedirectCreated", message);
+        }, "MessageRedirectCreated");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("MessageRedirectChanged", message);
+        }, "MessageRedirectChanged");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("MessageRedirectRemoved", message);
+        }, "MessageRedirectRemoved");
+
+        listener.subscribe($scope, function (message) {
             logit(message);
        
             notifier.notify("MessageFailuresUpdated", message.unresolved_total || message.total);

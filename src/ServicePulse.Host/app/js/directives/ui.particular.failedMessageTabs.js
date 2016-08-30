@@ -1,6 +1,4 @@
-﻿
-;
-(function(window, angular, $, undefined) {
+﻿(function(window, angular, $, undefined) {
     'use strict';
 
 

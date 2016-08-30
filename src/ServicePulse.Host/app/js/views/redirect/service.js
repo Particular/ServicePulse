@@ -12,28 +12,46 @@
         function getData() {
             var url = uri.join(scConfig.service_control_url, 'redirects');
             return $http.get(url).then(function (response) {
-                notifier.notify('RedirectsUpdated', { total: response.headers('Total-Count'), data: response.data });
-                notifier.notify('RedirectMessageCountUpdated', response.headers('Total-Count'));
+                redirects.data = response.data;
+                redirects.total = response.headers('Total-Count');
+                notifier.notify('RedirectsUpdated', { total: redirects.total, data: redirects.data });
+                notifier.notify('RedirectMessageCountUpdated', redirects.total);
             });
         }
 
-        var redirectsUpdatedTimer = $interval(function () {
-            getData();
-        }, 15000);
-
-        // Cancel interval on page changes
-        $rootScope.$on('$destroy', function () {
-            if (angular.isDefined(redirectsUpdatedTimer)) {
-                $interval.cancel(redirectsUpdatedTimer);
-                redirectsUpdatedTimer = undefined;
-            }
-        });
+        notifier.subscribe($rootScope, function (event, response) {
+            response.LastModified = '';
+            redirects.data.push(response);
+            redirects.total++;
+            notifier.notify('RedirectsUpdated', { total: redirects.total, data: redirects.data });
+            notifier.notify('RedirectMessageCountUpdated', redirects.total);
+        }, "MessageRedirectCreated");
 
         notifier.subscribe($rootScope, function (event, response) {
-            redirects.data = response.data;
-            redirects.total = response.total;
-        }, 'RedirectsUpdated');
+            var previousRedirect = redirects.data.filter(function (redirect) {
+                return redirect.message_redirect_id === response.message_redirect_id;
+            });
 
+            if (previousRedirect.length === 1) {
+                previousRedirect[0].to_physical_address = response.to_physical_address;
+                notifier.notify('RedirectsUpdated', { total: redirects.total, data: redirects.data });
+            }
+        }, "MessageRedirectChanged");
+
+        notifier.subscribe($rootScope, function (event, response) {
+            var redirectToBeDeleted = redirects.data.filter(function (redirect) {
+                return redirect.message_redirect_id === response.message_redirect_id;
+            });
+
+            redirects.total--;
+            notifier.notify('RedirectMessageCountUpdated', redirects.total);
+
+            if (redirectToBeDeleted.length === 1) {
+                redirects.data.splice(redirects.data.indexOf(redirectToBeDeleted[0]), 1);
+                notifier.notify('RedirectsUpdated', { total: redirects.total, data: redirects.data });
+            }
+        }, "MessageRedirectRemoved");
+        
         function sendPromise(url, method, data, success, error) {
 
             var defer = $q.defer();
@@ -62,19 +80,13 @@
             createRedirect: function (sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');
                 var promise = sendPromise(url, 'POST', { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
-                promise.then(function() {
-                    getData();
-                });
-
+                
                 return promise;
             },
             updateRedirect: function (redirectId, sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects', redirectId);
                 var promise = sendPromise(url, 'PUT', { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
-                promise.then(function () {
-                    getData();
-                });
-
+                
                 return promise;
             },
             deleteRedirect: function (id, success, error) {
@@ -82,17 +94,16 @@
                 return $http.delete(url)
                     .success(function() {
                         notifications.pushForCurrentRoute(success, 'info');
-                        getData();
                     })
                     .error(function () {
                         notifications.pushForCurrentRoute(error, 'danger');
                 });
             },
             getTotalRedirects: function() {
-                return redirects.total;
+                return $q.when(redirects.total);
             },
             getRedirects: function() {
-                return redirects;
+                return $q.when(redirects);
             }
         };
     }
