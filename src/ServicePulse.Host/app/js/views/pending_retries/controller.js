@@ -254,6 +254,11 @@
         vm.searchPhraseChanged = function() {
             vm.pendingRetryMessages = [];
             vm.page = 1;
+            vm.selectedIds = [];
+            vm.pendingRetryMessages.forEach(function (item) {
+                item.selected = false;
+            });
+
             vm.loadTotalBasedOnFilters();
             vm.loadMoreResults();
         };

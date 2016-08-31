@@ -11,7 +11,7 @@
         <div class="row" ng-show="!vm.loadingData">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
-                    <button type="button" class="btn btn-default" confirm-message="Are you sure you want to un-archive all selected archived messages?" confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> Unarchive {{vm.selectedIds.length | number}} selected</button>
+                    <button type="button" class="btn btn-default" confirm-message="Are you sure you want to un-archive selected archived messages?" confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> Unarchive {{vm.selectedIds.length | number}} selected</button>
 
                     <div class="btn-group">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
