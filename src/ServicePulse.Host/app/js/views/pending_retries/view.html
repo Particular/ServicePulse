@@ -116,7 +116,7 @@
                     <div class="col-sm-12 msg-row" ng-click="vm.toggleRowSelect(message)">
                         <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                             <div class="check col-xs-1">
-                                <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived || message.resolved" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                                <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.submittedForRetrial || message.resolved" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                             </div>
                             <div class="col-xs-10">
                                 <div class="row box-header">
@@ -125,8 +125,8 @@
                                         <p class="metadata">
                                             <div class="msg-status" ng-hide="vm.noStatusPresent(message)">
                                                 <span>
+                                                    <span ng-if="message.submittedForRetrial" tooltip="Message was submitted for retrial" class="label sidebar-label label-info">Submitted for retrial</span>
                                                     <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info">Retried</span>
-                                                    <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning">Archived</span>
                                                     <span ng-if="message.resolved" tooltip="Message is being marked as resolved" class="label sidebar-label label-info">Resolved</span>
                                                     <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important">{{message.number_of_processing_attempts}} Retry Failures</span>
                                                 </span>

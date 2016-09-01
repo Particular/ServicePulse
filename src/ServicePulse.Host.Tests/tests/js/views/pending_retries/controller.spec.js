@@ -31,22 +31,22 @@
             });
         }));
 
-        it('two out of three marked as retried', inject(function($q) {
+        it('two out of three marked as submitted for retrial', inject(function ($q) {
             var deferred = $q.defer();
             spyOn(pendingRetryService, 'retryPendingRetriedMessages').and.callFake(function() {
                 return deferred.promise;
             });
 
-            controller.pendingRetryMessages = [{ id: 1, retried: false, selected: true }, { id: 2, retried: false, selected: false }, { id: 3, retried: false, selected: true }];
+            controller.pendingRetryMessages = [{ id: 1, submittedForRetrial: false, selected: true }, { id: 2, submittedForRetrial: false, selected: false }, { id: 3, submittedForRetrial: false, selected: true }];
             controller.selectedIds = [1, 3];
             controller.retrySelected();
             
             root.$apply(function () { deferred.resolve('Remote call result') });
 
             expect(controller.selectedIds.length).toEqual(0);
-            expect(controller.pendingRetryMessages[0].retried).toEqual(true);
-            expect(controller.pendingRetryMessages[1].retried).toEqual(false);
-            expect(controller.pendingRetryMessages[2].retried).toEqual(true);
+            expect(controller.pendingRetryMessages[0].submittedForRetrial).toEqual(true);
+            expect(controller.pendingRetryMessages[1].submittedForRetrial).toEqual(false);
+            expect(controller.pendingRetryMessages[2].submittedForRetrial).toEqual(true);
             expect(controller.pendingRetryMessages[0].selected).toEqual(false);
             expect(controller.pendingRetryMessages[1].selected).toEqual(false);
             expect(controller.pendingRetryMessages[2].selected).toEqual(false);
@@ -54,7 +54,7 @@
         }));
     });
 
-    describe('mark all rows as retried', function () {
+    describe('mark all rows as submitted for retrial', function () {
         var $scope, controller, pendingRetryService, root, $httpBackend;
 
         beforeEach(inject(function ($rootScope, $injector) {
@@ -78,13 +78,13 @@
             });
         }));
 
-        it('all messages marked as retried', inject(function($q) {
+        it('all messages marked as submitted for retrial', inject(function ($q) {
             var deferred = $q.defer();
             spyOn(pendingRetryService, 'retryAllMessages').and.callFake(function() {
                 return deferred.promise;
             });
 
-            controller.pendingRetryMessages = [{ id: 1, retried: false, selected: false }, { id: 2, retried: false, selected: true }, { id: 3, retried: false, selected: false }];
+            controller.pendingRetryMessages = [{ id: 1, submittedForRetrial: false, selected: false }, { id: 2, submittedForRetrial: false, selected: true }, { id: 3, submittedForRetrial: false, selected: false }];
             controller.selectedIds = [2];
             controller.filter = {
                 searchPhrase: { physical_address: '' }
@@ -94,9 +94,9 @@
             root.$apply(function () { deferred.resolve('Remote call result') });
 
             expect(controller.selectedIds.length).toEqual(0);
-            expect(controller.pendingRetryMessages[0].retried).toEqual(true);
-            expect(controller.pendingRetryMessages[1].retried).toEqual(true);
-            expect(controller.pendingRetryMessages[2].retried).toEqual(true);
+            expect(controller.pendingRetryMessages[0].submittedForRetrial).toEqual(true);
+            expect(controller.pendingRetryMessages[1].submittedForRetrial).toEqual(true);
+            expect(controller.pendingRetryMessages[2].submittedForRetrial).toEqual(true);
             expect(controller.pendingRetryMessages[0].selected).toEqual(false);
             expect(controller.pendingRetryMessages[1].selected).toEqual(false);
             expect(controller.pendingRetryMessages[2].selected).toEqual(false);
@@ -215,7 +215,7 @@
 
         it('select row if it was not seleted', inject(function ($q) {
             
-            var row = { resolved: false, retried: false, selected: false, id: 1 };
+            var row = { resolved: false, submittedForRetrial: false, selected: false, id: 1 };
             controller.pendingRetryMessages = [row];
             
             controller.toggleRowSelect(row);
@@ -226,7 +226,7 @@
 
         it('unselect row if it was seleted', inject(function ($q) {
             
-            var row = { resolved: false, retried: false, selected: true, id: 1 };
+            var row = { resolved: false, submittedForRetrial: false, selected: true, id: 1 };
             controller.pendingRetryMessages = [row];
             controller.selectedIds = [1];
             controller.toggleRowSelect(row);
@@ -235,9 +235,9 @@
             expect(row.selected).toEqual(false);
         }));
 
-        it('do not select row if it is retried', inject(function ($q) {
+        it('do not select row if it is submitted for retrial', inject(function ($q) {
 
-            var row = { resolved: false, retried: true, selected: false, id: 1 };
+            var row = { resolved: false, submittedForRetrial: true, selected: false, id: 1 };
             controller.pendingRetryMessages = [row];
 
             controller.toggleRowSelect(row);
@@ -248,7 +248,7 @@
 
         it('do not select row if it is resolved', inject(function ($q) {
 
-            var row = { resolved: true, retried: false, selected: false, id: 1 };
+            var row = { resolved: true, submittedForRetrial: false, selected: false, id: 1 };
             controller.pendingRetryMessages = [row];
 
             controller.toggleRowSelect(row);
@@ -283,6 +283,15 @@
 
             var result = controller.noStatusPresent(message);
             
+            expect(result).toEqual(false);
+        }));
+
+        it('returns false when message is submitted for retrial', inject(function ($q) {
+
+            var message = { submittedForRetrial: true, number_of_processing_attempts: 1 };
+
+            var result = controller.noStatusPresent(message);
+
             expect(result).toEqual(false);
         }));
 

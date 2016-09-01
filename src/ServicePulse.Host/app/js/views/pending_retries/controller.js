@@ -34,10 +34,6 @@
         };
 
         notifier.subscribe($scope, function (event, updatedTotalMessages) {
-            if (vm.total > updatedTotalMessages) {
-                removeResolvedMessages();
-            }
-
             if (vm.total !== updatedTotalMessages) {
                 vm.total = updatedTotalMessages;
                 vm.loadTotalBasedOnFilters();
@@ -54,14 +50,31 @@
             refreshRedirects();
         }, 'RedirectsUpdated');
 
+        notifier.subscribe($scope, function (event, messagefailureResolvedManually) {
+            removeResolvedMessage(messagefailureResolvedManually.failed_message_id);
+        }, "MessageFailureResolvedManually");
+
+        notifier.subscribe($scope, function (event, messagesSubmittedForRetry) {
+            vm.pendingRetryMessages.filter(function(item) {
+                return messagesSubmittedForRetry.failed_message_ids.indexOf(item.id) > -1;
+            }).forEach(function(item) {
+                item.submittedForRetrial = false;
+                item.retried = true;
+            });
+        }, "MessagesSubmittedForRetry");
+
+        notifier.subscribe($scope, function (event, messageFailureResolved) {
+            removeResolvedMessage(messageFailureResolved.failed_message_id);
+        }, "MessageFailureResolvedByRetry");
+
         var setSortButtonText = function(sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure");
             vm.sortDirection = direction;
         };
 
-        function removeResolvedMessages() {
-            vm.pendingRetryMessages = vm.pendingRetryMessages.filter(function(item) {
-                return !item.resolved;
+        function removeResolvedMessage(message_id) {
+            vm.pendingRetryMessages = vm.pendingRetryMessages.filter(function (item) {
+                return item.id !== message_id;
             });
         }
 
@@ -119,7 +132,8 @@
         }
 
         vm.noStatusPresent = function(message) {
-            return (!message.retried || !angular.isDefined(message.retried)) &&
+            return (!message.submittedForRetrial || !angular.isDefined(message.submittedForRetrial)) &&
+                (!message.retried || !angular.isDefined(message.retried)) &&
             (!message.resolved || !angular.isDefined(message.resolved)) && message.number_of_processing_attempts === 1;
         };
 
@@ -148,7 +162,7 @@
         };
 
         vm.toggleRowSelect = function(row) {
-            if (row.retried || row.resolved) {
+            if (row.submittedForRetrial || row.resolved) {
                 return;
             }
 
@@ -170,7 +184,8 @@
                     return item.selected;
                 }).forEach(function(item) {
                     item.selected = false;
-                    item.retried = true;
+                    item.submittedForRetrial = true;
+                    item.retried = false;
                 });
                 toastService.showInfo('Selected messages were submitted for retry.');
                 vm.loadingData = false;
@@ -187,7 +202,8 @@
 
                 vm.pendingRetryMessages.forEach(function(item) {
                     item.selected = false;
-                    item.retried = true;
+                    item.submittedForRetrial = true;
+                    item.retried = false;
                 });
                 toastService.showInfo('All filtered messages were submitted for retry.');
                 vm.loadingData = false;
