@@ -31,8 +31,8 @@
                                 </div>
                             </div>
                             <div class="action-btns">
-                                <button type="button" class="btn btn-default" confirm-message="Are you sure you want to retry selected messages? Ensure that selected messages were not processed previously as this will create a duplicate message." confirm-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> <span>Retry</span> ({{vm.selectedIds.length | number}})</button>
-                                <button type="button" class="btn btn-default" confirm-message="Are you sure you want to mark as resolved selected messages? If you do they will not be available for Retry." confirm-click="vm.markAsResolvedSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-check-square-o"></i> <span>Mark as resolved</span> ({{vm.selectedIds.length | number}})</button>
+                                <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the selected messages?" confirm-message="Ensure that the selected messages were not processed previously as this will create a duplicate message." confirm-second-paragraph="NOTE: If the selection includes messages to be processed via unaudited queues, those messages will need to be marked as resolved once the retry is manually verified." confirm-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-refresh"></i> <span>Retry</span> ({{vm.selectedIds.length | number}})</button>
+                                <button type="button" class="btn btn-default" confirm-title="Are you sure you want to mark as resolved the selected messages?" confirm-message="If you mark these messages as resolved they will not be available for Retry. Messages should only be marked as resolved only if they belong to unaudited queues." confirm-click="vm.markAsResolvedSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-check-square-o"></i> <span>Mark as resolved</span> ({{vm.selectedIds.length | number}})</button>
                                 <button type="button" class="btn btn-default" ng-disabled="vm.filteredTotal === '0'" confirm-title="{{vm.retryAllConfirmationTitle()}}" confirm-message="{{vm.retryAllConfirmationMessage()}}" confirm-click="vm.retryAll()" confirm-ok-only="{{vm.isQueueFilterEmpty()}}"><i class="fa fa-refresh"></i> <span>Retry all</span> ({{vm.filteredTotal | number}})</button>
                                 <button type="button" class="btn btn-default" ng-disabled="vm.filteredTotal === '0'" confirm-message="Are you sure you want to mark as resolved all {{vm.filteredTotal}} retried messages out of {{vm.total}}? If you do they will not be available for Retry. {{vm.filteredTotal < vm.total ? 'If you want to mark as resolved all clear the filtering.' : ''}}" confirm-click="vm.markAsResolvedAll()"><i class="fa fa-check-square-o"></i> <span>Mark all as resolved</span> ({{vm.filteredTotal | number}})</button>
                             </div>
@@ -106,7 +106,7 @@
                 </div>
             </div>
 
-        <no-data ng-show="vm.pendingRetryMessages.length === 0 && !vm.loadingData" title="pending retries" message="There are currently no messages that were retried without receiving a confirmation."></no-data>
+        <no-data ng-show="vm.pendingRetryMessages.length === 0 && !vm.loadingData" title="pending retries" message="There are no messages waiting to be retried."></no-data>
 
         <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
 
@@ -122,10 +122,11 @@
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
-                                        <p class="metadata">
+                                        <span class="metadata">
                                             <div class="msg-status" ng-hide="vm.noStatusPresent(message)">
                                                 <span>
-                                                    <span ng-if="message.submittedForRetrial" tooltip="Message was submitted for retrial" class="label sidebar-label label-info">Submitted for retrial</span>
+                                                    <span ng-if="message.submittedForRetrial" tooltip="Message was submitted for retrying" class="label sidebar-label label-info">To retry</span>
+                                                    <i ng-if="message.submittedForRetrial" class="fa fa-info-circle" uib-tooltip="Messages set to retry need to be marked as resolved manually once the retry is manually verified. This is because they belong to unaudited queues."></i>
                                                     <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info">Retried</span>
                                                     <span ng-if="message.resolved" tooltip="Message is being marked as resolved" class="label sidebar-label label-info">Resolved</span>
                                                     <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important">{{message.number_of_processing_attempts}} Retry Failures</span>
@@ -136,7 +137,7 @@
                                             <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
                                             <redirect-link redirect="message.redirect" queue-address="{{message.queue_address}}" ></redirect-link>
 
-                                        </p>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

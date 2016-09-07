@@ -137,7 +137,7 @@ footer a:hover { font-weight: normal; }
 .sidebar-label {
     box-shadow: none;
     color: #ffffff;
-    display: block;
+    display: inline-block;
     font-size: 12px;
     margin-top: 3px;
     max-width: 100%;
