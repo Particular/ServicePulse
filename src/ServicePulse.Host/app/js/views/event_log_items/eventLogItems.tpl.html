@@ -16,13 +16,18 @@
                                    'danger': eventLogItem.severity === 'error',
                                    'fa-heart': eventLogItem.category === 'Endpoints' || eventLogItem.category === 'EndpointControl' || eventLogItem.category === 'HeartbeatMonitoring',
                                    'fa-check': eventLogItem.category === 'CustomChecks',
-                                   'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability'}"></i>
+                                   'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability',
+                                   'pa-redirect-source pa-redirect-large': eventLogItem.category === 'MessageRedirects',
+                                       }"></i>
 
-                                    <i ng-show="eventLogItem.severity === 'error'" class="fa fa-times fa-o fa-stack-1x fa-inverse"></i>
+                                    <i ng-show="eventLogItem.severity === 'error' || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse" 
+                                       ng-class="{
+                                       'fa-times fa-error': eventLogItem.severity === 'error',
+                                       'fa-pencil': eventLogItem.category === 'MessageRedirects' && eventLogItem.event_type === 'MessageRedirectChanged',
+                                       'fa-plus': eventLogItem.category === 'MessageRedirects' && eventLogItem.event_type === 'MessageRedirectCreated',
+                                       'fa-trash': eventLogItem.category === 'MessageRedirects' && eventLogItem.event_type === 'MessageRedirectRemoved',
+                                       }"></i>
                                 </span>
-
-
-                                
                             </div>
                             <div class="col-xs-8 col-sm-9">
                                 <div class="row box-header">

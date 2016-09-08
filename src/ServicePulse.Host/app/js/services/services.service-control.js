@@ -77,7 +77,7 @@
 
         function getTotalExceptionGroups() {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
-            return $http.head(url).then(function (response) {
+            return $http.head(url).then(function(response) {
                 return response.headers('Total-Count');
             });
         }
@@ -110,6 +110,13 @@
             });
         }
 
+        function getTotalPendingRetries() {
+            var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued');
+            return $http.head(url).then(function(response) {
+                return response.headers('Total-Count');
+            });
+        }
+
         function getFailingCustomChecks(page) {
             var url = uri.join(scConfig.service_control_url, 'customchecks?status=fail&page=' + page);
             return $http.get(url).then(function(response) {
@@ -136,6 +143,17 @@
                 })
                 .error(function() {
                     //  notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'danger', { item: customCheck });
+                });
+        }
+
+        function retryPendingMessagesForQueue(queueName) {
+            var url = uri.join(scConfig.service_control_url, 'errors', 'queues', queueName, 'retry');
+            $http.post(url)
+                .success(function() {
+                    notifications.pushForCurrentRoute('Retrying all pending retry messages for queue ' + queueName, 'info');
+                })
+                .error(function() {
+                    notifications.pushForCurrentRoute('Retrying all pending retried messages for queue ' + queueName + ' failed', 'danger');
                 });
         }
 
@@ -223,6 +241,12 @@
                     return results;
                 });
         }
+        
+        function loadQueueNames() {
+            var url = uri.join(scConfig.service_control_url, 'errors', 'queues', 'addresses');
+
+            return $http.get(url);
+        }
 
         var service = {
             getVersion: getVersion,
@@ -238,15 +262,18 @@
             getTotalFailedMessages: getTotalFailedMessages,
             getTotalArchivedMessages: getTotalArchivedMessages,
             getTotalFailingCustomChecks: getTotalFailingCustomChecks,
+            getTotalPendingRetries: getTotalPendingRetries,
             getFailingCustomChecks: getFailingCustomChecks,
             getFailedMessageStats: getFailedMessageStats,
             muteCustomChecks: muteCustomChecks,
             retryAllFailedMessages: retryAllFailedMessages,
+            retryPendingMessagesForQueue: retryPendingMessagesForQueue,
             retryFailedMessages: retryFailedMessages,
             archiveFailedMessages: archiveFailedMessages,
             archiveExceptionGroup: archiveExceptionGroup,
             retryExceptionGroup: retryExceptionGroup,
-            getHeartbeatStats: getHeartbeatStats
+            getHeartbeatStats: getHeartbeatStats,
+            loadQueueNames: loadQueueNames
         };
 
         return service;

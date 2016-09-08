@@ -81,6 +81,8 @@
     <Content Include="tests\js\jasmine_test_example.js" />
     <Content Include="tests\js\jasmine_test_example_tests.js" />
     <Content Include="tests\js\angular-mocks.js" />
+    <Content Include="tests\js\views\pending_retries\controller.spec.js" />
+    <Content Include="tests\js\views\redirect\edit\controller.spec.js" />
     <Content Include="tests\js\_references.js" />
     <Content Include="tests\js\services\services.spec.js" />
   </ItemGroup>
@@ -89,6 +91,9 @@
       <Project>{d120b791-bd1b-4e06-b4e1-69801a73209b}</Project>
       <Name>ServicePulse.Host</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

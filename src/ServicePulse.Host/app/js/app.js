@@ -19,7 +19,8 @@
         'endpoints',
         'customChecks',
         'configuration',
-        'dashboard']);
+        'dashboard',
+        'ui.select']);
 
     angular.module('sc')
         .run(['$rootScope', '$location', '$log', function ($rootScope, $location, $log) {

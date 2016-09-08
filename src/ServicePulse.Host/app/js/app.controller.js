@@ -152,6 +152,30 @@
         }, "CustomChecksUpdated");
 
         listener.subscribe($scope, function (message) {
+            notifier.notify("MessageRedirectCreated", message);
+        }, "MessageRedirectCreated");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("MessageRedirectChanged", message);
+        }, "MessageRedirectChanged");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("MessageRedirectRemoved", message);
+        }, "MessageRedirectRemoved");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("MessageFailureResolvedManually", message);
+        }, "MessageFailureResolvedManually");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("MessagesSubmittedForRetry", message);
+        }, "MessagesSubmittedForRetry");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("MessageFailureResolvedByRetry", message);
+        }, "MessageFailureResolvedByRetry");
+        
+        listener.subscribe($scope, function (message) {
             logit(message);
        
             notifier.notify("MessageFailuresUpdated", message.unresolved_total || message.total);

@@ -102,7 +102,7 @@
         vm.restore = function (timeGroup) {
             var rangeEnd = moment.utc();
             var rangeStart = moment.utc().subtract(timeGroup.amount, timeGroup.unit);
-            archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
+            archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected');
 
             startTimer();
         }

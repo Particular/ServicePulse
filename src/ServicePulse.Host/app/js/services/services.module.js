@@ -8,7 +8,8 @@
         'services.semverService',
         'services.notifications',
         'services.exceptionHandler',
-        'services.uri'
+        'services.uri',
+        'services.endpoints'
     ]);
 
 

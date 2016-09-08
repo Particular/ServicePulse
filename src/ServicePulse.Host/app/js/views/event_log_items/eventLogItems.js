@@ -33,13 +33,11 @@
                 case 'Recoverability':
                     $location.path('/failedGroups');
                     break;
-
+                case 'MessageRedirects':
+                    $location.path('/redirects');
+                    break;
                 default:
-        
             }
-
-            
-
         }
 
         serviceControlService.getEventLogItems().then(function(eventLogItems) {
