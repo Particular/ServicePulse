@@ -74,7 +74,7 @@
                     $uibModalInstance.close();
                 }, function(response) {
                     if ((response.status === '409' || response.status === 409) && response.statusText === 'Duplicate') {
-                        toastService.showError('Failed to create a redirect, can not create more than one redirect for queue: ' + $scope.from_physical_address);
+                        toastService.showError('Failed to create a redirect, can not create more than one redirect for queue: ' + $scope.selected.physical_address);
                     } else if ((response.status === '409' || response.status === 409) && response.statusText === 'Dependents') {
                         toastService.showError('Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.');
                     } else {

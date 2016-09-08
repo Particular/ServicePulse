@@ -163,6 +163,10 @@
             notifier.notify("MessageRedirectRemoved", message);
         }, "MessageRedirectRemoved");
 
+        listener.subscribe($scope, function(message) {
+            notifier.notify("MessageFailed", message);
+        }, "MessageFailed");
+
         listener.subscribe($scope, function (message) {
             notifier.notify("MessageFailureResolvedManually", message);
         }, "MessageFailureResolvedManually");
