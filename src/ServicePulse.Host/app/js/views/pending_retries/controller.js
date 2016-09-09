@@ -50,6 +50,11 @@
             refreshRedirects();
         }, 'RedirectsUpdated');
 
+
+        notifier.subscribe($scope, function (event, messagefailed) {
+            removeResolvedMessage(messagefailed.failed_message_id);
+        }, "MessageFailed");
+
         notifier.subscribe($scope, function (event, messagefailureResolvedManually) {
             removeResolvedMessage(messagefailureResolvedManually.failed_message_id);
         }, "MessageFailureResolvedManually");
