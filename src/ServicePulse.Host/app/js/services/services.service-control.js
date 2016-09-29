@@ -103,7 +103,7 @@
             });
         }
 
-        function getTotalFailingCustomChecks() {
+        function getTotalCustomChecks() {
             var url = uri.join(scConfig.service_control_url, 'customchecks?status=fail');
             return $http.get(url).then(function(response) {
                 return response.headers('Total-Count');
@@ -120,6 +120,16 @@
         function getFailingCustomChecks(page) {
             var url = uri.join(scConfig.service_control_url, 'customchecks?status=fail&page=' + page);
             return $http.get(url).then(function(response) {
+                return {
+                    data: response.data,
+                    total: response.headers('Total-Count')
+                };
+            });
+        }
+
+        function getSuccessfulCustomChecks(page) {
+            var url = uri.join(scConfig.service_control_url, 'customchecks?status=pass&page=' + page);
+            return $http.get(url).then(function (response) {
                 return {
                     data: response.data,
                     total: response.headers('Total-Count')
@@ -261,9 +271,10 @@
             getTotalExceptionGroups: getTotalExceptionGroups,
             getTotalFailedMessages: getTotalFailedMessages,
             getTotalArchivedMessages: getTotalArchivedMessages,
-            getTotalFailingCustomChecks: getTotalFailingCustomChecks,
+            getTotalCustomChecks: getTotalCustomChecks,
             getTotalPendingRetries: getTotalPendingRetries,
             getFailingCustomChecks: getFailingCustomChecks,
+            getSuccessfulCustomChecks: getSuccessfulCustomChecks,
             getFailedMessageStats: getFailedMessageStats,
             muteCustomChecks: muteCustomChecks,
             retryAllFailedMessages: retryAllFailedMessages,

@@ -7,30 +7,32 @@
 </div>
 
 <div class="container">
-    <section name="custom_checks">
+    <section name="failed_custom_checks">
 
-        <busy ng-show="loadingData" message="fetching more data"></busy>
+        <busy ng-show="failedChecks.loadingData" message="fetching more data"></busy>
 
-        <no-data ng-show="!loadingData && model.total == 0"  message="No failed custom checks"></no-data>
+        <no-data ng-show="!failedChecks.loadingData && failedChecks.model.total == 0"  message="No failed custom checks"></no-data>
 
         <div class="row">
             <div class="col-sm-12">
-                <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
-                    <div class="row box box-warning box-no-click" ng-repeat="item in model.data | orderBy: '-reported_at'">
+                <div infinite-scroll="loadMoreResults(failedChecks)" infinite-scroll-distance="0" infinite-scroll-disabled="failedChecks.disableLoadingData">
+                    <div class="row box box-warning box-no-click" ng-repeat="item in failedChecks.model.data | orderBy: '-reported_at'">
                         <div class="col-sm-12">
-                            <div class="row">
-
+                            <div class="row" ng-click="item.expandReason = !item.expandReason">
                                 <div class="col-sm-10">
                                     <div class="row box-header">
                                         <div class="col-sm-12">
-                                            <p class="lead">{{item.failure_reason}}</p>
+                                            <p class="lead">{{item.originating_endpoint.name}}@{{item.originating_endpoint.host}}</p>
                                             <p>{{item.custom_check_id}} </p>
-                                            <p>{{item.category}} reported by {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}} <sp-moment date="{{item.reported_at}}"></sp-moment>
+                                            <p>{{item.category}} reported <sp-moment date="{{item.reported_at}}"></sp-moment>
+                                            <p ng-show="item.expandReason">{{item.failure_reason}}</p>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-2">
+                                    <i title="{{eventLogItem.category}}" class="fa fa-stack-2x danger fa-check" uib-tooltip="Failed"></i>
+                                    <i class="fa fa-o fa-stack-1x fa-inverse fa-times fa-error"></i>
                                     <button type="button" class="btn btn-link btn-sm pull-right" title="Mute this custom check so it doesn't show up as an alert" ng-click="mute(item)">
                                         <i>Mute</i>
                                     </button>
@@ -39,6 +41,45 @@
                         </div>
                     </div>
                   
+
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section name="successful_custom_checks">
+
+        <busy ng-show="successfulChecks.loadingData" message="fetching more data"></busy>
+
+        <no-data ng-show="!successfulChecks.loadingData && successfulChecks.model.total == 0" message="No custom checks"></no-data>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div infinite-scroll="loadMoreResults(successfulChecks)" infinite-scroll-distance="0" infinite-scroll-disabled="successfulChecks.disableLoadingData">
+                    <div class="row box box-warning box-no-click" ng-repeat="item in successfulChecks.model.data | orderBy: '-reported_at'">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-10">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12">
+                                            <p class="lead">{{item.originating_endpoint.name}}@{{item.originating_endpoint.host}}</p>
+                                            <p>{{item.custom_check_id}} </p>
+                                            <p>{{item.category}} reported <sp-moment date="{{item.reported_at}}"></sp-moment>
+                                            <p>{{item.failure_reason}}</p>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2">
+                                    <i title="{{eventLogItem.category}}" class="fa fa-stack-2x fa-check" uib-tooltip="Passed"></i>
+                                    <button type="button" class="btn btn-link btn-sm pull-right" title="Mute this custom check so it doesn't show up as an alert" ng-click="mute(item)">
+                                        <i>Mute</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
             </div>
