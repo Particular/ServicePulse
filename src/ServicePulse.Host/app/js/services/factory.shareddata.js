@@ -81,7 +81,7 @@
             notifier.notify('MessageFailuresUpdated', response);
         });
 
-        serviceControlService.getTotalFailingCustomChecks().then(function (response) {
+        serviceControlService.getTotalCustomChecks().then(function (response) {
             notifier.notify('CustomChecksUpdated', response || 0);
         });
 

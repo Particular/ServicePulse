@@ -7,19 +7,28 @@
         serviceControlService,
         notifyService) {
 
-        $scope.model = { data: [], total: 0 };
-        $scope.loadingData = false;
-        $scope.disableLoadingData = false;
+        $scope.failedChecks = {};
+        $scope.failedChecks.model = { data: [], total: 0 };
+        $scope.failedChecks.loadingData = false;
+        $scope.failedChecks.disableLoadingData = false;
+        $scope.failedChecks.page = 1;
+        $scope.failedChecks.load = serviceControlService.getFailingCustomChecks;
+        
+        $scope.successfulChecks = {};
+        $scope.successfulChecks.model = { data: [], total: 0 };
+        $scope.successfulChecks.loadingData = false;
+        $scope.successfulChecks.disableLoadingData = false;
+        $scope.successfulChecks.page = 1;
+        $scope.successfulChecks.load = serviceControlService.getSuccessfulCustomChecks;
 
-        var page = 1;
-
-        $scope.loadMoreResults = function () {
-            if ($scope.loadingData) {
+        $scope.loadMoreResults = function (checks) {
+            if (checks.loadingData) {
                 return;
             }
 
-            $scope.loadingData = true;
-            load(page++);
+            checks.loadingData = true;
+            load(checks);
+            checks.page++;
         };
 
         $scope.mute = function (row) {
@@ -27,26 +36,30 @@
         };
 
         var notifier = notifyService();
-        notifier.subscribe($scope, reloadData, 'CustomChecksUpdated');
+        notifier.subscribe($scope,
+            function() {
+                reloadData($scope.failedChecks);
+                reloadData($scope.successfulChecks);
+            }, 'CustomChecksUpdated');
 
-        function reloadData() {
-            page = 1;
-            $scope.loadingData = true;
-            $scope.model = { data: [], total: 0 };
-            $scope.disableLoadingData = false;
-            load(page);
+        function reloadData(checks) {
+            checks.page = 1;
+            checks.loadingData = true;
+            checks.model = { data: [], total: 0 };
+            checks.disableLoadingData = false;
+            load(checks);
         }
 
-        function load(page) {
-            serviceControlService.getFailingCustomChecks(page).then(function (response) {
+        function load(checks) {
+            checks.load(checks.page).then(function (response) {
 
-                $scope.loadingData = false;
+                checks.loadingData = false;
 
-                $scope.model.data = $scope.model.data.concat(response.data);
-                $scope.model.total = response.total;
+                checks.model.data = checks.model.data.concat(response.data);
+                checks.model.total = response.total;
 
-                if ($scope.model.data.length >= $scope.model.total) {
-                    $scope.disableLoadingData = true;
+                if (checks.model.data.length >= checks.model.total) {
+                    checks.disableLoadingData = true;
                 }
             });
         };
