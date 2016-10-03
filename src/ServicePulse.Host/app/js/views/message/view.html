@@ -1,0 +1,91 @@
+﻿<div class="container">
+    <section name="failed_message">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>Message</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="btn-toolbar">
+                    <button type="button" ng-disabled="vm.message.retried || vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to archive this message?" confirm-message="If you archive, this message won't be available for retrying unless it is later unarchived." confirm-click="vm.archiveMessage()" ><i class="fa fa-archive"></i> Archive message</button>
+                    <button type="button" ng-disabled="vm.message.retried || vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="row box">
+                <div class="col-sm-12" ng-click="vm.toggleRowSelect(vm.message)">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="row box-header">
+                                <div class="col-sm-12 no-side-padding">
+                                    <p class="lead break">{{vm.message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
+                                    <p class="metadata">
+                                        <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{vm.message.time_of_failure}}"></sp-moment></span>
+                                        <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{vm.message.receiving_endpoint.name}}</span>
+                                        <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{vm.message.receiving_endpoint.host}}</span>
+                                        <span class="metadata" ng-show="vm.message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{vm.message.redirect}}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <span>
+                                    <span ng-if="vm.message.retried" tooltip="Message is being retried" class="label sidebar-label label-info">Retried</span>
+                                    <span ng-if="vm.message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning">Archived</span>
+                                    <span ng-if="vm.message.number_of_processing_attempts > 1" tooltip="This message has already failed {{vm.message.number_of_processing_attempts}} times" class="label sidebar-label label-important">{{vm.message.number_of_processing_attempts}} Retry Failures</span>
+                                </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div isolate-click  class="col-sm-12">
+                            <p class="small" ng-init="vm.message.panel = 0">
+
+                                <button type="button" class="btn btn-link btn-sm" ng-show="vm.message.panel === 1" ng-click="vm.togglePanel(vm.message, 0)">
+                                    <i>Hide stacktrace</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-hide="vm.message.panel === 1" ng-click="vm.togglePanel(vm.message, 1)">
+                                    <i> Show stacktrace</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-show="vm.message.panel === 2" ng-click="vm.togglePanel(vm.message, 0)">
+                                    <i>Hide headers</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-hide="vm.message.panel === 2" ng-click="vm.togglePanel(vm.message, 2)">
+                                    <i>Show headers</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-show="vm.message.panel === 3" ng-click="vm.togglePanel(vm.message, 0)">
+                                    <i>Hide message body</i>
+                                </button>
+                                <button type="button" class="btn btn-link btn-sm" ng-hide="vm.message.panel === 3" ng-click="vm.togglePanel(vm.message, 3)">
+                                    <i>Show message body</i>
+                                </button>
+                                <button type="button" clip-copy="" clip-complete="vm.clipComplete(message.message_id)" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
+                                    <i>Copy Id to clipboard</i>
+                                </button>
+                                <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
+                                    <i>Open in ServiceInsight</i>
+                                </button>
+                            </p>
+                            <pre isolate-click ng-show="vm.message.panel === 0">{{ vm.message.exception.message }}</pre>
+                            <pre isolate-click ng-show="vm.message.panel === 1">{{ vm.message.exception.stack_trace }}</pre>
+                            <table isolate-click class="table" ng-show="vm.message.panel === 2 && vm.message.messageHeaders">
+                                <tbody>
+                                <tr class="interactiveList" ng-repeat="header in vm.message.messageHeaders">
+                                    <td nowrap="nowrap">{{header.key}}</td>
+                                    <td>
+                                        <pre>{{header.value}}</pre>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div isolate-click class="alert alert-info" ng-show="vm.message.panel === 2 && vm.message.headersUnavailable">{{vm.message.headersUnavailable}}</div>
+                            <pre isolate-click ng-show="vm.message.panel === 3 && vm.message.messageBody">{{vm.message.messageBody}}</pre>
+                            <div isolate-click class="alert alert-info" ng-show="vm.message.panel === 3 && vm.message.bodyUnavailable">{{vm.message.bodyUnavailable}}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

@@ -56,6 +56,13 @@
             });
         }
 
+		function getFailedMessageById(messageId) {
+            var url = uri.join(scConfig.service_control_url, 'errors', messageId);
+            return $http.get(url).then(function (response) {
+                return response;
+            });
+        }
+
         function getHistoricGroups() {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'history');
             return $http.get(url).then(function (response) {
