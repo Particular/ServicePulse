@@ -23,7 +23,7 @@
         $scope.Version = version;
 
         $scope.isActive = function(viewLocation) {
-            var active = (viewLocation === $location.path());
+            var active = $location.path().startsWith(viewLocation);
             return active;
         };
        
