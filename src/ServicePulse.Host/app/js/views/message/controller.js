@@ -7,7 +7,8 @@
         $routeParams,
         scConfig,
         toastService,
-        serviceControlService) {
+        serviceControlService,
+        archivedMessageService) {
 
         var vm = this;
         
@@ -53,6 +54,13 @@
             toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
             vm.message.archived = true;
         };
+
+        vm.unarchiveMessage = function () {
+            archivedMessageService.restoreMessageFromArchive(vm.message.message_id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
+                .then(function (message) {
+                    vm.message.archived = false;
+                });
+        };
         
         vm.debugInServiceInsight = function () {
             var messageId = vm.message.message_id;
@@ -81,7 +89,8 @@
         "$routeParams",
         "scConfig",
         "toastService",
-        "serviceControlService"
+        "serviceControlService",
+        "archivedMessageService"
     ];
 
     angular.module("sc")

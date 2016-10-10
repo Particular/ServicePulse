@@ -8,8 +8,10 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
-                    <button type="button" ng-disabled="vm.message.retried || vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to archive this message?" confirm-message="If you archive, this message won't be available for retrying unless it is later unarchived." confirm-click="vm.archiveMessage()" ><i class="fa fa-archive"></i> Archive message</button>
+                    <button type="button" ng-hide="vm.message.archived" ng-disabled="vm.message.retried" class="btn btn-default" confirm-title="Are you sure you want to archive this message?" confirm-message="If you archive, this message won't be available for retrying unless it is later unarchived." confirm-click="vm.archiveMessage()" ><i class="fa fa-archive"></i> Archive message</button>
+                    <button type="button" ng-hide="!vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to un-archive this message?" confirm-message="Unarchived message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Unarchive</button>
                     <button type="button" ng-disabled="vm.message.retried || vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
+                    
                 </div>
             </div>
         </div>
