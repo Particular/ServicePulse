@@ -88,4 +88,8 @@
 /// <reference path="../../../servicepulse.host/app/js/views/views/redirect/route.js" />
 /// <reference path="../../../servicepulse.host/app/js/views/views/redirect/service.js" />
 /// <reference path="../../../servicepulse.host/app/js/views/redirect/edit/controller.js" />
+/// <!-- Message -->
+/// <reference path="../../../servicepulse.host/app/js/views/message/controller.js" />
+/// <reference path="../../../servicepulse.host/app/js/views/views/message/route.js" />
+
 /// <reference path="angular-mocks.js" />
