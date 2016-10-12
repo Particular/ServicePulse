@@ -105,23 +105,27 @@
         };
 
         vm.retrySelected = function () {
-            serviceControlService.retryFailedMessages(vm.selectedIds);
-            toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
-            vm.selectedIds = [];
+            serviceControlService.retryFailedMessages(vm.selectedIds)
+                .then(() => {
+                    toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
+                    vm.selectedIds = [];
 
-            vm.failedMessages = vm.failedMessages.filter(function(item) {
-                return !item.selected;
-            });
+                    vm.failedMessages = vm.failedMessages.filter(function(item) {
+                        return !item.selected;
+                    });
+                });
         };
 
         vm.archiveSelected = function () {
-            serviceControlService.archiveFailedMessages(vm.selectedIds);
-            toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
-            vm.selectedIds = [];
+            serviceControlService.archiveFailedMessages(vm.selectedIds)
+                .then(() => {
+                    toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
+                    vm.selectedIds = [];
 
-            vm.failedMessages = vm.failedMessages.filter(function (item) {
-                return !item.selected;
-            });
+                    vm.failedMessages = vm.failedMessages.filter(function(item) {
+                        return !item.selected;
+                    });
+                });
         };
 
         vm.archiveExceptionGroup = function (group) {

@@ -149,15 +149,17 @@
 
 
         vm.retrySelected = function () {
-            serviceControlService.retryFailedMessages(vm.selectedIds);
-            vm.selectedIds = [];
+            serviceControlService.retryFailedMessages(vm.selectedIds)
+                .then(() => {
+                    vm.selectedIds = [];
 
-            for (var i = 0; i < vm.failedMessages.length; i++) {
-                if (vm.failedMessages[i].selected) {
-                    vm.failedMessages[i].selected = false;
-                    vm.failedMessages[i].retried = true;
-                }
-            }
+                    for (var i = 0; i < vm.failedMessages.length; i++) {
+                        if (vm.failedMessages[i].selected) {
+                            vm.failedMessages[i].selected = false;
+                            vm.failedMessages[i].retried = true;
+                        }
+                    }
+                });
         };
 
         vm.unarchiveSelected = function () {

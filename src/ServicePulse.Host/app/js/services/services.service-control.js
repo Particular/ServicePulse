@@ -73,6 +73,13 @@
             });
         }
 
+        function getFailedMessageById(messageId) {
+            var url = uri.join(scConfig.service_control_url, 'errors', 'last', messageId);
+            return $http.get(url).then(function (response) {
+                return response;
+            });
+        }
+
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
             return $http.get(url).then(function(response) {

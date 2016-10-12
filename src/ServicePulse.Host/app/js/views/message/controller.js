@@ -44,15 +44,20 @@
         };
 
         vm.retryMessage = function () {
-            serviceControlService.retryFailedMessages([vm.message.message_id]);
-            toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
-            vm.message.retried = true;
+            serviceControlService.retryFailedMessages([vm.message.message_id])
+                .then(() => {
+                        toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
+                        vm.message.retried = true;
+                    }
+                );
         };
 
         vm.archiveMessage = function () {
-            serviceControlService.archiveFailedMessages([vm.message.message_id]);
-            toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
-            vm.message.archived = true;
+            serviceControlService.archiveFailedMessages([vm.message.message_id])
+                .then(() => {
+                    toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
+                    vm.message.archived = true;
+                });
         };
 
         vm.unarchiveMessage = function () {
