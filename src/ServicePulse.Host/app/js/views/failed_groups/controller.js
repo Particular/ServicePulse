@@ -109,7 +109,8 @@
                         vm.exceptionGroups = response.data.map(function (obj) {
                             vm.allFailedMessagesGroup.count += obj.count;
                             var nObj = obj;
-                            nObj.workflow_state = createWorkflowState('ready', '');
+                            nObj.workflow_state = createWorkflowState(nObj.retry_status || 'ready', '', nObj.number_of_retry_messages_remaining);
+                            
                             return nObj;
                         });
 
