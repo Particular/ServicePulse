@@ -8,14 +8,11 @@
     }));
 
     describe('retrying message', function () {
-        var $scope, controller, serviceControlService, root, $httpBackend;
+        var $scope, controller, serviceControlService, root;
 
         beforeEach(inject(function ($rootScope, $injector, $q) {
             $scope = {};
             root = $rootScope;
-            $httpBackend = $injector.get('$httpBackend');
-            $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
-            $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
 
             serviceControlService = {
                 retryFailedMessages: function() {},
@@ -25,7 +22,7 @@
             };
             controller = $controller('messagesController', {
                 $scope: $scope,
-                $routeParams: { messageId: 'some-message-id' },
+                $routeParams: { messageId: "some-message-id" },
                 scConfig: null,
                 toastService: { showInfo: function () {} },
                 serviceControlService: serviceControlService,
@@ -65,15 +62,12 @@
     });
 
     describe('archiving message', function () {
-        var $scope, controller, serviceControlService, root, $httpBackend;
+        var $scope, controller, serviceControlService, root;
 
         beforeEach(inject(function ($rootScope, $injector, $q) {
             $scope = {};
             root = $rootScope;
-            $httpBackend = $injector.get('$httpBackend');
-            $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
-            $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
-
+            
             serviceControlService = {
                 archiveFailedMessages: function () { },
                 getFailedMessageById: function () {
@@ -82,7 +76,7 @@
             };
             controller = $controller('messagesController', {
                 $scope: $scope,
-                $routeParams: { messageId: 'some-message-id' },
+                $routeParams: { messageId: "some-message-id" },
                 scConfig: null,
                 toastService: { showInfo: function () { } },
                 serviceControlService: serviceControlService,
@@ -122,15 +116,12 @@
     });
 
     describe('un-archiving message', function () {
-        var $scope, controller, serviceControlService, root, $httpBackend, archivedMessageService;
+        var $scope, controller, serviceControlService, root, archivedMessageService;
 
         beforeEach(inject(function ($rootScope, $injector, $q) {
             $scope = {};
             root = $rootScope;
-            $httpBackend = $injector.get('$httpBackend');
-            $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
-            $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
-
+            
             serviceControlService = {
                 getFailedMessageById: function () {
                     return $q.defer().promise;
@@ -140,7 +131,7 @@
 
             controller = $controller('messagesController', {
                 $scope: $scope,
-                $routeParams: { messageId: 'some-message-id' },
+                $routeParams: { messageId: "some-message-id" },
                 scConfig: null,
                 toastService: { showInfo: function () { } },
                 serviceControlService: serviceControlService,
