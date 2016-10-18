@@ -38,17 +38,38 @@
                         <div class="row" ng-show="group.workflow_state.status !=='ready'">
 
                             <div class="col-md-10">
-                                <div class="row box-header">
+                                <div class="row box-header" ng-show="group.workflow_state.status ==='submitted'">
+                                    <div class="col-sm-12">
+                                        <p class="lead">Submitted Group for retry: {{group.title}}</p>
+                                        <p>The group was submitted for retry and will be retried when possible. When the processing starts, progress will be displayed on this screen. </p>
+                                        <p>
+                                            <strong>If you leave this screen or refresh the data in this list, messages may appear as if they have not been submited when you return. 
+                                            When the processing will start it will be visually represented. </strong>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row box-header" ng-show="group.workflow_state.status === 'in_progress'">
                                     <div class="col-sm-12">
                                         <p class="lead">Processing Group {{group.title}}</p>
-                                        <p>It can take some time for these messages to be processed by your system. Please be patient. </p>
+                                        <p>Group is being processed, {{group.workflow_state.total}} messages remaining </p>
                                         <p>
-                                            <strong>If you leave this screen or refresh the data in this list, messages may appear as if they have not been processed when you return. </strong>
+                                            <strong> Please be patient. </strong>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row box-header" ng-show="group.workflow_state.status === 'done'">
+                                    <div class="col-sm-12">
+                                        <p class="lead">Group retry complete {{group.title}}</p>
+                                        <p>Processed {{group.workflow_state.total}} messages </p>
+                                        <p>
+                                            <button type="button" class="btn btn-link btn-sm hidden-sm-down" ng-click="vm.closeStatus(group)">
+                                                OK
+                                            </button>
                                         </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-sm-2" ng-show="group.workflow_state.status !== 'done'">
                                 <i class="fa fa-spinner fa-pulse fa-5x pull-right"></i>
                             </div>
                         </div>

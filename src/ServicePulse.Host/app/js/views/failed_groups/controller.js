@@ -46,28 +46,26 @@
                 }, function (message) {
                     group.workflow_state = createWorkflowState('error', message);
                     notifier.notify('ArchiveGroupRequestRejected', group);
-                })
-                .finally(function () {
-
                 });
         }
 
         vm.retryExceptionGroup = function (group) {
             group.workflow_state = { status: 'working', message: 'working' };
 
-            var response = failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
+            failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function (message) {
                     // We are going to have to wait for service control to tell us the job has been done
-                    group.workflow_state = createWorkflowState('success', message);
+                    group.workflow_state = createWorkflowState('submitted', message);
                     notifier.notify('RetryGroupRequestAccepted', group);
 
                 }, function (message) {
                     group.workflow_state = createWorkflowState('error', message);
                     notifier.notify('RetryGroupRequestRejected', group);
-                })
-                .finally(function () {
-
                 });
+        }
+
+        vm.closeStatus = function(group) {
+            group.workflow_state = createWorkflowState('ready');
         }
 
         vm.selectClassification = function (newClassification) {
@@ -109,7 +107,12 @@
                         vm.exceptionGroups = response.data.map(function (obj) {
                             vm.allFailedMessagesGroup.count += obj.count;
                             var nObj = obj;
-                            nObj.workflow_state = createWorkflowState(nObj.retry_status || 'ready', '', nObj.number_of_retry_messages_remaining);
+                            nObj
+                                .workflow_state =
+                                createWorkflowState((nObj.retry_status ? nObj.retry_status.toLowerCase().split(' ').join('_') : null) ||
+                                    'ready',
+                                    '',
+                                    nObj.number_of_retry_messages_remaining);
                             
                             return nObj;
                         });
@@ -147,6 +150,27 @@
             $timeout.cancel(localtimeout);
             startTimer();
         }, 'FailedMessageGroupArchived');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.exceptionGroups.filter(x => x.id === data.request_id)
+                .forEach(x => {
+                    x.workflow_state = createWorkflowState('in_progress', '', data.number_of_messages, 0);
+                });
+        }, 'RetryOperationStarted');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.exceptionGroups.filter(x => x.id === data.request_id)
+                .forEach(x => {
+                    x.workflow_state = createWorkflowState('in_progress', '', x.workflow_state.total, data.number_of_messages_forwarded);
+                });
+        }, 'RetryMessagesForwarded');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.exceptionGroups.filter(x => x.id === data.request_id)
+                .forEach(x => {
+                    x.workflow_state = createWorkflowState('done');
+                });
+        }, 'RetryOperationCompleted');
 
         // INIT
         initialLoad();
