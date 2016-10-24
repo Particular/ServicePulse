@@ -35,45 +35,7 @@
             <div class="col-sm-12" ng-show="vm.exceptionGroups.length">
                 <div class="row box wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-sm-12">
-                        <div class="row" ng-show="group.workflow_state.status !=='ready'">
-
-                            <div class="col-md-10">
-                                <div class="row box-header" ng-show="group.workflow_state.status ==='submitted'">
-                                    <div class="col-sm-12">
-                                        <p class="lead">Submitted Group for retry: {{group.title}}</p>
-                                        <p>The group was submitted for retry and will be retried when possible. When the processing starts, progress will be displayed on this screen. </p>
-                                        <p>
-                                            <strong>If you leave this screen or refresh the data in this list, messages may appear as if they have not been submited when you return. 
-                                            When the processing will start it will be visually represented. </strong>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row box-header" ng-show="group.workflow_state.status === 'in_progress'">
-                                    <div class="col-sm-12">
-                                        <p class="lead">Processing Group {{group.title}}</p>
-                                        <p>Group is being processed, {{group.workflow_state.total}} messages remaining </p>
-                                        <p>
-                                            <strong> Please be patient. </strong>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="row box-header" ng-show="group.workflow_state.status === 'done'">
-                                    <div class="col-sm-12">
-                                        <p class="lead">Group retry complete {{group.title}}</p>
-                                        <p>Processed {{group.workflow_state.total}} messages </p>
-                                        <p>
-                                            <button type="button" class="btn btn-link btn-sm hidden-sm-down" ng-click="vm.closeStatus(group)">
-                                                OK
-                                            </button>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-2" ng-show="group.workflow_state.status !== 'done'">
-                                <i class="fa fa-spinner fa-pulse fa-5x pull-right"></i>
-                            </div>
-                        </div>
-                        <div class="row" ng-show="group.workflow_state.status ==='ready'">
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="row box-header">
                                     <div class="col-sm-12" ng-click="vm.viewExceptionGroup(group)">
@@ -87,7 +49,7 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" ng-show="group.workflow_state.status ==='ready'">
                                     <div class="col-sm-12">
                                         <button type="button" class="btn btn-link btn-sm hidden-sm-down" title="View messages in this Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
                                             View Messages
@@ -98,6 +60,12 @@
                                         <button type="button" class="btn btn-link btn-sm" title="Archive messages in this Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-title="Are you sure you want to archive this group?" confirm-message="If you do, they will not be available for Retry.">
                                             Archive Group
                                         </button>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="group.workflow_state.status !=='ready'">
+                                    <div class="col-sm-12">
+                                        <i class="fa fa-spinner fa-pulse pull-left"></i>
+                                        <p class="lead">{{group.workflow_state.message}} ({{group.workflow_state.total}} of {{group.workflow_state.total}} remaining)</p>
                                     </div>
                                 </div>
                             </div>

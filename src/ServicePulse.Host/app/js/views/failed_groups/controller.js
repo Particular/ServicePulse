@@ -154,21 +154,21 @@
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('in_progress', '', data.number_of_messages, 0);
+                    x.workflow_state = createWorkflowState('in_progress', 'Assigning messages to batches...', data.number_of_messages, 0);
                 });
         }, 'RetryOperationStarted');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('in_progress', '', x.workflow_state.total, data.number_of_messages_forwarded);
+                    x.workflow_state = createWorkflowState('in_progress', 'Forwarding messages...', x.workflow_state.total, data.number_of_messages_forwarded);
                 });
         }, 'RetryMessagesForwarded');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('done');
+                    x.workflow_state = createWorkflowState('done', 'Processing done', x.workflow_state.total, x.workflow_state.count);
                 });
         }, 'RetryOperationCompleted');
 
