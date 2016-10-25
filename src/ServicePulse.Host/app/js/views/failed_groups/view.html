@@ -49,23 +49,23 @@
                                         </p>
                                     </div>
                                 </div>
-                                <div class="row" ng-show="group.workflow_state.status ==='ready'">
+                                <div class="row" ng-show="group.workflow_state.status ==='none'">
                                     <div class="col-sm-12">
                                         <button type="button" class="btn btn-link btn-sm hidden-sm-down" title="View messages in this Group" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
                                             View Messages
                                         </button>
-                                        <button type="button" class="btn btn-link btn-sm" title="Retry messages in this Group" confirm-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
+                                        <button type="button" class="btn btn-link btn-sm" title="Retry messages in this Group" confirm-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'none'" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
                                             Retry Group
                                         </button>
-                                        <button type="button" class="btn btn-link btn-sm" title="Archive messages in this Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'ready'" confirm-title="Are you sure you want to archive this group?" confirm-message="If you do, they will not be available for Retry.">
+                                        <button type="button" class="btn btn-link btn-sm" title="Archive messages in this Group" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || group.workflow_state.status !== 'none'" confirm-title="Are you sure you want to archive this group?" confirm-message="If you do, they will not be available for Retry.">
                                             Archive Group
                                         </button>
                                     </div>
                                 </div>
-                                <div class="row" ng-show="group.workflow_state.status !=='ready'">
+                                <div class="row" ng-show="group.workflow_state.status !=='none'">
                                     <div class="col-sm-12">
                                         <i class="fa fa-spinner fa-pulse pull-left"></i>
-                                        <p class="lead">{{group.workflow_state.message}} ({{group.workflow_state.total}} of {{group.workflow_state.total}} remaining)</p>
+                                        <p class="lead">{{group.workflow_state.message}} - {{group.workflow_state.total}}% complete</p>
                                     </div>
                                 </div>
                             </div>

@@ -208,12 +208,16 @@
         }, "FailedMessageGroupArchived");
         
         listener.subscribe($scope, function (message) {
-            notifier.notify("RetryOperationStarted", message);
-        }, "RetryOperationStarted");
+            notifier.notify("RetryOperationWaiting", message);
+        }, "RetryOperationWaiting");
         
         listener.subscribe($scope, function (message) {
-            notifier.notify("RetryMessagesForwarded", message);
-        }, "RetryMessagesForwarded");
+            notifier.notify("RetryOperationPreparing", message);
+        }, "RetryOperationPreparing");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("RetryOperationForwarding", message);
+        }, "RetryOperationForwarding");
 
         listener.subscribe($scope, function (message) {
             notifier.notify("RetryOperationCompleted", message);

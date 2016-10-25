@@ -2,12 +2,14 @@
 (function (window, angular, undefined) {
     "use strict";
 
-    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal, optionalCount) {
+    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal) {
+        if (optionalTotal && optionalTotal <= 1) {
+            optionalTotal = optionalTotal * 100;
+        }
         return {
-            status: optionalStatus || 'working',
+        status: optionalStatus || 'working',
             message: optionalMessage || 'working',
-            total: optionalTotal || 0,
-            count: optionalCount || 0
+            total: optionalTotal || 0
         };
     }
 
@@ -28,7 +30,7 @@
         vm.exceptionGroups = [];
         vm.availableClassifiers = [];
         vm.selectedExceptionGroup = {};
-        vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
+        vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages' }
         vm.stats = sharedDataService.getstats();
 
         vm.viewExceptionGroup = function (group) {
@@ -55,7 +57,6 @@
             failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function (message) {
                     // We are going to have to wait for service control to tell us the job has been done
-                    group.workflow_state = createWorkflowState('submitted', message);
                     notifier.notify('RetryGroupRequestAccepted', group);
 
                 }, function (message) {
@@ -65,7 +66,7 @@
         }
 
         vm.closeStatus = function(group) {
-            group.workflow_state = createWorkflowState('ready');
+            group.workflow_state = createWorkflowState('none');
         }
 
         vm.selectClassification = function (newClassification) {
@@ -110,9 +111,9 @@
                             nObj
                                 .workflow_state =
                                 createWorkflowState((nObj.retry_status ? nObj.retry_status.toLowerCase().split(' ').join('_') : null) ||
-                                    'ready',
+                                    'none',
                                     '',
-                                    nObj.number_of_retry_messages_remaining);
+                                    nObj.retry_progress);
                             
                             return nObj;
                         });
@@ -154,21 +155,28 @@
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('in_progress', 'Assigning messages to batches...', data.number_of_messages, 0);
+                    x.workflow_state = createWorkflowState('waiting', 'Retry group request enqueued...', data.progression);
                 });
-        }, 'RetryOperationStarted');
+        }, 'RetryOperationWaiting');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('in_progress', 'Forwarding messages...', x.workflow_state.total, data.number_of_messages_forwarded);
+                    x.workflow_state = createWorkflowState('preparing', 'Assigning messages to batches...', data.progression);
                 });
-        }, 'RetryMessagesForwarded');
+        }, 'RetryOperationPreparing');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('done', 'Processing done', x.workflow_state.total, x.workflow_state.count);
+                    x.workflow_state = createWorkflowState('forwarding', 'Forwarding messages...', data.progression);
+                });
+        }, 'RetryOperationForwarding');
+
+        notifier.subscribe($scope, function (event, data) {
+            vm.exceptionGroups.filter(x => x.id === data.request_id)
+                .forEach(x => {
+                    x.workflow_state = createWorkflowState('done', 'Processing done', data.progression);
                 });
         }, 'RetryOperationCompleted');
 
