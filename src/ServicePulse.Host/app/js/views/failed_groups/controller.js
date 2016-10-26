@@ -155,28 +155,28 @@
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('waiting', 'Retry group request enqueued...', data.progression);
+                    x.workflow_state = createWorkflowState('waiting', 'Step 1/3 - Waiting to assign message(s) to retry batches...', data.progression);
                 });
         }, 'RetryOperationWaiting');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('preparing', 'Assigning messages to batches...', data.progression);
+                    x.workflow_state = createWorkflowState('preparing', 'Step 2/3 - Assigning messages to batches...', data.progression);
                 });
         }, 'RetryOperationPreparing');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('forwarding', 'Forwarding messages...', data.progression);
+                    x.workflow_state = createWorkflowState('forwarding', 'Step 3/3 - Forwarding messages to endpoint for retrying...', data.progression);
                 });
         }, 'RetryOperationForwarding');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('done', 'Processing done', data.progression);
+                    x.workflow_state = createWorkflowState('done', 'Messages successfully forwarded for retrying', data.progression);
                 });
         }, 'RetryOperationCompleted');
 
