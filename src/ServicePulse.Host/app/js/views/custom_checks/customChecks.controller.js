@@ -22,8 +22,8 @@
             load(page++);
         };
 
-        $scope.mute = function (row) {
-            serviceControlService.muteCustomChecks(row);
+        $scope.dismiss = function (row) {
+            serviceControlService.dismissCustomChecks(row);
         };
 
         var notifier = notifyService();
