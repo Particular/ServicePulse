@@ -13,11 +13,11 @@
         var vm = this;
         
         vm.message = {};
-        
-        var init = function () {
+
+        var init = function() {
             var messageId = $routeParams.messageId;
             vm.loadMessage(messageId);
-        }
+        };
 
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
@@ -45,7 +45,7 @@
 
         vm.retryMessage = function () {
             serviceControlService.retryFailedMessages([vm.message.message_id])
-                .then(() => {
+                .then(function() {
                         toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
                         vm.message.retried = true;
                     }
@@ -54,7 +54,7 @@
 
         vm.archiveMessage = function () {
             serviceControlService.archiveFailedMessages([vm.message.message_id])
-                .then(() => {
+                .then(function() {
                     toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
                     vm.message.archived = true;
                 });
@@ -62,7 +62,7 @@
 
         vm.unarchiveMessage = function () {
             archivedMessageService.restoreMessageFromArchive(vm.message.message_id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
-                .then(function (message) {
+                .then(function () {
                     vm.message.archived = false;
                 });
         };

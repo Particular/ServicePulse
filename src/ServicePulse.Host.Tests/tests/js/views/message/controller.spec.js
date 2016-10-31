@@ -1,5 +1,8 @@
 ﻿describe('messagesController', function () {
-    beforeEach(module('sc'));
+
+    beforeEach(function () {
+        module('sc');
+    });
 
     var $controller;
 
@@ -8,11 +11,11 @@
     }));
 
     describe('retrying message', function () {
-        var $scope, controller, serviceControlService, root;
-
-        beforeEach(inject(function ($rootScope, $injector, $q) {
-            $scope = {};
+        var controller, serviceControlService, root, q;
+        
+        beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
+            q = $q;
 
             serviceControlService = {
                 retryFailedMessages: function() {},
@@ -20,8 +23,9 @@
                     return $q.defer().promise;
                 }
             };
-            controller = $controller('messagesController', {
-                $scope: $scope,
+
+            controller = $controller("messagesController", {
+                $scope: $rootScope.$new(),
                 $routeParams: { messageId: "some-message-id" },
                 scConfig: null,
                 toastService: { showInfo: function () {} },
@@ -30,8 +34,8 @@
             });
         }));
 
-        it('message marked as resolved', inject(function ($q) {
-            var deferred = $q.defer();
+        it('message marked as resolved', function () {
+            var deferred = q.defer();
             spyOn(serviceControlService, 'retryFailedMessages').and.callFake(function () {
                 return deferred.promise;
             });
@@ -43,10 +47,10 @@
             
             expect(controller.message.retried).toEqual(true);
             expect(serviceControlService.retryFailedMessages).toHaveBeenCalled();
-        }));
+        });
 
-        it('failed, message not marked as resolved', inject(function ($q) {
-            var deferred = $q.defer();
+        it('failed, message not marked as resolved', function () {
+            var deferred = q.defer();
             spyOn(serviceControlService, 'retryFailedMessages').and.callFake(function () {
                 return deferred.promise;
             });
@@ -58,14 +62,13 @@
 
             expect(controller.message.retried).toEqual(false);
             expect(serviceControlService.retryFailedMessages).toHaveBeenCalled();
-        }));
+        });
     });
 
     describe('archiving message', function () {
-        var $scope, controller, serviceControlService, root;
+        var controller, serviceControlService, root;
 
-        beforeEach(inject(function ($rootScope, $injector, $q) {
-            $scope = {};
+        beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
             
             serviceControlService = {
@@ -75,7 +78,7 @@
                 }
             };
             controller = $controller('messagesController', {
-                $scope: $scope,
+                $scope: {},
                 $routeParams: { messageId: "some-message-id" },
                 scConfig: null,
                 toastService: { showInfo: function () { } },
@@ -116,12 +119,11 @@
     });
 
     describe('un-archiving message', function () {
-        var $scope, controller, serviceControlService, root, archivedMessageService;
+        var controller, serviceControlService, root, archivedMessageService, q;
 
-        beforeEach(inject(function ($rootScope, $injector, $q) {
-            $scope = {};
+        beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
-            
+            q = $q;
             serviceControlService = {
                 getFailedMessageById: function () {
                     return $q.defer().promise;
@@ -130,7 +132,7 @@
             archivedMessageService = { restoreMessageFromArchive: function () { } };
 
             controller = $controller('messagesController', {
-                $scope: $scope,
+                $scope: {},
                 $routeParams: { messageId: "some-message-id" },
                 scConfig: null,
                 toastService: { showInfo: function () { } },
@@ -139,8 +141,8 @@
             });
         }));
 
-        it('message not marked as archived', inject(function ($q) {
-            var deferred = $q.defer();
+        it('message not marked as archived', function () {
+            var deferred = q.defer();
             spyOn(archivedMessageService, 'restoreMessageFromArchive').and.callFake(function () {
                 return deferred.promise;
             });
@@ -152,10 +154,10 @@
 
             expect(controller.message.archived).toEqual(false);
             expect(archivedMessageService.restoreMessageFromArchive).toHaveBeenCalled();
-        }));
+        });
 
-        it('failed, message marked as archived', inject(function ($q) {
-            var deferred = $q.defer();
+        it('failed, message marked as archived', function () {
+            var deferred = q.defer();
             spyOn(archivedMessageService, 'restoreMessageFromArchive').and.callFake(function () {
                 return deferred.promise;
             });
@@ -167,6 +169,6 @@
 
             expect(controller.message.archived).toEqual(true);
             expect(archivedMessageService.restoreMessageFromArchive).toHaveBeenCalled();
-        }));
+        });
     });
 });

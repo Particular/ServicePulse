@@ -10,11 +10,6 @@
     <script src="scripts/jasmine/jasmine-html.js"></script>
     <script src="scripts/jasmine/boot.js"></script>
 
-    <script src="tests/js/angular.js"></script>
-
-
-    <script src="tests/js/angular-mocks.js"></script>
-
     <!-- Vendor -->
     <script src="../servicepulse.host/app/lib/jQuery/jquery.min.js"></script>
     <script src="../servicepulse.host/app/lib/jQuery/jquery.signalR-1.1.3.min.js"></script>
@@ -33,6 +28,8 @@
     <script src="../servicepulse.host/app/lib/moment.min.js"></script>
     <script src="../servicepulse.host/app/lib/angular/angular-momentjs.js"></script>
     <script src="../servicepulse.host/app/lib/angular-ui-select/select.js"></script>
+    
+    <script src="tests/js/angular-mocks.js"></script> <!--Needs to be loaded after angular.js-->
 
     <!-- App -->
     <script src="../servicepulse.host/app/js/app.js"></script>
@@ -133,7 +130,7 @@
     <!-- Message -->
     <script src="../servicepulse.host/app/js/views/message/controller.js"></script>
     <script src="../servicepulse.host/app/js/views/message/route.js"></script>
-
+    
     <!-- test files -->
     <script src="tests/js/configuration/configuration.spec.js"></script>
     <script src="tests/js/services/services.spec.js"></script>
