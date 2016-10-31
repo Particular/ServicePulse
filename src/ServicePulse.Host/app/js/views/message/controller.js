@@ -22,11 +22,19 @@
         };
 
         notifier.subscribe($scope, function (event, messageFailureResolved) {
-            if (messageFailureResolved.failed_message_id === vm.message.message_id) {
+            if (messageFailureResolved.failed_message_id === vm.message.id) {
                 toastService.showInfo('Message was successfully retried.');
                 vm.message.retried = false;
+                vm.message.resolved = true;
             }
-        }, "MessageFailureResolved");
+        }, "MessageFailureResolvedByRetry");
+
+        notifier.subscribe($scope, function (event, messageFailureResolved) {
+            if (messageFailureResolved.failed_message_id === vm.message.id) {
+                toastService.showInfo('Message failed.');
+                vm.message.retried = false;
+            }
+        }, "MessageFailed");
 
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
@@ -92,6 +100,9 @@
         vm.loadMessage = function (messageId) {
             serviceControlService.getFailedMessageById(messageId).then(function (response) {
                 vm.message = response.data;
+                vm.message.archived = vm.message.status === 'archived';
+                vm.message.resolved = vm.message.status === 'resolved';
+                vm.message.retried = vm.message.status === 'retryIssued';
             });
         };
 
