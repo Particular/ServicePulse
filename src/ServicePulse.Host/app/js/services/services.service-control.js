@@ -134,7 +134,7 @@
             });
         }
 
-        function muteCustomChecks(customCheck) {
+        function dismissCustomChecks(customCheck) {
             var url = uri.join(scConfig.service_control_url, 'customchecks', customCheck.id);
 
             $http.delete(url)
@@ -265,7 +265,7 @@
             getTotalPendingRetries: getTotalPendingRetries,
             getFailingCustomChecks: getFailingCustomChecks,
             getFailedMessageStats: getFailedMessageStats,
-            muteCustomChecks: muteCustomChecks,
+            dismissCustomChecks: dismissCustomChecks,
             retryAllFailedMessages: retryAllFailedMessages,
             retryPendingMessagesForQueue: retryPendingMessagesForQueue,
             retryFailedMessages: retryFailedMessages,

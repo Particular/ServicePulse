@@ -831,11 +831,6 @@ nav {
     overflow-y: scroll;
 }
 
-.no-side-padding {
-    padding-right: 0;
-    padding-left: 0;
-}
-
 .row.list-count {
     margin-left: -10px;
     font-weight: bold;
@@ -910,6 +905,11 @@ p.lead hard-wrap.ng-binding {
     color: #777f7f;
 }
 
+.no-side-padding {
+        padding-right: 0;
+        padding-left: 0;
+}
+
 @media only screen and (min-width: 993px) {
     .filter-period-menu {
     margin-right: 0px;
@@ -964,11 +964,11 @@ p.lead hard-wrap.ng-binding {
     .filter-toolbar, .action-toolbar {
         margin-top: 2px;
     }
-
-    div.sp-pull-right {
+    
+    div.sp-pull-right { 
         display: inline-block;
         float: none;
-        margin-top: 4px;
+        margin-top: 4px;    
     }
 
 }
