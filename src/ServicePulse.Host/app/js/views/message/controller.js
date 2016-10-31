@@ -8,16 +8,25 @@
         scConfig,
         toastService,
         serviceControlService,
-        archivedMessageService) {
+        archivedMessageService,
+        notifyService) {
 
         var vm = this;
-        
+        var notifier = notifyService();
+
         vm.message = {};
 
         var init = function() {
             var messageId = $routeParams.messageId;
             vm.loadMessage(messageId);
         };
+
+        notifier.subscribe($scope, function (event, messageFailureResolved) {
+            if (messageFailureResolved.failed_message_id === vm.message.message_id) {
+                toastService.showInfo('Message was successfully retried.');
+                vm.message.retried = false;
+            }
+        }, "MessageFailureResolved");
 
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
@@ -44,7 +53,7 @@
         };
 
         vm.retryMessage = function () {
-            serviceControlService.retryFailedMessages([vm.message.message_id])
+            serviceControlService.retryFailedMessages([vm.message.id])
                 .then(function() {
                         toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
                         vm.message.retried = true;
@@ -53,7 +62,7 @@
         };
 
         vm.archiveMessage = function () {
-            serviceControlService.archiveFailedMessages([vm.message.message_id])
+            serviceControlService.archiveFailedMessages([vm.message.id])
                 .then(function() {
                     toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
                     vm.message.archived = true;
@@ -61,7 +70,7 @@
         };
 
         vm.unarchiveMessage = function () {
-            archivedMessageService.restoreMessageFromArchive(vm.message.message_id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
+            archivedMessageService.restoreMessageFromArchive(vm.message.id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
                 .then(function () {
                     vm.message.archived = false;
                 });
@@ -95,7 +104,8 @@
         "scConfig",
         "toastService",
         "serviceControlService",
-        "archivedMessageService"
+        "archivedMessageService",
+        "notifyService"
     ];
 
     angular.module("sc")

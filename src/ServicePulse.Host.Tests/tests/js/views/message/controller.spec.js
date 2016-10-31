@@ -30,7 +30,8 @@
                 scConfig: null,
                 toastService: { showInfo: function () {} },
                 serviceControlService: serviceControlService,
-                archivedMessageService: null
+                archivedMessageService: null,
+                notifyService: function () { return { subscribe: function () { } } }
             });
         }));
 
@@ -83,7 +84,8 @@
                 scConfig: null,
                 toastService: { showInfo: function () { } },
                 serviceControlService: serviceControlService,
-                archivedMessageService: null
+                archivedMessageService: null,
+                notifyService: function () { return { subscribe: function () { } } }
             });
         }));
 
@@ -137,7 +139,8 @@
                 scConfig: null,
                 toastService: { showInfo: function () { } },
                 serviceControlService: serviceControlService,
-                archivedMessageService: archivedMessageService
+                archivedMessageService: archivedMessageService,
+                notifyService: function () { return { subscribe: function () { } } }
             });
         }));
 
