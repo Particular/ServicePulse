@@ -40,7 +40,7 @@
         
         vm.archiveExceptionGroup = function (group) {
             group.workflow_state = { status: 'working', message: 'working' };
-            var response = failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+            failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
                     group.workflow_state = createWorkflowState('success', message);
                     notifier.notify('ArchiveGroupRequestAccepted', group);
@@ -55,7 +55,7 @@
             group.workflow_state = { status: 'working', message: 'working' };
 
             failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
-                .then(function (message) {
+                .then(function () {
                     // We are going to have to wait for service control to tell us the job has been done
                     notifier.notify('RetryGroupRequestAccepted', group);
 
@@ -67,6 +67,10 @@
 
         vm.closeStatus = function(group) {
             group.workflow_state = createWorkflowState('none');
+        }
+
+        vm.canBeRetried = function(group) {
+            return group.workflow_state.status === 'none' || group.workflow_state.status === 'completed';
         }
 
         vm.selectClassification = function (newClassification) {
@@ -126,6 +130,14 @@
                 });
         };
 
+        var getHistoricGroups = function() {
+            vm.historicGroups = [];
+            serviceControlService.getHistoricGroups()
+                .then(function(response) {
+                    vm.historicGroups = response.data.previous_operations;
+                });
+        };
+
         var localtimeout;
         var startTimer = function (time) {
             time = time || 5000;
@@ -182,6 +194,7 @@
 
         // INIT
         initialLoad();
+        getHistoricGroups();
     }
 
     controller.$inject = [

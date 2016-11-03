@@ -47,6 +47,15 @@
             });
         }
 
+        function getHistoricGroups() {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'history');
+            return $http.get(url).then(function (response) {
+                return {
+                    data: response.data
+                };
+            });
+        }
+
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
             return $http.get(url).then(function(response) {
@@ -263,6 +272,7 @@
             getFailedMessages: getFailedMessages,
             getExceptionGroups: getExceptionGroups,
             getExceptionGroupClassifiers: getExceptionGroupClassifiers,
+            getHistoricGroups: getHistoricGroups,
             getFailedMessagesForExceptionGroup: getFailedMessagesForExceptionGroup,
             getMessageBody: getMessageBody,
             getMessageHeaders: getMessageHeaders,
