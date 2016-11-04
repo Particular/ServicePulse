@@ -61,8 +61,8 @@
                 </div>
             </div>
         </div>
-
-        <div class="row">
+        
+        <div class="row" ng-show="vm.exceptionGroups.length > 0">
             <p class="lead">Failed message groups</p>
             <div class="col-sm-12" ng-show="vm.exceptionGroups.length">
                 <div class="row box wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
