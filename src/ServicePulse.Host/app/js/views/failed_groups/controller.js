@@ -42,7 +42,7 @@
             group.workflow_state = { status: 'working', message: 'working' };
             failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
-                    group.workflow_state = createWorkflowState('success', message);
+                    group.workflow_state = createWorkflowState('success', 'Starting operation...');
                     notifier.notify('ArchiveGroupRequestAccepted', group);
 
                 }, function (message) {
@@ -112,20 +112,22 @@
                         vm.exceptionGroups = response.data.map(function (obj) {
                             vm.allFailedMessagesGroup.count += obj.count;
                             var nObj = obj;
+                            var retryStatus = (nObj.retry_status ? nObj.retry_status.toLowerCase() : null) ||
+                                'none';
                             nObj
                                 .workflow_state =
-                                createWorkflowState((nObj.retry_status ? nObj.retry_status.toLowerCase().split(' ').join('_') : null) ||
-                                    'none',
-                                    '',
+                                createWorkflowState(retryStatus,
+                                    getMessageForRetryStatus(retryStatus),
                                     nObj.retry_progress);
                             
                             return nObj;
                         });
 
-                        vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
-                        notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
+                        if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
+                            vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
+                            notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
+                        }
                     }
-
                     return true;
                 });
         };
@@ -134,9 +136,29 @@
             vm.historicGroups = [];
             serviceControlService.getHistoricGroups()
                 .then(function(response) {
-                    vm.historicGroups = response.data.previous_operations;
+                    vm.historicGroups = response.data.previous_fully_completed_operations;
                 });
         };
+
+        function getMessageForRetryStatus(retryStatus) {
+            if (retryStatus === 'waiting') {
+                return 'Step 1/2 - Preparing...';
+            }
+
+            if (retryStatus === 'preparing') {
+                return 'Step 2/2 - Sending messages to retry...';
+            }
+        
+            if (retryStatus === 'forwarding') {
+                return 'Step 2/2 - Sending messages to retry...';
+            }
+
+            if (retryStatus === 'completed') {
+                return 'Messages successfully forwarded for retrying';
+            }
+
+            return '';
+        }
 
         var localtimeout;
         var startTimer = function (time) {
@@ -144,6 +166,7 @@
             localtimeout = $timeout(function () {
                 vm.loadingData = true;
 
+                getHistoricGroups();
                 autoGetExceptionGroups().then(function (result) {
                     vm.loadingData = false;
                 });
@@ -153,6 +176,13 @@
         $scope.$on("$destroy", function (event) {
             $timeout.cancel(localtimeout);
         });
+
+        notifier.subscribe($scope, function (event, data) {
+            if (vm.exceptionGroups.length !== parseInt(data)) {
+                autoGetExceptionGroups();
+                getHistoricGroups();
+            }
+        }, "ExceptionGroupCountUpdated");
 
         notifier.subscribe($scope, function (event, data) {
             $timeout.cancel(localtimeout);
@@ -167,28 +197,28 @@
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('waiting', 'Step 1/3 - Waiting to assign message(s) to retry batches...', data.progression);
+                    x.workflow_state = createWorkflowState('waiting', getMessageForRetryStatus('waiting'), data.progression);
                 });
         }, 'RetryOperationWaiting');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('preparing', 'Step 2/3 - Assigning messages to batches...', data.progression);
+                    x.workflow_state = createWorkflowState('preparing', getMessageForRetryStatus('preparing'), data.progression);
                 });
         }, 'RetryOperationPreparing');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('forwarding', 'Step 3/3 - Forwarding messages to endpoint for retrying...', data.progression);
+                    x.workflow_state = createWorkflowState('forwarding', getMessageForRetryStatus('forwarding'), data.progression);
                 });
         }, 'RetryOperationForwarding');
 
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(x => x.id === data.request_id)
                 .forEach(x => {
-                    x.workflow_state = createWorkflowState('done', 'Messages successfully forwarded for retrying', data.progression);
+                    x.workflow_state = createWorkflowState('completed', getMessageForRetryStatus('completed'), data.progression);
                 });
         }, 'RetryOperationCompleted');
 

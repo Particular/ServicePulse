@@ -27,7 +27,9 @@
 
         var exceptionGroupCountUpdatedTimer = $interval(function() {
             serviceControlService.getTotalExceptionGroups().then(function(response) {
-                notifier.notify('ExceptionGroupCountUpdated', response);
+                if (stats.number_of_exception_groups !== parseInt(response)) {
+                    notifier.notify('ExceptionGroupCountUpdated', response);
+                }
             });
         }, 5000);
 

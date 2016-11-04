@@ -15,8 +15,14 @@
 
         <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
         <div class="row">
-            <p class="lead">Last 10 successful group retries</p>
-            <div class="col-sm-12">
+            <button type="button" class="btn btn-link btn-sm" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">
+                <p class="lead">
+                    <i class="fa fa-sort-desc" aria-hidden="true" ng-show="vm.showHistoricRetries"></i>
+                    <i class="fa fa-sort-asc" aria-hidden="true" ng-show="!vm.showHistoricRetries"></i>
+                    Last 10 successful group retries
+                </p>
+            </button>
+            <div class="col-sm-12" ng-show="vm.showHistoricRetries">
                 <div class="row box repeat-modify" ng-repeat="group in vm.historicGroups">
                     <div class="col-sm-12">
                         <div class="row">
