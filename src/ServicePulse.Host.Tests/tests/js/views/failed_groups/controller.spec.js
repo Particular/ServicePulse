@@ -15,9 +15,12 @@
                 beforeEach(inject(function ($rootScope, notifyService, $q) {
                     root = $rootScope;
                     this.notifyService = notifyService;
-                    serviceControlService = { getExceptionGroups: function () { } };
+                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function() {} };
                     var deferred = $q.defer();
                     spyOn(serviceControlService, 'getExceptionGroups').and.callFake(function () {
+                        return deferred.promise;
+                    });
+                    spyOn(serviceControlService, 'getHistoricGroups').and.callFake(function () {
                         return deferred.promise;
                     });
 
@@ -61,9 +64,12 @@
                 beforeEach(inject(function ($rootScope, notifyService, $q) {
                     root = $rootScope;
                     this.notifyService = notifyService;
-                    serviceControlService = { getExceptionGroups: function () { } };
+                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function() {} };
                     var deferred = $q.defer();
                     spyOn(serviceControlService, 'getExceptionGroups').and.callFake(function () {
+                        return deferred.promise;
+                    });
+                    spyOn(serviceControlService, 'getHistoricGroups').and.callFake(function () {
                         return deferred.promise;
                     });
 
@@ -125,9 +131,12 @@
                 beforeEach(inject(function ($rootScope, notifyService, $q) {
                     root = $rootScope;
                     this.notifyService = notifyService;
-                    serviceControlService = { getExceptionGroups: function () { } };
+                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function() {} };
                     var deferred = $q.defer();
                     spyOn(serviceControlService, 'getExceptionGroups').and.callFake(function () {
+                        return deferred.promise;
+                    });
+                    spyOn(serviceControlService, 'getHistoricGroups').and.callFake(function () {
                         return deferred.promise;
                     });
 
@@ -156,7 +165,7 @@
 
                         this.notifyService().notify("RetryOperationCompleted", { request_id: 1});
 
-                        expect(controller.exceptionGroups[0].workflow_state.status).toEqual('done');
+                        expect(controller.exceptionGroups[0].workflow_state.status).toEqual('completed');
                         expect(controller.exceptionGroups[1].workflow_state).toEqual(null);
                         expect(controller.exceptionGroups[2].workflow_state).toEqual(null);
                     });

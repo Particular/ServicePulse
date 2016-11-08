@@ -195,30 +195,30 @@
         }, 'FailedMessageGroupArchived');
 
         notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(x => x.id === data.request_id)
-                .forEach(x => {
-                    x.workflow_state = createWorkflowState('waiting', getMessageForRetryStatus('waiting'), data.progression);
+            vm.exceptionGroups.filter(function (item) { return item.id === data.request_id })
+                .forEach(function(item) {
+                    item.workflow_state = createWorkflowState('waiting', getMessageForRetryStatus('waiting'), data.progression);
                 });
         }, 'RetryOperationWaiting');
 
         notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(x => x.id === data.request_id)
-                .forEach(x => {
-                    x.workflow_state = createWorkflowState('preparing', getMessageForRetryStatus('preparing'), data.progression);
+            vm.exceptionGroups.filter(function (item) { return item.id === data.request_id })
+                .forEach(function (item) {
+                    item.workflow_state = createWorkflowState('preparing', getMessageForRetryStatus('preparing'), data.progression);
                 });
         }, 'RetryOperationPreparing');
 
         notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(x => x.id === data.request_id)
-                .forEach(x => {
-                    x.workflow_state = createWorkflowState('forwarding', getMessageForRetryStatus('forwarding'), data.progression);
+            vm.exceptionGroups.filter(function (item) { return item.id === data.request_id })
+                .forEach(function (item) {
+                    item.workflow_state = createWorkflowState('forwarding', getMessageForRetryStatus('forwarding'), data.progression);
                 });
         }, 'RetryOperationForwarding');
 
         notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(x => x.id === data.request_id)
-                .forEach(x => {
-                    x.workflow_state = createWorkflowState('completed', getMessageForRetryStatus('completed'), data.progression);
+            vm.exceptionGroups.filter(function(item) { return item.id === data.request_id })
+                .forEach(function (item) {
+                    item.workflow_state = createWorkflowState('completed', getMessageForRetryStatus('completed'), data.progression);
                 });
         }, 'RetryOperationCompleted');
 
