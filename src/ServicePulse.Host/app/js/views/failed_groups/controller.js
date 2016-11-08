@@ -7,15 +7,9 @@
             optionalTotal = optionalTotal * 100;
         }
         return {
-            status: optionalStatus || 'working',
+        status: optionalStatus || 'working',
             message: optionalMessage || 'working',
-            total: optionalTotal || 0,
-            getDisplayMessage: function() {
-                if (this.status === 'waiting') {
-                    return this.message;
-                }
-                return this.message.concat(' - ', this.total, '% done');
-            }
+            total: optionalTotal || 0
         };
     }
 
