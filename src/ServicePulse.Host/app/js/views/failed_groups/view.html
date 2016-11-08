@@ -98,7 +98,7 @@
                                 <div class="row" ng-show="!vm.canBeRetried(group)">
                                     <div class="col-sm-12">
                                         <i class="fa fa-spinner fa-pulse pull-left"></i>
-                                        <p class="lead">{{group.workflow_state.message}} - {{group.workflow_state.total}}% done</p>
+                                        <p class="lead">{{group.workflow_state.getDisplayMessage()}}</p>
                                     </div>
                                 </div>
                             </div>
