@@ -220,6 +220,7 @@
                 .forEach(function (item) {
                     item.workflow_state = createWorkflowState('completed', getMessageForRetryStatus('completed'), data.progression);
                 });
+            getHistoricGroups();
         }, 'RetryOperationCompleted');
 
         // INIT
