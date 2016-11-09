@@ -39,7 +39,7 @@
         }
         
         vm.archiveExceptionGroup = function (group) {
-            group.workflow_state = { status: 'working', message: 'working' };
+            group.workflow_state = { status: 'waiting', message: getMessageForRetryStatus('waiting') };
             failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
                 .then(function (message) {
                     group.workflow_state = createWorkflowState('success', 'Starting operation...');
@@ -52,7 +52,7 @@
         }
 
         vm.retryExceptionGroup = function (group) {
-            group.workflow_state = { status: 'working', message: 'working' };
+            group.workflow_state = { status: 'waiting', message: getMessageForRetryStatus('waiting') };
 
             failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
                 .then(function () {
