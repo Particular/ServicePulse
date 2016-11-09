@@ -142,11 +142,11 @@
 
         function getMessageForRetryStatus(retryStatus) {
             if (retryStatus === 'waiting') {
-                return 'Starting operation...';
+                return 'Starting...';
             }
 
             if (retryStatus === 'preparing') {
-                return 'Step 1/2 - Preparing...';
+                return 'Step 1/2 - Preparing messages...';
             }
         
             if (retryStatus === 'forwarding') {
@@ -154,7 +154,7 @@
             }
 
             if (retryStatus === 'completed') {
-                return 'Messages successfully forwarded for retrying';
+                return 'Messages successfully submitted for retrying';
             }
 
             return '';

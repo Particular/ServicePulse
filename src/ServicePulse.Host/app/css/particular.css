@@ -931,6 +931,10 @@ p.lead hard-wrap.ng-binding {
     padding-bottom: 0;
 }
 
+.progress-bar {
+    background-color: #777f7f;
+}
+
 .no-side-padding {
         padding-right: 0;
         padding-left: 0;
