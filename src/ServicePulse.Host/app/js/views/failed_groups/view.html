@@ -11,19 +11,23 @@
 
         <failed-message-tabs></failed-message-tabs>
 
-        <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
-
-        <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
         <div class="row">
-            <button type="button" class="btn btn-link btn-sm" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">
-                <p class="lead">
-                    <i class="fa fa-sort-desc" aria-hidden="true" ng-show="vm.showHistoricRetries"></i>
-                    <i class="fa fa-sort-asc" aria-hidden="true" ng-show="!vm.showHistoricRetries"></i>
-                    Last 10 successful group retries
-                </p>
-            </button>
+            <div class="col-sm-12">
+                <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+
+                <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12 list-section">
+                <h5>
+                    <span class="fake-link" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
+                    <span class="fake-link" aria-hidden="true" ng-show="!vm.showHistoricRetries"><i class="fa fa-angle-right" aria-hidden="true"></i> </span>
+                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 successful group retries</a>
+                </h5>
+            </div>
             <div class="col-sm-12" ng-show="vm.showHistoricRetries">
-                <div class="row box repeat-modify" ng-repeat="group in vm.historicGroups">
+                <div class="row box extra-box-padding repeat-modify" ng-repeat="group in vm.historicGroups">
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-12">
@@ -35,8 +39,9 @@
                                 
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <i class="fa fa-envelope pull-left"></i>
-                                        <p class="lead">Retry completed: <sp-moment date="{{group.completion_time}}"></sp-moment></p>
+                                        <p class="metadata">
+                                            <span class="metadata"><i class="fa fa-envelope"></i> Retry request completed: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -63,8 +68,9 @@
         </div>
         
         <div class="row" ng-show="vm.exceptionGroups.length > 0">
-            <p class="lead">Failed message groups</p>
-            <div class="col-sm-12" ng-show="vm.exceptionGroups.length">
+            <div class="col-sm-12 list-section" ng-show="vm.exceptionGroups.length">
+                <h5>Failed message groups</h5>
+            </div>
                 <div class="row box wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-sm-12">
                         <div class="row">
@@ -97,11 +103,19 @@
                                 </div>
                                 <div class="row" ng-show="!vm.canBeRetried(group)">
                                     <div class="col-sm-12">
-                                        <i class="fa fa-spinner fa-pulse pull-left"></i>
-                                        <p class="lead">{{group.workflow_state.message}} - {{group.workflow_state.total}}% done</p>
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <p>{{group.workflow_state.message}}</p>
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+                                                        0%
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                             </div>
                         </div>
                     </div>
                 </div>

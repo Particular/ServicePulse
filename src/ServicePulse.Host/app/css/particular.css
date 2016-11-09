@@ -751,8 +751,14 @@ p.endpoint-metadata {
 .events p.lead { padding-bottom: 10px; }
 
 .fake-link {
-    color: #00a3c4;
-    text-decoration: none;
+    color: #00a3c4 !important;
+    text-decoration: none !important;
+}
+
+
+.fake-link:hover {
+    color: #00a3c4 !important;
+    text-decoration: none !important;
 }
 
 .version-info-container { width: 100% !important; }
@@ -770,6 +776,10 @@ p.endpoint-metadata {
 .version-separator {
     color: #BCC6C2;
     margin: 0 15px;
+}
+
+.list-section {
+    margin-top: 20px;
 }
 
 
@@ -903,6 +913,22 @@ span.ui-select-match-text.pull-left {
 
 p.lead hard-wrap.ng-binding {
     color: #777f7f;
+}
+
+.collapsible-section {
+    margin-top: 20px;
+}
+.disclose-link {
+    margin-top: 20px;
+}
+
+.extra-box-padding {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+.panel-body {
+    padding-bottom: 0;
 }
 
 .no-side-padding {
