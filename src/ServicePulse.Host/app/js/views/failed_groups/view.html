@@ -23,7 +23,7 @@
                 <h5>
                     <span class="fake-link" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
                     <span class="fake-link" aria-hidden="true" ng-show="!vm.showHistoricRetries"><i class="fa fa-angle-right" aria-hidden="true"></i> </span>
-                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 successful group retries</a>
+                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 completed group retries</a>
                 </h5>
             </div>
             <div class="col-sm-12" ng-show="vm.showHistoricRetries">
@@ -79,12 +79,13 @@
                                     <div class="col-sm-12" ng-click="vm.viewExceptionGroup(group)">
                                         <p class="lead break"> {{group.title}}</p>
                                         <p class="metadata">
-                                            <span class="metadata"><i class="fa fa-envelope"></i> {{group.count | number}} message<span ng-show="group.count >1">s</span></span>
+                                            <span class="metadata"><i class="fa fa-envelope"></i> {{group.count | number}} message<span ng-show="group.count >1">s</span><span ng-show="group.retry_remaining_count > 0">(currently retrying {{group.retry_remaining_count | number}})</span></span>
 
                                             <span class="metadata"><i class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
 
                                             <span class="metadata"><i class="fa fa-clock-o"></i> First failed: <sp-moment date="{{group.first}}"></sp-moment></span>
                                             <span class="metadata"><i class="fa fa-refresh"></i> Last retried: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
+                                            <span class="metadata" ng-show="group.workflow_state.status !== 'completed'"><i class="fa fa-clock-o"></i> Retry started: <sp-moment date="{{group.start_time}}"></sp-moment></span>
                                         </p>
                                     </div>
                                 </div>

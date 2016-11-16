@@ -2,14 +2,15 @@
 (function (window, angular, undefined) {
     "use strict";
 
-    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal) {
+    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal, optionalFailed) {
         if (optionalTotal && optionalTotal <= 1) {
             optionalTotal = optionalTotal * 100;
         }
         return {
-        status: optionalStatus || 'working',
+            status: optionalStatus || 'working',
             message: optionalMessage || 'working',
-            total: optionalTotal || 0
+            total: optionalTotal || 0,
+            failed: optionalFailed || false
         };
     }
 
@@ -140,7 +141,7 @@
                 });
         };
 
-        function getMessageForRetryStatus(retryStatus) {
+        function getMessageForRetryStatus(retryStatus, failed) {
             if (retryStatus === 'waiting') {
                 return 'Starting...';
             }
@@ -154,6 +155,10 @@
             }
 
             if (retryStatus === 'completed') {
+                if (failed) {
+                    return 'ServiceControl had to restart while this operation was in progress. Not all messages were submitted.';
+                }
+
                 return 'Messages successfully submitted for retrying';
             }
 
@@ -218,7 +223,7 @@
         notifier.subscribe($scope, function (event, data) {
             vm.exceptionGroups.filter(function(item) { return item.id === data.request_id })
                 .forEach(function (item) {
-                    item.workflow_state = createWorkflowState('completed', getMessageForRetryStatus('completed'), data.progression);
+                    item.workflow_state = createWorkflowState('completed', getMessageForRetryStatus('completed', data.failed), data.progression, data.failed);
                 });
             getHistoricGroups();
         }, 'RetryOperationCompleted');
