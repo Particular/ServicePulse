@@ -12,13 +12,6 @@
         <failed-message-tabs></failed-message-tabs>
 
         <div class="row">
-            <div class="col-sm-12">
-                <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
-
-                <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-sm-12 list-section">
                 <h5>
                     <span class="fake-link" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
@@ -50,6 +43,13 @@
                 </div>
             </div>
         </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+                 <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+            </div>
+        </div>
         
         <div class="row" ng-show="vm.availableClassifiers.length && vm.initialLoadComplete">
             <div class="col-sm-12">
@@ -66,7 +66,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row" ng-show="vm.exceptionGroups.length > 0">
             <div class="col-sm-12 list-section" ng-show="vm.exceptionGroups.length">
                 <h5>Failed message groups</h5>
