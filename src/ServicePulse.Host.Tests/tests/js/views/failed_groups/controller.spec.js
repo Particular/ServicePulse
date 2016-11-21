@@ -47,7 +47,15 @@
                             { id: 3, workflow_state: null }
                         ];
 
-                        this.notifyService().notify("RetryOperationWaiting", { request_id: 1, progression: 0.3 });
+                        this.notifyService()
+                            .notify("RetryOperationWaiting",
+                            {
+                                request_id: 1,
+                                progress: {
+                                    percentage: 0.3,
+                                    messages_remaining: 2
+                                }
+                            });
 
                         expect(controller.exceptionGroups[0].workflow_state.status).toEqual('waiting');
                         expect(controller.exceptionGroups[0].workflow_state.total).toEqual(30);
@@ -96,13 +104,42 @@
                             { id: 3, workflow_state: null }
                         ];
 
-                        this.notifyService().notify("RetryOperationForwarding", { request_id: 1, progression: 0.6 });
+                        this.notifyService().notify("RetryOperationForwarding", {
+                            request_id: 1, progress: {
+                                percentage: 0.6,
+                                messages_remaining: 2
+                            }
+                        });
 
                         expect(controller.exceptionGroups[0].workflow_state.status).toEqual('forwarding');
                         expect(controller.exceptionGroups[0].workflow_state.total).toEqual(60);
                         expect(controller.exceptionGroups[1].workflow_state).toEqual(null);
                         expect(controller.exceptionGroups[2].workflow_state).toEqual(null);
                     });
+
+                it('when an event RetryOperationForwarded is pubslished group get its state updated',
+                    function () {
+
+                        spyOn(root, '$broadcast');
+
+                        controller.exceptionGroups = [
+                            { id: 1, workflow_state: { state: "in_progress", total: 10 } }, { id: 2, workflow_state: null },
+                            { id: 3, workflow_state: null }
+                        ];
+
+                        this.notifyService().notify("RetryOperationForwarded", {
+                            request_id: 1, progress: {
+                                percentage: 0.7,
+                                messages_remaining: 2
+                            }
+                        });
+
+                        expect(controller.exceptionGroups[0].workflow_state.status).toEqual('forwarding');
+                        expect(controller.exceptionGroups[0].workflow_state.total).toEqual(70);
+                        expect(controller.exceptionGroups[1].workflow_state).toEqual(null);
+                        expect(controller.exceptionGroups[2].workflow_state).toEqual(null);
+                    });
+
 
                 it('when an event RetryOperationPreparing is pubslished group get its state updated',
                     function () {
@@ -114,7 +151,12 @@
                             { id: 3, workflow_state: null }
                         ];
 
-                        this.notifyService().notify("RetryOperationPreparing", { request_id: 1, progression: 0.5 });
+                        this.notifyService().notify("RetryOperationPreparing", {
+                            request_id: 1, progress: {
+                                percentage: 0.5,
+                                messages_remaining: 2
+                            }
+                        });
 
                         expect(controller.exceptionGroups[0].workflow_state.status).toEqual('preparing');
                         expect(controller.exceptionGroups[0].workflow_state.total).toEqual(50);
@@ -163,7 +205,12 @@
                             { id: 3, workflow_state: null }
                         ];
 
-                        this.notifyService().notify("RetryOperationCompleted", { request_id: 1});
+                        this.notifyService().notify("RetryOperationCompleted", {
+                            request_id: 1, progress: {
+                                percentage: 1,
+                                messages_remaining: 0
+                            }
+                        });
 
                         expect(controller.exceptionGroups[0].workflow_state.status).toEqual('completed');
                         expect(controller.exceptionGroups[1].workflow_state).toEqual(null);

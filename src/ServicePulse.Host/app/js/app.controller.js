@@ -220,6 +220,10 @@
         }, "RetryOperationForwarding");
 
         listener.subscribe($scope, function (message) {
+            notifier.notify("RetryOperationForwarded", message);
+        }, "RetryOperationForwarded");
+
+        listener.subscribe($scope, function (message) {
             notifier.notify("RetryOperationCompleted", message);
         }, "RetryOperationCompleted");
     };

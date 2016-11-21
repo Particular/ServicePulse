@@ -199,32 +199,37 @@
             startTimer();
         }, 'FailedMessageGroupArchived');
 
-        notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(function (item) { return item.id === data.request_id })
+        var retryOperationEventHandler = function(data, status) {
+            vm.exceptionGroups.filter(function(item) { return item.id === data.request_id })
                 .forEach(function(item) {
-                    item.workflow_state = createWorkflowState('waiting', getMessageForRetryStatus('waiting'), data.progression);
+                    item
+                        .workflow_state =
+                        createWorkflowState(status,
+                            getMessageForRetryStatus(status, data.failed || false),
+                            data.progress.percentage,
+                            data.failed || false);
+                    item.retry_remaining_count = data.progress.messages_remaining;
                 });
+        };
+
+        notifier.subscribe($scope, function (event, data) {
+            retryOperationEventHandler(data, 'waiting');
         }, 'RetryOperationWaiting');
 
         notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(function (item) { return item.id === data.request_id })
-                .forEach(function (item) {
-                    item.workflow_state = createWorkflowState('preparing', getMessageForRetryStatus('preparing'), data.progression);
-                });
+            retryOperationEventHandler(data, 'preparing');
         }, 'RetryOperationPreparing');
 
         notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(function (item) { return item.id === data.request_id })
-                .forEach(function (item) {
-                    item.workflow_state = createWorkflowState('forwarding', getMessageForRetryStatus('forwarding'), data.progression);
-                });
+            retryOperationEventHandler(data, 'forwarding');
         }, 'RetryOperationForwarding');
+        
+        notifier.subscribe($scope, function (event, data) {
+            retryOperationEventHandler(data, 'forwarding');
+        }, 'RetryOperationForwarded');
 
         notifier.subscribe($scope, function (event, data) {
-            vm.exceptionGroups.filter(function(item) { return item.id === data.request_id })
-                .forEach(function (item) {
-                    item.workflow_state = createWorkflowState('completed', getMessageForRetryStatus('completed', data.failed), data.progression, data.failed);
-                });
+            retryOperationEventHandler(data, 'completed');
             getHistoricGroups();
         }, 'RetryOperationCompleted');
 
