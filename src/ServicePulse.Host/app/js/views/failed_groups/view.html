@@ -16,7 +16,7 @@
                 <h5>
                     <span class="fake-link" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
                     <span class="fake-link" aria-hidden="true" ng-show="!vm.showHistoricRetries"><i class="fa fa-angle-right" aria-hidden="true"></i> </span>
-                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last {{vm.historicGroups.length}} completed group retries</a>
+                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 completed group retries</a>
                 </h5>
             </div>
             <div class="col-sm-12" ng-show="vm.showHistoricRetries">
@@ -41,6 +41,7 @@
                         </div>
                     </div>
                 </div>
+                <p ng-show="vm.historicGroups.length < 10">There are only {{vm.historicGroups.length}} completed groups.</p>
             </div>
         </div>
 
