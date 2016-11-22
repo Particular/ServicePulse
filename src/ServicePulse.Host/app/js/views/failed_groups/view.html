@@ -15,9 +15,24 @@
 
         <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
 
-        <div class="row">
-            <div class="col-sm-12" ng-show="vm.exceptionGroups.length > 0">
+        <div class="row" ng-show="vm.availableClassifiers.length && vm.exceptionGroups.length">
+            <div class="col-sm-12">
+                <div class="btn-group pull-right">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="hidden-xs hidden-sm">Grouped by </span>{{vm.selectedClassification}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li ng-repeat="classifier in vm.availableClassifiers">
+                            <a href="javascript://" ng-click="vm.selectClassification(classifier)">{{classifier}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-sm-12" ng-show="vm.exceptionGroups.length">
                 <div class="row box wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
                     <div class="col-sm-12">
                         <div class="row" ng-show="group.workflow_state.status !=='ready'">

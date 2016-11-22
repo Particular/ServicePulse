@@ -26,6 +26,7 @@
        
         vm.loadingData = false;
         vm.exceptionGroups = [];
+        vm.availableClassifiers = [];
         vm.selectedExceptionGroup = {};
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
         vm.stats = sharedDataService.getstats();
@@ -69,10 +70,35 @@
                 });
         }
 
-        var autoGetExceptionGroups = function () {
+        vm.selectClassification = function (newClassification) {
             vm.loadingData = true;
+            vm.selectedClassification = newClassification;
+
+            return autoGetExceptionGroups().then(function (result) {
+                vm.loadingData = false;
+
+                return true;
+            });
+        };
+
+        var initialLoad = function () {
+            vm.loadingData = true;
+
+            serviceControlService.getExceptionGroupClassifiers().then(function (classifiers) {
+                vm.availableClassifiers = classifiers;
+                vm.selectedClassification = classifiers[0];
+
+                autoGetExceptionGroups().then(function (result) {
+                    vm.loadingData = false;
+
+                    return true;
+                });
+            });
+        };
+
+        var autoGetExceptionGroups = function () {
             vm.exceptionGroups = [];
-            serviceControlService.getExceptionGroups()
+            return serviceControlService.getExceptionGroups(vm.selectedClassification)
                 .then(function (response) {
                     if (response.data.length > 0) {
 
@@ -89,7 +115,8 @@
                         vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
                         notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
                     }
-                    vm.loadingData = false;
+
+                    return true;
                 });
         };
 
@@ -97,7 +124,11 @@
         var startTimer = function (time) {
             time = time || 5000;
             localtimeout = $timeout(function () {
-                autoGetExceptionGroups();
+                vm.loadingData = true;
+
+                autoGetExceptionGroups().then(function (result) {
+                    vm.loadingData = false;
+                });
             }, time);
         }
 
@@ -116,7 +147,7 @@
         }, 'FailedMessageGroupArchived');
 
         // INIT
-        autoGetExceptionGroups();
+        initialLoad();
     }
 
     controller.$inject = [
