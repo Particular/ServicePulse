@@ -70,8 +70,8 @@
             group.workflow_state = createWorkflowState('none');
         }
 
-        vm.canBeRetried = function(group) {
-            return group.workflow_state.status === 'none' || group.workflow_state.status === 'completed';
+        vm.isBeingRetried = function(group) {
+            return group.workflow_state.status !== 'none' && group.workflow_state.status !== 'completed';
         }
 
         vm.selectClassification = function (newClassification) {
