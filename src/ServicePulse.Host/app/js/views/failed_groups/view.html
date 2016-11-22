@@ -33,7 +33,12 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <p class="metadata">
+                                            <span class="metadata"><i class="fa fa-envelope"></i> Retry request started: <sp-moment date="{{group.start_time}}"></sp-moment></span>
                                             <span class="metadata"><i class="fa fa-envelope"></i> Retry request completed: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
+                                            <span class="metadata"><i class="fa fa-envelope"></i> Messages retried: {{group.number_of_messages_processed}}</span>
+                                        </p>
+                                        <p ng-show="{{group.was_failed}}">
+                                            During retry an error occured which might have cause that not all messages were retried. Please verify if there are no more failed messages.
                                         </p>
                                     </div>
                                 </div>
