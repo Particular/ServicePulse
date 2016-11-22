@@ -90,8 +90,8 @@
                                             <span class="metadata"><i class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
 
                                             <span class="metadata"><i class="fa fa-clock-o"></i> First failed: <sp-moment date="{{group.first}}"></sp-moment></span>
-                                            <span class="metadata"><i class="fa fa-refresh"></i> Last retried: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
-                                            <span class="metadata" ng-show="group.workflow_state.status !== 'completed'"><i class="fa fa-clock-o"></i> Retry started: <sp-moment date="{{group.start_time}}"></sp-moment></span>
+                                            <span class="metadata"><i class="fa fa-refresh"></i> Last retried: <sp-moment empty-message="never" date="{{group.completion_time}}"></sp-moment></span>
+                                            <span class="metadata" ng-show="group.workflow_state.status !== 'completed'"><i class="fa fa-clock-o"></i> Retry started: <sp-moment empty-message="never" date="{{group.start_time}}"></sp-moment></span>
                                         </p>
                                     </div>
                                 </div>
