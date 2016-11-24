@@ -46,7 +46,8 @@
                         </div>
                     </div>
                 </div>
-                <p ng-show="vm.historicGroups.length < 10">There are only {{vm.historicGroups.length}} completed groups.</p>
+                <p ng-show="vm.historicGroups.length === 1">There is only 1 completed group.</p>
+                <p ng-show="vm.historicGroups.length < 10 && vm.historicGroups.length > 1">There are only {{vm.historicGroups.length}} completed groups.</p>
             </div>
         </div>
 
@@ -92,7 +93,6 @@
                                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
 
                                             <span class="metadata"><i aria-hidden="true" class="fa fa-refresh"></i> Last retried: <sp-moment empty-message="never" date="{{group.completion_time}}"></sp-moment></span>
-                                            <span class="metadata" ng-show="group.workflow_state.status !== 'completed'"><i class="fa fa-clock-o"></i> Retry started: <sp-moment empty-message="never" date="{{group.start_time}}"></sp-moment></span>
                                         </p>
                                     </div>
                                 </div>
@@ -120,7 +120,7 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to retry: {{(group.retry_remaining_count || group.count) | number}}</span>
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to retry: {{(group.retry_remaining_count || group.count) | number}}</span>
                                                     <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.start_time}}"></sp-moment></span>
                                                 </div>
                                                 <div ng-show="{{group.retry_failed}}">
