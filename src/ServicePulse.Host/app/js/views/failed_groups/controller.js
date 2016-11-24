@@ -22,7 +22,8 @@
         sharedDataService,
         notifyService,
         serviceControlService,
-        failedMessageGroupsService) {
+        failedMessageGroupsService,
+        toastService) {
 
         var vm = this;
         var notifier = notifyService();
@@ -231,6 +232,11 @@
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'completed');
             getHistoricGroups();
+            if (data.failed) {
+                toastService.showInfo("Group " + data.originator + " was retried however and error have occured and not all messages were retried. Retry the remaining messages afterwards.", true);
+            } else {
+                toastService.showInfo("Group " + data.originator + " was retried succesfully.", true);
+            }
         }, 'RetryOperationCompleted');
 
         // INIT
@@ -246,7 +252,8 @@
         "sharedDataService",
         "notifyService",
         "serviceControlService",
-        "failedMessageGroupsService"
+        "failedMessageGroupsService",
+        "toastService"
     ];
 
     angular.module("sc")
