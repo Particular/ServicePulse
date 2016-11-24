@@ -92,7 +92,7 @@
 
                                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
 
-                                            <span class="metadata"><i aria-hidden="true" class="fa fa-refresh"></i> Last retried: <sp-moment empty-message="never" date="{{group.completion_time}}"></sp-moment></span>
+                                            <span class="metadata"><i aria-hidden="true" class="fa fa-refresh"></i> Last retried: <sp-moment empty-message="never" date="{{group.last_retry_completion_time}}"></sp-moment></span>
                                         </p>
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@
                                                 </div>
                                                 <div>
                                                     <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to retry: {{(group.retry_remaining_count || group.count) | number}}</span>
-                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.start_time}}"></sp-moment></span>
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.retry_start_time}}"></sp-moment></span>
                                                 </div>
                                                 <div ng-show="{{group.retry_failed}}">
                                                     <span class="danger">

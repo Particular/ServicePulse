@@ -210,7 +210,7 @@
                             data.progress.percentage,
                             data.failed || false);
                     item.retry_remaining_count = data.progress.messages_remaining;
-                    item.start_time = data.start_time;
+                    item.retry_start_time = data.start_time;
                 });
         };
 
