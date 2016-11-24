@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-            <h1>Endpoint Overview</h1>
+        <div class="col-sm-12 no-side-padding">
+            <h1>Endpoints Overview</h1>
         </div>
     </div>
 </div>
@@ -17,7 +17,7 @@
     <section ng-show="isActiveEndpoints" name="active_endpoints">
         <no-data ng-show="model.active.length == 0" message="No active endpoints"></no-data>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 no-side-padding">
                 <div class="row box box-no-click" ng-repeat="endpoint in model.active | orderBy:'name'">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
@@ -44,7 +44,7 @@
     <section ng-show="!isActiveEndpoints" name="inactive_endpoints">
         <no-data ng-show="model.inactive.length == 0" message="No inactive endpoints"></no-data>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 no-side-padding">
                 <div class="row box box-no-click" ng-repeat="endpoint in model.inactive | orderBy:'name'">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">

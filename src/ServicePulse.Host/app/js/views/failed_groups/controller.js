@@ -143,20 +143,20 @@
 
         function getMessageForRetryStatus(retryStatus, failed) {
             if (retryStatus === 'waiting') {
-                return 'Starting...';
+                return 'Retry request initiated...';
             }
 
             if (retryStatus === 'preparing') {
-                return 'Step 1/2 - Preparing messages...';
+                return 'Retry request in progress. Step 1/2 - Preparing messages...';
             }
         
             if (retryStatus === 'forwarding') {
-                return 'Step 2/2 - Sending messages to retry...';
+                return 'Retry request in progress. Step 2/2 - Sending messages to retry...';
             }
 
             if (retryStatus === 'completed') {
                 if (failed) {
-                    return 'ServiceControl had to restart while this operation was in progress. Not all messages were submitted.';
+                    return 'ServiceControl had to restart while this operation was in progress. Not all messages were submitted for retrying.';
                 }
 
                 return 'Messages successfully submitted for retrying';

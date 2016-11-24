@@ -2,7 +2,7 @@
     <section class="events" name="eventlog" ng-controller="EventLogItemsCtrl">
         <div class="row">
             <div class="col-sm-12">
-                <h5>Last 10 events</h5>
+                <h6>Last 10 events</h6>
 
                 <div ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10" class="row box">
                     <div class="col-xs-12" ng-click="viewCategory(eventLogItem)">
