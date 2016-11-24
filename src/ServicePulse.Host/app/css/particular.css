@@ -156,7 +156,7 @@ footer a:hover { font-weight: normal; }
 
 .warning i { color: #aa6708; }
 
-.danger { color: #ce4844; }
+.danger { color: #ce4844 !important; font-weight: bold !important; }
 
 .box-info { border-left-color: #1b809e; }
 
@@ -412,6 +412,10 @@ h3 {
     cursor: pointer;
 }
 
+.check-hover {
+
+}
+
 h5 {
     color: #777f7f;
     display: inline-block !important;
@@ -429,7 +433,7 @@ h6 {
 }
 
 h6 a {
-    color: #a8b3b1;
+    color: #929e9e;
 }
 
 h6 a:hover {
@@ -456,7 +460,7 @@ h6 a:hover {
 .tabs h5.active a { color: #181919; }
 
 .tabs a {
-    color: #a8b3b1;
+    color: #929e9e;
     cursor: pointer;
 }
 
@@ -975,10 +979,6 @@ p.lead hard-wrap.ng-binding {
     text-decoration: none;
 }
 
-.no-link-underline:hover {
-    color: #23527c;
-    text-decoration: none;
-}
 
 @media only screen and (min-width: 993px) {
     .filter-period-menu {
@@ -1018,7 +1018,6 @@ p.lead hard-wrap.ng-binding {
     margin-right: 0;
     }
 }
-
 
 @media only screen and (max-width: 480px) {
     .sidebar-label { margin: 3px 0 14px; }
