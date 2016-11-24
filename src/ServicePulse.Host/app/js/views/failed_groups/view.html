@@ -15,7 +15,7 @@
 
         <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
 
-        <div class="row" ng-show="vm.availableClassifiers.length && vm.exceptionGroups.length">
+        <div class="row" ng-show="vm.availableClassifiers.length && vm.initialLoadComplete">
             <div class="col-sm-12">
                 <div class="btn-group pull-right">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

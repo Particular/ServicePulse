@@ -90,6 +90,7 @@
 
                 autoGetExceptionGroups().then(function (result) {
                     vm.loadingData = false;
+                    vm.initialLoadComplete = true;
 
                     return true;
                 });
