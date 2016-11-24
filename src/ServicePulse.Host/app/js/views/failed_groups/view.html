@@ -120,7 +120,7 @@
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to retry: {{group.retry_remaining_count | number}}</span>
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to retry: {{(group.retry_remaining_count || group.count) | number}}</span>
                                                     <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.start_time}}"></sp-moment></span>
                                                 </div>
                                                 <div ng-show="{{group.retry_failed}}">
