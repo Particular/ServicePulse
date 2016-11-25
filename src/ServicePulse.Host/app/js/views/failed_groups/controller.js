@@ -119,7 +119,7 @@
                             nObj
                                 .workflow_state =
                                 createWorkflowState(retryStatus,
-                                    getMessageForRetryStatus(retryStatus),
+                                    getMessageForRetryStatus(retryStatus, false, nObj.retry_progress),
                                     nObj.retry_progress);
                             
                             return nObj;
@@ -142,12 +142,15 @@
                 });
         };
 
-        function getMessageForRetryStatus(retryStatus, failed) {
+        function getMessageForRetryStatus(retryStatus, failed, progress) {
             if (retryStatus === 'waiting') {
                 return 'Retry request initiated...';
             }
 
             if (retryStatus === 'preparing') {
+                if (progress && progress === 1) {
+                    return 'Retry request in progress. Step 2/2 - Sending messages to retry...waiting for other sending operation(s) to finish.';
+                }
                 return 'Retry request in progress. Step 1/2 - Preparing messages...';
             }
         
@@ -206,7 +209,7 @@
                     item
                         .workflow_state =
                         createWorkflowState(status,
-                            getMessageForRetryStatus(status, data.failed || false),
+                            getMessageForRetryStatus(status, data.failed || false, data.progress.percentage),
                             data.progress.percentage,
                             data.failed || false);
                     item.retry_remaining_count = data.progress.messages_remaining;

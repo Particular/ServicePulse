@@ -15,12 +15,16 @@
                 beforeEach(inject(function ($rootScope, notifyService, $q) {
                     root = $rootScope;
                     this.notifyService = notifyService;
-                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function() {} };
+                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function () { }, getExceptionGroupClassifiers: function() {} };
                     var deferred = $q.defer();
                     spyOn(serviceControlService, 'getExceptionGroups').and.callFake(function () {
                         return deferred.promise;
                     });
                     spyOn(serviceControlService, 'getHistoricGroups').and.callFake(function () {
+                        return deferred.promise;
+                    });
+
+                    spyOn(serviceControlService, 'getExceptionGroupClassifiers').and.callFake(function () {
                         return deferred.promise;
                     });
 
@@ -72,12 +76,16 @@
                 beforeEach(inject(function ($rootScope, notifyService, $q) {
                     root = $rootScope;
                     this.notifyService = notifyService;
-                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function() {} };
+                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function () { }, getExceptionGroupClassifiers: function () { } };
                     var deferred = $q.defer();
                     spyOn(serviceControlService, 'getExceptionGroups').and.callFake(function () {
                         return deferred.promise;
                     });
                     spyOn(serviceControlService, 'getHistoricGroups').and.callFake(function () {
+                        return deferred.promise;
+                    });
+
+                    spyOn(serviceControlService, 'getExceptionGroupClassifiers').and.callFake(function () {
                         return deferred.promise;
                     });
 
@@ -173,12 +181,16 @@
                 beforeEach(inject(function ($rootScope, notifyService, $q) {
                     root = $rootScope;
                     this.notifyService = notifyService;
-                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function() {} };
+                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function () { }, getExceptionGroupClassifiers: function () { } };
                     var deferred = $q.defer();
                     spyOn(serviceControlService, 'getExceptionGroups').and.callFake(function () {
                         return deferred.promise;
                     });
                     spyOn(serviceControlService, 'getHistoricGroups').and.callFake(function () {
+                        return deferred.promise;
+                    });
+
+                    spyOn(serviceControlService, 'getExceptionGroupClassifiers').and.callFake(function () {
                         return deferred.promise;
                     });
 
