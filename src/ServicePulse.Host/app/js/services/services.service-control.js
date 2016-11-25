@@ -38,8 +38,8 @@
             });
         }
 
-        function getExceptionGroups() {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
+        function getExceptionGroups(classifier) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier);
             return $http.get(url).then(function(response) {
                 return {
                     data: response.data
@@ -93,6 +93,13 @@
             var url = uri.join(scConfig.service_control_url, 'errors?status=archived');
             return $http.head(url).then(function(response) {
                 return response.headers('Total-Count');
+            });
+        }
+
+        function getExceptionGroupClassifiers() {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'classifiers');
+            return $http.get(url).then(function (response) {
+                return response.data;
             });
         }
 
@@ -255,6 +262,7 @@
             getEventLogItems: getEventLogItems,
             getFailedMessages: getFailedMessages,
             getExceptionGroups: getExceptionGroups,
+            getExceptionGroupClassifiers: getExceptionGroupClassifiers,
             getFailedMessagesForExceptionGroup: getFailedMessagesForExceptionGroup,
             getMessageBody: getMessageBody,
             getMessageHeaders: getMessageHeaders,
