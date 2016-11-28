@@ -869,8 +869,8 @@ nav {
     width: 100% !important;
 }
 
-.filter-period-menu, .sort-menu {
-    float:right;
+.filter-period-menu, .sort-menu, .msg-group-menu {
+    float: right;
 }
 
 .filter-input, .action-btns, .filter-period-menu, .sort-menu {
@@ -885,6 +885,11 @@ nav {
 
 .filter-period-menu {
     margin: 0 30px 0 6px;
+}
+
+.msg-group-menu {
+    margin: 21px 0px 0 6px;
+    padding-right: 15px;
 }
 
 .sort-menu {
