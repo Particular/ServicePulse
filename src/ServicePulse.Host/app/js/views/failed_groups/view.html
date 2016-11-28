@@ -11,7 +11,7 @@
 
         <failed-message-tabs></failed-message-tabs>
 
-        <div class="row" ng-show="vm.historicGroups.length">
+        <div class="row">
             <div class="col-sm-12 list-section">
                 <h6>
                     <span class="no-link-underline" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
@@ -20,7 +20,8 @@
                 </h6>
             </div>
             <div class="col-sm-12" ng-show="vm.showHistoricRetries">
-                <div class="row box extra-box-padding repeat-modify" ng-repeat="group in vm.historicGroups">
+                <no-data ng-show="vm.historicGroups.length === 0" title="message group retries" message="No group retry requests have ever been completed"></no-data>
+                <div class="row box extra-box-padding repeat-modify" ng-repeat="group in vm.historicGroups" ng-show="vm.historicGroups.length">
                     <div class="col-sm-12">
                         <div class="row">
                             <div class="col-sm-12">
@@ -29,7 +30,7 @@
                                         <p class="lead break"> {{group.originator}}</p>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <p class="metadata">
