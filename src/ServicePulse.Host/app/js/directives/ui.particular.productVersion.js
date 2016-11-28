@@ -14,6 +14,7 @@
                         if (semverService.isUpgradeAvailable($scope.version, result.SP[0]['tag'])) {
                             $scope.newspversion = true;
                             $scope.newspversionlink = result.SP[0]['release'];
+                            $scope.newspversionnumber = result.SP[0]['tag'];
                         }
                     }
 
