@@ -212,8 +212,13 @@
                             getMessageForRetryStatus(status, data.failed || false, data.progress.percentage),
                             data.progress.percentage,
                             data.failed || false);
+
                     item.retry_remaining_count = data.progress.messages_remaining;
                     item.retry_start_time = data.start_time;
+
+                    if (status === 'completed') {
+                        item.count -= data.number_of_messages_processed;
+                    }
                 });
         };
 
