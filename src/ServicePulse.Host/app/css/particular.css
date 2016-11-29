@@ -432,10 +432,6 @@ h6 {
     color: #181919;
 }
 
-h6 a {
-    color: #929e9e;
-}
-
 h6 a:hover {
     cursor: pointer;
 }
