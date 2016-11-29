@@ -119,8 +119,8 @@
                             nObj
                                 .workflow_state =
                                 createWorkflowState(retryStatus,
-                                    getMessageForRetryStatus(retryStatus, false, nObj.retry_progress),
-                                    nObj.retry_progress);
+                                    getMessageForRetryStatus(retryStatus, nObj.retry_failed, nObj.retry_progress),
+                                    nObj.retry_progress, nObj.retry_failed);
                             
                             return nObj;
                         });
