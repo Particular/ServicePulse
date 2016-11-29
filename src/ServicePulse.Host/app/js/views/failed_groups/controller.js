@@ -242,9 +242,9 @@
             retryOperationEventHandler(data, 'completed');
             getHistoricGroups();
             if (data.failed) {
-                toastService.showInfo("Group " + data.originator + " was retried however and error have occured and not all messages were retried. Retry the remaining messages afterwards.", true);
+                toastService.showInfo("Group " + data.originator + " was retried however and error have occured and not all messages were retried. Retry the remaining messages afterwards.", "Retry operation completed", true);
             } else {
-                toastService.showInfo("Group " + data.originator + " was retried succesfully.", true);
+                toastService.showInfo("Group " + data.originator + " was retried succesfully.", "Retry operation completed", true);
             }
         }, 'RetryOperationCompleted');
 

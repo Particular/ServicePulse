@@ -14,8 +14,8 @@
             });
         }
 
-        this.showInfo = function (text, sticky) {
-            this.showToast(text, 'info', 'Info', sticky);
+        this.showInfo = function (text, title, sticky) {
+            this.showToast(text, 'info', title || 'Info', sticky);
         }
 
         this.showError = function (text) {
