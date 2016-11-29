@@ -173,12 +173,12 @@
         var startTimer = function (time) {
             time = time || 5000;
             localtimeout = $timeout(function () {
-                vm.loadingData = true;
+                //vm.loadingData = true;
 
-                getHistoricGroups();
-                autoGetExceptionGroups().then(function (result) {
-                    vm.loadingData = false;
-                });
+                //getHistoricGroups();
+                //autoGetExceptionGroups().then(function (result) {
+                //    vm.loadingData = false;
+                //});
             }, time);
         }
 
@@ -217,7 +217,7 @@
                     item.retry_start_time = data.start_time;
 
                     if (status === 'completed') {
-                        item.count -= data.number_of_messages_processed;
+                        item.count -= data.progress.messages_forwarded;
                     }
                 });
         };
