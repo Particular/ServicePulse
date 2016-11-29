@@ -149,7 +149,7 @@
 
             if (retryStatus === 'preparing') {
                 if (progress && progress === 1) {
-                    return 'Retry request in progress. Step 2/2 - Queued.';
+                    return 'Retry request in progress. Next Step - Queued.';
                 }
                 return 'Retry request in progress. Step 1/2 - Preparing messages...';
             }
