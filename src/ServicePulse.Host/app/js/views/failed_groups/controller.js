@@ -149,7 +149,7 @@
 
             if (retryStatus === 'preparing') {
                 if (progress && progress === 1) {
-                    return 'Retry request in progress. Step 2/2 - Sending messages to retry...waiting for other sending operation(s) to finish.';
+                    return 'Retry request in progress. Step 2/2 - Queued.';
                 }
                 return 'Retry request in progress. Step 1/2 - Preparing messages...';
             }
@@ -203,9 +203,10 @@
             startTimer();
         }, 'FailedMessageGroupArchived');
 
-        var retryOperationEventHandler = function(data, status) {
-            vm.exceptionGroups.filter(function(item) { return item.id === data.request_id })
-                .forEach(function(item) {
+        var retryOperationEventHandler = function (data, status) {
+            var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
+            
+            group.forEach(function(item) {
                     item
                         .workflow_state =
                         createWorkflowState(status,
@@ -220,6 +221,9 @@
                         item.count -= data.progress.messages_forwarded;
                     }
                 });
+            if (status === 'completed' && group.count === 0) {
+                vm.exceptionGroups.remove(vm.exceptionGroups.indexOf(group), 1);
+            }
         };
 
         notifier.subscribe($scope, function (event, data) {
