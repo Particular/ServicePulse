@@ -265,11 +265,8 @@
 
                     item.retry_remaining_count = data.progress.messages_remaining;
                     item.retry_start_time = data.start_time;
+            });
 
-                    if (status === 'completed') {
-                        item.count -= data.progress.messages_forwarded;
-                    }
-                });
             if (status === 'completed' && group.count === 0) {
                 vm.exceptionGroups.remove(vm.exceptionGroups.indexOf(group), 1);
             }
