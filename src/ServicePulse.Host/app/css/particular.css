@@ -761,7 +761,7 @@ p.endpoint-metadata {
 
 .fa-stack-2x { font-size: 24px; }
 
-.events .box { padding-bottom: 0; }
+.events .box { padding-bottom: 0; cursor: pointer; }
 
 .events p.lead { padding-bottom: 10px; }
 
