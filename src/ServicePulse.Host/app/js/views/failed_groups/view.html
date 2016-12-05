@@ -142,6 +142,18 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row" ng-show="vm.isBeingArchived(group)">
+                                    <div class="col-sm-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <p class="bulk-retry-progress-status">{{group.workflow_state.message}}</p>
+                                                <div>
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to archive: {{(group.retry_remaining_count || group.count) | number}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

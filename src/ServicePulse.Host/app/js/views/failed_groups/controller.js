@@ -40,12 +40,12 @@
         };
 
         vm.archiveExceptionGroup = function(group) {
-            group.workflow_state = { status: 'archiveRequested', message: 'Archive request initiated...' };
+            group.workflow_state = { status: 'requestingArchive', message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
                     'Archive Group Request Enqueued',
                     'Archive Group Request Rejected')
                 .then(function(message) {
-                        group.workflow_state = createWorkflowState('success', 'Archive completed...');
+                    group.workflow_state = createWorkflowState('archiveRequested', 'Archiving messages...');
                         notifier.notify('ArchiveGroupRequestAccepted', group);
 
                     },
@@ -73,7 +73,11 @@
         };
 
         vm.isBeingRetried = function(group) {
-            return group.workflow_state.status !== 'none' && group.workflow_state.status !== 'completed';
+            return group.workflow_state.status !== 'none' && group.workflow_state.status !== 'completed' && !vm.isBeingArchived(group);
+        };
+
+        vm.isBeingArchived = function (group) {
+            return group.workflow_state.status === 'requestingArchive' || group.workflow_state.status === 'archiveRequested';
         };
 
         vm.selectClassification = function (newClassification) {
