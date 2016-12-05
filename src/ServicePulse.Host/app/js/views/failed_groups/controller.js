@@ -32,48 +32,49 @@
         vm.exceptionGroups = [];
         vm.availableClassifiers = [];
         vm.selectedExceptionGroup = {};
-        vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages' }
         vm.stats = sharedDataService.getstats();
 
-        vm.viewExceptionGroup = function (group) {
+        vm.viewExceptionGroup = function(group) {
             sharedDataService.set(group);
             $location.path('/failedMessages');
-        }
-        
-        vm.archiveExceptionGroup = function (group) {
+        };
+
+        vm.archiveExceptionGroup = function(group) {
+            group.workflow_state = { status: 'archiveRequested', message: 'Archive request initiated...' };
+            failedMessageGroupsService.archiveGroup(group.id,
+                    'Archive Group Request Enqueued',
+                    'Archive Group Request Rejected')
+                .then(function(message) {
+                        group.workflow_state = createWorkflowState('success', 'Archive completed...');
+                        notifier.notify('ArchiveGroupRequestAccepted', group);
+
+                    },
+                    function(message) {
+                        group.workflow_state = createWorkflowState('error', message);
+                        notifier.notify('ArchiveGroupRequestRejected', group);
+                    });
+        };
+
+        vm.retryExceptionGroup = function(group) {
             group.workflow_state = { status: 'waiting', message: getMessageForRetryStatus('waiting') };
-            failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
-                .then(function (message) {
-                    group.workflow_state = createWorkflowState('success', 'Starting operation...');
-                    notifier.notify('ArchiveGroupRequestAccepted', group);
 
-                }, function (message) {
-                    group.workflow_state = createWorkflowState('error', message);
-                    notifier.notify('ArchiveGroupRequestRejected', group);
-                });
-        }
+            failedMessageGroupsService.retryGroup(group.id,
+                    'Retry Group Request Enqueued',
+                    'Retry Group Request Rejected')
+                .then(function() {
+                        // We are going to have to wait for service control to tell us the job has been done
+                        notifier.notify('RetryGroupRequestAccepted', group);
 
-        vm.retryExceptionGroup = function (group) {
-            group.workflow_state = { status: 'waiting', message: getMessageForRetryStatus('waiting') };
-
-            failedMessageGroupsService.retryGroup(group.id, 'Retry Group Request Enqueued', 'Retry Group Request Rejected')
-                .then(function () {
-                    // We are going to have to wait for service control to tell us the job has been done
-                    notifier.notify('RetryGroupRequestAccepted', group);
-
-                }, function (message) {
-                    group.workflow_state = createWorkflowState('error', message);
-                    notifier.notify('RetryGroupRequestRejected', group);
-                });
-        }
-
-        vm.closeStatus = function(group) {
-            group.workflow_state = createWorkflowState('none');
-        }
+                    },
+                    function(message) {
+                        group.workflow_state = createWorkflowState('error', message);
+                        notifier.notify('RetryGroupRequestRejected', group);
+                    });
+        };
 
         vm.isBeingRetried = function(group) {
             return group.workflow_state.status !== 'none' && group.workflow_state.status !== 'completed';
-        }
+        };
 
         vm.selectClassification = function (newClassification) {
             vm.loadingData = true;
@@ -102,28 +103,70 @@
             });
         };
 
+        function initializeGroupState(group) {
+            var nObj = group;
+            var retryStatus = (nObj.retry_status ? nObj.retry_status.toLowerCase() : null) ||
+                'none';
+            nObj
+                .workflow_state =
+                createWorkflowState(retryStatus,
+                    getMessageForRetryStatus(retryStatus, nObj.retry_failed, nObj.retry_progress),
+                    nObj.retry_progress,
+                    nObj.retry_failed);
+
+            return nObj;
+        };
+
+        vm.updateExceptionGroups = function () {
+            return serviceControlService.getExceptionGroups(vm.selectedClassification)
+                .then(function(response) {
+                    var exceptionGroupsToBeRemoved = vm.exceptionGroups.filter(function(item) {
+                        return !response.data.some(function(d) {
+                            return d.id === item.id;
+                        });
+                    });
+                    exceptionGroupsToBeRemoved.forEach(function(item) {
+                        vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(item), 1);
+                    });
+
+                    vm.exceptionGroups.forEach(function(group) {
+                        var d = response.data.find(function(item) {
+                            return item.id === group.id;
+                        });
+
+                        for (var prop in d) {
+                            group[prop] = d[prop];
+                        }
+                        initializeGroupState(group);
+                    });
+
+                    response.data.filter(function(group) {
+                            return !vm.exceptionGroups.some(function(item) {
+                                return item.id === group.id;
+                            });
+                        })
+                        .forEach(function(group) {
+                            vm.exceptionGroups.push(group);
+                            initializeGroupState(group);
+                        });
+
+                    if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
+                        vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
+                        notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
+                    }
+
+                    return true;
+                });
+        }
+
         var autoGetExceptionGroups = function () {
             vm.exceptionGroups = [];
             return serviceControlService.getExceptionGroups(vm.selectedClassification)
                 .then(function (response) {
                     if (response.data.length > 0) {
-
-                        vm.allFailedMessagesGroup.count = 0;
-
+                        
                         // need a map in some ui state for controlling animations
-                        vm.exceptionGroups = response.data.map(function (obj) {
-                            vm.allFailedMessagesGroup.count += obj.count;
-                            var nObj = obj;
-                            var retryStatus = (nObj.retry_status ? nObj.retry_status.toLowerCase() : null) ||
-                                'none';
-                            nObj
-                                .workflow_state =
-                                createWorkflowState(retryStatus,
-                                    getMessageForRetryStatus(retryStatus, nObj.retry_failed, nObj.retry_progress),
-                                    nObj.retry_progress, nObj.retry_failed);
-                            
-                            return nObj;
-                        });
+                        vm.exceptionGroups = response.data.map(initializeGroupState);
 
                         if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
                             vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
@@ -173,12 +216,9 @@
         var startTimer = function (time) {
             time = time || 5000;
             localtimeout = $timeout(function () {
-                //vm.loadingData = true;
 
-                //getHistoricGroups();
-                //autoGetExceptionGroups().then(function (result) {
-                //    vm.loadingData = false;
-                //});
+                getHistoricGroups();
+                vm.updateExceptionGroups();
             }, time);
         }
 
@@ -198,6 +238,11 @@
             startTimer();
         }, 'MessagesSubmittedForRetry');
         
+        notifier.subscribe($scope, function (event, data) {
+            $timeout.cancel(localtimeout);
+            startTimer();
+        }, 'MessageFailed');
+
         notifier.subscribe($scope, function (event, data) {
             $timeout.cancel(localtimeout);
             startTimer();

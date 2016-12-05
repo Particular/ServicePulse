@@ -230,4 +230,104 @@
                     });
 
             });
+
+        describe('update exception groups',
+            function () {
+                var controller, serviceControlService, root, deferred;
+
+                beforeEach(inject(function ($rootScope, notifyService, $q) {
+                    root = $rootScope;
+                    this.notifyService = notifyService;
+                    serviceControlService = { getExceptionGroups: function () { }, getHistoricGroups: function () { }, getExceptionGroupClassifiers: function () { } };
+                    deferred = $q.defer();
+                    var emptyDefer = $q.defer();
+                    spyOn(serviceControlService, 'getExceptionGroups').and.callFake(function () {
+                        return deferred.promise;
+                    });
+                    spyOn(serviceControlService, 'getHistoricGroups').and.callFake(function () {
+                        return emptyDefer.promise;
+                    });
+
+                    spyOn(serviceControlService, 'getExceptionGroupClassifiers').and.callFake(function () {
+                        return emptyDefer.promise;
+                    });
+
+                    controller = $controller('failedMessageGroupsController',
+                    {
+                        $scope: root,
+                        $timeout: null,
+                        $interval: null,
+                        $location: null,
+                        sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
+                        notifyService: notifyService,
+                        serviceControlService: serviceControlService,
+                        failedMessageGroupsService: null
+                    });
+                }));
+
+                it('add new group to an empty set',
+                    function () {
+                        controller.exceptionGroups = [];
+
+                        controller.updateExceptionGroups();
+                        root.$apply(function () {
+                            //deferred.resolve({data: []});
+                            deferred.resolve({ data: [{ id: 3, workflow_state: null }] });
+                        });
+                        expect(controller.exceptionGroups[0].id).toEqual(3);
+                        expect(controller.exceptionGroups[0].workflow_state).toBeDefined();
+                        
+                    });
+
+                it('update a group',
+                    function () {
+                        controller.exceptionGroups = [{id: 3, workflow_state: null }];
+
+                        controller.updateExceptionGroups();
+                        root.$apply(function () {
+                            //deferred.resolve({data: []});
+                            deferred.resolve({ data: [{ id: 3, workflow_state: null, retry_status: 'pending' }] });
+                        });
+                        expect(controller.exceptionGroups[0].id).toEqual(3);
+                        expect(controller.exceptionGroups[0].workflow_state).toBeDefined();
+                        expect(controller.exceptionGroups[0].retry_status).toEqual('pending');
+
+                    });
+
+                it('delete a group',
+                    function () {
+                        controller.exceptionGroups = [{ id: 3, workflow_state: null }];
+
+                        controller.updateExceptionGroups();
+                        root.$apply(function () {
+                            //deferred.resolve({data: []});
+                            deferred.resolve({ data: [] });
+                        });
+                        expect(controller.exceptionGroups.length).toEqual(0);
+                    });
+
+                it('adds a group, delete and updates ',
+                    function () {
+                        controller.exceptionGroups = [{ id: 3, workflow_state: null }, {id: 4}];
+
+                        controller.updateExceptionGroups();
+                        root.$apply(function () {
+                            deferred.resolve({
+                                data: [{ id: 1, workflow_state: null, retry_status: 'forwarding' }, { id: 2, workflow_state: null, retry_status: 'completed' },
+                                { id: 3, workflow_state: null, retry_status: 'pending' }]
+                            });
+                            deferred.resolve({ data: [] });
+                        });
+                        expect(controller.exceptionGroups.length).toEqual(3);
+                        expect(controller.exceptionGroups[0].id).toEqual(3);
+                        expect(controller.exceptionGroups[0].workflow_state).toBeDefined();
+                        expect(controller.exceptionGroups[0].retry_status).toEqual('pending');
+                        expect(controller.exceptionGroups[1].id).toEqual(1);
+                        expect(controller.exceptionGroups[1].workflow_state).toBeDefined();
+                        expect(controller.exceptionGroups[1].retry_status).toEqual('forwarding');
+                        expect(controller.exceptionGroups[2].id).toEqual(2);
+                        expect(controller.exceptionGroups[2].workflow_state).toBeDefined();
+                        expect(controller.exceptionGroups[2].retry_status).toEqual('completed');
+                    });
+            });
     });

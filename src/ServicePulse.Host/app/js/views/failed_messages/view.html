@@ -60,7 +60,7 @@
                     <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false">
                         <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                             <div class="check col-md-1">
-                                <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)" ng-class="{check-hover: message.hover}">
+                                <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)" ng-class="{'check-hover': message.hover}">
                             </div>
                             <div class="col-sm-9">
                                 <div class="row box-header">
