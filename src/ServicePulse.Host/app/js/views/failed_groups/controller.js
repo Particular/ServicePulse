@@ -111,10 +111,13 @@
             var nObj = group;
             var retryStatus = (nObj.retry_status ? nObj.retry_status.toLowerCase() : null) ||
                 'none';
+            if (retryStatus === 'preparing' && nObj.retry_progress === 1) {
+                retryStatus = 'queued';
+            }
             nObj
                 .workflow_state =
                 createWorkflowState(retryStatus,
-                    getMessageForRetryStatus(retryStatus, nObj.retry_failed, nObj.retry_progress),
+                    getMessageForRetryStatus(retryStatus, nObj.retry_failed),
                     nObj.retry_progress,
                     nObj.retry_failed);
 
@@ -189,15 +192,16 @@
                 });
         };
 
-        function getMessageForRetryStatus(retryStatus, failed, progress) {
+        function getMessageForRetryStatus(retryStatus, failed) {
             if (retryStatus === 'waiting') {
                 return 'Retry request initiated...';
             }
 
+            if (retryStatus === 'queued') {
+                return 'Retry request in progress. Next Step - Queued.';
+            }
+
             if (retryStatus === 'preparing') {
-                if (progress && progress === 1) {
-                    return 'Retry request in progress. Next Step - Queued.';
-                }
                 return 'Retry request in progress. Step 1/2 - Preparing messages...';
             }
         
@@ -255,11 +259,14 @@
         var retryOperationEventHandler = function (data, status) {
             var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
             
-            group.forEach(function(item) {
+            group.forEach(function (item) {
+                    if (status === 'preparing' && data.progress.percentage === 1) {
+                        status = 'queued';
+                    }
                     item
                         .workflow_state =
                         createWorkflowState(status,
-                            getMessageForRetryStatus(status, data.failed || false, data.progress.percentage),
+                            getMessageForRetryStatus(status, data.failed || false),
                             data.progress.percentage,
                             data.failed || false);
 

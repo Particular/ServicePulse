@@ -122,12 +122,33 @@
                                     <div class="col-sm-12">
                                         <div class="panel panel-default">
                                             <div class="panel-body">
-                                                <p class="bulk-retry-progress-status">{{group.workflow_state.message}}</p>
-                                                <div class="progress bulk-retry-progress" ng-hide="group.workflow_state.status === 'waiting' || (group.workflow_state.status === 'preparing' && group.workflow_state.total === 100)">
-                                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}%;">
-                                                        {{group.workflow_state.total | number : 0}}%
-                                                    </div>
-                                                </div>
+                                                <ul>
+                                                    <li ng-class="{active: group.workflow_state.status === 'waiting'}">
+                                                        <p class="bulk-retry-progress-status">Retry request initiated...</p>        
+                                                    </li>
+                                                    <li ng-class="{active: group.workflow_state.status === 'preparing'}">
+                                                        <p class="bulk-retry-progress-status">Retry request in progress. Step 1/2 - Preparing messages...</p>
+                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'preparing'">
+                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
+                                                                {{group.workflow_state.total | number : 0}}%
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li ng-class="{active: group.workflow_state.status === 'queued'}">
+                                                        <p class="bulk-retry-progress-status">Retry request in progress. Next Step - Queued.</p>
+                                                    </li>
+                                                    <li ng-class="{active: group.workflow_state.status === 'forwarding'}">
+                                                        <p class="bulk-retry-progress-status">Retry request in progress. Step 2/2 - Sending messages to retry...</p>
+                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'forwarding'">
+                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
+                                                                {{group.workflow_state.total | number : 0}}%
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                    <li ng-class="{active: group.workflow_state.status === 'completed'}">
+                                                        <p class="bulk-retry-progress-status">Messages successfully submitted for retrying</p>
+                                                    </li>
+                                                </ul>
                                                 <div>
                                                     <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to retry: {{(group.retry_remaining_count || group.count) | number}}</span>
                                                     <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.retry_start_time}}"></sp-moment></span>

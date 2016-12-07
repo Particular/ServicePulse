@@ -1048,3 +1048,11 @@ p.lead hard-wrap.ng-binding {
         margin-bottom: 0px;
     }
 }
+
+ul li {
+    background-color: red;
+}
+
+ul li.active {
+    background-color: green;
+}
