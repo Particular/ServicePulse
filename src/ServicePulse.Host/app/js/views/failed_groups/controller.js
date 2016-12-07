@@ -39,6 +39,15 @@
             $location.path('/failedMessages');
         };
 
+        vm.acknowledgeGroup = function (group) {
+            serviceControlService.acknowledgeGroup(group.id,
+                    'Group Acknowledged',
+                    'Acknowledging Group Failed')
+                .then(function(message) {
+                        group.workflow_state = createWorkflowState('none');
+                    });
+        }
+
         vm.archiveExceptionGroup = function(group) {
             group.workflow_state = { status: 'requestingArchive', message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
@@ -73,7 +82,7 @@
         };
 
         vm.isBeingRetried = function(group) {
-            return group.workflow_state.status !== 'none' && group.workflow_state.status !== 'completed' && !vm.isBeingArchived(group);
+            return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group);
         };
 
         vm.isBeingArchived = function (group) {
@@ -272,11 +281,10 @@
 
                     item.retry_remaining_count = data.progress.messages_remaining;
                     item.retry_start_time = data.start_time;
+                if (status === 'completed') {
+                    item.need_user_acknowledgement = true;
+                }
             });
-
-            if (status === 'completed' && group.count === 0) {
-                vm.exceptionGroups.remove(vm.exceptionGroups.indexOf(group), 1);
-            }
         };
 
         notifier.subscribe($scope, function (event, data) {

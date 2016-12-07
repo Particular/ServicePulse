@@ -147,6 +147,9 @@
                                                     </li>
                                                     <li ng-class="{active: group.workflow_state.status === 'completed'}">
                                                         <p class="bulk-retry-progress-status">Messages successfully submitted for retrying</p>
+                                                        <button type="button" class="btn btn-link btn-sm" ng-show="group.need_user_acknowledgement == true" confirm-click="vm.acknowledgeGroup(group)" confirm-title="Are you sure you want to acknowledge this group?">
+                                                            <i aria-hidden="true" class="fa fa-archive no-link-underline">&nbsp</i>Acknowledge Group
+                                                        </button>
                                                     </li>
                                                 </ul>
                                                 <div>

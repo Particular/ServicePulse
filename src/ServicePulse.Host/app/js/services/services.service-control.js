@@ -222,6 +222,16 @@
                 });
         }
 
+        function acknowledgeGroup(id, successText, failureText) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', id);
+            return $http.delete(url).then(
+                function () {
+                    //   notifications.pushForCurrentRoute(successText, 'info');
+                }, function () {
+                    notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
+                });
+        }
+
         function retryExceptionGroup(id, successText) {
 
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
@@ -291,7 +301,8 @@
             archiveExceptionGroup: archiveExceptionGroup,
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
-            loadQueueNames: loadQueueNames
+            loadQueueNames: loadQueueNames,
+            acknowledgeGroup: acknowledgeGroup
         };
 
         return service;
