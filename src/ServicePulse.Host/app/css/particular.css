@@ -953,15 +953,12 @@ p.lead hard-wrap.ng-binding {
 
 .progress-bar {
     background-color: #777f7f;
+    display: inline-block;
 }
 
 .no-side-padding {
     padding-right: 0 !important;
     padding-left: 0 !important;
-}
-
-.bulk-retry-progress-status {
-    color: #000 !important;
 }
 
 ..box-no-interaction {
@@ -980,6 +977,40 @@ p.lead hard-wrap.ng-binding {
     text-decoration: none;
 }
 
+.panel-body ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+ul.retry-request-progress li {
+    color: #eee !important;
+}
+
+.bulk-retry-progress-status {
+    color: #eee;
+}
+
+.retry-completed {
+    color: #000 !important;
+}
+
+ul.retry-request-progress li.active {
+    font-weight: bold;
+}
+
+.bulk-retry-progress-status {
+
+}
+
+.progress.bulk-retry-progress {
+
+}
+
+.retry-completed {
+    display: inline-block;
+}
+
+/* RESPONSIVE TWEAKS */ 
 
 @media only screen and (min-width: 993px) {
     .filter-period-menu {
@@ -1047,12 +1078,4 @@ p.lead hard-wrap.ng-binding {
     div.btn-toolbar, div.form-inliner {
         margin-bottom: 0px;
     }
-}
-
-ul li {
-    background-color: red;
-}
-
-ul li.active {
-    background-color: green;
 }
