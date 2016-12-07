@@ -197,7 +197,7 @@
             vm.historicGroups = [];
             serviceControlService.getHistoricGroups()
                 .then(function(response) {
-                    vm.historicGroups = response.data.previous_fully_completed_operations;
+                    vm.historicGroups = response.data.historic_operations;
                 });
         };
 
@@ -281,6 +281,7 @@
 
                     item.retry_remaining_count = data.progress.messages_remaining;
                     item.retry_start_time = data.start_time;
+
                 if (status === 'completed') {
                     item.need_user_acknowledgement = true;
                 }
