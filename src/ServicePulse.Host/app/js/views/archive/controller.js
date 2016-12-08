@@ -178,10 +178,6 @@
                 .finally(function () {
                     vm.selectedIds = [];
                 });
-
-            serviceControlService.getTotalExceptionGroups().then(function (response) {
-                notifier.notify('ExceptionGroupCountUpdated', response);
-            });
         };
 
         vm.archiveExceptionGroup = function (group) {

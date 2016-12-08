@@ -229,41 +229,17 @@
             return '';
         }
 
-        var localtimeout;
-        var startTimer = function (time) {
-            time = time || 5000;
-            localtimeout = $timeout(function () {
-
-                getHistoricGroups();
-                vm.updateExceptionGroups();
-            }, time);
-        }
+        var groupUpdatedInterval = $interval(function () {
+            getHistoricGroups();
+            vm.updateExceptionGroups();
+        }, 5000);
 
         $scope.$on("$destroy", function (event) {
-            $timeout.cancel(localtimeout);
-        });
-
-        notifier.subscribe($scope, function (event, data) {
-            if (vm.exceptionGroups.length !== parseInt(data)) {
-                autoGetExceptionGroups();
-                getHistoricGroups();
+            if (angular.isDefined(groupUpdatedInterval)) {
+                $interval.cancel(groupUpdatedInterval);
+                groupUpdatedInterval = undefined;
             }
-        }, "ExceptionGroupCountUpdated");
-
-        notifier.subscribe($scope, function (event, data) {
-            $timeout.cancel(localtimeout);
-            startTimer();
-        }, 'MessagesSubmittedForRetry');
-        
-        notifier.subscribe($scope, function (event, data) {
-            $timeout.cancel(localtimeout);
-            startTimer();
-        }, 'MessageFailed');
-
-        notifier.subscribe($scope, function (event, data) {
-            $timeout.cancel(localtimeout);
-            startTimer();
-        }, 'FailedMessageGroupArchived');
+        });
 
         var retryOperationEventHandler = function (data, status) {
             var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });

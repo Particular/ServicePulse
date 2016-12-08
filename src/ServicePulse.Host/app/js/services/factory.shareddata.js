@@ -69,10 +69,6 @@
             stats.active_endpoints = stat.active || 0;
         });
 
-        serviceControlService.getTotalExceptionGroups().then(function (response) {
-            notifier.notify('ExceptionGroupCountUpdated', response);
-        });
-
         serviceControlService.getTotalArchivedMessages().then(function (response) {
             notifier.notify('ArchivedMessagesUpdated', response || 0);
         });

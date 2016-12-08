@@ -42,7 +42,8 @@
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier);
             return $http.get(url).then(function(response) {
                 return {
-                    data: response.data
+                    data: response.data,
+                    status: reponse.status
                 };
             });
         }
@@ -81,13 +82,6 @@
                 return {
                     data: response.data
                 };
-            });
-        }
-
-        function getTotalExceptionGroups() {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
-            return $http.head(url).then(function(response) {
-                return response.headers('Total-Count');
             });
         }
 
@@ -286,7 +280,6 @@
             getFailedMessagesForExceptionGroup: getFailedMessagesForExceptionGroup,
             getMessageBody: getMessageBody,
             getMessageHeaders: getMessageHeaders,
-            getTotalExceptionGroups: getTotalExceptionGroups,
             getTotalFailedMessages: getTotalFailedMessages,
             getTotalArchivedMessages: getTotalArchivedMessages,
             getTotalFailingCustomChecks: getTotalFailingCustomChecks,
