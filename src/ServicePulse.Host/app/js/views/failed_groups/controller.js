@@ -81,6 +81,24 @@
                     });
         };
 
+
+        var statuses = ['waiting', 'preparing', 'queued', 'forwarding'];
+        vm.getClasses = function (stepStatus, currentStatus) {
+            if (currentStatus === 'queued') {
+                currentStatus = 'forwarding';
+            }
+            var indexOfStep = statuses.indexOf(stepStatus);
+            var indexOfCurrent = statuses.indexOf(currentStatus);
+            if (indexOfStep > indexOfCurrent) {
+                return 'left-to-do';
+            }
+            else if (indexOfStep === indexOfCurrent) {
+                return 'active';
+            } else {
+                return 'completed';
+            }
+        }
+
         vm.isBeingRetried = function(group) {
             return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group);
         };
@@ -135,7 +153,10 @@
 
         vm.updateExceptionGroups = function () {
             return serviceControlService.getExceptionGroups(vm.selectedClassification)
-                .then(function(response) {
+                .then(function (response) {
+                    if (response.status === 304) {
+                        return true;
+                    }
                     var exceptionGroupsToBeRemoved = vm.exceptionGroups.filter(function(item) {
                         return !response.data.some(function(d) {
                             return d.id === item.id;
@@ -179,6 +200,10 @@
             vm.exceptionGroups = [];
             return serviceControlService.getExceptionGroups(vm.selectedClassification)
                 .then(function (response) {
+                    if (response.status === 304) {
+                        return true;
+                    }
+
                     if (response.data.length > 0) {
                         
                         // need a map in some ui state for controlling animations

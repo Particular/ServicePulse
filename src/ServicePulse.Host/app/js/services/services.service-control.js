@@ -38,12 +38,20 @@
             });
         }
 
+        var previousExceptionGroupEtag;
+
         function getExceptionGroups(classifier) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier);
-            return $http.get(url).then(function(response) {
+            return $http.get(url).then(function (response) {
+                var status = 200;
+                if (previousExceptionGroupEtag === response.headers('etag')) {
+                    status = 304;
+                } else {
+                    previousExceptionGroupEtag = response.headers('etag');
+                }
                 return {
                     data: response.data,
-                    status: reponse.status
+                    status: status
                 };
             });
         }
