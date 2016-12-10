@@ -761,7 +761,15 @@ p.endpoint-metadata {
 
 .fa-stack-2x { font-size: 24px; }
 
-.events .box { padding-bottom: 0; cursor: pointer; }
+.events .box {
+    padding-bottom: 0;
+}
+
+.events .box:hover { 
+    cursor: pointer; 
+    background-color: #edf6f7;
+    border: 1px solid #00a3c4;
+}
 
 .events p.lead { padding-bottom: 10px; }
 
@@ -982,32 +990,58 @@ p.lead hard-wrap.ng-binding {
     padding-left: 0;
 }
 
-ul.retry-request-progress li {
-    color: #eee !important;
+
+
+ul.retry-request-progress li > div {
+    margin-bottom: 6px;
 }
 
-.bulk-retry-progress-status {
-    color: #eee;
+li.left-to-do, li.completed {
+    color: #777f7f;
 }
 
-.retry-completed {
+li.left-to-do {
+    padding-left: 15px;
+}
+
+li.active div {
     color: #000 !important;
-}
-
-ul.retry-request-progress li.active {
     font-weight: bold;
 }
 
-.bulk-retry-progress-status {
+li.active div.bulk-retry-progress-status:before {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f061 \00a0";
+}
 
+div.retry-completed.bulk-retry-progress-status {
+    color: #000;
+    font-weight: bold;
+}
+
+li.completed div.bulk-retry-progress-status:before, div.retry-completed.bulk-retry-progress-status:before {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f00c \00a0";
+}
+
+div.col-xs-3.col-sm-3.retry-op-queued {
+    color: #777f7f !important;
+}
+
+div.progress-bar.progress-bar-striped.active {
+    color: #fff !important;
 }
 
 .progress.bulk-retry-progress {
-
+    margin-bottom: 0;
 }
 
-.retry-completed {
+.retry-completed, ul.retry-request-progress button {
     display: inline-block;
+}
+
+ul.retry-request-progress button {
+    background-color: #00a3c4;
 }
 
 /* RESPONSIVE TWEAKS */ 
@@ -1020,7 +1054,7 @@ ul.retry-request-progress li.active {
 
 @media only screen and (max-width: 992px) {
     .filter-period-menu, .sort-menu {
-    float: left !important;
+        float: left !important;
     }
     .sort-menu {
         margin-top: 0;
@@ -1034,6 +1068,11 @@ ul.retry-request-progress li.active {
 @media only screen and (max-width: 768px) {
     .filter-toolbar .input-group {
         margin-bottom: 6px;
+    }
+    .msg-group-menu {
+        float: left !important;
+        margin-top: 0;
+        margin-left: 15px;
     }
     div.sp-pull-right {
         display: inline-block;

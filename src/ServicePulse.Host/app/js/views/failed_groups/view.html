@@ -16,7 +16,7 @@
                 <h6>
                     <span class="no-link-underline" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
                     <span class="fake-link" aria-hidden="true" ng-show="!vm.showHistoricRetries"><i class="fa fa-angle-right" aria-hidden="true"></i> </span>
-                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 completed group retries</a>
+                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 completed retry requests</a>
                 </h6>
             </div>
             <div class="col-sm-12" ng-show="vm.showHistoricRetries">
@@ -53,11 +53,11 @@
         </div>
 
         <div class="row">
-            <div class="cpl-xs-12 col-md-8 list-section" ng-show="vm.exceptionGroups.length">
+            <div class="col-xs-12 col-sm-6 list-section" ng-show="vm.exceptionGroups.length">
                 <h6>Failed message groups</h6>
             </div>
 
-            <div class="col-md-4 col-xs-12 toolbar-menus no-side-padding">
+            <div class="col-sm-6 col-xs-12 toolbar-menus no-side-padding">
 
                 <div class="msg-group-menu dropdown">
                     <label class="control-label">Group by:</label>
@@ -124,27 +124,47 @@
                                             <div class="panel-body">
                                                 <ul class="retry-request-progress">
                                                     <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClasses('waiting', group.workflow_state.status)">
-                                                        <p class="bulk-retry-progress-status">Retry request initiated...</p>        
+                                                        <div class="bulk-retry-progress-status">Initialize retry request...</div>        
                                                     </li>
                                                     <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClasses('preparing', group.workflow_state.status)">
-                                                        <p class="bulk-retry-progress-status"><i aria-hidden="true" class="fa fa-arrow-right"></i> Step 1/2 - Preparing messages...</p>
-                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'preparing'">
-                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
-                                                                {{group.workflow_state.total | number : 0}}%
+                                                        
+                                                        <div class="row">
+                                                            <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                <div class="bulk-retry-progress-status">Prepare messages...</div>
+                                                            </div>
+
+                                                            <div class="col-xs-12 col-sm-6">
+                                                                <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'preparing'">
+                                                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
+                                                                        {{group.workflow_state.total | number : 0}}%
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </li>
                                                     <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClasses('forwarding', group.workflow_state.status)">
-                                                        <p class="bulk-retry-progress-status"><i aria-hidden="true" class="fa fa-arrow-right"></i> Step 2/2 - Sending messages to retry...</p>
-                                                        <p ng-show="group.workflow_state.status === 'queued'">Queued</p>
-                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'forwarding'">
-                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
-                                                                {{group.workflow_state.total | number : 0}}%
+
+                                                        <div class="row">
+                                                            <div class="col-xs-9 col-sm-4 col-md-3 no-side-padding">
+                                                                <div class="bulk-retry-progress-status">Send messages to retry...</div>
                                                             </div>
-                                                        </div>
-                                                    </li>
+                                                            <div class="col-xs-3 col-sm-3 retry-op-queued" ng-show="group.workflow_state.status === 'queued'">
+                                                                (Queued)
+                                                            </div>
+                                                            <div class="col-xs-12 col-sm-6">
+
+                                                                <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'forwarding'">
+                                                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
+                                                                        {{group.workflow_state.total | number : 0}}%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+</li>
                                                     <li ng-show="group.workflow_state.status === 'completed'">
-                                                        <p class="retry-completed bulk-retry-progress-status"><i aria-hidden="true" class="fa fa-check"></i> Retry request operation complete</p>
+                                                        <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
+                                                        <div class="danger" ng-show="{{group.workflow_state.failed}}">
+                                                            <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> Warning: Not all messages will be retried because ServiceControl had to restart during the request operation.
+                                                        </div>
                                                         <button type="button" class="btn btn-default btn-primary btn-xs" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeGroup(group)">
                                                             Dismiss
                                                         </button>
@@ -152,14 +172,12 @@
                                                 </ul>
 
                                                 <div>
-                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to retry: {{(group.retry_remaining_count || group.count) | number}}</span>
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to send: {{(group.retry_remaining_count || group.count) | number}}</span>
                                                     <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.retry_start_time}}"></sp-moment></span>
                                                 </div>
-                                                <div ng-show="{{group.workflow_state.failed}}">
-                                                    <span class="danger">
-                                                        <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> Warning: Not all messages in this operation will be retried because ServiceControl had to restart during the request operation.
-                                                    </span>
-                                                </div>
+                                                
+                                                    
+                                                
                                             </div>
 
                                         </div>
