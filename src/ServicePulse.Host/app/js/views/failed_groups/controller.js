@@ -218,10 +218,15 @@
                 });
         };
 
+        var historicGroupsEtag;
+
         var getHistoricGroups = function() {
-            vm.historicGroups = [];
             serviceControlService.getHistoricGroups()
-                .then(function(response) {
+                .then(function (response) {
+                    if (historicGroupsEtag === response.etag) {
+                        return true;
+                    }
+                    historicGroupsEtag = response.etag;
                     vm.historicGroups = response.data.historic_operations;
                 });
         };

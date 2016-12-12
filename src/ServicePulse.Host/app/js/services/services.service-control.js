@@ -60,7 +60,8 @@
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'history');
             return $http.get(url).then(function (response) {
                 return {
-                    data: response.data
+                    data: response.data,
+                    etag: response.headers('etag')
                 };
             });
         }
