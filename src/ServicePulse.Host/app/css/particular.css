@@ -1063,6 +1063,27 @@ ul.retry-request-progress button {
     color: #B0B5B5 !important;
 }
 
+span.short-group-history {
+    text-align: center;
+    display: inherit;
+    margin-top: 10px;
+    color: #777f7f;
+}
+
+div.danger.sc-restart-warning {
+    margin-top: 3px;
+}
+
+div.danger.sc-restart-warning, div.danger.sc-restart-warning > i {
+    color: #fa733d !important;
+    font-weight: normal !important;
+    letter-spacing: 0.1px;
+}
+
+div.danger.sc-restart-warning > strong {
+    letter-spacing: 0.2px;
+}
+
 /* RESPONSIVE TWEAKS */ 
 
 @media only screen and (min-width: 993px) {
