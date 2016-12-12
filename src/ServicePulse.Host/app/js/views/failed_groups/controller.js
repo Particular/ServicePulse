@@ -44,7 +44,7 @@
                     'Group Acknowledged',
                     'Acknowledging Group Failed')
                 .then(function(message) {
-                        group.workflow_state = createWorkflowState('none');
+                        vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
                     });
         }
 
