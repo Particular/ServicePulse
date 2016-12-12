@@ -200,7 +200,7 @@
             vm.exceptionGroups = [];
             return serviceControlService.getExceptionGroups(vm.selectedClassification)
                 .then(function (response) {
-                    if (response.status === 304) {
+                    if (response.status === 304 && vm.exceptionGroups.length > 0) {
                         return true;
                     }
 
