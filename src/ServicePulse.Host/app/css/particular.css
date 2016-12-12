@@ -997,7 +997,7 @@ ul.retry-request-progress li > div {
 }
 
 li.left-to-do, li.completed {
-    color: #777f7f;
+    color: #B0B5B5;
 }
 
 li.left-to-do {
@@ -1005,7 +1005,7 @@ li.left-to-do {
 }
 
 li.active div {
-    color: #000 !important;
+    color: #fff !important;
     font-weight: bold;
 }
 
@@ -1015,7 +1015,7 @@ li.active div.bulk-retry-progress-status:before {
 }
 
 div.retry-completed.bulk-retry-progress-status {
-    color: #000;
+    color: #fff;
     font-weight: bold;
 }
 
@@ -1025,7 +1025,7 @@ li.completed div.bulk-retry-progress-status:before, div.retry-completed.bulk-ret
 }
 
 div.col-xs-3.col-sm-3.retry-op-queued {
-    color: #777f7f !important;
+    color: #B0B5B5 !important;
 }
 
 div.progress-bar.progress-bar-striped.active {
@@ -1034,6 +1034,7 @@ div.progress-bar.progress-bar-striped.active {
 
 .progress.bulk-retry-progress {
     margin-bottom: 0;
+    background-color: #333333;
 }
 
 .retry-completed, ul.retry-request-progress button {
@@ -1042,6 +1043,24 @@ div.progress-bar.progress-bar-striped.active {
 
 ul.retry-request-progress button {
     background-color: #00a3c4;
+}
+
+.panel-retry {
+    background-color: #1A1A1A;
+    border: none;
+    color: #fff
+}
+
+.panel-retry p.lead {
+    color: #fff;
+}
+
+.navbar-inverse {
+    background-color: #1A1A1A;
+}
+
+.panel-retry span.metadata, .panel-retry sp-moment {
+    color: #B0B5B5 !important;
 }
 
 /* RESPONSIVE TWEAKS */ 
