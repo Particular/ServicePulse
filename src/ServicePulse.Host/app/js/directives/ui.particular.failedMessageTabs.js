@@ -2,7 +2,7 @@
     'use strict';
 
 
-    function controller($scope, $interval, $location, sharedDataService, notifyService, serviceControlService) {
+    function controller($scope, $interval, $location, sharedDataService, notifyService, serviceControlService, showPendingRetry) {
 
         var notifier = notifyService();
 
@@ -13,7 +13,7 @@
         var stats = sharedDataService.getstats();
         var currentClassification;
         var allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': stats.number_of_failed_messages }
-
+        $scope.showPendingRetry = showPendingRetry;
         $scope.counters = {
             group: stats.number_of_exception_groups,
             message: stats.number_of_failed_messages,
@@ -79,7 +79,7 @@
         }, 'PendingRetriesTotalUpdated');
     }
 
-    controller.$inject = ['$scope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService'];
+    controller.$inject = ['$scope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService', 'showPendingRetry'];
 
     function directive() {
         return {
