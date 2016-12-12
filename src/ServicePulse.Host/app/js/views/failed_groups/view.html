@@ -38,17 +38,14 @@
                                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
                                             <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages retried: {{group.number_of_messages_processed}}</span>
                                         </p>
-                                        <p class="danger" ng-show="{{group.was_failed}}">
-                                            <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> Warning: Not all messages in this operation have been retried because ServiceControl had to restart during the operation.
-                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <p ng-show="vm.historicGroups.length === 1">There is only 1 completed group retry</p>
-                <p ng-show="vm.historicGroups.length < 10 && vm.historicGroups.length > 1">There are only {{vm.historicGroups.length}} completed group retries</p>
+                <span class="short-group-history" ng-show="vm.historicGroups.length === 1">There is only 1 completed group retry</span>
+                <span class="short-group-history" ng-show="vm.historicGroups.length < 10 && vm.historicGroups.length > 1">There are only {{vm.historicGroups.length}} completed group retries</span>
             </div>
         </div>
 
@@ -162,12 +159,13 @@
 </li>
                                                     <li ng-show="group.workflow_state.status === 'completed'">
                                                         <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
-                                                        <div class="danger" ng-show="{{group.workflow_state.failed}}">
-                                                            <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> Warning: Not all messages will be retried because ServiceControl had to restart during the request operation.
-                                                        </div>
                                                         <button type="button" class="btn btn-default btn-primary btn-xs" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeGroup(group)">
                                                             Dismiss
                                                         </button>
+                                                        <div class="danger sc-restart-warning" ng-show="{{group.workflow_state.failed}}">
+                                                            <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining messages.
+                                                        </div>
+                                                        
                                                     </li>
                                                 </ul>
 
