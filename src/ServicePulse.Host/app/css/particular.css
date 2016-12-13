@@ -7,7 +7,11 @@
 a {
     color: #00a3c4;
     font-weight: bold;
+    outline: none;
+    border: none;
 }
+
+a:focus, button:focus {outline:0 !important;}
 
 a:hover {
     color: #00a3c4;
@@ -965,8 +969,8 @@ p.lead hard-wrap.ng-binding {
 }
 
 .no-side-padding {
-    padding-right: 0 !important;
-    padding-left: 0 !important;
+    padding-right: 0;
+    padding-left: 0;
 }
 
 ..box-no-interaction {
@@ -1084,6 +1088,14 @@ div.danger.sc-restart-warning > strong {
     letter-spacing: 0.2px;
 }
 
+.op-metadata {
+    border-top: 1px solid #414242;
+    padding-top: 15px;
+}
+
+
+
+
 /* RESPONSIVE TWEAKS */ 
 
 @media only screen and (min-width: 993px) {
@@ -1128,6 +1140,10 @@ div.danger.sc-restart-warning > strong {
     .input-group-btn button.btn.btn-default {
     margin-right: 0;
     }
+    .no-mobile-side-padding {
+     padding-right: 0;
+     padding-left: 0;
+    }
 }
 
 @media only screen and (max-width: 480px) {
@@ -1150,7 +1166,9 @@ div.danger.sc-restart-warning > strong {
         float: none;
         margin-top: 4px;    
     }
-
+    .progress.bulk-retry-progress {
+        margin-top: 6px;
+    }
 }
 
 @media only screen and (max-width: 320px) {
