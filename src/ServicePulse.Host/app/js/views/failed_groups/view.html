@@ -173,10 +173,12 @@
                                                     <div class="op-metadata">
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to send: {{(group.retry_remaining_count || group.count) | number}}</span>
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.retry_start_time}}"></sp-moment></span>
+														<span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.retry_completion_time}}"></sp-moment></span>
                                                     </div>
 
 
 
+                                                    
                                                 </div>
 
                                             </div>

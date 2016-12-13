@@ -290,6 +290,7 @@
 
                 if (status === 'completed') {
                     item.need_user_acknowledgement = true;
+                    item.retry_completion_time = data.completion_time;
                 }
             });
         };
