@@ -32,7 +32,7 @@
                     {
                         $scope: root,
                         $timeout: null,
-                        $interval: null,
+                        $interval: function(){},
                         $location: null,
                         sharedDataService: { getstats: function() { return { number_of_pending_retries: 0 }; } },
                         notifyService: notifyService,
@@ -93,7 +93,7 @@
                     {
                         $scope: root,
                         $timeout: null,
-                        $interval: null,
+                        $interval: function () { },
                         $location: null,
                         sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                         notifyService: notifyService,
@@ -198,7 +198,7 @@
                     {
                         $scope: root,
                         $timeout: null,
-                        $interval: null,
+                        $interval: function () { },
                         $location: null,
                         sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                         notifyService: notifyService,
@@ -256,7 +256,7 @@
                     {
                         $scope: root,
                         $timeout: null,
-                        $interval: null,
+                        $interval: function () { },
                         $location: null,
                         sharedDataService: { getstats: function () { return { number_of_pending_retries: 0 }; } },
                         notifyService: notifyService,
