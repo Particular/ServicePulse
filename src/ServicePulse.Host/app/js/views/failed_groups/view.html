@@ -34,9 +34,9 @@
                                 <div class="row">
                                     <div class="col-sm-12 no-side-padding">
                                         <p class="metadata">
+                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages sent: {{group.number_of_messages_processed}}</span>
                                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.start_time}}"></sp-moment></span>
                                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
-                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages retried: {{group.number_of_messages_processed}}</span>
                                         </p>
                                     </div>
                                 </div>
@@ -171,16 +171,11 @@
                                                     </ul>
 
                                                     <div class="op-metadata">
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to send: {{(group.retry_remaining_count || group.count) | number}}</span>
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry requested: <sp-moment date="{{group.retry_start_time}}"></sp-moment></span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.retry_remaining_count || group.count) | number}}</span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.retry_start_time}}"></sp-moment></span>
 														<span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.retry_completion_time}}"></sp-moment></span>
                                                     </div>
-
-
-
-                                                    
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
