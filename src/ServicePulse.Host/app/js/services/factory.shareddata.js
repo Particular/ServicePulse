@@ -34,7 +34,7 @@
 
         var environment = {
             sc_version: undefined,
-            minimum_supported_sc_version: "1.27.0",
+            minimum_supported_sc_version: "1.30.0",
             is_compatible_with_sc: true,
             sp_version: spVersion
         };
@@ -67,10 +67,6 @@
 
             stats.failing_endpoints = stat.failing || 0;
             stats.active_endpoints = stat.active || 0;
-        });
-
-        serviceControlService.getTotalExceptionGroups().then(function (response) {
-            notifier.notify('ExceptionGroupCountUpdated', response);
         });
 
         serviceControlService.getTotalArchivedMessages().then(function (response) {

@@ -5,6 +5,9 @@
     function Directive($timeout, $moment) {
         return {
             restrict: 'E',
+            scope: {
+                emptyMessage: '@'
+            },
             link: function(scope, element, attrs) {
                 var minDate = '0001-01-01T00:00:00';
                 var timeoutId = null;
@@ -28,7 +31,7 @@
                         updateText();
                         updateLoop();
                     } else {
-                        element.text('unknown');
+                        element.text(scope.emptyMessage || 'unknown');
                     }
                 });
 

@@ -206,8 +206,26 @@
         listener.subscribe($scope, function (message) {
             notifier.notify("FailedMessageGroupArchived", message);
         }, "FailedMessageGroupArchived");
-
         
+        listener.subscribe($scope, function (message) {
+            notifier.notify("RetryOperationWaiting", message);
+        }, "RetryOperationWaiting");
+        
+        listener.subscribe($scope, function (message) {
+            notifier.notify("RetryOperationPreparing", message);
+        }, "RetryOperationPreparing");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("RetryOperationForwarding", message);
+        }, "RetryOperationForwarding");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("RetryOperationForwarded", message);
+        }, "RetryOperationForwarded");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("RetryOperationCompleted", message);
+        }, "RetryOperationCompleted");
     };
 
     controller.$inject = [

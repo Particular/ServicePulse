@@ -38,11 +38,30 @@
             });
         }
 
+        var previousExceptionGroupEtag;
+
         function getExceptionGroups(classifier) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier);
-            return $http.get(url).then(function(response) {
+            return $http.get(url).then(function (response) {
+                var status = 200;
+                if (previousExceptionGroupEtag === response.headers('etag')) {
+                    status = 304;
+                } else {
+                    previousExceptionGroupEtag = response.headers('etag');
+                }
                 return {
-                    data: response.data
+                    data: response.data,
+                    status: status
+                };
+            });
+        }
+
+        function getHistoricGroups() {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'history');
+            return $http.get(url).then(function (response) {
+                return {
+                    data: response.data,
+                    etag: response.headers('etag')
                 };
             });
         }
@@ -72,13 +91,6 @@
                 return {
                     data: response.data
                 };
-            });
-        }
-
-        function getTotalExceptionGroups() {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups');
-            return $http.head(url).then(function(response) {
-                return response.headers('Total-Count');
             });
         }
 
@@ -213,6 +225,16 @@
                 });
         }
 
+        function acknowledgeGroup(id, successText, failureText) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', id);
+            return $http.delete(url).then(
+                function () {
+                    //   notifications.pushForCurrentRoute(successText, 'info');
+                }, function () {
+                    notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
+                });
+        }
+
         function retryExceptionGroup(id, successText) {
 
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
@@ -263,10 +285,10 @@
             getFailedMessages: getFailedMessages,
             getExceptionGroups: getExceptionGroups,
             getExceptionGroupClassifiers: getExceptionGroupClassifiers,
+            getHistoricGroups: getHistoricGroups,
             getFailedMessagesForExceptionGroup: getFailedMessagesForExceptionGroup,
             getMessageBody: getMessageBody,
             getMessageHeaders: getMessageHeaders,
-            getTotalExceptionGroups: getTotalExceptionGroups,
             getTotalFailedMessages: getTotalFailedMessages,
             getTotalArchivedMessages: getTotalArchivedMessages,
             getTotalFailingCustomChecks: getTotalFailingCustomChecks,
@@ -281,7 +303,8 @@
             archiveExceptionGroup: archiveExceptionGroup,
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
-            loadQueueNames: loadQueueNames
+            loadQueueNames: loadQueueNames,
+            acknowledgeGroup: acknowledgeGroup
         };
 
         return service;

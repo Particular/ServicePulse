@@ -28,7 +28,7 @@ class Program
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("-------------------------------------");
                 Console.WriteLine("[ A ] Send 1 good Message");
-                Console.WriteLine("[ B ] Send 10 bad Messages");
+                Console.WriteLine("[ B ] Send 1000 bad Messages");
                 Console.WriteLine("[ C ] Send Infinite bad Messages ");
                 Console.WriteLine("[ Q ] Quit");
                 Console.WriteLine("-------------------------------------");
@@ -47,7 +47,7 @@ class Program
                         break;
                     case ConsoleKey.B:
                         
-                        for (var i = 0; i < 10; i++)
+                        for (var i = 0; i < 1000; i++)
                         {
                             SendMessage(bus, true, text);
                         }

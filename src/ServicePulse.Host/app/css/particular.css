@@ -7,7 +7,11 @@
 a {
     color: #00a3c4;
     font-weight: bold;
+    outline: none;
+    border: none;
 }
+
+a:focus, button:focus {outline:0 !important;}
 
 a:hover {
     color: #00a3c4;
@@ -156,7 +160,7 @@ footer a:hover { font-weight: normal; }
 
 .warning i { color: #aa6708; }
 
-.danger { color: #ce4844; }
+.danger { color: #ce4844 !important; font-weight: bold !important; }
 
 .box-info { border-left-color: #1b809e; }
 
@@ -174,8 +178,6 @@ footer a:hover { font-weight: normal; }
     margin: 0;
     padding: 0;
 }
-
-.box-body { }
 
 /* fixed bus with repeat list transition lag */
 
@@ -356,7 +358,7 @@ section.events > div > div > div > div { padding-bottom: 8px !important; }
 .lead {
     -ms-word-wrap: break-word;
     color: #181919 !important;
-    font-size: 16px !important;
+    font-size: 14px !important;
     font-weight: bold;
     margin-bottom: 3px;
     word-wrap: break-word;
@@ -408,10 +410,14 @@ h3 {
     font-weight: bold;
 }
 
-.box:hover, .summary-item:hover {
+.summary-item:hover {
     background-color: #edf6f7;
     border-color: #00a3c4 !important;
     cursor: pointer;
+}
+
+.check-hover {
+
 }
 
 h5 {
@@ -422,6 +428,16 @@ h5 {
     margin: 0 0 14px;
     margin-right: 30px;
     text-transform: uppercase;
+}
+
+h6 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #181919;
+}
+
+h6 a:hover {
+    cursor: pointer;
 }
 
 .tabs {
@@ -444,7 +460,7 @@ h5 {
 .tabs h5.active a { color: #181919; }
 
 .tabs a {
-    color: #a8b3b1;
+    color: #929e9e;
     cursor: pointer;
 }
 
@@ -485,11 +501,14 @@ h1 {
     margin: 0 0 32px;
 }
 
-p.metadata { margin-bottom: 6px; }
+p.metadata { 
+    margin-bottom: 6px;
+}
 
 span.metadata {
     display: inline-block;
     padding: 0px 20px 2px 0;
+    color: #777f7f;
 }
 
 .metadata:first-child { padding-left: 0; }
@@ -746,13 +765,27 @@ p.endpoint-metadata {
 
 .fa-stack-2x { font-size: 24px; }
 
-.events .box { padding-bottom: 0; }
+.events .box {
+    padding-bottom: 0;
+}
+
+.events .box:hover { 
+    cursor: pointer; 
+    background-color: #edf6f7;
+    border: 1px solid #00a3c4;
+}
 
 .events p.lead { padding-bottom: 10px; }
 
 .fake-link {
-    color: #00a3c4;
-    text-decoration: none;
+    color: #00a3c4 !important;
+    text-decoration: none !important;
+}
+
+
+.fake-link:hover {
+    color: #00a3c4 !important;
+    text-decoration: none !important;
 }
 
 .version-info-container { width: 100% !important; }
@@ -770,6 +803,10 @@ p.endpoint-metadata {
 .version-separator {
     color: #BCC6C2;
     margin: 0 15px;
+}
+
+.list-section {
+    margin-top: 20px;
 }
 
 
@@ -840,8 +877,8 @@ nav {
     width: 100% !important;
 }
 
-.filter-period-menu, .sort-menu {
-    float:right;
+.filter-period-menu, .sort-menu, .msg-group-menu {
+    float: right;
 }
 
 .filter-input, .action-btns, .filter-period-menu, .sort-menu {
@@ -856,6 +893,11 @@ nav {
 
 .filter-period-menu {
     margin: 0 30px 0 6px;
+}
+
+.msg-group-menu {
+    margin: 21px 0px 0 6px;
+    padding-right: 15px;
 }
 
 .sort-menu {
@@ -905,10 +947,156 @@ p.lead hard-wrap.ng-binding {
     color: #777f7f;
 }
 
-.no-side-padding {
-        padding-right: 0;
-        padding-left: 0;
+.collapsible-section {
+    margin-top: 20px;
 }
+.disclose-link {
+    margin-top: 20px;
+}
+
+.extra-box-padding {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+}
+
+.progress {
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    background-color: #777f7f;
+    display: inline-block;
+}
+
+.no-side-padding {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+..box-no-interaction {
+    background-color: #fff;
+    border-color: #eee !important;
+}
+
+.box-no-interaction:hover {
+    background-color: #fff !important;
+    border-color: #eee !important;
+    cursor: default;
+}
+
+.no-link-underline {
+    color: #00a3c4;
+    text-decoration: none;
+}
+
+.panel-body ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+
+
+ul.retry-request-progress li > div {
+    margin-bottom: 6px;
+}
+
+li.left-to-do, li.completed {
+    color: #B0B5B5;
+}
+
+li.left-to-do {
+    padding-left: 15px;
+}
+
+li.active div {
+    color: #fff !important;
+    font-weight: bold;
+}
+
+li.active div.bulk-retry-progress-status:before {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f061 \00a0";
+}
+
+div.retry-completed.bulk-retry-progress-status {
+    color: #fff;
+    font-weight: bold;
+}
+
+li.completed div.bulk-retry-progress-status:before, div.retry-completed.bulk-retry-progress-status:before {
+    font: normal normal normal 14px/1 FontAwesome;
+    content: "\f00c \00a0";
+}
+
+div.col-xs-3.col-sm-3.retry-op-queued {
+    color: #B0B5B5 !important;
+}
+
+div.progress-bar.progress-bar-striped.active {
+    color: #fff !important;
+}
+
+.progress.bulk-retry-progress {
+    margin-bottom: 0;
+    background-color: #333333;
+}
+
+.retry-completed, ul.retry-request-progress button {
+    display: inline-block;
+}
+
+ul.retry-request-progress button {
+    background-color: #00a3c4;
+}
+
+.panel-retry {
+    background-color: #1A1A1A;
+    border: none;
+    color: #fff
+}
+
+.panel-retry p.lead {
+    color: #fff;
+}
+
+.navbar-inverse {
+    background-color: #1A1A1A;
+}
+
+.panel-retry span.metadata, .panel-retry sp-moment {
+    color: #B0B5B5 !important;
+}
+
+span.short-group-history {
+    text-align: center;
+    display: inherit;
+    margin-top: 10px;
+    color: #777f7f;
+}
+
+div.danger.sc-restart-warning {
+    margin-top: 3px;
+}
+
+div.danger.sc-restart-warning, div.danger.sc-restart-warning > i {
+    color: #fa733d !important;
+    font-weight: normal !important;
+    letter-spacing: 0.1px;
+}
+
+div.danger.sc-restart-warning > strong {
+    letter-spacing: 0.2px;
+}
+
+.op-metadata {
+    border-top: 1px solid #414242;
+    padding-top: 15px;
+}
+
+
+
+
+/* RESPONSIVE TWEAKS */ 
 
 @media only screen and (min-width: 993px) {
     .filter-period-menu {
@@ -918,7 +1106,7 @@ p.lead hard-wrap.ng-binding {
 
 @media only screen and (max-width: 992px) {
     .filter-period-menu, .sort-menu {
-    float: left !important;
+        float: left !important;
     }
     .sort-menu {
         margin-top: 0;
@@ -932,6 +1120,11 @@ p.lead hard-wrap.ng-binding {
 @media only screen and (max-width: 768px) {
     .filter-toolbar .input-group {
         margin-bottom: 6px;
+    }
+    .msg-group-menu {
+        float: left !important;
+        margin-top: 0;
+        margin-left: 15px;
     }
     div.sp-pull-right {
         display: inline-block;
@@ -947,8 +1140,11 @@ p.lead hard-wrap.ng-binding {
     .input-group-btn button.btn.btn-default {
     margin-right: 0;
     }
+    .no-mobile-side-padding {
+     padding-right: 0;
+     padding-left: 0;
+    }
 }
-
 
 @media only screen and (max-width: 480px) {
     .sidebar-label { margin: 3px 0 14px; }
@@ -970,7 +1166,9 @@ p.lead hard-wrap.ng-binding {
         float: none;
         margin-top: 4px;    
     }
-
+    .progress.bulk-retry-progress {
+        margin-top: 6px;
+    }
 }
 
 @media only screen and (max-width: 320px) {

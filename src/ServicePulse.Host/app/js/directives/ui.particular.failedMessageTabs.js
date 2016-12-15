@@ -2,7 +2,7 @@
     'use strict';
 
 
-    function controller($scope, $interval, $location, sharedDataService, notifyService, serviceControlService) {
+    function controller($scope, $interval, $location, sharedDataService, notifyService, serviceControlService, showPendingRetry) {
 
         var notifier = notifyService();
 
@@ -11,8 +11,9 @@
         };
 
         var stats = sharedDataService.getstats();
+        var currentClassification;
         var allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': stats.number_of_failed_messages }
-
+        $scope.showPendingRetry = showPendingRetry;
         $scope.counters = {
             group: stats.number_of_exception_groups,
             message: stats.number_of_failed_messages,
@@ -24,12 +25,6 @@
             sharedDataService.set(allFailedMessagesGroup);
             $location.path('/failedMessages');
         }
-
-        var exceptionGroupCountUpdatedTimer = $interval(function() {
-            serviceControlService.getTotalExceptionGroups().then(function(response) {
-                notifier.notify('ExceptionGroupCountUpdated', response);
-            });
-        }, 5000);
 
         var archiveMessagesUpdatedTimer = $interval(function() {
             serviceControlService.getTotalArchivedMessages().then(function(response) {
@@ -51,10 +46,6 @@
 
         // Cancel interval on page changes
         $scope.$on('$destroy', function() {
-            if (angular.isDefined(exceptionGroupCountUpdatedTimer)) {
-                $interval.cancel(exceptionGroupCountUpdatedTimer);
-                exceptionGroupCountUpdatedTimer = undefined;
-            }
             if (angular.isDefined(archiveMessagesUpdatedTimer)) {
                 $interval.cancel(archiveMessagesUpdatedTimer);
                 archiveMessagesUpdatedTimer = undefined;
@@ -88,7 +79,7 @@
         }, 'PendingRetriesTotalUpdated');
     }
 
-    controller.$inject = ['$scope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService'];
+    controller.$inject = ['$scope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService', 'showPendingRetry'];
 
     function directive() {
         return {
