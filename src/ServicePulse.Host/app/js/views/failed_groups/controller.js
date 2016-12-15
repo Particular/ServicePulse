@@ -167,9 +167,9 @@
                     });
 
                     vm.exceptionGroups.forEach(function(group) {
-                        var d = response.data.find(function(item) {
+                        var d = response.data.filter(function(item) {
                             return item.id === group.id;
-                        });
+                        })[0];
 
                         for (var prop in d) {
                             group[prop] = d[prop];
