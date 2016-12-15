@@ -271,7 +271,6 @@
 
                         controller.updateExceptionGroups();
                         root.$apply(function () {
-                            //deferred.resolve({data: []});
                             deferred.resolve({ data: [{ id: 3, workflow_state: null }] });
                         });
                         expect(controller.exceptionGroups[0].id).toEqual(3);
@@ -285,7 +284,6 @@
 
                         controller.updateExceptionGroups();
                         root.$apply(function () {
-                            //deferred.resolve({data: []});
                             deferred.resolve({ data: [{ id: 3, workflow_state: null, retry_status: 'pending' }] });
                         });
                         expect(controller.exceptionGroups[0].id).toEqual(3);
