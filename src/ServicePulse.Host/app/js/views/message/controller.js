@@ -84,6 +84,12 @@
                 });
         };
         
+        //to be deleted
+        vm.resolveButtonClicked = function() {
+            vm.message.status = "resolved";
+            vm.message.resolved = true;
+        }
+
         vm.debugInServiceInsight = function () {
             var messageId = vm.message.message_id;
             var dnsName = scConfig.service_control_url.toLowerCase();

@@ -56,7 +56,7 @@
             });
         }
 
-		function getFailedMessageById(messageId) {
+        function getFailedMessageById(messageId) {
             var url = uri.join(scConfig.service_control_url, 'errors', messageId);
             return $http.get(url).then(function (response) {
                 return response;
@@ -192,7 +192,7 @@
 
         function retryAllFailedMessages() {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry', 'all');
-            $http.post(url)
+            return $http.post(url)
                 .success(function() {
                     notifications.pushForCurrentRoute('Retrying all messages...', 'info');
                 })
@@ -203,7 +203,7 @@
 
         function retryFailedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry');
-            $http.post(url, selectedMessages)
+            return $http.post(url, selectedMessages)
                 .success(function() {
                     notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
@@ -215,7 +215,7 @@
         function archiveFailedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'archive');
 
-            $http({
+            return $http({
                     url: url,
                     data: selectedMessages,
                     method: 'PATCH'
@@ -230,7 +230,7 @@
 
         function archiveExceptionGroup(id, successText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'archive');
-            $http.post(url)
+            return $http.post(url)
                 .success(function() {
                     // notifications.pushForCurrentRoute(successText, 'info');
                 })
@@ -252,7 +252,7 @@
         function retryExceptionGroup(id, successText) {
 
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
-            $http.post(url)
+            return $http.post(url)
                 .success(function() {
                     //   notifications.pushForCurrentRoute(successText, 'info');
                 })
@@ -318,7 +318,8 @@
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
             loadQueueNames: loadQueueNames,
-            acknowledgeGroup: acknowledgeGroup
+            acknowledgeGroup: acknowledgeGroup,
+            getFailedMessageById: getFailedMessageById
         };
 
         return service;
