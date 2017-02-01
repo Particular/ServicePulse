@@ -2,9 +2,11 @@
     <section name="failed_message">
         <div class="row">
             <div class="col-sm-12">
-                <h1>Message</h1>
+                <div><span class="fake-link">&#9664;</span> <a href="javascript:javascript:history.go(-1)">BACK</a></div>
+                <div class="active break group-title"><h1>{{vm.message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</h1></div>
             </div>
         </div>
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
@@ -15,22 +17,28 @@
                 </div>
             </div>
         </div>
+
+        <div class="row box-header">
+            <div class="col-sm-12 no-side-padding">
+                <p class="metadata">
+                    <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{vm.message.time_of_failure}}"></sp-moment></span>
+                    <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{vm.message.receiving_endpoint.name}}</span>
+                    <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{vm.message.receiving_endpoint.host}}</span>
+                    <span class="metadata" ng-show="vm.message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{vm.message.redirect}}</span>
+                </p>
+            </div>
+        </div>
+
+        <div ng-show="!vm.selectedExceptionGroup.id">
+            <failed-message-tabs></failed-message-tabs>
+        </div>
+
         <div>
             <div class="row box">
                 <div class="col-sm-12" ng-click="vm.toggleRowSelect(vm.message)">
                     <div class="row">
                         <div class="col-sm-9">
-                            <div class="row box-header">
-                                <div class="col-sm-12 no-side-padding">
-                                    <p class="lead break">{{vm.message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
-                                    <p class="metadata">
-                                        <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{vm.message.time_of_failure}}"></sp-moment></span>
-                                        <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{vm.message.receiving_endpoint.name}}</span>
-                                        <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{vm.message.receiving_endpoint.host}}</span>
-                                        <span class="metadata" ng-show="vm.message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{vm.message.redirect}}</span>
-                                    </p>
-                                </div>
-                            </div>
+                            
                         </div>
                         <div class="col-sm-2">
                             <span>

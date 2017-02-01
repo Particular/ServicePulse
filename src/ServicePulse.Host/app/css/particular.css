@@ -769,7 +769,7 @@ p.endpoint-metadata {
     padding-bottom: 0;
 }
 
-.events .box:hover { 
+.events .box:hover, .box.failed-message:hover { 
     cursor: pointer; 
     background-color: #edf6f7;
     border: 1px solid #00a3c4;
@@ -1093,7 +1093,13 @@ div.danger.sc-restart-warning > strong {
     padding-top: 15px;
 }
 
+.failed-message a {
+    color: #000;
+}
 
+.failed-message a:hover {
+    text-decoration: none;
+}
 
 
 /* RESPONSIVE TWEAKS */ 

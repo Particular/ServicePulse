@@ -55,8 +55,8 @@
         </div>
 
         <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
-
-                <div class="row box repeat-item" ng-repeat="message in vm.failedMessages">
+            <div class="col-sm-12 no-mobile-side-padding">
+                <div class="row box repeat-item failed-message" ng-repeat="message in vm.failedMessages">
                     <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false">
                         <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
                             <div class="check col-md-1">
@@ -85,33 +85,7 @@
                         </div>
                         <div class="row">
                             <div isolate-click  class="col-sm-offset-1 col-sm-11">
-                                <p class="small" ng-init="message.panel = 0">
-
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide stacktrace</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
-                                        <i> Show stacktrace</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide headers</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
-                                        <i>Show headers</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide message body</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
-                                        <i>Show message body</i>
-                                    </button>
-                                    <button type="button" clip-copy="" clip-complete="vm.clipComplete(message.message_id)" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
-                                        <i>Copy Id to clipboard</i>
-                                    </button>
-                                    <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
-                                        <i>Open in ServiceInsight</i>
-                                    </button>
-                                </p>
+                                
                                 <pre isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
                                 <pre isolate-click ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
                                 <table isolate-click class="table" ng-show="message.panel === 2 && message.messageHeaders">
@@ -131,7 +105,7 @@
                         </div>
                     </div>
                 </div>
-
+            </div>
         </div>
     </section>
 
