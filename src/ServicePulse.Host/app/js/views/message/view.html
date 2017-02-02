@@ -3,29 +3,29 @@
         <div class="row">
             <div class="col-sm-12">
                 <div><span class="fake-link">&#9664;</span> <a href="javascript:javascript:history.go(-1)">BACK</a></div>
-                <div class="active break group-title"><h1>{{vm.message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</h1></div>
+                <div class="active break group-title"><h1 class="message-type-title">{{vm.message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</h1></div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-12">
-                <div class="btn-toolbar">
-                    <button type="button" ng-hide="vm.message.archived" ng-disabled="vm.message.retried || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to archive this message?" confirm-message="If you archive, this message won't be available for retrying unless it is later unarchived." confirm-click="vm.archiveMessage()" ><i class="fa fa-archive"></i> Archive message</button>
-                    <button type="button" ng-hide="!vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to un-archive this message?" confirm-message="Unarchived message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Unarchive</button>
-                    <button type="button" ng-disabled="vm.message.retried || vm.message.archived || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
-                    <div><span>For Sergio Only!!!</span><button type="button" ng-click="vm.resolveButtonClicked()">Mark the message as resolved</button><span>vm.message.status - {{vm.message.status}}</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row box-header">
-            <div class="col-sm-12 no-side-padding">
-                <p class="metadata">
+                <p class="metadata group-title group-message-count">
                     <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{vm.message.time_of_failure}}"></sp-moment></span>
                     <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{vm.message.receiving_endpoint.name}}</span>
                     <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{vm.message.receiving_endpoint.host}}</span>
                     <span class="metadata" ng-show="vm.message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{vm.message.redirect}}</span>
                 </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="btn-toolbar message-toolbar">
+                    <button type="button" ng-hide="vm.message.archived" ng-disabled="vm.message.retried || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to archive this message?" confirm-message="If you archive, this message won't be available for retrying unless it is later unarchived." confirm-click="vm.archiveMessage()" ><i class="fa fa-archive"></i> Archive message</button>
+                    <button type="button" ng-hide="!vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to un-archive this message?" confirm-message="Unarchived message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Unarchive</button>
+                    <button type="button" ng-disabled="vm.message.retried || vm.message.archived || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
+                    <button type="button" class="btn btn-default" ng-click="debugInServiceInsight($index)"><i class="fa fa-refresh"></i> View in ServiceInsight</button>
+                </div>
             </div>
         </div>
 
@@ -74,9 +74,6 @@
                                 <button type="button" clip-copy="" clip-complete="vm.clipComplete(message.message_id)" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
                                     <i>Copy Id to clipboard</i>
                                 </button>
-                                <button type="button" tooltip="This only works if ServiceInsight is installed." class="btn btn-link btn-sm" ng-click="debugInServiceInsight($index)">
-                                    <i>Open in ServiceInsight</i>
-                                </button>
                             </p>
                             <pre isolate-click ng-show="vm.message.panel === 0">{{ vm.message.exception.message }}</pre>
                             <pre isolate-click ng-show="vm.message.panel === 1">{{ vm.message.exception.stack_trace }}</pre>
@@ -94,9 +91,11 @@
                             <pre isolate-click ng-show="vm.message.panel === 3 && vm.message.messageBody">{{vm.message.messageBody}}</pre>
                             <div isolate-click class="alert alert-info" ng-show="vm.message.panel === 3 && vm.message.bodyUnavailable">{{vm.message.bodyUnavailable}}</div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </section>
 </div>
+<div><span>For Sergio Only!!!</span><button type="button" ng-click="vm.resolveButtonClicked()">Mark the message as resolved</button><span>vm.message.status - {{vm.message.status}}</span></div>

@@ -1101,6 +1101,18 @@ div.danger.sc-restart-warning > strong {
     text-decoration: none;
 }
 
+h1.message-type-title {
+    margin: 0;
+}
+
+div.btn-toolbar.message-toolbar {
+    margin-bottom: 32px;
+}
+
+.group-title.group-message-count sp-moment, .group-title.group-message-count i {
+    font-size: 16px;
+    color: #777f7f;
+}
 
 /* RESPONSIVE TWEAKS */ 
 
