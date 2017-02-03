@@ -311,6 +311,7 @@ div.tooltip
 html {
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
+    height: 100%;
 }
 
 body { background-color: #f2f6f7 !important; }
@@ -769,7 +770,7 @@ p.endpoint-metadata {
     padding-bottom: 0;
 }
 
-.events .box:hover, .box.failed-message:hover { 
+.events .box:hover, { 
     cursor: pointer; 
     background-color: #edf6f7;
     border: 1px solid #00a3c4;
@@ -1093,12 +1094,45 @@ div.danger.sc-restart-warning > strong {
     padding-top: 15px;
 }
 
+.failed-message {
+    padding: 0;
+    height: 100%;
+}
+
 .failed-message a {
     color: #000;
 }
 
 .failed-message a:hover {
     text-decoration: none;
+}
+
+div.check.col-md-1 {
+    padding-right: 0px;
+    height: 100%;
+}
+
+div.col-md-11.failed-message-data:hover { 
+    cursor: pointer; 
+    background-color: #edf6f7;
+    border: 1px solid #00a3c4;
+}
+
+div.col-md-11.failed-message-data div {
+    padding-left: 0;
+}
+
+div.check.col-md-1, div.col-md-11.failed-message-data {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    height: 130px;
+}
+
+.stacktrace-preview {
+    height: 38px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 h1.message-type-title {
