@@ -6,6 +6,7 @@
         $scope,
         $timeout,
         $location,
+        $routeParams,
         scConfig,
         toastService,
         sharedDataService,
@@ -19,7 +20,7 @@
         vm.selectedExceptionGroup = sharedDataService.get();
 
         if (!vm.selectedExceptionGroup) {
-            vm.selectedExceptionGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
+            vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
         }
 
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
@@ -227,6 +228,7 @@
         "$scope",
         "$timeout",
         "$location",
+        "$routeParams",
         "scConfig",
         "toastService",
         "sharedDataService",
