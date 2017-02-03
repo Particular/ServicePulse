@@ -216,7 +216,11 @@
                 loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.page, vm.direction);
             }
 
-            loadPromise.then(function(response) {
+            loadPromise.then(function (response) {
+                if (group.count === 0) {
+                    group.count = response.total;
+                }
+
                 processLoadedMessages(response.data);
             });
         };
