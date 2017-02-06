@@ -99,7 +99,7 @@
 
                                                 <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
 
-                                                <span class="metadata"><i aria-hidden="true" class="fa fa-refresh"></i> Last retried: <sp-moment empty-message="never" date="{{group.last_retry_completion_time}}"></sp-moment></span>
+                                                <span class="metadata"><i aria-hidden="true" class="fa fa-repeat"></i> Last retried: <sp-moment empty-message="never" date="{{group.last_retry_completion_time}}"></sp-moment></span>
                                             </p>
                                         </div>
                                     </div>
@@ -109,7 +109,7 @@
                                                 <i aria-hidden="true" class="fa fa-eye no-link-underline">&nbsp</i>View Messages
                                             </button>
                                             <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
-                                                <i aria-hidden="true" class="fa fa-refresh no-link-underline">&nbsp</i>Request retry
+                                                <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
                                             </button>
                                             <button type="button" class="btn btn-link btn-sm" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" confirm-title="Are you sure you want to archive this group?" confirm-message="If you do, they will not be available for Retry.">
                                                 <i aria-hidden="true" class="fa fa-archive no-link-underline">&nbsp</i>Archive Group
