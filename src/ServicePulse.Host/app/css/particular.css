@@ -6,7 +6,6 @@
 
 a {
     color: #00a3c4;
-    font-weight: bold;
     outline: none;
     border: none;
 }
@@ -15,7 +14,6 @@ a:focus, button:focus {outline:0 !important;}
 
 a:hover {
     color: #00a3c4;
-    font-weight: bold;
 }
 
 .navbar { height: 60px; }
@@ -415,10 +413,6 @@ h3 {
     background-color: #edf6f7;
     border-color: #00a3c4 !important;
     cursor: pointer;
-}
-
-.check-hover {
-
 }
 
 h5 {
@@ -1107,14 +1101,60 @@ div.danger.sc-restart-warning > strong {
     text-decoration: none;
 }
 
+input[type=checkbox] {
+	visibility: hidden;
+}
+
+.checkbox {
+    margin-top: 1px;
+    margin-left: 1px;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #929e9e;
+    background-color: #fff;
+}
+
+.checkbox:hover, .check-hover {
+    margin-top: 0;
+    margin-left: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #00a3c4;
+}
+
+.checkbox label:after {
+	opacity: 0.1;
+	content: '';
+	position: absolute;
+	width: 11px;
+	height: 7px;
+	background: transparent;
+	top: 2px;
+	left: 2px;
+	border: 3px solid #333;
+	border-top: none;
+	border-right: none;
+	transform: rotate(-45deg);
+}
+
+.checkbox input[type=checkbox]:checked + label:after {
+	opacity: 1;
+}
+
 div.check.col-md-1 {
     padding-right: 0px;
     height: 100%;
 }
 
-div.col-md-11.failed-message-data:hover { 
-    cursor: pointer; 
+div.check.col-md-1:hover, div.col-md-11.failed-message-data:hover {
     background-color: #edf6f7;
+}
+
+div.col-md-11.failed-message-data:hover { 
+    cursor: pointer;
+}
+
+.failed-message:hover {
     border: 1px solid #00a3c4;
 }
 
@@ -1137,6 +1177,7 @@ div.check.col-md-1, div.col-md-11.failed-message-data {
 
 h1.message-type-title {
     margin: 0;
+    font-size: 24px;
 }
 
 div.btn-toolbar.message-toolbar {

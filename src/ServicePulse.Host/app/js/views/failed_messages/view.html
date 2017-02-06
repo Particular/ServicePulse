@@ -58,8 +58,12 @@
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.failedMessages">
                     
-                    <div class="check col-md-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: pointer;">
-                        <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)" ng-class="{'check-hover': message.hover}">
+                    <div class="check col-md-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
+                        <div class="checkbox" ng-class="{'check-hover': message.hover}">
+                            <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                            <label for="onoffswitch{{$id}}"></label>
+                        </div>
+                    
                     </div>
                     
                     <div class="col-md-11 failed-message-data">
