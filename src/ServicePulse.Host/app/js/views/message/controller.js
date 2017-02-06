@@ -18,7 +18,8 @@
 
         var init = function() {
             var messageId = $routeParams.messageId;
-            vm.loadMessage(messageId);
+            vm.loadMessage(messageId).then(function () { vm.togglePanel(vm.message, 1); });
+            
         };
 
         notifier.subscribe($scope, function (event, messageFailureResolved) {
@@ -104,7 +105,7 @@
         };
 
         vm.loadMessage = function (messageId) {
-            serviceControlService.getFailedMessageById(messageId).then(function (response) {
+            return serviceControlService.getFailedMessageById(messageId).then(function (response) {
                 vm.message = response.data;
                 vm.message.archived = vm.message.status === 'archived';
                 vm.message.resolved = vm.message.status === 'resolved';

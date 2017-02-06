@@ -29,10 +29,6 @@
             </div>
         </div>
 
-        <div ng-show="!vm.selectedExceptionGroup.id">
-            <failed-message-tabs></failed-message-tabs>
-        </div>
-
         <div>
             <div class="row box">
                 <div class="col-sm-12" ng-click="vm.toggleRowSelect(vm.message)">
@@ -51,24 +47,14 @@
                     </div>
                     <div class="row">
                         <div isolate-click  class="col-sm-12">
-                            <p class="small" ng-init="vm.message.panel = 0">
-
-                                <button type="button" class="btn btn-link btn-sm" ng-show="vm.message.panel === 1" ng-click="vm.togglePanel(vm.message, 0)">
-                                    <i>Hide stacktrace</i>
-                                </button>
-                                <button type="button" class="btn btn-link btn-sm" ng-hide="vm.message.panel === 1" ng-click="vm.togglePanel(vm.message, 1)">
+                            <p class="small">
+                                <button type="button" class="btn btn-link btn-sm" ng-class="{active: vm.message.panel === 1}" ng-click="vm.togglePanel(vm.message, 1)">
                                     <i> Show stacktrace</i>
                                 </button>
-                                <button type="button" class="btn btn-link btn-sm" ng-show="vm.message.panel === 2" ng-click="vm.togglePanel(vm.message, 0)">
-                                    <i>Hide headers</i>
-                                </button>
-                                <button type="button" class="btn btn-link btn-sm" ng-hide="vm.message.panel === 2" ng-click="vm.togglePanel(vm.message, 2)">
+                                <button type="button" class="btn btn-link btn-sm" ng-class="{active: vm.message.panel === 2}" ng-click="vm.togglePanel(vm.message, 2)">
                                     <i>Show headers</i>
                                 </button>
-                                <button type="button" class="btn btn-link btn-sm" ng-show="vm.message.panel === 3" ng-click="vm.togglePanel(vm.message, 0)">
-                                    <i>Hide message body</i>
-                                </button>
-                                <button type="button" class="btn btn-link btn-sm" ng-hide="vm.message.panel === 3" ng-click="vm.togglePanel(vm.message, 3)">
+                                <button type="button" class="btn btn-link btn-sm" ng-class="{active: vm.message.panel === 3}" ng-click="vm.togglePanel(vm.message, 3)">
                                     <i>Show message body</i>
                                 </button>
                                 <button type="button" clip-copy="" clip-complete="vm.clipComplete(message.message_id)" data-clipboard-text="{{message.message_id}}" class="btn btn-link btn-sm">
