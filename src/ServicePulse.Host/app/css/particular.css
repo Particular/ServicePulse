@@ -26,6 +26,10 @@ a:hover {
     padding-top: 10px;
 }
 
+.navbar-brand img {
+    width: 160px;
+}
+
 .navbar-nav > li > a > span { margin-left: 4px; }
 
 .navbar-toggle { margin-top: 13px; }
@@ -1215,6 +1219,12 @@ div.btn-toolbar.message-toolbar {
 
 .box-event-item .fa-stack {
     height: 1em;
+}
+
+button img {
+    position: relative;
+    top: -1px;
+    width: 17px;
 }
 
 /* RESPONSIVE TWEAKS */ 
