@@ -1,11 +1,4 @@
 ﻿<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1>Failed Messages</h1>
-        </div>
-    </div>
-</div>
-<div class="container">
 
     <section name="message_groups">
 
@@ -85,7 +78,7 @@
 
                 <div ng-show="vm.exceptionGroups.length > 0">
 
-                    <div class="row box box-no-interaction wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups">
+                    <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
                         <div class="col-sm-12 no-mobile-side-padding">
                             <div class="row">
                                 <div class="col-sm-12 no-side-padding">
@@ -105,9 +98,6 @@
                                     </div>
                                     <div class="row" ng-show="!vm.isBeingRetried(group)">
                                         <div class="col-sm-12 no-side-padding">
-                                            <button type="button" class="btn btn-link btn-sm hidden-sm-down" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0">
-                                                <i aria-hidden="true" class="fa fa-eye no-link-underline">&nbsp</i>View Messages
-                                            </button>
                                             <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
                                                 <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
                                             </button>

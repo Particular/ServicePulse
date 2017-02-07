@@ -1,10 +1,5 @@
 ﻿<div class="container">
     <section name="failed_messages">
-        <div class="row">
-            <div class="col-sm-12 padded">
-                <h1>Failed Messages</h1>
-            </div>
-        </div>
 
         <failed-message-tabs></failed-message-tabs>
 
@@ -66,82 +61,50 @@
 
             <div class="col-sm-12" ng-repeat="message in vm.archives">
 
-                <div class="row box">
-                    <div class="col-sm-12" ng-click="vm.toggleRowSelect(message)">
-                        <div class="row" ng-class="{rowSelected: message.selected == true}" style="cursor: pointer;">
-                            <div class="check col-xs-1">
-                                <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
-                            </div>
-                            <div class="col-xs-11 col-sm-9">
-                                <div class="row box-header">
-                                    <div class="col-sm-12">
-                                        <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
-                                        <p>
+                <div class="row box failed-message">
+ 
+                    <div class="check col-md-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
+                        <div class="checkbox" ng-class="{'check-hover': message.hover}">
+                            <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                            <label for="onoffswitch{{$id}}"></label>
+                        </div>
+                    </div>
 
-                                        </p>
-                                        <p class="metadata">
-                                            <span class="metadata"><i class="fa fa-exclamation-circle"></i> Failed <sp-moment date="{{message.time_of_failure}}"></sp-moment>, reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</span>
-                                            <span class="metadata"><i class="fa fa-clock-o"></i> Archived: <sp-moment date="{{message.last_modified}}"></sp-moment></span>
-                                            <span class="metadata warning" ng-show="message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: immediately</span>
-                                            <span class="metadata" ng-show="!message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
-                                        </p>
+                    <div class="col-md-11 failed-message-data">
+                        <a href="#/failedMessages/{{message.id}}">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>
 
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-12 col-sm-2">
-                                <span>
+                                    <p class="metadata">
                                         <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info">Retried</span>
                                         <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning">Archived</span>
                                         <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important">{{message.number_of_processing_attempts}} Retry Failures</span>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div isolate-click class="col-sm-offset-1 col-sm-11">
-                                <p class="small" ng-init="message.panel = 0">
+                                            
+                                        <span class="metadata"><i class="fa fa-exclamation-circle"></i> Failed <sp-moment date="{{message.time_of_failure}}"></sp-moment>, reported by {{message.receiving_endpoint.name}} on {{message.receiving_endpoint.host}}</span>
+                                        <span class="metadata"><i class="fa fa-clock-o"></i> Archived: <sp-moment date="{{message.last_modified}}"></sp-moment></span>
+                                        <span class="metadata warning" ng-show="message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: immediately</span>
+                                        <span class="metadata" ng-show="!message.delete_soon"><i class="fa fa-trash-o"></i> Scheduled for deletion: <sp-moment date="{{message.deleted_in}}"></sp-moment></span>
+                                    </p>
 
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 1" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide stacktrace</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 1" ng-click="vm.togglePanel(message, 1)">
-                                        <i> Show stacktrace</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 2" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide headers</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 2" ng-click="vm.togglePanel(message, 2)">
-                                        <i>Show headers</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-show="message.panel === 3" ng-click="vm.togglePanel(message, 0)">
-                                        <i>Hide message body</i>
-                                    </button>
-                                    <button type="button" class="btn btn-link btn-sm" ng-hide="message.panel === 3" ng-click="vm.togglePanel(message, 3)">
-                                        <i>Show message body</i>
-                                    </button>
-                                </p>
-                                <pre ng-show="message.panel === 0">{{ message.exception.message }}</pre>
-                                <pre ng-show="message.panel === 1">{{ message.exception.stack_trace }}</pre>
-                                <table class="table" ng-show="message.panel === 2 && message.messageHeaders">
-                                    <tbody>
-                                    <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
-                                        <td nowrap="nowrap">{{header.key}}</td>
-                                        <td>
-                                            <pre>{{header.value}}</pre>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                                <div class="alert alert-info" ng-show="message.panel === 2 && message.headersUnavailable">{{message.headersUnavailable}}</div>
-                                <pre ng-show="message.panel === 3 && message.messageBody">{{message.messageBody}}</pre>
-                                <div class="alert alert-info" ng-show="message.panel === 3 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="row">
+                                <div isolate-click class="col-sm-12">
+
+                                    <pre class="stacktrace-preview" ng-show="message.panel === 0">{{ message.exception.message }}</pre>
+
+                                </div>
+                            </div>
+                        </a>
                     </div>
+                        
                 </div>
             </div>
-
         </div>
+
+        
     </section>
 
 </div>

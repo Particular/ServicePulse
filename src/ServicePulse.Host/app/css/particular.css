@@ -23,7 +23,7 @@ a:hover {
 .navbar-brand {
     height: 60px;
     padding-bottom: 9px;
-    padding-top: 9px;
+    padding-top: 10px;
 }
 
 .navbar-nav > li > a > span { margin-left: 4px; }
@@ -51,13 +51,13 @@ a:hover {
 @media (min-width: 768px) {
     .navbar-nav > li.active > a {
         background: transparent !important;
-        border-bottom: 4px solid #00A3C4;
+        border-bottom: 5px solid #00A3C4;
     }
 
     .navbar-label { display: none; }
 
     .navbar-nav > li > a {
-        padding-bottom: 16px;
+        padding-bottom: 15px;
         padding-top: 20px;
     }
 }
@@ -325,8 +325,6 @@ body { background-color: #f2f6f7 !important; }
     font-size: 14px;
 }
 
-section.events > div > div > div > div { padding-bottom: 8px !important; }
-
 .box-no-click {
     background: none;
     border-bottom: 1px solid #ced6d3;
@@ -416,7 +414,7 @@ h3 {
 }
 
 h5 {
-    color: #777f7f;
+    color: #929e9e;
     display: inline-block !important;
     font-size: 14px;
     font-weight: bold;
@@ -442,7 +440,8 @@ h6 a:hover {
 
 .tabs h5 {
     display: inline;
-    padding-bottom: 3px;
+    padding-bottom: 10px;
+    margin-bottom: 0;
 }
 
 .tabs h5 a:hover { text-decoration: none; }
@@ -828,8 +827,12 @@ p.endpoint-metadata {
 .group-title {
     display: inline-block;
     font-size: 16px;
-    font-weight: bold;
     margin: 10px 0 0;
+}
+
+h2.group-title, h3.group-title {
+    font-weight: bold;
+    line-height: 20px;
 }
 
 .group-message-count {
@@ -968,7 +971,7 @@ p.lead hard-wrap.ng-binding {
     padding-left: 0;
 }
 
-..box-no-interaction {
+.box-no-interaction {
     background-color: #fff;
     border-color: #eee !important;
 }
@@ -1181,12 +1184,37 @@ h1.message-type-title {
 }
 
 div.btn-toolbar.message-toolbar {
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 }
 
 .group-title.group-message-count sp-moment, .group-title.group-message-count i {
     font-size: 16px;
     color: #777f7f;
+}
+
+.metadata-label {
+    margin-right: 24px;
+    position: relative;
+    top: -1px;
+}
+
+.msg-tabs {
+    margin-bottom: 20px;
+}
+
+.box-group:hover {
+    background-color: #edf6f7;
+    border: 1px solid #00a3c4;
+    cursor: pointer;
+}
+
+.box-event-item {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.box-event-item .fa-stack {
+    height: 1em;
 }
 
 /* RESPONSIVE TWEAKS */ 
