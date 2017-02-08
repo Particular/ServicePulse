@@ -46,6 +46,9 @@
         };
 
         vm.togglePanel = function (message, panelnum) {
+            if (!message)
+                return false;
+
             if (!angular.isDefined(message.messageBody)) {
                 serviceControlService.getMessageBody(message.message_id).then(function (msg) {
                     message.messageBody = msg.data;
@@ -119,7 +122,10 @@
                 message.delete_soon = countdown < $moment();
                 message.deleted_in = countdown.format();
                 vm.message = message;
-            });
+            },
+                function() {
+                    vm.message = null;
+                });
         };
 
         init();
