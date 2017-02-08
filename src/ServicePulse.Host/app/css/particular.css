@@ -1208,7 +1208,7 @@ pre {
 }
 
 h1.message-type-title {
-    margin: 0;
+    margin: 0 0 8px;
     font-size: 24px;
 }
 
@@ -1264,6 +1264,10 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 .msg-list-dropdown {
     margin: 1px 0 0 0 !important;
     padding-right: 0;
+}
+
+.message-metadata {
+    display: inline;
 }
 
 /* RESPONSIVE TWEAKS */ 

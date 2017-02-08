@@ -39,7 +39,7 @@
 
         <div class="row" ng-show="vm.archives.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
 
-            <div class="col-sm-12" ng-repeat="message in vm.archives">
+            <div class="col-sm-12 no-mobile-side-padding" ng-repeat="message in vm.archives">
 
                 <div class="row box failed-message">
  
