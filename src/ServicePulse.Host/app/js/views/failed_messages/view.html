@@ -25,9 +25,11 @@
                     <button type="button" class="btn btn-default" confirm-title="Are you sure you want to archive the selected messages?" confirm-message="If you archive, these messages won't be available for retrying unless they're later unarchived." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length | number}} selected</button>
                     <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
                     <button type="button" class="btn btn-default" ng-show="vm.selectedExceptionGroup.id" confirm-title="Are you sure you want to archive this group?" confirm-message="If you archive, the messages in the group won't be available for retrying unless they're later unarchived." confirm-click="vm.archiveExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-archive"></i> Archive all</button>
-                    <div class="btn-group pull-right">
-                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="hidden-xs hidden-sm">Sorted by </span>{{vm.sortButtonText}}
+                    
+                    <div class="msg-group-menu dropdown msg-list-dropdown">
+                        <label class="control-label">Sort by:</label>
+                        <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{vm.sortButtonText}}
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
@@ -45,6 +47,7 @@
                             </li>
                         </ul>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -53,7 +56,7 @@
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.failedMessages">
                     
-                    <div class="check col-md-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
+                    <div class="check col-xs-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
                         <div class="checkbox" ng-class="{'check-hover': message.hover}">
                             <input isolate-click type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
                             <label for="onoffswitch{{$id}}"></label>
@@ -61,7 +64,7 @@
                     
                     </div>
                     
-                    <div class="col-md-11 failed-message-data">
+                    <div class="col-xs-11 failed-message-data" ng-mouseenter="message.hover2 = true" ng-mouseleave="message.hover2 = false">
                         <a href="#/failedMessages/{{message.id}}">
 
                             <div class="row" ng-class="{rowSelected: message.selected == true}">
@@ -69,7 +72,7 @@
                                 <div class="col-sm-12">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</p>
+                                            <p class="lead break" ng-class="{'msg-type-hover': message.hover2}">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</p>
                                             <p class="metadata">
                                                 <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
                                                 <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning metadata-label">Archived</span>
@@ -80,15 +83,11 @@
                                                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
                                                 <span class="metadata" ng-show="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{message.redirect}}</span>
                                             </p>
+
+                                            <pre class="stacktrace-preview" isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
+
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div isolate-click class="col-sm-12">
-
-                                    <pre class="stacktrace-preview" isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
-                                    
                                 </div>
                             </div>
                         </a>

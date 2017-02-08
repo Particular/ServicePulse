@@ -391,7 +391,7 @@ h3 {
     border-radius: 4px;
     color: #777f7f;
     display: block;
-    height: 130px;
+//    height: 130px;
     padding: 25px 10px;
     position: relative;
     text-align: center;
@@ -550,6 +550,7 @@ span.metadata {
 
 .btn-toolbar {
     padding: 12px 0 0;
+    margin-left: 0;
 }
 
 div.btn-toolbar, div.form-inline { margin-bottom: 12px; }
@@ -641,10 +642,6 @@ input.check {
 input.check-label {
     margin: 4px 6px 0 0;
     float: left;
-}
-
-button.btn.btn-default {
-    margin-left: 5px;
 }
 
 .action-toolbar .btn.btn-default:first-child {
@@ -1148,16 +1145,21 @@ input[type=checkbox] {
 	opacity: 1;
 }
 
-div.check.col-md-1 {
+.check {
     padding-right: 0px;
     height: 100%;
+    cursor: default;
 }
 
-div.check.col-md-1:hover, div.col-md-11.failed-message-data:hover {
+.check:hover, .failed-message-data:hover {
     background-color: #edf6f7;
 }
 
-div.col-md-11.failed-message-data:hover { 
+.msg-type-hover {
+    text-decoration: underline;
+}
+
+.failed-message-data:hover { 
     cursor: pointer;
 }
 
@@ -1165,14 +1167,37 @@ div.col-md-11.failed-message-data:hover {
     border: 1px solid #00a3c4;
 }
 
-div.col-md-11.failed-message-data div {
+div.failed-message-data div {
     padding-left: 0;
 }
 
-div.check.col-md-1, div.col-md-11.failed-message-data {
+.failed-message {
+    position: relative;
+}
+
+.check {
+    position: absolute;
     padding-top: 15px;
     padding-bottom: 15px;
-    height: 130px;
+}
+
+.failed-message-data {
+    left: 8.3%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.failed-message-data .col-sm-12 {
+    padding-right: 0;
+}
+
+.check, .failed-message-data {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+pre {
+    margin: 3px 0 2px;
 }
 
 .stacktrace-preview {
@@ -1227,6 +1252,20 @@ button img {
     width: 17px;
 }
 
+.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group {
+    margin-left: 0;
+    margin-right: 5px;
+}
+
+span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
+    font-weight: normal !important;
+}
+
+.msg-list-dropdown {
+    margin: 1px 0 0 0 !important;
+    padding-right: 0;
+}
+
 /* RESPONSIVE TWEAKS */ 
 
 @media only screen and (min-width: 993px) {
@@ -1274,6 +1313,15 @@ button img {
     .no-mobile-side-padding {
      padding-right: 0;
      padding-left: 0;
+    }
+    
+    .tabs {
+        
+    }
+
+    .tabs h5 {
+        padding-bottom: 4px;
+        margin-bottom: 10px;
     }
 }
 

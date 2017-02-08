@@ -19,6 +19,10 @@
                     <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{vm.message.receiving_endpoint.name}}</span>
                     <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{vm.message.receiving_endpoint.host}}</span>
                     <span class="metadata" ng-show="vm.message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{vm.message.redirect}}</span>
+
+                    <span class="metadata"><i class="fa fa-clock-o"></i> Archived: <sp-moment date="{{message.last_modified}}"></sp-moment></span>
+                    <span class="metadata danger" ng-show="message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
+                    <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: <sp-moment class="danger" date="{{message.deleted_in}}"></sp-moment></span>
                 </p>
             </div>
         </div>
