@@ -5,18 +5,22 @@
     function controller(
         $scope,
         $routeParams,
+        $moment,
         scConfig,
         toastService,
         serviceControlService,
         archivedMessageService,
-        notifyService) {
+        notifyService,
+        sharedDataService) {
 
         var vm = this;
         var notifier = notifyService();
 
         vm.message = {};
 
-        var init = function() {
+        var init = function () {
+            var configuration = sharedDataService.getConfiguration();
+            vm.error_retention_period = $moment.duration(configuration.data_retention.error_retention_period).asHours();
             var messageId = $routeParams.messageId;
             vm.loadMessage(messageId).then(function () { vm.togglePanel(vm.message, 1); });
             
@@ -74,6 +78,7 @@
             serviceControlService.archiveFailedMessages([vm.message.id])
                 .then(function() {
                     toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
+                    vm.loadMessage(vm.message.id).then(function () { vm.togglePanel(vm.message, 1); });
                     vm.message.archived = true;
                 });
         };
@@ -106,10 +111,14 @@
 
         vm.loadMessage = function (messageId) {
             return serviceControlService.getFailedMessageById(messageId).then(function (response) {
-                vm.message = response.data;
-                vm.message.archived = vm.message.status === 'archived';
-                vm.message.resolved = vm.message.status === 'resolved';
-                vm.message.retried = vm.message.status === 'retryIssued';
+                var message = response.data;
+                message.archived = message.status === 'archived';
+                message.resolved = message.status === 'resolved';
+                message.retried = message.status === 'retryIssued';
+                var countdown = $moment(message.last_modified).add(vm.error_retention_period, 'hours');
+                message.delete_soon = countdown < $moment();
+                message.deleted_in = countdown.format();
+                vm.message = message;
             });
         };
 
@@ -119,11 +128,13 @@
     controller.$inject = [
         "$scope",
         "$routeParams",
+        "$moment",
         "scConfig",
         "toastService",
         "serviceControlService",
         "archivedMessageService",
-        "notifyService"
+        "notifyService",
+        "sharedDataService"
     ];
 
     angular.module("sc")
