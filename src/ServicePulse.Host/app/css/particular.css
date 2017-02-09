@@ -1159,6 +1159,10 @@ input[type=checkbox] {
     text-decoration: underline;
 }
 
+.msg-type-hover-off {
+    text-decoration: none;
+}
+
 .failed-message-data:hover { 
     cursor: pointer;
 }
