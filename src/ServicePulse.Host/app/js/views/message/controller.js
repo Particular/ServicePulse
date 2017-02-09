@@ -81,10 +81,18 @@
             serviceControlService.archiveFailedMessages([vm.message.id])
                 .then(function() {
                     toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
-                    vm.loadMessage(vm.message.id).then(function () { vm.togglePanel(vm.message, 1); });
+                    // below line is a way to not fetch for the whole message from SC. We update date to now and calculate delete fields
+                    vm.message.last_modified = $moment().format();
+                    calculateDeleteDate(vm.message, vm.error_retention_period); 
                     vm.message.archived = true;
                 });
         };
+
+        function calculateDeleteDate(message, errorRetentionPeriod) {
+            var countdown = $moment(message.last_modified).add(errorRetentionPeriod, 'hours');
+            message.delete_soon = countdown < $moment();
+            message.deleted_in = countdown.format();
+        }
 
         vm.unarchiveMessage = function () {
             archivedMessageService.restoreMessageFromArchive(vm.message.id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
@@ -118,9 +126,7 @@
                 message.archived = message.status === 'archived';
                 message.resolved = message.status === 'resolved';
                 message.retried = message.status === 'retryIssued';
-                var countdown = $moment(message.last_modified).add(vm.error_retention_period, 'hours');
-                message.delete_soon = countdown < $moment();
-                message.deleted_in = countdown.format();
+                calculateDeleteDate(message, vm.error_retention_period);
                 vm.message = message;
             },
                 function() {
