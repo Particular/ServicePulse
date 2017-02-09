@@ -2,7 +2,7 @@
     'use strict';
 
     function routeProvider($routeProvider) {
-        $routeProvider.when('/failedMessages/:messageId', {
+        $routeProvider.when('/message/:messageId', {
             data: {
                 pageTitle: 'Message'
             },
