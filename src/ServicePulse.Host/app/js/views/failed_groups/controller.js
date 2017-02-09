@@ -48,7 +48,7 @@
                     });
         }
 
-        vm.archiveExceptionGroup = function(group) {
+        vm.archiveExceptionGroup = function(group, $event) {
             group.workflow_state = { status: 'requestingArchive', message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
                     'Archive Group Request Enqueued',
@@ -62,9 +62,10 @@
                         group.workflow_state = createWorkflowState('error', message);
                         notifier.notify('ArchiveGroupRequestRejected', group);
                     });
+            $event.stopPropagation();
         };
 
-        vm.retryExceptionGroup = function(group) {
+        vm.retryExceptionGroup = function(group, $event) {
             group.workflow_state = { status: 'waiting', message: getMessageForRetryStatus('waiting') };
 
             failedMessageGroupsService.retryGroup(group.id,
@@ -79,6 +80,7 @@
                         group.workflow_state = createWorkflowState('error', message);
                         notifier.notify('RetryGroupRequestRejected', group);
                     });
+            $event.stopPropagation();
         };
 
 

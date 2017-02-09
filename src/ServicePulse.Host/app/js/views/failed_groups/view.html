@@ -98,10 +98,10 @@
                                     </div>
                                     <div class="row" ng-show="!vm.isBeingRetried(group)">
                                         <div class="col-sm-12 no-side-padding">
-                                            <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
+                                            <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
                                                 <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
                                             </button>
-                                            <button type="button" class="btn btn-link btn-sm" confirm-click="vm.archiveExceptionGroup(group)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" confirm-title="Are you sure you want to archive this group?" confirm-message="If you do, they will not be available for Retry.">
+                                            <button type="button" class="btn btn-link btn-sm" confirm-click="vm.archiveExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" confirm-title="Are you sure you want to archive this group?" confirm-message="If you do, they will not be available for Retry.">
                                                 <i aria-hidden="true" class="fa fa-archive no-link-underline">&nbsp</i>Archive Group
                                             </button>
                                         </div>
