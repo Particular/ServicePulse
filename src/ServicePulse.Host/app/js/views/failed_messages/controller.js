@@ -94,9 +94,11 @@
         };
 
         vm.toggleRowSelect = function (row) {
-
             row.selected = !row.selected;
+            vm.updateSelectedIdsWithMessage(row);
+        };
 
+        vm.updateSelectedIdsWithMessage = function(row) {
             if (row.selected) {
                 vm.selectedIds.push(row.id);
             } else {
@@ -105,9 +107,9 @@
         };
 
         vm.retrySelected = function () {
+            toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
             serviceControlService.retryFailedMessages(vm.selectedIds)
                 .then(() => {
-                    toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
                     vm.selectedIds = [];
 
                     vm.failedMessages = vm.failedMessages.filter(function(item) {
@@ -117,9 +119,9 @@
         };
 
         vm.archiveSelected = function () {
+            toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
             serviceControlService.archiveFailedMessages(vm.selectedIds)
                 .then(() => {
-                    toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
                     vm.selectedIds = [];
 
                     vm.failedMessages = vm.failedMessages.filter(function(item) {

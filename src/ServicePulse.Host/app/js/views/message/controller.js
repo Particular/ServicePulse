@@ -23,7 +23,6 @@
             vm.error_retention_period = $moment.duration(configuration.data_retention.error_retention_period).asHours();
             var messageId = $routeParams.messageId;
             vm.loadMessage(messageId).then(function () { vm.togglePanel(vm.message, 1); });
-            
         };
 
         notifier.subscribe($scope, function (event, messageFailureResolved) {
@@ -69,26 +68,26 @@
         };
 
         vm.retryMessage = function () {
+            toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
             serviceControlService.retryFailedMessages([vm.message.id])
-                .then(function() {
-                        toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
+                .then(function() {                        
                         vm.message.retried = true;
                     }
                 );
         };
 
         vm.archiveMessage = function () {
+            toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
             serviceControlService.archiveFailedMessages([vm.message.id])
                 .then(function() {
-                    toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
                     // below line is a way to not fetch for the whole message from SC. We update date to now and calculate delete fields
                     vm.message.last_modified = $moment().format();
-                    calculateDeleteDate(vm.message, vm.error_retention_period); 
+                    updateMessageDeleteDate(vm.message, vm.error_retention_period);
                     vm.message.archived = true;
                 });
         };
 
-        function calculateDeleteDate(message, errorRetentionPeriod) {
+        function updateMessageDeleteDate(message, errorRetentionPeriod) {
             var countdown = $moment(message.last_modified).add(errorRetentionPeriod, 'hours');
             message.delete_soon = countdown < $moment();
             message.deleted_in = countdown.format();
@@ -101,12 +100,6 @@
                 });
         };
         
-        //to be deleted
-        vm.resolveButtonClicked = function() {
-            vm.message.status = "resolved";
-            vm.message.resolved = true;
-        }
-
         vm.debugInServiceInsight = function () {
             var messageId = vm.message.message_id;
             var dnsName = scConfig.service_control_url.toLowerCase();
@@ -126,7 +119,7 @@
                 message.archived = message.status === 'archived';
                 message.resolved = message.status === 'resolved';
                 message.retried = message.status === 'retryIssued';
-                calculateDeleteDate(message, vm.error_retention_period);
+                updateMessageDeleteDate(message, vm.error_retention_period);
                 vm.message = message;
             },
                 function() {

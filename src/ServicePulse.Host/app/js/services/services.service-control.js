@@ -68,9 +68,7 @@
 
         function getFailedMessageById(messageId) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'last', messageId);
-            return $http.get(url).then(function (response) {
-                return response;
-            });
+            return $http.get(url);
         }
 
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {

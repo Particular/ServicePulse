@@ -391,7 +391,6 @@ h3 {
     border-radius: 4px;
     color: #777f7f;
     display: block;
-//    height: 130px;
     padding: 25px 10px;
     position: relative;
     text-align: center;
@@ -764,7 +763,7 @@ p.endpoint-metadata {
     padding-bottom: 0;
 }
 
-.events .box:hover, { 
+.events .box:hover { 
     cursor: pointer; 
     background-color: #edf6f7;
     border: 1px solid #00a3c4;

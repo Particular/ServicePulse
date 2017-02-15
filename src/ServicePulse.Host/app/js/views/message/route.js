@@ -6,7 +6,7 @@
             data: {
                 pageTitle: 'Message'
             },
-            templateUrl: 'js/views/message/view.html',
+            templateUrl: 'js/views/message/messages-view.html',
             controller: 'messagesController',
             controllerAs: 'vm'
         });

@@ -147,21 +147,6 @@
             }
         };
 
-
-        vm.retrySelected = function () {
-            serviceControlService.retryFailedMessages(vm.selectedIds)
-                .then(() => {
-                    vm.selectedIds = [];
-
-                    for (var i = 0; i < vm.failedMessages.length; i++) {
-                        if (vm.failedMessages[i].selected) {
-                            vm.failedMessages[i].selected = false;
-                            vm.failedMessages[i].retried = true;
-                        }
-                    }
-                });
-        };
-
         vm.unarchiveSelected = function () {
             archivedMessageService.restoreMessagesFromArchive(vm.selectedIds, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
                 .then(function (message) {
