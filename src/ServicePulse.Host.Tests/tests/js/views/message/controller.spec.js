@@ -10,7 +10,7 @@
         $controller = _$controller_;
     }));
 
-    describe('retrying message', function () {
+    describe('when retrying a message', function () {
         var controller, serviceControlService, root, q;
         
         beforeEach(inject(function ($rootScope, $q) {
@@ -31,11 +31,16 @@
                 toastService: { showInfo: function () {} },
                 serviceControlService: serviceControlService,
                 archivedMessageService: null,
-                notifyService: function () { return { subscribe: function () { } } }
+                notifyService: function () { return { subscribe: function () { } } },
+                sharedDataService: {
+                    getConfiguration () {
+                        return { data_retention: { error_retention_period: 7 } };
+                    }
+                }
             });
         }));
 
-        it('message marked as resolved', function () {
+        it('and the retry succeeds, the message is marked as resolved', function () {
             var deferred = q.defer();
             spyOn(serviceControlService, 'retryFailedMessages').and.callFake(function () {
                 return deferred.promise;
@@ -50,7 +55,7 @@
             expect(serviceControlService.retryFailedMessages).toHaveBeenCalled();
         });
 
-        it('failed, message not marked as resolved', function () {
+        it('and the retry fails, the message is not marked as resolved', function () {
             var deferred = q.defer();
             spyOn(serviceControlService, 'retryFailedMessages').and.callFake(function () {
                 return deferred.promise;
@@ -66,7 +71,7 @@
         });
     });
 
-    describe('archiving message', function () {
+    describe('when archiving a message', function () {
         var controller, serviceControlService, root;
 
         beforeEach(inject(function ($rootScope, $q) {
@@ -85,11 +90,16 @@
                 toastService: { showInfo: function () { } },
                 serviceControlService: serviceControlService,
                 archivedMessageService: null,
-                notifyService: function () { return { subscribe: function () { } } }
+                notifyService: function () { return { subscribe: function () { } } },
+                sharedDataService: {
+                    getConfiguration () {
+                        return { data_retention: { error_retention_period: 7 } };
+                    }
+                }
             });
         }));
 
-        it('message marked as archived', inject(function ($q) {
+        it('and the archive succeeds, the message is marked as archived', inject(function ($q) {
             var deferred = $q.defer();
             spyOn(serviceControlService, 'archiveFailedMessages').and.callFake(function () {
                 return deferred.promise;
@@ -104,7 +114,7 @@
             expect(serviceControlService.archiveFailedMessages).toHaveBeenCalled();
         }));
 
-        it('failed, message not marked as archived', inject(function ($q) {
+        it('and the archive failed, the message is not marked as archived', inject(function ($q) {
             var deferred = $q.defer();
             spyOn(serviceControlService, 'archiveFailedMessages').and.callFake(function () {
                 return deferred.promise;
@@ -120,7 +130,7 @@
         }));
     });
 
-    describe('un-archiving message', function () {
+    describe('when unarchiving a message', function () {
         var controller, serviceControlService, root, archivedMessageService, q;
 
         beforeEach(inject(function ($rootScope, $q) {
@@ -140,11 +150,16 @@
                 toastService: { showInfo: function () { } },
                 serviceControlService: serviceControlService,
                 archivedMessageService: archivedMessageService,
-                notifyService: function () { return { subscribe: function () { } } }
+                notifyService: function () { return { subscribe: function () { } } },
+                sharedDataService: {
+                    getConfiguration () {
+                        return { data_retention: { error_retention_period: 7 } };
+                    }
+                }
             });
         }));
 
-        it('message not marked as archived', function () {
+        it('and the unarchive succeeds, the message is not marked as archived', function () {
             var deferred = q.defer();
             spyOn(archivedMessageService, 'restoreMessageFromArchive').and.callFake(function () {
                 return deferred.promise;
@@ -159,7 +174,7 @@
             expect(archivedMessageService.restoreMessageFromArchive).toHaveBeenCalled();
         });
 
-        it('failed, message marked as archived', function () {
+        it('and the unarchive fails, the message is still marked as archived', function () {
             var deferred = q.defer();
             spyOn(archivedMessageService, 'restoreMessageFromArchive').and.callFake(function () {
                 return deferred.promise;
