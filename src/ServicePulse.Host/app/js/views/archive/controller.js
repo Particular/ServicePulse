@@ -139,7 +139,10 @@
             }
 
             row.selected = !row.selected;
+            vm.updateSelectedIdsWithMessage(row);
+        };
 
+        vm.updateSelectedIdsWithMessage = function (row) {
             if (row.selected) {
                 vm.selectedIds.push(row.id);
             } else {
