@@ -110,22 +110,13 @@
         <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
 
         <div ng-show="vm.pendingRetryMessages.length > 0" infinite-scroll="vm.loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
-
-                
-
-
-
-
-
-
-
-
+            
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.pendingRetryMessages">
 
                     <div class="check col-xs-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
                         <div class="checkbox" ng-class="{'check-hover': message.hover}">
-                            <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.submittedForRetrial || message.resolved" ng-checked="message.selected" ng-click="vm.toggleRowSelect(message)">
+                            <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.submittedForRetrial || message.resolved" ng-model="message.selected" ng-change="vm.updateSelectedIdsWithMessage(message)">
                             <label for="onoffswitch{{$id}}"></label>
                         </div>
 
