@@ -161,13 +161,7 @@
         function dismissCustomChecks(customCheck) {
             var url = uri.join(scConfig.service_control_url, 'customchecks', customCheck.id);
 
-            $http.delete(url)
-                .success(function() {
-                    // notifications.pushForCurrentRoute('"{{item.custom_check_id}}" custom check muted', 'info', { item: customCheck });
-                })
-                .error(function() {
-                    //  notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'danger', { item: customCheck });
-                });
+            $http.delete(url);
         }
 
         function retryPendingMessagesForQueue(queueName) {
@@ -222,9 +216,6 @@
         function archiveExceptionGroup(id, successText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'archive');
             return $http.post(url)
-                .success(function() {
-                    // notifications.pushForCurrentRoute(successText, 'info');
-                })
                 .error(function() {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
@@ -232,10 +223,7 @@
 
         function acknowledgeGroup(id, successText, failureText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', id);
-            return $http.delete(url).then(
-                function () {
-                    //   notifications.pushForCurrentRoute(successText, 'info');
-                }, function () {
+            return $http.delete(url).error( function () {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         }
@@ -244,9 +232,6 @@
 
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
             return $http.post(url)
-                .success(function() {
-                    //   notifications.pushForCurrentRoute(successText, 'info');
-                })
                 .error(function() {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
