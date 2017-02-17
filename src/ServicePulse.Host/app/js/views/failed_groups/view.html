@@ -78,8 +78,8 @@
                  <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
             </div>
         </div>
-        
-        
+
+
         <div class="row">
             <div class="col-sm-12 no-mobile-side-padding">
 
@@ -157,6 +157,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
                                                         </li>
                                                         <li ng-show="group.workflow_state.status === 'completed'">
                                                             <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
@@ -199,8 +200,6 @@
                 </div>
             </div>
         </div>
-        </div>
-
     </section>
 </div>
 

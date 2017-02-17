@@ -501,7 +501,7 @@ h1 {
     margin: 0 0 32px;
 }
 
-p.metadata { 
+p.metadata {
     margin-bottom: 6px;
 }
 
@@ -769,8 +769,8 @@ p.endpoint-metadata {
     padding-bottom: 0;
 }
 
-.events .box:hover { 
-    cursor: pointer; 
+.events .box:hover {
+    cursor: pointer;
     background-color: #edf6f7;
     border: 1px solid #00a3c4;
 }
@@ -973,7 +973,7 @@ p.lead hard-wrap.ng-binding {
     padding-left: 0;
 }
 
-..box-no-interaction {
+.box-no-interaction {
     background-color: #fff;
     border-color: #eee !important;
 }
@@ -1096,7 +1096,7 @@ div.danger.sc-restart-warning > strong {
 
 
 
-/* RESPONSIVE TWEAKS */ 
+/* RESPONSIVE TWEAKS */
 
 @media only screen and (min-width: 993px) {
     .filter-period-menu {
@@ -1160,11 +1160,11 @@ div.danger.sc-restart-warning > strong {
     .filter-toolbar, .action-toolbar {
         margin-top: 2px;
     }
-    
-    div.sp-pull-right { 
+
+    div.sp-pull-right {
         display: inline-block;
         float: none;
-        margin-top: 4px;    
+        margin-top: 4px;
     }
     .progress.bulk-retry-progress {
         margin-top: 6px;
