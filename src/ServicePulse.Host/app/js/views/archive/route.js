@@ -6,7 +6,7 @@
             data: {
                 pageTitle: 'Archived Messages'
             },
-            templateUrl: 'js/views/archive/view.html',
+            templateUrl: '/js/views/archive/view.html',
             controller: 'archivedMessageController',
             controllerAs: 'vm'
         });

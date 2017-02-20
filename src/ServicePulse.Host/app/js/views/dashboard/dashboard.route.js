@@ -7,7 +7,7 @@
             data: {
                 pageTitle: "Dashboard"
             },
-            templateUrl: 'js/views/dashboard/dashboard.html',
+            templateUrl: '/js/views/dashboard/dashboard.html',
             controller: 'DashboardCtrl',
             controllerAs: 'vm'
         });

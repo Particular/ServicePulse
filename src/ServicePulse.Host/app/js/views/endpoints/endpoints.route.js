@@ -7,7 +7,7 @@
             data: {
                 pageTitle: 'Endpoints'
             },
-            templateUrl: 'js/views/endpoints/endpoints.html',
+            templateUrl: '/js/views/endpoints/endpoints.html',
             controller: 'EndpointsCtrl',
             controllerAs: 'vm'
         });

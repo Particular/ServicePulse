@@ -6,7 +6,7 @@
             data: {
                 pageTitle: 'Configuration'
             },
-            templateUrl: 'js/views/configuration/configuration.html',
+            templateUrl: '/js/views/configuration/configuration.html',
             controller: 'ConfigurationCtrl',
             controllerAs: 'vm'
         });
