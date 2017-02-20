@@ -139,24 +139,14 @@
             }
 
             row.selected = !row.selected;
+            vm.updateSelectedIdsWithMessage(row);
+        };
 
+        vm.updateSelectedIdsWithMessage = function (row) {
             if (row.selected) {
                 vm.selectedIds.push(row.id);
             } else {
                 vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
-            }
-        };
-
-
-        vm.retrySelected = function () {
-            serviceControlService.retryFailedMessages(vm.selectedIds);
-            vm.selectedIds = [];
-
-            for (var i = 0; i < vm.failedMessages.length; i++) {
-                if (vm.failedMessages[i].selected) {
-                    vm.failedMessages[i].selected = false;
-                    vm.failedMessages[i].retried = true;
-                }
             }
         };
 

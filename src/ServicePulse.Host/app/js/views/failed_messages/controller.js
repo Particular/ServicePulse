@@ -94,9 +94,11 @@
         };
 
         vm.toggleRowSelect = function (row) {
-
             row.selected = !row.selected;
+            vm.updateSelectedIdsWithMessage(row);
+        };
 
+        vm.updateSelectedIdsWithMessage = function(row) {
             if (row.selected) {
                 vm.selectedIds.push(row.id);
             } else {
@@ -105,23 +107,27 @@
         };
 
         vm.retrySelected = function () {
-            serviceControlService.retryFailedMessages(vm.selectedIds);
             toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
-            vm.selectedIds = [];
+            serviceControlService.retryFailedMessages(vm.selectedIds)
+                .then(() => {
+                    vm.selectedIds = [];
 
-            vm.failedMessages = vm.failedMessages.filter(function(item) {
-                return !item.selected;
-            });
+                    vm.failedMessages = vm.failedMessages.filter(function(item) {
+                        return !item.selected;
+                    });
+                });
         };
 
         vm.archiveSelected = function () {
-            serviceControlService.archiveFailedMessages(vm.selectedIds);
             toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
-            vm.selectedIds = [];
+            serviceControlService.archiveFailedMessages(vm.selectedIds)
+                .then(() => {
+                    vm.selectedIds = [];
 
-            vm.failedMessages = vm.failedMessages.filter(function (item) {
-                return !item.selected;
-            });
+                    vm.failedMessages = vm.failedMessages.filter(function(item) {
+                        return !item.selected;
+                    });
+                });
         };
 
         vm.archiveExceptionGroup = function (group) {

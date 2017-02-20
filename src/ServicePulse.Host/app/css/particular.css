@@ -6,7 +6,6 @@
 
 a {
     color: #00a3c4;
-    font-weight: bold;
     outline: none;
     border: none;
 }
@@ -15,7 +14,6 @@ a:focus, button:focus {outline:0 !important;}
 
 a:hover {
     color: #00a3c4;
-    font-weight: bold;
 }
 
 .navbar { height: 60px; }
@@ -25,7 +23,11 @@ a:hover {
 .navbar-brand {
     height: 60px;
     padding-bottom: 9px;
-    padding-top: 9px;
+    padding-top: 10px;
+}
+
+.navbar-brand img {
+    width: 160px;
 }
 
 .navbar-nav > li > a > span { margin-left: 4px; }
@@ -53,13 +55,13 @@ a:hover {
 @media (min-width: 768px) {
     .navbar-nav > li.active > a {
         background: transparent !important;
-        border-bottom: 4px solid #00A3C4;
+        border-bottom: 5px solid #00A3C4;
     }
 
     .navbar-label { display: none; }
 
     .navbar-nav > li > a {
-        padding-bottom: 16px;
+        padding-bottom: 15px;
         padding-top: 20px;
     }
 }
@@ -311,6 +313,7 @@ div.tooltip
 html {
     -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
+    height: 100%;
 }
 
 body { background-color: #f2f6f7 !important; }
@@ -325,8 +328,6 @@ body { background-color: #f2f6f7 !important; }
     color: #777f7f;
     font-size: 14px;
 }
-
-section.events > div > div > div > div { padding-bottom: 8px !important; }
 
 .box-no-click {
     background: none;
@@ -390,7 +391,6 @@ h3 {
     border-radius: 4px;
     color: #777f7f;
     display: block;
-    height: 130px;
     padding: 25px 10px;
     position: relative;
     text-align: center;
@@ -416,12 +416,8 @@ h3 {
     cursor: pointer;
 }
 
-.check-hover {
-
-}
-
 h5 {
-    color: #777f7f;
+    color: #929e9e;
     display: inline-block !important;
     font-size: 14px;
     font-weight: bold;
@@ -447,7 +443,8 @@ h6 a:hover {
 
 .tabs h5 {
     display: inline;
-    padding-bottom: 3px;
+    padding-bottom: 10px;
+    margin-bottom: 0;
 }
 
 .tabs h5 a:hover { text-decoration: none; }
@@ -552,6 +549,7 @@ span.metadata {
 
 .btn-toolbar {
     padding: 12px 0 0;
+    margin-left: 0;
 }
 
 div.btn-toolbar, div.form-inline { margin-bottom: 12px; }
@@ -643,10 +641,6 @@ input.check {
 input.check-label {
     margin: 4px 6px 0 0;
     float: left;
-}
-
-button.btn.btn-default {
-    margin-left: 5px;
 }
 
 .action-toolbar .btn.btn-default:first-child {
@@ -833,8 +827,12 @@ p.endpoint-metadata {
 .group-title {
     display: inline-block;
     font-size: 16px;
-    font-weight: bold;
     margin: 10px 0 0;
+}
+
+h2.group-title, h3.group-title {
+    font-weight: bold;
+    line-height: 20px;
 }
 
 .group-message-count {
@@ -887,7 +885,6 @@ nav {
 }
 
 .filter-input {
-    margin-left: 5px;
     width: 100%;
 }
 
@@ -903,6 +900,11 @@ nav {
 .sort-menu {
     margin-left: 6px;
     padding-top: 8px;
+}
+
+.sort-menu.dropdown {
+    margin-right: 32px;
+    padding-top: 0;
 }
 
 .repeat-item.ng-enter,
@@ -1093,8 +1095,187 @@ div.danger.sc-restart-warning > strong {
     padding-top: 15px;
 }
 
+.failed-message {
+    padding: 0;
+    height: 100%;
+}
 
+.failed-message a {
+    color: #000;
+}
 
+.failed-message a:hover {
+    text-decoration: none;
+}
+
+input[type=checkbox] {
+	visibility: hidden;
+}
+
+.checkbox {
+    margin-top: 1px;
+    margin-left: 1px;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #929e9e;
+    background-color: #fff;
+}
+
+.checkbox:hover, .check-hover {
+    margin-top: 0;
+    margin-left: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #00a3c4;
+}
+
+.checkbox label:after {
+	opacity: 0;
+	content: '';
+	position: absolute;
+	width: 11px;
+	height: 7px;
+	background: transparent;
+	top: 2px;
+	left: 2px;
+	border: 3px solid #333;
+	border-top: none;
+	border-right: none;
+	transform: rotate(-45deg);
+}
+
+.checkbox input[type=checkbox]:checked + label:after {
+	opacity: 1;
+}
+
+.check {
+    padding-right: 0px;
+    height: 100%;
+    cursor: default;
+}
+
+.check:hover, .failed-message-data:hover {
+    background-color: #edf6f7;
+}
+
+.msg-type-hover {
+    text-decoration: underline;
+}
+
+.msg-type-hover-off {
+    text-decoration: none;
+}
+
+.failed-message-data:hover { 
+    cursor: pointer;
+}
+
+.failed-message:hover {
+    border: 1px solid #00a3c4;
+}
+
+div.failed-message-data div {
+    padding-left: 0;
+}
+
+.failed-message {
+    position: relative;
+}
+
+.check {
+    position: absolute;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.failed-message-data {
+    left: 8.3%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.failed-message-data .col-sm-12 {
+    padding-right: 0;
+}
+
+.check, .failed-message-data {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+pre {
+    margin: 3px 0 2px;
+}
+
+.stacktrace-preview {
+    height: 38px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+h1.message-type-title {
+    margin: 0 0 8px;
+    font-size: 24px;
+}
+
+div.btn-toolbar.message-toolbar {
+    margin-bottom: 20px;
+}
+
+.group-title.group-message-count sp-moment, .group-title.group-message-count i {
+    font-size: 16px;
+    color: #777f7f;
+}
+
+.metadata-label {
+    margin-right: 24px;
+    position: relative;
+    top: -1px;
+}
+
+.msg-tabs {
+    margin-bottom: 20px;
+}
+
+.box-group:hover {
+    background-color: #edf6f7;
+    border: 1px solid #00a3c4;
+    cursor: pointer;
+}
+
+.box-event-item {
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+
+.box-event-item .fa-stack {
+    height: 1em;
+}
+
+button img {
+    position: relative;
+    top: -1px;
+    width: 17px;
+}
+
+.btn-toolbar > .btn, .btn-toolbar > .btn-group, .btn-toolbar > .input-group, .action-btns .btn {
+    margin-left: 0;
+    margin-right: 5px;
+}
+
+span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
+    font-weight: normal !important;
+}
+
+.msg-list-dropdown {
+    margin: 1px 0 0 0 !important;
+    padding-right: 0;
+}
+
+.message-metadata {
+    display: inline;
+}
 
 /* RESPONSIVE TWEAKS */
 
@@ -1111,9 +1292,6 @@ div.danger.sc-restart-warning > strong {
     .sort-menu {
         margin-top: 0;
         padding-top: 0;
-    }
-    .action-btns {
-        margin-left: 5px;
     }
 }
 
@@ -1143,6 +1321,11 @@ div.danger.sc-restart-warning > strong {
     .no-mobile-side-padding {
      padding-right: 0;
      padding-left: 0;
+    }
+
+    .tabs h5 {
+        padding-bottom: 4px;
+        margin-bottom: 10px;
     }
 }
 

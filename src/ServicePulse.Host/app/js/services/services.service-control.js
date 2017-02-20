@@ -66,6 +66,11 @@
             });
         }
 
+        function getFailedMessageById(messageId) {
+            var url = uri.join(scConfig.service_control_url, 'errors', 'last', messageId);
+            return $http.get(url);
+        }
+
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
             return $http.get(url).then(function(response) {
@@ -156,13 +161,7 @@
         function dismissCustomChecks(customCheck) {
             var url = uri.join(scConfig.service_control_url, 'customchecks', customCheck.id);
 
-            $http.delete(url)
-                .success(function() {
-                    // notifications.pushForCurrentRoute('"{{item.custom_check_id}}" custom check muted', 'info', { item: customCheck });
-                })
-                .error(function() {
-                    //  notifications.pushForCurrentRoute('Failed to mute "{{item.custom_check_id}}" custom check', 'danger', { item: customCheck });
-                });
+            $http.delete(url);
         }
 
         function retryPendingMessagesForQueue(queueName) {
@@ -178,7 +177,7 @@
 
         function retryAllFailedMessages() {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry', 'all');
-            $http.post(url)
+            return $http.post(url)
                 .success(function() {
                     notifications.pushForCurrentRoute('Retrying all messages...', 'info');
                 })
@@ -189,7 +188,7 @@
 
         function retryFailedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry');
-            $http.post(url, selectedMessages)
+            return $http.post(url, selectedMessages)
                 .success(function() {
                     notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
                 })
@@ -201,7 +200,7 @@
         function archiveFailedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'archive');
 
-            $http({
+            return $http({
                     url: url,
                     data: selectedMessages,
                     method: 'PATCH'
@@ -216,10 +215,7 @@
 
         function archiveExceptionGroup(id, successText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'archive');
-            $http.post(url)
-                .success(function() {
-                    // notifications.pushForCurrentRoute(successText, 'info');
-                })
+            return $http.post(url)
                 .error(function() {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
@@ -227,10 +223,7 @@
 
         function acknowledgeGroup(id, successText, failureText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', id);
-            return $http.delete(url).then(
-                function () {
-                    //   notifications.pushForCurrentRoute(successText, 'info');
-                }, function () {
+            return $http.delete(url).error( function () {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         }
@@ -238,10 +231,7 @@
         function retryExceptionGroup(id, successText) {
 
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
-            $http.post(url)
-                .success(function() {
-                    //   notifications.pushForCurrentRoute(successText, 'info');
-                })
+            return $http.post(url)
                 .error(function() {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
@@ -304,7 +294,8 @@
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
             loadQueueNames: loadQueueNames,
-            acknowledgeGroup: acknowledgeGroup
+            acknowledgeGroup: acknowledgeGroup,
+            getFailedMessageById: getFailedMessageById
         };
 
         return service;
