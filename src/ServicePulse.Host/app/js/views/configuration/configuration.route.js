@@ -2,7 +2,10 @@
     'use strict';
 
     function routeProvider($routeProvider) {
-        $routeProvider.when('/configuration', {
+        $routeProvider.when('/configuration',
+        {
+            redirectTo: '/configuration/endpoints'
+        }).when('/configuration/endpoints', {
             data: {
                 pageTitle: 'Configuration'
             },

@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="col-xs-11 failed-message-data" ng-mouseenter="message.hover2 = true" ng-mouseleave="message.hover2 = false">
-                        <a href="#/message/{{message.id}}">
+                        <a href="#/failed-messages/message/{{message.id}}">
                             <div class="row">
                                 <div class="col-sm-12">
                                     <p class="lead break" ng-class="{'msg-type-hover': message.hover2}">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}} </p>

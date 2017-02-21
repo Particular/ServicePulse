@@ -49,12 +49,7 @@
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
 
         var localtimeout;
-
-        vm.viewExceptionGroup = function (group) {
-            sharedDataService.set(group);
-            $location.path('/failedMessages');
-        }
-
+        
         var processLoadedMessages = function (data) {
 
             if (data && data.length > 0) {

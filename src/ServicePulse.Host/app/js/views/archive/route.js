@@ -3,6 +3,8 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/archived', {
+            redirectTo: '/failed-messages/archived'
+        }).when('/failed-messages/archived', {
             data: {
                 pageTitle: 'Archived Messages'
             },

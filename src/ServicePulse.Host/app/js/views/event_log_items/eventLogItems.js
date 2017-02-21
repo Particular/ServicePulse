@@ -16,25 +16,25 @@
 
             switch(eventLogItem.category) {
                 case 'Endpoints':
-                    $location.path('/configuration');
+                    $location.path('/configuration/endpoints');
                     break;
                 case 'HeartbeatMonitoring':
                     $location.path('/endpoints');
                     break;
                 case 'CustomChecks':
-                    $location.path('/customChecks');
+                    $location.path('/custom-checks');
                     break;
                 case 'EndpointControl':
                     $location.path('/endpoints');
                     break;
                 case 'MessageFailures':
-                    $location.path('/failedGroups');
+                    $location.path('/failed-messages/groups');
                     break;
                 case 'Recoverability':
-                    $location.path('/failedGroups');
+                    $location.path('/failed-messages/groups');
                     break;
                 case 'MessageRedirects':
-                    $location.path('/redirects');
+                    $location.path('/configuration/redirects');
                     break;
                 default:
             }

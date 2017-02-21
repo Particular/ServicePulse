@@ -3,6 +3,8 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/failedGroups', {
+            redirectTo: '/failed-messages/groups'
+        }).when('/failed-messages/groups', {
             data: {
                 pageTitle: 'Failed Groups'
             },

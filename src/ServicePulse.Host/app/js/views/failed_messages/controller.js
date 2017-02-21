@@ -24,7 +24,7 @@
         }
 
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
-            $location.path('/failedGroups');
+            $location.path('/failed-messages/groups');
         }
 
         vm.stats = sharedDataService.getstats();

@@ -3,6 +3,8 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/redirects', {
+            redirectTo: "/configuration/redirects"
+        }).when('/configuration/redirects', {
             data: {
                 pageTitle: 'Retry Redirects'
             },
