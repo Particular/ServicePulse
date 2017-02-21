@@ -1095,6 +1095,19 @@ div.danger.sc-restart-warning > strong {
     padding-top: 15px;
 }
 
+a.btn-feedback, a.btn-feedback:visited, a.btn-feedback:focus {
+    color: #fff !important;
+    background-color: #0DB3C8 !important;
+    padding: 6px 16px !important;
+    margin: 14px 0 0 14px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+a.btn-feedback i.fa {
+    color: #fff;
+}
+
 .failed-message {
     padding: 0;
     height: 100%;
@@ -1146,6 +1159,16 @@ input[type=checkbox] {
 
 .checkbox input[type=checkbox]:checked + label:after {
 	opacity: 1;
+}
+
+a.btn-feedback:hover {
+    background-color: hsl(194, 95%, 61%) !important;  
+    font-weight: bold;
+}
+
+a.btn-feedback:active {
+    background-color: #00729C !important;  
+    font-weight: bold;
 }
 
 .check {
@@ -1327,7 +1350,14 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
         padding-bottom: 4px;
         margin-bottom: 10px;
     }
+    
+    a.btn-feedback {
+        width: 130px !important;
+        margin: 10px 15px 22px !important;
+        padding-left: 20px !important;
+    }
 }
+
 
 @media only screen and (max-width: 480px) {
     .sidebar-label { margin: 3px 0 14px; }

@@ -26,7 +26,7 @@
                 <li ng-class="{ active: isActive('/endpoints') }">
                     <a href="#/endpoints">
                         <i class="fa fa-heart icon-white"></i>
-                        <span class="navbar-label">Endpoints Overview</span>
+                        <span class="navbar-label">Endpoints</span>
                         <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | number}}</span>
                     </a>
                 </li>
@@ -48,6 +48,12 @@
                     <a href="#/configuration">
                         <i class="fa fa-cog icon-white"></i>
                         <span class="navbar-label">Configuration</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
+                        <i class="fa fa-comment"></i>
+                        <span class="navbar-label">Feedback</span>
                     </a>
                 </li>
             </ul>
