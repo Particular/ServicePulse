@@ -30,21 +30,21 @@
                         <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | number}}</span>
                     </a>
                 </li>
-                <li ng-class="{ active: isActive('/failedGroups') || isActive('/failedMessages') || isActive('/archived') || isActive('/pendingRetries') }">
-                    <a href="#/failedGroups">
+                <li ng-class="{ active: isActive('/failed-messages/groups') || isActive('/failed-messages/all') || isActive('/failed-messages/archived') || isActive('/failed-messages/pending-retries') }">
+                    <a href="#/failed-messages/groups">
                         <i class="fa fa-envelope icon-white"></i>
                         <span class="navbar-label">Failed Messages</span>
                         <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages | number}}</span>
                     </a>
                 </li>
-                <li ng-class="{ active: isActive('/customChecks') }">
-                    <a href="#/customChecks">
+                <li ng-class="{ active: isActive('/custom-checks') }">
+                    <a href="#/custom-checks">
                         <i class="fa fa-check icon-white"></i>
                         <span class="navbar-label">Custom Checks</span>
                         <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks | number}}</span>
                     </a>
                 </li>
-                <li ng-class="{ active: isActive('/configuration') || isActive('/redirects') }">
+                <li ng-class="{ active: isActive('/configuration/endpoints') || isActive('/configuration/redirects') }">
                     <a href="#/configuration">
                         <i class="fa fa-cog icon-white"></i>
                         <span class="navbar-label">Configuration</span>

@@ -36,7 +36,7 @@
 
         vm.viewExceptionGroup = function(group) {
             sharedDataService.set(group);
-            $location.path('/failedMessages/' + group.id);
+            $location.path('/failed-messages/groups/' + group.id);
         };
 
         vm.acknowledgeGroup = function (group) {

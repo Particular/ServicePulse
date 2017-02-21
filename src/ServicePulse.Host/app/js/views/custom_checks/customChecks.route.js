@@ -3,6 +3,8 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/customChecks', {
+            redirectTo: '/custom-checks'
+        }).when('/custom-checks', {
             data: {
                 pageTitle: 'Customer Checks'
             },

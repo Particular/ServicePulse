@@ -23,7 +23,7 @@
 
         $scope.viewExceptionGroup = function() {
             sharedDataService.set(allFailedMessagesGroup);
-            $location.path('/failedMessages');
+            $location.path('/failed-messages/all');
         }
 
         var archiveMessagesUpdatedTimer = $interval(function() {

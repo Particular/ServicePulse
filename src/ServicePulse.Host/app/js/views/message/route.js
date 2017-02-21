@@ -3,6 +3,8 @@
 
     function routeProvider($routeProvider) {
         $routeProvider.when('/message/:messageId', {
+            redirectTo: '/failed-messages/message/:messageId'
+        }).when('/failed-messages/message/:messageId', {
             data: {
                 pageTitle: 'Message'
             },
