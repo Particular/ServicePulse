@@ -109,7 +109,7 @@
         vm.retrySelected = function () {
             toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
             serviceControlService.retryFailedMessages(vm.selectedIds)
-                .then(() => {
+                .then(function () {
                     vm.selectedIds = [];
 
                     vm.failedMessages = vm.failedMessages.filter(function(item) {
@@ -121,7 +121,7 @@
         vm.archiveSelected = function () {
             toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
             serviceControlService.archiveFailedMessages(vm.selectedIds)
-                .then(() => {
+                .then(function () {
                     vm.selectedIds = [];
 
                     vm.failedMessages = vm.failedMessages.filter(function(item) {
@@ -139,7 +139,7 @@
                     notifier.notify('ArchiveGroupRequestRejected', group);
                 })
                 .finally(function () {
-                    
+
                 });
         }
 
@@ -161,10 +161,10 @@
                     notifier.notify('RetryGroupRequestRejected', group);
                 })
                 .finally(function () {
-                    
+
                 });
         }
-        
+
         vm.debugInServiceInsight = function (index) {
             var messageId = vm.failedMessages[index].message_id;
             var dnsName = scConfig.service_control_url.toLowerCase();
@@ -186,7 +186,7 @@
             vm.sort = sort;
             vm.direction = direction;
             setSortButtonText(sort, direction);
-            
+
             if (changeToMessagesTab) {
                 vm.activePageTab = "messages";
             }
