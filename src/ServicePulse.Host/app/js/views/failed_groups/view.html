@@ -151,7 +151,7 @@
                                                         </li>
                                                         <li ng-show="group.workflow_state.status === 'completed'">
                                                             <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
-                                                            <button type="button" class="btn btn-default btn-primary btn-xs" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeGroup(group)">
+                                                            <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeGroup(group)">
                                                                 Dismiss
                                                             </button>
                                                             <div class="danger sc-restart-warning" ng-show="{{group.workflow_state.failed}}">
