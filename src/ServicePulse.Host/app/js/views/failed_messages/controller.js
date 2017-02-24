@@ -165,19 +165,6 @@
                 });
         }
 
-        vm.debugInServiceInsight = function (index) {
-            var messageId = vm.failedMessages[index].message_id;
-            var dnsName = scConfig.service_control_url.toLowerCase();
-
-            if (dnsName.indexOf("https") === 0) {
-                dnsName = dnsName.replace("https://", "");
-            } else {
-                dnsName = dnsName.replace("http://", "");
-            }
-
-            $window.open("si://" + dnsName + "?search=" + messageId);
-        };
-
         var selectGroupInternal = function (group, sort, direction, changeToMessagesTab) {
             if ($scope.loadingData) {
                 return;
