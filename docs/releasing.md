@@ -8,16 +8,20 @@ By default a merge directly into master is considered a `patch` increment, if u 
 
 ### 2. Build using TeamCity
 Once you have your change merged into `master` (AVOID BUNDLING CHANGES, RELEASE OFTEN INSTEAD) and the [build is green](https://builds.particular.net/project.html?projectId=ServicePulse) it is time to "Promote" the master build to "Deploy".
-![Promote](Promote.PNG)
-![Promote_dialog](Promote_dialog.PNG)
+
+![Promote](promote.png)
+
+![Promote_dialog](promote-dialog.png)
 
 ### 3. Deploy using OctopusDeploy
 You are now ready to go to [OctopusDeploy](http://deploy.particular.net/app#/projects/servicepulse).
-You should have a new "Staging" build waiting to be released.  
-![Octopus_staging](Octopus_staging.PNG)
+You should have a new "Staging" build waiting to be released.
 
-First step is to proof read the release notes that were auto generated (it is best to use an outsider for this job).  
-![Octopus assign to me](Octopus%20assign%20to%20me.PNG)
+![Octopus_staging](octopus-staging.png)
+
+First step is to proof read the release notes that were auto generated (it is best to use an outsider for this job).
+
+![Octopus assign to me](octopus-assign-to-me.png)
 
 This release notes are generated based on the issues/PRs titles associated to a milestone that matches the version you are about to release. 
 By default the release notes are very "simple", if you want you can edit them and add extra content to it to make them more appealing, see example [here](https://github.com/Particular/ServiceControl/releases/tag/1.10.0) and [here](https://github.com/Particular/ServicePulse/releases/tag/1.2.0).
@@ -30,8 +34,9 @@ By default the release notes are very "simple", if you want you can edit them an
 You can download this release from our [website](http://particular.net/downloads).
 ```
 
-Once you happy approve them:  
-![looks good](looks%20good.PNG)
+Once you happy approve them:
+  
+![looks good](looks-good.png)
 
 And then all is left to do is "Promote to Production".  
-![promote to prod](promote%20to%20prod.PNG)
+![promote to prod](promote-to-prod.png)
