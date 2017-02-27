@@ -1300,6 +1300,14 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     display: inline;
 }
 
+.btn-retry-dismiss {
+    position: absolute;
+    height: 28px;
+    width: 74px;
+    top: 12px;
+    left: 214px;
+}
+
 /* RESPONSIVE TWEAKS */
 
 @media only screen and (min-width: 993px) {
