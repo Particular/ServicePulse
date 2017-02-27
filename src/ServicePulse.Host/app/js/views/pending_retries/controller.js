@@ -299,19 +299,6 @@
             vm.loadMoreResults();
         };
 
-        vm.debugInServiceInsight = function(index) {
-            var messageId = vm.pendingRetryMessages[index].message_id;
-            var dnsName = scConfig.service_control_url.toLowerCase();
-
-            if (dnsName.indexOf("https") === 0) {
-                dnsName = dnsName.replace("https://", "");
-            } else {
-                dnsName = dnsName.replace("http://", "");
-            }
-
-            $window.open("si://" + dnsName + "?search=" + messageId);
-        };
-
         var selectGroupInternal = function(sort, direction) {
             if ($scope.loadingData) {
                 return;
