@@ -39,13 +39,14 @@
             $location.path('/failed-messages/groups/' + group.id);
         };
 
-        vm.acknowledgeGroup = function (group) {
+        vm.acknowledgeGroup = function (group, $event) {
             serviceControlService.acknowledgeGroup(group.id,
                     'Group Acknowledged',
                     'Acknowledging Group Failed')
                 .then(function(message) {
                         vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
-                    });
+                });
+            $event.stopPropagation();
         }
 
         vm.archiveExceptionGroup = function(group) {
