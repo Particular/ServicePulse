@@ -6,7 +6,7 @@
             redirectTo: "/configuration/redirects"
         }).when('/configuration/redirects', {
             data: {
-                pageTitle: 'Retry Redirects'
+                pageTitle: 'Retry Redirects - Configuration'
             },
             templateUrl: 'js/views/redirect/view.html',
             controller: 'redirectController',
