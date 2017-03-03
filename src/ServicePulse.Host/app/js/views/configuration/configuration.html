@@ -17,6 +17,14 @@
 
         <div class="row">
             <div class="col-sm-12">
+                <div class="row box box-no-click">
+                    <div class="col-xs-3 col-sm-2 col-lg-1">
+                        <p class="lead">Is monitored</p>
+                    </div>
+                    <div class="col-xs-9 col-sm-10 col-lg-11">
+                        <p class="lead">Endpoint name</p>
+                    </div>
+                </div>
                 <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
@@ -44,7 +52,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
