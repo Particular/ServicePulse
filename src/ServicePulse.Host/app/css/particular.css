@@ -1308,6 +1308,12 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     left: 214px;
 }
 
+.table-header p {
+    color: #777f7f !important;
+    font-weight: bold;
+    margin: 12px 0 0;
+}
+
 /* RESPONSIVE TWEAKS */
 
 @media only screen and (min-width: 993px) {
