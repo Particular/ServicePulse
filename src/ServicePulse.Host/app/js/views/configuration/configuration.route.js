@@ -7,7 +7,7 @@
             redirectTo: '/configuration/endpoints'
         }).when('/configuration/endpoints', {
             data: {
-                pageTitle: 'Endpoints monitoring - Configuration'
+                pageTitle: 'Monitored endpoints - Configuration'
             },
             templateUrl: 'js/views/configuration/configuration.html',
             controller: 'ConfigurationCtrl',
