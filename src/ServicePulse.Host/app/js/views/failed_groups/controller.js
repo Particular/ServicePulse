@@ -50,7 +50,7 @@
         }
 
         vm.archiveExceptionGroup = function(group) {
-            group.workflow_state = { status: 'requestingArchive', message: 'Archive request initiated...' };
+            group.workflow_state = { status: 'ArchiveRequested', message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
                     'Archive Group Request Enqueued',
                     'Archive Group Request Rejected')
@@ -103,7 +103,7 @@
         };
 
         vm.isBeingArchived = function (group) {
-            return group.workflow_state.status === 'requestingArchive' || group.workflow_state.status === 'archive-started' || group.workflow_state.status === 'archive-batch-completed' || group.workflow_state.status === 'archive-completed';
+            return group.workflow_state.status === 'ArchiveRequested' || group.workflow_state.status === 'ArchiveStarted' || group.workflow_state.status === 'ArchiveProgressing' || group.workflow_state.status === 'ArchiveCompleted';
         };
 
         vm.selectClassification = function (newClassification) {
@@ -231,13 +231,13 @@
         };
 
         function getMessageForArchiveStatus(archiveStatus) {
-            if (archiveStatus === 'archive-started') {
+            if (archiveStatus === 'ArchiveStarted') {
                 return 'Archive request in progress.';
             }
-            if (archiveStatus === 'archive-batch-completed') {
+            if (archiveStatus === 'ArchiveProgressing') {
                 return 'Archive request in progress.';
             }
-            if (archiveStatus === 'archive-completed') {
+            if (archiveStatus === 'ArchiveCompleted') {
                 return 'Archive completed';
             }
         }
@@ -296,7 +296,7 @@
                 item.archive_messages_archived = data.progress.number_of_messages_archived;
                 item.archive_start_time = data.start_time;
 
-                if (status === 'archive-completed') {
+                if (status === 'ArchiveCompleted') {
                     item.archive_completion_time = data.completion_time;
                 }
             });
@@ -327,15 +327,19 @@
         };
 
         notifier.subscribe($scope, function (event, data) {
-            archiveOperationEventHandler(data, 'archive-started');
+            archiveOperationEventHandler(data, 'ArchiveStarted');
         }, 'ArchiveOperationStarting');
 
         notifier.subscribe($scope, function (event, data) {
-            archiveOperationEventHandler(data, 'archive-batch-completed');
+            archiveOperationEventHandler(data, 'ArchiveProgressing');
         }, 'ArchiveOperationBatchCompleted');
 
         notifier.subscribe($scope, function (event, data) {
-            archiveOperationEventHandler(data, 'archive-completed');
+            archiveOperationEventHandler(data, 'ArchiveCompleted');
+            getHistoricGroups();
+            
+            toastService.showInfo("Group " + data.originator + " was archived succesfully.", "Archive operation completed", true);
+            
         }, 'ArchiveOperationCompleted');
 
 
