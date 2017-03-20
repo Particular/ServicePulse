@@ -55,9 +55,7 @@
                     'Archive Group Request Enqueued',
                     'Archive Group Request Rejected')
                 .then(function(message) {
-                    group.workflow_state = createWorkflowState('archiveRequested', 'Archiving messages...');
                         notifier.notify('ArchiveGroupRequestAccepted', group);
-
                     },
                     function(message) {
                         group.workflow_state = createWorkflowState('error', message);
@@ -105,7 +103,7 @@
         };
 
         vm.isBeingArchived = function (group) {
-            return group.workflow_state.status === 'requestingArchive' || group.workflow_state.status === 'archiveRequested';
+            return group.workflow_state.status === 'requestingArchive' || group.workflow_state.status === 'archive-started' || group.workflow_state.status === 'archive-batch-completed' || group.workflow_state.status === 'archive-completed';
         };
 
         vm.selectClassification = function (newClassification) {
@@ -232,6 +230,18 @@
                 });
         };
 
+        function getMessageForArchiveStatus(archiveStatus) {
+            if (archiveStatus === 'archive-started') {
+                return 'Archive request in progress.';
+            }
+            if (archiveStatus === 'archive-batch-completed') {
+                return 'Archive request in progress.';
+            }
+            if (archiveStatus === 'archive-completed') {
+                return 'Archive completed';
+            }
+        }
+
         function getMessageForRetryStatus(retryStatus, failed) {
             if (retryStatus === 'waiting') {
                 return 'Retry request initiated...';
@@ -272,6 +282,26 @@
             }
         });
 
+        var archiveOperationEventHandler = function (data, status) {
+            var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
+
+            group.forEach(function (item) {
+                item
+                    .workflow_state =
+                    createWorkflowState(status,
+                        getMessageForArchiveStatus(status),
+                        data.progress.percentage);
+
+                item.archive_remaining_count = data.progress.messages_remaining;
+                item.archive_messages_archived = data.progress.number_of_messages_archived;
+                item.archive_start_time = data.start_time;
+
+                if (status === 'archive-completed') {
+                    item.archive_completion_time = data.completion_time;
+                }
+            });
+        };
+
         var retryOperationEventHandler = function (data, status) {
             var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
             
@@ -287,7 +317,7 @@
                             data.failed || false);
 
                     item.retry_remaining_count = data.progress.messages_remaining;
-                    item.retry_start_time = data.start_time;
+                    item.retry_start_time = data.progress.start_time;
 
                 if (status === 'completed') {
                     item.need_user_acknowledgement = true;
@@ -295,6 +325,19 @@
                 }
             });
         };
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, 'archive-started');
+        }, 'ArchiveOperationStarting');
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, 'archive-batch-completed');
+        }, 'ArchiveOperationBatchCompleted');
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, 'archive-completed');
+        }, 'ArchiveOperationCompleted');
+
 
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'waiting');
