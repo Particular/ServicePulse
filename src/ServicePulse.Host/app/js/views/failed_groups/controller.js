@@ -135,17 +135,17 @@
 
         function initializeGroupState(group) {
             var nObj = group;
-            var retryStatus = (nObj.retry_status ? nObj.retry_status.toLowerCase() : null) ||
+            var retryStatus = (nObj.operation_status ? nObj.operation_status.toLowerCase() : null) ||
                 'none';
-            if (retryStatus === 'preparing' && nObj.retry_progress === 1) {
+            if (retryStatus === 'preparing' && nObj.operation_progress === 1) {
                 retryStatus = 'queued';
             }
             nObj
                 .workflow_state =
                 createWorkflowState(retryStatus,
-                    getMessageForRetryStatus(retryStatus, nObj.retry_failed),
-                    nObj.retry_progress,
-                    nObj.retry_failed);
+                getMessageForRetryStatus(retryStatus, nObj.operation_failed),
+                    nObj.operation_progress,
+                    nObj.operation_failed);
 
             return nObj;
         };
@@ -317,7 +317,7 @@
                             data.failed || false);
 
                     item.retry_remaining_count = data.progress.messages_remaining;
-                    item.retry_start_time = data.progress.start_time;
+                    item.retry_start_time = data.start_time;
 
                 if (status === 'completed') {
                     item.need_user_acknowledgement = true;
