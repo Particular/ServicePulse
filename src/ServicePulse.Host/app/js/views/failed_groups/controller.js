@@ -50,7 +50,7 @@
         }
 
         vm.archiveExceptionGroup = function(group) {
-            group.workflow_state = { status: 'ArchiveRequested', message: 'Archive request initiated...' };
+            group.workflow_state = { status: "archiverequested", message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
                     'Archive Group Request Enqueued',
                     'Archive Group Request Rejected')
@@ -99,11 +99,11 @@
         }
 
         vm.isBeingRetried = function(group) {
-            return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group);
+            return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group.workflow_state.status);
         };
 
-        vm.isBeingArchived = function (group) {
-            return group.workflow_state.status === 'ArchiveRequested' || group.workflow_state.status === 'ArchiveStarted' || group.workflow_state.status === 'ArchiveProgressing' || group.workflow_state.status === 'ArchiveCompleted';
+        vm.isBeingArchived = function (status) {
+            return status === "archiverequested" || status === "archivestarted" || status === "archiveprogressing" || status === "archivecompleted";
         };
 
         vm.selectClassification = function (newClassification) {
@@ -133,17 +133,24 @@
             });
         };
 
-        function initializeGroupState(group) {
+        var initializeGroupState = function(group) {
             var nObj = group;
-            var retryStatus = (nObj.operation_status ? nObj.operation_status.toLowerCase() : null) ||
+            var operationStatus = (nObj.operation_status ? nObj.operation_status.toLowerCase() : null) ||
                 'none';
-            if (retryStatus === 'preparing' && nObj.operation_progress === 1) {
-                retryStatus = 'queued';
+            if (operationStatus === 'preparing' && nObj.operation_progress === 1) {
+                operationStatus = 'queued';
             }
+            var message = '';
+            if (vm.isBeingArchived(operationStatus)) {
+                message = getMessageForArchiveStatus(operationStatus);
+            } else {
+                message = getMessageForRetryStatus(operationStatus, nObj.operation_failed);
+            }
+
             nObj
                 .workflow_state =
-                createWorkflowState(retryStatus,
-                getMessageForRetryStatus(retryStatus, nObj.operation_failed),
+                createWorkflowState(operationStatus,
+                message,
                     nObj.operation_progress,
                     nObj.operation_failed);
 
@@ -231,13 +238,13 @@
         };
 
         function getMessageForArchiveStatus(archiveStatus) {
-            if (archiveStatus === 'ArchiveStarted') {
+            if (archiveStatus === "archivestarted") {
                 return 'Archive request in progress.';
             }
-            if (archiveStatus === 'ArchiveProgressing') {
+            if (archiveStatus === "archiveprogressing") {
                 return 'Archive request in progress.';
             }
-            if (archiveStatus === 'ArchiveCompleted') {
+            if (archiveStatus === "archivecompleted") {
                 return 'Archive completed';
             }
         }
@@ -296,7 +303,7 @@
                 item.archive_messages_archived = data.progress.number_of_messages_archived;
                 item.archive_start_time = data.start_time;
 
-                if (status === 'ArchiveCompleted') {
+                if (status === "archivecompleted") {
                     item.archive_completion_time = data.completion_time;
                 }
             });
@@ -327,15 +334,15 @@
         };
 
         notifier.subscribe($scope, function (event, data) {
-            archiveOperationEventHandler(data, 'ArchiveStarted');
+            archiveOperationEventHandler(data, "archivestarted");
         }, 'ArchiveOperationStarting');
 
         notifier.subscribe($scope, function (event, data) {
-            archiveOperationEventHandler(data, 'ArchiveProgressing');
+            archiveOperationEventHandler(data, "archiveprogressing");
         }, 'ArchiveOperationBatchCompleted');
 
         notifier.subscribe($scope, function (event, data) {
-            archiveOperationEventHandler(data, 'ArchiveCompleted');
+            archiveOperationEventHandler(data, "archivecompleted");
             getHistoricGroups();
             
             toastService.showInfo("Group " + data.originator + " was archived succesfully.", "Archive operation completed", true);
