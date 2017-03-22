@@ -345,7 +345,7 @@
             archiveOperationEventHandler(data, "archivecompleted");
             getHistoricGroups();
             
-            toastService.showInfo("Group " + data.originator + " was archived succesfully.", "Archive operation completed", true);
+            toastService.showInfo("Group " + data.group_name + " was archived succesfully.", "Archive operation completed", true);
             
         }, 'ArchiveOperationCompleted');
 
