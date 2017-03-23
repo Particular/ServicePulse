@@ -111,10 +111,10 @@
                                             <div class="panel panel-default panel-retry">
                                                 <div class="panel-body">
                                                     <ul class="retry-request-progress">
-                                                        <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClasses('waiting', group.workflow_state.status)">
+                                                        <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClassesForRetryOperation('waiting', group.workflow_state.status)">
                                                             <div class="bulk-retry-progress-status">Initialize retry request...</div>
                                                         </li>
-                                                        <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClasses('preparing', group.workflow_state.status)">
+                                                        <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClassesForRetryOperation('preparing', group.workflow_state.status)">
 
                                                             <div class="row">
                                                                 <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
@@ -130,7 +130,7 @@
                                                                 </div>
                                                             </div>
                                                         </li>
-                                                        <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClasses('forwarding', group.workflow_state.status)">
+                                                        <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClassesForRetryOperation('forwarding', group.workflow_state.status)">
 
                                                             <div class="row">
                                                                 <div class="col-xs-9 col-sm-4 col-md-3 no-side-padding">
@@ -164,22 +164,41 @@
                                                     <div class="op-metadata">
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.operation_remaining_count || group.count) | number}}</span>
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
-														<span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.operation_completion_time}}"></sp-moment></span>
+                                                        <span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.operation_completion_time}}"></sp-moment></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row" ng-show="vm.isBeingArchived(group.workflow_state.status)">
-                                        <div class="col-sm-12">
-                                            <div class="panel panel-default">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <div class="panel panel-default panel-retry">
                                                 <div class="panel-body">
-                                                    <p class="bulk-retry-progress-status">{{group.workflow_state.message}}</p>
-                                                    <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'ArchiveProgressing'">
-                                                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
-                                                            {{group.workflow_state.total | number : 0}}%
-                                                        </div>
-                                                    </div>
+                                                    <ul class="retry-request-progress">
+                                                        <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archivestarted', group.workflow_state.status)">
+                                                            <div class="bulk-retry-progress-status">Initialize archive request...</div>
+                                                        </li>
+                                                        <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archiveprogressing', group.workflow_state.status)">
+
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                    <div class="bulk-retry-progress-status">Archive request in progress...</div>
+                                                                </div>
+
+                                                                <div class="col-xs-12 col-sm-6">
+                                                                    <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'archiveprogressing'">
+                                                                        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em; width: {{group.workflow_state.total}}% ; ">
+                                                                            {{group.workflow_state.total | number : 0}}%
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li ng-show="group.workflow_state.status === 'archivecompleted'">
+                                                            <div class="retry-completed bulk-retry-progress-status">Archive request completed</div>
+                                                        </li>
+                                                    </ul>
+
                                                     <div class="op-metadata">
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to archive: {{(group.operation_remaining_count || group.count) | number}}</span>

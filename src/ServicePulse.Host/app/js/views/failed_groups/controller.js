@@ -50,7 +50,7 @@
         }
 
         vm.archiveExceptionGroup = function(group) {
-            group.workflow_state = { status: "archiverequested", message: 'Archive request initiated...' };
+            group.workflow_state = { status: "archivestarted", message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
                     'Archive Group Request Enqueued',
                     'Archive Group Request Rejected')
@@ -80,30 +80,37 @@
                     });
         };
 
-
-        var statuses = ['waiting', 'preparing', 'queued', 'forwarding'];
-        vm.getClasses = function (stepStatus, currentStatus) {
-            if (currentStatus === 'queued') {
-                currentStatus = 'forwarding';
-            }
-            var indexOfStep = statuses.indexOf(stepStatus);
-            var indexOfCurrent = statuses.indexOf(currentStatus);
+        var getClasses = function (stepStatus, currentStatus, statusArray) {
+            var indexOfStep = statusArray.indexOf(stepStatus);
+            var indexOfCurrent = statusArray.indexOf(currentStatus);
             if (indexOfStep > indexOfCurrent) {
                 return 'left-to-do';
-            }
-            else if (indexOfStep === indexOfCurrent) {
+            } else if (indexOfStep === indexOfCurrent) {
                 return 'active';
             } else {
                 return 'completed';
             }
-        }
+        };
+
+        var statusesForRetryOperation = ['waiting', 'preparing', 'queued', 'forwarding'];
+        vm.getClassesForRetryOperation = function(stepStatus, currentStatus) {
+            if (currentStatus === 'queued') {
+                currentStatus = 'forwarding';
+            }
+            return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
+        };
+
+        var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivecompleted'];
+        vm.getClassesForArchiveOperation = function(stepStatus, currentStatus) {
+            return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
+        };
 
         vm.isBeingRetried = function(group) {
             return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group.workflow_state.status);
         };
 
         vm.isBeingArchived = function (status) {
-            return status === "archiverequested" || status === "archivestarted" || status === "archiveprogressing" || status === "archivecompleted";
+            return status === "archivestarted" || status === "archiveprogressing" || status === "archivecompleted";
         };
 
         vm.selectClassification = function (newClassification) {
