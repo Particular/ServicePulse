@@ -118,20 +118,15 @@
         };
 
         var initializeGroupState = function (group) {
-            var nObj = group;
-            var operationStatus = (nObj.operation_status ? nObj.operation_status.toLowerCase() : null) ||
+            var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) ||
                 'none';
-            if (operationStatus === 'preparing' && nObj.operation_progress === 1) {
+            if (operationStatus === 'preparing' && group.operation_progress === 1) {
                 operationStatus = 'queued';
             }
-           
-            nObj
-                .workflow_state =
-                createWorkflowState(operationStatus,
-                    nObj.operation_progress,
-                    nObj.operation_failed);
 
-            return nObj;
+            group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
+
+            return group;
         };
 
         var autoGetExceptionGroups = function () {
