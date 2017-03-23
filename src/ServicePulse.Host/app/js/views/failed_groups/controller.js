@@ -33,7 +33,10 @@
         vm.selectedExceptionGroup = {};
         vm.stats = sharedDataService.getstats();
 
-        vm.viewExceptionGroup = function(group) {
+        vm.viewExceptionGroup = function (group) {
+            if (vm.isBeingArchived(group) || vm.isBeingRetried(group)) {
+                return;
+            }
             sharedDataService.set(group);
             $location.path('/failed-messages/groups/' + group.id);
         };
@@ -58,7 +61,7 @@
                     },
                     function(message) {
                         group.workflow_state = createWorkflowState('error');
-                        toastService.showError("Archive request for" + group.name + " failed: " + message);
+                        toastService.showError("Archive request for" + group.title + " failed: " + message);
                         notifier.notify('ArchiveGroupRequestRejected', group);
                     });
         };
@@ -76,7 +79,7 @@
                     },
                     function(message) {
                         group.workflow_state = createWorkflowState('error');
-                        toastService.showError("Retry request for" + group.name + " failed: " + message);
+                        toastService.showError("Retry request for" + group.title + " failed: " + message);
                         notifier.notify('RetryGroupRequestRejected', group);
                     });
         };
