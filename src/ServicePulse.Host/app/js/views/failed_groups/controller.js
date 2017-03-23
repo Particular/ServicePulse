@@ -2,13 +2,12 @@
 (function (window, angular, undefined) {
     "use strict";
 
-    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal, optionalFailed) {
+    function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
         if (optionalTotal && optionalTotal <= 1) {
             optionalTotal = optionalTotal * 100;
         }
         return {
             status: optionalStatus || 'working',
-            message: optionalMessage || 'working',
             total: optionalTotal || 0,
             failed: optionalFailed || false
         };
@@ -39,32 +38,33 @@
             $location.path('/failed-messages/groups/' + group.id);
         };
 
-        vm.acknowledgeGroup = function (group, $event) {
+        vm.acknowledgeGroup = function(group, $event) {
             serviceControlService.acknowledgeGroup(group.id,
                     'Group Acknowledged',
                     'Acknowledging Group Failed')
-                .then(function(message) {
-                        vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
+                .then(function() {
+                    vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
                 });
             $event.stopPropagation();
-        }
+        };
 
         vm.archiveExceptionGroup = function(group) {
             group.workflow_state = { status: "archivestarted", message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
                     'Archive Group Request Enqueued',
                     'Archive Group Request Rejected')
-                .then(function(message) {
+                .then(function() {
                         notifier.notify('ArchiveGroupRequestAccepted', group);
                     },
                     function(message) {
-                        group.workflow_state = createWorkflowState('error', message);
+                        group.workflow_state = createWorkflowState('error');
+                        toastService.showError("Archive request for" + group.name + " failed: " + message);
                         notifier.notify('ArchiveGroupRequestRejected', group);
                     });
         };
 
         vm.retryExceptionGroup = function(group) {
-            group.workflow_state = { status: 'waiting', message: getMessageForRetryStatus('waiting') };
+            group.workflow_state = { status: 'waiting' };
 
             failedMessageGroupsService.retryGroup(group.id,
                     'Retry Group Request Enqueued',
@@ -75,7 +75,8 @@
 
                     },
                     function(message) {
-                        group.workflow_state = createWorkflowState('error', message);
+                        group.workflow_state = createWorkflowState('error');
+                        toastService.showError("Retry request for" + group.name + " failed: " + message);
                         notifier.notify('RetryGroupRequestRejected', group);
                     });
         };
@@ -113,11 +114,50 @@
             return status === "archivestarted" || status === "archiveprogressing" || status === "archivecompleted";
         };
 
+        var initializeGroupState = function (group) {
+            var nObj = group;
+            var operationStatus = (nObj.operation_status ? nObj.operation_status.toLowerCase() : null) ||
+                'none';
+            if (operationStatus === 'preparing' && nObj.operation_progress === 1) {
+                operationStatus = 'queued';
+            }
+           
+            nObj
+                .workflow_state =
+                createWorkflowState(operationStatus,
+                    nObj.operation_progress,
+                    nObj.operation_failed);
+
+            return nObj;
+        };
+
+        var autoGetExceptionGroups = function () {
+            vm.exceptionGroups = [];
+            return serviceControlService.getExceptionGroups(vm.selectedClassification)
+                .then(function (response) {
+                    if (response.status === 304 && vm.exceptionGroups.length > 0) {
+                        return true;
+                    }
+
+                    if (response.data.length > 0) {
+
+                        // need a map in some ui state for controlling animations
+                        vm.exceptionGroups = response.data.map(initializeGroupState);
+
+                        if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
+                            vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
+                            notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
+                        }
+                    }
+                    return true;
+                });
+        };
+
         vm.selectClassification = function (newClassification) {
             vm.loadingData = true;
             vm.selectedClassification = newClassification;
 
-            return autoGetExceptionGroups().then(function (result) {
+            return autoGetExceptionGroups().then(function () {
                 vm.loadingData = false;
 
                 return true;
@@ -131,7 +171,7 @@
                 vm.availableClassifiers = classifiers;
                 vm.selectedClassification = classifiers[0];
 
-                autoGetExceptionGroups().then(function (result) {
+                autoGetExceptionGroups().then(function () {
                     vm.loadingData = false;
                     vm.initialLoadComplete = true;
 
@@ -140,33 +180,9 @@
             });
         };
 
-        var initializeGroupState = function(group) {
-            var nObj = group;
-            var operationStatus = (nObj.operation_status ? nObj.operation_status.toLowerCase() : null) ||
-                'none';
-            if (operationStatus === 'preparing' && nObj.operation_progress === 1) {
-                operationStatus = 'queued';
-            }
-            var message = '';
-            if (vm.isBeingArchived(operationStatus)) {
-                message = getMessageForArchiveStatus(operationStatus);
-            } else {
-                message = getMessageForRetryStatus(operationStatus, nObj.operation_failed);
-            }
-
-            nObj
-                .workflow_state =
-                createWorkflowState(operationStatus,
-                message,
-                    nObj.operation_progress,
-                    nObj.operation_failed);
-
-            return nObj;
-        };
-
-        vm.updateExceptionGroups = function () {
+        vm.updateExceptionGroups = function() {
             return serviceControlService.getExceptionGroups(vm.selectedClassification)
-                .then(function (response) {
+                .then(function(response) {
                     if (response.status === 304) {
                         return true;
                     }
@@ -207,28 +223,6 @@
 
                     return true;
                 });
-        }
-
-        var autoGetExceptionGroups = function () {
-            vm.exceptionGroups = [];
-            return serviceControlService.getExceptionGroups(vm.selectedClassification)
-                .then(function (response) {
-                    if (response.status === 304 && vm.exceptionGroups.length > 0) {
-                        return true;
-                    }
-
-                    if (response.data.length > 0) {
-                        
-                        // need a map in some ui state for controlling animations
-                        vm.exceptionGroups = response.data.map(initializeGroupState);
-
-                        if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
-                            vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
-                            notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
-                        }
-                    }
-                    return true;
-                });
         };
 
         var historicGroupsEtag;
@@ -244,52 +238,12 @@
                 });
         };
 
-        function getMessageForArchiveStatus(archiveStatus) {
-            if (archiveStatus === "archivestarted") {
-                return 'Archive request in progress.';
-            }
-            if (archiveStatus === "archiveprogressing") {
-                return 'Archive request in progress.';
-            }
-            if (archiveStatus === "archivecompleted") {
-                return 'Archive completed';
-            }
-        }
-
-        function getMessageForRetryStatus(retryStatus, failed) {
-            if (retryStatus === 'waiting') {
-                return 'Retry request initiated...';
-            }
-
-            if (retryStatus === 'queued') {
-                return 'Retry request in progress. Next Step - Queued.';
-            }
-
-            if (retryStatus === 'preparing') {
-                return 'Retry request in progress. Step 1/2 - Preparing messages...';
-            }
-        
-            if (retryStatus === 'forwarding') {
-                return 'Retry request in progress. Step 2/2 - Sending messages to retry...';
-            }
-
-            if (retryStatus === 'completed') {
-                if (failed) {
-                    return 'ServiceControl had to restart while this operation was in progress. Not all messages were submitted for retrying.';
-                }
-
-                return 'Messages successfully submitted for retrying';
-            }
-
-            return '';
-        }
-
         var groupUpdatedInterval = $interval(function () {
             getHistoricGroups();
             vm.updateExceptionGroups();
         }, 5000);
 
-        $scope.$on("$destroy", function (event) {
+        $scope.$on("$destroy", function () {
             if (angular.isDefined(groupUpdatedInterval)) {
                 $interval.cancel(groupUpdatedInterval);
                 groupUpdatedInterval = undefined;
@@ -303,7 +257,6 @@
                 item
                     .workflow_state =
                     createWorkflowState(status,
-                        getMessageForArchiveStatus(status),
                         data.progress.percentage);
 
                 item.operation_remaining_count = data.progress.messages_remaining;
@@ -326,7 +279,6 @@
                     item
                         .workflow_state =
                         createWorkflowState(status,
-                            getMessageForRetryStatus(status, data.failed || false),
                             data.progress.percentage,
                             data.failed || false);
 
