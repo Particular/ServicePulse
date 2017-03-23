@@ -85,18 +85,18 @@
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
                                             <p class="lead break" ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}"> {{group.title}}</p>
-                                            <p class="metadata" ng-show="!vm.isBeingRetried(group)">
-                                                <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.count | number}} message<span ng-show="group.count >1">s</span><span ng-show="group.retry_remaining_count > 0">(currently retrying {{group.retry_remaining_count | number}})</span></span>
+                                            <p class="metadata" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
+                                                <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.count | number}} message<span ng-show="group.count >1">s</span><span ng-show="group.operation_remaining_count > 0">(currently retrying {{group.operation_remaining_count | number}})</span></span>
 
                                                 <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> First failed: <sp-moment date="{{group.first}}"></sp-moment></span>
 
                                                 <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
 
-                                                <span class="metadata"><i aria-hidden="true" class="fa fa-repeat"></i> Last retried: <sp-moment empty-message="never" date="{{group.last_retry_completion_time}}"></sp-moment></span>
+                                                <span class="metadata"><i aria-hidden="true" class="fa fa-repeat"></i> Last retried: <sp-moment empty-message="never" date="{{group.last_operation_completion_time}}"></sp-moment></span>
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="row" ng-show="!vm.isBeingRetried(group)">
+                                    <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
                                         <div class="col-sm-12 no-side-padding">
                                             <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
                                                 <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
@@ -162,9 +162,9 @@
                                                     </ul>
 
                                                     <div class="op-metadata">
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.retry_remaining_count || group.count) | number}}</span>
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.retry_start_time}}"></sp-moment></span>
-														<span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.retry_completion_time}}"></sp-moment></span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.operation_remaining_count || group.count) | number}}</span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
+														<span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.operation_completion_time}}"></sp-moment></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -181,9 +181,9 @@
                                                         </div>
                                                     </div>
                                                     <div class="op-metadata">
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.archive_start_time}}"></sp-moment></span>
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to archive: {{(group.archive_remaining_count || group.count) | number}}</span>
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages archived: {{(group.archive_messages_archived || 0) | number}}</span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages to archive: {{(group.operation_remaining_count || group.count) | number}}</span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages archived: {{(group.operation_messages_completed_count || 0) | number}}</span>
                                                     </div>
                                                 </div>
                                             </div>

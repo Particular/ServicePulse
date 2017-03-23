@@ -299,12 +299,12 @@
                         getMessageForArchiveStatus(status),
                         data.progress.percentage);
 
-                item.archive_remaining_count = data.progress.messages_remaining;
-                item.archive_messages_archived = data.progress.number_of_messages_archived;
-                item.archive_start_time = data.start_time;
+                item.operation_remaining_count = data.progress.messages_remaining;
+                item.operation_messages_completed_count = data.progress.number_of_messages_archived;
+                item.operation_start_time = data.start_time;
 
                 if (status === "archivecompleted") {
-                    item.archive_completion_time = data.completion_time;
+                    item.operation_completion_time = data.completion_time;
                 }
             });
         };
@@ -323,12 +323,12 @@
                             data.progress.percentage,
                             data.failed || false);
 
-                    item.retry_remaining_count = data.progress.messages_remaining;
-                    item.retry_start_time = data.start_time;
+                    item.operation_remaining_count = data.progress.messages_remaining;
+                    item.operation_start_time = data.start_time;
 
                 if (status === 'completed') {
                     item.need_user_acknowledgement = true;
-                    item.retry_completion_time = data.completion_time;
+                    item.operation_completion_time = data.completion_time;
                 }
             });
         };
