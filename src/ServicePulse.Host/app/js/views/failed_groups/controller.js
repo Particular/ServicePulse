@@ -114,7 +114,7 @@
             return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
         };
 
-        var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivecompleted'];
+        var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivefinalizing', 'archivecompleted'];
         vm.getClassesForArchiveOperation = function(stepStatus, currentStatus) {
             return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
         };
@@ -124,7 +124,7 @@
         };
 
         vm.isBeingArchived = function (status) {
-            return status === "archivestarted" || status === "archiveprogressing" || status === "archivecompleted";
+            return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
         };
 
         var initializeGroupState = function (group) {
@@ -308,6 +308,10 @@
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archiveprogressing");
         }, 'ArchiveOperationBatchCompleted');
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, "archivefinalizing");
+        }, 'ArchiveOperationFinalizing');
 
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archivecompleted");

@@ -178,7 +178,6 @@
                                                             <div class="bulk-retry-progress-status">Initialize archive request...</div>
                                                         </li>
                                                         <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archiveprogressing', group.workflow_state.status)">
-
                                                             <div class="row">
                                                                 <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
                                                                     <div class="bulk-retry-progress-status">Archive request in progress...</div>
@@ -193,6 +192,13 @@
                                                                 </div>
                                                             </div>
                                                         </li>
+                                                        <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archivefinalizing', group.workflow_state.status)">
+                                                            <div class="row">
+                                                                <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                    <div class="bulk-retry-progress-status">Cleaning up...</div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
                                                         <li ng-show="group.workflow_state.status === 'archivecompleted'">
                                                             <div class="retry-completed bulk-retry-progress-status">Archive request completed</div>
                                                             <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeArchiveGroup(group, $event)">
@@ -203,7 +209,7 @@
 
                                                     <div class="op-metadata">
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Archive request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
-                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to archive: {{(group.operation_remaining_count || group.count) | number}}</span>
+                                                        <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to archive: {{(group.operation_remaining_count || 0) | number}}</span>
                                                         <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages archived: {{(group.operation_messages_completed_count || 0) | number}}</span>
                                                     </div>
                                                 </div>
