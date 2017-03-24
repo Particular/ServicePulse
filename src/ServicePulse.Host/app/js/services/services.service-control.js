@@ -221,6 +221,13 @@
                 });
         }
 
+        function acknowledgeArchiveGroup(groupId, successText, failureText) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', 'unacknowledgedgroups', groupId);
+            return $http.delete(url).error(function () {
+                notifications.pushForCurrentRoute('Archive messages failed', 'danger');
+            });
+        }
+
         function acknowledgeGroup(id, successText, failureText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', id);
             return $http.delete(url).error( function () {
@@ -291,6 +298,7 @@
             retryFailedMessages: retryFailedMessages,
             archiveFailedMessages: archiveFailedMessages,
             archiveExceptionGroup: archiveExceptionGroup,
+            acknowledgeArchiveGroup: acknowledgeArchiveGroup,
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
             loadQueueNames: loadQueueNames,

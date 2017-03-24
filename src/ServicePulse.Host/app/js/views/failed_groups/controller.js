@@ -41,11 +41,21 @@
             $location.path('/failed-messages/groups/' + group.id);
         };
 
-        vm.acknowledgeGroup = function(group, $event) {
+        vm.acknowledgeGroup = function (group, $event) {
             serviceControlService.acknowledgeGroup(group.id,
                     'Group Acknowledged',
                     'Acknowledging Group Failed')
                 .then(function() {
+                    vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
+                });
+            $event.stopPropagation();
+        };
+
+        vm.acknowledgeArchiveGroup = function (group, $event) {
+            serviceControlService.acknowledgeArchiveGroup(group.id,
+                'Group Acknowledged',
+                'Acknowledging Group Failed')
+                .then(function () {
                     vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
                 });
             $event.stopPropagation();
@@ -263,6 +273,7 @@
 
                 if (status === "archivecompleted") {
                     item.operation_completion_time = data.completion_time;
+                    item.need_user_acknowledgement = true;
                 }
             });
         };

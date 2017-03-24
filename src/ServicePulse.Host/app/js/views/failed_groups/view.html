@@ -157,7 +157,6 @@
                                                             <div class="danger sc-restart-warning" ng-show="{{group.workflow_state.failed}}">
                                                                 <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining messages.
                                                             </div>
-
                                                         </li>
                                                     </ul>
 
@@ -196,6 +195,9 @@
                                                         </li>
                                                         <li ng-show="group.workflow_state.status === 'archivecompleted'">
                                                             <div class="retry-completed bulk-retry-progress-status">Archive request completed</div>
+                                                            <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeArchiveGroup(group, $event)">
+                                                                Dismiss
+                                                            </button>
                                                         </li>
                                                     </ul>
 
