@@ -123,8 +123,8 @@
             return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group.workflow_state.status);
         };
 
-        vm.isBeingArchived = function (status) {
-            return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
+        vm.isBeingArchived = function (group) {
+            return group.operation_status === "archivestarted" || group.operation_status === "archiveprogressing" || group.operation_status === "archivefinalizing" || group.operation_status === "archivecompleted";
         };
 
         var initializeGroupState = function (group) {
