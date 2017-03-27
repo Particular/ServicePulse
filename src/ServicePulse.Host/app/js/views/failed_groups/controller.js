@@ -34,18 +34,26 @@
         vm.stats = sharedDataService.getstats();
 
         vm.viewExceptionGroup = function (group) {
-            if (vm.isBeingArchived(group) || vm.isBeingRetried(group)) {
+            if (vm.isBeingArchived(group.operation_status) || vm.isBeingRetried(group)) {
                 return;
             }
             sharedDataService.set(group);
             $location.path('/failed-messages/groups/' + group.id);
         };
 
-        vm.acknowledgeGroup = function(group, $event) {
-            serviceControlService.acknowledgeGroup(group.id,
-                    'Group Acknowledged',
-                    'Acknowledging Group Failed')
+        vm.acknowledgeGroup = function (group, $event) {
+            serviceControlService.acknowledgeGroup(group.id)
                 .then(function() {
+                    vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
+                });
+            $event.stopPropagation();
+        };
+
+        vm.acknowledgeArchiveGroup = function (group, $event) {
+            serviceControlService.acknowledgeArchiveGroup(group.id,
+                'Group Acknowledged',
+                'Acknowledging Group Failed')
+                .then(function () {
                     vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
                 });
             $event.stopPropagation();
@@ -104,7 +112,7 @@
             return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
         };
 
-        var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivecompleted'];
+        var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivefinalizing', 'archivecompleted'];
         vm.getClassesForArchiveOperation = function(stepStatus, currentStatus) {
             return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
         };
@@ -114,7 +122,7 @@
         };
 
         vm.isBeingArchived = function (status) {
-            return status === "archivestarted" || status === "archiveprogressing" || status === "archivecompleted";
+            return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
         };
 
         var initializeGroupState = function (group) {
@@ -263,6 +271,7 @@
 
                 if (status === "archivecompleted") {
                     item.operation_completion_time = data.completion_time;
+                    item.need_user_acknowledgement = true;
                 }
             });
         };
@@ -297,6 +306,10 @@
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archiveprogressing");
         }, 'ArchiveOperationBatchCompleted');
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, "archivefinalizing");
+        }, 'ArchiveOperationFinalizing');
 
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archivecompleted");
