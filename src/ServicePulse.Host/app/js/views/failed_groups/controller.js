@@ -2,13 +2,12 @@
 (function (window, angular, undefined) {
     "use strict";
 
-    function createWorkflowState(optionalStatus, optionalMessage, optionalTotal, optionalFailed) {
+    function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
         if (optionalTotal && optionalTotal <= 1) {
             optionalTotal = optionalTotal * 100;
         }
         return {
             status: optionalStatus || 'working',
-            message: optionalMessage || 'working',
             total: optionalTotal || 0,
             failed: optionalFailed || false
         };
@@ -34,39 +33,49 @@
         vm.selectedExceptionGroup = {};
         vm.stats = sharedDataService.getstats();
 
-        vm.viewExceptionGroup = function(group) {
+        vm.viewExceptionGroup = function (group) {
+            if (vm.isBeingArchived(group.operation_status) || vm.isBeingRetried(group)) {
+                return;
+            }
             sharedDataService.set(group);
             $location.path('/failed-messages/groups/' + group.id);
         };
 
         vm.acknowledgeGroup = function (group, $event) {
-            serviceControlService.acknowledgeGroup(group.id,
-                    'Group Acknowledged',
-                    'Acknowledging Group Failed')
-                .then(function(message) {
-                        vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
+            serviceControlService.acknowledgeGroup(group.id)
+                .then(function() {
+                    vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
                 });
             $event.stopPropagation();
-        }
+        };
+
+        vm.acknowledgeArchiveGroup = function (group, $event) {
+            serviceControlService.acknowledgeArchiveGroup(group.id,
+                'Group Acknowledged',
+                'Acknowledging Group Failed')
+                .then(function () {
+                    vm.exceptionGroups.splice(vm.exceptionGroups.indexOf(group), 1);
+                });
+            $event.stopPropagation();
+        };
 
         vm.archiveExceptionGroup = function(group) {
-            group.workflow_state = { status: 'requestingArchive', message: 'Archive request initiated...' };
+            group.workflow_state = { status: "archivestarted", message: 'Archive request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
                     'Archive Group Request Enqueued',
                     'Archive Group Request Rejected')
-                .then(function(message) {
-                    group.workflow_state = createWorkflowState('archiveRequested', 'Archiving messages...');
+                .then(function() {
                         notifier.notify('ArchiveGroupRequestAccepted', group);
-
                     },
                     function(message) {
-                        group.workflow_state = createWorkflowState('error', message);
+                        group.workflow_state = createWorkflowState('error');
+                        toastService.showError("Archive request for" + group.title + " failed: " + message);
                         notifier.notify('ArchiveGroupRequestRejected', group);
                     });
         };
 
         vm.retryExceptionGroup = function(group) {
-            group.workflow_state = { status: 'waiting', message: getMessageForRetryStatus('waiting') };
+            group.workflow_state = { status: 'waiting' };
 
             failedMessageGroupsService.retryGroup(group.id,
                     'Retry Group Request Enqueued',
@@ -77,42 +86,84 @@
 
                     },
                     function(message) {
-                        group.workflow_state = createWorkflowState('error', message);
+                        group.workflow_state = createWorkflowState('error');
+                        toastService.showError("Retry request for" + group.title + " failed: " + message);
                         notifier.notify('RetryGroupRequestRejected', group);
                     });
         };
 
-
-        var statuses = ['waiting', 'preparing', 'queued', 'forwarding'];
-        vm.getClasses = function (stepStatus, currentStatus) {
-            if (currentStatus === 'queued') {
-                currentStatus = 'forwarding';
-            }
-            var indexOfStep = statuses.indexOf(stepStatus);
-            var indexOfCurrent = statuses.indexOf(currentStatus);
+        var getClasses = function (stepStatus, currentStatus, statusArray) {
+            var indexOfStep = statusArray.indexOf(stepStatus);
+            var indexOfCurrent = statusArray.indexOf(currentStatus);
             if (indexOfStep > indexOfCurrent) {
                 return 'left-to-do';
-            }
-            else if (indexOfStep === indexOfCurrent) {
+            } else if (indexOfStep === indexOfCurrent) {
                 return 'active';
             } else {
                 return 'completed';
             }
-        }
-
-        vm.isBeingRetried = function(group) {
-            return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group);
         };
 
-        vm.isBeingArchived = function (group) {
-            return group.workflow_state.status === 'requestingArchive' || group.workflow_state.status === 'archiveRequested';
+        var statusesForRetryOperation = ['waiting', 'preparing', 'queued', 'forwarding'];
+        vm.getClassesForRetryOperation = function(stepStatus, currentStatus) {
+            if (currentStatus === 'queued') {
+                currentStatus = 'forwarding';
+            }
+            return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
+        };
+
+        var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivefinalizing', 'archivecompleted'];
+        vm.getClassesForArchiveOperation = function(stepStatus, currentStatus) {
+            return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
+        };
+
+        vm.isBeingRetried = function(group) {
+            return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group.workflow_state.status);
+        };
+
+        vm.isBeingArchived = function (status) {
+            return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
+        };
+
+        var initializeGroupState = function (group) {
+            var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) ||
+                'none';
+            if (operationStatus === 'preparing' && group.operation_progress === 1) {
+                operationStatus = 'queued';
+            }
+
+            group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
+
+            return group;
+        };
+
+        var autoGetExceptionGroups = function () {
+            vm.exceptionGroups = [];
+            return serviceControlService.getExceptionGroups(vm.selectedClassification)
+                .then(function (response) {
+                    if (response.status === 304 && vm.exceptionGroups.length > 0) {
+                        return true;
+                    }
+
+                    if (response.data.length > 0) {
+
+                        // need a map in some ui state for controlling animations
+                        vm.exceptionGroups = response.data.map(initializeGroupState);
+
+                        if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
+                            vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
+                            notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
+                        }
+                    }
+                    return true;
+                });
         };
 
         vm.selectClassification = function (newClassification) {
             vm.loadingData = true;
             vm.selectedClassification = newClassification;
 
-            return autoGetExceptionGroups().then(function (result) {
+            return autoGetExceptionGroups().then(function () {
                 vm.loadingData = false;
 
                 return true;
@@ -126,7 +177,7 @@
                 vm.availableClassifiers = classifiers;
                 vm.selectedClassification = classifiers[0];
 
-                autoGetExceptionGroups().then(function (result) {
+                autoGetExceptionGroups().then(function () {
                     vm.loadingData = false;
                     vm.initialLoadComplete = true;
 
@@ -135,26 +186,9 @@
             });
         };
 
-        function initializeGroupState(group) {
-            var nObj = group;
-            var retryStatus = (nObj.retry_status ? nObj.retry_status.toLowerCase() : null) ||
-                'none';
-            if (retryStatus === 'preparing' && nObj.retry_progress === 1) {
-                retryStatus = 'queued';
-            }
-            nObj
-                .workflow_state =
-                createWorkflowState(retryStatus,
-                    getMessageForRetryStatus(retryStatus, nObj.retry_failed),
-                    nObj.retry_progress,
-                    nObj.retry_failed);
-
-            return nObj;
-        };
-
-        vm.updateExceptionGroups = function () {
+        vm.updateExceptionGroups = function() {
             return serviceControlService.getExceptionGroups(vm.selectedClassification)
-                .then(function (response) {
+                .then(function(response) {
                     if (response.status === 304) {
                         return true;
                     }
@@ -195,28 +229,6 @@
 
                     return true;
                 });
-        }
-
-        var autoGetExceptionGroups = function () {
-            vm.exceptionGroups = [];
-            return serviceControlService.getExceptionGroups(vm.selectedClassification)
-                .then(function (response) {
-                    if (response.status === 304 && vm.exceptionGroups.length > 0) {
-                        return true;
-                    }
-
-                    if (response.data.length > 0) {
-                        
-                        // need a map in some ui state for controlling animations
-                        vm.exceptionGroups = response.data.map(initializeGroupState);
-
-                        if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
-                            vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
-                            notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
-                        }
-                    }
-                    return true;
-                });
         };
 
         var historicGroupsEtag;
@@ -232,45 +244,37 @@
                 });
         };
 
-        function getMessageForRetryStatus(retryStatus, failed) {
-            if (retryStatus === 'waiting') {
-                return 'Retry request initiated...';
-            }
-
-            if (retryStatus === 'queued') {
-                return 'Retry request in progress. Next Step - Queued.';
-            }
-
-            if (retryStatus === 'preparing') {
-                return 'Retry request in progress. Step 1/2 - Preparing messages...';
-            }
-        
-            if (retryStatus === 'forwarding') {
-                return 'Retry request in progress. Step 2/2 - Sending messages to retry...';
-            }
-
-            if (retryStatus === 'completed') {
-                if (failed) {
-                    return 'ServiceControl had to restart while this operation was in progress. Not all messages were submitted for retrying.';
-                }
-
-                return 'Messages successfully submitted for retrying';
-            }
-
-            return '';
-        }
-
         var groupUpdatedInterval = $interval(function () {
             getHistoricGroups();
             vm.updateExceptionGroups();
         }, 5000);
 
-        $scope.$on("$destroy", function (event) {
+        $scope.$on("$destroy", function () {
             if (angular.isDefined(groupUpdatedInterval)) {
                 $interval.cancel(groupUpdatedInterval);
                 groupUpdatedInterval = undefined;
             }
         });
+
+        var archiveOperationEventHandler = function (data, status) {
+            var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
+
+            group.forEach(function (item) {
+                item
+                    .workflow_state =
+                    createWorkflowState(status,
+                        data.progress.percentage);
+
+                item.operation_remaining_count = data.progress.messages_remaining;
+                item.operation_messages_completed_count = data.progress.number_of_messages_archived;
+                item.operation_start_time = data.start_time;
+
+                if (status === "archivecompleted") {
+                    item.operation_completion_time = data.completion_time;
+                    item.need_user_acknowledgement = true;
+                }
+            });
+        };
 
         var retryOperationEventHandler = function (data, status) {
             var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
@@ -282,19 +286,39 @@
                     item
                         .workflow_state =
                         createWorkflowState(status,
-                            getMessageForRetryStatus(status, data.failed || false),
                             data.progress.percentage,
                             data.failed || false);
 
-                    item.retry_remaining_count = data.progress.messages_remaining;
-                    item.retry_start_time = data.start_time;
+                    item.operation_remaining_count = data.progress.messages_remaining;
+                    item.operation_start_time = data.start_time;
 
                 if (status === 'completed') {
                     item.need_user_acknowledgement = true;
-                    item.retry_completion_time = data.completion_time;
+                    item.operation_completion_time = data.completion_time;
                 }
             });
         };
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, "archivestarted");
+        }, 'ArchiveOperationStarting');
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, "archiveprogressing");
+        }, 'ArchiveOperationBatchCompleted');
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, "archivefinalizing");
+        }, 'ArchiveOperationFinalizing');
+
+        notifier.subscribe($scope, function (event, data) {
+            archiveOperationEventHandler(data, "archivecompleted");
+            getHistoricGroups();
+            
+            toastService.showInfo("Group " + data.group_name + " was archived succesfully.", "Archive operation completed", true);
+            
+        }, 'ArchiveOperationCompleted');
+
 
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'waiting');

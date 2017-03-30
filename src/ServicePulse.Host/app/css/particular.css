@@ -1301,11 +1301,11 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 }
 
 .btn-retry-dismiss {
-    position: absolute;
+    position: relative;
     height: 28px;
     width: 74px;
-    top: 12px;
-    left: 214px;
+    top: -2px;
+    left: 11px;
 }
 
 .table-header p {

@@ -206,7 +206,19 @@
         listener.subscribe($scope, function (message) {
             notifier.notify("FailedMessageGroupArchived", message);
         }, "FailedMessageGroupArchived");
-        
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("ArchiveOperationStarting", message);
+        }, "ArchiveOperationStarting");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("ArchiveOperationBatchCompleted", message);
+        }, "ArchiveOperationBatchCompleted");
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify("ArchiveOperationCompleted", message);
+        }, "ArchiveOperationCompleted");
+
         listener.subscribe($scope, function (message) {
             notifier.notify("RetryOperationWaiting", message);
         }, "RetryOperationWaiting");
