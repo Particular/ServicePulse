@@ -222,7 +222,7 @@
         }
 
         function acknowledgeArchiveGroup(groupId) {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', 'unacknowledgedgroups', groupId);
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', groupId);
             return $http.delete(url).error(function () {
                 notifications.pushForCurrentRoute('Archive messages failed', 'danger');
             });
