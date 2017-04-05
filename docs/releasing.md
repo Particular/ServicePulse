@@ -31,7 +31,7 @@ By default the release notes are very "simple", if you want you can edit them an
  - Type: Bugs
  - Type: Refactoring
 
-Issue/PR that is closed, belong to the right milestone and doesn't have 1 of the label listed above will cause the release generation exception. Configuration of those labels can be found in Octopus Variable called `release_notes_options`.
+A release generation exception will be caused by any issue or PR that is closed, belongs to the right milestone, but doesn't have one of the labels listed above. Configuration of those labels can be found in the Octopus Variable called `release_notes_options`.
 
 Once you happy approve them:
   
