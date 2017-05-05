@@ -26,13 +26,12 @@ First step is to proof read the release notes that were auto generated (it is be
 This release notes are generated based on the issues/PRs titles associated to a milestone that matches the version you are about to release. 
 By default the release notes are very "simple", if you want you can edit them and add extra content to it to make them more appealing, see example [here](https://github.com/Particular/ServiceControl/releases/tag/1.10.0) and [here](https://github.com/Particular/ServicePulse/releases/tag/1.2.0).
 
-**NOTE**: Ensure all issues/PRs are closed, otherwise they are not included in the release notes.
+**NOTE**: Ensure all issues/PRs are closed and contain one of the following labels:
+ - Type: Feature 
+ - Type: Bugs
+ - Type: Refactoring
 
-
-**NOTE 2**: The link at the end needs to be updated to:
-```
-You can download this release from our [website](http://particular.net/downloads).
-```
+A release generation exception will be caused by any issue or PR that is closed, belongs to the right milestone, but doesn't have one of the labels listed above. Configuration of those labels can be found in the Octopus Variable called `release_notes_options`.
 
 Once you happy approve them:
   
