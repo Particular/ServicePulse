@@ -1314,6 +1314,11 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     margin: 12px 0 0;
 }
 
+.tabs .badge {
+    position: relative;
+    top: -2px;
+}
+
 /* RESPONSIVE TWEAKS */
 
 @media only screen and (min-width: 993px) {

@@ -1,8 +1,8 @@
 ﻿<div class="row">
     <div class="col-sm-12">
         <div class="tabs">
-            <h5 ng-class="{ active: isActive('/failed-messages/groups') }"><a href="#/failedGroups">Failed message groups ({{counters.group | number}})</a></h5>
-            <h5 ng-class="{ active: isActive('/failed-messages/all') }"><a ng-click="viewExceptionGroup()">All failed messages ({{counters.message | number}})</a></h5>
+            <h5 ng-class="{ active: isActive('/failed-messages/groups') }"><a href="#/failedGroups">Failed message groups</a> <span class="badge badge-important">{{counters.group | number}}</span></h5>
+            <h5 ng-class="{ active: isActive('/failed-messages/all') }"><a ng-click="viewExceptionGroup()">All failed messages</a> <span class="badge badge-important">{{counters.message | number}}</span></h5>
             <h5 ng-class="{ active: isActive('/failed-messages/archived') }"><a href="#/failed-messages/archived">Archived messages ({{counters.archived | number}})</a></h5>
             <h5 ng-show="{{showPendingRetry}}" ng-class="{ active: isActive('/failed-messages/pending-retries') }"><a href="#/failed-messages/pending-retries">Pending retries ({{counters.pendingRetries | number}})</a></h5>
         </div>
