@@ -227,6 +227,8 @@
     <Content Include="app\js\directives\ui.particular.tabset.tpl.html" />
     <Content Include="app\js\views\endpoints\endpoints.controller.js" />
     <Content Include="app\js\views\endpoints\endpoints.route.js" />
+    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.controller.js" />
+    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.route.js" />
     <Content Include="app\js\views\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\views\custom_checks\customChecks.html" />
     <Content Include="app\js\directives\ui.particular.hud.js" />
@@ -236,6 +238,7 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\views\endpoints\endpoints.module.js" />
+    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.module.js" />
     <Content Include="app\js\services\services.platform-update.js" />
     <Content Include="app\js\services\services.semver.js" />
     <Content Include="app\js\services\services.module.js" />
@@ -287,6 +290,7 @@
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\views\dashboard\dashboard.html" />
     <Content Include="app\js\views\endpoints\endpoints.html" />
+    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.html" />
     <Content Include="app\lib\angular\angular-animate.min.js.map" />
     <Content Include="app\lib\angular\angular-route.min.js.map" />
     <Content Include="app\lib\angular\angular-sanitize.min.js.map" />
