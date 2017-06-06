@@ -4,6 +4,7 @@
     angular.module('services', [
         'services.streamService',
         'services.serviceControlService',
+        'services.monitoringService',
         'services.platformUpdateService',
         'services.semverService',
         'services.notifications',

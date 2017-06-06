@@ -102,6 +102,7 @@
     <Content Include="app\js\directives\ui.particular.nodata.js" />
     <Content Include="app\js\directives\ui.particular.nodata.tpl.html" />
     <Content Include="app\js\services\factory.shareddata.js" />
+    <Content Include="app\js\services\services.monitoring.js" />
     <Content Include="app\js\services\services.endpoints.js" />
     <Content Include="app\js\views\about\controller.js" />
     <Content Include="app\js\views\about\route.js" />
