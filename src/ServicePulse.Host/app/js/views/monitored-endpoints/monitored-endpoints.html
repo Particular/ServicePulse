@@ -7,31 +7,93 @@
 </div>
 
 <div class="container">
-    <div class="tabs">
-        <h5 ng-class="true">Endpoints</h5>
-    </div>
-
     <section ng-show="true">
         <no-data ng-show="model.active.length == 0" message="No active endpoints"></no-data>
+
+        <!-- Table column headers -->
+        <div class="row">
+            <div class="col-sm-12 no-side-padding">
+                <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
+                    <div class="col-sm-12 no-side-padding">
+                        <div class="row">
+                            <div class="col-sm-6 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p class="lead"> Name</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p class="lead">Status</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p class="lead">Processing Time </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p class="lead">Critical Time </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table data rows-->
         <div class="row">
             <div class="col-sm-12 no-side-padding">
                 <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
 
-                            <div class="col-sm-12 no-side-padding">
+                            <div class="col-sm-6 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p class="lead hard-wrap">{{endpointName}}@{{endpointData["Raw"]["Environment"]["MachineName"]}} </p>
+                                        <p class="hard-wrap">{{endpointName}}@{{endpointData["Raw"]["Environment"]["MachineName"]}} </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
                                         <p>
-                                            monitoring data: {{endpointData}}
+                                            No Data
                                         </p>
                                     </div>
                                 </div>
                             </div>
-
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p>
+                                            {{endpointData["Raw"]["Timers"][0]["Histogram"]["Mean"]}} ms
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p>
+                                            {{endpointData["Raw"]["Timers"][1]["Histogram"]["Mean"]}} ms
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
