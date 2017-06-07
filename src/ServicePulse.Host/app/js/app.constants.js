@@ -4,8 +4,8 @@
         .constant('version', '1.2.0')
         .constant('showPendingRetry', false)
         .constant('scConfig', {
-            service_control_url: 'http://localhost:33333/api/',
-            monitoring_url: 'http://localhost:1234'
+            service_control_url: 'http://localhost:33334/api/',
+            monitoring_url: 'http://localhost:1234/metrics/'
         });
 
 }(window, window.angular));

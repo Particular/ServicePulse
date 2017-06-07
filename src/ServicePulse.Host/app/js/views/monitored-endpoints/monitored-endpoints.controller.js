@@ -13,7 +13,8 @@
         });
 
         function updateUI() {
-            monitoringService.getMetrics().getData().then(function (metricsData) {
+            monitoringService.getRaw().then(function (data) {
+                $scope.endpoints = data["NServiceBus.Endpoints"];
 
                 timeoutId = $timeout(function () {
                     updateUI();

@@ -4,15 +4,19 @@
 
     function Service($http, scConfig, notifications, uri) {
 
-        function getMetrics() {
-            var url = uri.join(scConfig.monitoring_url, 'metrics');
-            return $http.get(url).then(function (response) {
-                return response.data;
-            });
+        function getRaw() {
+            var url = uri.join(scConfig.monitoring_url, '/raw');
+            return $http.get(url)
+                .then(function (response) {
+                    return response.data;
+                })
+                .catch(function(fallback) {
+                    notifications.pushSticky('Can not connect to Monitoring Service');
+                });
         }
 
         var service = {
-            getMetrics: getMetrics
+            getRaw: getRaw
         };
 
         return service;
