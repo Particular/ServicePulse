@@ -7,7 +7,7 @@
                 pageTitle: 'Monitored Endpoints'
             },
             templateUrl: 'js/views/monitored-endpoints/monitored-endpoints.html',
-            controller: 'MonitoredEndpointsCtrl',
+            controller: 'monitoredEndpointsCtrl',
             controllerAs: 'vm'
         });
     };
