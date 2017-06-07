@@ -1,4 +1,4 @@
-﻿describe('MonitoredEndpointsCtrl', function () {
+﻿describe('monitoredEndpointsCtrl', function () {
     beforeEach(module('sc'));
 
     var $controller;

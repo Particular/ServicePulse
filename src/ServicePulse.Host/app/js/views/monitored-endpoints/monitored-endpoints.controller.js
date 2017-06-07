@@ -32,6 +32,6 @@
     ];
 
     angular.module('monitored-endpoints')
-        .controller('MonitoredEndpointsCtrl', controller);
+        .controller('monitoredEndpointsCtrl', controller);
 
 }(window, window.angular));
