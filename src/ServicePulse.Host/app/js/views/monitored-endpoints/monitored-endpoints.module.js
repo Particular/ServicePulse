@@ -11,7 +11,8 @@
                         var width = 120;
                         var margin = 2;
 
-                        var data = [10, 15, 30, 50, 20, 10, 10, 15, 0];
+                        //var data = [10, 15, 30, 50, 20, 10, 10, 15, 0];
+                        var data = scope.endpoint[attrs.graph];
                         var average = 25;
 
                         var scaleY = d3.scaleLinear()

@@ -13,8 +13,6 @@
 
         <!-- Table column headers -->
         <div class="row">
-            <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
                             <div class="col-sm-3 no-side-padding">
@@ -61,14 +59,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
 
         <!-- Table data rows-->
         <div class="row">
             <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
+                <div class="row box box-no-click" ng-repeat="endpoint in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
 
@@ -76,7 +72,7 @@
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         
-                                        <p class="hard-wrap">{{endpointName}}@{{endpointData["Raw"]["Environment"]["MachineName"]}} </p>
+                                        <p class="hard-wrap">{{endpoint.endpointName}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -92,34 +88,28 @@
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <svg graph="test" color="#efa717"></svg>
+                                        <svg graph="queueLength" color="#efa717"></svg>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <svg graph="test" color="#62c8ea"></svg>
+                                        <svg graph="retries" color="#62c8ea"></svg>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <svg graph="test" color="#b671f7"></svg>
-                                        <p>
-                                            {{endpointData["Raw"]["Timers"][0]["Histogram"]["Mean"]}} ms
-                                        </p>
+                                        <svg graph="criticalTime" color="#b671f7"></svg>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <svg graph="test" color="#40bc42"></svg>
-                                        <p>
-                                            {{endpointData["Raw"]["Timers"][1]["Histogram"]["Mean"]}} ms
-                                        </p>
+                                        <svg graph="processingTime" color="#40bc42"></svg>
                                     </div>
                                 </div>
                             </div>
