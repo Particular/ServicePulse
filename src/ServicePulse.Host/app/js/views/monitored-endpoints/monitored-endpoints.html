@@ -1,3 +1,4 @@
+
 <div class="container">
     <div class="row">
         <div class="col-sm-12 no-side-padding">
@@ -12,21 +13,33 @@
 
         <!-- Table column headers -->
         <div class="row">
-            <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <div class="col-sm-6 no-side-padding">
+                            <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p class="lead"> Name</p>
+                                        <p class="lead">Name</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p class="lead">Status</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p class="lead">Status</p>
+                                        <p class="lead">Queue</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p class="lead">Retries</p>
                                     </div>
                                 </div>
                             </div>
@@ -46,25 +59,24 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
         </div>
 
         <!-- Table data rows-->
         <div class="row">
             <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
+                <div class="row box box-no-click" ng-repeat="endpoint in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
 
-                            <div class="col-sm-6 no-side-padding">
+                            <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p class="hard-wrap">{{endpointName}}@{{endpointData["Raw"]["Environment"]["MachineName"]}} </p>
+                                        
+                                        <p class="hard-wrap">{{endpoint.endpointName}}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2 no-side-padding">
+                            <div class="col-sm-1 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         <p>
@@ -76,18 +88,28 @@
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p>
-                                            {{endpointData["Raw"]["Timers"][0]["Histogram"]["Mean"]}} ms
-                                        </p>
+                                        <svg graph="queueLength" color="#efa717"></svg>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p>
-                                            {{endpointData["Raw"]["Timers"][1]["Histogram"]["Mean"]}} ms
-                                        </p>
+                                        <svg graph="retries" color="#62c8ea"></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <svg graph="criticalTime" color="#b671f7"></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <svg graph="processingTime" color="#40bc42"></svg>
                                     </div>
                                 </div>
                             </div>

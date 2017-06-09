@@ -5,7 +5,7 @@
     function Service($http, scConfig, notifications, uri) {
 
         function getRaw() {
-            var url = uri.join(scConfig.monitoring_url, '/raw');
+            var url = uri.join(scConfig.monitoring_url, '/fake');
             return $http.get(url)
                 .then(function (response) {
                     return response.data;

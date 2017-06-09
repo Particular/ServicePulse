@@ -14,11 +14,11 @@
 
         function updateUI() {
             monitoringService.getRaw().then(function (data) {
-                $scope.endpoints = data["NServiceBus.Endpoints"];
+                $scope.endpoints = data;
 
                 timeoutId = $timeout(function () {
                     updateUI();
-                }, 5000);
+                }, 1000);
             });
         }
 
