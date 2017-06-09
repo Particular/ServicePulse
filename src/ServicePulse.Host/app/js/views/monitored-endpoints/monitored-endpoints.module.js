@@ -8,7 +8,7 @@
                     restrict: "A",
                     link: function link(scope, element, attrs) {
                         var heigth = 50;
-                        var width = 160;
+                        var width = 120;
                         var margin = 2;
 
                         var data = [10, 15, 30, 50, 20, 10, 10, 15, 0];
