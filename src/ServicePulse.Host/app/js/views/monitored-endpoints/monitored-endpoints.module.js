@@ -1,11 +1,11 @@
 ﻿(function(window, angular, undefined) {
-    "use strict";
+    'use strict';
 
-    angular.module("monitored-endpoints", [])
-        .directive("graph",
+    angular.module('monitored-endpoints', [])
+        .directive('graph',
             function() {
                 return {
-                    restrict: "E",
+                    restrict: 'E',
                     scope: {
                         data: '=plotPoints'
                     },
@@ -43,18 +43,18 @@
                             .curve(d3.curveNatural);
 
                         var chart = d3.select(svg)
-                            .attr("width", width)
-                            .attr("height", heigth);
+                            .attr('width', width)
+                            .attr('height', heigth);
 
-                        chart.append("path")
+                        chart.append('path')
                             .datum(scope.data)
-                            .attr("d", area)
-                            .attr("fill", attrs.color);
+                            .attr('d', area)
+                            .attr('fill', attrs.color);
 
-                        chart.append("path")
+                        chart.append('path')
                             .datum(Array(scope.data.length).fill(average))
-                            .attr("d", line)
-                            .attr("stroke", "black");
+                            .attr('d', line)
+                            .attr('stroke', 'black');
                     }
                 };
             });
