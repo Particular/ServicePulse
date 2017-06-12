@@ -11,40 +11,46 @@
         <no-data ng-show="model.active.length == 0" message="No active endpoints"></no-data>
 
         <!-- Table column headers -->
-        <div class="row">
-            <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
+        <div class="row box box-no-click">
+            <div class="col-sm-3 no-side-padding">
+                <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
-                        <div class="row">
-                            <div class="col-sm-6 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="lead"> Name</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-2 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="lead">Status</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-2 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="lead">Processing Time </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-2 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="lead">Critical Time </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="lead"> Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-1 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p class="lead">Queue</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p class="lead">Retries</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p class="lead">Status</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p class="lead">Processing Time </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p class="lead">Critical Time </p>
                     </div>
                 </div>
             </div>
@@ -53,18 +59,18 @@
         <!-- Table data rows-->
         <div class="row">
             <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="(endpointName, endpointData) in endpoints">
+                <div class="row box box-no-click" ng-repeat="endpoint in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
 
-                            <div class="col-sm-6 no-side-padding">
+                            <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p class="hard-wrap">{{endpointName}}@{{endpointData["Raw"]["Environment"]["MachineName"]}} </p>
+                                        <p class="hard-wrap">{{endpoint.endpointName}}@{{endpoint.endpointData["Raw"]["Environment"]["MachineName"]}} </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-2 no-side-padding">
+                            <div class="col-sm-1 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         <p>
@@ -76,8 +82,23 @@
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
+                                        <graph plot-points="endpoint.endpointData" color="#efa717"></graph>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <graph plot-points="endpoint.endpointData" color="#62c8ea"></graph>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <graph plot-points="endpoint.endpointData" color="#40bc42"></graph>
                                         <p>
-                                            {{endpointData["Raw"]["Timers"][0]["Histogram"]["Mean"]}} ms
+                                            {{endpoint.endpointData["Raw"]["Timers"][0]["Histogram"]["Mean"]}} ms
                                         </p>
                                     </div>
                                 </div>
@@ -85,8 +106,9 @@
                             <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
+                                        <graph plot-points="endpoint.endpointData" color="#d64f21"></graph>
                                         <p>
-                                            {{endpointData["Raw"]["Timers"][1]["Histogram"]["Mean"]}} ms
+                                            {{endpoint.endpointData["Raw"]["Timers"][1]["Histogram"]["Mean"]}} ms
                                         </p>
                                     </div>
                                 </div>
