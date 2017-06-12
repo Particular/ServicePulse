@@ -28,9 +28,9 @@
                             .range([margin, width - margin]);
 
                         var area = d3.area()
-                            .x((d, i) => scaleX(i))
-                            .y((d, i) => scaleY(d))
-                            .y1(d => scaleY(0))
+                            .x(function(d, i) { scaleX(i); })
+                            .y(function(d, i) { scaleY(d); })
+                            .y1(function(d) { scaleY(0); }) 
                             .curve(d3.curveNatural);
 
                         var line = d3.line()
