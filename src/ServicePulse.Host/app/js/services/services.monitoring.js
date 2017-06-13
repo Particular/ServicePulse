@@ -2,7 +2,7 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, scConfig, notifications, uri) {
+    function Service($http, rx, scConfig, uri) {
         var endpoints;
         function getData() {
             var outcome =  getEndpoints().then(function(response) {
@@ -44,6 +44,23 @@
             return outcome;
         }
 
+        function getEndpoints() {
+            return rx.Observable.merge(scConfig.monitoring_urls.map(function (url) {
+                var requestUri = uri.join(url, '/raw');
+
+                var httpRequest = rx.Observable.just(url)
+                    .flatMap(function (requestUrl) {
+                        return $http.get(requestUrl);
+                    });
+
+                var repeatRequests = rx.Observable.interval(5000).flatMapLatest(httpRequest.retry().delay(5000));
+
+                var streamedResults = rx.Observable.onErrorResumeNext(httpRequest.take(1),
+                    repeatRequests);
+
+                return streamedResults.selectMany(function (endpoints) {
+                    return endpoints;
+                });
         var previousExceptionGroupEtag;
 
         function getEndpoints() {
@@ -60,16 +77,18 @@
                     status: status
                 };
             });
+            }));
         }
 
         var service = {
+            getEndpoints: getEndpoints
             getData: getData
         };
 
         return service;
     }
-
-    Service.$inject = ['$http', 'scConfig', 'notifications', 'uri'];
+    
+    Service.$inject = ['$http', 'rx', 'scConfig', 'uri'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);

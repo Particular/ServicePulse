@@ -13,6 +13,9 @@
         });
 
         function updateUI() {
+            monitoringService.getEndpoints().subscribe(function (endpoint) {
+                $scope.endpoints = $scope.endpoints || {};
+                $scope.endpoints[endpoint.endpointName] = endpoint;
             monitoringService.getData().then(function (data) {
                 $scope.endpoints = data["NServiceBus.Endpoints"];
                 $scope.endpoints.forEach(function(item) {
