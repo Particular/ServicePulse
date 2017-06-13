@@ -47,17 +47,28 @@
         function getEndpoints() {
             return rx.Observable.merge(scConfig.monitoring_urls.map(function (url) {
                 var requestUri = uri.join(url, '/raw');
+                var retryCount = 0;
 
                 var httpRequest = rx.Observable.just(url)
                     .flatMap(function (requestUrl) {
                         return $http.get(requestUrl);
+                    }).retryWhen(function (errors) {
+                        return errors.scan(function (count, error) {
+                            if (++count >= 10) {
+                                throw error;
+                            }
+
+                            return count;
+                        }, 0).delay(5000);
                     });
 
-                var repeatRequests = rx.Observable.interval(5000).flatMapLatest(httpRequest.retry().delay(5000));
+                var repeatRequests = rx.Observable.interval(5000).flatMapLatest(httpRequest);
 
-                var streamedResults = rx.Observable.onErrorResumeNext(httpRequest.take(1),
+                var streamedResults = rx.Observable.concat(
+                    httpRequest.take(1),
                     repeatRequests);
 
+                // Flatten the endpoints array into individual endpoints
                 return streamedResults.selectMany(function (endpoints) {
                     return endpoints;
                 });

@@ -3,13 +3,16 @@
 
     function controller(
         $scope,
-        monitoringService) {
+        monitoringService,
+        toastService) {
 
         function updateUI() {
             $scope.endpoints = {};
 
             monitoringService.getEndpoints().subscribe(function (endpoint) {
                 $scope.endpoints[endpoint.endpointName] = endpoint;
+            }, function (err) {
+                toastService.showWarning('Failed to load endpoints from monitoring service');
             monitoringService.getData().then(function (data) {
                 $scope.endpoints = data["NServiceBus.Endpoints"];
                 $scope.endpoints.forEach(function(item) {
@@ -33,7 +36,8 @@
 
     controller.$inject = [
         '$scope',
-        'monitoringService'
+        'monitoringService',
+        'toastService'
     ];
 
     angular.module('monitored-endpoints')
