@@ -3,18 +3,12 @@
 
     function controller(
         $scope,
-        $timeout,
         monitoringService) {
 
-        var timeoutId;
-
-        $scope.$on('$destroy', function () {
-            $timeout.cancel(timeoutId);
-        });
-
         function updateUI() {
+            $scope.endpoints = {};
+
             monitoringService.getEndpoints().subscribe(function (endpoint) {
-                $scope.endpoints = $scope.endpoints || {};
                 $scope.endpoints[endpoint.endpointName] = endpoint;
             monitoringService.getData().then(function (data) {
                 $scope.endpoints = data["NServiceBus.Endpoints"];
@@ -39,7 +33,6 @@
 
     controller.$inject = [
         '$scope',
-        '$timeout',
         'monitoringService'
     ];
 
