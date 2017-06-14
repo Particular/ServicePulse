@@ -1,0 +1,1 @@
+require('wiredep')({ src: './app/index.html' })
