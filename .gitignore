@@ -83,3 +83,9 @@ src/scaffolding.config
 
 # Approval tests temp file
 *.received.*
+
+# npm artifacts
+src/ServicePulse.Host/node_modules
+
+# bower artifacts
+src/ServicePulse.Host/app/bower_components
