@@ -86,6 +86,7 @@ src/scaffolding.config
 
 # npm artifacts
 src/ServicePulse.Host/node_modules
+package-lock.json
 
 # bower artifacts
 src/ServicePulse.Host/app/bower_components
