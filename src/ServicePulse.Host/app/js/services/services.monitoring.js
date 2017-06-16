@@ -4,8 +4,8 @@
 
     function Service($http, scConfig, notifications, uri) {
 
-        function getRaw() {
-            var url = uri.join(scConfig.monitoring_url, '/raw');
+        function getData() {
+            var url = uri.join(scConfig.monitoring_url, '/data');
             return $http.get(url)
                 .then(function (response) {
                     return response.data;
@@ -16,7 +16,7 @@
         }
 
         var service = {
-            getRaw: getRaw
+            getData: getData
         };
 
         return service;
