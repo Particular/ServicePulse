@@ -16,11 +16,11 @@
                         var heigth = 50;
                         var width = 130;
                         var margin = 2;
-
-                        var average = 25;
-
+                        var average = d3.mean(scope.data);
+                        var max = d3.max(scope.data);
+                        var min = d3.min(scope.data) !== d3.max(scope.data) ? d3.min(scope.data) : 0;
                         var scaleY = d3.scaleLinear()
-                            .domain([d3.min(scope.data), d3.max(scope.data)])
+                            .domain([min, max])
                             .range([heigth - margin, margin]);
 
                         var scaleX = d3.scaleLinear()
@@ -28,9 +28,9 @@
                             .range([margin, width - margin]);
 
                         var area = d3.area()
-                            .x(function(d, i) { scaleX(i); })
-                            .y(function(d, i) { scaleY(d); })
-                            .y1(function(d) { scaleY(0); }) 
+                            .x(function(d, i) { return scaleX(i); })
+                            .y(function (d, i) { return scaleY(d); })
+                            .y1(function (d) { return scaleY(0); }) 
                             .curve(d3.curveNatural);
 
                         var line = d3.line()

@@ -13,9 +13,14 @@
         });
 
         function updateUI() {
-            monitoringService.getRaw().then(function (data) {
+            monitoringService.getData().then(function (data) {
                 $scope.endpoints = data["NServiceBus.Endpoints"];
-
+                $scope.endpoints.forEach(function(item) {
+                    for (var key in item.Data) {
+                        var average = item.Data[key].reduce(function (sum, a) { return sum + a }, 0) / (item.Data[key].length || 1);
+                        item.Data[key + "Avg"] = average;
+                    }
+                })
                 timeoutId = $timeout(function () {
                     updateUI();
                 }, 5000);
