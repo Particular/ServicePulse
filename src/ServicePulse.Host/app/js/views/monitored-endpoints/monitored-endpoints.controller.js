@@ -27,6 +27,10 @@
             });
         }
 
+        function loadEndpointData() {
+             
+        }
+
         updateUI();
     };
 
