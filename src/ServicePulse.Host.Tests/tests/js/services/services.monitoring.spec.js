@@ -42,7 +42,7 @@
         $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond([]);
 
         var monitoredEndpoints;
-        monitoringService.getData().then(function (response) {
+        monitoringService.getEndpoints().then(function (response) {
             monitoredEndpoints = response.data;
         });
         $httpBackend.flush();
@@ -60,7 +60,7 @@
         $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond(scEndpointWithMatchingData);
 
         var monitoredEndpoints;
-        monitoringService.getData().then(function (response) {
+        monitoringService.getEndpoints().then(function (response) {
             monitoredEndpoints = response.data;
         });
         $httpBackend.flush();
@@ -78,7 +78,7 @@
         $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond(scEndpointWithMoreData);
 
         var monitoredEndpoints;
-        monitoringService.getData().then(function (response) {
+        monitoringService.getEndpoints().then(function (response) {
             monitoredEndpoints = response.data;
         });
         $httpBackend.flush();

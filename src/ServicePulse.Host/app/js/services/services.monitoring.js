@@ -4,52 +4,19 @@
 
     function Service($http, rx, scConfig, uri) {
         var endpoints;
-        function getData() {
-            var outcome =  getEndpoints().then(function(response) {
+        function getEndpoints() {
+            getEndpointsFromSC().then(function(response) {
                 if (response.status !== 304) {
                     endpoints = response.data;
                 }    
-            
-                var url = uri.join(scConfig.monitoring_url, '/data');
-                return $http.get(url)
-                    .then(function (response) {
-                        response.data["NServiceBus.Endpoints"].forEach(function(item) {
-                            var e = endpoints.filter(function (endpoint) { return endpoint.title === item.Name; });
-                            if (e.length === 1) {
-                                item.Errors = e[0].count;
-                            }
-                        });
-                        endpoints.filter(function(endpoint) {
-                            return response.data["NServiceBus.Endpoints"].filter(function(search) {
-                                    return search.Name === endpoint.title;
-                                }).length ===
-                                0;
-                        }).forEach(function(missingEndpoint) {
-                            response.data["NServiceBus.Endpoints"].push({
-                                "Name": missingEndpoint.title,
-                                "Errors": missingEndpoint.count,
-                                "Data": {
-                                    "Timestamps": [],
-                                    "CriticalTime": [],
-                                    "ProcessingTime": []
-                                }
-                            });
-                            });
-                        return response;
-                    })
-                    .catch(function(fallback) {
-                        notifications.pushSticky('Can not connect to Monitoring Service');
-                    });
-            });
-            return outcome;
-        }
 
-        function getEndpoints() {
+            });
+
             return rx.Observable.merge(scConfig.monitoring_urls.map(function (url) {
-                var requestUri = uri.join(url, '/raw');
+                var requestUri = uri.join(url, '/data');
                 var retryCount = 0;
 
-                var httpRequest = rx.Observable.just(url)
+                var httpRequest = rx.Observable.just(requestUri)
                     .flatMap(function (requestUrl) {
                         return $http.get(requestUrl);
                     }).retryWhen(function (errors) {
@@ -59,7 +26,8 @@
                             }
 
                             return count;
-                        }, 0).delay(5000);
+                        },
+                            0).delay(5000);
                     });
 
                 var repeatRequests = rx.Observable.interval(5000).flatMapLatest(httpRequest);
@@ -69,12 +37,37 @@
                     repeatRequests);
 
                 // Flatten the endpoints array into individual endpoints
-                return streamedResults.selectMany(function (endpoints) {
-                    return endpoints;
+                return streamedResults.selectMany(function (response) {
+                    response.data["NServiceBus.Endpoints"].forEach(function (item) {
+                        var e = endpoints.filter(function (endpoint) { return endpoint.title === item.Name; });
+                        if (e.length === 1) {
+                            item.Errors = e[0].count;
+                        }
+                    });
+                    endpoints.filter(function (endpoint) {
+                        return response.data["NServiceBus.Endpoints"].filter(function (search) {
+                            return search.Name === endpoint.title;
+                        }).length ===
+                            0;
+                    }).forEach(function (missingEndpoint) {
+                        response.data["NServiceBus.Endpoints"].push({
+                            "Name": missingEndpoint.title,
+                            "Errors": missingEndpoint.count,
+                            "Data": {
+                                "Timestamps": [],
+                                "CriticalTime": [],
+                                "ProcessingTime": []
+                            }
+                        });
+                    });
+                    return response;
                 });
+            }));
+        }
+
         var previousExceptionGroupEtag;
 
-        function getEndpoints() {
+        function getEndpointsFromSC() {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'endpoints');
             return $http.get(url).then(function (response) {
                 var status = 200;
@@ -88,12 +81,10 @@
                     status: status
                 };
             });
-            }));
         }
 
         var service = {
             getEndpoints: getEndpoints
-            getData: getData
         };
 
         return service;
