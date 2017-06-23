@@ -2,33 +2,36 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, rx, scConfig, uri) {
+    function Service($http, rx, scConfig, uri, $q) {
         var endpoints;
         function getEndpoints() {
-            getEndpointsFromSC().then(function(response) {
-                if (response.status !== 304) {
-                    endpoints = response.data;
-                }    
+            var mappedUrls = [{
+                url: uri.join(scConfig.service_control_url, 'recoverability', 'endpoints'),
+                mapper: function (endpoint) {
+                    return {
+                        Name: endpoint.title,
+                        Count: endpoint.count
+                    };
+                }
+            }].concat(scConfig.monitoring_urls.map(function (url) {
+                    return {
+                        url: uri.join(url, '/data')
+                    };
+            }));
 
-            });
-
-            return rx.Observable.merge(scConfig.monitoring_urls.map(function (url) {
-                var requestUri = uri.join(url, '/data');
-                var retryCount = 0;
-
-                var httpRequest = rx.Observable.just(requestUri)
+            return rx.Observable.merge(mappedUrls.map(function (mappedUrl) {
+                var httpRequest = rx.Observable.just(mappedUrl.url)
                     .flatMap(function (requestUrl) {
-                        return $http.get(requestUrl);
-                    }).retryWhen(function (errors) {
-                        return errors.scan(function (count, error) {
-                            if (++count >= 10) {
-                                throw error;
-                            }
+                        var request = $http.get(requestUrl);
 
-                            return count;
-                        },
-                            0).delay(5000);
-                    });
+                        if (mappedUrl.mapper) {
+                            request = request.then(function (result) {
+                            return result.map(mappedUrl.mapper);
+                            });
+                        }
+
+                        return request;
+                    }).retryWhen(automaticRetry);
 
                 var repeatRequests = rx.Observable.interval(5000).flatMapLatest(httpRequest);
 
@@ -37,50 +40,20 @@
                     repeatRequests);
 
                 // Flatten the endpoints array into individual endpoints
-                return streamedResults.selectMany(function (response) {
-                    response.data["NServiceBus.Endpoints"].forEach(function (item) {
-                        var e = endpoints.filter(function (endpoint) { return endpoint.title === item.Name; });
-                        if (e.length === 1) {
-                            item.Errors = e[0].count;
-                        }
-                    });
-                    endpoints.filter(function (endpoint) {
-                        return response.data["NServiceBus.Endpoints"].filter(function (search) {
-                            return search.Name === endpoint.title;
-                        }).length ===
-                            0;
-                    }).forEach(function (missingEndpoint) {
-                        response.data["NServiceBus.Endpoints"].push({
-                            "Name": missingEndpoint.title,
-                            "Errors": missingEndpoint.count,
-                            "Data": {
-                                "Timestamps": [],
-                                "CriticalTime": [],
-                                "ProcessingTime": []
-                            }
-                        });
-                    });
-                    return response;
+                return streamedResults.selectMany(function (endpoints) {
+                    return endpoints;
                 });
             }));
         }
 
-        var previousExceptionGroupEtag;
-
-        function getEndpointsFromSC() {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'endpoints');
-            return $http.get(url).then(function (response) {
-                var status = 200;
-                if (previousExceptionGroupEtag === response.headers('etag')) {
-                    status = 304;
-                } else {
-                    previousExceptionGroupEtag = response.headers('etag');
+        function automaticRetry(errors) {
+            return errors.scan(function (count, error) {
+                if (++count >= 10) {
+                    throw error;
                 }
-                return {
-                    data: response.data,
-                    status: status
-                };
-            });
+
+                return count;
+            }, 0).delay(5000);
         }
 
         var service = {
@@ -90,7 +63,7 @@
         return service;
     }
     
-    Service.$inject = ['$http', 'rx', 'scConfig', 'uri'];
+    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);

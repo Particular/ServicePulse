@@ -9,20 +9,20 @@
         function updateUI() {
             $scope.endpoints = {};
 
-            monitoringService.getEndpoints().subscribe(function (data) {
-                $scope.endpoints = data["NServiceBus.Endpoints"];
-                $scope.endpoints.forEach(function(item) {
-                    for (var key in item.Data) {
-                        var average = item.Data[key].reduce(function(sum, a) { return sum + a }, 0) /
-                            (item.Data[key].length || 1);
-                        item.Data[key + "Avg"] = average;
-                    }
-                });
-            }, function (err) {
-                toastService.showWarning('Failed to load endpoints from monitoring service');
+            monitoringService.getEndpoints().subscribe(function (endpoint) {
+                if ($scope.endpoints.hasOwnProperty(endpoint.Name)) {
+                    updateEndpointData($scope.endpoints[endpoint.Name], endpoint);
+                } else {
+                    $scope.endpoints[endpoint.Name] = endpoint;
+                }
             });
         }
-        
+
+        function updateEndpointData(scopeEndpoint, newData) {
+            Object.keys(newData).forEach(function (key) {
+                scopeEndpoint[key] = newData[key];
+            });
+        }
 
         updateUI();
     };
