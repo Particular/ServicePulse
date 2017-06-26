@@ -10,7 +10,8 @@
                 mapper: function (endpoint) {
                     return {
                         Name: endpoint.title,
-                        Count: endpoint.count
+                        Count: endpoint.count,
+                        IsFromSC: true
                     };
                 }
             }].concat(scConfig.monitoring_urls.map(function (url) {
@@ -22,13 +23,9 @@
             return rx.Observable.merge(mappedUrls.map(function (mappedUrl) {
                 var httpRequest = rx.Observable.just(mappedUrl.url)
                     .flatMap(function (requestUrl) {
-                        var request = $http.get(requestUrl);
-
-                        if (mappedUrl.mapper) {
-                            request = request.then(function (result) {
-                            return result.map(mappedUrl.mapper);
+                        var request = $http.get(requestUrl).then(function (result) {
+                            return mappedUrl.mapper ? result.data.map(mappedUrl.mapper) : result.data["NServiceBus.Endpoints"];
                             });
-                        }
 
                         return request;
                     }).retryWhen(automaticRetry);

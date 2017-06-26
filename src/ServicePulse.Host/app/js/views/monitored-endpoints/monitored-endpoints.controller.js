@@ -13,7 +13,9 @@
                 if ($scope.endpoints.hasOwnProperty(endpoint.Name)) {
                     updateEndpointData($scope.endpoints[endpoint.Name], endpoint);
                 } else {
-                    $scope.endpoints[endpoint.Name] = endpoint;
+                    if (!endpoint.IsFromSC) {
+                        $scope.endpoints[endpoint.Name] = endpoint;
+                    }
                 }
             });
         }

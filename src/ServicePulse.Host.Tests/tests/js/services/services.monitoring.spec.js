@@ -42,58 +42,55 @@
         $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond([]);
 
         var monitoredEndpoints;
-        monitoringService.getEndpoints().then(function (response) {
-            monitoredEndpoints = response.data;
+        monitoringService.getEndpoints().subscribe(function (response) {
+            monitoredEndpoints = response;
+            
+            expect(monitoredEndpoints.Name).toEqual("Samples.Metrics.Tracing.Endpoint");
+            expect(monitoredEndpoints.Count).not.toBeDefined();
+            expect(monitoredEndpoints.Data.Timestamps).toEqual([]);
+            expect(monitoredEndpoints.Data.CriticalTime).toEqual([]);
+            expect(monitoredEndpoints.Data.ProcessingTime).toEqual([]);
         });
         $httpBackend.flush();
-
-        expect(monitoredEndpoints["NServiceBus.Endpoints"].length).toEqual(1);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Name).toEqual("Samples.Metrics.Tracing.Endpoint");
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Errors).not.toBeDefined();
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.Timestamps).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.CriticalTime).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.ProcessingTime).toEqual([]);
     });
 
-    it('should return filled collection when sc returns matching rows', function () {
+    it('should return added collections when sc returns matching rows', function () {
         $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
         $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond(scEndpointWithMatchingData);
 
         var monitoredEndpoints;
-        monitoringService.getEndpoints().then(function (response) {
-            monitoredEndpoints = response.data;
+        monitoringService.getEndpoints().subscribe(function (response) {
+            monitoredEndpoints = response;
+            if (monitoredEndpoints.IsFromSC) {
+                expect(monitoredEndpoints.Name).toEqual("Samples.Metrics.Tracing.Endpoint");
+                expect(monitoredEndpoints.Count).toEqual(2);
+            } else {
+                expect(monitoredEndpoints.Name).toEqual("Samples.Metrics.Tracing.Endpoint");
+                expect(monitoredEndpoints.Count).not.toBeDefined();
+                expect(monitoredEndpoints.Data.Timestamps).toEqual([]);
+                expect(monitoredEndpoints.Data.CriticalTime).toEqual([]);
+                expect(monitoredEndpoints.Data.ProcessingTime).toEqual([]);
+            }
         });
         $httpBackend.flush();
-
-        expect(monitoredEndpoints["NServiceBus.Endpoints"].length).toEqual(1);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Name).toEqual("Samples.Metrics.Tracing.Endpoint");
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Errors).toEqual(2);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.Timestamps).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.CriticalTime).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.ProcessingTime).toEqual([]);
     });
 
-    it('should return bigger collection when sc returns more rows', function () {
-        $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
-        $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond(scEndpointWithMoreData);
+    it('should return added collection when sc returns more rows',
+        function() {
+            $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
+            $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond(scEndpointWithMoreData);
 
-        var monitoredEndpoints;
-        monitoringService.getEndpoints().then(function (response) {
-            monitoredEndpoints = response.data;
+            var monitoredEndpoints = [];
+            monitoringService.getEndpoints().subscribe(function(response) {
+                monitoredEndpoints.push(response);
+                if (monitoredEndpoints.length === 2) {
+                    expect(monitoredEndpoints[0].Name).toEqual("Samples.Metrics.Tracing.Endpoint");
+                    expect(monitoredEndpoints[0].Count).toEqual(2);
+
+                    expect(monitoredEndpoints[1].Name).toEqual("Samples.Metrics.Tracing.Endpoint2");
+                    expect(monitoredEndpoints[1].Count).toEqual(3);
+                }
+            });
+            $httpBackend.flush();
         });
-        $httpBackend.flush();
-
-        expect(monitoredEndpoints["NServiceBus.Endpoints"].length).toEqual(2);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Name).toEqual("Samples.Metrics.Tracing.Endpoint");
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Errors).toEqual(2);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.Timestamps).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.CriticalTime).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][0].Data.ProcessingTime).toEqual([]);
-
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][1].Name).toEqual("Samples.Metrics.Tracing.Endpoint2");
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][1].Errors).toEqual(3);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][1].Data.Timestamps).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][1].Data.CriticalTime).toEqual([]);
-        expect(monitoredEndpoints["NServiceBus.Endpoints"][1].Data.ProcessingTime).toEqual([]);
-    });
 });
