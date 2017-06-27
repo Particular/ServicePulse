@@ -3,29 +3,21 @@
     'use strict';
 
     function Service($http, rx, scConfig, uri, $q) {
-        var endpoints;
+
         function getEndpoints() {
-            var mappedUrls = [{
-                url: uri.join(scConfig.service_control_url, 'recoverability', 'endpoints'),
-                mapper: function (endpoint) {
-                    return {
-                        Name: endpoint.title,
-                        Count: endpoint.count,
-                        IsFromSC: true
-                    };
-                }
-            }].concat(scConfig.monitoring_urls.map(function (url) {
-                    return {
-                        url: uri.join(url, '/data')
-                    };
-            }));
+
+            var mappedUrls = scConfig.monitoring_urls.map(function (url) {
+                return {
+                    url: uri.join(url, '/data')
+                };
+            });
 
             return rx.Observable.merge(mappedUrls.map(function (mappedUrl) {
                 var httpRequest = rx.Observable.just(mappedUrl.url)
                     .flatMap(function (requestUrl) {
-                        var request = $http.get(requestUrl).then(function (result) {
-                            return mappedUrl.mapper ? result.data.map(mappedUrl.mapper) : result.data["NServiceBus.Endpoints"];
-                            });
+                        var request = $http.get(requestUrl).then(function(result) {
+                            return result.data["NServiceBus.Endpoints"];
+                        });
 
                         return request;
                     }).retryWhen(automaticRetry);

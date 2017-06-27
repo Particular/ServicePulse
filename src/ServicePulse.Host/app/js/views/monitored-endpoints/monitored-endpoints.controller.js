@@ -10,19 +10,7 @@
             $scope.endpoints = {};
 
             monitoringService.getEndpoints().subscribe(function (endpoint) {
-                if ($scope.endpoints.hasOwnProperty(endpoint.Name)) {
-                    updateEndpointData($scope.endpoints[endpoint.Name], endpoint);
-                } else {
-                    if (!endpoint.IsFromSC) {
-                        $scope.endpoints[endpoint.Name] = endpoint;
-                    }
-                }
-            });
-        }
-
-        function updateEndpointData(scopeEndpoint, newData) {
-            Object.keys(newData).forEach(function (key) {
-                scopeEndpoint[key] = newData[key];
+                $scope.endpoints[endpoint.Name] = endpoint;
             });
         }
 
