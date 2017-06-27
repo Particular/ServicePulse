@@ -9,7 +9,7 @@
         function updateUI() {
             $scope.endpoints = {};
 
-            monitoringService.getEndpoints().subscribe(function (endpoint) {
+            monitoringService.endpoints.subscribe(function (endpoint) {
                 $scope.endpoints[endpoint.Name] = endpoint;
             });
         }
