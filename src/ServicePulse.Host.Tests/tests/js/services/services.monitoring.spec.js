@@ -4,93 +4,58 @@
     var monitoredEndpointWithData = {
         "NServiceBus.Endpoints": [
             {
-                "Name": "Samples.Metrics.Tracing.Endpoint",
+                "Name": "Samples.Metrics.Tracing.Endpoint1",
                 "Data": { "Timestamps": [], "CriticalTime": [], "ProcessingTime": [] }
-            }
+            },
+            {
+                "Name": "Samples.Metrics.Tracing.Endpoint2",
+                "Data": { "Timestamps": [], "CriticalTime": [], "ProcessingTime": [] }
+            },
         ]
     };
 
-    var scEndpointWithMatchingData = [
-        {
-            "id": "48e7c05e-5cb6-703d-7862-2897cc2cfa01",
-            "title": "Samples.Metrics.Tracing.Endpoint",
-            "count": 2
-        }
-    ];
+    var monitoringService, $httpBackend, scConfig;
 
-    var scEndpointWithMoreData = [{
-            "id": "48e7c05e-5cb6-703d-7862-2897cc2cfa01",
-            "title": "Samples.Metrics.Tracing.Endpoint",
-            "count": 2
-        },
-        {
-            "id": "48e7c05e-5cb6-703d-7862-2897cc2cfa02",
-            "title": "Samples.Metrics.Tracing.Endpoint2",
-            "count": 3
-        }
-    ];
-
-    var monitoringService, $httpBackend;
-
-    beforeEach(inject(function (_monitoringService_, _$httpBackend_) {
+    beforeEach(inject(function (_monitoringService_, _$httpBackend_, _scConfig_) {
         monitoringService = _monitoringService_;
         $httpBackend = _$httpBackend_;
+        scConfig = _scConfig_;
     }));
 
-    it('should return unchanged collection when sc returns no matching rows', function () {
-        $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
-        $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond([]);
+    it('should push endpoints retrieved from monitoring server', function () {
+        scConfig.monitoring_urls = ['http://localhost:1234/diagrams'];
 
-        var monitoredEndpoints;
-        monitoringService.getEndpoints().subscribe(function (response) {
-            monitoredEndpoints = response;
-            
-            expect(monitoredEndpoints.Name).toEqual("Samples.Metrics.Tracing.Endpoint");
-            expect(monitoredEndpoints.Count).not.toBeDefined();
-            expect(monitoredEndpoints.Data.Timestamps).toEqual([]);
-            expect(monitoredEndpoints.Data.CriticalTime).toEqual([]);
-            expect(monitoredEndpoints.Data.ProcessingTime).toEqual([]);
+        $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
+
+        var monitoredEndpoints = [];
+        monitoringService.endpoints.subscribe(function (response) {
+            monitoredEndpoints.push(response);
         });
         $httpBackend.flush();
+
+        expect(monitoredEndpoints.length).toEqual(2);
+        expect(monitoredEndpoints[0].Name).toEqual("Samples.Metrics.Tracing.Endpoint1");
+        expect(monitoredEndpoints[0].Data.Timestamps).toEqual([]);
+        expect(monitoredEndpoints[0].Data.CriticalTime).toEqual([]);
+        expect(monitoredEndpoints[0].Data.ProcessingTime).toEqual([]);
+        expect(monitoredEndpoints[1].Name).toEqual("Samples.Metrics.Tracing.Endpoint2");
+        expect(monitoredEndpoints[1].Data.Timestamps).toEqual([]);
+        expect(monitoredEndpoints[1].Data.CriticalTime).toEqual([]);
+        expect(monitoredEndpoints[1].Data.ProcessingTime).toEqual([]);
     });
 
-    it('should return added collections when sc returns matching rows', function () {
-        $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
-        $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond(scEndpointWithMatchingData);
+    it('should push endpoints retrieved from multiple monitoring servers', function () {
+        scConfig.monitoring_urls = ['http://localhost:1234/diagrams', 'http://localhost:5678/diagrams'];
 
-        var monitoredEndpoints;
-        monitoringService.getEndpoints().subscribe(function (response) {
-            monitoredEndpoints = response;
-            if (monitoredEndpoints.IsFromSC) {
-                expect(monitoredEndpoints.Name).toEqual("Samples.Metrics.Tracing.Endpoint");
-                expect(monitoredEndpoints.Count).toEqual(2);
-            } else {
-                expect(monitoredEndpoints.Name).toEqual("Samples.Metrics.Tracing.Endpoint");
-                expect(monitoredEndpoints.Count).not.toBeDefined();
-                expect(monitoredEndpoints.Data.Timestamps).toEqual([]);
-                expect(monitoredEndpoints.Data.CriticalTime).toEqual([]);
-                expect(monitoredEndpoints.Data.ProcessingTime).toEqual([]);
-            }
+        $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:5678/diagrams/data').respond(monitoredEndpointWithData);
+
+        var monitoredEndpoints = [];
+        monitoringService.endpoints.subscribe(function (response) {
+            monitoredEndpoints.push(response);
         });
         $httpBackend.flush();
+
+        expect(monitoredEndpoints.length).toEqual(4);
     });
-
-    it('should return added collection when sc returns more rows',
-        function() {
-            $httpBackend.whenGET('http://localhost:1234/diagrams/data').respond(monitoredEndpointWithData);
-            $httpBackend.whenGET('http://localhost:33333/api/recoverability/endpoints').respond(scEndpointWithMoreData);
-
-            var monitoredEndpoints = [];
-            monitoringService.getEndpoints().subscribe(function(response) {
-                monitoredEndpoints.push(response);
-                if (monitoredEndpoints.length === 2) {
-                    expect(monitoredEndpoints[0].Name).toEqual("Samples.Metrics.Tracing.Endpoint");
-                    expect(monitoredEndpoints[0].Count).toEqual(2);
-
-                    expect(monitoredEndpoints[1].Name).toEqual("Samples.Metrics.Tracing.Endpoint2");
-                    expect(monitoredEndpoints[1].Count).toEqual(3);
-                }
-            });
-            $httpBackend.flush();
-        });
 });

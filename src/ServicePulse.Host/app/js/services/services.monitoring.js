@@ -4,11 +4,11 @@
 
     function Service($http, rx, scConfig, uri, $q) {
 
-        var mappedUrls = scConfig.monitoring_urls.map(function (url) {
-            return uri.join(url, '/data');
-        });
-
+        var mappedUrls;
         var source = Rx.Observable.create(function (observer) {
+            mappedUrls = scConfig.monitoring_urls.map(function (url) {
+                return uri.join(url, '/data');
+            });
 
             console.log('start polling');
             updateData(observer);
