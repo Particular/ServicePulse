@@ -7,10 +7,15 @@
         toastService) {
 
         function updateUI() {
-            $scope.endpoints = {};
+            $scope.endpoints = [];
 
             monitoringService.endpoints.subscribe(function (endpoint) {
-                $scope.endpoints[endpoint.Name] = endpoint;
+                var index = $scope.endpoints.findIndex(function (item) { return item.Name === endpoint.Name });
+                if (index >= 0) {
+                    $scope.endpoints[index] = endpoint;
+                } else {
+                    $scope.endpoints.push(endpoint);
+                }
             });
         }
 
