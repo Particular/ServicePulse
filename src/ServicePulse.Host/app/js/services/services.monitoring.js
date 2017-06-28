@@ -10,13 +10,11 @@
                 return uri.join(url, '/data');
             });
 
-            console.log('start polling');
             updateData(observer);
             var interval = setInterval(function() { updateData(observer); },
                 5000);
 
             return function () {
-                console.log('stop polling');
                 clearInterval(interval);
             };
         });
