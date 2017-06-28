@@ -7,6 +7,7 @@
         toastService) {
 
         var subscription;
+
         function updateUI() {
             $scope.endpoints = [];
 
@@ -18,10 +19,10 @@
                     $scope.endpoints.push(endpoint);
                 }
             });
-
         }
 
         updateUI();
+
         $scope.$on("$destroy", function handler() {
             subscription.dispose();
         });

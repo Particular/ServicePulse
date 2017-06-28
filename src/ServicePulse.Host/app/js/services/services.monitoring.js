@@ -8,26 +8,35 @@
             return uri.join(url, '/data');
         });
 
-        var subject = new rx.Subject();
+        var source = Rx.Observable.create(function (observer) {
 
-        function updateData() {
+            console.log('start polling');
+            updateData(observer);
+            var interval = setInterval(function() { updateData(observer); },
+                5000);
+
+            return function () {
+                console.log('stop polling');
+                clearInterval(interval);
+            };
+        });
+
+        var endpoints = source
+            .shareReplay(1)
+            .selectMany(function (endpoints) {
+                return endpoints;
+            });
+
+        function updateData(observer) {
             mappedUrls.forEach(function (url) {
                 $http.get(url).then(function (result) {
-                    subject.onNext(result.data["NServiceBus.Endpoints"]);
+                    observer.onNext(result.data["NServiceBus.Endpoints"]);
                 });
             });
         }
 
-        updateData();
-        setInterval(updateData,
-            5000);
-
-        var replaySubject = subject
-            .replay(function(x) { return x; }, 1)
-            .selectMany(function(endpoints) { return endpoints; });
-
         var service = {
-            endpoints: replaySubject
+            endpoints: endpoints
         };
 
         return service;
