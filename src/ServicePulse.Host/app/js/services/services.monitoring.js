@@ -2,74 +2,45 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, scConfig, notifications, uri) {
-        var endpoints;
-        function getData() {
-            var outcome =  getEndpoints().then(function(response) {
-                if (response.status !== 304) {
-                    endpoints = response.data;
-                }    
-            
-                var url = uri.join(scConfig.monitoring_url, '/data');
-                return $http.get(url)
-                    .then(function (response) {
-                        response.data["NServiceBus.Endpoints"].forEach(function(item) {
-                            var e = endpoints.filter(function (endpoint) { return endpoint.title === item.Name; });
-                            if (e.length === 1) {
-                                item.Errors = e[0].count;
-                            }
-                        });
-                        endpoints.filter(function(endpoint) {
-                            return response.data["NServiceBus.Endpoints"].filter(function(search) {
-                                    return search.Name === endpoint.title;
-                                }).length ===
-                                0;
-                        }).forEach(function(missingEndpoint) {
-                            response.data["NServiceBus.Endpoints"].push({
-                                "Name": missingEndpoint.title,
-                                "Errors": missingEndpoint.count,
-                                "Data": {
-                                    "Timestamps": [],
-                                    "CriticalTime": [],
-                                    "ProcessingTime": []
-                                }
-                            });
-                            });
-                        return response;
-                    })
-                    .catch(function(fallback) {
-                        notifications.pushSticky('Can not connect to Monitoring Service');
-                    });
+    function Service($http, rx, scConfig, uri, $q) {
+
+        var mappedUrls;
+        var source = Rx.Observable.create(function (observer) {
+            mappedUrls = scConfig.monitoring_urls.map(function (url) {
+                return uri.join(url, '/data');
             });
-            return outcome;
-        }
 
-        var previousExceptionGroupEtag;
+            updateData(observer);
+            var interval = setInterval(function() { updateData(observer); },
+                5000);
 
-        function getEndpoints() {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'endpoints');
-            return $http.get(url).then(function (response) {
-                var status = 200;
-                if (previousExceptionGroupEtag === response.headers('etag')) {
-                    status = 304;
-                } else {
-                    previousExceptionGroupEtag = response.headers('etag');
-                }
-                return {
-                    data: response.data,
-                    status: status
-                };
+            return function () {
+                clearInterval(interval);
+            };
+        });
+
+        var endpoints = source
+            .shareReplay(1)
+            .selectMany(function (endpoints) {
+                return endpoints;
+            });
+
+        function updateData(observer) {
+            mappedUrls.forEach(function (url) {
+                $http.get(url).then(function (result) {
+                    observer.onNext(result.data["NServiceBus.Endpoints"]);
+                });
             });
         }
 
         var service = {
-            getData: getData
+            endpoints: endpoints
         };
 
         return service;
     }
 
-    Service.$inject = ['$http', 'scConfig', 'notifications', 'uri'];
+    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);
