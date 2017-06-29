@@ -237,8 +237,6 @@
     <Content Include="app\js\services\services.semver.js" />
     <Content Include="app\js\services\services.module.js" />
     <Content Include="app\js\services\services.service-control.js" />
-    <Content Include="app\lib\d3.js" />
-    <Content Include="app\lib\d3.min.js" />
     <Content Include="app\lib\page-width-functions.js" />
     <EmbeddedResource Include="Hosting\Help.txt" />
     <Content Include="app\js\app.js" />
@@ -274,6 +272,7 @@
     <Content Include="app\js\services\services.uri.js" />
     <None Include="app\lib\rx.angular\rx.all.map" />
     <None Include="app\lib\rx.angular\rx.angular.map" />
+    <None Include="bower.json" />
     <None Include="bundleconfig.json" />
     <None Include="package.json" />
     <None Include="packages.config">
