@@ -1,5 +1,6 @@
-﻿## Setting up javascript unit tests
+## Setting up javascript unit tests
 
+### Running the tests in Resharper
 We use Resharper to manage our development javascript tests
 
 First, install [PhantomJs](http://phantomjs.org/), a headless browser. It comes as a zip, don't forget to unlock the zip before extracting it. I put mine here `C:\Apps\phantomjs-2.0.0-windows\bin\phantomjs.exe`.
@@ -24,3 +25,6 @@ Like this
 
 
 When you open up a javascript test file you will be able to run the test like you would a regular C# unit test.
+
+### Running the tests in the browser
+Alternatively the unit tests can be run in a browser by opening SpecsRunner.html in a browser.
