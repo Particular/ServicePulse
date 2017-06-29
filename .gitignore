@@ -26,6 +26,8 @@ _NCrunch_NServiceBus/*
 logs
 run-git.cmd
 src/Chocolatey/Build/*
+npm-debug.log
+
 
 installer/[F|f]iles
 installer/[C|c]ustom[A|a]ctions
@@ -83,3 +85,13 @@ src/scaffolding.config
 
 # Approval tests temp file
 *.received.*
+
+# npm artifacts
+src/ServicePulse.Host/node_modules
+package-lock.json
+
+# bower artifacts
+src/ServicePulse.Host/app/bower_components
+
+# Chutzpah folders
+_Chutzpah.*/
