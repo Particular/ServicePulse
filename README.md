@@ -7,7 +7,7 @@ Keep track of the health of your system's endpoints, monitor for any processing 
 
 ### Connecting to ServiceControl
 
-Service Pulse uses [ServiceControl](http://github.com/Particular/ServiceControl) as the source of all presented data.  ServiceControl url can be set in ServicePulse.Host/app/js/app.constants.js under constant scConfig.
+Service Pulse uses [ServiceControl](http://github.com/Particular/ServiceControl) as the source of all presented data.  The ServiceControl url can be set in ServicePulse.Host/app/js/app.constants.js under constant scConfig.
 
 ### Configuring automated tests
 
