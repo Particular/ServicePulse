@@ -9,6 +9,15 @@ Keep track of the health of your system's endpoints, monitor for any processing 
 
 Service Pulse uses [ServiceControl](http://github.com/Particular/ServiceControl) as the source of all presented data.  The ServiceControl url can be set in ServicePulse.Host/app/js/app.constants.js under constant scConfig.
 
+### Setting up package manager
+
+ServicePulse uses npm and bower as package managers. For the solution to work dependencies needs to be downloaded before opening the ServicePulse website. To accomplish that follow these steps:
+ - Install [Node.js](https://nodejs.org/en/download/)
+ - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
+ - run the following command `npm run setup`. This script will install all node and bower dependencies and update index.html to include them if needed.
+
+After doing the above steps one can open visual studio and continue working on that project.
+
 ### Configuring automated tests
 
 For information how to run automated tests please follow [ServicePulse.Host.Tests/Readme](https://github.com/Particular/ServicePulse/blob/master/src/ServicePulse.Host.Tests/README.md).
