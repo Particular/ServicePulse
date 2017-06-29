@@ -3,63 +3,43 @@
     'use strict';
 
     function Service($http, rx, scConfig, uri, $q) {
-        var endpoints;
-        function getEndpoints() {
-            var mappedUrls = [{
-                url: uri.join(scConfig.service_control_url, 'recoverability', 'endpoints'),
-                mapper: function (endpoint) {
-                    return {
-                        Name: endpoint.title,
-                        Count: endpoint.count,
-                        IsFromSC: true
-                    };
-                }
-            }].concat(scConfig.monitoring_urls.map(function (url) {
-                    return {
-                        url: uri.join(url, '/data')
-                    };
-            }));
 
-            return rx.Observable.merge(mappedUrls.map(function (mappedUrl) {
-                var httpRequest = rx.Observable.just(mappedUrl.url)
-                    .flatMap(function (requestUrl) {
-                        var request = $http.get(requestUrl).then(function (result) {
-                            return mappedUrl.mapper ? result.data.map(mappedUrl.mapper) : result.data["NServiceBus.Endpoints"];
-                            });
+        var mappedUrls;
+        var source = Rx.Observable.create(function (observer) {
+            mappedUrls = scConfig.monitoring_urls.map(function (url) {
+                return uri.join(url, '/data');
+            });
 
-                        return request;
-                    }).retryWhen(automaticRetry);
+            updateData(observer);
+            var interval = setInterval(function() { updateData(observer); },
+                5000);
 
-                var repeatRequests = rx.Observable.interval(5000).flatMapLatest(httpRequest);
+            return function () {
+                clearInterval(interval);
+            };
+        });
 
-                var streamedResults = rx.Observable.concat(
-                    httpRequest.take(1),
-                    repeatRequests);
+        var endpoints = source
+            .shareReplay(1)
+            .selectMany(function (endpoints) {
+                return endpoints;
+            });
 
-                // Flatten the endpoints array into individual endpoints
-                return streamedResults.selectMany(function (endpoints) {
-                    return endpoints;
+        function updateData(observer) {
+            mappedUrls.forEach(function (url) {
+                $http.get(url).then(function (result) {
+                    observer.onNext(result.data["NServiceBus.Endpoints"]);
                 });
-            }));
-        }
-
-        function automaticRetry(errors) {
-            return errors.scan(function (count, error) {
-                if (++count >= 10) {
-                    throw error;
-                }
-
-                return count;
-            }, 0).delay(5000);
+            });
         }
 
         var service = {
-            getEndpoints: getEndpoints
+            endpoints: endpoints
         };
 
         return service;
     }
-    
+
     Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q'];
 
     angular.module('services.monitoringService', ['sc'])

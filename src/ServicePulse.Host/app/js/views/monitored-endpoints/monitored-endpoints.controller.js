@@ -6,27 +6,26 @@
         monitoringService,
         toastService) {
 
-        function updateUI() {
-            $scope.endpoints = {};
+        var subscription;
 
-            monitoringService.getEndpoints().subscribe(function (endpoint) {
-                if ($scope.endpoints.hasOwnProperty(endpoint.Name)) {
-                    updateEndpointData($scope.endpoints[endpoint.Name], endpoint);
+        function updateUI() {
+            $scope.endpoints = [];
+
+            subscription = monitoringService.endpoints.subscribe(function (endpoint) {
+                var index = $scope.endpoints.findIndex(function (item) { return item.Name === endpoint.Name });
+                if (index >= 0) {
+                    $scope.endpoints[index] = endpoint;
                 } else {
-                    if (!endpoint.IsFromSC) {
-                        $scope.endpoints[endpoint.Name] = endpoint;
-                    }
+                    $scope.endpoints.push(endpoint);
                 }
             });
         }
 
-        function updateEndpointData(scopeEndpoint, newData) {
-            Object.keys(newData).forEach(function (key) {
-                scopeEndpoint[key] = newData[key];
-            });
-        }
-
         updateUI();
+
+        $scope.$on("$destroy", function handler() {
+            subscription.dispose();
+        });
     };
 
     controller.$inject = [
