@@ -5,7 +5,7 @@
         .constant('showPendingRetry', false)
         .constant('scConfig', {
             service_control_url: 'http://localhost:33333/api/',
-            monitoring_url: 'http://localhost:1234/diagrams/'
+            monitoring_urls: ['http://localhost:1234/diagrams/']
         });
 
 }(window, window.angular));

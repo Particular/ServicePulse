@@ -3,41 +3,35 @@
 
     function controller(
         $scope,
-        $timeout,
-        monitoringService) {
+        monitoringService,
+        toastService) {
 
-        var timeoutId;
-
-        $scope.$on('$destroy', function () {
-            $timeout.cancel(timeoutId);
-        });
+        var subscription;
 
         function updateUI() {
-            monitoringService.getData().then(function (data) {
-                $scope.endpoints = data["NServiceBus.Endpoints"];
-                $scope.endpoints.forEach(function(item) {
-                    for (var key in item.Data) {
-                        var average = item.Data[key].reduce(function (sum, a) { return sum + a }, 0) / (item.Data[key].length || 1);
-                        item.Data[key + "Avg"] = average;
-                    }
-                })
-                timeoutId = $timeout(function () {
-                    updateUI();
-                }, 5000);
+            $scope.endpoints = [];
+
+            subscription = monitoringService.endpoints.subscribe(function (endpoint) {
+                var index = $scope.endpoints.findIndex(function (item) { return item.Name === endpoint.Name });
+                if (index >= 0) {
+                    $scope.endpoints[index] = endpoint;
+                } else {
+                    $scope.endpoints.push(endpoint);
+                }
             });
         }
 
-        function loadEndpointData() {
-             
-        }
-
         updateUI();
+
+        $scope.$on("$destroy", function handler() {
+            subscription.dispose();
+        });
     };
 
     controller.$inject = [
         '$scope',
-        '$timeout',
-        'monitoringService'
+        'monitoringService',
+        'toastService'
     ];
 
     angular.module('monitored-endpoints')

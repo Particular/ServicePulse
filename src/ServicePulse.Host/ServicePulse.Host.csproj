@@ -269,6 +269,17 @@
     <Content Include="app\js\app.js" />
     <Content Include="app\js\views\event_log_items\eventLogItems.js" />
     <Content Include="app\js\directives\moment.js" />
+    <Content Include="app\lib\rx.angular\rx.all.js" />
+    <Content Include="app\lib\rx.angular\rx.all.min.js" />
+    <Content Include="app\lib\rx.angular\rx.angular.js" />
+    <Content Include="app\lib\rx.angular\rx.angular.min.js" />
+    <Content Include="app\lib\toaster.min.css" />
+    <Content Include="app\lib\toaster.min.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.js" />
+    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.swf" />
     <Content Include="app\js\services\services.breadcrumbs.js" />
     <Content Include="app\js\services\services.exception-handler.js" />
     <Content Include="app\js\services\services.notifications.js" />
@@ -297,6 +308,19 @@
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="app\js\services\services.uri.js" />
+    <None Include="app\lib\angular\angular-momentjs.min.js.map" />
+    <None Include="app\lib\bootcards-desktop.css.map" />
+    <None Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css.map" />
+    <None Include="app\lib\bootstrap-3.3.5\css\bootstrap.css.map" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.eot" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.ttf" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff" />
+    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="app\lib\jQuery\jquery.min.map" />
+    <None Include="app\lib\rx.angular\rx.all.map" />
+    <None Include="app\lib\rx.angular\rx.angular.map" />
+    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.map" />
+    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.map" />
     <None Include="bundleconfig.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
