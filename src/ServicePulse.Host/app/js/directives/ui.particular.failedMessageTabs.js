@@ -11,11 +11,9 @@
         };
 
         var stats = sharedDataService.getstats();
-        var currentClassification;
         var allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': stats.number_of_failed_messages }
         $scope.showPendingRetry = showPendingRetry;
         $scope.counters = {
-            group: stats.number_of_exception_groups,
             message: stats.number_of_failed_messages,
             archived: stats.number_of_archived_messages,
             pendingRetries: stats.number_of_pending_retries
@@ -59,11 +57,6 @@
                 messageFailuresUpdatedTimer = undefined;
             }
         });
-
-
-        notifier.subscribe($scope, function(event, data) {
-            $scope.counters.group = data;
-        }, 'ExceptionGroupCountUpdated');
 
         notifier.subscribe($scope, function(event, data) {
             $scope.counters.message = data;
