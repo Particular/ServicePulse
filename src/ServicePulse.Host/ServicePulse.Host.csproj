@@ -237,33 +237,8 @@
     <Content Include="app\js\services\services.semver.js" />
     <Content Include="app\js\services\services.module.js" />
     <Content Include="app\js\services\services.service-control.js" />
-    <Content Include="app\lib\angular\angular-animate.js" />
-    <Content Include="app\lib\angular\angular-animate.min.js" />
-    <Content Include="app\lib\angular\angular-breadcrumb.js" />
-    <Content Include="app\lib\angular\angular-breadcrumb.min.js" />
-    <Content Include="app\lib\angular\angular-route.js" />
-    <Content Include="app\lib\angular\angular-route.min.js" />
-    <Content Include="app\lib\angular\angular-sanitize.js" />
-    <Content Include="app\lib\angular\angular-sanitize.min.js" />
-    <Content Include="app\lib\bootcards-desktop.css" />
-    <Content Include="app\lib\bootcards-desktop.min.css" />
-    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css" />
-    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.min.css" />
-    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap.css" />
-    <Content Include="app\lib\bootstrap-3.3.5\css\bootstrap.min.css" />
-    <Content Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.svg" />
-    <Content Include="app\lib\bootstrap-3.3.5\js\bootstrap.js" />
-    <Content Include="app\lib\bootstrap-3.3.5\js\bootstrap.min.js" />
-    <Content Include="app\lib\bootstrap-3.3.5\js\npm.js" />
     <Content Include="app\lib\d3.js" />
     <Content Include="app\lib\d3.min.js" />
-    <Content Include="app\lib\jQuery\jquery.js" />
-    <Content Include="app\lib\jQuery\jquery.min.js" />
-    <Content Include="app\lib\jQuery\jquery.signalR-1.1.3.min.js" />
-    <Content Include="app\lib\jQuery\jquery.signalr-2.2.0.js" />
-    <Content Include="app\lib\jQuery\jquery.signalr-2.2.0.min.js" />
-    <Content Include="app\lib\moment.js" />
-    <Content Include="app\lib\ng-infinite-scroll.min.js" />
     <Content Include="app\lib\page-width-functions.js" />
     <EmbeddedResource Include="Hosting\Help.txt" />
     <Content Include="app\js\app.js" />
@@ -273,13 +248,6 @@
     <Content Include="app\lib\rx.angular\rx.all.min.js" />
     <Content Include="app\lib\rx.angular\rx.angular.js" />
     <Content Include="app\lib\rx.angular\rx.angular.min.js" />
-    <Content Include="app\lib\toaster.min.css" />
-    <Content Include="app\lib\toaster.min.js" />
-    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.js" />
-    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.js" />
-    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.js" />
-    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.js" />
-    <Content Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.swf" />
     <Content Include="app\js\services\services.breadcrumbs.js" />
     <Content Include="app\js\services\services.exception-handler.js" />
     <Content Include="app\js\services\services.notifications.js" />
@@ -288,10 +256,6 @@
     <Content Include="app\js\views\dashboard\dashboard.html" />
     <Content Include="app\js\views\endpoints\endpoints.html" />
     <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.html" />
-    <Content Include="app\lib\angular\angular-animate.min.js.map" />
-    <Content Include="app\lib\angular\angular-route.min.js.map" />
-    <Content Include="app\lib\angular\angular-sanitize.min.js.map" />
-    <Content Include="app\lib\angular\angular.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
@@ -308,20 +272,10 @@
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="app\js\services\services.uri.js" />
-    <None Include="app\lib\angular\angular-momentjs.min.js.map" />
-    <None Include="app\lib\bootcards-desktop.css.map" />
-    <None Include="app\lib\bootstrap-3.3.5\css\bootstrap-theme.css.map" />
-    <None Include="app\lib\bootstrap-3.3.5\css\bootstrap.css.map" />
-    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.eot" />
-    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.ttf" />
-    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff" />
-    <None Include="app\lib\bootstrap-3.3.5\fonts\glyphicons-halflings-regular.woff2" />
-    <None Include="app\lib\jQuery\jquery.min.map" />
     <None Include="app\lib\rx.angular\rx.all.map" />
     <None Include="app\lib\rx.angular\rx.angular.map" />
-    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.Core.min.map" />
-    <None Include="app\lib\zeroclipboard-2.2.0\ZeroClipboard.min.map" />
     <None Include="bundleconfig.json" />
+    <None Include="package.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
