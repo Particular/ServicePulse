@@ -101,7 +101,7 @@
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.tpl.html" />
     <Content Include="app\js\directives\ui.particular.nodata.js" />
     <Content Include="app\js\directives\ui.particular.nodata.tpl.html" />
-    <Content Include="app\js\services\factory.rxjs.js" />
+    <Content Include="app\js\services\constant.rxjs.js" />
     <Content Include="app\js\services\factory.shareddata.js" />
     <Content Include="app\js\services\services.monitoring.js" />
     <Content Include="app\js\services\services.endpoints.js" />
