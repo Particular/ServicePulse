@@ -14,7 +14,8 @@
                         var svg = element.find('svg')[0];
 
                         var heigth = 50;
-                        var width = 130;
+                        var graphWidth = 130;
+                        var totalWidth = 180;
                         var margin = 2;
                         var average = d3.mean(scope.data);
                         var max = Math.max(average * 1.5, d3.max(scope.data));
@@ -24,7 +25,7 @@
 
                         var scaleX = d3.scaleLinear()
                             .domain([0, scope.data.length - 1])
-                            .range([margin, width - margin]);
+                            .range([margin, graphWidth - margin]);
 
                         var area = d3.area()
                             .x(function(d, i) { return scaleX(i); })
@@ -42,7 +43,7 @@
                             .curve(d3.curveNatural);
 
                         var chart = d3.select(svg)
-                            .attr('width', width)
+                            .attr('width', totalWidth)
                             .attr('height', heigth);
 
                         chart.append('path')
@@ -54,6 +55,14 @@
                             .datum(Array(scope.data.length).fill(average))
                             .attr('d', line)
                             .attr('stroke', 'black');
+
+                        chart.append("text")
+                            .attr("x", graphWidth)
+                            .attr("y", heigth / 2 + 5)
+                            .attr("text-anchor", "start")
+                            .attr("font-size", 12)
+                            .attr("font-family", "sans-serif")
+                            .text(average);
                     }
                 };
             });
