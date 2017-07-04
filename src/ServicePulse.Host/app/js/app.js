@@ -10,7 +10,6 @@
         'ngPageTitle',
         'angular-momentjs',
         'toaster',
-        'rx',
         'ui.bootstrap',
         'infinite-scroll',
         'services',
