@@ -35,6 +35,7 @@
 /// <reference path="../../../servicepulse.host/app/js/services/factory.listener.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.notifier.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.shareddata.js" />
+/// <reference path="../../../servicepulse.host/app/js/services/factory.rxjs.js" />
 /// <!-- Directives -->
 /// <reference path="../../../servicepulse.host/app/js/directives/ngClip.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/moment.js" />

@@ -27,7 +27,8 @@
 
         function updateData(observer) {
             mappedUrls.forEach(function (url) {
-                $http.get(url).then(function (result) {
+                $http.get(url)
+                .then(function (result) {
                     observer.onNext(result.data["NServiceBus.Endpoints"]);
                 });
             });
