@@ -17,10 +17,9 @@
                         var width = 130;
                         var margin = 2;
                         var average = d3.mean(scope.data);
-                        var max = d3.max(scope.data);
-                        var min = d3.min(scope.data) !== d3.max(scope.data) ? d3.min(scope.data) : 0;
+                        var max = Math.max(average * 1.5, d3.max(scope.data));
                         var scaleY = d3.scaleLinear()
-                            .domain([min, max])
+                            .domain([0, max])
                             .range([heigth - margin, margin]);
 
                         var scaleX = d3.scaleLinear()
