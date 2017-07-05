@@ -12,7 +12,7 @@
             $scope.endpoints = [];
 
             subscription = monitoringService.endpoints.subscribe(function (endpoint) {
-                var index = $scope.endpoints.findIndex(function (item) { return item.Name === endpoint.Name });
+                var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name });
                 if (index >= 0) {
                     $scope.endpoints[index] = endpoint;
                 } else {
