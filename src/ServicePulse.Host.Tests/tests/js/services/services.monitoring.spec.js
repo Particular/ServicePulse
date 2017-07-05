@@ -1,18 +1,24 @@
 ﻿describe('monitoringService', function () {
     beforeEach(module('services.monitoringService'));
 
-    var monitoredEndpointWithData = {
-        "NServiceBus.Endpoints": [
-            {
-                "Name": "Samples.Metrics.Tracing.Endpoint1",
-                "Data": { "Timestamps": [], "CriticalTime": [], "ProcessingTime": [] }
-            },
-            {
-                "Name": "Samples.Metrics.Tracing.Endpoint2",
-                "Data": { "Timestamps": [], "CriticalTime": [], "ProcessingTime": [] }
-            },
-        ]
-    };
+    var monitoredEndpointWithData = [
+        {
+            "name": "Samples.Metrics.Tracing.Endpoint1",
+            "data": {
+                "timestamps": [],
+                "criticalTime": [],
+                "processingTime": []
+            }
+        },
+        {
+            "name": "Samples.Metrics.Tracing.Endpoint2",
+            "data": {
+                "timestamps": [],
+                "criticalTime": [],
+                "processingTime": []
+            }
+        }
+    ];
 
     var monitoringService, $httpBackend, scConfig;
 
@@ -34,14 +40,14 @@
         $httpBackend.flush();
 
         expect(monitoredEndpoints.length).toEqual(2);
-        expect(monitoredEndpoints[0].Name).toEqual("Samples.Metrics.Tracing.Endpoint1");
-        expect(monitoredEndpoints[0].Data.Timestamps).toEqual([]);
-        expect(monitoredEndpoints[0].Data.CriticalTime).toEqual([]);
-        expect(monitoredEndpoints[0].Data.ProcessingTime).toEqual([]);
-        expect(monitoredEndpoints[1].Name).toEqual("Samples.Metrics.Tracing.Endpoint2");
-        expect(monitoredEndpoints[1].Data.Timestamps).toEqual([]);
-        expect(monitoredEndpoints[1].Data.CriticalTime).toEqual([]);
-        expect(monitoredEndpoints[1].Data.ProcessingTime).toEqual([]);
+        expect(monitoredEndpoints[0].name).toEqual("Samples.Metrics.Tracing.Endpoint1");
+        expect(monitoredEndpoints[0].data.timestamps).toEqual([]);
+        expect(monitoredEndpoints[0].data.criticalTime).toEqual([]);
+        expect(monitoredEndpoints[0].data.processingTime).toEqual([]);
+        expect(monitoredEndpoints[1].name).toEqual("Samples.Metrics.Tracing.Endpoint2");
+        expect(monitoredEndpoints[1].data.timestamps).toEqual([]);
+        expect(monitoredEndpoints[1].data.criticalTime).toEqual([]);
+        expect(monitoredEndpoints[1].data.processingTime).toEqual([]);
     });
 
     it('should push endpoints retrieved from multiple monitoring servers', function () {
