@@ -10,7 +10,6 @@
     <section ng-show="true">
         <no-data ng-show="!endpoints.length" message="No active endpoints"></no-data>
 
-        <!-- Table column headers -->
         <div class="row box box-no-click">
             <div class="col-sm-4 no-side-padding">
                 <div class="row box-header">
@@ -34,8 +33,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Table data rows-->
+        
         <div class="row">
             <div class="col-sm-12 no-side-padding">
                 <div class="row box box-no-click" ng-repeat="endpoint in endpoints">
@@ -44,21 +42,25 @@
                             <div class="col-sm-4 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p class="hard-wrap">{{endpoint.Name}}</p> <span ng-if="endpoint.Count">has {{endpoint.Count}} errors</span>
+                                        <p class="hard-wrap">{{endpoint.name}}</p> <span ng-if="endpoint.count">has {{endpoint.count}} errors</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <graph plot-points="endpoint.Data.ProcessingTime" color="#40bc42"></graph>
+                                        <graph plot-points="endpoint.data.processingTime" color="#efa717"></graph>
+                                        <graph plot-points="endpoint.data.processingTime" color="#62c8ea"></graph>
+                                        <graph plot-points="endpoint.data.processingTime" color="#40bc42"></graph>
+                                            {{endpoint.data.processingTimeAvg}} ms
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <graph plot-points="endpoint.Data.CriticalTime" color="#d64f21"></graph>
+                                        <graph plot-points="endpoint.data.criticalTime" color="#d64f21"></graph>
+                                            {{endpoint.data.criticalTimeAvg}} ms
                                     </div>
                                 </div>
                             </div>
