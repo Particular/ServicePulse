@@ -2,7 +2,9 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, rx, scConfig, uri, toastService) {
+    function Service($http, rx, scConfig, uri) {
+        toastr.options.preventDuplicates = true;
+
         var connectionToasts = [];
         var mappedUrls;
         var source = Rx.Observable.create(function (observer) {
@@ -32,15 +34,20 @@
                         if (connectionToasts[url] !== undefined) {
                             var message = connectionToasts[url];
                             // doesn't exist
-                            toastService.remove(message);
+                            toastr.clear(message);
                             connectionToasts[url] = undefined;
                         }
                         observer.onNext(result.data);
                     }, function (error) {
                         if (connectionToasts[url] === undefined) {
                             var message = "unable to connect to " + url;
-                            toastService.showWarning("unable to connect to " + url);
-                            connectionToasts[url] = message;
+                            var x = toastr.warning(message,
+                                '',
+                                {
+                                    closeButton: true,
+                                    timeOut: 0
+                                });
+                            connectionToasts[url] = x;
                         }
                     });
             });
@@ -53,7 +60,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', 'toastService'];
+    Service.$inject = ['$http', 'rx', 'scConfig', 'uri'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);
