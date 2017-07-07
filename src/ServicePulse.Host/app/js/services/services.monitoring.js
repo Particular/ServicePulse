@@ -2,8 +2,7 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, rx, scConfig, uri) {
-        toastr.options.preventDuplicates = true;
+    function Service($http, rx, scConfig, uri, toastr) {
 
         var connectionToasts = [];
         var mappedUrls;
@@ -40,7 +39,7 @@
                         observer.onNext(result.data);
                     }, function (error) {
                         if (connectionToasts[url] === undefined) {
-                            var message = "unable to connect to " + url;
+                            var message = "unable to connect to ServiceControl.Monitoring at: " + url;
                             var x = toastr.warning(message,
                                 '',
                                 {
@@ -60,7 +59,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'rx', 'scConfig', 'uri'];
+    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', 'toastr'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);
