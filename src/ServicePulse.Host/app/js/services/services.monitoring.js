@@ -4,7 +4,7 @@
 
     function Service($http, rx, scConfig, uri, toastr) {
 
-        var connectionToasts = [];
+        var connectionToasts = {};
         var mappedUrls;
         var source = Rx.Observable.create(function (observer) {
             mappedUrls = scConfig.monitoring_urls.map(function (url) {
@@ -17,6 +17,18 @@
 
             return function () {
                 clearInterval(interval);
+
+                // clear open toasts
+                for(var toastEntry in connectionToasts) {
+                    if (connectionToasts.hasOwnProperty(toastEntry)) {
+                        var toast = connectionToasts[toastEntry];
+                        if (toast) {
+                            // toastr.remove would probably be better, but it seems to be buggy: https://github.com/CodeSeven/toastr/issues/494
+                            toastr.clear(toast);
+                            connectionToasts[toastEntry] = undefined;
+                        }
+                    }
+                }
             };
         });
 
