@@ -32,6 +32,14 @@
     ];
 
     angular.module('sc')
-        .service('toastService', service);
+        .service('toastService', service)
+        .factory('toastr', function () {
+            toastr.options = {
+                preventDuplicates: true,
+                positionClass: "toast-bottom-right",
+            };
+
+            return toastr;
+        });
 
 } (window, window.angular));
