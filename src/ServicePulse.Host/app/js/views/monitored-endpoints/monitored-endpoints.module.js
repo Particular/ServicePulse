@@ -17,14 +17,15 @@
                         var graphWidth = 130;
                         var totalWidth = 180;
                         var margin = 2;
-                        var average = d3.mean(scope.data);
-                        var max = Math.max(average * 1.5, d3.max(scope.data));
+                        var points = scope.data.points;
+                        var average = scope.data.avg;
+                        var max = Math.max(average * 1.5, d3.max(points));
                         var scaleY = d3.scaleLinear()
                             .domain([0, max])
                             .range([heigth - margin, margin]);
 
                         var scaleX = d3.scaleLinear()
-                            .domain([0, scope.data.length - 1])
+                            .domain([0, points.length - 1])
                             .range([margin, graphWidth - margin]);
 
                         var area = d3.area()
@@ -47,12 +48,12 @@
                             .attr('height', heigth);
 
                         chart.append('path')
-                            .datum(scope.data)
+                            .datum(points)
                             .attr('d', area)
                             .attr('fill', attrs.color);
 
                         chart.append('path')
-                            .datum(Array(scope.data.length).fill(average))
+                            .datum(Array(points.length).fill(average))
                             .attr('d', line)
                             .attr('stroke', 'black');
 
