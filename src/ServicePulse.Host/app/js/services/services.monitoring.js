@@ -4,15 +4,12 @@
 
     function Service($http, rx, scConfig, uri, $q) {
 
-        var mappedUrls;
+        var urls = scConfig.monitoring_urls;
         var source = Rx.Observable.create(function (observer) {
-            mappedUrls = scConfig.monitoring_urls.map(function (url) {
-                return uri.join(url, '/data');
-            });
 
             updateData(observer);
-            var interval = setInterval(function() { updateData(observer); },
-                5000);
+
+            var interval = setInterval(function() { updateData(observer); }, 5000);
 
             return function () {
                 clearInterval(interval);
@@ -26,7 +23,7 @@
             });
 
         function updateData(observer) {
-            mappedUrls.forEach(function (url) {
+            urls.forEach(function (url) {
                 $http.get(url)
                     .then(function (result) {
                         observer.onNext(result.data);
