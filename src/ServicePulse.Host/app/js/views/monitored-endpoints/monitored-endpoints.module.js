@@ -18,7 +18,7 @@
                         var totalWidth = 180;
                         var margin = 2;
                         var points = scope.data.points;
-                        var average = scope.data.avg;
+                        var average = scope.data.average;
                         var max = Math.max(average * 1.5, d3.max(points));
                         var scaleY = d3.scaleLinear()
                             .domain([0, max])
