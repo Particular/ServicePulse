@@ -11,10 +11,17 @@
         <no-data ng-show="!endpoints.length" message="No active endpoints"></no-data>
 
         <div class="row box box-no-click">
-            <div class="col-sm-4 no-side-padding">
+            <div class="col-sm-3 no-side-padding">
                 <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
                         <p class="lead"> Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p class="lead">Queue Length </p>
                     </div>
                 </div>
             </div>
@@ -39,12 +46,19 @@
                 <div class="row box box-no-click" ng-repeat="endpoint in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <div class="col-sm-4 no-side-padding">
+                            <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}">
                                             {{endpoint.name}} <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
                                         </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <graph ng-if="endpoint.queueLength.points" plot-points="endpoint.queueLength.points" color="#40bc42"></graph>
                                     </div>
                                 </div>
                             </div>
