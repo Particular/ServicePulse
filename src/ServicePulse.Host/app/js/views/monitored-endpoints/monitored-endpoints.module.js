@@ -7,7 +7,8 @@
                 return {
                     restrict: 'E',
                     scope: {
-                        data: '=plotPoints'
+                        data: '=plotPoints',
+                        avg: '=plotAverage'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
@@ -16,7 +17,7 @@
                         var graphWidth = 130;
                         var totalWidth = 180;
                         var margin = 2;
-                        var points = scope.data.points;
+                        var points = scope.data;
                         var average = scope.data.average;
                         var max = Math.max(average * 1.5, d3.max(points));
                         var scaleY = d3.scaleLinear()
