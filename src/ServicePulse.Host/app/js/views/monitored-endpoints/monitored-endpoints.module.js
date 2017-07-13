@@ -12,7 +12,6 @@
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         var svg = element.find('svg')[0];
-
                         var heigth = 50;
                         var graphWidth = 130;
                         var totalWidth = 180;
