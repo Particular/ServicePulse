@@ -25,13 +25,24 @@
             scConfig.monitoring_urls.forEach(function (url) {
                 $http.get(uri.join(url, 'monitored-endpoints'))
                     .then(function (result) {
+                        var sourceIndex = scConfig.monitoring_urls.findIndex(function (item) { return item === url });
+
+                        result.data.forEach(function (endpoint) {
+                            endpoint.sourceIndex = sourceIndex;
+                        });
+
                         observer.onNext(result.data);
                     });
             });
         }
 
+        function loadEndpointDetails(endpointName, sourceIndex) {
+            return $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName));
+        }
+
         var service = {
-            endpoints: endpoints
+            endpoints: endpoints,
+            loadEndpointDetails: loadEndpointDetails
         };
 
         return service;

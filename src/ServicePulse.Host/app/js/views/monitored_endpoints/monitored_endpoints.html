@@ -42,7 +42,7 @@
                             <div class="col-sm-4 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}">
+                                        <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}">
                                             {{endpoint.name}} <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
                                         </a>
                                     </div>
