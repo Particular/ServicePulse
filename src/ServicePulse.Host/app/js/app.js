@@ -17,7 +17,7 @@
         'directives.moment',
         'eventLogItems',
         'endpoints',
-        'monitored-endpoints',
+        'monitored_endpoints',
         'customChecks',
         'configuration',
         'dashboard',

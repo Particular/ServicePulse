@@ -31,7 +31,7 @@
     it('should push endpoints retrieved from monitoring server', function () {
         scConfig.monitoring_urls = ['http://localhost:1234/diagrams'];
 
-        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored_endpoints').respond(monitoredEndpointWithData);
 
         var monitoredEndpoints = [];
         monitoringService.endpoints.subscribe(function (response) {
@@ -51,8 +51,8 @@
     });
 
     it('should push endpoints retrieved from multiple monitoring servers', function () {
-        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints').respond(monitoredEndpointWithData);
-        $httpBackend.whenGET('http://localhost:5678/diagrams/monitored-endpoints').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored_endpoints').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:5678/diagrams/monitored_endpoints').respond(monitoredEndpointWithData);
 
         scConfig.monitoring_urls = ['http://localhost:1234/diagrams', 'http://localhost:5678/diagrams'];
 

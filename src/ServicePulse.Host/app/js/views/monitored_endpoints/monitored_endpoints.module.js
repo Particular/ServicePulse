@@ -1,7 +1,7 @@
 ﻿(function(window, angular, undefined) {
     'use strict';
 
-    angular.module('monitored-endpoints', [])
+    angular.module('monitored_endpoints', [])
         .directive('graph',
             function() {
                 return {
