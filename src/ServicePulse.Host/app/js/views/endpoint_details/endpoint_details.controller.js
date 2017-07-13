@@ -11,6 +11,7 @@
         $scope.loading = true;
 
         monitoringService.loadEndpointDetails($scope.endpointName, $routeParams.sourceIndex).then(function (result) {
+            $scope.endpointInstances = result.data;
         }, function (err) {
             // show warning
             toastService.showWarning('Could not load endpoint details');

@@ -8,4 +8,7 @@
 
 <div class="container">
     <busy ng-show="loading" message="Loading details"></busy>
+    <ul>
+        <li ng-repeat="instance in endpointInstances">{{instance.id}}</li>
+    </ul>
 </div>
