@@ -4,7 +4,6 @@
 
     function Service($http, rx, scConfig, uri, $q) {
 
-        var urls = scConfig.monitoring_urls;
         var source = Rx.Observable.create(function (observer) {
 
             updateData(observer);
@@ -23,8 +22,8 @@
             });
 
         function updateData(observer) {
-            urls.forEach(function (url) {
-                $http.get(url)
+            scConfig.monitoring_urls.forEach(function (url) {
+                $http.get(uri.join(url, 'monitored-endpoints'))
                     .then(function (result) {
                         observer.onNext(result.data);
                     });
