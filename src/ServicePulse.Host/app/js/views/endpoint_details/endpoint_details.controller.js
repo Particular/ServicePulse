@@ -13,8 +13,13 @@
         $scope.loading = true;
 
         monitoringService.endpointDetails($routeParams.endpointName, $routeParams.sourceIndex).subscribe(function (endpointInstances) {
-            $scope.endpointInstances = endpointInstances;
-            $scope.loading = false;
+            if (endpointInstances.error) {
+                // show warning
+                toastService.showWarning('Could not load endpoint details');
+            } else {
+                $scope.endpointInstances = endpointInstances;
+                $scope.loading = false;
+            }
         });
 
         $scope.$on("$destroy", function handler() {
