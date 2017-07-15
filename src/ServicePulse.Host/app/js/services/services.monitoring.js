@@ -25,7 +25,7 @@
             scConfig.monitoring_urls.forEach(function (url) {
                 $http.get(uri.join(url, 'monitored-endpoints'))
                     .then(function (result) {
-                        var sourceIndex = scConfig.monitoring_urls.findIndex(function (item) { return item === url; });
+                        var sourceIndex = scConfig.monitoring_urls.indexOf(url);
 
                         result.data.forEach(function (endpoint) {
                             endpoint.sourceIndex = sourceIndex;
