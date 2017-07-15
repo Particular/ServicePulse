@@ -7,18 +7,20 @@
         toastService,
         monitoringService) {
 
+        var subscription;
+
         $scope.endpointName = $routeParams.endpointName;
         $scope.loading = true;
 
-        monitoringService.loadEndpointDetails($scope.endpointName, $routeParams.sourceIndex).then(function (result) {
-            $scope.endpointInstances = result.data;
-        }, function (err) {
-            // show warning
-            toastService.showWarning('Could not load endpoint details');
-        }).then(function () {
+        monitoringService.endpointDetails($routeParams.endpointName, $routeParams.sourceIndex).subscribe(function (endpointInstances) {
+            $scope.endpointInstances = endpointInstances;
             $scope.loading = false;
-    });
-    };
+        });
+
+        $scope.$on("$destroy", function handler() {
+            subscription.dispose();
+        });
+    }
 
     controller.$inject = [
         '$scope',
