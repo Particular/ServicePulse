@@ -58,7 +58,7 @@
                             <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <graph ng-if="endpoint.queueLength.points" plot-points="endpoint.queueLength.points" color="#40bc42"></graph>
+                                        <graph ng-if="endpoint.queueLength.points" plot-points="endpoint.queueLength.points" plot-average="endpoint.queueLength.average" plot-x-axis="endpoint.queueLength.pointsAxisValues" color="#40bc42"></graph>
                                     </div>
                                 </div>
                             </div>
