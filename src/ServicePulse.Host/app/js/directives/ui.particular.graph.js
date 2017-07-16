@@ -1,13 +1,14 @@
 ﻿(function(window, angular, undefined) {
     'use strict';
 
-    angular.module('monitored-endpoints', [])
+    angular.module('ui.particular.graph', [])
         .directive('graph',
             function() {
                 return {
                     restrict: 'E',
                     scope: {
-                        data: '=plotPoints'
+                        data: '=plotPoints',
+                        avg: '=plotAverage'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
@@ -16,8 +17,8 @@
                         var graphWidth = 130;
                         var totalWidth = 180;
                         var margin = 2;
-                        var points = scope.data.points;
-                        var average = scope.data.average;
+                        var points = scope.data;
+                        var average = scope.avg;
                         var max = Math.max(average * 1.5, d3.max(points));
                         var scaleY = d3.scaleLinear()
                             .domain([0, max])

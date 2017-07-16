@@ -116,6 +116,10 @@
     <Content Include="app\js\views\message\controller.js" />
     <Content Include="app\js\views\message\route.js" />
     <Content Include="app\js\views\message\messages-view.html" />
+    <Content Include="app\js\views\endpoint_details\endpoint_details.controller.js" />
+    <Content Include="app\js\views\endpoint_details\endpoint_details.html" />
+    <Content Include="app\js\views\endpoint_details\endpoint_details.module.js" />
+    <Content Include="app\js\views\endpoint_details\endpoint_details.route.js" />
     <Content Include="app\js\views\pending_retries\service.js" />
     <Content Include="app\js\views\redirect\controller.js" />
     <Content Include="app\js\views\redirect\edit\controller.js" />
@@ -222,8 +226,8 @@
     <Content Include="app\js\directives\ui.particular.tabset.tpl.html" />
     <Content Include="app\js\views\endpoints\endpoints.controller.js" />
     <Content Include="app\js\views\endpoints\endpoints.route.js" />
-    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.controller.js" />
-    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.route.js" />
+    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.controller.js" />
+    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.route.js" />
     <Content Include="app\js\views\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\views\custom_checks\customChecks.html" />
     <Content Include="app\js\directives\ui.particular.hud.js" />
@@ -233,7 +237,7 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\views\endpoints\endpoints.module.js" />
-    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.module.js" />
+    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.module.js" />
     <Content Include="app\js\services\services.platform-update.js" />
     <Content Include="app\js\services\services.semver.js" />
     <Content Include="app\js\services\services.module.js" />
@@ -250,7 +254,7 @@
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\views\dashboard\dashboard.html" />
     <Content Include="app\js\views\endpoints\endpoints.html" />
-    <Content Include="app\js\views\monitored-endpoints\monitored-endpoints.html" />
+    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
@@ -267,6 +271,7 @@
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="app\js\services\services.uri.js" />
+    <Content Include="app\js\directives\ui.particular.graph.js" />
     <None Include="bower.json" />
     <None Include="bundleconfig.json" />
     <None Include="package.json" />
