@@ -42,23 +42,23 @@
                             <div class="col-sm-4 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <p class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded">
+                                        <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}">
                                             {{endpoint.name}} <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
-                                        </p>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <graph ng-if="endpoint.data.processingTime" plot-points="endpoint.data.processingTime" color="#40bc42"></graph>
+                                        <graph ng-if="endpoint.processingTime.points" plot-points="endpoint.processingTime.points" plot-average="endpoint.processingTime.average" color="#40bc42"></graph>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-3 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <graph ng-if="endpoint.data.criticalTime" plot-points="endpoint.data.criticalTime" color="#d64f21"></graph>
+                                        <graph ng-if="endpoint.criticalTime.points" plot-points="endpoint.criticalTime.points" plot-average="endpoint.criticalTime.average" color="#d64f21"></graph>
                                     </div>
                                 </div>
                             </div>

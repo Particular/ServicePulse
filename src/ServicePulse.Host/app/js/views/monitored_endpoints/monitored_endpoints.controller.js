@@ -34,7 +34,7 @@
         'toastService'
     ];
 
-    angular.module('monitored-endpoints')
+    angular.module('monitored_endpoints')
         .controller('monitoredEndpointsCtrl', controller);
 
 }(window, window.angular));
