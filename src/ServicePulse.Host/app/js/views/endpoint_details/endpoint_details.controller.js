@@ -7,12 +7,10 @@
         toastService,
         monitoringService) {
 
-        var subscription;
-
         $scope.endpointName = $routeParams.endpointName;
         $scope.loading = true;
 
-        monitoringService.endpointDetails($routeParams.endpointName, $routeParams.sourceIndex).subscribe(function (endpointInstances) {
+        var subscription = monitoringService.endpointDetails($routeParams.endpointName, $routeParams.sourceIndex).subscribe(function (endpointInstances) {
             if (endpointInstances.error) {
                 // show warning
                 toastService.showWarning('Could not load endpoint details');
