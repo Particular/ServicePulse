@@ -8,6 +8,7 @@
                     restrict: 'E',
                     scope: {
                         data: '=plotPoints',
+                        xAxis: '=plotXAxis',
                         avg: '=plotAverage'
                     },
                     template: '<svg></svg>',
@@ -20,22 +21,36 @@
                         var points = scope.data;
                         var average = scope.avg;
                         var max = Math.max(average * 1.5, d3.max(points));
+
                         var scaleY = d3.scaleLinear()
                             .domain([0, max])
                             .range([heigth - margin, margin]);
 
+                        var xAxisEnd = points.length - 1;
+                        if (scope.xAxis && scope.xAxis.length) {
+                            xAxisEnd = scope.xAxis[scope.xAxis.length - 1];
+                        }
+
                         var scaleX = d3.scaleLinear()
-                            .domain([0, points.length - 1])
+                            .domain([0, xAxisEnd])
                             .range([margin, graphWidth - margin]);
 
                         var area = d3.area()
-                            .x(function(d, i) { return scaleX(i); })
+                            .x(function (d, i) {
+                                if (scope.xAxis) {
+                                    return scaleX(scope.xAxis[i]);
+                                }
+                                return scaleX(i);
+                            })
                             .y(function (d, i) { return scaleY(d); })
                             .y1(function (d) { return scaleY(0); }) 
                             .curve(d3.curveNatural);
 
                         var line = d3.line()
-                            .x(function(d, i) {
+                            .x(function (d, i) {
+                                if (scope.xAxis) {
+                                    return scaleX(scope.xAxis[i]);
+                                }
                                 return scaleX(i);
                             })
                             .y(function(d, i) {

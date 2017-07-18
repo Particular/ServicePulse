@@ -39,6 +39,8 @@
             $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName))
                 .then(function (result) {
                     observer.onNext(result.data);
+                }, function (error) {
+                    observer.onNext({ error: error });
                 });
         }
 
