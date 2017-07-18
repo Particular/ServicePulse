@@ -8,7 +8,62 @@
 
 <div class="container">
     <busy ng-show="loading" message="Loading details"></busy>
-    <ul>
-        <li ng-repeat="instance in endpointInstances">{{instance.id}}</li>
-    </ul>
+
+    <div ng-show="!loading" class="row box box-no-click">
+        <div class="col-sm-4 no-side-padding">
+            <div class="row box-header">
+                <div class="col-sm-12 no-side-padding">
+                    <p class="lead">Instance Name</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 no-side-padding">
+            <div class="row box-header">
+                <div class="col-sm-12 no-side-padding">
+                    <p class="lead">Processing Time </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3 no-side-padding">
+            <div class="row box-header">
+                <div class="col-sm-12 no-side-padding">
+                    <p class="lead">Critical Time </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12 no-side-padding">
+            <div class="row box box-no-click" ng-repeat="instance in endpointInstances">
+                <div class="col-sm-12 no-side-padding">
+                    <div class="row">
+                        <div class="col-sm-4 no-side-padding">
+                            <div class="row box-header">
+                                <div class="col-sm-12 no-side-padding">
+                                    <div class="hard-wrap">
+                                        {{instance.id}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 no-side-padding">
+                            <div class="row box-header">
+                                <div class="col-sm-12 no-side-padding">
+                                    <graph ng-if="instance.processingTime.points" plot-points="instance.processingTime.points" plot-x-axis="instance.processingTime.pointsAxisValues" plot-average="instance.processingTime.average" color="#40bc42"></graph>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3 no-side-padding">
+                            <div class="row box-header">
+                                <div class="col-sm-12 no-side-padding">
+                                    <graph ng-if="instance.criticalTime.points" plot-points="instance.criticalTime.points" x-axis="instance.criticalTime.pointsAxisValues" plot-average="instance.criticalTime.average" color="#d64f21"></graph>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
