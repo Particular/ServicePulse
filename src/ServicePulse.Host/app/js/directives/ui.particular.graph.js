@@ -44,7 +44,7 @@
                             })
                             .y(function (d, i) { return scaleY(d); })
                             .y1(function (d) { return scaleY(0); }) 
-                            .curve(d3.curveNatural);
+                            .curve(d3.curveLinear);
 
                         var line = d3.line()
                             .x(function (d, i) {
@@ -56,7 +56,7 @@
                             .y(function(d, i) {
                                 return scaleY(d);
                             })
-                            .curve(d3.curveNatural);
+                            .curve(d3.curveLinear);
 
                         var chart = d3.select(svg)
                             .attr('width', totalWidth)
