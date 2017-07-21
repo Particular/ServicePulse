@@ -17,7 +17,7 @@
                         var heigth = 50;
                         var graphWidth = 130;
                         var totalWidth = 180;
-                        var margin = 2;
+                        var margin = 12;
                         var points = scope.data;
                         var average = scope.avg;
                         var max = Math.max(average * 1.5, d3.max(points));
@@ -72,13 +72,26 @@
                             .attr('d', line)
                             .attr('stroke', 'black');
 
+                        chart.append('path')
+                            .datum(Array(points.length).fill(0))
+                            .attr('d', line)
+                            .attr('stroke', 'gray');
+
                         chart.append("text")
-                            .attr("x", graphWidth)
+                            .attr("x", graphWidth - margin + 3)
                             .attr("y", heigth / 2 + 5)
                             .attr("text-anchor", "start")
                             .attr("font-size", 12)
                             .attr("font-family", "sans-serif")
                             .text(average);
+
+                        chart.append("text")
+                            .attr("x", 0)
+                            .attr("y", scaleY(average) + 3)
+                            .attr("text-anchor", "start")
+                            .attr("font-size", 12)
+                            .attr("font-family", "sans-serif")
+                            .text("ø");
                     }
                 };
             });
