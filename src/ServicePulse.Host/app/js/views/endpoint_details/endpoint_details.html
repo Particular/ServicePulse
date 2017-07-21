@@ -1,7 +1,21 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-12 no-side-padding">
-            <h1>{{endpointName}}</h1>
+        <div class="col-sm-10 no-side-padding list-section">
+            <h6>{{endpointName}}</h6>
+        </div>
+        <div class="col-sm-2 no-side-padding toolbar-menus">
+            <div class="msg-group-menu dropdown">
+                <label class="control-label">Period:</label>
+                <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Last 5 mins.
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="javascript://" ng-click="true;">Last 5 mins.</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -20,14 +34,14 @@
         <div class="col-sm-3 no-side-padding">
             <div class="row box-header">
                 <div class="col-sm-12 no-side-padding">
-                    <p class="lead">Processing Time </p>
+                    <p class="lead">Processing Time (ms) </p>
                 </div>
             </div>
         </div>
         <div class="col-sm-3 no-side-padding">
             <div class="row box-header">
                 <div class="col-sm-12 no-side-padding">
-                    <p class="lead">Critical Time </p>
+                    <p class="lead">Critical Time (ms) </p>
                 </div>
             </div>
         </div>
