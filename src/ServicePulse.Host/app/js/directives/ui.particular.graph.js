@@ -83,7 +83,7 @@
                             .attr("text-anchor", "start")
                             .attr("font-size", 12)
                             .attr("font-family", "sans-serif")
-                            .text(average);
+                            .text(average.toFixed(2));
 
                         chart.append("text")
                             .attr("x", 0)
