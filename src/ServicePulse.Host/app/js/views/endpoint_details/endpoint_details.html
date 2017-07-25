@@ -31,14 +31,21 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-3 no-side-padding">
+        <div class="col-sm-2 no-side-padding">
+            <div class="row box-header">
+                <div class="col-sm-12 no-side-padding">
+                    <p class="lead">Retries (msgs)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 no-side-padding">
             <div class="row box-header">
                 <div class="col-sm-12 no-side-padding">
                     <p class="lead">Processing Time (ms) </p>
                 </div>
             </div>
         </div>
-        <div class="col-sm-3 no-side-padding">
+        <div class="col-sm-2 no-side-padding">
             <div class="row box-header">
                 <div class="col-sm-12 no-side-padding">
                     <p class="lead">Critical Time (ms) </p>
@@ -61,14 +68,21 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-3 no-side-padding">
+                        <div class="col-sm-2 no-side-padding">
+                            <div class="row box-header">
+                                <div class="col-sm-12 no-side-padding">
+                                    <graph ng-if="instance.retries.points" plot-points="instance.retries.points" plot-average="instance.retries.average" color="#4286f4"></graph>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 no-side-padding">
                             <div class="row box-header">
                                 <div class="col-sm-12 no-side-padding">
                                     <graph ng-if="instance.processingTime.points" plot-points="instance.processingTime.points" plot-x-axis="instance.processingTime.pointsAxisValues" plot-average="instance.processingTime.average" color="#40bc42"></graph>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-3 no-side-padding">
+                        <div class="col-sm-2 no-side-padding">
                             <div class="row box-header">
                                 <div class="col-sm-12 no-side-padding">
                                     <graph ng-if="instance.criticalTime.points" plot-points="instance.criticalTime.points" x-axis="instance.criticalTime.pointsAxisValues" plot-average="instance.criticalTime.average" color="#d64f21"></graph>
