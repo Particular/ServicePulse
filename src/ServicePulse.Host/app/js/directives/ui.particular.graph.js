@@ -8,7 +8,6 @@
                     restrict: 'E',
                     scope: {
                         data: '=plotPoints',
-                        xAxis: '=plotXAxis',
                         avg: '=plotAverage'
                     },
                     template: '<svg></svg>',
@@ -26,20 +25,12 @@
                             .domain([0, max])
                             .range([heigth - margin, margin]);
 
-                        var xAxisEnd = points.length - 1;
-                        if (scope.xAxis && scope.xAxis.length) {
-                            xAxisEnd = scope.xAxis[scope.xAxis.length - 1];
-                        }
-
                         var scaleX = d3.scaleLinear()
-                            .domain([0, xAxisEnd])
+                            .domain([0, points.length - 1])
                             .range([margin, graphWidth - margin]);
 
                         var area = d3.area()
                             .x(function (d, i) {
-                                if (scope.xAxis) {
-                                    return scaleX(scope.xAxis[i]);
-                                }
                                 return scaleX(i);
                             })
                             .y(function (d, i) { return scaleY(d); })
@@ -48,9 +39,6 @@
 
                         var line = d3.line()
                             .x(function (d, i) {
-                                if (scope.xAxis) {
-                                    return scaleX(scope.xAxis[i]);
-                                }
                                 return scaleX(i);
                             })
                             .y(function(d, i) {
