@@ -73,8 +73,11 @@
                                         <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}">
                                             {{endpoint.name}}
                                             <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
-                                            <span ng-if="endpoint.errorCount" class="warning"><i class="fa fa-envelope"></i></span>
                                         </a>
+                                        <span ng-if="endpoint.errorCount" class="warning">
+                                            <i class="fa fa-envelope"></i>
+                                            <span class="badge badge-important ng-binding">{{endpoint.errorCount | largeNumber:1}}</span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
