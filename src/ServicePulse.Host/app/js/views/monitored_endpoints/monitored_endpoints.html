@@ -71,7 +71,9 @@
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}">
-                                            {{endpoint.name}} <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
+                                            {{endpoint.name}}
+                                            <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
+                                            <span ng-if="endpoint.errorCount" class="warning"><i class="fa fa-envelope"></i></span>
                                         </a>
                                     </div>
                                 </div>

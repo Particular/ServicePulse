@@ -40,8 +40,8 @@
 
         var previousExceptionGroupEtag;
 
-        function getExceptionGroups(classifier) {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier);
+        function getExceptionGroups(classifier, classifierFilter) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier, classifierFilter);
             return $http.get(url).then(function (response) {
                 var status = 200;
                 if (previousExceptionGroupEtag === response.headers('etag')) {
@@ -54,6 +54,14 @@
                     status: status
                 };
             });
+        }
+
+        function getExceptionGroupsForLogicalEndpoint(endpointName) {
+            return getExceptionGroups('Endpoint Name', endpointName);
+        }
+
+        function getExceptionGroupsForEndpointInstance(endpointName) {
+            return getExceptionGroups('Endpoint Name', endpointName);
         }
 
         function getHistoricGroups() {
@@ -281,6 +289,8 @@
             getEventLogItems: getEventLogItems,
             getFailedMessages: getFailedMessages,
             getExceptionGroups: getExceptionGroups,
+            getExceptionGroupsForLogicalEndpoint: getExceptionGroupsForLogicalEndpoint,
+            getExceptionGroupsForEndpointInstance: getExceptionGroupsForEndpointInstance,
             getExceptionGroupClassifiers: getExceptionGroupClassifiers,
             getHistoricGroups: getHistoricGroups,
             getFailedMessagesForExceptionGroup: getFailedMessagesForExceptionGroup,
