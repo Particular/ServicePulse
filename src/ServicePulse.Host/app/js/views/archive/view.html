@@ -6,7 +6,7 @@
         <div class="row" ng-show="!vm.loadingData">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
-                    <button type="button" class="btn btn-default" confirm-title="Are you sure you want to un-archive selected archived messages?" confirm-message="Unarchived messages will be moved back to the list of failed messages." confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> Unarchive {{vm.selectedIds.length | number}} selected</button>
+                    <button type="button" class="btn btn-default" confirm-title="Are you sure you want to un-archive selected archived messages?" confirm-message="Unarchived messages will be moved back to the list of failed messages." confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> Unarchive {{vm.selectedIds.length | largeNumber:1}} selected</button>
 
                     <div class="msg-group-menu dropdown msg-list-dropdown">
                         <label class="control-label">Show:</label>

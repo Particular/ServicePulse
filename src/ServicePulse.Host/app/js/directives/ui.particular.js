@@ -13,7 +13,8 @@
         'ui.particular.nodata',
         'ui.particular.configurationTabs',
         'ui.particular.redirectLink',
-        'ui.particular.graph'
+        'ui.particular.graph',
+        'ui.particular.largenumber'
     ]);
 
 } (window, window.angular));
