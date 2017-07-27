@@ -56,6 +56,22 @@
             });
         }
 
+        function getExceptionGroup(groupId) {
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId);
+            return $http.get(url).then(function (response) {
+                var status = 200;
+                if (previousExceptionGroupEtag === response.headers('etag')) {
+                    status = 304;
+                } else {
+                    previousExceptionGroupEtag = response.headers('etag');
+                }
+                return {
+                    data: response.data,
+                    status: status
+                };
+            });
+        }
+
         function getExceptionGroupsForLogicalEndpoint(endpointName) {
             return getExceptionGroups('Endpoint Name', endpointName);
         }
@@ -288,6 +304,7 @@
             getConfiguration: getConfiguration,
             getEventLogItems: getEventLogItems,
             getFailedMessages: getFailedMessages,
+            getExceptionGroup: getExceptionGroup,
             getExceptionGroups: getExceptionGroups,
             getExceptionGroupsForLogicalEndpoint: getExceptionGroupsForLogicalEndpoint,
             getExceptionGroupsForEndpointInstance: getExceptionGroupsForEndpointInstance,
