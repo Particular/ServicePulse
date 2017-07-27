@@ -5,6 +5,7 @@
         $scope,
         $routeParams,
         toastService,
+        serviceControlService,
         monitoringService) {
 
         $scope.endpointName = $routeParams.endpointName;
@@ -18,6 +19,14 @@
                 $scope.endpointInstances = endpointInstances;
                 $scope.loading = false;
             }
+
+            $scope.endpointInstances.forEach(function (instance) {
+                serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
+                    instance.errorCount = result.data[0].count;
+                }, function (err) {
+                    // Warn user
+                });
+            });
         });
 
         $scope.$on("$destroy", function handler() {
@@ -29,6 +38,7 @@
         '$scope',
         '$routeParams',
         'toastService',
+        'serviceControlService',
         'monitoringService',
     ];
 

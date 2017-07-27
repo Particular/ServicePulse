@@ -61,7 +61,7 @@
         }
 
         function getExceptionGroupsForEndpointInstance(endpointName) {
-            return getExceptionGroups('Endpoint Name', endpointName);
+            return getExceptionGroups('Endpoint Instance', endpointName);
         }
 
         function getHistoricGroups() {
