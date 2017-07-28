@@ -9,6 +9,7 @@
         monitoringService) {
 
         $scope.endpointName = $routeParams.endpointName;
+        $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.loading = true;
 
         var subscription = monitoringService.endpointDetails($routeParams.endpointName, $routeParams.sourceIndex).subscribe(function (endpointInstances) {
