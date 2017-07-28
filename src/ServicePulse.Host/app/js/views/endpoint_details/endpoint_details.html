@@ -4,18 +4,7 @@
             <h6>{{endpointName}}</h6>
         </div>
         <div class="col-sm-2 no-side-padding toolbar-menus">
-            <div class="msg-group-menu dropdown">
-                <label class="control-label">Period:</label>
-                <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Last 5 mins.
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="javascript://" ng-click="true;">Last 5 mins.</a>
-                    </li>
-                </ul>
-            </div>
+            <historical-period-chooser></historical-period-chooser>
         </div>
     </div>
 </div>

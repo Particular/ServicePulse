@@ -4,13 +4,26 @@
 
     function Service($http, rx, scConfig, uri, $q) {
 
-        var endpointsSource = Rx.Observable.create(function (observer) {
-            updateData(observer);
+        var historyPeriod = 5;
+        var refreshEndpointSource;
+        var refreshEndpointDetailsSource;
 
-            var interval = setInterval(function() { updateData(observer); }, 5000);
+        var endpointsSource = Rx.Observable.create(function (observer) {
+            var interval;
+            var setUp = function () {
+                updateData(observer);
+                interval = setInterval(function () { updateData(observer); }, 5000);
+            }
+            refreshEndpointSource = function() {
+                clearInterval(interval);
+                setUp();
+            }
+
+            setUp();
 
             return function () {
                 clearInterval(interval);
+                refreshEndpointSource = null;
             };
         });
 
@@ -22,7 +35,7 @@
 
         function updateData(observer) {
             scConfig.monitoring_urls.forEach(function (url) {
-                $http.get(uri.join(url, 'monitored-endpoints'))
+                $http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
                     .then(function (result) {
                         var sourceIndex = scConfig.monitoring_urls.indexOf(url);
 
@@ -36,7 +49,7 @@
         }
 
         function loadEndpointDetails(observer, endpointName, sourceIndex) {
-            $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName))
+            $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
                 .then(function (result) {
                     observer.onNext(result.data);
                 }, function (error) {
@@ -46,12 +59,23 @@
 
         function endpointDetails(endpointName, sourceIndex) {
             var endpointDetailsSource = Rx.Observable.create(function (observer) {
-                loadEndpointDetails(observer, endpointName, sourceIndex);
+                var updateInterval;
+                var setUp = function() {
+                    loadEndpointDetails(observer, endpointName, sourceIndex);
 
-                var updateInterval = setInterval(function () { loadEndpointDetails(observer, endpointName, sourceIndex); }, 5000);
+                    updateInterval = setInterval(function() {loadEndpointDetails(observer, endpointName, sourceIndex); }, 5000);
+                }
+
+                refreshEndpointDetailsSource = function() {
+                    clearInterval(updateInterval);
+                    setUp();
+                }
+
+                setUp();
 
                 return function () {
                     clearInterval(updateInterval);
+                    refreshEndpointDetailsSource = null;
                 };
             });
 
@@ -59,9 +83,27 @@
                 .shareReplay(1);
         }
 
+        function changeHistoryPeriod(period) {
+            historyPeriod = period;
+
+            if (refreshEndpointSource) {
+                refreshEndpointSource();
+            }
+
+            if (refreshEndpointDetailsSource) {
+                refreshEndpointDetailsSource();
+            }
+        }
+
+        function getHistoryPeriod() {
+            return historyPeriod;
+        }
+
         var service = {
             endpoints: endpoints,
-            endpointDetails: endpointDetails
+            endpointDetails: endpointDetails,
+            changeHistoryPeriod: changeHistoryPeriod,
+            getHistoryPeriod: getHistoryPeriod
         };
 
         return service;

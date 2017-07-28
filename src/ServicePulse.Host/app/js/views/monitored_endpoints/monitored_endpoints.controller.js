@@ -11,6 +11,25 @@
 
         function updateUI() {
             $scope.endpoints = [];
+            $scope.historyPeriods = function () {
+                var periods = {
+                    items: [
+                        { value: 5, text: "Last 5 min." },
+                        { value: 10, text: "Last 10 min." },
+                        { value: 15, text: "Last 15 min." },
+                        { value: 30, text: "Last 30 min." },
+                        { value: 60, text: "Last hour" }
+                    ]
+                }
+
+                periods.selected = periods.items[0];
+                periods.select = function (item) {
+                    periods.selected = item;
+                    monitoringService.changeHistoryPeriod(item.value);
+                }
+
+                return periods;
+            }();
 
             subscription = monitoringService.endpoints.subscribe(function (endpoint) {
                 var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name });
@@ -26,7 +45,7 @@
                     // Warn user
                 });
             });
-        }
+        };
 
         updateUI();
 
