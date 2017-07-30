@@ -13,11 +13,12 @@
             { value: 60, text: "Last hour" }
         ];
 
-        self.selected = self.items.filter(function(i) { return i.value === monitoringService.getHistoryPeriod(); })[0];
         self.select = function(item) {
             self.selected = item;
             monitoringService.changeHistoryPeriod(item.value);
         };
+
+        self.select(self.items[0]);
     }
 
     function link(scope, element, attrs) {
