@@ -5,8 +5,8 @@
     function Service($http, rx, scConfig, uri, $q) {
 
         var historyPeriod = 5;
-        var refreshEndpointSource;
-        var refreshEndpointDetailsSource;
+        var forceEndpointsSourceRefresh = function(){};
+        var forceEndpointsDetailsRefresh = function(){};
 
         var endpointsSource = Rx.Observable.create(function (observer) {
             var interval;
@@ -14,16 +14,18 @@
                 updateData(observer);
                 interval = setInterval(function () { updateData(observer); }, 5000);
             }
-            refreshEndpointSource = function() {
-                clearInterval(interval);
-                setUp();
+            forceEndpointsSourceRefresh = function () {
+                if (interval) {
+                    clearInterval(interval);
+                    setUp();
+                }
             }
 
             setUp();
 
             return function () {
                 clearInterval(interval);
-                refreshEndpointSource = null;
+                interval = null;
             };
         });
 
@@ -59,23 +61,25 @@
 
         function endpointDetails(endpointName, sourceIndex) {
             var endpointDetailsSource = Rx.Observable.create(function (observer) {
-                var updateInterval;
+                var interval;
                 var setUp = function() {
                     loadEndpointDetails(observer, endpointName, sourceIndex);
 
-                    updateInterval = setInterval(function() {loadEndpointDetails(observer, endpointName, sourceIndex); }, 5000);
+                    interval = setInterval(function() {loadEndpointDetails(observer, endpointName, sourceIndex); }, 5000);
                 }
 
-                refreshEndpointDetailsSource = function() {
-                    clearInterval(updateInterval);
-                    setUp();
+                forceEndpointsDetailsRefresh = function () {
+                    if (interval) {
+                        clearInterval(interval);
+                        setUp();
+                    }
                 }
 
                 setUp();
 
                 return function () {
-                    clearInterval(updateInterval);
-                    refreshEndpointDetailsSource = null;
+                    clearInterval(interval);
+                    interval = null;
                 };
             });
 
@@ -86,13 +90,8 @@
         function changeHistoryPeriod(period) {
             historyPeriod = period;
 
-            if (refreshEndpointSource) {
-                refreshEndpointSource();
-            }
-
-            if (refreshEndpointDetailsSource) {
-                refreshEndpointDetailsSource();
-            }
+            forceEndpointsSourceRefresh();
+            forceEndpointsDetailsRefresh();
         }
 
         function getHistoryPeriod() {
