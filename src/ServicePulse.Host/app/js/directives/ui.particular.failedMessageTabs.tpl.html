@@ -5,9 +5,9 @@
                 <span ng-hide="counters.message === 0" tooltip="There's varying numbers of failed message groups depending on group type">!</span>
                 <span ng-show="counters.message === 0">0</span>
             </span></h5>
-            <h5 ng-class="{ active: isActive('/failed-messages/all') }"><a ng-click="viewExceptionGroup()">All failed messages</a> <span class="badge badge-important">{{counters.message | number}}</span></h5>
-            <h5 ng-class="{ active: isActive('/failed-messages/archived') }"><a href="#/failed-messages/archived">Archived messages ({{counters.archived | number}})</a></h5>
-            <h5 ng-show="{{showPendingRetry}}" ng-class="{ active: isActive('/failed-messages/pending-retries') }"><a href="#/failed-messages/pending-retries">Pending retries ({{counters.pendingRetries | number}})</a></h5>
+            <h5 ng-class="{ active: isActive('/failed-messages/all') }"><a ng-click="viewExceptionGroup()">All failed messages</a> <span class="badge badge-important">{{counters.message | largeNumber:1}}</span></h5>
+            <h5 ng-class="{ active: isActive('/failed-messages/archived') }"><a href="#/failed-messages/archived">Archived messages ({{counters.archived | largeNumber:1}})</a></h5>
+            <h5 ng-show="{{showPendingRetry}}" ng-class="{ active: isActive('/failed-messages/pending-retries') }"><a href="#/failed-messages/pending-retries">Pending retries ({{counters.pendingRetries | largeNumber:1}})</a></h5>
         </div>
     </div>
 </div>
