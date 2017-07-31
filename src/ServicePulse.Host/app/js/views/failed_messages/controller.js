@@ -17,11 +17,10 @@
         var vm = this;
 
         var notifier = notifyService();
-        vm.selectedExceptionGroup = sharedDataService.get();
 
-        if (!vm.selectedExceptionGroup) {
-            vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
-        }
+        vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
+        vm.selectedExceptionGroup.parentTitle = $routeParams.parentGroupId;
+        vm.selectedExceptionGroup.parentGroupIndex = $routeParams.parentGroupIndex;
 
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
             $location.path('/failed-messages/groups');
@@ -61,10 +60,19 @@
             vm.loadingData = false;
         };
 
+        function loadGroupDetails() {
+            if (vm.selectedExceptionGroup.initialLoad && vm.selectedExceptionGroup.id) {
+                    serviceControlService.getExceptionGroup(vm.selectedExceptionGroup.id).then(function (result) {
+                        vm.selectedExceptionGroup.title = result.data.title;
+                });
+            }
+        }
+
         var init = function() {
             vm.failedMessages = [];
             vm.selectedIds = [];
             vm.page = 1;
+            loadGroupDetails();
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults(vm.selectedExceptionGroup);
         }

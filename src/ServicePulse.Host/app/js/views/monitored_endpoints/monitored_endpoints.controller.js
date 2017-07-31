@@ -4,6 +4,7 @@
     function controller(
         $scope,
         monitoringService,
+        serviceControlService,
         toastService) {
 
         var subscription;
@@ -18,6 +19,12 @@
                 } else {
                     $scope.endpoints.push(endpoint);
                 }
+
+                serviceControlService.getExceptionGroupsForLogicalEndpoint(endpoint.name).then(function (result) {
+                    $scope.endpoints[index].errorCount = result.data[0].count;
+                }, function (err) {
+                    // Warn user
+                });
             });
         }
 
@@ -31,6 +38,7 @@
     controller.$inject = [
         '$scope',
         'monitoringService',
+        'serviceControlService',
         'toastService'
     ];
 

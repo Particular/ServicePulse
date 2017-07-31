@@ -272,6 +272,7 @@
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="app\js\services\services.uri.js" />
     <Content Include="app\js\directives\ui.particular.graph.js" />
+    <Content Include="app\js\directives\ui.particular.largenumber.js" />
     <None Include="bower.json" />
     <None Include="bundleconfig.json" />
     <None Include="package.json" />

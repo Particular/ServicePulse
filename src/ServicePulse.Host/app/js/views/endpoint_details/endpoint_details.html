@@ -64,6 +64,10 @@
                                 <div class="col-sm-12 no-side-padding">
                                     <div class="hard-wrap">
                                         {{instance.id}}
+                                        <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
+                                            <i class="fa fa-envelope"></i>
+                                            <span class="badge badge-important ng-binding">{{instance.errorCount | largeNumber:1}}</span>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
