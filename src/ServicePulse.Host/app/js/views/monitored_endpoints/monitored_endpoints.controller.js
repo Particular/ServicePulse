@@ -3,35 +3,43 @@
 
     function controller(
         $scope,
+        $location,
         monitoringService,
         serviceControlService,
         toastService) {
 
         var subscription;
 
+        $scope.periods = [
+                { value: 5, text: "Last 5 min." },
+                { value: 10, text: "Last 10 min." },
+                { value: 15, text: "Last 15 min." },
+                { value: 30, text: "Last 30 min." },
+                { value: 60, text: "Last hour" }
+        ];
+
+        $scope.selectedPeriod = $scope.periods[0];
+
+        if ($location.$$search.historyPeriod) {
+            $scope.selectedPeriod = $scope.periods[$scope.periods.findIndex(function (period) {
+                return period.value == $location.$$search.historyPeriod;
+            })];
+        }
+
+        $scope.endpoints = [];
+
+        $scope.selectPeriod = function (period) {
+            $scope.selectedPeriod = period;
+
+            updateUI();
+        };
+
         function updateUI() {
-            $scope.endpoints = [];
-            $scope.historyPeriods = function () {
-                var periods = {
-                    items: [
-                        { value: 5, text: "Last 5 min." },
-                        { value: 10, text: "Last 10 min." },
-                        { value: 15, text: "Last 15 min." },
-                        { value: 30, text: "Last 30 min." },
-                        { value: 60, text: "Last hour" }
-                    ]
-                }
+            if (subscription) {
+                subscription.dispose();
+            }
 
-                periods.selected = periods.items[0];
-                periods.select = function (item) {
-                    periods.selected = item;
-                    monitoringService.changeHistoryPeriod(item.value);
-                }
-
-                return periods;
-            }();
-
-            subscription = monitoringService.endpoints.subscribe(function (endpoint) {
+            subscription = monitoringService.createEndpointsSource($scope.selectedPeriod.value).subscribe(function (endpoint) {
                 var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name });
                 if (index >= 0) {
                     $scope.endpoints[index] = endpoint;
@@ -45,7 +53,7 @@
                     // Warn user
                 });
             });
-        };
+        }
 
         updateUI();
 
@@ -56,6 +64,7 @@
 
     controller.$inject = [
         '$scope',
+        '$location',
         'monitoringService',
         'serviceControlService',
         'toastService'

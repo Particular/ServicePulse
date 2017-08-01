@@ -4,38 +4,29 @@
 
     function Service($http, rx, scConfig, uri, $q) {
 
-        var historyPeriod = 5;
-        var forceEndpointsSourceRefresh = function(){};
-        var forceEndpointsDetailsRefresh = function(){};
-
-        var endpointsSource = Rx.Observable.create(function (observer) {
-            var interval;
-            var setUp = function () {
-                updateData(observer);
-                interval = setInterval(function () { updateData(observer); }, 5000);
-            }
-            forceEndpointsSourceRefresh = function () {
-                if (interval) {
+        function createEndpointsSource(historyPeriod) {
+            return Rx.Observable.create(function (observer) {
+                var interval;
+                var setUp = function () {
                     clearInterval(interval);
-                    setUp();
+
+                    loadEndpointDataFromMonitoringService(observer, historyPeriod);
+                    interval = setInterval(function () { loadEndpointDataFromMonitoringService(observer, historyPeriod); }, 5000);
                 }
-            }
 
-            setUp();
+                setUp();
 
-            return function () {
-                clearInterval(interval);
-                interval = null;
-            };
-        });
-
-        var endpoints = endpointsSource
-            .shareReplay(1)
+                return function () {
+                    clearInterval(interval);
+                    interval = null;
+                };
+            }).shareReplay(1)
             .selectMany(function (endpoints) {
                 return endpoints;
             });
+        }
 
-        function updateData(observer) {
+        function loadEndpointDataFromMonitoringService(observer, historyPeriod) {
             scConfig.monitoring_urls.forEach(function (url) {
                 $http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
                     .then(function (result) {
@@ -50,7 +41,7 @@
             });
         }
 
-        function loadEndpointDetails(observer, endpointName, sourceIndex) {
+        function loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod) {
             $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
                 .then(function (result) {
                     observer.onNext(result.data);
@@ -59,20 +50,15 @@
                 });
         }
 
-        function endpointDetails(endpointName, sourceIndex) {
+        function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod) {
             var endpointDetailsSource = Rx.Observable.create(function (observer) {
                 var interval;
                 var setUp = function() {
-                    loadEndpointDetails(observer, endpointName, sourceIndex);
+                    clearInterval(interval);
 
-                    interval = setInterval(function() {loadEndpointDetails(observer, endpointName, sourceIndex); }, 5000);
-                }
+                    loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod);
 
-                forceEndpointsDetailsRefresh = function () {
-                    if (interval) {
-                        clearInterval(interval);
-                        setUp();
-                    }
+                    interval = setInterval(function () { loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod); }, 5000);
                 }
 
                 setUp();
@@ -87,22 +73,13 @@
                 .shareReplay(1);
         }
 
-        function changeHistoryPeriod(period) {
-            historyPeriod = period;
-
-            forceEndpointsSourceRefresh();
-            forceEndpointsDetailsRefresh();
-        }
-
         function getHistoryPeriod() {
             return historyPeriod;
         }
 
         var service = {
-            endpoints: endpoints,
-            endpointDetails: endpointDetails,
-            changeHistoryPeriod: changeHistoryPeriod,
-            getHistoryPeriod: getHistoryPeriod
+            createEndpointsSource: createEndpointsSource,
+            createEndpointDetailsSource: createEndpointDetailsSource
         };
 
         return service;

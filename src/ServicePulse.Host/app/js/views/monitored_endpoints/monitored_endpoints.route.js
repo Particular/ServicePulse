@@ -8,7 +8,8 @@
             },
             templateUrl: 'js/views/monitored_endpoints/monitored_endpoints.html',
             controller: 'monitoredEndpointsCtrl',
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            reloadOnSearch: false
         });
     };
 

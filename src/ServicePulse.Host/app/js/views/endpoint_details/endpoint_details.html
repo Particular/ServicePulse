@@ -4,7 +4,18 @@
             <h6>{{endpointName}}</h6>
         </div>
         <div class="col-sm-2 no-side-padding toolbar-menus">
-            <historical-period-chooser></historical-period-chooser>
+            <div class="msg-group-menu dropdown">
+                <label class="control-label">Period:</label>
+                <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{selectedPeriod.text}}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="period in periods">
+                        <a ng-click="selectPeriod(period)" href="#/endpoint_details/{{endpointName}}/{{sourceIndex}}?historyPeriod={{period.value}}">{{period.text}}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

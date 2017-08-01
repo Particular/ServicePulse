@@ -14,8 +14,7 @@
         'ui.particular.configurationTabs',
         'ui.particular.redirectLink',
         'ui.particular.graph',
-        'ui.particular.largenumber',
-        'ui.particular.historicalPeriodChooser'
+        'ui.particular.largenumber'
     ]);
 
 } (window, window.angular));

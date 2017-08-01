@@ -8,7 +8,8 @@
             },
             templateUrl: 'js/views/endpoint_details/endpoint_details.html',
             controller: 'endpointDetailsCtrl',
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            reloadOnSearch: false
         });
     };
 
