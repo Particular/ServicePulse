@@ -1467,12 +1467,12 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     width:100%;
 }
 
-.endpointrow {
+.endpoint-row {
     height:60px;
     position:relative;
 }
 
-.endpointrow .graphicon {
+.endpoint-row .graphicon {
     top:50%;
     position:absolute;
     transform:translateY(-50%);
