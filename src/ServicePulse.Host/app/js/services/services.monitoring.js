@@ -4,25 +4,31 @@
 
     function Service($http, rx, scConfig, uri, $q) {
 
-        var endpointsSource = Rx.Observable.create(function (observer) {
-            updateData(observer);
+        function createEndpointsSource(historyPeriod) {
+            return Rx.Observable.create(function (observer) {
+                var interval;
+                var setUp = function () {
+                    clearInterval(interval);
 
-            var interval = setInterval(function() { updateData(observer); }, 5000);
+                    loadEndpointDataFromMonitoringService(observer, historyPeriod);
+                    interval = setInterval(function () { loadEndpointDataFromMonitoringService(observer, historyPeriod); }, 5000);
+                }
 
-            return function () {
-                clearInterval(interval);
-            };
-        });
+                setUp();
 
-        var endpoints = endpointsSource
-            .shareReplay(1)
+                return function () {
+                    clearInterval(interval);
+                    interval = null;
+                };
+            }).shareReplay(1)
             .selectMany(function (endpoints) {
                 return endpoints;
             });
+        }
 
-        function updateData(observer) {
+        function loadEndpointDataFromMonitoringService(observer, historyPeriod) {
             scConfig.monitoring_urls.forEach(function (url) {
-                $http.get(uri.join(url, 'monitored-endpoints'))
+                $http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
                     .then(function (result) {
                         var sourceIndex = scConfig.monitoring_urls.indexOf(url);
 
@@ -35,8 +41,8 @@
             });
         }
 
-        function loadEndpointDetails(observer, endpointName, sourceIndex) {
-            $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName))
+        function loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod) {
+            $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
                 .then(function (result) {
                     observer.onNext(result.data);
                 }, function (error) {
@@ -44,14 +50,22 @@
                 });
         }
 
-        function endpointDetails(endpointName, sourceIndex) {
+        function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod) {
             var endpointDetailsSource = Rx.Observable.create(function (observer) {
-                loadEndpointDetails(observer, endpointName, sourceIndex);
+                var interval;
+                var setUp = function() {
+                    clearInterval(interval);
 
-                var updateInterval = setInterval(function () { loadEndpointDetails(observer, endpointName, sourceIndex); }, 5000);
+                    loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod);
+
+                    interval = setInterval(function () { loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod); }, 5000);
+                }
+
+                setUp();
 
                 return function () {
-                    clearInterval(updateInterval);
+                    clearInterval(interval);
+                    interval = null;
                 };
             });
 
@@ -59,9 +73,13 @@
                 .shareReplay(1);
         }
 
+        function getHistoryPeriod() {
+            return historyPeriod;
+        }
+
         var service = {
-            endpoints: endpoints,
-            endpointDetails: endpointDetails
+            createEndpointsSource: createEndpointsSource,
+            createEndpointDetailsSource: createEndpointDetailsSource
         };
 
         return service;

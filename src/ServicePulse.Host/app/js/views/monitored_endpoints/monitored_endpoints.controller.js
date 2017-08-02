@@ -3,16 +3,37 @@
 
     function controller(
         $scope,
+        $location,
         monitoringService,
         serviceControlService,
-        toastService) {
+        toastService,
+        historyPeriods) {
 
         var subscription;
 
-        function updateUI() {
-            $scope.endpoints = [];
+        $scope.periods = historyPeriods;
+        $scope.selectedPeriod = $scope.periods[0];
 
-            subscription = monitoringService.endpoints.subscribe(function (endpoint) {
+        if ($location.$$search.historyPeriod) {
+            $scope.selectedPeriod = $scope.periods[$scope.periods.findIndex(function (period) {
+                return period.value == $location.$$search.historyPeriod;
+            })];
+        }
+
+        $scope.endpoints = [];
+
+        $scope.selectPeriod = function (period) {
+            $scope.selectedPeriod = period;
+
+            updateUI();
+        };
+
+        function updateUI() {
+            if (subscription) {
+                subscription.dispose();
+            }
+
+            subscription = monitoringService.createEndpointsSource($scope.selectedPeriod.value).subscribe(function (endpoint) {
                 var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name });
                 if (index >= 0) {
                     $scope.endpoints[index] = endpoint;
@@ -37,9 +58,11 @@
 
     controller.$inject = [
         '$scope',
+        '$location',
         'monitoringService',
         'serviceControlService',
-        'toastService'
+        'toastService',
+        'historyPeriods'
     ];
 
     angular.module('monitored_endpoints')
