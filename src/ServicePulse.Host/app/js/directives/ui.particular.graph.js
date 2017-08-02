@@ -73,10 +73,7 @@
                             .attr("font-family", "sans-serif")
                             .text(average.toFixed(2));
 
-                        var scaleYValue = scaleY(average == 0 ? 1 : average) + 3;
-                        if (isNaN(scaleYValue)) {
-                            scaleYValue = 0;
-                        }
+                        var scaleYValue = (scaleY(average == 0 ? 1 : average) + 3) | 0;
 
                         chart.append("text")
                             .attr("x", 0)
