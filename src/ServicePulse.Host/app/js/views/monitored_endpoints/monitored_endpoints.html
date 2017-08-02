@@ -25,7 +25,7 @@
         <no-data ng-show="!endpoints.length" message="No active endpoints"></no-data>
 
         <div class="row box box-no-click">
-            <div class="col-sm-4 no-side-padding">
+            <div class="col-sm-2 no-side-padding">
                 <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
                         <p class="lead"> Name</p>
@@ -36,6 +36,13 @@
                 <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
                         <p class="lead">Queue Length (msgs)</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p class="lead">Throughput (msgs/s)</p>
                     </div>
                 </div>
             </div>
@@ -67,7 +74,7 @@
                 <div class="row box box-no-click" ng-repeat="endpoint in endpoints">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <div class="col-sm-4 no-side-padding">
+                            <div class="col-sm-2 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}?historyPeriod={{selectedPeriod.value}}">
@@ -85,6 +92,13 @@
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
                                         <graph ng-if="endpoint.queueLength.points" plot-points="endpoint.queueLength.points" plot-average="endpoint.queueLength.average" color="#e09365"></graph>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-2 no-side-padding">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <graph ng-if="endpoint.throughput.points" plot-points="endpoint.throughput.points" plot-average="endpoint.throughput.average" color="#e09365"></graph>
                                     </div>
                                 </div>
                             </div>
