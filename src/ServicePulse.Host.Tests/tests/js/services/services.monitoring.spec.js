@@ -31,10 +31,10 @@
     it('should push endpoints retrieved from monitoring server', function () {
         scConfig.monitoring_urls = ['http://localhost:1234/diagrams'];
 
-        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
 
         var monitoredEndpoints = [];
-        monitoringService.endpoints.subscribe(function (response) {
+        monitoringService.createEndpointsSource(5).subscribe(function (response) {
             monitoredEndpoints.push(response);
         });
         $httpBackend.flush();
@@ -51,13 +51,13 @@
     });
 
     it('should push endpoints retrieved from multiple monitoring servers', function () {
-        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints').respond(monitoredEndpointWithData);
-        $httpBackend.whenGET('http://localhost:5678/diagrams/monitored-endpoints').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:5678/diagrams/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
 
         scConfig.monitoring_urls = ['http://localhost:1234/diagrams', 'http://localhost:5678/diagrams'];
 
         var monitoredEndpoints = [];
-        monitoringService.endpoints.subscribe(function (response) {
+        monitoringService.createEndpointsSource(5).subscribe(function (response) {
             monitoredEndpoints.push(response);
         });
         $httpBackend.flush();

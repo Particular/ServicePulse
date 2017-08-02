@@ -7,12 +7,12 @@
             <div class="msg-group-menu dropdown">
                 <label class="control-label">Period:</label>
                 <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Last 5 mins.
+                    {{selectedPeriod.text}}
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li>
-                        <a href="javascript://" ng-click="true;">Last 5 mins.</a>
+                    <li ng-repeat="period in periods">
+                        <a ng-click="selectPeriod(period)" href="#/monitored_endpoints?historyPeriod={{period.value}}">{{period.text}}</a>
                     </li>
                 </ul>
             </div>
@@ -70,7 +70,7 @@
                             <div class="col-sm-4 no-side-padding">
                                 <div class="row box-header">
                                     <div class="col-sm-12 no-side-padding">
-                                        <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}">
+                                        <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}?historyPeriod={{selectedPeriod.value}}">
                                             {{endpoint.name}}
                                             <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
                                         </a>
@@ -111,9 +111,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </section>
