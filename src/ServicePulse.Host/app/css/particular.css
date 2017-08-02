@@ -1466,3 +1466,14 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 .graph svg {
     width:100%;
 }
+
+.endpointrow {
+    height:60px;
+    position:relative;
+}
+
+.endpointrow .graphicon {
+    top:50%;
+    position:absolute;
+    transform:translateY(-50%);
+}
