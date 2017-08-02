@@ -7,21 +7,15 @@
         $location,
         toastService,
         serviceControlService,
-        monitoringService) {
+        monitoringService,
+        historyPeriods) {
 
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.loading = true;
         var subscription;
 
-        $scope.periods = [
-                { value: 5, text: "Last 5 min." },
-                { value: 10, text: "Last 10 min." },
-                { value: 15, text: "Last 15 min." },
-                { value: 30, text: "Last 30 min." },
-                { value: 60, text: "Last hour" }
-        ];
-
+        $scope.periods = historyPeriods;
         $scope.selectedPeriod = $scope.periods[0];
 
         if ($location.$$search.historyPeriod) {
@@ -74,6 +68,7 @@
         'toastService',
         'serviceControlService',
         'monitoringService',
+        'historyPeriods'
     ];
 
     angular.module('endpoint_details')
