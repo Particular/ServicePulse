@@ -1458,3 +1458,11 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
         overflow: hidden !important;
     }
 }
+
+.graph {
+    width:80%;
+}
+
+.graph svg {
+    width:100%;
+}
