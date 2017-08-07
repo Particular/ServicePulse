@@ -57,7 +57,7 @@
         }
 
         function getExceptionGroup(groupId) {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', groupId);
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', 'id', groupId);
             return $http.get(url).then(function (response) {
                 var status = 200;
                 if (previousExceptionGroupEtag === response.headers('etag')) {
