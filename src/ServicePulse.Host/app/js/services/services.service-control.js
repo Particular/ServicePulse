@@ -41,7 +41,7 @@
         var previousExceptionGroupEtag;
 
         function getExceptionGroups(classifier, classifierFilter) {
-            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier, classifierFilter);
+            var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier) + '?classifierFilter=' + classifierFilter;
             return $http.get(url).then(function (response) {
                 var status = 200;
                 if (previousExceptionGroupEtag === response.headers('etag')) {
