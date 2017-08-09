@@ -23,7 +23,9 @@
     <ROW Property="BannerBitmap" Value="banner" MultiBuildValue="DefaultBuild:banner.jpg" Type="1" MsiKey="BannerBitmap"/>
     <ROW Property="DialogBitmap" Value="dialog" MultiBuildValue="DefaultBuild:dialog.jpg" Type="1" MsiKey="DialogBitmap"/>
     <ROW Property="IGNORE_SERVICECONTROL_OFFLINE" Value="IDNO"/>
+    <ROW Property="IGNORE_SERVICECONTROLMONITORING_OFFLINE" Value="IDNO"/>
     <ROW Property="INST_PORT_PULSE" Value="9090" Type="4"/>
+    <ROW Property="INST_SC_MONITORING_URI" Value="http://localhost:33633/"/>
     <ROW Property="INST_URI" Value="http://localhost:33333/api/"/>
     <ROW Property="Manufacturer" Value="Particular Software"/>
     <ROW Property="ProductCode" Value="1033:{BAE534DC-0605-4EC0-8E26-561E9107485B} " Type="16"/>
@@ -171,6 +173,9 @@
     <ROW Dialog_="Configuration" Control="Text_4" Type="Text" X="20" Y="137" Width="272" Height="18" Attributes="65539" Property="TEXT_3_PROP_1" Text="Specify the URI that ServicePulse should use to connect to ServiceControl" Order="1100"/>
     <ROW Dialog_="Configuration" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="ServicePulse Configuration" TextStyle="[DlgTitleFont]" Order="1200" TextLocId="Control.Text.FolderDlg#Title"/>
     <ROW Dialog_="Configuration" Control="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Attributes="196611" Text="Adjust configuration settings" Order="1300" TextLocId="Control.Text.FolderDlg#Description"/>
+    <ROW Dialog_="Configuration" Control="Edit_3" Type="Edit" X="109" Y="208" Width="237" Height="15" Attributes="3" Property="INST_SC_MONITORING_URI" Text="{260}" Order="1400"/>
+    <ROW Dialog_="Configuration" Control="Text_5" Type="Text" X="20" Y="208" Width="89" Height="53" Attributes="65539" Property="TEXT_2_PROP_1" Text="ServiceControl Monitoring URI" TextStyle="DlgFontBold8" Order="1500"/>
+    <ROW Dialog_="Configuration" Control="Text_6" Type="Text" X="20" Y="186" Width="321" Height="18" Attributes="65539" Property="TEXT_3_PROP_1_1" Text="Specify the URI that ServicePulse should use to connect to ServiceControl Monitoring" Order="1600"/>
     <ROW Dialog_="CustomizeDlg" Control="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Back]" Order="600" TextLocId="-" MsiKey="CustomizeDlg#Back" Options="1"/>
     <ROW Dialog_="CustomizeDlg" Control="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Next]" Order="700" TextLocId="-" MsiKey="CustomizeDlg#Next" Options="1"/>
     <ROW Dialog_="CustomizeDlg" Control="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Order="800" TextLocId="-" MsiKey="CustomizeDlg#Cancel" Options="1"/>
@@ -282,7 +287,7 @@
     <ROW Dialog_="ResumeDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_RESUME" Ordering="299"/>
     <ROW Dialog_="BrowseDlg" Control_="OK" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="1" Ordering="201"/>
     <ROW Dialog_="Configuration" Control_="Cancel" Event="SpawnDialog" Argument="CancelDlg" Condition="1" Ordering="100"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL AND ( 1 AND  (VALID_PORT=&quot;TRUE&quot;) AND (VALID_CONTROL_URL=&quot;TRUE&quot;) AND (CONTACT_SERVICECONTROL=&quot;TRUE&quot; OR IGNORE_SERVICECONTROL_OFFLINE &lt;&gt; &quot;IDNO&quot;) )" Ordering="15"/>
+    <ROW Dialog_="Configuration" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="AI_INSTALL AND ( 1 AND  (VALID_PORT=&quot;TRUE&quot;) AND (VALID_CONTROL_URL=&quot;TRUE&quot;) AND (CONTACT_SERVICECONTROL=&quot;TRUE&quot; OR IGNORE_SERVICECONTROL_OFFLINE &lt;&gt; &quot;IDNO&quot;) )" Ordering="23"/>
     <ROW Dialog_="Configuration" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Invalid_ServicePulseUrl_Msg" Condition="AI_INSTALL AND ( VALID_PORT = &quot;FALSE&quot; )" Ordering="6"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_3" Condition="AI_INSTALL AND ( VALID_PORT = &quot;FALSE&quot; )" Ordering="5"/>
@@ -296,6 +301,12 @@
     <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="12"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_4" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="11"/>
+    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Check_SC_Monitoring_URL" Condition="AI_INSTALL AND ( VALID_PORT = &quot;TRUE&quot; )" Ordering="15"/>
+    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Connect_SC_Monitoring" Condition="AI_INSTALL AND ( VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; )" Ordering="16"/>
+    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Invalid_ServiceControlMonitoringUrl_Msg" Condition="AI_INSTALL AND ( VALID_CONTROL_MONITORING_URL=&quot;FALSE&quot; )" Ordering="19"/>
+    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_5" Condition="AI_INSTALL AND ( VALID_CONTROL_MONITORING_URL=&quot;FALSE&quot; )" Ordering="18"/>
+    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Warning_ServiceControlMonitoring_Unavail_msg" Condition="AI_INSTALL AND ( ( CONTACT_SERVICECONTROL_MONITORING=&quot;FALSE&quot; ) AND  1 )" Ordering="22"/>
+    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_6" Condition="AI_INSTALL AND ( ( CONTACT_SERVICECONTROL_MONITORING=&quot;FALSE&quot; ) AND  1 )" Ordering="21"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR"/>
@@ -308,6 +319,8 @@
     <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="Particular.ServicePulse"/>
     <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="The specified port  for ServicePulse is invalid. Please choose port between 1 and 49151 |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_4" Type="51" Source="CustomActionData" Target="The URL specified for ServiceControl is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_5" Type="51" Source="CustomActionData" Target="The URL specified for ServiceControl Monitoring is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_6" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl Monitoring using the URI specified.  Do you wish to proceed with the install anyway?&#13;\n |ServicePulse[ProductVersion] |MB_YESNO,MB_ICONWARNING,MB_DEFBUTTON2|IGNORE_SERVICECONTROLMONITORING_OFFLINE|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -330,11 +343,14 @@
     <ROW Action="AI_ResolveLocalizedCredentials" Type="1" Source="aicustact.dll" Target="GetLocalizedCredentials"/>
     <ROW Action="AI_SHOW_LOG" Type="65" Source="aicustact.dll" Target="LaunchLogFile" WithoutSeq="true"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
+    <ROW Action="Check_SC_Monitoring_URL" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="CheckServiceControlMonitoringUrl" WithoutSeq="true"/>
     <ROW Action="Check_SC_URL" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="CheckServiceControlUrl" WithoutSeq="true"/>
     <ROW Action="Check_SP_PORT" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="CheckPulsePort" WithoutSeq="true"/>
     <ROW Action="Connect_SC" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ContactServiceControl" WithoutSeq="true"/>
+    <ROW Action="Connect_SC_Monitoring" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ContactServiceControlMonitoring" WithoutSeq="true"/>
     <ROW Action="DetectService" Type="1" Source="aicustact.dll" Target="DetectService" Options="3" AdditionalSeq="AI_DATA_SETTER_2"/>
-    <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --description=&quot;Monitoring and operations for NServiceBus&quot; --url=http://localhost:[INST_PORT_PULSE] --serviceControlUrl=[INST_URI] --autostart" Options="1"/>
+    <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --description=&quot;Monitoring and operations for NServiceBus&quot; --url=http://localhost:[INST_PORT_PULSE] --serviceControlUrl=[INST_URI] --serviceControlMonitoringUrl=[INST_SC_MONITORING_URI] --autostart" Options="1"/>
+    <ROW Action="Invalid_ServiceControlMonitoringUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_5"/>
     <ROW Action="Invalid_ServiceControlUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_4"/>
     <ROW Action="Invalid_ServicePulseUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_3"/>
     <ROW Action="Launch_Url" Type="1090" Source="viewer.exe" Target="http://www.particular.net/Installation-completed?installer=ServicePulse&amp;version=[ProductVersion]&amp;localURL=http://localhost:[INST_PORT_PULSE]" Options="1"/>
@@ -347,6 +363,7 @@
     <ROW Action="Start_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
     <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
+    <ROW Action="Warning_ServiceControlMonitoring_Unavail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_6"/>
     <ROW Action="Warning_ServiceControl_Unavail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_1"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
@@ -364,9 +381,9 @@
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
     <ROW Action="AI_STORE_LOCATION" Condition="(Not Installed) OR REINSTALL" Sequence="1502"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
-    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="52"/>
-    <ROW Action="AI_GetArpIconPath" Sequence="51"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="55"/>
+    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="54"/>
+    <ROW Action="AI_GetArpIconPath" Sequence="52"/>
     <ROW Action="AI_RemoveExternalUIStub" Condition="(REMOVE=&quot;ALL&quot;) AND ((VersionNT &gt; 500) OR((VersionNT = 500) AND (ServicePackLevel &gt;= 4)))" Sequence="1501"/>
     <ROW Action="Launch_Url" Condition="( NOT Installed ) AND ( UILevel &lt;&gt; &quot;2&quot; )" Sequence="6404"/>
     <ROW Action="Install_Service" Condition="( NOT Installed )" Sequence="6402"/>
@@ -392,11 +409,11 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
-    <ROW Action="AI_ResolveKnownFolders" Sequence="53"/>
-    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="52"/>
+    <ROW Action="AI_ResolveKnownFolders" Sequence="54"/>
+    <ROW Action="AI_ResolveLocalizedCredentials" Sequence="53"/>
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Sequence="99"/>
     <ROW Action="AI_RESTORE_AI_SETUPEXEPATH" Condition="AI_SETUPEXEPATH_ORIGINAL" Sequence="101"/>
-    <ROW Action="AI_DpiContentScale" Sequence="51"/>
+    <ROW Action="AI_DpiContentScale" Sequence="52"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
     <ROW Condition="(AI_DOTNET40_SEARCH = &quot;#1&quot;) OR (AI_DOTNET45_SEARCH &gt;= &quot;4.5&quot;)" Description="[ProductName] cannot be installed on systems with .NET Framework version lower than [AI_MINDOTNETVERSION]" DescriptionLocId="AI.LaunchCondition.DotNET" IsPredefined="true" Builds="DefaultBuild"/>
