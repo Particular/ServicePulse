@@ -98,6 +98,20 @@
         }
 
         [Test]
+        public void Extract_Args_With_SC_Monitoring_Specified()
+        {
+            args = new[]
+            {
+                "-extract",
+                $"--serviceControlMonitoringUrl={validUrl}"
+            };
+            var hostArgs = new HostArguments(args);
+            Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
+            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Extract, "extract argument did not parse to correct execution mode");
+            Assert.IsTrue(hostArgs.ServiceControlMonitoringUrl.Equals(validUrl, StringComparison.Ordinal), "ServiceControlMonitoringUrl argument was not parsed correctly");
+        }
+
+        [Test]
         public void Extract_Args_With_Output_Specified()
         {
             var path = @"c:\foo\bar";
@@ -120,6 +134,7 @@
             {
                 "-e",
                 $"--servicecontrolurl={validUrl}",
+                $"--serviceControlMonitoringUrl={validUrl}",
                 $"--outpath={path}"
 
             };
@@ -128,6 +143,7 @@
             Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
             Assert.IsTrue(hostArgs.OutputPath.Equals(path, StringComparison.Ordinal), "outpath argument was not parsed correctly");
             Assert.IsTrue(hostArgs.ServiceControlUrl.Equals(validUrl, StringComparison.Ordinal), "ServiceControlUrl argument was not parsed correctly");
+            Assert.IsTrue(hostArgs.ServiceControlMonitoringUrl.Equals(validUrl, StringComparison.Ordinal), "ServiceControlMonitoringUrl argument was not parsed correctly");
         }
     }
 }

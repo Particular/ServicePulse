@@ -67,6 +67,11 @@ namespace ServicePulse.Host.Hosting
                     , s => { serviceControlUrl = s; }
                 },
                 {
+                    "servicecontrolmonitoringurl=",
+                    @"Configures the service control monitoring url."
+                    , s => { serviceControlMonitoringUrl = s; }
+                },
+                {
                     "outpath=",
                     @"The output path to extract files to. By default it extracts to the current directory."
                     , s => { OutputPath = s; }
@@ -176,6 +181,11 @@ namespace ServicePulse.Host.Hosting
                     , s => { serviceControlUrl = s; }
                 },
                 {
+                    "servicecontrolmonitoringurl=",
+                    @"Configures the service control monitoring url."
+                    , s => { serviceControlMonitoringUrl = s; }
+                },
+                {
                     "url=",
                     @"Configures ServicePulse to listen on the specified url."
                     , s => { url = s; }
@@ -248,6 +258,16 @@ namespace ServicePulse.Host.Hosting
                             throw new Exception("The value specified for 'serviceControlUrl' is not a valid URL");
                         }
                     }
+
+                    if (!string.IsNullOrEmpty(ServiceControlMonitoringUrl))  // param for sc url is optional. 
+                    {
+                        Uri scUri;
+                        if ((!Uri.TryCreate(ServiceControlMonitoringUrl, UriKind.Absolute, out scUri)) || (!validProtocols.Contains(scUri.Scheme, StringComparer.OrdinalIgnoreCase)))
+                        {
+                            throw new Exception("The value specified for 'serviceControlMonitoringUrl' is not a valid URL");
+                        }
+                    }
+
                     goto case ExecutionMode.Run;
 
                 case ExecutionMode.Run:
@@ -277,6 +297,12 @@ namespace ServicePulse.Host.Hosting
         {
             get { return serviceControlUrl; }
             set { serviceControlUrl = value; }
+        }
+
+        public string ServiceControlMonitoringUrl
+        {
+            get { return serviceControlMonitoringUrl; }
+            set { serviceControlMonitoringUrl = value; }
         }
 
         public string DisplayName { get; set; }
@@ -327,6 +353,7 @@ namespace ServicePulse.Host.Hosting
         readonly OptionSet uninstallOptions;
         List<Type> commands;
         string serviceControlUrl;
+        string serviceControlMonitoringUrl;
         StartMode startMode;
         string url;
     }

@@ -19,6 +19,11 @@
 
             ExtractAndUpdateConstantsCommand.UpdateVersion(args.OutputPath);
             ExtractAndUpdateConstantsCommand.UpdateConfig(args.OutputPath, args.ServiceControlUrl);
+
+            if (!String.IsNullOrEmpty(args.ServiceControlMonitoringUrl))
+            {
+                ExtractAndUpdateConstantsCommand.UpdateMonitoringConfig(args.OutputPath, args.ServiceControlMonitoringUrl);
+            }
         }
 
         static void ExtractResources(string directoryPath)
