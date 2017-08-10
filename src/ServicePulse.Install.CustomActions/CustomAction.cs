@@ -21,6 +21,61 @@
         }
 
         [CustomAction]
+        public static ActionResult CheckServiceControlMonitoringUrl(Session session)
+        {
+            Log(session, "Begin custom action CheckServiceControlMonitoringUrl");
+            var url = session.Get("INST_SC_MONITORING_URI");
+            session.Set("VALID_CONTROL_MONITORING_URL", UrlIsValid(url, session) ? "TRUE" : "FALSE");
+            Log(session, "End custom action CheckServiceControlMonitoringUrl");
+            return ActionResult.Success;
+        }
+
+        [CustomAction]
+        public static ActionResult ContactServiceControlMonitoring(Session session)
+        {
+            Log(session, "Begin custom action ContactServiceControlMonitoring");
+            // getting URL from property
+            var url = session.Get("INST_SC_MONITORING_URI");
+            var connectionSuccessful = false;
+            try
+            {
+                if (url == null)
+                {
+                    return ActionResult.Success;
+                }
+
+                var request = WebRequest.Create(url);
+                request.Timeout = 2000;
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    if (response == null)
+                    {
+                        throw new Exception("No response");
+                    }
+
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        throw new Exception(response.StatusDescription);
+                    }
+                    var version = response.Headers["X-Particular-Version"];
+                    if (!string.IsNullOrEmpty(version))
+                    {
+                        session.Set("MONITORING_REPORTED_VERSION", version.Split(' ').First());
+                    }
+                }
+
+                connectionSuccessful = true;
+            }
+            catch (Exception ex)
+            {
+                Log(session, ex.ToString());
+            }
+            session.Set("CONTACT_SERVICECONTROL_MONITORING", connectionSuccessful ? "TRUE" : "FALSE");
+            Log(session, "End custom action ContactServiceControlMonitoring");
+            return ActionResult.Success;
+        }
+
+        [CustomAction]
         public static ActionResult ContactServiceControl(Session session)
         {
             Log(session, "Begin custom action ContactServiceControl");
@@ -127,7 +182,7 @@
                     @"app\js\app.constants.js"  /* Post SC 1.3 path */
                 };
 
-                string uri = null;
+                string uri = null, monitoringUrl = null;
 
                 foreach (var file in configFiles)
                 {
@@ -147,11 +202,28 @@
                         Log(session, string.Format(@"Extracted {0} from {1}", extracted, filePath));
                         uri = extracted;
                     }
+
+                    var monitoringExtracted = ExtractServiceControlMonitoringURI(filePath);
+                    if (monitoringExtracted == null)
+                    {
+                        Log(session, string.Format("No Monitoring URI found in {0}", filePath));
+                    }
+                    else
+                    {
+                        Log(session, string.Format(@"Extracted monitoring URI {0} from {1}", extracted, filePath));
+                        monitoringUrl = monitoringExtracted;
+                    }
+
+
                 }
 
                 if (uri != null)
                 {
                     session.Set("INST_URI", uri);
+                }
+                if (monitoringUrl != null)
+                {
+                    session.Set("INST_SC_MONITORING_URI", monitoringUrl);
                 }
                 return ActionResult.Success;
             }
@@ -164,6 +236,13 @@
         static string ExtractServiceControlURI(string file)
         {
             var pattern = new Regex(@"(service_control_url\s*\:\s*['""])(.*?)(['""])");
+            var matches = pattern.Match(File.ReadAllText(file));
+            return matches.Success ? matches.Groups[2].Value : null;
+        }
+
+        static string ExtractServiceControlMonitoringURI(string file)
+        {
+            var pattern = new Regex(@"(monitoring_urls\s*\:\s*[\s*['""])(.*?)(['""]])");
             var matches = pattern.Match(File.ReadAllText(file));
             return matches.Success ? matches.Groups[2].Value : null;
         }
