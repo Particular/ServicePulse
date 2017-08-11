@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-show="endpoints.length">
     <div class="row">
         <div class="col-sm-10 no-side-padding list-section">
             <h6>Endpoints Overview</h6>
@@ -22,9 +22,16 @@
 
 <div class="container">
     <section ng-show="true">
-        <no-data ng-show="!endpoints.length" message="No active endpoints"></no-data>
-
-        <div class="row box box-no-click">
+        <div class="text-center monitoring-no-data" ng-show="!endpoints.length">
+            <h6>No endpoints available</h6>
+            Ensure that your endpoints have auditing enabled and/or
+            have the metrics plug-in enabled
+            <div class="action-toolbar">
+                <a class="btn btn-default btn-primary btn-xs" href="https://www.google.com/search?site=&source=hp&q=metrics+%2Fsite%3Adocs.particular.net&oq=metrics+%2Fsite%3Adocs.particular.net">Learn more</a>
+            </div>
+        </div>
+        
+        <div ng-show="endpoints.length" class="row box box-no-click">
             <div class="col-sm-2 no-side-padding">
                 <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
@@ -68,7 +75,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-sm-12 no-side-padding">
                 <div class="row box box-no-click" ng-repeat="endpoint in endpoints">

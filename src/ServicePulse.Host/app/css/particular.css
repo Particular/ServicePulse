@@ -1047,7 +1047,7 @@ div.progress-bar.progress-bar-striped.active {
     display: inline-block;
 }
 
-ul.retry-request-progress button {
+ul.retry-request-progress button, .monitoring-no-data button {
     background-color: #00a3c4;
 }
 
