@@ -801,10 +801,6 @@ p.endpoint-metadata {
     margin: 0 15px;
 }
 
-.list-section {
-    margin-top: 20px;
-}
-
 
 /* Add animation */
 
@@ -827,7 +823,7 @@ p.endpoint-metadata {
 }
 
 .group-title {
-    display: inline-block;
+    display: block;
     font-size: 16px;
     margin: 10px 0 0;
 }
@@ -841,6 +837,7 @@ h2.group-title, h3.group-title {
     color: #A8B3B1;
     font-size: 16px;
     margin: 4px 0 12px;
+    display: block;
 }
 
 
@@ -1492,10 +1489,17 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 }
 
 .endpoint-row .graphicon {
-    top:50%;
-    position:absolute;
-    transform:translateY(-50%);
+    top: 14px;
+    left: 120px;
+    position: absolute;
+    background-color: white;
+    width: 100px;
+    display: block;
 }
+
+    .endpoint-row .graphicon.graphicon-row-hover {
+        background-color: #edf6f7 !important;
+    }
 
 .monitoring-no-data {
     margin: 60px 0 120px;
@@ -1515,7 +1519,7 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 }
 
 .monitoring-head .msg-group-menu {
-    margin: 26px 0px 0 6px;
+    margin: 6px 0px 0 6px;
     padding-right: 0;
 }
 
@@ -1555,4 +1559,38 @@ p.col-sort-active {
 .endpoint-name a:hover {
     text-decoration: none !important;
     margin-top: 20px;
+}
+
+.tooltip-inner {
+    width: 200px;
+}
+
+.endpoint-status {
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+}
+
+    .endpoint-status i.fa-envelope, .endpoint-name i.fa-exclamation-triangle {
+        font-size: 20px;
+        color: #CE4844;
+        margin-left: 6px;
+    }
+
+    .endpoint-status i.fa-envelope {
+        position: relative;
+        top: -4px;
+        color: #777f7f;
+    }
+
+    .endpoint-status i.fa-exclamation-triangle {
+        position: relative;
+        top: -3px;
+    }
+
+    .endpoint-status .badge {
+        position: relative;
+        top: 2px;
+        left: -9px;
+        font-size: 10px;
 }
