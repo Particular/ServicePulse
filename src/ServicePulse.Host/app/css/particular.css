@@ -86,7 +86,7 @@ footer {
     font-size: 14px;
     font-weight: normal;
     height: 60px;
-    margin-top: 50px;
+    margin-top: 100px;
     padding: 5px 0;
     text-align: left;
     text-align: center;
@@ -316,7 +316,9 @@ html {
     height: 100%;
 }
 
-body { background-color: #f2f6f7 !important; }
+body {
+    background-color: #f2f6f7 !important;
+}
 
 .box {
     box-shadow: none;
@@ -1097,7 +1099,7 @@ div.danger.sc-restart-warning > strong {
 
 a.btn-feedback, a.btn-feedback:visited, a.btn-feedback:focus {
     color: #fff !important;
-    background-color: #0DB3C8 !important;
+    background-color: #00A3C4 !important;
     padding: 6px 16px !important;
     margin: 14px 0 0 14px;
     border-radius: 3px;
@@ -1459,6 +1461,22 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     }
 }
 
+@media only screen and (min-width: 1200px) {
+    .container {
+        width: 92%  ;
+    }
+}
+
+@media only screen and (min-width: 1440px) {
+    .table-head-row .col-xl-7, .endpoint-row .col-xl-7 {
+        width: 30% !important;
+    }
+
+    .table-head-row .col-xl-1, .endpoint-row .col-xl-1 {
+        width: 14% !important;
+    }
+}
+
 .graph {
     width:80%;
 }
@@ -1470,10 +1488,71 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 .endpoint-row {
     height:60px;
     position:relative;
+    padding: 8px 0 4px;
 }
 
 .endpoint-row .graphicon {
     top:50%;
     position:absolute;
     transform:translateY(-50%);
+}
+
+.monitoring-no-data {
+    margin: 60px 0 120px;
+}
+
+    .monitoring-no-data p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .monitoring-no-data .btn {
+        font-size: 16px;
+    }
+
+.monitoring-head h1 {
+    margin-bottom: 20px;
+}
+
+.monitoring-head .msg-group-menu {
+    margin: 26px 0px 0 6px;
+    padding-right: 0;
+}
+
+
+.btn-primary {
+    background-color: #00A3C4;
+    border-color: #0686AA;
+}
+
+    .btn-primary:hover {
+        background-color: #0DB3C8;
+        border-color: #00A3C4;
+    }
+
+.table-head-row {
+    padding-bottom: 0;
+}
+
+    .table-head-row p {
+        font-size: 11.5px;
+        text-transform: uppercase;
+        color: #181919;
+    }
+
+    .table-head-row span {
+        color: #777f7f;
+    }
+
+p.col-sort-active {
+    font-weight: bold;
+}
+
+.endpoint-name {
+    margin-top: 9px;
+}
+
+.endpoint-name a:hover {
+    text-decoration: none !important;
+    margin-top: 20px;
 }
