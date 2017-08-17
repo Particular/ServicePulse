@@ -52,7 +52,7 @@
         {
             var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
-            File.WriteAllText(appJsPath, Regex.Replace(appJsCode, @"(monitoring_urls\s*\:\s*[\s*['""])(.*?)(['""]])", "$1" + serviceControlMonitoringUrl + "$3"));
+            File.WriteAllText(appJsPath, Regex.Replace(appJsCode, @"(monitoring_urls\s*\:\s*[\s*['""]*)(.*?)(['""]])", "$1" + serviceControlMonitoringUrl + "$3"));
         }
 
         public static void UpdateVersion(string directoryPath)
