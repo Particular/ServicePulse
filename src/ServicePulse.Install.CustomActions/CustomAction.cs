@@ -242,7 +242,7 @@
 
         static string ExtractServiceControlMonitoringURI(string file)
         {
-            var pattern = new Regex(@"(monitoring_urls\s*\:\s*[\s*['""])(.*?)(['""]])");
+            var pattern = new Regex(@"(monitoring_urls\s*\:\s*[\s*['""]*)(.*?)(['""]])");
             var matches = pattern.Match(File.ReadAllText(file));
             return matches.Success ? matches.Groups[2].Value : null;
         }
