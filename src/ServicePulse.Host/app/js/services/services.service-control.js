@@ -40,9 +40,13 @@
 
         var previousExceptionGroupEtag;
 
-        function getExceptionGroups(classifier, classifierFilter) {
+        function getExceptionGroupsPromise(classifier, classifierFilter) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', classifier) + '?classifierFilter=' + classifierFilter;
-            return $http.get(url).then(function (response) {
+            return $http.get(url);
+        }
+
+        function getExceptionGroups(classifier, classifierFilter) {
+            return getExceptionGroupsPromise(classifier, classifierFilter).then(function (response) {
                 var status = 200;
                 if (previousExceptionGroupEtag === response.headers('etag')) {
                     status = 304;
@@ -305,6 +309,7 @@
             getEventLogItems: getEventLogItems,
             getFailedMessages: getFailedMessages,
             getExceptionGroup: getExceptionGroup,
+            getExceptionGroupsPromise: getExceptionGroupsPromise,
             getExceptionGroups: getExceptionGroups,
             getExceptionGroupsForLogicalEndpoint: getExceptionGroupsForLogicalEndpoint,
             getExceptionGroupsForEndpointInstance: getExceptionGroupsForEndpointInstance,
