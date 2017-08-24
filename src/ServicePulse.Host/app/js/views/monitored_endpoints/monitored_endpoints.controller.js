@@ -10,7 +10,7 @@
         historyPeriods,
         rx ) {
 
-        var subscription, ednpointsFromScSubscription;
+        var subscription, endpointsFromScSubscription;
 
         $scope.periods = historyPeriods;
         $scope.selectedPeriod = $scope.periods[0];
@@ -34,8 +34,8 @@
                 subscription.dispose();
             }
 
-            if (ednpointsFromScSubscription) {
-                ednpointsFromScSubscription.dispose();
+            if (endpointsFromScSubscription) {
+                endpointsFromScSubscription.dispose();
             }
 
             subscription = monitoringService.createEndpointsSource($scope.selectedPeriod.value).subscribe(function (endpoint) {
@@ -55,49 +55,25 @@
                 });
             });
 
-            ednpointsFromScSubscription = createSourceFrom(function () {
-                return serviceControlService.getExceptionGroups('Endpoint Name', null);
-            }).subscribe(function (endpoint) {
-                var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.title });
-                if (index >= 0) {
-                    $scope.endpoints[index].errorCount = endpoint.count;
-                } else {
-                    $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, isConnected: false });
-                }
-            });
-        }
-
-        function createSourceFrom(promise) {
-            return Rx.Observable.create(function (observer) {
-                var interval;
-                var setUp = function () {
-                    clearInterval(interval);
-
-                    loadData(observer, promise);
-                    interval = setInterval(function () { loadData(observer, promise); }, 5000);
-                }
-
-                setUp();
-
-                return function () {
-                    clearInterval(interval);
-                    interval = null;
-                };
-            }).shareReplay(1).selectMany(function (endpoints) {
-                return endpoints;
-            });
-        }
-
-        function loadData(observer, promise) {
-            promise().then(function(result) {
-                observer.onNext(result.data);
-            });
+            endpointsFromScSubscription =
+                Rx.Observable.interval(5000)
+                    .flatMap(function (i) {
+                        return Rx.Observable.fromPromise(serviceControlService.getExceptionGroups('Endpoint Name', null));
+                    }).subscribe(function (endpoint) {
+                        var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.title });
+                        if (index >= 0) {
+                            $scope.endpoints[index].errorCount = endpoint.count;
+                        } else {
+                            $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, isConnected: false });
+                        }
+                    });
         }
 
         updateUI();
 
         $scope.$on("$destroy", function handler() {
             subscription.dispose();
+            endpointsFromScSubscription.dispose();
         });
     };
 
