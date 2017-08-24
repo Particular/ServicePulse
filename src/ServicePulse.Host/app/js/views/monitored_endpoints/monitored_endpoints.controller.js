@@ -56,7 +56,7 @@
             });
 
             ednpointsFromScSubscription = createSourceFrom(function () {
-                return serviceControlService.getExceptionGroupsPromise('Endpoint Name', null);
+                return serviceControlService.getExceptionGroups('Endpoint Name', null);
             }).subscribe(function (endpoint) {
                 var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.title });
                 if (index >= 0) {
