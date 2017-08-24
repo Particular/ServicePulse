@@ -7,15 +7,21 @@
         function createEndpointsSource(historyPeriod) {
             return Rx.Observable.interval(5000)
                 .flatMap(function (i) {
-                    return Rx.Observable.fromPromise(loadEndpointDataFromMonitoringService(observer, historyPeriod));
+                    return Rx.Observable.fromArray(loadEndpointDataFromMonitoringService(historyPeriod))
+                        .flatMap(function (p) {
+                            var o = Rx.Observable.fromPromise(p);
+                            o = o.catch(Rx.Observable.empty());
+                            return o;
+                        });
                 }).selectMany(function (endpoints) {
                     return endpoints;
                 });
         }
 
-        function loadEndpointDataFromMonitoringService(observer, historyPeriod) {
+        function loadEndpointDataFromMonitoringService(historyPeriod) {
+            var promises = [];
             scConfig.monitoring_urls.forEach(function (url) {
-                $http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
+                promises.push($http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
                     .then(function (result) {
                         var sourceIndex = scConfig.monitoring_urls.indexOf(url);
 
@@ -23,17 +29,18 @@
                             endpoint.sourceIndex = sourceIndex;
                         });
 
-                        observer.onNext(result.data);
-                    });
+                        return result.data;
+                    }));
             });
+            return promises;
         }
 
         function loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod) {
-            $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
+            return $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
                 .then(function (result) {
-                    observer.onNext(result.data);
+                    return result.data;
                 }, function (error) {
-                    observer.onNext({ error: error });
+                    return { error: error };
                 });
         }
 

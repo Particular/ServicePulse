@@ -29,9 +29,9 @@
     }));
 
     it('should push endpoints retrieved from monitoring server', function () {
-        scConfig.monitoring_urls = ['http://localhost:1234/diagrams'];
+        scConfig.monitoring_urls = ['http://localhost:33633/'];
 
-        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:33633/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
 
         var monitoredEndpoints = [];
         monitoringService.createEndpointsSource(5).subscribe(function (response) {
@@ -51,10 +51,10 @@
     });
 
     it('should push endpoints retrieved from multiple monitoring servers', function () {
-        $httpBackend.whenGET('http://localhost:1234/diagrams/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
-        $httpBackend.whenGET('http://localhost:5678/diagrams/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:33633/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
+        $httpBackend.whenGET('http://localhost:5678/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
 
-        scConfig.monitoring_urls = ['http://localhost:1234/diagrams', 'http://localhost:5678/diagrams'];
+        scConfig.monitoring_urls = ['http://localhost:33633/', 'http://localhost:5678/'];
 
         var monitoredEndpoints = [];
         monitoringService.createEndpointsSource(5).subscribe(function (response) {
