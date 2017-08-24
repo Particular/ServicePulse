@@ -45,14 +45,7 @@
                     $scope.endpoints[index] = endpoint;
                 } else {
                     $scope.endpoints.push(endpoint);
-                    index = $scope.endpoints.length - 1;
                 }
-
-                serviceControlService.getExceptionGroupsForLogicalEndpoint(endpoint.name).then(function (result) {
-                    $scope.endpoints[index].errorCount = result.data[0].count;
-                }, function (err) {
-                    // Warn user
-                });
             });
 
             endpointsFromScSubscription =
