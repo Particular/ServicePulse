@@ -35,7 +35,7 @@
             return promises;
         }
 
-        function loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod) {
+        function loadEndpointDetailsFromMonitoringService(endpointName, sourceIndex, historyPeriod) {
             return $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
                 .then(function (result) {
                     return result.data;
@@ -47,7 +47,7 @@
         function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod) {
             return Rx.Observable.interval(5000)
                 .flatMap(function (i) {
-                    return Rx.Observable.fromPromise(loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod));
+                    return Rx.Observable.fromPromise(loadEndpointDetailsFromMonitoringService(endpointName, sourceIndex, historyPeriod));
                 });
         }
 
