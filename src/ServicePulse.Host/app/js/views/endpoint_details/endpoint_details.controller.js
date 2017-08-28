@@ -45,6 +45,8 @@
                     $scope.loading = false;
                 }
 
+                $scope.throughput = endpointInstances[0].throughput;
+               
                 $scope.endpoint.instances.forEach(function (instance) {
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
                         instance.serviceControlId = result.data[0].id;
