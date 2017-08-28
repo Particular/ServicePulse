@@ -99,7 +99,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
                                             <graph ng-if="endpoint.queueLength.points" plot-points="endpoint.queueLength.points" plot-average="endpoint.queueLength.average" color="#e09365" class="graph pull-left"></graph>
@@ -109,7 +109,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
                                             <graph ng-if="endpoint.throughput.points" plot-points="endpoint.throughput.points" plot-average="endpoint.throughput.average" color="#e09365" class="graph pull-left"></graph>
@@ -119,7 +119,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
                                             <graph ng-if="endpoint.retries.points" plot-points="endpoint.retries.points" plot-average="endpoint.retries.average" color="#4286f4" class="graph pull-left"></graph>
@@ -129,7 +129,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
                                             <graph ng-if="endpoint.processingTime.points" plot-points="endpoint.processingTime.points" plot-average="endpoint.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
@@ -139,7 +139,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
                                             <graph ng-if="endpoint.criticalTime.points" plot-points="endpoint.criticalTime.points" plot-average="endpoint.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
@@ -147,6 +147,12 @@
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
                                         </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="!endpoint.isConnected">
+                                    <div class="row box-header">
+                                        No plug-ins installed. 
                                     </div>
                                 </div>
                             </a>
