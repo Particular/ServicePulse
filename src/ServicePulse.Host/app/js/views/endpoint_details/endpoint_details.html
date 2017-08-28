@@ -21,6 +21,19 @@
 </div>
 
 <div class="container">
+    <div class="row">
+        <div class="col-sm-10 no-side-padding list-section">
+            <!-- here goes diagram -->
+            <large-graph ng-if="endpointInstances[0].throughput.points" plot-points="endpointInstances[0].throughput.points" plot-average="endpointInstances[0].throughput.average" color="#e09365" class="graph pull-left"></large-graph>
+        </div>
+        <div class="col-sm-2 no-side-padding toolbar-menus">
+            <!-- here goes average values -->
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <busy ng-show="loading" message="Loading details"></busy>
 <div class="tabs">
     <h5 ng-class="{active: showInstancesBreakdown}">
         <a ng-click="showInstancesBreakdown = true" class="ng-binding">Instances</a>
