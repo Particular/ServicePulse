@@ -5,7 +5,7 @@
     function Service($http, rx, scConfig, uri, $q) {
 
         function createEndpointsSource(historyPeriod) {
-            return Rx.Observable.interval(5000)
+            return Rx.Observable.interval(5000).startWith(0)
                 .flatMap(function (i) {
                     return Rx.Observable.fromArray(loadEndpointDataFromMonitoringService(historyPeriod))
                         .flatMap(function (p) {
@@ -19,9 +19,8 @@
         }
 
         function loadEndpointDataFromMonitoringService(historyPeriod) {
-            var promises = [];
-            scConfig.monitoring_urls.forEach(function (url) {
-                promises.push($http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
+            return scConfig.monitoring_urls.map(function (url) {
+                return $http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
                     .then(function (result) {
                         var sourceIndex = scConfig.monitoring_urls.indexOf(url);
 
@@ -30,9 +29,8 @@
                         });
 
                         return result.data;
-                    }));
+                    });
             });
-            return promises;
         }
 
         function loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod) {
@@ -45,7 +43,7 @@
         }
 
         function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod) {
-            return Rx.Observable.interval(5000)
+            return Rx.Observable.interval(5000).startWith(0)
                 .flatMap(function (i) {
                     return Rx.Observable.fromPromise(loadEndpointDetailsFromMonitoringService(observer, endpointName, sourceIndex, historyPeriod));
                 });
