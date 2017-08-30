@@ -35,15 +35,15 @@
                 subscription.dispose();
             }
 
-            subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, $scope.selectedPeriod.value).subscribe(function (endpointInstances) {
-                if (endpointInstances.error) {
+            subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, $scope.selectedPeriod.value).subscribe(function (endpoint) {
+                if (endpoint.error) {
                     toastService.showWarning('Could not load endpoint details');
                 } else {
-                    $scope.endpointInstances = endpointInstances;
+                    $scope.endpoint = endpoint;
                     $scope.loading = false;
                 }
 
-                $scope.endpointInstances.forEach(function (instance) {
+                $scope.endpoint.instances.forEach(function (instance) {
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
                         instance.serviceControlId = result.data[0].id;
                         instance.errorCount = result.data[0].count;
