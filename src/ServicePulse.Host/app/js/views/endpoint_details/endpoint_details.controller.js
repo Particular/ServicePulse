@@ -13,6 +13,8 @@
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.loading = true;
+        $scope.showInstancesBreakdown = true;
+
         var subscription;
 
         $scope.periods = historyPeriods;
