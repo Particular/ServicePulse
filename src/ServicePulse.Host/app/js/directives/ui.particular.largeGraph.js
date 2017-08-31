@@ -8,21 +8,26 @@
                     restrict: 'E',
                     scope: {
                         data: '=plotPoints',
-                        avg: '=plotAverage'
+                        avg: '=plotAverage',
+                        dates: '=xaxisPoints',
+                        width: '=plotWidth',
+                        heigth: '=plotHeight'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         scope.$watch('data', function () {
                             d3.selectAll("svg > *").remove();
                             var svg = element.find('svg')[0];
-                            var heigth = 600;
-                            var graphWidth = 750;
-                            var totalWidth = 800;
-                            var margin = 20;
+                            var margin = 35;
+
+                            var totalWidth = scope.width;
+                            var heigth = scope.heigth;
+                            var graphWidth = totalWidth - (2 * margin) - 30;
                             var points = scope.data;
                             var average = scope.avg;
+                            var dates = scope.dates;
                             var max = Math.max(average * 1.5, d3.max(points));
-
+                            
                             var scaleY = d3.scaleLinear()
                                 .domain([0, max])
                                 .range([heigth - margin, margin]);
@@ -62,10 +67,14 @@
                                 .attr('d', line)
                                 .attr('stroke', 'black');
 
-                            chart.append('path')
-                                .datum(Array(points.length).fill(0))
-                                .attr('d', line)
-                                .attr('stroke', 'gray');
+                            chart.selectAll("dot")
+                                .data(points)
+                                .enter().append("circle")
+                                .attr("r", 3)
+                                .attr("cx", function (d, i) { return scaleX(i); })
+                                .attr("cy", function (d) { return scaleY(d); })
+                                .append("svg:title")
+                                .text(function (d, i) { return dates[i] + " | " + d; }); 
 
                             chart.append("text")
                                 .attr("x", graphWidth - margin + 3)
@@ -74,6 +83,18 @@
                                 .attr("font-size", 12)
                                 .attr("font-family", "sans-serif")
                                 .text(average.toFixed(2));
+
+                            chart.append("g")
+                                .attr("class", "x axis")
+                                .attr("transform", "translate(0," + (heigth - margin) + ")")
+                                .call(d3.axisBottom(scaleX).tickFormat(function(d) {
+                                    return dates[d];
+                                }));
+                            
+                            chart.append("g")
+                                .attr("class", "y axis")
+                                .attr("transform", "translate(" + margin + ", 0)")
+                                .call(d3.axisLeft(scaleY));
 
                             var scaleYValue = (scaleY(average == 0 ? 1 : average) + 3) | 0;
 

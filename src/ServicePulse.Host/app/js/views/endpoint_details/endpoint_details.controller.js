@@ -46,6 +46,15 @@
                 }
 
                 $scope.throughput = endpointInstances[0].throughput;
+                $scope.throughput.xAxisPoints = [
+                                '2017-08-30 11:00', '2017-08-30 11:05', '2017-08-30 11:10', '2017-08-30 11:15',
+                                '2017-08-30 11:20', '2017-08-30 11:25', '2017-08-30 11:30',
+                                '2017-08-30 11:35', '2017-08-30 11:40', '2017-08-30 11:45', 
+                                '2017-08-30 11:50', '2017-08-30 11:55', '2017-08-30 12:00', '2017-08-30 12:05',
+                                '2017-08-30 12:10', '2017-08-30 12:15', '2017-08-30 12:20',
+                                '2017-08-30 12:25', '2017-08-30 12:35', '2017-08-30 12:40', 
+                ];
+               
                
                 $scope.endpoint.instances.forEach(function (instance) {
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
