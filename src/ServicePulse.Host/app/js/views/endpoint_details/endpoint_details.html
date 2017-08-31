@@ -30,7 +30,7 @@
     </h5>
 </div>
 
-<section ng-show="showInstancesBreakdown">
+<section ng-if="showInstancesBreakdown">
     <div class="row">
         <div class="col-sm-12 no-side-padding">
 
@@ -146,7 +146,7 @@
     </div>
 </section>
 
-<section ng-show="!showInstancesBreakdown">
+<section ng-if="!showInstancesBreakdown">
     <div class="row">
         <div class="col-sm-12 no-side-padding">
             <!-- Breakdown by message type-->
