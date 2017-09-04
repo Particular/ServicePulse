@@ -21,104 +21,216 @@
 </div>
 
 <div class="container">
-    <busy ng-show="loading" message="Loading details"></busy>
+<div class="tabs">
+    <h5 ng-class="{active: showInstancesBreakdown}">
+        <a ng-click="showInstancesBreakdown = true" class="ng-binding">Instances</a>
+    </h5>
+    <h5 ng-class="{active: !showInstancesBreakdown}">
+        <a ng-click="showInstancesBreakdown = false" class="ng-binding">Message Types</a>
+    </h5>
+</div>
 
-    <div ng-show="!loading" class="row box box-no-click">
-        <div class="col-sm-4 no-side-padding">
-            <div class="row box-header">
-                <div class="col-sm-12 no-side-padding">
-                    <p class="lead">Instance Name</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2 no-side-padding">
-            <div class="row box-header">
-                <div class="col-sm-12 no-side-padding">
-                    <p class="lead">Throughput (msgs/s)</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2 no-side-padding">
-            <div class="row box-header">
-                <div class="col-sm-12 no-side-padding">
-                    <p class="lead">Retries (msgs)</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2 no-side-padding">
-            <div class="row box-header">
-                <div class="col-sm-12 no-side-padding">
-                    <p class="lead">Processing Time (ms) </p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-2 no-side-padding">
-            <div class="row box-header">
-                <div class="col-sm-12 no-side-padding">
-                    <p class="lead">Critical Time (ms) </p>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<section ng-if="showInstancesBreakdown">
     <div class="row">
         <div class="col-sm-12 no-side-padding">
-            <div class="row box box-no-click" ng-repeat="instance in endpointInstances">
+
+            <!-- Breakdown by instance -->
+            <busy ng-show="loading" message="Loading details"></busy>
+
+            <div ng-show="!loading" class="row box box-no-click">
+                <div class="col-sm-4 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Instance Name</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Throughput (msgs/s)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Retries (msgs)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Processing Time (ms) </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Critical Time (ms) </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-sm-12 no-side-padding">
-                    <div class="row endpoint-row">
-                        <div class="col-sm-4 no-side-padding">
-                            <div class="row box-header">
-                                <div class="col-sm-12 no-side-padding">
-                                    <div class="hard-wrap">
-                                        {{instance.id}}
-                                        <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
-                                            <i class="fa fa-envelope"></i>
-                                            <span class="badge badge-important ng-binding">{{instance.errorCount | largeNumber:1}}</span>
-                                            <span ng-if="instance.isStale" class="warning pull-right">
+                    <div class="row box box-no-click" ng-repeat="instance in endpoint.instances">
+                        <div class="col-sm-12 no-side-padding">
+                            <div class="row endpoint-row">
+                                <div class="col-sm-4 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <div class="hard-wrap">
+                                                {{instance.id}}
+                                                <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
+                                                    <i class="fa fa-envelope"></i>
+                                                    <span class="badge badge-important ng-binding">{{instance.errorCount | largeNumber:1}}</span>
+                                                    <span ng-if="instance.isStale" class="warning pull-right">
+                                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                    </span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="instance.metrics.throughput.points" plot-points="instance.metrics.throughput.points" plot-average="instance.metrics.throughput.average" color="#e09365" class="graph pull-left"></graph>
+                                            <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
-                                        </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="instance.metrics.retries.points" plot-points="instance.metrics.retries.points" plot-average="instance.metrics.retries.average" color="#4286f4" class="graph pull-left"></graph>
+                                            <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="instance.metrics.processingTime.points" plot-points="instance.metrics.processingTime.points" plot-average="instance.metrics.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
+                                            <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="instance.metrics.criticalTime.points" plot-points="instance.metrics.criticalTime.points" plot-average="instance.metrics.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
+                                            <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-2 no-side-padding">
-                            <div class="row box-header">
-                                <div class="col-sm-12 no-side-padding">
-                                    <graph ng-if="instance.throughput.points" plot-points="instance.throughput.points" plot-average="instance.throughput.average" color="#e09365" class="graph pull-left"></graph>
-                                    <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                    </span>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section ng-if="!showInstancesBreakdown">
+    <div class="row">
+        <div class="col-sm-12 no-side-padding">
+            <!-- Breakdown by message type-->
+            <busy ng-show="loading" message="Loading details"></busy>
+
+            <div ng-show="!loading" class="row box box-no-click">
+                <div class="col-sm-4 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Message Type</p>
                         </div>
-                        <div class="col-sm-2 no-side-padding">
-                            <div class="row box-header">
-                                <div class="col-sm-12 no-side-padding">
-                                    <graph ng-if="instance.retries.points" plot-points="instance.retries.points" plot-average="instance.retries.average" color="#4286f4" class="graph pull-left"></graph>
-                                    <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                    </span>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Throughput (msgs/s)</p>
                         </div>
-                        <div class="col-sm-2 no-side-padding">
-                            <div class="row box-header">
-                                <div class="col-sm-12 no-side-padding">
-                                    <graph ng-if="instance.processingTime.points" plot-points="instance.processingTime.points" plot-x-axis="instance.processingTime.pointsAxisValues" plot-average="instance.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
-                                    <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                    </span>
-                                </div>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Retries (msgs)</p>
                         </div>
-                        <div class="col-sm-2 no-side-padding">
-                            <div class="row box-header">
-                                <div class="col-sm-12 no-side-padding">
-                                    <graph ng-if="instance.criticalTime.points" plot-points="instance.criticalTime.points" x-axis="instance.criticalTime.pointsAxisValues" plot-average="instance.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
-                                    <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                    </span>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Processing Time (ms) </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2 no-side-padding">
+                    <div class="row box-header">
+                        <div class="col-sm-12 no-side-padding">
+                            <p class="lead">Critical Time (ms) </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 no-side-padding">
+                    <div class="row box box-no-click" ng-repeat="messageType in endpoint.messageTypes">
+                        <div class="col-sm-12 no-side-padding">
+                            <div class="row endpoint-row">
+                                <div class="col-sm-4 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <div class="hard-wrap">
+                                                {{messageType.messageType}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="messageType.metrics.throughput.points" plot-points="messageType.metrics.throughput.points" plot-average="messageType.metrics.throughput.average" color="#e09365" class="graph pull-left"></graph>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="messageType.metrics.retries.points" plot-points="messageType.metrics.retries.points" plot-average="messageType.metrics.retries.average" color="#4286f4" class="graph pull-left"></graph>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="messageType.metrics.processingTime.points" plot-points="messageType.metrics.processingTime.points" plot-average="messageType.metrics.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph ng-if="messageType.metrics.criticalTime.points" plot-points="messageType.metrics.criticalTime.points" plot-average="messageType.metrics.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -127,4 +239,5 @@
             </div>
         </div>
     </div>
+</section>
 </div>
