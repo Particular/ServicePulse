@@ -27,8 +27,37 @@
             <p class="lead">Throughput (msgs/s)</p>
             <large-graph ng-if="throughput.points" plot-points="throughput.points" plot-average="throughput.average" xAxis-points="throughput.timeAxisValues" plot-width="1240" plot-height="600" color="#e09365" class="graph pull-left"></large-graph>
         </div>
+
         <div class="col-sm-2 no-side-padding toolbar-menus">
-            <!-- here goes average values -->
+            <div class="row">
+                <div class="col-sm-6"><p class="lead text-center">Current</p></div>
+                <div class="col-sm-6"><p class="lead text-center">Average</p></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.latest}} msgs</span></div>
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.average}} msgs</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Processing Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.processingTime.latest}} ms</span></div>
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Processing Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.processingTime.average}} ms</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.latest}} ms</span></div>
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.average}} ms</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.latest}} msgs</span></div>
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.average}} msgs</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.latest}} msgs/s</span></div>
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.average}} msgs/s</span></div>
+            </div>
         </div>
     </div>
 </div>
@@ -44,7 +73,7 @@
         </h5>
     </div>
 
-    <section ng-if="showInstancesBreakdown" class="col-sm-9">
+    <section ng-if="showInstancesBreakdown">
         <div class="row">
             <div class="col-sm-12 no-side-padding">
 
@@ -160,7 +189,7 @@
         </div>
     </section>
 
-    <section ng-if="!showInstancesBreakdown" class="col-sm-9">
+    <section ng-if="!showInstancesBreakdown">
         <div class="row">
             <div class="col-sm-12 no-side-padding">
                 <!-- Breakdown by message type-->
@@ -254,36 +283,4 @@
             </div>
         </div>
     </section>
-
-    <div class="col-sm-3 no-side-padding">
-        <div class="row">
-            <div class="col-sm-6"><p class="lead text-center">Current</p></div>
-            <div class="col-sm-6"><p class="lead text-center">Average</p></div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.latest}} msgs</span></div>
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.average}} msgs</span></div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Processing Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.processingTime.latest}} ms</span></div>
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Processing Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.processingTime.average}} ms</span></div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.latest}} ms</span></div>
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.average}} ms</span></div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.latest}} msgs</span></div>
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.average}} msgs</span></div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.latest}} msgs/s</span></div>
-            <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.average}} msgs/s</span></div>
-        </div>
-    </div>
 </div>
