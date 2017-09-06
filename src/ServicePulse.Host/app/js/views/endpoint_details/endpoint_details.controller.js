@@ -45,7 +45,7 @@
                     $scope.loading = false;
                 }
                 
-                $scope.endpoint.metricDetails.metrics.throughput.timeAxisValues = $scope.throughput.timeAxisValues.map(function(item) {
+                $scope.endpoint.metricDetails.metrics.throughput.timeAxisValues = $scope.endpoint.metricDetails.metrics.throughput.timeAxisValues.map(function(item) {
                     var date = new Date(item);
                     return date.toLocaleTimeString();
                 });
