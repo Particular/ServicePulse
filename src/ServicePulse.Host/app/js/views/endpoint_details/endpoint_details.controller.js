@@ -45,6 +45,14 @@
                     $scope.loading = false;
                 }
 
+                $scope.throughput = $scope.endpoint.metricDetails.metrics.throughput;
+                
+                $scope.throughput.timeAxisValues = $scope.throughput.timeAxisValues.map(function(item) {
+                    var date = new Date(item);
+                    return date.toLocaleTimeString();
+                });
+
+               
                 $scope.endpoint.instances.forEach(function (instance) {
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
                         instance.serviceControlId = result.data[0].id;
