@@ -20,18 +20,20 @@
     </div>
 </div>
 
+<hr/>
+
 <div class="container">
     <div class="row">
-        <div class="col-sm-10 no-side-padding list-section">
+        <div class="col-sm-9 no-side-padding list-section">
             <!-- here goes diagram -->
             <p class="lead">Throughput (msgs/s)</p>
-            <large-graph ng-if="endpoint.metricDetails.metrics.throughput" plot-points="endpoint.metricDetails.metrics.throughput.points" plot-average="endpoint.metricDetails.metrics.throughput.average" xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues" plot-width="1240" plot-height="600" color="#e09365" class="graph pull-left"></large-graph>
+            <large-graph ng-if="endpoint.metricDetails.metrics.throughput" plot-points="endpoint.metricDetails.metrics.throughput.points" plot-average="endpoint.metricDetails.metrics.throughput.average" xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues" plot-width="1240" plot-height="600" color="#e09365" class="large-graph pull-left"></large-graph>
         </div>
 
-        <div class="col-sm-2 no-side-padding toolbar-menus">
+        <div class="col-sm-3 no-side-padding toolbar-menus">
             <div class="row">
-                <div class="col-sm-6"><p class="lead text-center">Current</p></div>
-                <div class="col-sm-6"><p class="lead text-center">Average</p></div>
+                <div class="col-sm-6"><p class="lead text-left">Current</p></div>
+                <div class="col-sm-6"><p class="lead text-left">Average</p></div>
             </div>
 
             <div class="row">
