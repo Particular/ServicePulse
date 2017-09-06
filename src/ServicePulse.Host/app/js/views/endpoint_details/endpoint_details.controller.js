@@ -45,12 +45,11 @@
                     $scope.loading = false;
                 }
 
-                $scope.throughput = $scope.endpoint.graphData.throughput;
-                $scope.throughput.xAxisPoints = $scope.endpoint.graphData.timeAxisValues;
-
-                $scope.throughput.xAxisPoints.forEach(function(item, index) {
+                $scope.throughput = $scope.endpoint.metricDetails.metrics.throughput;
+                
+                $scope.throughput.timeAxisValues = $scope.throughput.timeAxisValues.map(function(item) {
                     var date = new Date(item);
-                    $scope.throughput.xAxisPoints[index] = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
                 });
 
                

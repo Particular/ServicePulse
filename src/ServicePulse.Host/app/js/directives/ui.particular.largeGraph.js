@@ -16,7 +16,7 @@
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         scope.$watch('data', function () {
-                            d3.selectAll("svg > *").remove();
+                            d3.selectAll('svg > *').remove();
                             var svg = element.find('svg')[0];
                             var margin = 35;
 
@@ -67,44 +67,44 @@
                                 .attr('d', line)
                                 .attr('stroke', 'black');
 
-                            chart.selectAll("dot")
+                            chart.selectAll('dot')
                                 .data(points)
-                                .enter().append("circle")
-                                .attr("r", 3)
-                                .attr("cx", function (d, i) { return scaleX(i); })
-                                .attr("cy", function (d) { return scaleY(d); })
-                                .append("svg:title")
-                                .text(function (d, i) { return dates[i] + " | " + d; }); 
+                                .enter().append('circle')
+                                .attr('r', 3)
+                                .attr('cx', function (d, i) { return scaleX(i); })
+                                .attr('cy', function (d) { return scaleY(d); })
+                                .append('svg:title')
+                                .text(function (d, i) { return dates[i] + ' | ' + d; }); 
 
-                            chart.append("text")
-                                .attr("x", graphWidth - margin + 3)
-                                .attr("y", heigth / 2 + 5)
-                                .attr("text-anchor", "start")
-                                .attr("font-size", 12)
-                                .attr("font-family", "sans-serif")
+                            chart.append('text')
+                                .attr('x', graphWidth - margin + 3)
+                                .attr('y', heigth / 2 + 5)
+                                .attr('text-anchor', 'start')
+                                .attr('font-size', 12)
+                                .attr('font-family', 'sans-serif')
                                 .text(average.toFixed(2));
 
-                            chart.append("g")
-                                .attr("class", "x axis")
-                                .attr("transform", "translate(0," + (heigth - margin) + ")")
+                            chart.append('g')
+                                .attr('class', 'x axis')
+                                .attr('transform', 'translate(0,' + (heigth - margin) + ')')
                                 .call(d3.axisBottom(scaleX).tickFormat(function(d) {
                                     return dates[d];
                                 }));
                             
-                            chart.append("g")
-                                .attr("class", "y axis")
-                                .attr("transform", "translate(" + margin + ", 0)")
+                            chart.append('g')
+                                .attr('class', 'y axis')
+                                .attr('transform', 'translate(' + margin + ', 0)')
                                 .call(d3.axisLeft(scaleY));
 
                             var scaleYValue = (scaleY(average == 0 ? 1 : average) + 3) | 0;
 
-                            chart.append("text")
-                                .attr("x", 0)
-                                .attr("y", scaleYValue)
-                                .attr("text-anchor", "start")
-                                .attr("font-size", 12)
-                                .attr("font-family", "sans-serif")
-                                .text("ø");
+                            chart.append('text')
+                                .attr('x', 0)
+                                .attr('y', scaleYValue)
+                                .attr('text-anchor', 'start')
+                                .attr('font-size', 12)
+                                .attr('font-family', 'sans-serif')
+                                .text('ø');
                         });
                     }
                 };
