@@ -1595,3 +1595,19 @@ p.col-sort-active {
         left: -9px;
         font-size: 10px;
 }
+
+
+.metric-digest {
+    padding:1em;
+}
+
+.metric-digest > .metric-digest-header {
+    text-transform: uppercase;
+    display:block;
+    font-size:0.7em;
+}
+
+.metric-digest > .metric-digest-value {
+    font-weight: bold;
+    font-size: 1.3em;
+}

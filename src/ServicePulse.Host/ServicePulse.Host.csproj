@@ -94,6 +94,7 @@
     <Content Include="app\js\directives\ui.particular.busy.js" />
     <Content Include="app\js\directives\ui.particular.busy.tpl.html" />
     <Content Include="app\js\directives\ui.particular.configurationTabs.js" />
+    <Content Include="app\js\directives\ui.particular.largeGraph.js" />
     <Content Include="app\js\directives\ui.particular.redirectLink.js" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.js" />
     <Content Include="app\js\directives\ui.particular.configurationTabs.tpl.html" />
