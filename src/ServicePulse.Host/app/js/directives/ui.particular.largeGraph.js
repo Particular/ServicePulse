@@ -16,7 +16,7 @@
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         scope.$watch('data', function () {
-                            d3.selectAll('svg > *').remove();
+                            d3.selectAll('large-graph svg > *').remove();
                             var svg = element.find('svg')[0];
                             var margin = 35;
 

@@ -49,7 +49,7 @@
                 
                 $scope.throughput.timeAxisValues = $scope.throughput.timeAxisValues.map(function(item) {
                     var date = new Date(item);
-                    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                    return date.toLocaleTimeString();
                 });
 
                
