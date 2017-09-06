@@ -1474,6 +1474,14 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     }
 }
 
+.large-graph {
+    width: 100%;
+}
+
+.large-graph svg {
+    width: 100%
+}
+
 .graph {
     width:80%;
 }
