@@ -67,11 +67,11 @@
 <div class="container">
     <busy ng-show="loading" message="Loading details"></busy>
     <div class="tabs">
-        <h5 ng-class="{active: showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdown = true" class="ng-binding">Instances</a>
-        </h5>
         <h5 ng-class="{active: !showInstancesBreakdown}">
             <a ng-click="showInstancesBreakdown = false" class="ng-binding">Message Types</a>
+        </h5>
+        <h5 ng-class="{active: showInstancesBreakdown}">
+            <a ng-click="showInstancesBreakdown = true" class="ng-binding">Instances</a>
         </h5>
     </div>
 
