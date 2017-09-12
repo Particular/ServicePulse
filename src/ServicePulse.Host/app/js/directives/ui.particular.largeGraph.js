@@ -1,7 +1,7 @@
 ﻿(function(window, angular, undefined) {
     'use strict';
 
-    function drawDataSeries(dataSeries, color, scaleX, chart, heigth, graphWidth, margin, dates) {
+    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, heigth, graphWidth, margin, dates) {
 
         var max = Math.max(dataSeries.average * 1.5, d3.max(dataSeries.points));
 
@@ -29,7 +29,8 @@
         chart.append('path')
             .datum(dataSeries.points)
             .attr('d', area)
-            .attr('fill', color);
+            .attr('fill', 'transparent')
+            .attr('stroke', color);
 
         chart.append('path')
             .datum(Array(dataSeries.points.length).fill(dataSeries.average))
@@ -46,17 +47,18 @@
             .text(function (d, i) { return dates[i] + ' | ' + d; });
 
         chart.append('text')
-            .attr('x', graphWidth - margin + 3)
-            .attr('y', heigth / 2 + 5)
+            .attr('x', graphWidth + 3)
+            .attr('y', scaleY(dataSeries.average))
             .attr('text-anchor', 'start')
             .attr('font-size', 12)
             .attr('font-family', 'sans-serif')
+            .attr('fill', color)
             .text(dataSeries.average.toFixed(2));
 
         chart.append('g')
             .attr('class', 'y axis')
-            .attr('transform', 'translate(' + margin + ', 0)')
-            .call(d3.axisLeft(scaleY));
+            .attr('transform', 'translate(' + (yAxisAllignedLeft ? margin : graphWidth - margin) + ', 0)')
+            .call((yAxisAllignedLeft ? d3.axisLeft(scaleY) : d3.axisRight(scaleY)));
 }
 
     angular.module('ui.particular.largeGraph', [])
@@ -85,7 +87,11 @@
                                 points: scope.firstDataSeries.points,
                                 average: scope.firstDataSeries.average
                             };
-                            
+                            var secondSeries = {
+                                points: scope.secondDataSeries.points,
+                                average: scope.secondDataSeries.average
+                            };
+
                             var dates = scope.dates;
 
                             var scaleX = d3.scaleLinear()
@@ -106,12 +112,24 @@
 
                             drawDataSeries(firstSeries,
                                 attrs.firstSeriesColor,
+                                true,
                                 scaleX,
                                 chart,
                                 heigth,
                                 graphWidth,
                                 margin,
                                 dates);
+
+                            drawDataSeries(secondSeries,
+                                attrs.secondSeriesColor,
+                                false,
+                                scaleX,
+                                chart,
+                                heigth,
+                                graphWidth,
+                                margin,
+                                dates);
+                            
                         });
                     }
                 };
