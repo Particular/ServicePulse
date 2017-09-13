@@ -24,12 +24,13 @@
     <ROW Property="ARPURLINFOABOUT" Value="http://particular.net/ServicePulse"/>
     <ROW Property="ARPURLUPDATEINFO" Value="http://particular.net/downloads"/>
     <ROW Property="BannerBitmap" Value="banner" MultiBuildValue="DefaultBuild:banner.jpg" Type="1" MsiKey="BannerBitmap"/>
+    <ROW Property="DEFAULT_SC_MONITORING_URI" Value="http://localhost:33633"/>
+    <ROW Property="DEFAULT_SC_URI" Value="http://localhost:33333/api"/>
     <ROW Property="DialogBitmap" Value="dialog" MultiBuildValue="DefaultBuild:dialog.jpg" Type="1" MsiKey="DialogBitmap"/>
     <ROW Property="ENABLE_FEATURE_SELECTION" Value="FALSE"/>
     <ROW Property="IGNORE_SERVICECONTROLMONITORING_OFFLINE" Value="IDNO"/>
     <ROW Property="IGNORE_SERVICECONTROL_OFFLINE" Value="IDNO"/>
     <ROW Property="INST_PORT_PULSE" Value="9090" Type="4"/>
-    <ROW Property="INST_PORT_PULSE_1" Value="9090" Type="4"/>
     <ROW Property="INST_SC_MONITORING_URI" Value="http://localhost:33633/"/>
     <ROW Property="INST_URI" Value="http://localhost:33333/api/"/>
     <ROW Property="Manufacturer" Value="Particular Software"/>
@@ -205,19 +206,20 @@
     <ROW Dialog_="DiskCostDlg" Control="BannerLine" Type="Line" X="0" Y="44" Width="372" Height="0" Attributes="1" Order="800" MsiKey="DiskCostDlg#BannerLine"/>
     <ROW Dialog_="ExitDialog" Control="Title" Type="Text" X="135" Y="9" Width="220" Height="60" Attributes="196611" Text="Completing the [ProductName] [Wizard]" TextStyle="VerdanaBold13" Order="700" TextLocId="Control.Text.ExitDialog#Title" MsiKey="ExitDialog#Title"/>
     <ROW Dialog_="FatalError" Control="Title" Type="Text" X="135" Y="9" Width="220" Height="60" Attributes="196611" Text="The [ProductName] [Wizard] ended prematurely" TextStyle="VerdanaBold13" Order="800" TextLocId="Control.Text.FatalError#Title" MsiKey="FatalError#Title"/>
+    <ROW Dialog_="FeatureConfiguration" Control="FeatureConfigurationDialogInitializer" Type="DialogInitializer" X="0" Y="0" Width="0" Height="0" Attributes="0" Order="-1" TextLocId="-" HelpLocId="-" ExtDataLocId="-"/>
     <ROW Dialog_="FeatureConfiguration" Control="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Next]" Order="100" TextLocId="-"/>
     <ROW Dialog_="FeatureConfiguration" Control="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Order="200" TextLocId="-"/>
     <ROW Dialog_="FeatureConfiguration" Control="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Back]" Order="300" TextLocId="-"/>
     <ROW Dialog_="FeatureConfiguration" Control="BottomLine" Type="Line" X="0" Y="234" Width="372" Height="0" Attributes="1" Order="400"/>
     <ROW Dialog_="FeatureConfiguration" Control="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Attributes="1048577" Text="[BannerBitmap]" Order="500"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_1" Type="Text" X="20" Y="96" Width="53" Height="31" Attributes="65539" Property="TEXT_1_PROP_1" Text="Port" TextStyle="DlgFontBold8" Order="600"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="45" Y="94" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE_1" Text="{260}" Order="700"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="149" Width="247" Height="15" Attributes="3" Property="INST_URI_1" Text="{260}" Order="800"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="45" Y="94" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="149" Width="247" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_2" Type="Text" X="23" Y="152" Width="89" Height="15" Attributes="65539" Property="TEXT_2_PROP_2" Text="ServiceControl URI" Order="900"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_3" Type="Text" X="20" Y="74" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP_2" Text="Specify the port number ServicePulse will listen on" Order="1000"/>
     <ROW Dialog_="FeatureConfiguration" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="ServicePulse Configuration" TextStyle="[DlgTitleFont]" Order="1100" TextLocId="Control.Text.FolderDlg#Title"/>
     <ROW Dialog_="FeatureConfiguration" Control="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Attributes="196611" Text="Adjust configuration settings" Order="1200" TextLocId="Control.Text.FolderDlg#Description"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_3" Type="Edit" X="100" Y="201" Width="246" Height="15" Attributes="3" Property="INST_SC_MONITORING_URI_1" Text="{260}" Order="1300"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_3" Type="Edit" X="100" Y="201" Width="246" Height="15" Attributes="3" Property="INST_SC_MONITORING_URI" Text="{260}" Order="1300"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_5" Type="Text" X="25" Y="204" Width="89" Height="53" Attributes="65539" Property="TEXT_2_PROP_1_1" Text="Monitoring URI" Order="1400"/>
     <ROW Dialog_="FeatureConfiguration" Control="CheckBox_1" Type="CheckBox" X="20" Y="127" Width="135" Height="21" Attributes="3" Property="ENABLE_SERVICECONTROL" Text="Recoverability and Auditing" TextStyle="DlgFontBold8" Order="1500"/>
     <ROW Dialog_="FeatureConfiguration" Control="CheckBox_2" Type="CheckBox" X="20" Y="181" Width="65" Height="19" Attributes="3" Property="ENABLE_MONITORING" Text="Monitoring" TextStyle="DlgFontBold8" Order="1600"/>
@@ -287,6 +289,16 @@
     <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="135" Y="86" Width="220" Height="32" Attributes="196611" Text="The [Wizard] will install [ProductName] on your computer.  Click &quot;[Text_Next]&quot; to continue or &quot;Cancel&quot; to exit the [Wizard]." Order="600" TextLocId="Control.Text.WelcomeDlg#Description" MsiKey="WelcomeDlg#Description"/>
     <ATTRIBUTE name="DeletedRows" value="AdminBrowseDlg#Logo@AdminInstallPointDlg#Logo@BrowseDlg#Logo@CustomizeDlg#Logo@DiskCostDlg#Logo@FilesInUse#Logo@FolderDlg#Logo@LicenseAgreementDlg#Logo@MaintenanceTypeDlg#Logo@MsiRMFilesInUse#Logo@OutOfDiskDlg#Logo@OutOfRbDiskDlg#Logo@ProgressDlg#Logo@VerifyReadyDlg#Logo"/>
   </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
+    <ROW Dialog_="FeatureConfiguration" Control_="Edit_2" Action="Enable" Condition="ENABLE_SERVICECONTROL"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Edit_2" Action="Disable" Condition="NOT ENABLE_SERVICECONTROL"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Text_2" Action="Enable" Condition="ENABLE_SERVICECONTROL"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Text_2" Action="Disable" Condition="NOT ENABLE_SERVICECONTROL"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Text_5" Action="Enable" Condition="ENABLE_MONITORING"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Text_5" Action="Disable" Condition="NOT ENABLE_MONITORING"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Edit_3" Action="Enable" Condition="ENABLE_MONITORING"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Edit_3" Action="Disable" Condition="NOT ENABLE_MONITORING"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_INSTALL" Ordering="197"/>
@@ -326,12 +338,6 @@
     <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="12"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_4" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="11"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Check_SC_Monitoring_URL" Condition="AI_INSTALL AND ( VALID_PORT = &quot;TRUE&quot; )" Ordering="15"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Connect_SC_Monitoring" Condition="AI_INSTALL AND ( VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; )" Ordering="16"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Invalid_ServiceControlMonitoringUrl_Msg" Condition="AI_INSTALL AND ( VALID_CONTROL_MONITORING_URL=&quot;FALSE&quot; )" Ordering="19"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_5" Condition="AI_INSTALL AND ( VALID_CONTROL_MONITORING_URL=&quot;FALSE&quot; )" Ordering="18"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Warning_ServiceControlMonitoring_Unavail_msg" Condition="AI_INSTALL AND ( ( CONTACT_SERVICECONTROL_MONITORING=&quot;FALSE&quot; ) AND  1 )" Ordering="22"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_6" Condition="AI_INSTALL AND ( ( CONTACT_SERVICECONTROL_MONITORING=&quot;FALSE&quot; ) AND  1 )" Ordering="21"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Next" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="14"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_4" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="13"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Next" Event="DoAction" Argument="Check_SC_URL" Condition="AI_INSTALL AND ( VALID_PORT = &quot;TRUE&quot; )" Ordering="8"/>
@@ -351,6 +357,15 @@
     <ROW Dialog_="FolderDlg" Control_="Next" Event="NewDialog" Argument="FeatureConfiguration" Condition="AI_INSTALL AND ( ENABLE_FEATURE_SELECTION=&quot;TRUE&quot; )" Ordering="201"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Next" Event="NewDialog" Argument="VerifyReadyDlg" Condition="1 AND  (VALID_PORT=&quot;TRUE&quot;) AND (VALID_CONTROL_URL=&quot;TRUE&quot;) AND (CONTACT_SERVICECONTROL=&quot;TRUE&quot; OR IGNORE_SERVICECONTROL_OFFLINE &lt;&gt; &quot;IDNO&quot;)" Ordering="26"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="FeatureConfiguration" Condition="AI_INSTALL AND ( ENABLE_FEATURE_SELECTION=&quot;TRUE&quot; )" Ordering="201"/>
+    <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="[INST_SC_MONITORING_URI]" Argument="&quot;&quot;" Condition="AI_INSTALL" Ordering="2"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="1" Ordering="0"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="TRUE" Condition="INST_URI" Ordering="8"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="CheckBox_1" Event="[INST_URI]" Argument="[DEFAULT_SC_URI]" Condition="( ENABLE_SERVICECONTROL ) AND (NOT INST_URI)" Ordering="0"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="CheckBox_2" Event="[INST_SC_MONITORING_URI]" Argument="[DEFAULT_SC_MONITORING_URI]" Condition="( ENABLE_MONITORING ) AND (NOT INST_SC_MONITORING_URI)" Ordering="0"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="TRUE" Condition="INST_SC_MONITORING_URI" Ordering="5"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="1" Ordering="1"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="[INST_SC_MONITORING_URI]" Condition="( NOT INST_SC_MONITORING_URI )" Ordering="7"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="INST_URI" Condition="( NOT INST_URI )" Ordering="9"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
