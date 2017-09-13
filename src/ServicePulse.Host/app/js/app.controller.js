@@ -17,6 +17,11 @@
         scConfig,
         uriService
     ) {
+        $scope.isMonitoringEnabled = scConfig.monitoring_urls && scConfig.monitoring_urls.reduce(function (currentlyEnabled, url) {
+            return currentlyEnabled || url;
+        }, false);
+
+        $scope.isRecoverabilityEnabled = scConfig.service_control_url;
 
         $scope.SCVersion = '';
         $scope.is_compatible_with_sc = true;
