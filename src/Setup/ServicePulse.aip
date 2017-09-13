@@ -366,6 +366,7 @@
     <ROW Dialog_="FeatureConfiguration" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="1" Ordering="1"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="[INST_SC_MONITORING_URI]" Condition="( NOT INST_SC_MONITORING_URI )" Ordering="7"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="INST_URI" Condition="( NOT INST_URI )" Ordering="9"/>
+    <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="[INST_URI]" Argument="[DEFAULT_SC_URI]" Condition="AI_INSTALL AND ( NOT INST_URI )" Ordering="3"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
