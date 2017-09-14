@@ -46,6 +46,10 @@
                 } else {
                     $scope.endpoints.push(endpoint);
                 }
+
+                // force a digest as this binding could happen during an angular
+                // digest and it won't show until the next one
+                $scope.$apply();
             });
 
             endpointsFromScSubscription =
