@@ -58,7 +58,7 @@
                         chart.append('path')
                             .datum(Array(points.length).fill(average))
                             .attr('d', line)
-                            .attr('stroke', 'black');
+                            .attr('stroke', '#AAAFAD');
 
                         chart.append('path')
                             .datum(Array(points.length).fill(0))
