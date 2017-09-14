@@ -6,7 +6,7 @@
             redirectTo: '/custom-checks'
         }).when('/custom-checks', {
             data: {
-                pageTitle: 'Customer Checks'
+                pageTitle: 'Custom Checks'
             },
             templateUrl: 'js/views/custom_checks/customChecks.html',
             controller: 'CustomChecksCtrl',
