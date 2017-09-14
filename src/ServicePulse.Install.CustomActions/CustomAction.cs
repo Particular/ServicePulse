@@ -210,7 +210,7 @@
                     }
                     else
                     {
-                        Log(session, string.Format(@"Extracted monitoring URI {0} from {1}", extracted, filePath));
+                        Log(session, string.Format(@"Extracted monitoring URI {0} from {1}", monitoringExtracted, filePath));
                         monitoringUrl = monitoringExtracted;
                     }
 
