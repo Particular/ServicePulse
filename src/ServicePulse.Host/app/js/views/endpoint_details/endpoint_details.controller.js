@@ -49,7 +49,10 @@
                     var date = new Date(item);
                     return date.toLocaleTimeString();
                 });
-
+                endpoint.metricDetails.metrics.throughput.className = 'throughput';
+                endpoint.metricDetails.metrics.throughput.axisName = 'Throughput [msgs/s]';
+                endpoint.metricDetails.metrics.queueLength.className = 'queue-length';
+                endpoint.metricDetails.metrics.queueLength.axisName = 'Queue Length [msgs]';
                
                 $scope.endpoint.instances.forEach(function (instance) {
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {

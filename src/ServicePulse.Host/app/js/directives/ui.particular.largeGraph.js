@@ -82,14 +82,8 @@
                             var totalWidth = scope.width;
                             var height = scope.height;
                             var graphWidth = totalWidth - (2 * margin) - 30;
-                            var firstSeries = {
-                                points: scope.firstDataSeries.points,
-                                average: scope.firstDataSeries.average
-                            };
-                            var secondSeries = {
-                                points: scope.secondDataSeries.points,
-                                average: scope.secondDataSeries.average
-                            };
+                            var firstSeries = scope.firstDataSeries;
+                            var secondSeries = scope.secondDataSeries;
 
                             var dates = scope.dates;
 
@@ -118,7 +112,7 @@
                                 graphWidth,
                                 margin,
                                 dates,
-                                'throughput');
+                                firstSeries.className);
 
                             drawDataSeries(secondSeries,
                                 attrs.secondSeriesColor,
@@ -129,17 +123,17 @@
                                 graphWidth,
                                 margin,
                                 dates,
-                                'queue-length');
+                                secondSeries.className);
 
-                            chart.append("text")
-                                .attr("text-anchor", "middle")
-                                .attr("transform", "translate(" + (margin / 2) + "," + (height / 2) + ")rotate(-90)")
-                                .text("Throughput [msgs/s]");
+                            chart.append('text')
+                                .attr('text-anchor', 'middle')
+                                .attr('transform', 'translate(' + (margin / 2) + ',' + (height / 2) + ')rotate(-90)')
+                                .text(firstSeries.axisName);
 
-                            chart.append("text")
-                                .attr("text-anchor", "middle")  
-                                .attr("transform", "translate(" + (graphWidth) + "," + (height / 2) + ")rotate(90)") 
-                                .text("Queue Length [msgs]");
+                            chart.append('text')
+                                .attr('text-anchor', 'middle')  
+                                .attr('transform', 'translate(' + (graphWidth) + ',' + (height / 2) + ')rotate(90)') 
+                                .text(secondSeries.axisName);
                         });
                     }
                 };
