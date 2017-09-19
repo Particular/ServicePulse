@@ -1,13 +1,13 @@
 ﻿(function(window, angular, undefined) {
     'use strict';
 
-    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, heigth, graphWidth, margin, dates) {
+    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, height, graphWidth, margin, dates) {
 
         var max = Math.max(dataSeries.average * 1.5, d3.max(dataSeries.points));
 
         var scaleY = d3.scaleLinear()
             .domain([0, max])
-            .range([heigth - margin, margin]);
+            .range([height - margin, margin]);
 
         var area = d3.area()
             .x(function (d, i) {
@@ -29,13 +29,15 @@
         chart.append('path')
             .datum(dataSeries.points)
             .attr('d', area)
-            .attr('fill', 'transparent')
+            .attr('fill', color)
+            .attr('opacity', 0.2)
             .attr('stroke', color);
 
         chart.append('path')
             .datum(Array(dataSeries.points.length).fill(dataSeries.average))
             .attr('d', line)
-            .attr('stroke', 'black');
+            .attr('stroke', color)
+            .attr('stroke-width', 2)            ;
 
         chart.selectAll('dot')
             .data(dataSeries.points)
@@ -45,21 +47,24 @@
             .attr('cy', function (d) { return scaleY(d); })
             .append('svg:title')
             .text(function (d, i) { return dates[i] + ' | ' + d; });
-
-        chart.append('text')
-            .attr('x', graphWidth + 3)
-            .attr('y', scaleY(dataSeries.average))
-            .attr('text-anchor', 'start')
-            .attr('font-size', 12)
-            .attr('font-family', 'sans-serif')
-            .attr('fill', color)
-            .text(dataSeries.average.toFixed(2));
-
+            
         chart.append('g')
             .attr('class', 'y axis')
             .attr('transform', 'translate(' + (yAxisAllignedLeft ? margin : graphWidth - margin) + ', 0)')
             .call((yAxisAllignedLeft ? d3.axisLeft(scaleY) : d3.axisRight(scaleY)));
 }
+
+
+        chart.append("text")
+            .attr("text-anchor", "middle")
+            .attr("transform", "translate(" + (margin / 2) + "," + (height / 2) + ")rotate(-90)")  
+            .text("Throughput [msgs/s]");
+
+        chart.append("text")
+            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate(" + (graphWidth) + "," + (height / 2) + ")rotate(90)")  // centre below axis
+            .text("Queue Length [msgs]");
+    }
 
     angular.module('ui.particular.largeGraph', [])
         .directive('largeGraph',
@@ -71,17 +76,17 @@
                         firstDataSeries: '=firstDataSeries',
                         secondDataSeries: '=secondDataSeries',
                         width: '=plotWidth',
-                        heigth: '=plotHeight'
+                        height: '=plotHeight'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         scope.$watch('firstDataSeries', function () {
                             d3.selectAll('large-graph svg > *').remove();
                             var svg = element.find('svg')[0];
-                            var margin = 35;
+                            var margin = 60;
 
                             var totalWidth = scope.width;
-                            var heigth = scope.heigth;
+                            var height = scope.height;
                             var graphWidth = totalWidth - (2 * margin) - 30;
                             var firstSeries = {
                                 points: scope.firstDataSeries.points,
@@ -101,11 +106,11 @@
                             
                             var chart = d3.select(svg)
                                 .attr('width', totalWidth)
-                                .attr('height', heigth);
+                                .attr('height', height);
 
                             chart.append('g')
                                 .attr('class', 'x axis')
-                                .attr('transform', 'translate(0,' + (heigth - margin) + ')')
+                                .attr('transform', 'translate(0,' + (height - margin) + ')')
                                 .call(d3.axisBottom(scaleX).tickFormat(function(d) {
                                     return dates[d];
                                 }));
@@ -115,7 +120,7 @@
                                 true,
                                 scaleX,
                                 chart,
-                                heigth,
+                                height,
                                 graphWidth,
                                 margin,
                                 dates);
@@ -125,7 +130,7 @@
                                 false,
                                 scaleX,
                                 chart,
-                                heigth,
+                                height,
                                 graphWidth,
                                 margin,
                                 dates);
