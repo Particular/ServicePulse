@@ -1,7 +1,7 @@
 ﻿(function(window, angular, undefined) {
     'use strict';
 
-    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, height, graphWidth, margin, dates) {
+    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, height, graphWidth, margin, dates, className) {
 
         var max = Math.max(dataSeries.average * 1.5, d3.max(dataSeries.points));
 
@@ -26,20 +26,22 @@
             })
             .curve(d3.curveLinear);
 
-        chart.append('path')
+        var group = chart.append('g').attr('class', className);
+
+        group.append('path')
             .datum(dataSeries.points)
             .attr('d', area)
             .attr('fill', color)
             .attr('opacity', 0.2)
             .attr('stroke', color);
 
-        chart.append('path')
+        group.append('path')
             .datum(Array(dataSeries.points.length).fill(dataSeries.average))
             .attr('d', line)
             .attr('stroke', color)
-            .attr('stroke-width', 2)            ;
+            .attr('stroke-width', 2);
 
-        chart.selectAll('dot')
+        group.selectAll('dot')
             .data(dataSeries.points)
             .enter().append('circle')
             .attr('r', 3)
@@ -48,22 +50,14 @@
             .append('svg:title')
             .text(function (d, i) { return dates[i] + ' | ' + d; });
             
-        chart.append('g')
+        group.append('g')
             .attr('class', 'y axis')
             .attr('transform', 'translate(' + (yAxisAllignedLeft ? margin : graphWidth - margin) + ', 0)')
             .call((yAxisAllignedLeft ? d3.axisLeft(scaleY) : d3.axisRight(scaleY)));
 }
 
 
-        chart.append("text")
-            .attr("text-anchor", "middle")
-            .attr("transform", "translate(" + (margin / 2) + "," + (height / 2) + ")rotate(-90)")  
-            .text("Throughput [msgs/s]");
-
-        chart.append("text")
-            .attr("text-anchor", "middle")  // this makes it easy to centre the text as the transform is applied to the anchor
-            .attr("transform", "translate(" + (graphWidth) + "," + (height / 2) + ")rotate(90)")  // centre below axis
-            .text("Queue Length [msgs]");
+        
     }
 
     angular.module('ui.particular.largeGraph', [])
@@ -123,7 +117,8 @@
                                 height,
                                 graphWidth,
                                 margin,
-                                dates);
+                                dates,
+                                'throughput');
 
                             drawDataSeries(secondSeries,
                                 attrs.secondSeriesColor,
@@ -133,8 +128,18 @@
                                 height,
                                 graphWidth,
                                 margin,
-                                dates);
-                            
+                                dates,
+                                'queue-length');
+
+                            chart.append("text")
+                                .attr("text-anchor", "middle")
+                                .attr("transform", "translate(" + (margin / 2) + "," + (height / 2) + ")rotate(-90)")
+                                .text("Throughput [msgs/s]");
+
+                            chart.append("text")
+                                .attr("text-anchor", "middle")  
+                                .attr("transform", "translate(" + (graphWidth) + "," + (height / 2) + ")rotate(90)") 
+                                .text("Queue Length [msgs]");
                         });
                     }
                 };
