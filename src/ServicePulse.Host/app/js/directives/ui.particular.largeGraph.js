@@ -38,7 +38,7 @@
         group.append('path')
             .datum(Array(dataSeries.points.length).fill(dataSeries.average))
             .attr('d', line)
-            .attr('stroke', color)
+            .attr('stroke', '#AAAFAD')
             .attr('stroke-width', 2);
 
         group.selectAll('dot')
@@ -54,10 +54,6 @@
             .attr('class', 'y axis')
             .attr('transform', 'translate(' + (yAxisAllignedLeft ? margin : graphWidth - margin) + ', 0)')
             .call((yAxisAllignedLeft ? d3.axisLeft(scaleY) : d3.axisRight(scaleY)));
-}
-
-
-        
     }
 
     angular.module('ui.particular.largeGraph', [])
