@@ -95,16 +95,6 @@
                                 .attr('class', 'y axis')
                                 .attr('transform', 'translate(' + margin + ', 0)')
                                 .call(d3.axisLeft(scaleY));
-
-                            var scaleYValue = (scaleY(average == 0 ? 1 : average) + 3) | 0;
-
-                            chart.append('text')
-                                .attr('x', 0)
-                                .attr('y', scaleYValue)
-                                .attr('text-anchor', 'start')
-                                .attr('font-size', 12)
-                                .attr('font-family', 'sans-serif')
-                                .text('ø');
                         });
                     }
                 };
