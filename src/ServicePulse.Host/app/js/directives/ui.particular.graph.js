@@ -18,15 +18,16 @@
                         var totalWidth = 180;
                         var margin = 12;
                         var points = scope.data;
-                        var average = scope.avg;
-                        var max = Math.max(average * 1.5, d3.max(points));
+                        var average = scope.avg || 0;
+                        var max = points && points.length ? Math.max(average * 1.5, d3.max(points)) : 1;
+                        var numberOfPoints = points && points.length ? points.length : 2;
 
                         var scaleY = d3.scaleLinear()
                             .domain([0, max])
                             .range([heigth - margin, margin]);
 
                         var scaleX = d3.scaleLinear()
-                            .domain([0, points.length - 1])
+                            .domain([0, numberOfPoints - 1])
                             .range([margin, graphWidth - margin]);
 
                         var area = d3.area()
@@ -50,18 +51,20 @@
                             .attr('width', totalWidth)
                             .attr('height', heigth);
 
-                        chart.append('path')
-                            .datum(points)
-                            .attr('d', area)
-                            .attr('fill', attrs.color);
+                        if (points) {
+                            chart.append('path')
+                                .datum(points)
+                                .attr('d', area)
+                                .attr('fill', attrs.color);
+                        }
 
                         chart.append('path')
-                            .datum(Array(points.length).fill(average))
+                            .datum(Array(numberOfPoints).fill(average))
                             .attr('d', line)
                             .attr('stroke', 'black');
 
                         chart.append('path')
-                            .datum(Array(points.length).fill(0))
+                            .datum(Array(numberOfPoints).fill(0))
                             .attr('d', line)
                             .attr('stroke', 'gray');
 

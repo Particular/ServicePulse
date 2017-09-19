@@ -144,7 +144,7 @@
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="instance.metrics.throughput.points" plot-points="instance.metrics.throughput.points" plot-average="instance.metrics.throughput.average" color="#e09365" class="graph pull-left"></graph>
+                                                <graph plot-points="instance.metrics.throughput.points" plot-average="instance.metrics.throughput.average" color="#e09365" class="graph pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -154,7 +154,7 @@
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="instance.metrics.retries.points" plot-points="instance.metrics.retries.points" plot-average="instance.metrics.retries.average" color="#4286f4" class="graph pull-left"></graph>
+                                                <graph plot-points="instance.metrics.retries.points" plot-average="instance.metrics.retries.average" color="#4286f4" class="graph pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -164,7 +164,7 @@
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="instance.metrics.processingTime.points" plot-points="instance.metrics.processingTime.points" plot-average="instance.metrics.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
+                                                <graph plot-points="instance.metrics.processingTime.points" plot-average="instance.metrics.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -174,7 +174,7 @@
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="instance.metrics.criticalTime.points" plot-points="instance.metrics.criticalTime.points" plot-average="instance.metrics.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
+                                                <graph plot-points="instance.metrics.criticalTime.points" plot-average="instance.metrics.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -252,28 +252,28 @@
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="messageType.metrics.throughput.points" plot-points="messageType.metrics.throughput.points" plot-average="messageType.metrics.throughput.average" color="#e09365" class="graph pull-left"></graph>
+                                                <graph plot-points="messageType.metrics.throughput.points" plot-average="messageType.metrics.throughput.average" color="#e09365" class="graph pull-left"></graph>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="messageType.metrics.retries.points" plot-points="messageType.metrics.retries.points" plot-average="messageType.metrics.retries.average" color="#4286f4" class="graph pull-left"></graph>
+                                                <graph plot-points="messageType.metrics.retries.points" plot-average="messageType.metrics.retries.average" color="#4286f4" class="graph pull-left"></graph>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="messageType.metrics.processingTime.points" plot-points="messageType.metrics.processingTime.points" plot-average="messageType.metrics.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
+                                                <graph plot-points="messageType.metrics.processingTime.points" plot-average="messageType.metrics.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
-                                                <graph ng-if="messageType.metrics.criticalTime.points" plot-points="messageType.metrics.criticalTime.points" plot-average="messageType.metrics.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
+                                                <graph plot-points="messageType.metrics.criticalTime.points" plot-average="messageType.metrics.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
                                             </div>
                                         </div>
                                     </div>
