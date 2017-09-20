@@ -105,6 +105,7 @@
     <Content Include="app\js\services\constant.historyperiods.js" />
     <Content Include="app\js\services\constant.rxjs.js" />
     <Content Include="app\js\services\factory.shareddata.js" />
+    <Content Include="app\js\services\service.formatter.js" />
     <Content Include="app\js\services\services.monitoring.js" />
     <Content Include="app\js\services\services.endpoints.js" />
     <Content Include="app\js\views\about\controller.js" />

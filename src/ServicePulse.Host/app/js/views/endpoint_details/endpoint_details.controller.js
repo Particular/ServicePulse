@@ -8,7 +8,8 @@
         toastService,
         serviceControlService,
         monitoringService,
-        historyPeriods) {
+        historyPeriods,
+        formatter) {
 
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
@@ -30,6 +31,10 @@
             $scope.selectedPeriod = period;
 
             updateUI();
+        };
+
+        $scope.formatTime = function (value) {
+            return formatter.formatTime(value);
         };
 
         function updateUI() {
@@ -76,7 +81,8 @@
         'toastService',
         'serviceControlService',
         'monitoringService',
-        'historyPeriods'
+        'historyPeriods',
+        'formatter'
     ];
 
     angular.module('endpoint_details')

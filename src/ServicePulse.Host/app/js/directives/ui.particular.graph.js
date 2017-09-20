@@ -8,10 +8,12 @@
                     restrict: 'E',
                     scope: {
                         data: '=plotPoints',
-                        avg: '=plotAverage'
+                        avg: '=plotAverage',
+                        formatter: '&'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
+                        scope.formatter = scope.formatter(); // unwrap the function
                         var svg = element.find('svg')[0];
                         var heigth = 50;
                         var graphWidth = 130;
@@ -68,13 +70,18 @@
                             .attr('d', line)
                             .attr('stroke', 'gray');
 
+                        var displayValue = average.toFixed(2);
+                        if (scope.formatter) {
+                            displayValue = scope.formatter(average);
+                        }
+
                         chart.append("text")
                             .attr("x", graphWidth - margin + 3)
                             .attr("y", heigth / 2 + 5)
                             .attr("text-anchor", "start")
                             .attr("font-size", 12)
                             .attr("font-family", "sans-serif")
-                            .text(average.toFixed(2));
+                            .text(displayValue);
                     }
                 };
             });

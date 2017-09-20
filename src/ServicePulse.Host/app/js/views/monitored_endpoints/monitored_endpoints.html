@@ -93,7 +93,7 @@
                                                 </span>
                                                 <span class="warning" ng-if="endpoint.errorCount">
                                                     <i class="fa fa-envelope"></i>
-                                                    <span class="badge badge-important ng-binding">{{endpoint.errorCount | largeNumber:1}}</span>
+                                                    <span class="badge badge-important ng-binding">{{endpoint.errorCount | largeNumber:1:""}}</span>
                                                 </span>
                                             </div>
                                         </div>
@@ -132,7 +132,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <graph plot-points="endpoint.metrics.processingTime.points" plot-average="endpoint.metrics.processingTime.average" color="#40bc42" class="graph pull-left"></graph>
+                                            <graph plot-points="endpoint.metrics.processingTime.points" plot-average="endpoint.metrics.processingTime.average" formatter="formatTime" color="#40bc42" class="graph pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
@@ -142,7 +142,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <graph plot-points="endpoint.metrics.criticalTime.points" plot-average="endpoint.metrics.criticalTime.average" color="#d64f21" class="graph pull-left"></graph>
+                                            <graph plot-points="endpoint.metrics.criticalTime.points" plot-average="endpoint.metrics.criticalTime.average" formatter="formatTime" color="#d64f21" class="graph pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>

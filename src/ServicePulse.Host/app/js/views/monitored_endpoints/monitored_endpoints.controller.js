@@ -8,7 +8,8 @@
         serviceControlService,
         toastService,
         historyPeriods,
-        rx ) {
+        rx,
+        formatter) {
 
         var subscription, endpointsFromScSubscription;
 
@@ -27,6 +28,10 @@
             $scope.selectedPeriod = period;
 
             updateUI();
+        };
+
+        $scope.formatTime = function (value) {
+            return formatter.formatTime(value);
         };
 
         function updateUI() {
@@ -79,7 +84,8 @@
         'serviceControlService',
         'toastService',
         'historyPeriods',
-        'rx'
+        'rx',
+        'formatter'
     ];
 
     angular.module('monitored_endpoints')
