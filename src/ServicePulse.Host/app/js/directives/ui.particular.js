@@ -16,6 +16,7 @@
         'ui.particular.graph',
         'ui.particular.largenumber',
         'ui.particular.largeGraph',
+        'ui.particular.duration',
     ]);
 
 } (window, window.angular));
