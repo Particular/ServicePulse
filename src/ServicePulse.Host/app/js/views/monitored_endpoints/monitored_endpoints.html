@@ -102,7 +102,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <graph plot-points="endpoint.metrics.queueLength.points" plot-average="endpoint.metrics.queueLength.average" color="#e09365" class="graph pull-left"></graph>
+                                            <graph plot-points="endpoint.metrics.queueLength.points" plot-average="endpoint.metrics.queueLength.average" formatter="formatDecimal" color="#e09365" class="graph pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
