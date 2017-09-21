@@ -33,10 +33,6 @@
             updateUI();
         };
 
-        $scope.formatTime = function (value) {
-            return formatter.formatTime(value);
-        };
-
         function updateUI() {
             if (subscription) {
                 subscription.dispose();

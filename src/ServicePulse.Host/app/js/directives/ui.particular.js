@@ -17,6 +17,8 @@
         'ui.particular.largenumber',
         'ui.particular.largeGraph',
         'ui.particular.duration',
+        'ui.particular.graphduration',
+        'ui.particular.graphdecimal',
     ]);
 
 } (window, window.angular));

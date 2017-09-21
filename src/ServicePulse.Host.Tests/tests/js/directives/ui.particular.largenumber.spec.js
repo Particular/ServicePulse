@@ -4,6 +4,7 @@
     var $filter;
 
     beforeEach(function () {
+        module('sc');
         module('ui.particular.largenumber');
 
         inject(function (_$filter_) {
@@ -14,7 +15,7 @@
     it('number below 1000 should be left intact', function () {
         var value = 301, result;
         
-        result = $filter('largeNumber')(value, '1');
+        result = $filter('largeNumber')(value, 0) * 1;
         
         expect(result).toEqual(value);
     });

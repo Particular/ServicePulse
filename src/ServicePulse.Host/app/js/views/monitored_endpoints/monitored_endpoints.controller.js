@@ -30,14 +30,6 @@
             updateUI();
         };
 
-        $scope.formatTime = function (value) {
-            return formatter.formatTime(value);
-        };
-
-        $scope.formatDecimal = function (value) {
-            return formatter.formatLargeNumber(value, 0);
-        }
-
         function updateUI() {
             if (subscription) {
                 subscription.dispose();

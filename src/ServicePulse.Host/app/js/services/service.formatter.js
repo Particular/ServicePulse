@@ -32,7 +32,7 @@
             }
 
             if (value < 1000) {
-                return value;
+                return value.toFixed(decimals);
             }
 
             exp = Math.floor(Math.log(value) / Math.log(1000));
