@@ -8,7 +8,8 @@
         serviceControlService,
         toastService,
         historyPeriods,
-        rx ) {
+        rx,
+        formatter) {
 
         var subscription, endpointsFromScSubscription;
 
@@ -79,7 +80,8 @@
         'serviceControlService',
         'toastService',
         'historyPeriods',
-        'rx'
+        'rx',
+        'formatter'
     ];
 
     angular.module('monitored_endpoints')

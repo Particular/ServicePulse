@@ -8,7 +8,8 @@
         toastService,
         serviceControlService,
         monitoringService,
-        historyPeriods) {
+        historyPeriods,
+        formatter) {
 
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
@@ -76,7 +77,8 @@
         'toastService',
         'serviceControlService',
         'monitoringService',
-        'historyPeriods'
+        'historyPeriods',
+        'formatter'
     ];
 
     angular.module('endpoint_details')
