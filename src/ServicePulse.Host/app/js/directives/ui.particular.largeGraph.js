@@ -1,7 +1,7 @@
 ﻿(function(window, angular, undefined) {
     'use strict';
 
-    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, height, graphWidth, margin, dates, className) {
+    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, height, graphWidth, margin, dates, className, unit) {
 
         var max = Math.max(dataSeries.average * 1.5, d3.max(dataSeries.points));
 
@@ -48,7 +48,7 @@
             .attr('cx', function (d, i) { return scaleX(i); })
             .attr('cy', function (d) { return scaleY(d); })
             .append('svg:title')
-            .text(function (d, i) { return dates[i] + ' | ' + d; });
+            .text(function (d, i) { return 'Time: ' + dates[i] + ', Value: ' + d.toFixed(2) + ' ' + unit; });
             
         group.append('g')
             .attr('class', 'y axis')
@@ -108,7 +108,8 @@
                                 graphWidth,
                                 margin,
                                 dates,
-                                firstSeries.className);
+                                firstSeries.className,
+                                firstSeries.unit);
 
                             drawDataSeries(secondSeries,
                                 attrs.secondSeriesColor,
@@ -119,7 +120,8 @@
                                 graphWidth,
                                 margin,
                                 dates,
-                                secondSeries.className);
+                                secondSeries.className,
+                                secondSeries.unit);
 
                             chart.append('text')
                                 .attr('text-anchor', 'middle')
