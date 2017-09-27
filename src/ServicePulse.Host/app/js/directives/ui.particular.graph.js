@@ -71,7 +71,7 @@
                             .attr('stroke', 'gray');
 
                         var displayValue = average.toFixed(2);
-                        if (typeof scope.plotData.displayValue !== undefined) {
+                        if (typeof scope.plotData.displayValue !== "undefined") {
                             displayValue = scope.plotData.displayValue;
                         }
 
