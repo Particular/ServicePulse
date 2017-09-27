@@ -123,11 +123,15 @@
 
                             chart.append('text')
                                 .attr('text-anchor', 'middle')
+                                .attr('stroke', attrs.firstSeriesColor)
+                                .attr('opacity', 0.5)
                                 .attr('transform', 'translate(' + (margin / 2) + ',' + (height / 2) + ')rotate(-90)')
                                 .text(firstSeries.axisName);
 
                             chart.append('text')
                                 .attr('text-anchor', 'middle')  
+                                .attr('stroke', attrs.secondSeriesColor)
+                                .attr('opacity', 0.5)
                                 .attr('transform', 'translate(' + (graphWidth) + ',' + (height / 2) + ')rotate(90)') 
                                 .text(secondSeries.axisName);
                         });
