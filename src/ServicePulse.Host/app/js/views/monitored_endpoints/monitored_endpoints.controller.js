@@ -47,6 +47,8 @@
                 } else {
                     $scope.endpoints.push(endpoint);
                 }
+
+                $scope.$apply();
             });
 
             endpointsFromScSubscription =
