@@ -12,6 +12,7 @@
             ExtractApp(args);
             UpdateVersion(args.OutputPath);
             UpdateConfig(args.OutputPath, args.ServiceControlUrl);
+            UpdateMonitoringConfig(args.OutputPath, args.ServiceControlMonitoringUrl);
         }
 
         static void ExtractApp(HostArguments args)
@@ -45,6 +46,13 @@
             var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
             File.WriteAllText(appJsPath, Regex.Replace(appJsCode, @"(service_control_url\s*\:\s*['""])(.*?)(['""])", "$1" + serviceControlUrl + "$3"));
+        }
+
+        public static void UpdateMonitoringConfig(string directoryPath, string serviceControlMonitoringUrl)
+        {
+            var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
+            var appJsCode = File.ReadAllText(appJsPath);
+            File.WriteAllText(appJsPath, Regex.Replace(appJsCode, @"(monitoring_urls\s*\:\s*[\s*['""]*)(.*?)(['""]])", "$1" + serviceControlMonitoringUrl + "$3"));
         }
 
         public static void UpdateVersion(string directoryPath)

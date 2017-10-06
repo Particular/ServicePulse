@@ -12,7 +12,13 @@
         'ui.particular.busy',
         'ui.particular.nodata',
         'ui.particular.configurationTabs',
-        'ui.particular.redirectLink'
+        'ui.particular.redirectLink',
+        'ui.particular.graph',
+        'ui.particular.largenumber',
+        'ui.particular.largeGraph',
+        'ui.particular.duration',
+        'ui.particular.graphduration',
+        'ui.particular.graphdecimal',
     ]);
 
 } (window, window.angular));

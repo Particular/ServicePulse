@@ -1,0 +1,165 @@
+<div class="container" ng-show="endpoints.length">
+    <div class="row monitoring-head">
+        <div class="col-sm-10 no-side-padding list-section">
+            <h1>Endpoints overview</h1>
+        </div>
+        <div class="col-sm-2 no-side-padding toolbar-menus">
+            <div class="msg-group-menu dropdown">
+                <label class="control-label">Period:</label>
+                <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{selectedPeriod.text}}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li ng-repeat="period in periods">
+                        <a ng-click="selectPeriod(period)" href="#/monitored_endpoints?historyPeriod={{period.value}}">{{period.text}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <section ng-show="true">
+        <div class="text-center monitoring-no-data" ng-show="!endpoints.length">
+            <h1>No endpoints available for monitoring</h1>
+                <p>Ensure that your endpoints have auditing enabled and/or have the metrics plug-in enabled</p>
+            <div class="action-toolbar">
+                <a class="btn btn-default btn-primary" href="https://www.google.com/search?site=&source=hp&q=metrics+%2Fsite%3Adocs.particular.net&oq=metrics+%2Fsite%3Adocs.particular.net">Learn more</a>
+            </div>
+        </div>
+        
+        <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
+            <div class="col-sm-2 col-xl-7">
+                <div class="row box-header">
+                    <div class="col-sm-12">
+                        <p>Name</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xl-1 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p>Queue Length <span>(msgs)</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xl-1 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p>Throughput <span>(msgs/s)</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xl-1 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p>Retries <span>(msgs)</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xl-1 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p>Processing Time <span>(ms)</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xl-1 no-side-padding">
+                <div class="row box-header">
+                    <div class="col-sm-12 no-side-padding">
+                        <p>Critical Time <span>(ms)</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 no-side-padding">
+                <div class="row box endpoint-row box-group" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
+                    <div class="col-sm-12 no-side-padding">
+                        <div class="row">
+                            <a class="hard-wrap lead" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}?historyPeriod={{selectedPeriod.value}}">
+                                <div class="col-sm-2 col-xl-7 endpoint-name">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+
+                                            {{endpoint.name}}
+                                            <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
+                                            <div class="endpoint-status">
+                                                <span class="warning" ng-if="endpoint.isStale">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
+                                                <span class="warning" ng-if="endpoint.errorCount">
+                                                    <i class="fa fa-envelope"></i>
+                                                    <span class="badge badge-important ng-binding">{{endpoint.errorCount | largeNumber:1:""}}</span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph plot-data="endpoint.metrics.queueLength | graphdecimal" color="#e09365" class="graph pull-left"></graph>
+                                            <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph plot-data="endpoint.metrics.throughput" color="#e09365" class="graph pull-left"></graph>
+                                            <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph plot-data="endpoint.metrics.retries" color="#4286f4" class="graph pull-left"></graph>
+                                            <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph plot-data="endpoint.metrics.processingTime | graphduration" color="#40bc42" class="graph pull-left"></graph>
+                                            <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <graph plot-data="endpoint.metrics.criticalTime | graphduration" color="#d64f21" class="graph pull-left"></graph>
+                                            <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
+                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="!endpoint.isConnected">
+                                    <div class="row box-header">
+                                        No plug-ins installed. 
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

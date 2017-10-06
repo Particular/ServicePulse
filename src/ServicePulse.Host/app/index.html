@@ -90,6 +90,9 @@
 <script src="bower_components/toaster/toaster.js"></script>
 <script src="bower_components/signalr/jquery.signalR.js"></script>
 <script src="bower_components/angular-ui-select/dist/select.js"></script>
+<script src="bower_components/d3/d3.js"></script>
+<script src="bower_components/rxjs/dist/rx.all.js"></script>
+<script src="bower_components/moment-duration-format/lib/moment-duration-format.js"></script>
 <!-- endbower -->
 
 <script src="lib/page-width-functions.js"></script>
@@ -109,6 +112,7 @@
 <script src="js/services/services.platform-update.js"></script>
 <script src="js/services/services.semver.js"></script>
 <script src="js/services/services.service-control.js"></script>
+<script src="js/services/services.monitoring.js"></script>
 <script src="js/services/services.stream.js"></script>
 <script src="js/services/services.uri.js"></script>
 <script src="js/services/service.toast.js"></script>
@@ -116,6 +120,9 @@
 <script src="js/services/factory.notifier.js"></script>
 <script src="js/services/factory.shareddata.js"></script>
 <script src="js/services/services.endpoints.js"></script>
+<script src="js/services/constant.rxjs.js"></script>
+<script src="js/services/constant.historyperiods.js"></script>
+<script src="js/services/service.formatter.js"></script>
 
 <!-- Directives -->
 <script src="js/directives/ngClip.js"></script>
@@ -132,6 +139,12 @@
 <script src="js/directives/ui.particular.failedMessageTabs.js"></script>
 <script src="js/directives/ui.particular.configurationTabs.js"></script>
 <script src="js/directives/ui.particular.redirectLink.js"></script>
+<script src="js/directives/ui.particular.graph.js"></script>
+<script src="js/directives/ui.particular.largeGraph.js"></script>
+<script src="js/directives/ui.particular.largenumber.js"></script>
+<script src="js/directives/ui.particular.duration.js"></script>
+<script src="js/directives/ui.particular.graphdecimal.js"></script>
+<script src="js/directives/ui.particular.graphduration.js"></script>
 
 <!-- Mystery -->
 <script src="js/views/event_log_items/eventLogItems.js"></script>
@@ -179,6 +192,16 @@
 <script src="js/views/endpoints/endpoints.module.js"></script>
 <script src="js/views/endpoints/endpoints.route.js"></script>
 <script src="js/views/endpoints/endpoints.controller.js"></script>
+
+<!-- Monitored Endpoints -->
+<script src="js/views/monitored_endpoints/monitored_endpoints.module.js"></script>
+<script src="js/views/monitored_endpoints/monitored_endpoints.route.js"></script>
+<script src="js/views/monitored_endpoints/monitored_endpoints.controller.js"></script>
+
+<!-- Endpoint Details -->
+<script src="js/views/endpoint_details/endpoint_details.module.js"></script>
+<script src="js/views/endpoint_details/endpoint_details.route.js"></script>
+<script src="js/views/endpoint_details/endpoint_details.controller.js"></script>
 
 <!-- Configuration -->
 <script src="js/views/configuration/configuration.module.js"></script>

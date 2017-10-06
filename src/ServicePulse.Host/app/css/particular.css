@@ -86,7 +86,7 @@ footer {
     font-size: 14px;
     font-weight: normal;
     height: 60px;
-    margin-top: 50px;
+    margin-top: 100px;
     padding: 5px 0;
     text-align: left;
     text-align: center;
@@ -160,7 +160,7 @@ footer a:hover { font-weight: normal; }
 
 .warning { color: red; }
 
-.warning i { color: #aa6708; }
+.warning i { color: #BE0202; }
 
 .danger { color: #ce4844 !important; font-weight: bold !important; }
 
@@ -316,7 +316,9 @@ html {
     height: 100%;
 }
 
-body { background-color: #f2f6f7 !important; }
+body {
+    background-color: #f2f6f7 !important;
+}
 
 .box {
     box-shadow: none;
@@ -799,10 +801,6 @@ p.endpoint-metadata {
     margin: 0 15px;
 }
 
-.list-section {
-    margin-top: 20px;
-}
-
 
 /* Add animation */
 
@@ -825,7 +823,7 @@ p.endpoint-metadata {
 }
 
 .group-title {
-    display: inline-block;
+    display: block;
     font-size: 16px;
     margin: 10px 0 0;
 }
@@ -839,6 +837,7 @@ h2.group-title, h3.group-title {
     color: #A8B3B1;
     font-size: 16px;
     margin: 4px 0 12px;
+    display: block;
 }
 
 
@@ -1047,7 +1046,7 @@ div.progress-bar.progress-bar-striped.active {
     display: inline-block;
 }
 
-ul.retry-request-progress button {
+ul.retry-request-progress button, .monitoring-no-data button {
     background-color: #00a3c4;
 }
 
@@ -1097,7 +1096,7 @@ div.danger.sc-restart-warning > strong {
 
 a.btn-feedback, a.btn-feedback:visited, a.btn-feedback:focus {
     color: #fff !important;
-    background-color: #0DB3C8 !important;
+    background-color: #00A3C4 !important;
     padding: 6px 16px !important;
     margin: 14px 0 0 14px;
     border-radius: 3px;
@@ -1457,4 +1456,166 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     .collapsing {
         overflow: hidden !important;
     }
+}
+
+@media only screen and (min-width: 1200px) {
+    .container {
+        width: 92%  ;
+    }
+}
+
+@media only screen and (min-width: 1440px) {
+    .table-head-row .col-xl-7, .endpoint-row .col-xl-7 {
+        width: 30% !important;
+    }
+
+    .table-head-row .col-xl-1, .endpoint-row .col-xl-1 {
+        width: 14% !important;
+    }
+}
+
+.large-graph {
+    width: 100%;
+}
+
+.large-graph svg {
+    width: 100%
+}
+
+.graph {
+    width:80%;
+}
+
+.graph svg {
+    width:100%;
+}
+
+.endpoint-row {
+    height:60px;
+    position:relative;
+    padding: 8px 0 4px;
+}
+
+.endpoint-row .graphicon {
+    top: 14px;
+    left: 120px;
+    position: absolute;
+    background-color: white;
+    width: 94px;
+    padding-left: 6px;
+    display: block;
+}
+
+    .endpoint-row .graphicon.graphicon-row-hover {
+        background-color: #edf6f7 !important;
+    }
+
+.monitoring-no-data {
+    margin: 60px 0 120px;
+}
+
+    .monitoring-no-data p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .monitoring-no-data .btn {
+        font-size: 16px;
+    }
+
+.monitoring-head h1 {
+    margin-bottom: 20px;
+}
+
+.monitoring-head .msg-group-menu {
+    margin: 6px 0px 0 6px;
+    padding-right: 0;
+}
+
+
+.btn-primary {
+    background-color: #00A3C4;
+    border-color: #0686AA;
+}
+
+    .btn-primary:hover {
+        background-color: #0DB3C8;
+        border-color: #00A3C4;
+    }
+
+.table-head-row {
+    padding-bottom: 0;
+}
+
+    .table-head-row p {
+        font-size: 11.5px;
+        text-transform: uppercase;
+        color: #181919;
+    }
+
+    .table-head-row span {
+        color: #777f7f;
+    }
+
+p.col-sort-active {
+    font-weight: bold;
+}
+
+.endpoint-name {
+    margin-top: 9px;
+}
+
+.endpoint-name a:hover {
+    text-decoration: none !important;
+    margin-top: 20px;
+}
+
+.tooltip-inner {
+    width: 200px;
+}
+
+.endpoint-status {
+    display: inline-block;
+    position: absolute;
+    top: 2px;
+}
+
+    .endpoint-status i.fa-envelope, .endpoint-name i.fa-exclamation-triangle {
+        font-size: 20px;
+        color: #CE4844;
+        margin-left: 6px;
+    }
+
+    .endpoint-status i.fa-envelope {
+        position: relative;
+        top: -4px;
+        color: #777f7f;
+    }
+
+    .endpoint-status i.fa-exclamation-triangle {
+        position: relative;
+        top: -3px;
+    }
+
+    .endpoint-status .badge {
+        position: relative;
+        top: 2px;
+        left: -9px;
+        font-size: 10px;
+}
+
+
+.metric-digest {
+    padding:1em;
+}
+
+.metric-digest > .metric-digest-header {
+    text-transform: uppercase;
+    display:block;
+    font-size:0.7em;
+}
+
+.metric-digest > .metric-digest-value {
+    font-weight: bold;
+    font-size: 1.3em;
 }

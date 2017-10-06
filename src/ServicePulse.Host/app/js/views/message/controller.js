@@ -73,6 +73,9 @@
             serviceControlService.retryFailedMessages([vm.message.id])
                 .then(function() {                        
                         vm.message.retried = true;
+                },
+                    function() {
+                        toastService.showError("Retrying the message " + vm.message.message_id + " failed.");
                     }
                 );
         };
@@ -85,6 +88,9 @@
                     vm.message.last_modified = $moment().format();
                     updateMessageDeleteDate(vm.message, vm.error_retention_period);
                     vm.message.archived = true;
+                },
+                function () {
+                    toastService.showError("Archiving the message " + vm.message.message_id + " failed.");
                 });
         };
 
@@ -98,6 +104,9 @@
             archivedMessageService.restoreMessageFromArchive(vm.message.id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
                 .then(function () {
                     vm.message.archived = false;
+                },
+                function () {
+                    toastService.showError("Unarchiving the message " + vm.message.message_id + " failed.");
                 });
         };
         
