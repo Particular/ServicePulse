@@ -59,8 +59,10 @@
                
                 $scope.endpoint.instances.forEach(function (instance) {
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
-                        instance.serviceControlId = result.data[0].id;
-                        instance.errorCount = result.data[0].count;
+                        if (result.data.length > 0) {
+                            instance.serviceControlId = result.data[0].id;
+                            instance.errorCount = result.data[0].count;
+                        }
                     }, function (err) {
                         // Warn user?
                     });
