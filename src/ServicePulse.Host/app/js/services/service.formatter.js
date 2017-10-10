@@ -24,8 +24,10 @@
         }
 
         function formatLargeNumber(value, decimals) {
-            var exp, rounded,
+            var exp,
                 suffixes = ['k', 'M', 'G', 'T', 'P', 'E'];
+
+            value = Number(value);
 
             if (window.isNaN(value)) {
                 return null;
