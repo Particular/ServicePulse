@@ -5,7 +5,7 @@
         .filter('graphduration', ['formatter', function (formatter) {
             return function (input) {
                 if (input) {
-                    input.displayValue = formatter.formatTime(input.average);
+                    input.displayValue = formatter.formatTime(input.lastValue);
                 }
 
                 return input;
