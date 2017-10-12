@@ -5,7 +5,8 @@
         .filter('graphdecimal', ['formatter', function (formatter) {
             return function (input) {
                 if (input) {
-                    input.displayValue = formatter.formatLargeNumber(input.lastValue, 0);
+                    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;;
+                    input.displayValue = formatter.formatLargeNumber(lastValue, 0);
                 } else {
                     input = {
                         points: [],
