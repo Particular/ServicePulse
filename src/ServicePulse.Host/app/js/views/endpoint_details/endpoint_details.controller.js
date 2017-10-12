@@ -43,6 +43,19 @@
                     toastService.showWarning('Could not load endpoint details');
                 } else {
                     $scope.endpoint = endpoint;
+
+                    $scope.endpoint.instances.sort(function (first, second) {
+                        if (first.id < second.id) {
+                            return -1;
+                        }
+
+                        if (first.id > second.id) {
+                            return 1;
+                        }
+
+                        return 0;
+                    });
+
                     $scope.loading = false;
                 }
                 
@@ -56,7 +69,7 @@
                 endpoint.metricDetails.metrics.queueLength.className = 'queue-length';
                 endpoint.metricDetails.metrics.queueLength.unit = 'msgs';
                 endpoint.metricDetails.metrics.queueLength.axisName = 'Queue Length [' + endpoint.metricDetails.metrics.queueLength.unit + ']';
-               
+
                 $scope.endpoint.instances.forEach(function (instance) {
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
                         if (result.data.length > 0) {

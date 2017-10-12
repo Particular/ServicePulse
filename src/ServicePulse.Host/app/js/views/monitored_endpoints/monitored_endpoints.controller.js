@@ -46,6 +46,18 @@
                     $scope.endpoints[index] = endpoint;
                 } else {
                     $scope.endpoints.push(endpoint);
+
+                    $scope.endpoints.sort(function (first, second) {
+                        if (first.name < second.name) {
+                            return -1;
+                        }
+
+                        if (first.name > second.name) {
+                            return 1;
+                        }
+
+                        return 0;
+                    });
                 }
 
                 $scope.$apply();
