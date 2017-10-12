@@ -21,6 +21,7 @@
                         var margin = 12;
                         var points = scope.plotData.points;
                         var average = scope.plotData.average || 0;
+                        var lastValue = scope.plotData.points.length > 0 ? scope.plotData.points[scope.plotData.points.length - 1] : 0;
                         var max = points && points.length ? Math.max(average * 1.5, d3.max(points)) : 1;
                         var numberOfPoints = points && points.length ? points.length : 2;
 
@@ -70,7 +71,7 @@
                             .attr('d', line)
                             .attr('stroke', 'gray');
 
-                        var displayValue = average.toFixed(2);
+                        var displayValue = lastValue.toFixed(2);
                         if (typeof scope.plotData.displayValue !== "undefined") {
                             displayValue = scope.plotData.displayValue;
                         }
