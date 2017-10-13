@@ -5,7 +5,8 @@
         .filter('graphduration', ['formatter', function (formatter) {
             return function (input) {
                 if (input) {
-                    input.displayValue = formatter.formatTime(input.lastValue);
+                    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+                    input.displayValue = formatter.formatTime(lastValue);
                 }
 
                 return input;
