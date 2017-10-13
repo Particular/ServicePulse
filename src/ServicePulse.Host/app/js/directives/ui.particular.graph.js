@@ -64,7 +64,10 @@
                         chart.append('path')
                             .datum(Array(numberOfPoints).fill(average))
                             .attr('d', line)
-                            .attr('stroke', '#AAAFAD');
+                            .attr('stroke', '#000000')
+                            .attr('stroke-width', '1')
+                            .attr('opacity', 0.5)
+                            .attr('stroke-dasharray', '5,5');
 
                         chart.append('path')
                             .datum(Array(numberOfPoints).fill(0))
