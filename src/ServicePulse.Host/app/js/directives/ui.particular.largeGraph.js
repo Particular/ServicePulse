@@ -38,8 +38,10 @@
         group.append('path')
             .datum(Array(dataSeries.points.length).fill(dataSeries.average))
             .attr('d', line)
-            .attr('stroke', '#AAAFAD')
-            .attr('stroke-width', 2);
+            .attr('stroke', '#000000')
+            .attr('stroke-width', '1')
+            .attr('opacity', 0.5)
+            .attr('stroke-dasharray', '5,5');
 
         group.selectAll('dot')
             .data(dataSeries.points)
