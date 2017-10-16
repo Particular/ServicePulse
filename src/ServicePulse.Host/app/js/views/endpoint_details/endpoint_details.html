@@ -39,6 +39,16 @@
                 <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.latest | number:0}} msgs</span></div>
                 <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.average | number:0}} msgs</span></div>
             </div>
+            
+            <div class="row">
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.latest | number:2}} msgs/s</span></div>
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.average | number:2}} msgs/s</span></div>
+            </div>
+            
+            <div class="row">
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.latest | number:2}} msgs</span></div>
+                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.average | number:2}} msgs</span></div>
+            </div>
 
             <div class="row">
                 <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Processing Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.processingTime.latest | duration}}</span></div>
@@ -49,16 +59,7 @@
                 <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.latest | duration}}</span></div>
                 <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.average | duration}}</span></div>
             </div>
-
-            <div class="row">
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.latest | number:2}} msgs</span></div>
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Retries</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.average | number:2}} msgs</span></div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.latest | number:2}} msgs/s</span></div>
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.average | number:2}} msgs/s</span></div>
-            </div>
+            
         </div>
     </div>
 </div>
