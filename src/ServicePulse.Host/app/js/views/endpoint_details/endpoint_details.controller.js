@@ -64,7 +64,7 @@
                     return date.toLocaleTimeString();
                 });
                 endpoint.metricDetails.metrics.throughput.className = 'throughput';
-                endpoint.metricDetails.metrics.throughput.unit = 'msgs/s';
+                endpoint.metricDetails.metrics.throughput.unit = 'msgs/sec';
                 endpoint.metricDetails.metrics.throughput.axisName = 'Throughput [' + endpoint.metricDetails.metrics.throughput.unit + ']';
                 endpoint.metricDetails.metrics.queueLength.className = 'queue-length';
                 endpoint.metricDetails.metrics.queueLength.unit = 'msgs';
