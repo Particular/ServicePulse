@@ -2,11 +2,15 @@
     'use strict';
 
     function routeProvider($routeProvider) {
+        let template = require('./../views/monitored_endpoints.html');
+        debugger;
+
         $routeProvider.when('/monitored_endpoints', {
             data: {
                 pageTitle: 'Monitored Endpoints'
             },
-            templateUrl: 'js/views/monitored_endpoints/monitored_endpoints.html',
+            template: template,
+            //templateUrl: './monitored_endpoints.html',
             controller: 'monitoredEndpointsCtrl',
             controllerAs: 'vm',
             reloadOnSearch: false

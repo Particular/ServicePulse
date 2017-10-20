@@ -232,8 +232,6 @@
     <Content Include="app\js\directives\ui.particular.tabset.tpl.html" />
     <Content Include="app\js\views\endpoints\endpoints.controller.js" />
     <Content Include="app\js\views\endpoints\endpoints.route.js" />
-    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.controller.js" />
-    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.route.js" />
     <Content Include="app\js\views\event_log_items\eventLogItems.tpl.html" />
     <Content Include="app\js\views\custom_checks\customChecks.html" />
     <Content Include="app\js\directives\ui.particular.hud.js" />
@@ -243,7 +241,6 @@
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.js" />
     <Content Include="app\js\directives\ui-bootstrap-custom-tpls-0.6.0.min.js" />
     <Content Include="app\js\views\endpoints\endpoints.module.js" />
-    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.module.js" />
     <Content Include="app\js\services\services.platform-update.js" />
     <Content Include="app\js\services\services.semver.js" />
     <Content Include="app\js\services\services.module.js" />
@@ -257,10 +254,16 @@
     <Content Include="app\js\services\services.exception-handler.js" />
     <Content Include="app\js\services\services.notifications.js" />
     <Content Include="app\js\services\services.stream.js" />
+    <Content Include="app\modules\monitoring\dist\monitoring.dist.js" />
+    <Content Include="app\modules\monitoring\js\monitored_endpoints.controller.js" />
+    <Content Include="app\modules\monitoring\js\monitored_endpoints.module.js" />
+    <Content Include="app\modules\monitoring\js\monitored_endpoints.route.js" />
+    <Content Include="app\modules\monitoring\monitoring.js" />
+    <Content Include="app\modules\monitoring\monitoring.webpackconfig.js" />
+    <Content Include="app\modules\monitoring\views\monitored_endpoints.html" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\views\dashboard\dashboard.html" />
     <Content Include="app\js\views\endpoints\endpoints.html" />
-    <Content Include="app\js\views\monitored_endpoints\monitored_endpoints.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="app\**\*.*">
