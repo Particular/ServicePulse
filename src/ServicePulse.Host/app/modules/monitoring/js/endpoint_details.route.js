@@ -2,11 +2,13 @@
     'use strict';
 
     function routeProvider($routeProvider) {
+        let template = require('./../views/endpoint_details.html');
+
         $routeProvider.when('/endpoint_details/:endpointName/:sourceIndex', {
             data: {
                 pageTitle: 'Endpoint Details'
             },
-            templateUrl: 'js/views/endpoint_details/endpoint_details.html',
+            template: template,
             controller: 'endpointDetailsCtrl',
             controllerAs: 'vm',
             reloadOnSearch: false

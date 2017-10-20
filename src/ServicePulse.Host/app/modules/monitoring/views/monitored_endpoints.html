@@ -80,7 +80,7 @@
                 <div class="row box endpoint-row box-group" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <a class="hard-wrap lead" ng-click="endpoint.isExpanded = !endpoint.isExpanded" href="#/endpoint_details/{{endpoint.name}}/{{endpoint.sourceIndex}}?historyPeriod={{selectedPeriod.value}}">
+                            <a class="hard-wrap lead" ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">
                                 <div class="col-sm-2 col-xl-7 endpoint-name">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">

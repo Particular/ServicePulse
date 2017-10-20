@@ -3,14 +3,12 @@
 
     function routeProvider($routeProvider) {
         let template = require('./../views/monitored_endpoints.html');
-        debugger;
 
         $routeProvider.when('/monitored_endpoints', {
             data: {
                 pageTitle: 'Monitored Endpoints'
             },
             template: template,
-            //templateUrl: './monitored_endpoints.html',
             controller: 'monitoredEndpointsCtrl',
             controllerAs: 'vm',
             reloadOnSearch: false

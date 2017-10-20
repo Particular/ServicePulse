@@ -10,7 +10,6 @@
         monitoringService,
         historyPeriods,
         formatter) {
-
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.loading = true;
