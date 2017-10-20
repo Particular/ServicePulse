@@ -2,6 +2,7 @@
     'use strict';
 
     angular.module('sc').constant('historyPeriods', [
+        { value: 1, text: "Last 1 min." },
         { value: 5, text: "Last 5 min." },
         { value: 10, text: "Last 10 min." },
         { value: 15, text: "Last 15 min." },

@@ -64,7 +64,7 @@
             });
 
             endpointsFromScSubscription =
-                Rx.Observable.interval(5000)
+                Rx.Observable.interval(monitoringService.calculateIntervalInMiliseconds($scope.selectedPeriod.value))
                 .flatMap(function(i) {
                     return Rx.Observable.fromPromise(serviceControlService.getExceptionGroups('Endpoint Name', null));
                 }).selectMany(function(endpoints) {
