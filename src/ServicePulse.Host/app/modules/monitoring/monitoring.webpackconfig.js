@@ -27,11 +27,11 @@ module.exports = {
             test: /\.html$/,
             use: [{
                 loader: 'html-loader',
-                //options: {
-                //    minimize: true,
-                //    removeComments: true,
-                //    collapseWhitespace: true
-                //}
+                options: {
+                    minimize: true,
+                    removeComments: true,
+                    collapseWhitespace: true
+                }
             }]
         }, {
             test: /\.css$/,
@@ -41,5 +41,5 @@ module.exports = {
             ]
         }]
     },
-    //devtool: 'eval-source-map'
+    devtool: 'eval-source-map'
 };
