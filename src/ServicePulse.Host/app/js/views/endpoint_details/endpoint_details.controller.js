@@ -38,7 +38,9 @@
                 subscription.dispose();
             }
 
-            subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, $scope.selectedPeriod.value).subscribe(function (endpoint) {
+            var selectedPeriod = $scope.selectedPeriod;
+
+            subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
                     toastService.showWarning('Could not load endpoint details');
                 } else {

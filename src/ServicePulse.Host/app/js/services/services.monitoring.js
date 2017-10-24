@@ -4,8 +4,8 @@
 
     function Service($http, rx, scConfig, uri, $q) {
 
-        function createEndpointsSource(historyPeriod) {
-            return Rx.Observable.interval(calculateIntervalInMiliseconds(historyPeriod)).startWith(0)
+        function createEndpointsSource(historyPeriod, refreshInterval) {
+            return Rx.Observable.interval(refreshInterval).startWith(0)
                 .flatMap(function (i) {
                     return Rx.Observable.fromArray(loadEndpointDataFromMonitoringService(historyPeriod))
                         .flatMap(function (p) {
@@ -42,25 +42,16 @@
                 });
         }
 
-        function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod) {
-            return Rx.Observable.interval(calculateIntervalInMiliseconds(historyPeriod)).startWith(0)
+        function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod, refreshInterval) {
+            return Rx.Observable.interval(refreshInterval).startWith(0)
                 .flatMap(function (i) {
                     return Rx.Observable.fromPromise(loadEndpointDetailsFromMonitoringService(endpointName, sourceIndex, historyPeriod));
                 });
         }
 
-        function calculateIntervalInMiliseconds(period) {
-            return (period * 1000 * 60) / 20;
-        }
-
-        function getHistoryPeriod() {
-            return historyPeriod;
-        }
-
         var service = {
             createEndpointsSource: createEndpointsSource,
-            createEndpointDetailsSource: createEndpointDetailsSource,
-            calculateIntervalInMiliseconds: calculateIntervalInMiliseconds
+            createEndpointDetailsSource: createEndpointDetailsSource
         };
 
         return service;
