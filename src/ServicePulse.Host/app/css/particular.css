@@ -1500,9 +1500,8 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     top: 14px;
     left: 120px;
     position: absolute;
-    background-color: white;
     width: 94px;
-    padding-left: 6px;
+    padding-left: 36px;
     display: block;
 }
 
