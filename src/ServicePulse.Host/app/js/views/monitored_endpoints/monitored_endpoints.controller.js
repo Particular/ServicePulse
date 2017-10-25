@@ -39,7 +39,9 @@
                 endpointsFromScSubscription.dispose();
             }
 
-            subscription = monitoringService.createEndpointsSource($scope.selectedPeriod.value).subscribe(function (endpoint) {
+            var selectedPeriod = $scope.selectedPeriod;
+
+            subscription = monitoringService.createEndpointsSource(selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name });
                 endpoint.isConnected = true;
                 if (index >= 0) {
