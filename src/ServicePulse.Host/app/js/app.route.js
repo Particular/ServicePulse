@@ -1,12 +1,13 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
-    function routeProvider($routeProvider) {
-        $routeProvider.otherwise({ redirectTo: '/dashboard' });
+    function routeProvider($routeProvider, scConfig) {
+        $routeProvider.otherwise({ redirectTo: scConfig.default_route });
     };
 
     routeProvider.$inject = [
-        '$routeProvider'
+        '$routeProvider',
+        'scConfig'
     ];
 
     angular.module('sc')
