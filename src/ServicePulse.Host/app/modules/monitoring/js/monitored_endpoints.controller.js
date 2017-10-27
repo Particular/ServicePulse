@@ -30,6 +30,14 @@
             updateUI();
         };
 
+        $scope.getDetailsUrl = endpoint => {
+            if (!endpoint.isServiceControlOnly) {
+                return '#/endpoint_details/' + endpoint.name + '/' + endpoint.sourceIndex + '?historyPeriod=' + $scope.selectedPeriod.value;
+            }
+
+            return '#/failed-messages/groups/' + endpoint.serviceControlId;
+        };
+
         function updateUI() {
             if (subscription) {
                 subscription.dispose();
@@ -43,6 +51,7 @@
 
             subscription = monitoringService.createEndpointsSource(selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name });
+
                 endpoint.isConnected = true;
                 if (index >= 0) {
                     $scope.endpoints[index] = endpoint;
@@ -71,12 +80,12 @@
                     return Rx.Observable.fromPromise(serviceControlService.getExceptionGroups('Endpoint Name', null));
                 }).selectMany(function(endpoints) {
                     return endpoints.data;
-                }).subscribe(function(endpoint) {
+                }).subscribe(function (endpoint) {
                     var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.title });
                     if (index >= 0) {
                         $scope.endpoints[index].errorCount = endpoint.count;
                     } else {
-                        $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, isConnected: false });
+                        $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, isConnected: false, isServiceControlOnly: true, serviceControlId: endpoint.id });
                     }
                 });
         }

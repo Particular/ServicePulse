@@ -2,12 +2,14 @@
     'use strict';
 
     function routeProvider($routeProvider) {
-        $routeProvider.when('/monitored_endpoints', {
+        let template = require('./../views/endpoint_details.html');
+
+        $routeProvider.when('/endpoint_details/:endpointName/:sourceIndex', {
             data: {
-                pageTitle: 'Monitored Endpoints'
+                pageTitle: 'Endpoint Details'
             },
-            templateUrl: 'js/views/monitored_endpoints/monitored_endpoints.html',
-            controller: 'monitoredEndpointsCtrl',
+            template: template,
+            controller: 'endpointDetailsCtrl',
             controllerAs: 'vm',
             reloadOnSearch: false
         });
@@ -17,6 +19,6 @@
         '$routeProvider'
     ];
 
-    angular.module('monitored_endpoints')
+    angular.module('endpoint_details')
         .config(routeProvider);
 } (window, window.angular));
