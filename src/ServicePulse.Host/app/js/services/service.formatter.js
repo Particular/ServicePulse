@@ -11,7 +11,7 @@
             var duration = moment.duration(value);
 
             if (duration >= dayDuration) {
-                return duration.format('D [d] h [h]')
+                return duration.format('D [d] h [h]');
             } else if (duration >= hourDuration) {
                 return duration.format('hh:mm [h]');
             } else if (duration >= minuteDuration) {
