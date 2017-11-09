@@ -83,16 +83,18 @@
                         }
 
                         chart.append("text")
-                            .attr("x", graphWidth - margin + 23)
+                            .attr("x", totalWidth - margin + 23)
                             .attr("y", heigth / 2 + 5)
+                            .attr("class", "value-" + unit)
                             .attr("text-anchor", "end")
                             .attr("font-size", 12)
                             .attr("font-family", "sans-serif")
                             .text(displayValue);
 
                         chart.append("text")
-                            .attr("x", graphWidth - margin + 25)
+                            .attr("x", totalWidth - margin + 25)
                             .attr("y", heigth / 2 + 5)
+                            .attr("class", unit)
                             .attr("text-anchor", "start")
                             .attr("font-size", 12)
                             .attr("font-family", "sans-serif")
