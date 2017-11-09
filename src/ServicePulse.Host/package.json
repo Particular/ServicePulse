@@ -4,9 +4,7 @@
   "description": "Production monitoring for distributed systems.",
   "main": "index.html",
   "dependencies": {
-    "bower": "^1.8.0",
     "npm": "^5.0.3",
-    "wiredep": "^4.0.0",
     "angular": "1.4.5",
     "angular-animate": "1.4.5",
     "angular-momentjs": "0.2.2",

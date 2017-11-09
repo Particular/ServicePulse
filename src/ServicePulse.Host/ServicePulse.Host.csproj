@@ -268,6 +268,7 @@
     <Content Include="app\modules\monitoring\views\endpoint_details.html" />
     <Content Include="app\modules\monitoring\views\monitored_endpoints.html" />
     <Content Include="app\modules\monitoring\views\monitoring_not_available.html" />
+    <Content Include="app\modules\recoverability\recoverability.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\views\dashboard\dashboard.html" />
     <Content Include="app\js\views\endpoints\endpoints.html" />
@@ -289,7 +290,6 @@
     <Content Include="app\js\services\services.uri.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.graph.js" />
     <Content Include="app\js\directives\ui.particular.largenumber.js" />
-    <None Include="bower.json" />
     <None Include="bundleconfig.json" />
     <None Include="package.json" />
     <None Include="packages.config">
