@@ -2,26 +2,7 @@
   "name": "service-pulse",
   "private": true,
   "dependencies": {
-    "angular": "1.4.5",
-    "angular-animate": "1.4.5",
-    "angular-momentjs": "0.2.2",
-    "angular-route": "1.4.5",
-    "angular-sanitize": "1.4.5",
-    "ng-page-title": "1.1.1",
-    "ngstorage": "git://github.com/gsklee/ngStorage#0.3.10",
-    "angular-bootstrap": "0.14.3",
-    "bootstrap": "3.3.5",
-    "jquery": "2.1.4",
-    "zeroclipboard": "2.2.0",
-    "momentjs": "2.10.6",
-    "moment-duration-format": "1.3.0", 
-    "ng-infinite-scroll": "git://github.com/sroze/ngInfiniteScroll#1.0.0",
-    "toaster": "1.1.0",
-    "animate-css": "3.4.0",
-    "signalr": "2.2.0",
-    "angular-ui-select": "0.18.1",
-    "d3": "4.9.1",
-    "rxjs": "4.1.0"
+   
   },
   "overrides":{
 	"angular":{
