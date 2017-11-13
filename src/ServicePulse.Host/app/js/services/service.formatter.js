@@ -55,7 +55,8 @@
             } else if (duration >= minuteDuration) {
                 return duration.format('mm:ss [min]');
             } else if (duration >= secondDuration) {
-                return duration.format('ss.S [s]');
+                //return duration.format('ss.S [s]');
+                return duration.asSeconds().toFixed(1) + ' s';
             } else {
                 return duration.format('S [ms]');
             }
