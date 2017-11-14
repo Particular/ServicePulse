@@ -20,46 +20,132 @@
     </div>
 </div>
 
-<hr/>
+<hr class="top-separator"></hr>
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-9 no-side-padding list-section">
-            <!-- here goes diagram -->
-            <large-graph ng-if="endpoint.metricDetails.metrics.throughput" first-data-series="endpoint.metricDetails.metrics.throughput" second-data-series="endpoint.metricDetails.metrics.queueLength" xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues" plot-width="1240" plot-height="600" first-series-color="#e09365" second-series-color="#4286f4" class="large-graph pull-left"></large-graph>
-        </div>
+<div class="container large-graphs">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 no-side-padding list-section graph-area graph-queue-length">
+                <!-- here goes diagram -->
+                <large-graph ng-if="endpoint.metricDetails.metrics.queueLength"
+                             first-data-series="endpoint.metricDetails.metrics.queueLength"
+                             xAxis-points="endpoint.metricDetails.metrics.queueLength.timeAxisValues"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#EA7E00"
+                             first-series-fill-color="#EADDCE"
+                             class="large-graph pull-left"></large-graph>
 
-        <div class="col-sm-3 no-side-padding toolbar-menus">
-            <div class="row">
-                <div class="col-sm-6"><p class="lead text-left">Current</p></div>
-                <div class="col-sm-6"><p class="lead text-left">Average</p></div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Queue length (# msgs): The estimated number of messages in an endpoint's queue.">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.latest | number:0}} msgs</span></div>
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Queue length (# msgs): The estimated number of messages in an endpoint's queue.">Queue Length</span><span class="metric-digest-value">{{endpoint.digest.metrics.queueLength.average | number:0}} msgs</span></div>
-            </div>
-            
-            <div class="row">
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.latest | number:2}} msgs/s</span></div>
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">Throughput</span><span class="metric-digest-value">{{endpoint.digest.metrics.throughput.average | number:2}} msgs/s</span></div>
-            </div>
-            
-            <div class="row">
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retry rate</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.latest | number:2}} msgs</span></div>
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retry rate</span><span class="metric-digest-value">{{endpoint.digest.metrics.retries.average | number:2}} msgs</span></div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">Processing Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.processingTime.latest | duration}}</span></div>
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">Processing Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.processingTime.average | duration}}</span></div>
+                <div class="col-sm-12 no-side-padding graph-values">
+                    <div class="row queue-length-values">
+                        <span class="metric-digest-header" uib-tooltip="Queue length (# msgs): The estimated number of messages in an endpoint's queue.">
+                            Queue Length
+                        </span>
+                    </div>
+                    <div class="row metric-digest-value">
+                        {{endpoint.digest.metrics.queueLength.latest | number:0}} <span class="metric-digest-value-suffix">MSGS</span>
+                    </div>
+                    <div class="row metric-digest-value">
+                        {{endpoint.digest.metrics.queueLength.average | number:0}} <span class="metric-digest-value-suffix">MSGS AVG</span>
+                    </div>
+                </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.latest | duration}}</span></div>
-                <div class="col-sm-6 metric-digest"><span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">Critical Time</span><span class="metric-digest-value">{{endpoint.digest.metrics.criticalTime.average | duration}}</span></div>
+            <div class="col-sm-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
+                <!-- here goes diagram -->
+                <large-graph ng-if="endpoint.metricDetails.metrics.throughput"
+                             first-data-series="endpoint.metricDetails.metrics.throughput"
+                             second-data-series="endpoint.metricDetails.metrics.retries"
+                             xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#CC1252"
+                             first-series-fill-color="#E9C4D1"
+                             second-series-color="#176397"
+                             second-series-fill-color="#CADCE8"
+                             class="large-graph pull-left"></large-graph>
+
+                <div class="col-sm-12 no-side-padding graph-values">
+                    <div class="col-sm-6 no-side-padding throughput-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.throughput.latest | number:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                        </div>
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.throughput.average | number:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 no-side-padding scheduled-retries-rate-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled Retries Rate
+                            </span>
+                        </div>
+
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.retries.latest | number:2}} <span class="metric-digest-value-suffix">MSGS</span>
+                        </div>
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.retries.average | number:2}} <span class="metric-digest-value-suffix">MSGS AVG</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
+
+            <div class="col-sm-4 no-side-padding list-section graph-area graph-critical-processing-times">
+                <!-- here goes diagram -->
+                <large-graph ng-if="endpoint.metricDetails.metrics.criticalTime"
+                             first-data-series="endpoint.metricDetails.metrics.criticalTime"
+                             second-data-series="endpoint.metricDetails.metrics.processingTime"
+                             xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#2700CB"
+                             first-series-fill-color="#C4BCE5"
+                             second-series-color="#258135"
+                             second-series-fill-color="#BEE6C5"
+                             is-duration-graph="true"
+                             class="large-graph pull-left"></large-graph>
+
+                <div class="col-sm-12 no-side-padding graph-values">
+                    <div class="col-sm-6 no-side-padding critical-time-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.criticalTime.latest | durationValue}} 
+                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}} </span>
+                        </div>
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.criticalTime.average | durationValue}} 
+                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 no-side-padding processing-time-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.processingTime.latest | durationValue}} 
+                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}} </span>
+                        </div>
+                        <div class="row metric-digest-value">
+                            {{endpoint.digest.metrics.processingTime.average | durationValue}} 
+                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}  AVG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

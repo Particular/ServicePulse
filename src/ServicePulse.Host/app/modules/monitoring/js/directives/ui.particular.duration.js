@@ -7,5 +7,15 @@
                 var time = formatter.formatTime(input);
                 return `${time.value} ${time.unit}`;
             };
+        }])
+        .filter('durationValue', ['formatter', function (formatter) {
+            return function (input) {
+                return formatter.timeValue(input);
+            };
+        }])
+        .filter('durationUnit', ['formatter', function (formatter) {
+            return function (input) {
+                return formatter.timeUnit(input);
+            };
         }]);
 }(window, window.angular));
