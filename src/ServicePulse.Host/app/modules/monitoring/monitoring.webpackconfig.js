@@ -14,6 +14,9 @@ module.exports = {
         new webpack.ContextReplacementPlugin(/\.\/locale$/, 'empty-module', false, /js$/)
     ],
     module: {
+        loaders: [
+            { test: path.resolve('./node_modules/angular-momentjs'), loader: 'exports?angular-momentjs' }
+        ],
         rules: [{
             test: /\.js$/,
             exclude: /(node_modules|bower_components)/,
