@@ -94,9 +94,9 @@
     <Content Include="app\js\directives\ui.particular.busy.js" />
     <Content Include="app\js\directives\ui.particular.busy.tpl.html" />
     <Content Include="app\js\directives\ui.particular.configurationTabs.js" />
-    <Content Include="app\js\directives\ui.particular.graphdecimal.js" />
-    <Content Include="app\js\directives\ui.particular.graphduration.js" />
-    <Content Include="app\js\directives\ui.particular.largeGraph.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.graphdecimal.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.graphduration.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.largeGraph.js" />
     <Content Include="app\js\directives\ui.particular.duration.js" />
     <Content Include="app\js\directives\ui.particular.redirectLink.js" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.js" />
@@ -280,7 +280,7 @@
     <None Include="app\css\font-awesome\fonts\fontawesome-webfont.woff2" />
     <None Include="app\css\font-awesome\fonts\FontAwesome.otf" />
     <Content Include="app\js\services\services.uri.js" />
-    <Content Include="app\js\directives\ui.particular.graph.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.graph.js" />
     <Content Include="app\js\directives\ui.particular.largenumber.js" />
     <None Include="bower.json" />
     <None Include="bundleconfig.json" />
