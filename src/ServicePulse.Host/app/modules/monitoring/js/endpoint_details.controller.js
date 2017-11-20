@@ -32,6 +32,61 @@
             updateUI();
         };
 
+        function multiplyEntries(endpoint) {
+            var firstInstance = endpoint.instances[0];
+
+            var millisecBasedInstance = JSON.parse(JSON.stringify(firstInstance));
+            millisecBasedInstance.id = "Fake instance using 700-1100 ms";
+            millisecBasedInstance.metrics.processingTime.points = millisecBasedInstance.metrics.processingTime.points.map(function (item) {
+                return Math.floor((Math.random() * 400) + 700);
+            });
+            millisecBasedInstance.metrics.criticalTime.points = millisecBasedInstance.metrics.criticalTime.points.map(function (item) {
+                return Math.floor((Math.random() * 400) + 700);
+            });
+            endpoint.instances.push(millisecBasedInstance);
+
+            var secBasedInstance = JSON.parse(JSON.stringify(firstInstance));
+            secBasedInstance.id = "Fake instance using seconds";
+            secBasedInstance.metrics.processingTime.points = secBasedInstance.metrics.processingTime.points.map(function(item) {
+                return Math.floor((Math.random() * 1000) + 1000);
+            });
+            secBasedInstance.metrics.criticalTime.points = secBasedInstance.metrics.criticalTime.points.map(function (item) {
+                return Math.floor((Math.random() * 1000) + 1000);
+            });
+            endpoint.instances.push(secBasedInstance);
+
+            var tensOfSecBasedInstance = JSON.parse(JSON.stringify(firstInstance));
+            tensOfSecBasedInstance.id = "Fake instance using 10 of seconds";
+            tensOfSecBasedInstance.metrics.processingTime.points = tensOfSecBasedInstance.metrics.processingTime.points.map(function (item) {
+                return Math.floor((Math.random() * 10000) + 10000);
+            });
+            tensOfSecBasedInstance.metrics.criticalTime.points = tensOfSecBasedInstance.metrics.criticalTime.points.map(function (item) {
+                return Math.floor((Math.random() * 10000) + 10000);
+            });
+            endpoint.instances.push(tensOfSecBasedInstance);
+
+            var minBasedInstance = JSON.parse(JSON.stringify(firstInstance));
+            minBasedInstance.id = "Fake instance using minutes";
+            minBasedInstance.metrics.processingTime.points = minBasedInstance.metrics.processingTime.points.map(function (item) {
+                return Math.floor((Math.random() * 59 * 60 * 1000) + 60000);
+            });
+            minBasedInstance.metrics.criticalTime.points = minBasedInstance.metrics.criticalTime.points.map(function (item) {
+                return Math.floor((Math.random() * 59 * 60 * 1000) + 60000);
+            });
+            endpoint.instances.push(minBasedInstance);
+
+            var hourBasedInstance = JSON.parse(JSON.stringify(firstInstance));
+            hourBasedInstance.id = "Fake instance using minutes";
+            hourBasedInstance.metrics.processingTime.points = hourBasedInstance.metrics.processingTime.points.map(function (item) {
+                return Math.floor((Math.random() * 23 * 60  * 60 * 1000) + 3600000);
+            });
+            hourBasedInstance.metrics.criticalTime.points = hourBasedInstance.metrics.criticalTime.points.map(function (item) {
+                return Math.floor((Math.random() * 23 * 60 * 60 * 1000) + 3600000);
+            });
+            endpoint.instances.push(hourBasedInstance);
+
+        }
+
         function updateUI() {
             if (subscription) {
                 subscription.dispose();
@@ -56,6 +111,8 @@
 
                         return 0;
                     });
+
+                    multiplyEntries($scope.endpoint);
 
                     $scope.loading = false;
                 }

@@ -3,8 +3,8 @@
 
     angular.module('ui.particular.duration', [])
         .filter('duration', ['formatter', function (formatter) {
-            return function (input) {
-                return formatter.formatTime(input);
+            return function (input, timeFormatOption) {
+                return formatter.formatTime(input, timeFormatOption);
             };
         }]);
 }(window, window.angular));

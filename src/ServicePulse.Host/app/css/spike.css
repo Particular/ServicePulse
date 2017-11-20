@@ -1,0 +1,38 @@
+﻿svg .ms {
+    fill: orange;
+}
+svg .s {
+    fill: green;
+}
+
+svg .min {
+    fill: purple;
+}
+
+svg .h {
+    fill: blue;
+}
+
+svg .d {
+    fill: pink;
+}
+
+svg .value-ms {
+    fill: orange;
+}
+
+svg .value-s {
+    fill: green;
+}
+
+svg .value-min {
+    fill: purple;
+}
+
+svg .value-h {
+    fill: blue;
+}
+
+svg .value-d {
+    fill: pink;
+}
