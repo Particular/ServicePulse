@@ -234,6 +234,14 @@
                         </div>
                     </div>
                 </div>
+                
+                <!--
+                "typeName": "Messages.PlaceOrder",
+                "assemblyName": "Messages",
+                "assemblyVersion": "1.0.0.0",
+                "culture": "neutral",
+                "publicKeyToken": "null",
+                -->
 
                 <div class="row">
                     <div class="col-sm-12 no-side-padding">
@@ -246,8 +254,8 @@
                                                 <div class="hard-wrap">
                                                     <div class="message-type">{{messageType.typeName == "" ? "N/A" : messageType.typeName}}</div>
                                                     <div class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
-                                                    <div ng-show="{{messageType.culture != 'neutral'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
-                                                    <div ng-show="{{messageType.publicKeyToken != 'null'}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
+                                                    <div ng-show="{{messageType.culture}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                                    <div ng-show="{{messageType.publicKeyToken}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
                                                 </div>
                                             </div>
                                         </div>
