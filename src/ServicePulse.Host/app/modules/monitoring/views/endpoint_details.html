@@ -244,7 +244,10 @@
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding">
                                                 <div class="hard-wrap">
-                                                    {{messageType.messageType}}
+                                                    <div class="message-type">{{messageType.typeName == "" ? "N/A" : messageType.typeName}}</div>
+                                                    <div class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                                    <div ng-show="{{messageType.culture != 'neutral'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                                    <div ng-show="{{messageType.publicKeyToken != 'null'}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
                                                 </div>
                                             </div>
                                         </div>
