@@ -75,17 +75,28 @@
                             .attr('stroke', 'gray');
 
                         var displayValue = lastValue.toFixed(2);
+                        var unit = "";
                         if (typeof scope.plotData.displayValue !== "undefined") {
-                            displayValue = scope.plotData.displayValue;
+                            displayValue = scope.plotData.displayValue.value;
+                            unit = scope.plotData.displayValue.unit;
                         }
 
                         chart.append("text")
-                            .attr("x", graphWidth - margin + 3)
+                            .attr("x", graphWidth - margin + 23)
                             .attr("y", heigth / 2 + 5)
-                            .attr("text-anchor", "start")
+                            .attr("text-anchor", "end")
                             .attr("font-size", 12)
                             .attr("font-family", "sans-serif")
                             .text(displayValue);
+
+                        chart.append("text")
+                            .attr("x", totalWidth - margin + 5)
+                            .attr("y", heigth / 2 + 5)
+                            .attr("class", unit)
+                            .attr("text-anchor", "start")
+                            .attr("font-size", 12)
+                            .attr("font-family", "sans-serif")
+                            .text(unit);
                     }
                 };
             });

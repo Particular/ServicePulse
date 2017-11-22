@@ -4,22 +4,32 @@
     function formatter() {
         var secondDuration = moment.duration(1000);
         var minuteDuration = moment.duration(60 * 1000);
-        var hourDuration = moment.duration(60 * 60 * 1000);
+        var hourDuration = moment.duration(60 * 1000); //this ensure that we never use minute formatting
         var dayDuration = moment.duration(24 * 60 * 60 * 1000);
 
         function formatTime(value) {
             var duration = moment.duration(value);
 
+            var time = { value: 0, unit: '' };
             if (duration >= dayDuration) {
-                return duration.format('D [d] h [h]');
+                time.value = duration.format('D [d] h [h]');
+                return time;
             } else if (duration >= hourDuration) {
-                return duration.format('hh:mm [h]');
+                time.value = moment(duration._data).format('HH:mm');
+                time.unit = 'h';
+                return time;
             } else if (duration >= minuteDuration) {
-                return duration.format('mm:ss [min]');
+                time.value = duration.format('mm:ss');
+                time.unit = 'min';
+                return time;
             } else if (duration >= secondDuration) {
-                return duration.format('ss.S [s]');
+                time.value = duration.format('ss.S');
+                time.unit = 's';
+                return time;
             } else {
-                return duration.format('S [ms]');
+                time.value = duration.format('S');
+                time.unit = 'ms';
+                return time;
             }
         }
 
