@@ -143,41 +143,59 @@
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
+                                            <div class="col-sm-10 no-side-padding">
                                                 <graph plot-data="instance.metrics.throughput" color="#e09365" class="graph pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
                                             </div>
+                                            <div class="col-sm-2 no-side-padding">
+                                                <span>{{instance.metrics.throughput.displayValue}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
+                                            <div class="col-sm-10 no-side-padding">
                                                 <graph plot-data="instance.metrics.retries" color="#4286f4" class="graph pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2 no-side-padding">
-                                        <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
-                                                <graph plot-data="instance.metrics.processingTime | graphduration" color="#40bc42" class="graph pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
+                                            <div class="col-sm-2 no-side-padding">
+                                                <span>{{instance.metrics.retries.displayValue}}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
-                                                <graph plot-data="instance.metrics.criticalTime | graphduration" color="#d64f21" class="graph pull-left"></graph>
+                                            <div class="col-sm-10 no-side-padding">
+                                                <graph plot-data="instance.metrics.processingTime" color="#40bc42" class="graph pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{instance.metrics.processingTime.displayValue.value}}</span>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{instance.metrics.processingTime.displayValue.unit}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="col-sm-10 no-side-padding">
+                                                <graph plot-data="instance.metrics.criticalTime" color="#d64f21" class="graph pull-left"></graph>
+                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{instance.metrics.criticalTime.displayValue.value}}</span>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{instance.metrics.criticalTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -251,29 +269,47 @@
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
+                                            <div class="col-sm-10 no-side-padding">
                                                 <graph plot-data="messageType.metrics.throughput" color="#e09365" class="graph pull-left"></graph>
                                             </div>
+                                            <div class="col-sm-2 no-side-padding">
+                                                <span>{{messageType.metrics.throughput.displayValue}}</span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
+                                            <div class="col-sm-10 no-side-padding">
                                                 <graph plot-data="messageType.metrics.retries" color="#4286f4" class="graph pull-left"></graph>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-2 no-side-padding">
-                                        <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
-                                                <graph plot-data="messageType.metrics.processingTime | graphduration" color="#40bc42" class="graph pull-left"></graph>
+                                            <div class="col-sm-2 no-side-padding">
+                                                <span>{{messageType.metrics.retries.displayValue}}</span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
-                                                <graph plot-data="messageType.metrics.criticalTime | graphduration" color="#d64f21" class="graph pull-left"></graph>
+                                            <div class="col-sm-10 no-side-padding">
+                                                <graph plot-data="messageType.metrics.processingTime" color="#40bc42" class="graph pull-left"></graph>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{messageType.metrics.processingTime.displayValue.value}}</span>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{messageType.metrics.processingTime.displayValue.unit}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="col-sm-10 no-side-padding">
+                                                <graph plot-data="messageType.metrics.criticalTime" color="#d64f21" class="graph pull-left"></graph>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{messageType.metrics.criticalTime.displayValue.value}}</span>
+                                            </div>
+                                            <div class="col-sm-1 no-side-padding">
+                                                <span>{{messageType.metrics.criticalTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>

@@ -21,7 +21,6 @@
                         var margin = 12;
                         var points = scope.plotData.points;
                         var average = scope.plotData.average || 0;
-                        var lastValue = scope.plotData.points.length > 0 ? scope.plotData.points[scope.plotData.points.length - 1] : 0;
                         var max = points && points.length ? Math.max(average * 1.5, d3.max(points)) : 1;
                         var numberOfPoints = points && points.length ? points.length : 2;
 
@@ -73,30 +72,6 @@
                             .datum(Array(numberOfPoints).fill(0))
                             .attr('d', line)
                             .attr('stroke', 'gray');
-
-                        var displayValue = lastValue.toFixed(2);
-                        var unit = "";
-                        if (typeof scope.plotData.displayValue !== "undefined") {
-                            displayValue = scope.plotData.displayValue.value;
-                            unit = scope.plotData.displayValue.unit;
-                        }
-
-                        chart.append('text')
-                            .attr('x', graphWidth - margin + 23)
-                            .attr('y', heigth / 2 + 5)
-                            .attr('text-anchor', 'end')
-                            .attr('font-size', 12)
-                            .attr('font-family', 'sans-serif')
-                            .text(displayValue);
-
-                        chart.append('text')
-                            .attr('x', totalWidth - margin + 5)
-                            .attr('y', heigth / 2 + 5)
-                            .attr('class', unit)
-                            .attr('text-anchor', 'start')
-                            .attr('font-size', 12)
-                            .attr('font-family', 'sans-serif')
-                            .text(unit);
                     }
                 };
             });
