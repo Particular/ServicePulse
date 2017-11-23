@@ -95,3 +95,6 @@ src/ServicePulse.Host/app/bower_components
 
 # Chutzpah folders
 _Chutzpah.*/
+
+# Webpack results
+src/ServicePulse.Host/app/modules/monitoring/dist
