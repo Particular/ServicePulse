@@ -43,7 +43,7 @@
                 return null;
             }
 
-            if (value < 1000) {
+            if (value < 1000000) {
                 return value.toFixed(decimals);
             }
 
