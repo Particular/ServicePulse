@@ -9,7 +9,7 @@
         toastService,
         historyPeriods,
         rx,
-        formatter) {
+        $filter) {
 
         var subscription, endpointsFromScSubscription;
 
@@ -38,6 +38,15 @@
             return '#/failed-messages/groups/' + endpoint.serviceControlId;
         };
 
+        function fillDisplayValuesForEndpoint(endpoint) {
+
+            $filter('graphduration')(endpoint.metrics.processingTime);
+            $filter('graphduration')(endpoint.metrics.criticalTime);
+            $filter('graphdecimal')(endpoint.metrics.queueLength, 0);
+            $filter('graphdecimal')(endpoint.metrics.throughput, 2);
+            $filter('graphdecimal')(endpoint.metrics.retries, 2);
+        }
+
         function updateUI() {
             if (subscription) {
                 subscription.dispose();
@@ -53,6 +62,7 @@
                 var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name });
 
                 endpoint.isConnected = true;
+                fillDisplayValuesForEndpoint(endpoint);
                 if (index >= 0) {
                     $scope.endpoints[index] = endpoint;
                 } else {
@@ -106,7 +116,7 @@
         'toastService',
         'historyPeriods',
         'rx',
-        'formatter'
+        '$filter'
     ];
 
     angular.module('monitored_endpoints')
