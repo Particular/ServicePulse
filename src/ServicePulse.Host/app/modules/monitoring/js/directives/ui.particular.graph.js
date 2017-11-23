@@ -81,21 +81,21 @@
                             unit = scope.plotData.displayValue.unit;
                         }
 
-                        chart.append("text")
-                            .attr("x", graphWidth - margin + 23)
-                            .attr("y", heigth / 2 + 5)
-                            .attr("text-anchor", "end")
-                            .attr("font-size", 12)
-                            .attr("font-family", "sans-serif")
+                        chart.append('text')
+                            .attr('x', graphWidth - margin + 23)
+                            .attr('y', heigth / 2 + 5)
+                            .attr('text-anchor', 'end')
+                            .attr('font-size', 12)
+                            .attr('font-family', 'sans-serif')
                             .text(displayValue);
 
-                        chart.append("text")
-                            .attr("x", totalWidth - margin + 5)
-                            .attr("y", heigth / 2 + 5)
-                            .attr("class", unit)
-                            .attr("text-anchor", "start")
-                            .attr("font-size", 12)
-                            .attr("font-family", "sans-serif")
+                        chart.append('text')
+                            .attr('x', totalWidth - margin + 5)
+                            .attr('y', heigth / 2 + 5)
+                            .attr('class', unit)
+                            .attr('text-anchor', 'start')
+                            .attr('font-size', 12)
+                            .attr('font-family', 'sans-serif')
                             .text(unit);
                     }
                 };
