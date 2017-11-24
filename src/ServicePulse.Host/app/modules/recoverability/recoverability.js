@@ -1,9 +1,7 @@
 ﻿require('angular');
 require('angular-animate');
-require('angular-momentjs');
 require('angular-route');
 require('angular-sanitize');
-require('angular-title');
 require('ngstorage');
 require('angular-ui-bootstrap');
 require('bootstrap');

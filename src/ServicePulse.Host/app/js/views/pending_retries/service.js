@@ -3,7 +3,7 @@
 
 
 
-    function service($http, $moment, scConfig, notifications, uri) {
+    function service($http, moment, scConfig, notifications, uri) {
 
         function getPendingRetryMessages(searchPhrase, sortBy, page, direction, start, end) {
             var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
@@ -45,8 +45,8 @@
 
         function retryAllMessages(searchPhrase, start, end) {
             if (!start || !end) {
-                start = $moment(0).utc().format('YYYY-MM-DDTHH:mm:ss');
-                end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+                start = moment(0).utc().format('YYYY-MM-DDTHH:mm:ss');
+                end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             }
 
             var url = null;
@@ -85,8 +85,8 @@
 
         function markAsResolvedAllMessages(searchPhrase, start, end) {
             if (!start || !end) {
-                start = $moment(0).utc().format('YYYY-MM-DDTHH:mm:ss');
-                end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+                start = moment(0).utc().format('YYYY-MM-DDTHH:mm:ss');
+                end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             }
             var data = {};
             var url = null;
@@ -137,7 +137,7 @@
         };
     }
 
-    service.$inject = ['$http', '$moment', 'scConfig', 'notifications', 'uri'];
+    service.$inject = ['$http', 'moment', 'scConfig', 'notifications', 'uri'];
 
     angular.module('sc')
         .service('pendingRetryService', service);

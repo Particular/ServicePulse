@@ -7,7 +7,6 @@
     "npm": "^5.0.3",
     "angular": "1.4.5",
     "angular-animate": "1.4.5",
-    "angular-momentjs": "0.2.2",
     "angular-route": "1.4.5",
     "angular-sanitize": "1.4.5",
     "ng-page-title": "1.1.1",
@@ -18,7 +17,7 @@
     "zeroclipboard": "2.2.0",
     "moment": "2.10.6",
     "moment-duration-format": "1.3.0",
-    "ng-infinite-scroll": "git://github.com/sroze/ngInfiniteScroll#1.0.0",
+    "ng-infinite-scroll": "1.3.0",
     "angularjs-toaster": "1.1.0",
     "animate.css": "3.4.0",
     "signalr": "2.2.1",
@@ -38,7 +37,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "load": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/monitoring/monitoring.webpackconfig.builder.js",
-    "setup": "npm install && && node ./node_modules/webpack/bin/webpack.js --config app/modules/monitoring/monitoring.webpackconfig.js"
+    "setup": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/monitoring/monitoring.webpackconfig.js"
   },
   "author": "Particular Software",
   "license": "RPL-1.5"

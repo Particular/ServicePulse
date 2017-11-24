@@ -14,7 +14,6 @@
 /// <reference path="../../../servicepulse.host/app/lib/page-width-functions.js" />
 /// <reference path="../../../servicepulse.host/app/lib/zeroclipboard-2.2.0/ZeroClipboard.min.js" />
 /// <reference path="../../../servicepulse.host/app/lib/moment.min.js" />
-/// <reference path="../../../servicepulse.host/app/lib/angular/angular-momentjs.js" />
 /// <!-- App -->
 /// <reference path="../../../servicepulse.host/app/js/app.js" />
 /// <reference path="../../../servicepulse.host/app/js/app.constants.js" />

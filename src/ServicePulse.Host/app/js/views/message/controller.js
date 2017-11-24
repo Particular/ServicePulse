@@ -5,7 +5,7 @@
     function controller(
         $scope,
         $routeParams,
-        $moment,
+        moment,
         $window,
         scConfig,
         toastService,
@@ -21,7 +21,7 @@
 
         var init = function () {
             var configuration = sharedDataService.getConfiguration();
-            vm.error_retention_period = $moment.duration(configuration.data_retention.error_retention_period).asHours();
+            vm.error_retention_period = moment.duration(configuration.data_retention.error_retention_period).asHours();
             var messageId = $routeParams.messageId;
             vm.loadMessage(messageId).then(function () { vm.togglePanel(vm.message, 1); });
         };
@@ -85,7 +85,7 @@
             serviceControlService.archiveFailedMessages([vm.message.id])
                 .then(function() {
                     // below line is a way to not fetch for the whole message from SC. We update date to now and calculate delete fields
-                    vm.message.last_modified = $moment().format();
+                    vm.message.last_modified = moment().format();
                     updateMessageDeleteDate(vm.message, vm.error_retention_period);
                     vm.message.archived = true;
                 },
@@ -95,8 +95,8 @@
         };
 
         function updateMessageDeleteDate(message, errorRetentionPeriod) {
-            var countdown = $moment(message.last_modified).add(errorRetentionPeriod, 'hours');
-            message.delete_soon = countdown < $moment();
+            var countdown = moment(message.last_modified).add(errorRetentionPeriod, 'hours');
+            message.delete_soon = countdown < moment();
             message.deleted_in = countdown.format();
         }
 
@@ -143,7 +143,7 @@
     controller.$inject = [
         "$scope",
         "$routeParams",
-        "$moment",
+        "moment",
         "$window",
         "scConfig",
         "toastService",

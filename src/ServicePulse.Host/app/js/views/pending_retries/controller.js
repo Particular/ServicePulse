@@ -7,7 +7,7 @@
         $scope,
         $timeout,
         $location,
-        $moment,
+        moment,
         $filter,
         scConfig,
         toastService,
@@ -340,8 +340,8 @@
                     vm.timeGroup.buttonText = amount + ' ' + unit;
                     break;
                 }
-                vm.filter.start = $moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
-                vm.filter.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+                vm.filter.start = moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
+                vm.filter.end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             } else {
                 vm.timeGroup.buttonText = 'All Pending Retries';
                 vm.filter.start = vm.filter.end = undefined;
@@ -380,7 +380,7 @@
         "$scope",
         "$timeout",
         "$location",
-        "$moment",
+        "moment",
         "$filter",
         "scConfig",
         "toastService",

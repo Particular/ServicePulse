@@ -1,3 +1,3 @@
-﻿require('./js/monitored_endpoints.module');
+﻿require('../recoverability/recoverability');
+require('./js/monitored_endpoints.module');
 require('./js/endpoint_details.module');
-require('../recoverability/recoverability');
