@@ -15,6 +15,7 @@
         'ui.particular.redirectLink',
         'ui.particular.graph',
         'ui.particular.largenumber',
+        'ui.particular.metricslargenumber',
         'ui.particular.largeGraph',
         'ui.particular.duration',
         'ui.particular.graphduration',
