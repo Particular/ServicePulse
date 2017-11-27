@@ -9,7 +9,6 @@
         serviceControlService,
         monitoringService,
         historyPeriods,
-        formatter,
         $filter) {
 
         $scope.endpointName = $routeParams.endpointName;
@@ -111,7 +110,6 @@
         'serviceControlService',
         'monitoringService',
         'historyPeriods',
-        'formatter',
         '$filter'
     ];
 
