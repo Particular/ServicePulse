@@ -3,10 +3,10 @@
 
     angular.module('ui.particular.graphdecimal', [])
         .filter('graphdecimal', ['formatter', function (formatter) {
-            return function (input) {
+            return function (input, decimals) {
                 if (input) {
                     var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-                    input.displayValue = formatter.formatLargeNumber(lastValue, 0);
+                    input.displayValue = formatter.formatLargeNumber(lastValue, decimals | 0);
                 } else {
                     input = {
                         points: [],

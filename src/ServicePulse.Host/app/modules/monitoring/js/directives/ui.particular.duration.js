@@ -4,7 +4,8 @@
     angular.module('ui.particular.duration', [])
         .filter('duration', ['formatter', function (formatter) {
             return function (input) {
-                return formatter.formatTime(input);
+                var time = formatter.formatTime(input);
+                return `${time.value} ${time.unit}`;
             };
         }]);
 }(window, window.angular));

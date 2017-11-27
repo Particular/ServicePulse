@@ -97,7 +97,7 @@
     <Content Include="app\modules\monitoring\js\directives\ui.particular.graphdecimal.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.graphduration.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.largeGraph.js" />
-    <Content Include="app\js\directives\ui.particular.duration.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.duration.js" />
     <Content Include="app\js\directives\ui.particular.redirectLink.js" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.js" />
     <Content Include="app\js\directives\ui.particular.configurationTabs.tpl.html" />

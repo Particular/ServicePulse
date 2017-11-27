@@ -9,7 +9,8 @@
         serviceControlService,
         monitoringService,
         historyPeriods,
-        formatter) {
+        $filter) {
+
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.loading = true;
@@ -71,7 +72,10 @@
                 endpoint.metricDetails.metrics.queueLength.unit = 'msgs';
                 endpoint.metricDetails.metrics.queueLength.axisName = 'Queue Length [' + endpoint.metricDetails.metrics.queueLength.unit + ']';
 
+                $scope.endpoint.messageTypes.forEach( (messageType) => fillDisplayValues(messageType));
+
                 $scope.endpoint.instances.forEach(function (instance) {
+                    fillDisplayValues(instance);
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
                         if (result.data.length > 0) {
                             instance.serviceControlId = result.data[0].id;
@@ -82,6 +86,13 @@
                     });
                 });
             });
+        }
+
+        function fillDisplayValues(instance) {
+            $filter('graphduration')(instance.metrics.processingTime);
+            $filter('graphduration')(instance.metrics.criticalTime);
+            $filter('graphdecimal')(instance.metrics.throughput, 2);
+            $filter('graphdecimal')(instance.metrics.retries, 2);
         }
 
         $scope.$on("$destroy", function handler() {
@@ -99,7 +110,7 @@
         'serviceControlService',
         'monitoringService',
         'historyPeriods',
-        'formatter'
+        '$filter'
     ];
 
     angular.module('endpoint_details')
