@@ -1626,3 +1626,14 @@ p.col-sort-active {
     font-weight: bold;
     font-size: 1.3em;
 }
+
+.message-type {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.message-type-part {
+    margin-right: 20px;
+    float: left;
+    color: gray;
+}
