@@ -1694,4 +1694,16 @@ p.col-sort-active {
     text-transform: uppercase;
 //    text-align: left;
 //    width: 90px;
+    font-size: 1.3em;
+}
+
+.message-type {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.message-type-part {
+    margin-right: 20px;
+    float: left;
+    color: gray;
 }
