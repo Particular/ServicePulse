@@ -1497,11 +1497,9 @@ hr.top-separator {
 }
 
 .graph {
-    width: 38%;
 }
 
 .graph svg {
-    width: 100%;
     position: relative;
     left: -10px;
 }
