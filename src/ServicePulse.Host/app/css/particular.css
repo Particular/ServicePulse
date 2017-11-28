@@ -64,6 +64,9 @@ a:hover {
         padding-bottom: 15px;
         padding-top: 20px;
     }
+    .graph-values .col-sm-6 {
+        width: 45%;
+    }
 }
 
 @media only screen and (min-width: 1072px) {
@@ -1474,6 +1477,17 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     }
 }
 
+hr.top-separator {
+    margin-bottom: 0;
+}
+
+.large-graphs {
+    width: 100%;
+    background-color: white;
+    margin-bottom: 30px;
+    padding: 30px 0;
+}
+
 .large-graph {
     width: 100%;
 }
@@ -1483,11 +1497,9 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 }
 
 .graph {
-    width: 38%;
 }
 
 .graph svg {
-    width: 100%;
     position: relative;
     left: -10px;
 }
@@ -1498,9 +1510,34 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     font-weight: normal;
 }
 
+.graph-area {
+    width: 33%;
+    box-sizing: border-box;
+}
+
+.graph-values {
+    margin-left: 60px;
+}
+
+.graph-queue-length {
+
+}
+
+.graph-message-retries-throughputs {
+
+}
+
+.graph-critical-processing-times {
+
+}
+
+.graph-message-retries-throughputs, .graph-critical-processing-times {
+    margin-left: 0.5%;
+}
+
 .endpoint-row {
-    height:60px;
-    position:relative;
+    height: 60px;
+    position: relative;
     padding: 8px 0 4px;
 }
 
@@ -1616,14 +1653,47 @@ p.col-sort-active {
     padding:1em;
 }
 
-.metric-digest > .metric-digest-header {
+.metric-digest-header {
     text-transform: uppercase;
-    display:block;
-    font-size:0.7em;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
 }
 
-.metric-digest > .metric-digest-value {
+.queue-length-values span.metric-digest-header {
+    color: #EA7E00;
+}
+
+.throughput-values span.metric-digest-header {
+    color: #CC1252;
+}
+
+.scheduled-retries-rate-values span.metric-digest-header {
+    color: #176397;
+}
+
+.critical-time-values span.metric-digest-header {
+    color: #2700CB;
+}
+
+.processing-time-values span.metric-digest-header {
+    color: #279039;
+}
+
+.metric-digest-value {
     font-weight: bold;
+    font-size: 22px;
+//    width: 180px;
+//    text-align: right;
+}
+
+.metric-digest-value-suffix {
+    font-weight: normal;
+    font-size: 14px;
+    display: inline-block;
+    text-transform: uppercase;
+//    text-align: left;
+//    width: 90px;
     font-size: 1.3em;
 }
 

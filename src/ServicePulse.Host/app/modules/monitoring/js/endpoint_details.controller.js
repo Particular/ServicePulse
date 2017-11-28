@@ -61,17 +61,6 @@
                     $scope.loading = false;
                 }
                 
-                $scope.endpoint.metricDetails.metrics.throughput.timeAxisValues = $scope.endpoint.metricDetails.metrics.throughput.timeAxisValues.map(function(item) {
-                    var date = new Date(item);
-                    return date.toLocaleTimeString();
-                });
-                endpoint.metricDetails.metrics.throughput.className = 'throughput';
-                endpoint.metricDetails.metrics.throughput.unit = 'msgs/sec';
-                endpoint.metricDetails.metrics.throughput.axisName = 'Throughput [' + endpoint.metricDetails.metrics.throughput.unit + ']';
-                endpoint.metricDetails.metrics.queueLength.className = 'queue-length';
-                endpoint.metricDetails.metrics.queueLength.unit = 'msgs';
-                endpoint.metricDetails.metrics.queueLength.axisName = 'Queue Length [' + endpoint.metricDetails.metrics.queueLength.unit + ']';
-
                 $scope.endpoint.messageTypes.forEach( (messageType) => fillDisplayValues(messageType));
 
                 $scope.endpoint.instances.forEach(function (instance) {

@@ -1,143 +1,171 @@
-﻿(function(window, angular, undefined) {
+﻿(function(window, angular) {
     'use strict';
 
-    function drawDataSeries(dataSeries, color, yAxisAllignedLeft, scaleX, chart, height, graphWidth, margin, dates, className, unit) {
-
-        var max = Math.max(dataSeries.average * 1.5, d3.max(dataSeries.points));
-
-        var scaleY = d3.scaleLinear()
-            .domain([0, max])
-            .range([height - margin, margin]);
+    function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 
         var area = d3.area()
-            .x(function (d, i) {
-                return scaleX(i);
-            })
-            .y(function (d, i) { return scaleY(d); })
-            .y1(function (d) { return scaleY(0); })
+            .x(function (d, i) { return scaleX(i);})
+            .y(function (d)    { return scaleY(d); })
+            .y1(function ()    { return scaleY(0); })
             .curve(d3.curveLinear);
 
         var line = d3.line()
-            .x(function (d, i) {
-                return scaleX(i);
-            })
-            .y(function (d, i) {
-                return scaleY(d);
-            })
+            .x(function (d, i) { return scaleX(i);})
+            .y(function (d, i) { return scaleY(d);})
             .curve(d3.curveLinear);
 
-        var group = chart.append('g').attr('class', className);
+        var group = chart.append('g').attr('class', 'dataSeries');
 
         group.append('path')
-            .datum(dataSeries.points)
+            .datum(data.points)
             .attr('d', area)
-            .attr('fill', color)
-            .attr('opacity', 0.2)
-            .attr('stroke', color);
+            .attr('fill', fillColor)
+            .attr('opacity', 0.8)
+            .attr('stroke', fillColor);
 
         group.append('path')
-            .datum(Array(dataSeries.points.length).fill(dataSeries.average))
+            .datum(data.points)
             .attr('d', line)
-            .attr('stroke', '#000000')
-            .attr('stroke-width', '1')
-            .attr('opacity', 0.5)
-            .attr('stroke-dasharray', '5,5');
+            .attr('stroke', color)
+            .attr('stroke-width', 2.75)
+            .attr('fill', 'none');
+    }
 
-        group.selectAll('dot')
-            .data(dataSeries.points)
-            .enter().append('circle')
-            .attr('r', 3)
-            .attr('cx', function (d, i) { return scaleX(i); })
-            .attr('cy', function (d) { return scaleY(d); })
-            .append('svg:title')
-            .text(function (d, i) { return 'Time: ' + dates[i] + ', Value: ' + d.toFixed(2) + ' ' + unit; });
-            
-        group.append('g')
-            .attr('class', 'y axis')
-            .attr('transform', 'translate(' + (yAxisAllignedLeft ? margin : graphWidth - margin) + ', 0)')
-            .call((yAxisAllignedLeft ? d3.axisLeft(scaleY) : d3.axisRight(scaleY)));
+    function drawAverageLine(chart, data, color, fillColor, scaleX, scaleY) {
+
+        var line = d3.line()
+            .x(function (d, i) { return scaleX(i); })
+            .y(function (d, i) { return scaleY(d); })
+            .curve(d3.curveLinear);
+
+        var group = chart.append('g').attr('class', 'dataAverage');
+
+        group.append('path')
+            .datum(Array(data.points.length).fill(data.average))
+            .attr('d', line)
+            .attr('stroke', color)
+            .attr('stroke-width', 1.5)
+            .attr('opacity', 0.5)
+            .attr('stroke-dasharray', '10,10');
+    }
+
+    function padToWholeValue(value) {
+        var upperBound = 10;
+
+        while (value > upperBound) {
+            upperBound *= 10;
+        }
+
+        upperBound /= 10;
+
+        return Math.floor(value / upperBound) * upperBound + upperBound;
     }
 
     angular.module('ui.particular.largeGraph', [])
         .directive('largeGraph',
-            function() {
+            function(formatter) {
                 return {
                     restrict: 'E',
                     scope: {                        
                         dates: '=xaxisPoints',
                         firstDataSeries: '=firstDataSeries',
                         secondDataSeries: '=secondDataSeries',
+                        isDurationGraph: '=isDurationGraph',
                         width: '=plotWidth',
                         height: '=plotHeight'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         scope.$watch('firstDataSeries', function () {
-                            d3.selectAll('large-graph svg > *').remove();
-                            var svg = element.find('svg')[0];
-                            var margin = 60;
 
-                            var totalWidth = scope.width;
-                            var height = scope.height;
-                            var graphWidth = totalWidth - (2 * margin) - 30;
+                            var svg = element.find('svg')[0];
+
+                            d3.select(svg).selectAll('*').remove();
+
+                            var topMargin = 10;
+                            var bottomMargin = 5;
+                            var leftMargin = 60;
+
+                            var chart = d3.select(svg)
+                                .attr('width', scope.width)
+                                .attr('height', scope.height);
+
+                            var width = svg.clientWidth;
+                            var height = svg.clientHeight;
+
+                            //HINT: This is workaround for Firefox
+                            if (width === 0) {
+                                var box = svg.getBoundingClientRect();
+
+                                width = box.right - box.left;
+                                height = box.bottom - box.top;
+                            }
+
                             var firstSeries = scope.firstDataSeries;
                             var secondSeries = scope.secondDataSeries;
 
-                            var dates = scope.dates;
-
                             var scaleX = d3.scaleLinear()
                                 .domain([0, firstSeries.points.length - 1])
-                                .range([margin, graphWidth - margin]);
+                                .range([leftMargin, width]);
 
-                            
-                            var chart = d3.select(svg)
-                                .attr('width', totalWidth)
-                                .attr('height', height);
+                            chart.append('rect')
+                                .attr('width', width - leftMargin)
+                                .attr('height', height - topMargin - bottomMargin)
+                                .attr('transform', 'translate(' + leftMargin + ',' + topMargin + ')')
+                                .attr('fill', '#F2F6F7');
+
+                            var max = Math.max(firstSeries.average, d3.max(firstSeries.points));
+
+                            if (secondSeries && secondSeries.points.length > 0) {
+                                max = Math.max(max, secondSeries.average, d3.max(secondSeries.points));
+                            }
+
+                            var max = padToWholeValue(max);
+
+                            var scaleY = d3.scaleLinear()
+                                .domain([0, max])
+                                .range([height - bottomMargin, topMargin]);
+
+                            var yAxis = d3.axisLeft(scaleY) 
+                                .tickValues([0, max * 1/4, max * 1/2, max * 3/4, max]);
+
+                            if (scope.isDurationGraph) {
+                                yAxis = yAxis.tickFormat(function (v) {
+                                    var formattedTime = formatter.formatTime(v);
+
+                                    return formattedTime.value + '  ' + formattedTime.unit;
+                                });
+                            }
 
                             chart.append('g')
-                                .attr('class', 'x axis')
-                                .attr('transform', 'translate(0,' + (height - margin) + ')')
-                                .call(d3.axisBottom(scaleX).tickFormat(function(d) {
-                                    return dates[d];
-                                }));
+                                .attr('class', 'y axis')
+                                .attr('transform', 'translate(' + leftMargin + ', 0)')
+                                .call(function (g) {
+                                    g.call(yAxis);
+                                    g.select('.domain').remove();
+                                    g.selectAll('.tick line').attr('stroke', 'black').attr('stroke-width', '1.75').attr('opacity', 0.1).attr('x', 0).attr('x2', width - leftMargin);
+                                    g.selectAll('.tick text').attr('x', -4).attr('fill', '#828282');
+                                });
 
-                            drawDataSeries(firstSeries,
-                                attrs.firstSeriesColor,
-                                true,
-                                scaleX,
-                                chart,
-                                height,
-                                graphWidth,
-                                margin,
-                                dates,
-                                firstSeries.className,
-                                firstSeries.unit);
+                            var drawSeries = function(data, lineColor, fillColor) {
+                                drawDataSeries(chart, data, lineColor, fillColor, scaleX, scaleY);
+                            }
 
-                            drawDataSeries(secondSeries,
-                                attrs.secondSeriesColor,
-                                false,
-                                scaleX,
-                                chart,
-                                height,
-                                graphWidth,
-                                margin,
-                                dates,
-                                secondSeries.className,
-                                secondSeries.unit);
+                            var drawAverage = function(data, lineColor, fillColor) {
+                                drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
+                            }
 
-                            chart.append('text')
-                                .attr('text-anchor', 'middle')
-                                .attr('stroke', attrs.firstSeriesColor)
-                                .attr('opacity', 0.5)
-                                .attr('transform', 'translate(' + (margin / 2) + ',' + (height / 2) + ')rotate(-90)')
-                                .text(firstSeries.axisName);
+                            drawSeries(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor);
 
-                            chart.append('text')
-                                .attr('text-anchor', 'middle')  
-                                .attr('stroke', attrs.secondSeriesColor)
-                                .attr('opacity', 0.5)
-                                .attr('transform', 'translate(' + (graphWidth) + ',' + (height / 2) + ')rotate(90)') 
-                                .text(secondSeries.axisName);
+                            if (secondSeries) {
+                                drawSeries(secondSeries, attrs.secondSeriesColor,attrs.secondSeriesFillColor);
+                            }
+
+                            drawAverage(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor );
+
+                            if (secondSeries) {
+                                drawAverage(secondSeries, attrs.secondSeriesColor, attrs.secondSeriesFillColor);
+                            }
                         });
                     }
                 };

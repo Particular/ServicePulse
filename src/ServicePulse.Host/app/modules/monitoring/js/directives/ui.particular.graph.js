@@ -17,8 +17,9 @@
                         var svg = element.find('svg')[0];
                         var heigth = 50;
                         var graphWidth = 130;
-                        var totalWidth = 180;
                         var margin = 12;
+                        var totalWidth = graphWidth + 2 * margin;
+
                         var points = scope.plotData.points;
                         var average = scope.plotData.average || 0;
                         var max = points && points.length ? Math.max(average * 1.5, d3.max(points)) : 1;
