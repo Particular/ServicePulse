@@ -108,8 +108,7 @@
                                 .domain([0, firstSeries.points.length - 1])
                                 .range([leftMargin, width]);
 
-                            chart.append('rect'
-                                        )
+                            chart.append('rect')
                                 .attr('width', width - leftMargin)
                                 .attr('height', height - topMargin - bottomMargin)
                                 .attr('transform', 'translate(' + leftMargin + ',' + topMargin + ')')
