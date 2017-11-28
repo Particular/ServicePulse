@@ -80,7 +80,7 @@
 
                             var svg = element.find('svg')[0];
 
-                            d3.select(svg).selectAll("*").remove();
+                            d3.select(svg).selectAll('*').remove();
 
                             var topMargin = 10;
                             var bottomMargin = 5;
