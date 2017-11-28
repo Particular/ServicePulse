@@ -130,8 +130,10 @@
                                 .tickValues([0, max * 1/4, max * 1/2, max * 3/4, max]);
 
                             if (scope.isDurationGraph) {
-                                yAxis = yAxis.tickFormat(function(v) {
-                                    return formatter.formatTime(v);
+                                yAxis = yAxis.tickFormat(function (v) {
+                                    var formattedTime = formatter.formatTime(v);
+
+                                    return formattedTime.value + '  ' + formattedTime.unit;
                                 });
                             }
 

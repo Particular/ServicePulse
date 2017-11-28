@@ -10,12 +10,12 @@
         }])
         .filter('durationValue', ['formatter', function (formatter) {
             return function (input) {
-                return formatter.timeValue(input);
+                return formatter.formatTime(input).value;
             };
         }])
         .filter('durationUnit', ['formatter', function (formatter) {
             return function (input) {
-                return formatter.timeUnit(input);
+                return formatter.formatTime(input).unit;
             };
         }]);
 }(window, window.angular));
