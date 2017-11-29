@@ -39,7 +39,7 @@
     it('number value is 123000 should return 1.2M, when precision is set to 1', function () {
         var value = 1230000, result;
 
-        result = $filter('largeNumber')(value, '1');
+        result = $filter('largeNumber')(value, 1);
 
         expect(result).toEqual('1.2M');
     });

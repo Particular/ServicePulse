@@ -9,4 +9,5 @@
     require('./directives/ui.particular.graph.js');
     require('./directives/ui.particular.graphdecimal.js');
     require('./directives/ui.particular.graphduration.js');
+    require('./directives/ui.particular.metricslargenumber.js');
 }(window, window.angular));

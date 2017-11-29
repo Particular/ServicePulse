@@ -2,13 +2,13 @@
 	'use strict';
 
     angular.module('ui.particular.metricslargenumber', [])
-        .filter('largeNumber', ['formatter', function (formatter) {
+        .filter('metricslargenumber', ['formatter', function (formatter) {
             return function (input, dec) {
                 var decimals = 0;
                 if (input < 10 || input > 1000000) {
                     decimals = 2;
                 }
-                return formatter.formatLargeNumber(input, dec | decimals);
+                return formatter.formatLargeNumber(input, dec || decimals);
             };
         }]);
 }(window, window.angular));
