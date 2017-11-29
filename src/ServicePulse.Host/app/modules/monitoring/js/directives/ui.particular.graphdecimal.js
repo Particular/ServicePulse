@@ -2,11 +2,11 @@
     'use strict';
 
     angular.module('ui.particular.graphdecimal', [])
-        .filter('graphdecimal', ['metricslargenumber', function (metricslargenumber) {
+        .filter('graphdecimal', ['$filter', function ($filter) {
             return function (input, decimals) {
                 if (input) {
                     var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-                    input.displayValue = metricslargenumber(lastValue, decimals);
+                    input.displayValue = $filter("metricslargenumber")(lastValue, decimals);
                 } else {
                     input = {
                         points: [],
