@@ -2,7 +2,7 @@
     'use strict';
 
     function formatter() {
-        var secondDuration = moment.duration(1000);
+        var secondDuration = moment.duration(10 * 1000);
         var minuteDuration = moment.duration(60 * 1000);
         var hourDuration = moment.duration(60 * 1000); //this ensure that we never use minute formatting
         var dayDuration = moment.duration(24 * 60 * 60 * 1000);
@@ -23,11 +23,11 @@
                 time.unit = 'min';
                 return time;
             } else if (duration >= secondDuration) {
-                time.value = duration.format('ss.S');
+                time.value = duration.format('ss');
                 time.unit = 's';
                 return time;
             } else {
-                time.value = duration.format('S');
+                time.value = duration.format('s,SSS');
                 time.unit = 'ms';
                 return time;
             }
