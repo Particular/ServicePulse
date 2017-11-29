@@ -109,6 +109,7 @@
     <Content Include="app\js\services\constant.rxjs.js" />
     <Content Include="app\js\services\factory.shareddata.js" />
     <Content Include="app\js\services\service.formatter.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.metricslargenumber.js" />
     <Content Include="app\modules\monitoring\js\services\services.monitoring.js" />
     <Content Include="app\js\services\services.endpoints.js" />
     <Content Include="app\js\views\about\controller.js" />

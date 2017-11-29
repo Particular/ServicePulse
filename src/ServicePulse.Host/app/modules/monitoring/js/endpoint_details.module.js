@@ -11,4 +11,5 @@
     require('./directives/ui.particular.duration.js');
     require('./directives/ui.particular.graphduration.js');
     require('./directives/ui.particular.largeGraph.js');
+    require('./directives/ui.particular.metricslargenumber.js');
 }(window, window.angular));
