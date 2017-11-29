@@ -58,21 +58,19 @@
                             chart.append('path')
                                 .datum(points)
                                 .attr('d', area)
-                                .attr('fill', attrs.color);
+                                .attr('class', 'graph-data-fill');
+
+
+                            chart.append('path')
+                                .datum(points)
+                                .attr('d', line)
+                                .attr('class', 'graph-data-line');
                         }
 
                         chart.append('path')
                             .datum(Array(numberOfPoints).fill(average))
                             .attr('d', line)
-                            .attr('stroke', '#000000')
-                            .attr('stroke-width', '1')
-                            .attr('opacity', 0.5)
-                            .attr('stroke-dasharray', '5,5');
-
-                        chart.append('path')
-                            .datum(Array(numberOfPoints).fill(0))
-                            .attr('d', line)
-                            .attr('stroke', 'gray');
+                            .attr('class', 'graph-avg-line');
                     }
                 };
             });

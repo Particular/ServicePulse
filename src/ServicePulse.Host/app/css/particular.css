@@ -128,13 +128,10 @@ footer a:hover { font-weight: normal; }
     -webkit-box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
     -webkit-transition: box-shadow 0.25s ease 0s;
     background-color: #fff;
-    border-color: #eee;
-    /*border-left-color: #666666;*/
-    border-radius: 2px;
-    border-style: solid;
-    border-width: 1px 1px 1px 1px;
-    box-shadow: 0 2px 5px 0 #000000, 0 2px 10px 0 #000000;
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    border-top: 1px solid #eee;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #eee;
+    border-left: 1px solid #fff;
     margin: 0.5rem 0 1rem;
     margin-bottom: 5px;
     padding: 20px;
@@ -442,7 +439,7 @@ h6 a:hover {
 }
 
 .tabs {
-    border-bottom: 1px solid #ced6d3;
+    border-bottom: 1px solid #E6E6E6;
     padding: 0;
 }
 
@@ -462,11 +459,14 @@ h6 a:hover {
 .tabs h5.active a { color: #181919; }
 
 .tabs a {
-    color: #929e9e;
+    color: #00a3c4;
     cursor: pointer;
+    font-size: 16px;
 }
 
-.tabs a:hover { color: #00a3c4; }
+.tabs a:hover { 
+    color: #00729c;
+}
 
 .tabs h5.active > a:hover {
     color: #181919;
@@ -568,6 +568,7 @@ div.btn-toolbar, div.form-inline { margin-bottom: 12px; }
 .control-label {
     float: left;
     padding-top: 6px;
+    margin-right: 6px;
 }
 
 .row.filter-toolbar, .row.action-toolbar {
@@ -583,12 +584,6 @@ div.btn-toolbar, div.form-inline { margin-bottom: 12px; }
 
 .filter-messages {
     display: inline-block;
-}
-
-
-.control-label {
-    font-weight: normal;
-    margin-right: 6px;
 }
 
 .sp-btn-menu {
@@ -1472,6 +1467,10 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
         width: 30% !important;
     }
 
+    .table-head-row .col-xl-8, .endpoint-row .col-xl-8 {
+        width: 44% !important;
+    }
+
     .table-head-row .col-xl-1, .endpoint-row .col-xl-1 {
         width: 14% !important;
     }
@@ -1484,7 +1483,7 @@ hr.top-separator {
 .large-graphs {
     width: 100%;
     background-color: white;
-    margin-bottom: 30px;
+    margin-bottom: 34px;
     padding: 30px 0;
 }
 
@@ -1502,6 +1501,86 @@ hr.top-separator {
 .graph svg {
     position: relative;
     left: -10px;
+}
+
+.graph * .graph-data-line {
+    stroke-width: 1.75px;
+    fill: none;
+}
+
+.graph * .graph-data-fill {
+    opacity: 0.8;
+}
+
+.graph * .graph-avg-line {
+    stroke-width: 1px;
+    opacity: 0.5;
+    stroke-dasharray: 5,5;
+}
+
+.graph.queue-length * .graph-data-line {
+    stroke: #EA7E00;
+}
+
+.graph.queue-length * .graph-data-fill {
+    fill: #EADDCE;
+    stroke: #EADDCE;
+}
+
+.graph.queue-length * .graph-avg-line {
+    stroke: #EA7E00;
+}
+
+.graph.throughput * .graph-data-line {
+    stroke: #CC1252;
+}
+
+.graph.throughput * .graph-data-fill {
+    fill: #E9C4D1;
+    stroke: #E9C4D1;
+}
+
+.graph.throughput * .graph-avg-line {
+    stroke: #CC1252;
+}
+
+.graph.retries * .graph-data-line {
+    stroke: #176397;
+}
+
+.graph.retries * .graph-data-fill {
+    fill: #CADCE8;
+    stroke: #CADCE8;
+}
+
+.graph.retries * .graph-avg-line {
+    stroke: #176397;
+}
+
+.graph.processing-time * .graph-data-line {
+    stroke: #258135;
+}
+
+.graph.processing-time * .graph-data-fill {
+    fill: #BEE6C5;
+    stroke: #BEE6C5;
+}
+
+.graph.processing-time * .graph-avg-line {
+    stroke: #258135;
+}
+
+.graph.critical-time * .graph-data-line {
+    stroke: #2700CB;
+}
+
+.graph.critical-time * .graph-data-fill {
+    fill: #C4BCE5;
+    stroke: #C4BCE5;
+}
+
+.graph.critical-time * .graph-avg-line {
+    stroke: #2700CB;
 }
 
 .sparkline-value {
@@ -1592,7 +1671,7 @@ hr.top-separator {
 }
 
     .table-head-row p {
-        font-size: 11.5px;
+        font-size: 12px;
         text-transform: uppercase;
         color: #181919;
     }
@@ -1694,16 +1773,21 @@ p.col-sort-active {
     text-transform: uppercase;
 //    text-align: left;
 //    width: 90px;
-    font-size: 1.3em;
 }
 
-.message-type {
-    font-size: 1.3em;
-    font-weight: bold;
+.message-type-label {
+    margin-top: -6px;
 }
 
 .message-type-part {
-    margin-right: 20px;
-    float: left;
-    color: gray;
+    margin-right: 24px;
+    color: #8C8C8C;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+.sparkline-value span {
+    color: #777f7f;
+    text-transform: uppercase;
+    font-size: 11px;
 }
