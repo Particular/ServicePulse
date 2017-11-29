@@ -1500,7 +1500,6 @@ hr.top-separator {
 
 .graph svg {
     position: relative;
-    left: -10px;
 }
 
 .graph * .graph-data-line {
@@ -1584,10 +1583,17 @@ hr.top-separator {
 }
 
 .sparkline-value {
-    top: 10px;
+    top: 16px;
+    left: 6px;
     position: relative;
     font-weight: normal;
 }
+
+    .sparkline-value span {
+        color: #777f7f;
+        text-transform: uppercase;
+        font-size: 11px;
+    }
 
 .graph-area {
     width: 33%;
@@ -1617,7 +1623,7 @@ hr.top-separator {
 .endpoint-row {
     height: 60px;
     position: relative;
-    padding: 8px 0 4px;
+    padding: 2px 0 4px;
 }
 
 .endpoint-row .graphicon {
@@ -1685,7 +1691,7 @@ p.col-sort-active {
 }
 
 .endpoint-name {
-    margin-top: 9px;
+    margin-top: 15px;
 }
 
 .endpoint-name a:hover {
@@ -1776,7 +1782,7 @@ p.col-sort-active {
 }
 
 .message-type-label {
-    margin-top: -6px;
+    margin-top: -8px;
 }
 
 .message-type-part {
@@ -1784,10 +1790,4 @@ p.col-sort-active {
     color: #8C8C8C;
     font-weight: normal;
     font-size: 14px;
-}
-
-.sparkline-value span {
-    color: #777f7f;
-    text-transform: uppercase;
-    font-size: 11px;
 }
