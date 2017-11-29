@@ -50,6 +50,12 @@
     }
 
     function padToWholeValue(value) {
+        var emptyDataSetyAxisMax = 10;
+
+        if (!value) {
+            return emptyDataSetyAxisMax;
+        }
+
         var upperBound = 10;
 
         while (value > upperBound) {
