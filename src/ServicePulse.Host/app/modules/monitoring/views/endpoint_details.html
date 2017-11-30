@@ -1,7 +1,7 @@
 <div class="container">
-    <div class="row">
+    <div class="row monitoring-head">
         <div class="col-sm-10 no-side-padding list-section">
-            <h6>{{endpointName}}</h6>
+            <h1>{{endpointName}}</h1>
         </div>
         <div class="col-sm-2 no-side-padding toolbar-menus">
             <div class="msg-group-menu dropdown">
@@ -19,8 +19,6 @@
         </div>
     </div>
 </div>
-
-<hr class="top-separator"></hr>
 
 <div class="container large-graphs">
     <div class="container">
@@ -98,7 +96,7 @@
 
             <div class="col-sm-4 no-side-padding list-section graph-area graph-critical-processing-times">
                 <!-- here goes diagram -->
-                <large-graph ng-if="endpoint.metricDetails.metrics.criticalTime"
+                <large-graph ng-if="endpoint.metricDetails.metrics.processingTime"
                              first-data-series="endpoint.metricDetails.metrics.criticalTime"
                              second-data-series="endpoint.metricDetails.metrics.processingTime"
                              xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
@@ -168,39 +166,39 @@
                 <!-- Breakdown by instance -->
                 <busy ng-show="loading" message="Loading details"></busy>
 
-                <div ng-show="!loading" class="row box box-no-click">
-                    <div class="col-sm-4 no-side-padding">
+                <div ng-show="!loading" class="row box box-no-click table-head-row">
+                    <div class="col-sm-2 col-xl-8">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding">
-                                <p class="lead">Instance Name</p>
+                            <div class="col-sm-12">
+                                <p>Instance Name</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
-                                <p class="lead">Throughput (msgs/sec)</p>
+                                <p>Throughput <span>(msgs/s)</span></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
-                                <p class="lead">Scheduled retry rate (msgs/sec)</p>
+                                <p>Scheduled retry rate <span>(msgs/s)</span></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
-                                <p class="lead">Processing Time (t) </p>
+                                <p>Processing Time <span>(t)</span></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                <p class="lead">Critical Time (t) </p>
+                                <p>Critical Time <span>(t)</span></p>
                             </div>
                         </div>
                     </div>
@@ -208,90 +206,82 @@
 
                 <div class="row">
                     <div class="col-sm-12 no-side-padding">
-                        <div class="row box box-no-click" ng-repeat="instance in endpoint.instances">
+                        <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
                             <div class="col-sm-12 no-side-padding">
-                                <div class="row endpoint-row">
-                                    <div class="col-sm-4 no-side-padding">
-                                        <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
-                                                <div class="hard-wrap">
-                                                    {{instance.id}}
-                                                    <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
-                                                        <i class="fa fa-envelope"></i>
-                                                        <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
-                                                        <span ng-if="instance.isStale" class="warning pull-right">
-                                                            <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                        </span>
-                                                    </a>
+                                <div class="row">
+                                        <div class="col-sm-2 col-xl-8 endpoint-name">
+                                            <div class="row box-header">
+                                                <div class="col-sm-12 no-side-padding lead">
+
+                                                        {{instance.id}}
+                                                        <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
+                                                            <i class="fa fa-envelope"></i>
+                                                            <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
+                                                            <span ng-if="instance.isStale" class="warning pull-right">
+                                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                            </span>
+                                                        </a>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="instance.metrics.throughput" color="#e09365" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.throughput" class="graph throughput pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
                                             </div>
-                                            <div class="col-sm-2 no-side-padding">
-                                                <span>{{instance.metrics.throughput.displayValue}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{instance.metrics.throughput.displayValue}}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="instance.metrics.retries" color="#4286f4" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.retries" class="graph retries pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
                                             </div>
-                                            <div class="col-sm-2 no-side-padding">
-                                                <span>{{instance.metrics.retries.displayValue}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{instance.metrics.retries.displayValue}}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="instance.metrics.processingTime" color="#40bc42" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.processingTime" class="graph processing-time pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
                                             </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{instance.metrics.processingTime.displayValue.value}}</span>
-                                            </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{instance.metrics.processingTime.displayValue.unit}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{instance.metrics.processingTime.displayValue.value}} <span>{{instance.metrics.processingTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="instance.metrics.criticalTime" color="#d64f21" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.criticalTime" class="graph critical-time pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
                                             </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{instance.metrics.criticalTime.displayValue.value}}</span>
-                                            </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{instance.metrics.criticalTime.displayValue.unit}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{instance.metrics.criticalTime.displayValue.value}} <span>{{instance.metrics.criticalTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
+          </div>
         </div>
     </section>
 
@@ -301,39 +291,39 @@
                 <!-- Breakdown by message type-->
                 <busy ng-show="loading" message="Loading details"></busy>
 
-                <div ng-show="!loading" class="row box box-no-click">
-                    <div class="col-sm-4 no-side-padding">
+                <div ng-show="!loading" class="row box box-no-click table-head-row">
+                    <div class="col-sm-2 col-xl-8">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding">
-                                <p class="lead">Message Type</p>
+                            <div class="col-sm-12">
+                                <p>Message Type</p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
-                                <p class="lead">Throughput (msgs/sec)</p>
+                                <p>Throughput <span>(msgs/s)</span></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
-                                <p class="lead">Scheduled retry rate (msgs/sec)</p>
+                                <p>Scheduled retry rate <span>(msgs/s)</span></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
-                                <p class="lead">Processing Time (t) </p>
+                                <p>Processing Time <span>(t)</span></p>
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-2 no-side-padding">
+                    <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                <p class="lead">Critical Time (t) </p>
+                                <p>Critical Time <span>(t)</span></p>
                             </div>
                         </div>
                     </div>
@@ -341,64 +331,60 @@
 
                 <div class="row">
                     <div class="col-sm-12 no-side-padding">
-                        <div class="row box box-no-click" ng-repeat="messageType in endpoint.messageTypes">
+                        <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes">
                             <div class="col-sm-12 no-side-padding">
-                                <div class="row endpoint-row">
-                                    <div class="col-sm-4 no-side-padding">
+                                <div class="row">
+                                    <div class="col-sm-2 col-xl-8 endpoint-name">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding">
-                                                <div class="hard-wrap">
-                                                    <div class="message-type">{{messageType.typeName == "" ? "N/A" : messageType.typeName}}</div>
-                                                    <div class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
-                                                    <div ng-show="{{messageType.culture}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
-                                                    <div ng-show="{{messageType.publicKeyToken}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
-                                                </div>
+                                            <div class="col-sm-12 no-side-padding lead message-type-label">
+                                                
+                                                    <div ng-show="{{!messageType.typeName}}">N/A</div>
+                                                
+                                                    <div ng-show="{{messageType.typeName != ''}}">{{messageType.typeName}}</div>
+                                                    <div ng-show="{{messageType.typeName != ''}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                                    <div ng-show="{{messageType.culture != ''}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                                    <div ng-show="{{messageType.publicKeyToken != ''}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
+
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="messageType.metrics.throughput" color="#e09365" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.throughput" class="graph throughput pull-left"></graph>
                                             </div>
-                                            <div class="col-sm-2 no-side-padding">
-                                                <span>{{messageType.metrics.throughput.displayValue}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{messageType.metrics.throughput.displayValue}}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="messageType.metrics.retries" color="#4286f4" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.retries" class="graph retries pull-left"></graph>
                                             </div>
-                                            <div class="col-sm-2 no-side-padding">
-                                                <span>{{messageType.metrics.retries.displayValue}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{messageType.metrics.retries.displayValue}}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="messageType.metrics.processingTime" color="#40bc42" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.processingTime" class="graph processing-time pull-left"></graph>
                                             </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{messageType.metrics.processingTime.displayValue.value}}</span>
-                                            </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{messageType.metrics.processingTime.displayValue.unit}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{messageType.metrics.processingTime.displayValue.value}} <span>{{messageType.metrics.processingTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-2 no-side-padding">
+                                    <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
-                                            <div class="col-sm-10 no-side-padding">
-                                                <graph plot-data="messageType.metrics.criticalTime" color="#d64f21" class="graph pull-left"></graph>
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.criticalTime" class="graph critical-time pull-left"></graph>
                                             </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{messageType.metrics.criticalTime.displayValue.value}}</span>
-                                            </div>
-                                            <div class="col-sm-1 no-side-padding">
-                                                <span>{{messageType.metrics.criticalTime.displayValue.unit}}</span>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{messageType.metrics.criticalTime.displayValue.value}} <span>{{messageType.metrics.criticalTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>

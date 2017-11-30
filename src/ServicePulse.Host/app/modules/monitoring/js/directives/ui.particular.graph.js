@@ -16,9 +16,9 @@
 
                         var svg = element.find('svg')[0];
                         var heigth = 50;
-                        var graphWidth = 130;
-                        var margin = 12;
-                        var totalWidth = graphWidth + 2 * margin;
+                        var width = 150;
+                        var verticalMargin = 6;
+                        var horizontalMargin = 2;
 
                         var points = scope.plotData.points;
                         var average = scope.plotData.average || 0;
@@ -27,11 +27,11 @@
 
                         var scaleY = d3.scaleLinear()
                             .domain([0, max])
-                            .range([heigth - margin, margin]);
+                            .range([heigth - verticalMargin, verticalMargin]);
 
                         var scaleX = d3.scaleLinear()
                             .domain([0, numberOfPoints - 1])
-                            .range([margin, graphWidth - margin]);
+                            .range([horizontalMargin, width - horizontalMargin]);
 
                         var area = d3.area()
                             .x(function (d, i) {
@@ -51,28 +51,32 @@
                             .curve(d3.curveLinear);
 
                         var chart = d3.select(svg)
-                            .attr('width', totalWidth)
+                            .attr('width', width)
                             .attr('height', heigth);
+
+                        chart.append('rect')
+                            .attr('width', width - 2 * horizontalMargin)
+                            .attr('height', heigth - 2 * verticalMargin)
+                            .attr('transform', 'translate(' + horizontalMargin + ',' + verticalMargin + ')')
+                            .attr('fill', '#F2F6F7');
 
                         if (points) {
                             chart.append('path')
                                 .datum(points)
                                 .attr('d', area)
-                                .attr('fill', attrs.color);
+                                .attr('class', 'graph-data-fill');
+
+
+                            chart.append('path')
+                                .datum(points)
+                                .attr('d', line)
+                                .attr('class', 'graph-data-line');
                         }
 
                         chart.append('path')
                             .datum(Array(numberOfPoints).fill(average))
                             .attr('d', line)
-                            .attr('stroke', '#000000')
-                            .attr('stroke-width', '1')
-                            .attr('opacity', 0.5)
-                            .attr('stroke-dasharray', '5,5');
-
-                        chart.append('path')
-                            .datum(Array(numberOfPoints).fill(0))
-                            .attr('d', line)
-                            .attr('stroke', 'gray');
+                            .attr('class', 'graph-avg-line');
                     }
                 };
             });
