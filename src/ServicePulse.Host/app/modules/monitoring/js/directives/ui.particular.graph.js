@@ -27,8 +27,6 @@
                             height = box.bottom - box.top;
                         }
 
-                        //var heigth = 50;
-                        //var width = 150;
                         var verticalMargin = 6;
                         var horizontalMargin = 2;
 
