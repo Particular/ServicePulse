@@ -1500,6 +1500,8 @@ hr.top-separator {
 
 .graph svg {
     position: relative;
+    width: 80%;
+    height: 50px;
 }
 
 .graph * .graph-data-line {
