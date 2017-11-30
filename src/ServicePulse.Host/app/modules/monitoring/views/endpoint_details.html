@@ -341,7 +341,7 @@
                                                     <div ng-show="{{!messageType.typeName}}">N/A</div>
                                                 
                                                     <div ng-show="{{messageType.typeName != ''}}">{{messageType.typeName}}</div>
-                                                    <div ng-show="{{messageType.typeName}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                                    <div ng-show="{{messageType.typeName != ''}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
                                                     <div ng-show="{{messageType.culture}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
                                                     <div ng-show="{{messageType.publicKeyToken}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
 
