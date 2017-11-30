@@ -1496,10 +1496,13 @@ hr.top-separator {
 }
 
 .graph {
+    width: 68%;
 }
 
 .graph svg {
     position: relative;
+    width: 100%;
+    height: 50px;
 }
 
 .graph * .graph-data-line {
@@ -1584,9 +1587,11 @@ hr.top-separator {
 
 .sparkline-value {
     top: 16px;
-    left: 6px;
+    left: -12px;
     position: relative;
     font-weight: normal;
+    float: right;
+    width: 25%;
 }
 
     .sparkline-value span {
