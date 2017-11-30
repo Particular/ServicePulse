@@ -1768,8 +1768,6 @@ p.col-sort-active {
 .metric-digest-value {
     font-weight: bold;
     font-size: 22px;
-//    width: 180px;
-//    text-align: right;
 }
 
 .metric-digest-value-suffix {
@@ -1777,8 +1775,6 @@ p.col-sort-active {
     font-size: 14px;
     display: inline-block;
     text-transform: uppercase;
-//    text-align: left;
-//    width: 90px;
 }
 
 .message-type-label {
