@@ -1791,4 +1791,5 @@ p.col-sort-active {
     color: #8C8C8C;
     font-weight: normal;
     font-size: 14px;
+    float: left;
 }
