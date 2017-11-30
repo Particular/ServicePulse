@@ -96,7 +96,7 @@
 
             <div class="col-sm-4 no-side-padding list-section graph-area graph-critical-processing-times">
                 <!-- here goes diagram -->
-                <large-graph ng-if="endpoint.metricDetails.metrics.criticalTime"
+                <large-graph ng-if="endpoint.metricDetails.metrics.processingTime"
                              first-data-series="endpoint.metricDetails.metrics.criticalTime"
                              second-data-series="endpoint.metricDetails.metrics.processingTime"
                              xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
@@ -337,9 +337,11 @@
                                     <div class="col-sm-2 col-xl-8 endpoint-name">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding lead message-type-label">
-
-                                                    <div>{{messageType.typeName == "" ? "N/A" : messageType.typeName}}</div>
-                                                    <div class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                                
+                                                    <div ng-show="{{!messageType.typeName}}">N/A</div>
+                                                
+                                                    <div ng-show="{{messageType.typeName != ''}}">{{messageType.typeName}}</div>
+                                                    <div ng-show="{{messageType.typeName}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
                                                     <div ng-show="{{messageType.culture}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
                                                     <div ng-show="{{messageType.publicKeyToken}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
 
