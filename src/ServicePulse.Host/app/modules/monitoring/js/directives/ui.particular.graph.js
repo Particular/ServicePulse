@@ -15,8 +15,18 @@
                         scope.plotData = scope.plotData() || { points: [], average: 0 };
 
                         var svg = element.find('svg')[0];
-                        var heigth = 50;
-                        var width = 150;
+
+                        var width = svg.clientWidth;
+                        var height = svg.clientHeight;
+
+                        //HINT: This is workaround for Firefox
+                        if (width === 0) {
+                            var box = svg.getBoundingClientRect();
+
+                            width = box.right - box.left;
+                            height = box.bottom - box.top;
+                        }
+
                         var verticalMargin = 6;
                         var horizontalMargin = 2;
 
@@ -27,7 +37,7 @@
 
                         var scaleY = d3.scaleLinear()
                             .domain([0, max])
-                            .range([heigth - verticalMargin, verticalMargin]);
+                            .range([height - verticalMargin, verticalMargin]);
 
                         var scaleX = d3.scaleLinear()
                             .domain([0, numberOfPoints - 1])
@@ -52,11 +62,11 @@
 
                         var chart = d3.select(svg)
                             .attr('width', width)
-                            .attr('height', heigth);
+                            .attr('height', height);
 
                         chart.append('rect')
                             .attr('width', width - 2 * horizontalMargin)
-                            .attr('height', heigth - 2 * verticalMargin)
+                            .attr('height', height - 2 * verticalMargin)
                             .attr('transform', 'translate(' + horizontalMargin + ',' + verticalMargin + ')')
                             .attr('fill', '#F2F6F7');
 
