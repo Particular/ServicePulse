@@ -1793,3 +1793,10 @@ p.col-sort-active {
     font-size: 14px;
     float: left;
 }
+
+.back-nav {
+    position: absolute;
+    top: 78px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
