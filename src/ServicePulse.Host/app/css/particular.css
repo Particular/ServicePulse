@@ -306,6 +306,7 @@ footer a:hover { font-weight: normal; }
 div.tooltip
 {
     word-wrap: break-word;
+    margin-left: 0;
 }
 
 /*Global overrides*/
@@ -1681,15 +1682,20 @@ hr.top-separator {
     padding-bottom: 0;
 }
 
-    .table-head-row p {
+    .table-head-row span {
         font-size: 12px;
         text-transform: uppercase;
         color: #181919;
     }
 
-    .table-head-row span {
+    .table-head-row span.table-header-unit {
         color: #777f7f;
     }
+
+.experiment {
+    color: #00a3c4;
+    position: relative;
+}
 
 p.col-sort-active {
     font-weight: bold;
@@ -1745,7 +1751,7 @@ p.col-sort-active {
 
 .metric-digest-header {
     text-transform: uppercase;
-    display: block;
+    display: inline-block;
     font-size: 14px;
     font-weight: bold;
 }
@@ -1792,4 +1798,58 @@ p.col-sort-active {
     font-weight: normal;
     font-size: 14px;
     float: left;
+}
+
+.interactive-tooltip {
+    display: none;
+}
+
+
+.experiment:hover .interactive-tooltip {
+    display: inline;
+    position: absolute;
+    top: -34px;
+    height: 46px;
+    margin: 0 auto;
+    font-family: sans-serif;
+    text-align: center;
+    left: 50%;
+    -webkit-transform: translateX(-51%);
+    -moz-transform: translateX(-51%);
+    -ms-transform: translateX(-51%);
+    -o-transform: translateX(-51%);
+    transform: translateX(-51%);
+}
+
+.tooltip-contents {
+    text-align: center;
+    color: #fff;
+    background-color: #1A1A1A;
+    font-size: 12px;
+    padding: 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+    .tooltip-contents a {
+        font-weight: bold;
+    }
+
+    .tooltip-contents:after {
+        top: 23px;
+        left: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-top-color: #1A1A1A;
+        border-width: 6px;
+        margin-left: -4px;
+    }
+
+
+.show-interactive-tooltip {
+    display: block;
 }
