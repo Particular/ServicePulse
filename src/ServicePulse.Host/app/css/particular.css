@@ -1533,31 +1533,31 @@ hr.top-separator {
     stroke: #EA7E00;
 }
 
-.graph.throughput * .graph-data-line {
-    stroke: #CC1252;
-}
+    .graph.throughput * .graph-data-line {
+        stroke: #176397;
+    }
 
-.graph.throughput * .graph-data-fill {
-    fill: #E9C4D1;
-    stroke: #E9C4D1;
-}
+    .graph.throughput * .graph-data-fill {
+        fill: #CADCE8;
+        stroke: #CADCE8;
+    }
 
-.graph.throughput * .graph-avg-line {
-    stroke: #CC1252;
-}
+    .graph.throughput * .graph-avg-line {
+        stroke: #176397;
+    }
 
-.graph.retries * .graph-data-line {
-    stroke: #176397;
-}
+    .graph.retries * .graph-data-line {
+        stroke: #CC1252;
+    }
 
-.graph.retries * .graph-data-fill {
-    fill: #CADCE8;
-    stroke: #CADCE8;
-}
+    .graph.retries * .graph-data-fill {
+        fill: #E9C4D1;
+        stroke: #E9C4D1;
+    }
 
-.graph.retries * .graph-avg-line {
-    stroke: #176397;
-}
+    .graph.retries * .graph-avg-line {
+        stroke: #CC1252;
+    }
 
 .graph.processing-time * .graph-data-line {
     stroke: #258135;
@@ -1607,18 +1607,6 @@ hr.top-separator {
 
 .graph-values {
     margin-left: 60px;
-}
-
-.graph-queue-length {
-
-}
-
-.graph-message-retries-throughputs {
-
-}
-
-.graph-critical-processing-times {
-
 }
 
 .graph-message-retries-throughputs, .graph-critical-processing-times {
@@ -1750,24 +1738,61 @@ p.col-sort-active {
     font-weight: bold;
 }
 
+.current, .average {
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+    line-height: 20px;
+    height: 19px;
+}
+
+.current {
+    border-left: 2.5px solid;
+}
+
+.average {
+    border-left: 1px dashed;
+    padding-left: 6px;
+}
+
 .queue-length-values span.metric-digest-header {
     color: #EA7E00;
 }
 
+.graph-queue-length .current, .graph-queue-length .average {
+    border-color: #EA7E00;
+}
+
 .throughput-values span.metric-digest-header {
-    color: #CC1252;
+    color: #176397;
+}
+
+.throughput-values .current, .throughput-values .average {
+    border-color: #176397;
 }
 
 .scheduled-retries-rate-values span.metric-digest-header {
-    color: #176397;
+    color: #CC1252;
+}
+
+.scheduled-retries-rate-values .current, .scheduled-retries-rate-values .average {
+    border-color: #CC1252;
 }
 
 .critical-time-values span.metric-digest-header {
     color: #2700CB;
 }
 
+.critical-time-values .current, .critical-time-values .average {
+    border-color: #2700CB;
+}
+
 .processing-time-values span.metric-digest-header {
     color: #279039;
+}
+
+.processing-time-values .current, .processing-time-values .average {
+    border-color: #279039;
 }
 
 .metric-digest-value {
