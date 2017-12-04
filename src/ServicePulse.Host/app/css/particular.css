@@ -1667,18 +1667,15 @@ hr.top-separator {
     }
 
 .table-head-row {
-    padding-bottom: 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #181919;
+    padding-bottom: 5px;
 }
 
-    .table-head-row span {
-        font-size: 12px;
-        text-transform: uppercase;
-        color: #181919;
-    }
-
-    .table-head-row span.table-header-unit {
-        color: #777f7f;
-    }
+.table-head-row span.table-header-unit {
+    color: #777f7f;
+}
 
 .experiment {
     color: #00a3c4;
@@ -1854,6 +1851,7 @@ p.col-sort-active {
     color: #fff;
     background-color: #1A1A1A;
     font-size: 12px;
+    text-transform: initial;
     padding: 6px;
     border-radius: 4px;
     white-space: nowrap;
