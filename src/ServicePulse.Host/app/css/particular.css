@@ -1761,7 +1761,11 @@ p.col-sort-active {
     padding-left: 6px;
 }
 
-.queue-length-values span.metric-digest-header {
+.queue-length-values {
+    display: inline-block;
+}
+
+.queue-length-values .metric-digest-header {
     color: #EA7E00;
 }
 
@@ -1830,20 +1834,21 @@ p.col-sort-active {
 }
 
 
-.experiment:hover .interactive-tooltip {
+.tooltip-trigger:hover
+.interactive-tooltip {
     display: inline;
     position: absolute;
-    top: -34px;
-    height: 46px;
-    margin: 0 auto;
+    overflow: auto;
     font-family: sans-serif;
     text-align: center;
-    left: 50%;
-    -webkit-transform: translateX(-51%);
-    -moz-transform: translateX(-51%);
-    -ms-transform: translateX(-51%);
-    -o-transform: translateX(-51%);
-    transform: translateX(-51%);
+    transform: translate(-65%, -80%);
+    z-index: 999;
+    padding-bottom: 20px;
+}
+
+.queue-length-values.tooltip-trigger:hover
+.interactive-tooltip {
+    transform: translate(-30%, -105%);
 }
 
 .tooltip-contents {
@@ -1856,22 +1861,16 @@ p.col-sort-active {
     white-space: nowrap;
 }
 
-.tooltip-contents a {
-    font-weight: bold;
+.tooltip-contents p {
+    color: #fff;
 }
 
-.tooltip-contents:after {
-    top: 23px;
-    left: 50%;
-    border: solid transparent;
-    content: " ";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    border-top-color: #1A1A1A;
-    border-width: 6px;
-    margin-left: -4px;
+.tooltip-contents p:last-child {
+    margin-bottom:0;
+}
+
+.tooltip-contents a {
+    font-weight: bold;
 }
 
 
