@@ -1829,10 +1829,13 @@ p.col-sort-active {
     float: left;
 }
 
+.tooltip-trigger {
+    display: inline-block;
+}
+
 .interactive-tooltip {
     display: none;
 }
-
 
 .tooltip-trigger:hover
 .interactive-tooltip {
@@ -1841,14 +1844,9 @@ p.col-sort-active {
     overflow: auto;
     font-family: sans-serif;
     text-align: center;
-    transform: translate(-65%, -80%);
+    transform: translate(-30%, -105%);
     z-index: 999;
     padding-bottom: 20px;
-}
-
-.queue-length-values.tooltip-trigger:hover
-.interactive-tooltip {
-    transform: translate(-30%, -105%);
 }
 
 .tooltip-contents {
