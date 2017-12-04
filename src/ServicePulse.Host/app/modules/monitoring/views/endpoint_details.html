@@ -46,10 +46,10 @@
                         </div>
                         
                     </div>
-                    <div class="row metric-digest-value">
+                    <div class="row metric-digest-value current">
                         {{endpoint.digest.metrics.queueLength.latest | number:0}} <span class="metric-digest-value-suffix">MSGS</span>
                     </div>
-                    <div class="row metric-digest-value">
+                    <div class="row metric-digest-value average">
                         {{endpoint.digest.metrics.queueLength.average | number:0}} <span class="metric-digest-value-suffix">MSGS AVG</span>
                     </div>
                 </div>
@@ -63,10 +63,10 @@
                              xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
                              plot-width="750"
                              plot-height="200"
-                             first-series-color="#CC1252"
-                             first-series-fill-color="#E9C4D1"
-                             second-series-color="#176397"
-                             second-series-fill-color="#CADCE8"
+                             first-series-color="#176397"
+                             first-series-fill-color="#CADCE8"
+                             second-series-color="#CC1252"
+                             second-series-fill-color="#E9C4D1"
                              class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
@@ -76,10 +76,10 @@
                                 Throughput
                             </span>
                         </div>
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value current">
                             {{endpoint.digest.metrics.throughput.latest | number:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
                         </div>
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.throughput.average | number:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
                         </div>
                     </div>
@@ -90,10 +90,10 @@
                             </span>
                         </div>
 
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value current">
                             {{endpoint.digest.metrics.retries.latest | number:2}} <span class="metric-digest-value-suffix">MSGS</span>
                         </div>
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.retries.average | number:2}} <span class="metric-digest-value-suffix">MSGS AVG</span>
                         </div>
                     </div>
@@ -122,11 +122,11 @@
                                 Critical Time
                             </span>
                         </div>
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value current">
                             {{endpoint.digest.metrics.criticalTime.latest | durationValue}} 
                             <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}} </span>
                         </div>
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.criticalTime.average | durationValue}} 
                             <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
                         </div>
@@ -138,11 +138,11 @@
                                 Processing Time
                             </span>
                         </div>
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value current">
                             {{endpoint.digest.metrics.processingTime.latest | durationValue}} 
                             <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}} </span>
                         </div>
-                        <div class="row metric-digest-value">
+                        <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.processingTime.average | durationValue}} 
                             <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}  AVG</span>
                         </div>
