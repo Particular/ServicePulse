@@ -15,3 +15,4 @@ require('signalr');
 require('ui-select');
 require('d3');
 require('rx');
+require('./constant.moment.js');

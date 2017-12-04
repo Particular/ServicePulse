@@ -11,7 +11,13 @@ module.exports = {
     },
     plugins: [
         new CleanWebpackPlugin(['dist']),
-        new webpack.ContextReplacementPlugin(/\.\/locale$/, 'empty-module', false, /js$/)
+        new webpack.ContextReplacementPlugin(/\.\/locale$/, null, false, /js$/),
+        new webpack.ProvidePlugin({
+            jQuery: 'jquery'
+        }),
+        new webpack.ProvidePlugin({
+            moment: "moment"
+        })
     ],
     module: {
         rules: [{
@@ -39,6 +45,8 @@ module.exports = {
                 'to-string-loader',
                 'css-loader'
             ]
+        }, {
+            test: require.resolve("jquery"), loader: "expose-loader?$!expose-loader?jQuery"
         }]
     },
     devtool: 'eval-source-map',

@@ -31,13 +31,15 @@
     "babel-preset-env": "^1.6.1",
     "clean-webpack-plugin": "^0.1.17",
     "css-loader": "^0.28.7",
+    "expose-loader": "^0.7.4",
     "html-loader": "^0.5.1",
     "webpack": "^3.8.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "load": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/monitoring/monitoring.webpackconfig.builder.js",
-    "setup": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/monitoring/monitoring.webpackconfig.js"
+    "setup": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/monitoring/monitoring.webpackconfig.js",
+    "webpack": "node ./node_modules/webpack/bin/webpack.js --config app/modules/monitoring/monitoring.webpackconfig.js"
   },
   "author": "Particular Software",
   "license": "RPL-1.5"
