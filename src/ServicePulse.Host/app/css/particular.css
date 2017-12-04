@@ -1831,23 +1831,23 @@ p.col-sort-active {
     white-space: nowrap;
 }
 
-    .tooltip-contents a {
-        font-weight: bold;
-    }
+.tooltip-contents a {
+    font-weight: bold;
+}
 
-    .tooltip-contents:after {
-        top: 23px;
-        left: 50%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-        border-top-color: #1A1A1A;
-        border-width: 6px;
-        margin-left: -4px;
-    }
+.tooltip-contents:after {
+    top: 23px;
+    left: 50%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border-top-color: #1A1A1A;
+    border-width: 6px;
+    margin-left: -4px;
+}
 
 
 .show-interactive-tooltip {
