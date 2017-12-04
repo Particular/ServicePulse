@@ -110,22 +110,6 @@
                              class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
-                    <div class="col-sm-6 no-side-padding critical-time-values">
-                        <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                Critical Time
-                            </span>
-                        </div>
-                        <div class="row metric-digest-value current">
-                            {{endpoint.digest.metrics.criticalTime.latest | durationValue}} 
-                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}} </span>
-                        </div>
-                        <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.criticalTime.average | durationValue}} 
-                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
-                        </div>
-                    </div>
-
                     <div class="col-sm-6 no-side-padding processing-time-values">
                         <div class="row">
                             <span class="metric-digest-header" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
@@ -139,6 +123,22 @@
                         <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.processingTime.average | durationValue}} 
                             <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}  AVG</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 no-side-padding critical-time-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value current">
+                            {{endpoint.digest.metrics.criticalTime.latest | durationValue}}
+                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}} </span>
+                        </div>
+                        <div class="row metric-digest-value average">
+                            {{endpoint.digest.metrics.criticalTime.average | durationValue}}
+                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
                         </div>
                     </div>
                 </div>
