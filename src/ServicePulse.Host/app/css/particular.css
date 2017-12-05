@@ -1818,3 +1818,7 @@ p.col-sort-active {
     font-size: 14px;
     float: left;
 }
+
+i.fa-exclamation-triangle {
+    color: #CE4844 !important;
+}
