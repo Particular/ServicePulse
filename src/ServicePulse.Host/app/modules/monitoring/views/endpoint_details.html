@@ -237,7 +237,8 @@
                                                 <graph plot-data="instance.metrics.throughput" class="graph throughput pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.metrics.throughput.displayValue}}<i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{endpoint.isStale ? "" : instance.metrics.throughput.displayValue}}
+                                                <i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -247,7 +248,8 @@
                                                 <graph plot-data="instance.metrics.retries" class="graph retries pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.metrics.retries.displayValue}}<i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{endpoint.isStale ? "" : instance.metrics.retries.displayValue}}
+                                                <i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -257,7 +259,8 @@
                                                 <graph plot-data="instance.metrics.processingTime" class="graph processing-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.metrics.processingTime.displayValue.value}} <span>{{instance.metrics.processingTime.displayValue.unit}}</span><i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{endpoint.isStale ? "" : instance.metrics.processingTime.displayValue.value}}
+                                                <span ng-if="endpoint.isStale">{{instance.metrics.processingTime.displayValue.unit}}</span><i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -267,7 +270,8 @@
                                                 <graph plot-data="instance.metrics.criticalTime" class="graph critical-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.metrics.criticalTime.displayValue.value}} <span>{{instance.metrics.criticalTime.displayValue.unit}}</span><i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{endpoint.isStale ? "" : instance.metrics.criticalTime.displayValue.value}} 
+                                                <span ng-if="endpoint.isStale">{{instance.metrics.criticalTime.displayValue.unit}}</span><i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </div>
                                         </div>
                                     </div>
