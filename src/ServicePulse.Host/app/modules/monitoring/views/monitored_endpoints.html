@@ -88,11 +88,11 @@
                                             {{endpoint.name}}
                                             <div class="endpoint-status">
                                                 <span ng-if="endpoint.endpointInstanceIds.length && endpoint.endpointInstanceIds.length > 1">({{endpoint.endpointInstanceIds.length}})</span>
-                                                <a class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{endpoint.serviceControlId}}">
+                                                <a class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{endpoint.serviceControlId}}" ng-if="instance.isStale">
                                                     <i class="fa fa-envelope"></i>
                                                     <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                                                 </a>
-                                                <span class="warning">
+                                                <span class="warning" ng-if="endpoint.errorCount">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
                                             </div>
