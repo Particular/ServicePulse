@@ -1,8 +1,8 @@
 <div class="container">
     <div class="row monitoring-head">
         <div class="back-nav">
-            <span class="fake-link">&#9664;</span>
-            <a href="/#/monitored_endpoints">Back to overview</a>
+            <span class="fake-link" aria-hidden="true">&#9664;</span>
+            <a href="/#/monitored_endpoints">All endpoints</a>
         </div>
         <div class="col-sm-10 no-side-padding list-section">
             <h1>{{endpointName}}</h1>
@@ -218,13 +218,15 @@
                                                 <div class="col-sm-12 no-side-padding lead">
 
                                                         {{instance.id}}
-                                                        <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
-                                                            <i class="fa fa-envelope"></i>
-                                                            <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
-                                                            <span ng-if="instance.isStale" class="warning pull-right">
+                                                        <div class="endpoint-status">
+                                                            <a ng-if="instance.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
+                                                                <i class="fa fa-envelope"></i>
+                                                                <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
+                                                            </a>
+                                                            <span class="warning">
                                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                             </span>
-                                                        </a>
+                                                        </div>
                                                 </div>
                                             </div>
                                         </div>

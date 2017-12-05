@@ -8,9 +8,9 @@
         <div class="row" ng-show="vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
             <div class="col-sm-12">
                 <div>
-                    <span class="fake-link">&#9664;</span>
-                    <a ng-if="vm.selectedExceptionGroup.parentTitle" href="#/endpoint_details/{{vm.selectedExceptionGroup.parentTitle}}/{{vm.selectedExceptionGroup.parentGroupIndex}}/">Back to {{vm.selectedExceptionGroup.parentTitle}} Endpoint</a>
-                    <a ng-if="!vm.selectedExceptionGroup.parentTitle" href="#/failed-messages/groups">FAILED MESSAGE GROUPS</a>
+                    <span class="fake-link" aria-hidden="true">&#9664;</span>
+                    <a class="back-nav" ng-if="vm.selectedExceptionGroup.parentTitle" href="#/endpoint_details/{{vm.selectedExceptionGroup.parentTitle}}/{{vm.selectedExceptionGroup.parentGroupIndex}}/">{{vm.selectedExceptionGroup.parentTitle}} endpoint</a>
+                    <a class="back-nav" ng-if="!vm.selectedExceptionGroup.parentTitle" href="#/failed-messages/groups">Failed message groups list</a>
                 </div>
                 <div ng-show="!vm.selectedExceptionGroup.id" class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}} | number)</div>
                 <h2 ng-show="vm.selectedExceptionGroup.id" class="active break group-title">
