@@ -1818,3 +1818,11 @@ p.col-sort-active {
     font-size: 14px;
     float: left;
 }
+
+.back-nav {
+    position: absolute;
+    top: 80px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
