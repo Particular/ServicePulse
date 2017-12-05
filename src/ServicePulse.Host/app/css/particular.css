@@ -1850,16 +1850,16 @@ p.col-sort-active {
     text-align: center;
     color: #fff;
     background-color: #1A1A1A;
-    font-size: 12px;
     text-transform: initial;
     padding: 6px;
     border-radius: 4px;
     white-space: nowrap;
 }
 
-.tooltip-contents p {
-    color: #fff;
-}
+    .tooltip-contents p {
+        color: #fff;
+        font-size: 12px;
+    }
 
 .tooltip-contents p:last-child {
     margin-bottom:0;
@@ -1872,4 +1872,8 @@ p.col-sort-active {
 
 .show-interactive-tooltip {
     display: block;
+}
+
+.table-head-row .row.box-header {
+    display: inline-block;
 }
