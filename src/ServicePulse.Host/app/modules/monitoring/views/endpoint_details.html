@@ -219,13 +219,13 @@
 
                                                         {{instance.id}}
                                                         <div class="endpoint-status">
+                                                            <span ng-if="instance.isStale" class="warning">
+                                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                            </span>
                                                             <a ng-if="instance.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
                                                                 <i class="fa fa-envelope"></i>
                                                                 <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
                                                             </a>
-                                                            <span class="warning">
-                                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                            </span>
                                                         </div>
                                                 </div>
                                             </div>

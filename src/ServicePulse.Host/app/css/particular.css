@@ -1711,7 +1711,6 @@ p.col-sort-active {
     .endpoint-status i.fa-envelope {
         position: relative;
         color: #777f7f;
-        margin-right: -6px;
     }
 
         .endpoint-status i.fa-envelope:hover {
@@ -1721,7 +1720,7 @@ p.col-sort-active {
     .endpoint-status i.fa-exclamation-triangle {
         position: relative;
         top: 1px;
-        
+        margin-right: 6px;
     }
 
     .endpoint-status .badge {
@@ -1729,7 +1728,7 @@ p.col-sort-active {
         top: 6px;
         font-size: 10px;
         margin-right: 0;
-        left: -4px;
+        left: -10px;
     }
 
     .endpoint-status a {
