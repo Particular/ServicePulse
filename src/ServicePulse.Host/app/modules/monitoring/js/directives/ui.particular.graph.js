@@ -8,7 +8,8 @@
                     restrict: 'E',
                     scope: {
                         plotData: '&',
-                        formatter: '&'
+                        formatter: '&',
+                        minimumYaxis: '@'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
@@ -32,7 +33,8 @@
 
                         var points = scope.plotData.points;
                         var average = scope.plotData.average || 0;
-                        var max = points && points.length ? Math.max(average * 1.5, d3.max(points)) : 1;
+                        var minimumYaxis = !isNaN(scope.minimumYaxis) ? Number(scope.minimumYaxis) : 10;
+                        var max = points && points.length ? Math.max(average * 1.5, d3.max(points), minimumYaxis) : 1;
                         var numberOfPoints = points && points.length ? points.length : 2;
 
                         var scaleY = d3.scaleLinear()

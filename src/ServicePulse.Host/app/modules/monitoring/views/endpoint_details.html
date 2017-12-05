@@ -32,6 +32,7 @@
                 <large-graph ng-if="endpoint.metricDetails.metrics.queueLength"
                              first-data-series="endpoint.metricDetails.metrics.queueLength"
                              xAxis-points="endpoint.metricDetails.metrics.queueLength.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
                              plot-width="750"
                              plot-height="200"
                              first-series-color="#EA7E00"
@@ -59,6 +60,7 @@
                              first-data-series="endpoint.metricDetails.metrics.throughput"
                              second-data-series="endpoint.metricDetails.metrics.retries"
                              xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
                              plot-width="750"
                              plot-height="200"
                              first-series-color="#176397"
@@ -104,6 +106,7 @@
                              first-data-series="endpoint.metricDetails.metrics.criticalTime"
                              second-data-series="endpoint.metricDetails.metrics.processingTime"
                              xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
                              plot-width="750"
                              plot-height="200"
                              first-series-color="#2700CB"
@@ -231,7 +234,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.throughput" class="graph throughput pull-left"></graph>
+                                                <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -244,7 +247,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.retries" class="graph retries pull-left"></graph>
+                                                <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -257,7 +260,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.processingTime" class="graph processing-time pull-left"></graph>
+                                                <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -270,7 +273,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.criticalTime" class="graph critical-time pull-left"></graph>
+                                                <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
@@ -354,7 +357,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.throughput" class="graph throughput pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{messageType.metrics.throughput.displayValue}}
@@ -364,7 +367,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.retries" class="graph retries pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{messageType.metrics.retries.displayValue}}
@@ -374,7 +377,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.processingTime" class="graph processing-time pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{messageType.metrics.processingTime.displayValue.value}} <span>{{messageType.metrics.processingTime.displayValue.unit}}</span>
@@ -384,7 +387,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.criticalTime" class="graph critical-time pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{messageType.metrics.criticalTime.displayValue.value}} <span>{{messageType.metrics.criticalTime.displayValue.unit}}</span>
