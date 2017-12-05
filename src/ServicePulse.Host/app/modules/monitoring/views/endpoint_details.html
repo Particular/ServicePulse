@@ -1,7 +1,12 @@
 <div class="container">
     <div class="row monitoring-head">
         <div class="col-sm-10 no-side-padding list-section">
-            <h1>{{endpointName}}</h1>
+            <h1>
+                {{endpointName}} 
+                <span class="warning" ng-if="endpoint.isStale">
+                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                </span>
+            </h1>
         </div>
         <div class="col-sm-2 no-side-padding toolbar-menus">
             <div class="msg-group-menu dropdown">
@@ -339,19 +344,18 @@
                                                 
                                                     <div ng-show="{{!messageType.typeName}}">N/A</div>
                                                 
-                                                    <div ng-show="{{messageType.typeName != ''}}">{{messageType.typeName}}</div>
+                                                    <div ng-show="{{messageType.typeName != ''}}">
+                                                        {{messageType.typeName}}
+                                                        <div class="endpoint-status">
+                                                            <span class="warning" ng-if="endpoint.isStale">
+                                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                     <div ng-show="{{messageType.typeName != ''}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
                                                     <div ng-show="{{messageType.culture != ''}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
                                                     <div ng-show="{{messageType.publicKeyToken != ''}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
-                                                    <div class="endpoint-status">
-                                                        <span class="warning" ng-if="endpoint.isStale">
-                                                            <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                        </span>
-                                                        <!--<span class="warning" ng-if="instance.errorCount">
-                                                            <i class="fa fa-envelope"></i>
-                                                            <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
-                                                        </span>-->
-                                                    </div>
+                                                    
                                             </div>
                                         </div>
                                     </div>
