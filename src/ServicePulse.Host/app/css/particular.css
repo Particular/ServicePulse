@@ -1703,37 +1703,37 @@ p.col-sort-active {
     margin-left: 7px;
 }
 
-    .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
-        font-size: 20px;
-        color: #CE4844;
+.endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
+    font-size: 20px;
+    color: #CE4844;
+}
+
+h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
+    font-size: 24px;
+}
+
+.endpoint-status i.fa-envelope {
+    position: relative;
+    color: #777f7f;
+}
+
+    .endpoint-status i.fa-envelope:hover {
+        color: #23527c;
     }
 
-    .endpoint-status i.fa-envelope {
-        position: relative;
-        color: #777f7f;
-    }
+.endpoint-status i.fa-exclamation-triangle {
+    position: relative;
+    top: 1px;
+    margin-right: 6px;
+}
 
-        .endpoint-status i.fa-envelope:hover {
-            color: #23527c;
-        }
-
-    .endpoint-status i.fa-exclamation-triangle {
-        position: relative;
-        top: 1px;
-        margin-right: 6px;
-    }
-
-    .endpoint-status .badge {
-        position: relative;
-        top: 6px;
-        font-size: 10px;
-        margin-right: 0;
-        left: -10px;
-    }
-
-    .endpoint-status a {
-        /*margin-right: -9px;*/
-    }
+.endpoint-status .badge {
+    position: relative;
+    top: 6px;
+    font-size: 10px;
+    margin-right: 0;
+    left: -10px;
+}
 
 
 .metric-digest {
