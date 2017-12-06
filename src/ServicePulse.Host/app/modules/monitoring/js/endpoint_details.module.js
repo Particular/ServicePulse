@@ -5,6 +5,7 @@
 
     require('./endpoint_details.controller');
     require('./endpoint_details.route.js');
+    require('./constant.diagrams.js');
 
     require('./directives/ui.particular.graph.js');
     require('./directives/ui.particular.graphdecimal.js');

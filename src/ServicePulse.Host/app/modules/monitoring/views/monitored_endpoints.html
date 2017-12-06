@@ -102,7 +102,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.queueLength" class="graph queue-length pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="{{smallGraphsMinimumYAxis.queueLength}}" class="graph queue-length pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
@@ -115,7 +115,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.throughput" class="graph throughput pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
@@ -128,7 +128,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.retries" class="graph retries pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
@@ -141,7 +141,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.processingTime" class="graph processing-time pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
@@ -154,7 +154,7 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.criticalTime" class="graph critical-time pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>

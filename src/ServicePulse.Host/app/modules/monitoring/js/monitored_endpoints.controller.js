@@ -9,12 +9,14 @@
         toastService,
         historyPeriods,
         rx,
-        $filter) {
+        $filter,
+        smallGraphsMinimumYAxis) {
 
         var subscription, endpointsFromScSubscription;
 
         $scope.periods = historyPeriods;
         $scope.selectedPeriod = $scope.periods[0];
+        $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
 
         if ($location.$$search.historyPeriod) {
             $scope.selectedPeriod = $scope.periods[$scope.periods.findIndex(function (period) {
@@ -116,7 +118,8 @@
         'toastService',
         'historyPeriods',
         'rx',
-        '$filter'
+        '$filter',
+        'smallGraphsMinimumYAxis'
     ];
 
     angular.module('monitored_endpoints')
