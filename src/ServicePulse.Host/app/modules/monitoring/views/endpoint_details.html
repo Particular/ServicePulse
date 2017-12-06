@@ -1,5 +1,9 @@
 <div class="container">
     <div class="row monitoring-head">
+        <div class="back-nav">
+            <span class="fake-link">&#9664;</span>
+            <a href="/#/monitored_endpoints">Back to overview</a>
+        </div>
         <div class="col-sm-10 no-side-padding list-section">
             <h1>
                 {{endpointName}} 
@@ -118,23 +122,6 @@
                              class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
-                    <div class="col-sm-6 no-side-padding critical-time-values">
-                        <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                Critical Time
-                            </span>
-                        </div>
-                        <div class="row metric-digest-value current">
-                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.criticalTime.latest | durationValue)}} 
-                            <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
-                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                        </div>
-                        <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.criticalTime.average | durationValue}} 
-                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
-                        </div>
-                    </div>
-
                     <div class="col-sm-6 no-side-padding processing-time-values">
                         <div class="row">
                             <span class="metric-digest-header" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
@@ -149,6 +136,23 @@
                         <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.processingTime.average | durationValue}} 
                             <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}  AVG</span>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 no-side-padding critical-time-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value current">
+                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.criticalTime.latest | durationValue)}} 
+                            <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
+                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                        </div>
+                        <div class="row metric-digest-value average">
+                            {{endpoint.digest.metrics.criticalTime.average | durationValue}}
+                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
                         </div>
                     </div>
                 </div>

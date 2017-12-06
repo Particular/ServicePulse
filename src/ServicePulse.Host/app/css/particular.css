@@ -1822,3 +1822,11 @@ p.col-sort-active {
 i.fa-exclamation-triangle {
     color: #CE4844 !important;
 }
+
+.back-nav {
+    position: absolute;
+    top: 80px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
