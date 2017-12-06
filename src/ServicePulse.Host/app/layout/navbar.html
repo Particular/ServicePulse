@@ -27,7 +27,7 @@
                     <a href="#/endpoints">
                         <i class="fa fa-heart icon-white"></i>
                         <span class="navbar-label">Endpoints</span>
-                        <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | largeNumber:1}}</span>
+                        <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | largeNumber:0}}</span>
                     </a>
                 </li>
 
@@ -42,14 +42,14 @@
                     <a href="#/failed-messages/groups">
                         <i class="fa fa-envelope icon-white"></i>
                         <span class="navbar-label">Failed Messages</span>
-                        <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages | largeNumber:1}}</span>
+                        <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages | largeNumber:0}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/custom-checks') }">
                     <a href="#/custom-checks">
                         <i class="fa fa-check icon-white"></i>
                         <span class="navbar-label">Custom Checks</span>
-                        <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks | largeNumber:1}}</span>
+                        <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks | largeNumber:0}}</span>
                     </a>
                 </li>
                 <li ng-class="{ active: isActive('/configuration/endpoints') || isActive('/configuration/redirects') }">

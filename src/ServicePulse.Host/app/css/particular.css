@@ -1876,4 +1876,11 @@ p.col-sort-active {
 
 .table-head-row .row.box-header {
     display: inline-block;
+
+.back-nav {
+    position: absolute;
+    top: 80px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-size: 13px;
 }
