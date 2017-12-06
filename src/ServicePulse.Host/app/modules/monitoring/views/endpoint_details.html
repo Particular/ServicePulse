@@ -342,19 +342,17 @@
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding lead message-type-label">
                                                 
-                                                    <div ng-show="{{!messageType.typeName}}">N/A</div>
-                                                
-                                                    <div ng-show="{{messageType.typeName != ''}}">
-                                                        {{messageType.typeName}}
+                                                    <div>
+                                                        {{messageType.typeName ? messageType.typeName : 'Unknown'}}
                                                         <div class="endpoint-status">
                                                             <span class="warning" ng-if="endpoint.isStale">
                                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <div ng-show="{{messageType.typeName != ''}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
-                                                    <div ng-show="{{messageType.culture != ''}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
-                                                    <div ng-show="{{messageType.publicKeyToken != ''}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
+                                                    <div ng-show="{{messageType.typeName && messageType.typeName != 'null'}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                                    <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                                    <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
                                                     
                                             </div>
                                         </div>
