@@ -12,6 +12,14 @@
         });
     });
 
+    it('number without decimal places should be formatted without decimals', function () {
+        var value = 9, result;
+
+        result = $filter('largeNumber')(value, 2);
+
+        expect(result).toEqual(value);
+    });
+
     it('number below 1000 should be left intact', function () {
         var value = 301, result;
         
@@ -25,7 +33,7 @@
 
         result = $filter('largeNumber')(value, '0');
 
-        expect(result).toEqual('1200');
+        expect(result).toEqual(1200);
     });
 
     it('number value is greater than 1 million should return 1M', function () {
