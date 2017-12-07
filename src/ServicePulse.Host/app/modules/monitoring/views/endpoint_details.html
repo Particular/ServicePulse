@@ -255,9 +255,6 @@
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.throughput.displayValue}}
@@ -269,9 +266,6 @@
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.retries.displayValue}}
@@ -283,9 +277,6 @@
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.processingTime.displayValue.value}}
@@ -297,9 +288,6 @@
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.criticalTime.displayValue.value}} 
