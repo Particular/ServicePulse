@@ -40,10 +40,16 @@
                              class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
-                    <div class="row queue-length-values">
-                        <span class="metric-digest-header" uib-tooltip="Queue length (# msgs): The estimated number of messages in an endpoint's queue.">
-                            Queue Length
-                        </span>
+                    <div class="row queue-length-values tooltip-trigger">
+                        <div class="metric-digest-header">
+                            Queue Length <i class="fa fa-flask fake-link"></i>
+                        </div>
+                        <div class="interactive-tooltip">
+                            <div class="tooltip-contents">
+                                <p>Queue length: The estimated number of messages in an endpoint's queue.</p>
+                                <p>NOTE: This is an experimental feature. <a href="https://docs.particular.net/search?q=nservicebus+queue+length+metric+%2bexperimental" target="_blank">Learn more</a> <i class="fa fa-external-link fake-link"></i></p>
+                            </div>
+                        </div>
                     </div>
                     <div class="row metric-digest-value current">
                         {{endpoint.digest.metrics.queueLength.latest | number:0}} <span class="metric-digest-value-suffix">MSGS</span>
@@ -72,7 +78,7 @@
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding throughput-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
+                            <span class="metric-digest-header" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
                                 Throughput
                             </span>
                         </div>
@@ -85,7 +91,7 @@
                     </div>
                     <div class="col-sm-6 no-side-padding scheduled-retries-rate-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
+                            <span class="metric-digest-header" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
                                 Scheduled Retries Rate
                             </span>
                         </div>
@@ -119,7 +125,7 @@
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding processing-time-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
+                            <span class="metric-digest-header" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
                                 Processing Time
                             </span>
                         </div>
@@ -135,7 +141,7 @@
 
                     <div class="col-sm-6 no-side-padding critical-time-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                            <span class="metric-digest-header" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
                                 Critical Time
                             </span>
                         </div>
@@ -177,35 +183,35 @@
                     <div class="col-sm-2 col-xl-8">
                         <div class="row box-header">
                             <div class="col-sm-12">
-                                <p>Instance Name</p>
+                                Instance Name
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
-                                <p>Throughput <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
-                                <p>Scheduled retry rate <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
-                                <p>Processing Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                <p>Critical Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
@@ -302,35 +308,35 @@
                     <div class="col-sm-2 col-xl-8">
                         <div class="row box-header">
                             <div class="col-sm-12">
-                                <p>Message Type</p>
+                                Message type name
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
-                                <p>Throughput <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
-                                <p>Scheduled retry rate <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
-                                <p>Processing Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                <p>Critical Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
