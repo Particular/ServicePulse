@@ -5,6 +5,7 @@
     require('./services/services.monitoring');
     require('./monitored_endpoints.controller');
     require('./monitored_endpoints.route.js');
+    require('./constant.diagrams.js');
 
     require('./directives/ui.particular.graph.js');
     require('./directives/ui.particular.graphdecimal.js');

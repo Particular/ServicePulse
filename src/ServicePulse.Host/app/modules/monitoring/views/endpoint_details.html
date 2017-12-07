@@ -37,6 +37,7 @@
                 <large-graph ng-if="endpoint.metricDetails.metrics.queueLength"
                              first-data-series="endpoint.metricDetails.metrics.queueLength"
                              xAxis-points="endpoint.metricDetails.metrics.queueLength.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
                              plot-width="750"
                              plot-height="200"
                              first-series-color="#EA7E00"
@@ -44,10 +45,16 @@
                              class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
-                    <div class="row queue-length-values">
-                        <span class="metric-digest-header" uib-tooltip="Queue length (# msgs): The estimated number of messages in an endpoint's queue.">
-                            Queue Length
-                        </span>
+                    <div class="row queue-length-values tooltip-trigger">
+                        <div class="metric-digest-header">
+                            Queue Length <i class="fa fa-flask fake-link"></i>
+                        </div>
+                        <div class="interactive-tooltip">
+                            <div class="tooltip-contents">
+                                <p>Queue length: The estimated number of messages in an endpoint's queue.</p>
+                                <p>NOTE: This is an experimental feature. <a href="https://docs.particular.net/search?q=nservicebus+queue+length+metric+%2bexperimental" target="_blank">Learn more</a> <i class="fa fa-external-link fake-link"></i></p>
+                            </div>
+                        </div>
                     </div>
                     <div class="row metric-digest-value current">
                         {{endpoint.isStale ? "" : (endpoint.digest.metrics.queueLength.latest | number:0)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS</span>
@@ -65,6 +72,7 @@
                              first-data-series="endpoint.metricDetails.metrics.throughput"
                              second-data-series="endpoint.metricDetails.metrics.retries"
                              xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
                              plot-width="750"
                              plot-height="200"
                              first-series-color="#176397"
@@ -76,7 +84,7 @@
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding throughput-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
+                            <span class="metric-digest-header" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
                                 Throughput
                             </span>
                         </div>
@@ -90,7 +98,7 @@
                     </div>
                     <div class="col-sm-6 no-side-padding scheduled-retries-rate-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
+                            <span class="metric-digest-header" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
                                 Scheduled Retries Rate
                             </span>
                         </div>
@@ -112,6 +120,7 @@
                              first-data-series="endpoint.metricDetails.metrics.criticalTime"
                              second-data-series="endpoint.metricDetails.metrics.processingTime"
                              xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
                              plot-width="750"
                              plot-height="200"
                              first-series-color="#2700CB"
@@ -124,7 +133,7 @@
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding processing-time-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
+                            <span class="metric-digest-header" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
                                 Processing Time
                             </span>
                         </div>
@@ -141,7 +150,7 @@
 
                     <div class="col-sm-6 no-side-padding critical-time-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                            <span class="metric-digest-header" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
                                 Critical Time
                             </span>
                         </div>
@@ -184,35 +193,35 @@
                     <div class="col-sm-2 col-xl-8">
                         <div class="row box-header">
                             <div class="col-sm-12">
-                                <p>Instance Name</p>
+                                Instance Name
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
-                                <p>Throughput <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
-                                <p>Scheduled retry rate <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
-                                <p>Processing Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                <p>Critical Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
@@ -227,14 +236,16 @@
                                             <div class="row box-header">
                                                 <div class="col-sm-12 no-side-padding lead">
 
-                                                        {{instance.id}}
+                                                        {{instance.name}}
                                                         <div class="endpoint-status">
                                                             <span class="warning" ng-if="instance.isStale">
                                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                             </span>
                                                             <span class="warning" ng-if="instance.errorCount">
+                                                              <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
                                                                 <i class="fa fa-envelope"></i>
                                                                 <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
+                                                              </a>
                                                             </span>
                                                         </div>
                                                 </div>
@@ -243,7 +254,10 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.throughput" class="graph throughput pull-left"></graph>
+                                                <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
+                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.throughput.displayValue}}
@@ -254,7 +268,10 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.retries" class="graph retries pull-left"></graph>
+                                                <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
+                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.retries.displayValue}}
@@ -265,7 +282,10 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.processingTime" class="graph processing-time pull-left"></graph>
+                                                <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
+                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.processingTime.displayValue.value}}
@@ -276,7 +296,10 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="instance.metrics.criticalTime" class="graph critical-time pull-left"></graph>
+                                                <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
+                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.criticalTime.displayValue.value}} 
@@ -303,35 +326,35 @@
                     <div class="col-sm-2 col-xl-8">
                         <div class="row box-header">
                             <div class="col-sm-12">
-                                <p>Message Type</p>
+                                Message type name
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
-                                <p>Throughput <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
-                                <p>Scheduled retry rate <span>(msgs/s)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
-                                <p>Processing Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                                <p>Critical Time <span>(t)</span></p>
+                            <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
@@ -364,7 +387,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.throughput" class="graph throughput pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{endpoint.isStale ? "" : messageType.metrics.throughput.displayValue}}<i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
@@ -374,7 +397,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.retries" class="graph retries pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{endpoint.isStale ? "" : messageType.metrics.retries.displayValue}}<i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
@@ -384,7 +407,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.processingTime" class="graph processing-time pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{endpoint.isStale ? "" : messageType.metrics.processingTime.displayValue.value}} 
@@ -395,7 +418,7 @@
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
-                                                <graph plot-data="messageType.metrics.criticalTime" class="graph critical-time pull-left"></graph>
+                                                <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{endpoint.isStale ? "" : messageType.metrics.criticalTime.displayValue.value}} 

@@ -77,6 +77,7 @@
                         firstDataSeries: '=firstDataSeries',
                         secondDataSeries: '=secondDataSeries',
                         isDurationGraph: '=isDurationGraph',
+                        minimumYaxis: '@',
                         width: '=plotWidth',
                         height: '=plotHeight'
                     },
@@ -120,7 +121,8 @@
                                 .attr('transform', 'translate(' + leftMargin + ',' + topMargin + ')')
                                 .attr('fill', '#F2F6F7');
 
-                            var max = Math.max(firstSeries.average, d3.max(firstSeries.points));
+                            var minimumYaxis = !isNaN(scope.minimumYaxis) ? Number(scope.minimumYaxis) : 10;
+                            var max = Math.max(firstSeries.average, d3.max(firstSeries.points), minimumYaxis);
 
                             if (secondSeries && secondSeries.points.length > 0) {
                                 max = Math.max(max, secondSeries.average, d3.max(secondSeries.points));
