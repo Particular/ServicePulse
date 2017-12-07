@@ -1924,6 +1924,10 @@ p.col-sort-active {
     float: left;
 }
 
+i.fa-exclamation-triangle {
+    color: #CE4844 !important;
+}
+
 .tooltip-trigger {
     display: inline-block;
 }
@@ -1965,7 +1969,6 @@ p.col-sort-active {
 .tooltip-contents a {
     font-weight: bold;
 }
-
 
 .show-interactive-tooltip {
     display: block;

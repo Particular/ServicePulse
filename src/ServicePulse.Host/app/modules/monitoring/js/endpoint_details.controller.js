@@ -68,6 +68,8 @@
                 
                 $scope.endpoint.messageTypes.forEach( (messageType) => fillDisplayValues(messageType));
 
+                $scope.endpoint.isStale = true;
+
                 $scope.endpoint.instances.forEach(function (instance) {
                     fillDisplayValues(instance);
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
@@ -77,7 +79,9 @@
                         }
                     }, function (err) {
                         // Warn user?
-                    });
+                        });
+
+                    $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
                 });
             });
         }

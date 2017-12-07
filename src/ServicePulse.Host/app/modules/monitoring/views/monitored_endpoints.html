@@ -116,7 +116,8 @@
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.queueLength.displayValue}}
+                                            {{endpoint.isStale ? "" : endpoint.metrics.queueLength.displayValue}}
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -129,7 +130,8 @@
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.throughput.displayValue}}
+                                            {{endpoint.isStale ? "" : endpoint.metrics.throughput.displayValue}}
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -142,7 +144,8 @@
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.retries.displayValue}}
+                                            {{endpoint.isStale ? "" : endpoint.metrics.retries.displayValue}}
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -155,7 +158,7 @@
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.processingTime.displayValue.value}} <span>{{endpoint.metrics.processingTime.displayValue.unit}}</span>
+                                            {{endpoint.isStale ? "" : endpoint.metrics.processingTime.displayValue.value}} <span ng-if="!endpoint.isStale">{{endpoint.metrics.processingTime.displayValue.unit}}</span><i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -168,7 +171,8 @@
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.criticalTime.displayValue.value}} <span>{{endpoint.metrics.criticalTime.displayValue.unit}}</span>
+                                            {{endpoint.isStale ? "" : endpoint.metrics.criticalTime.displayValue.value}} <span ng-if="!endpoint.isStale">{{endpoint.metrics.criticalTime.displayValue.unit}}</span>
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
