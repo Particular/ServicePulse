@@ -139,7 +139,7 @@
                         </div>
                         <div class="row metric-digest-value current">
                             {{endpoint.isStale ? "" : (endpoint.digest.metrics.processingTime.latest | durationValue)}} 
-                            <span ng-if="endpoint.iStale == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
+                            <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
                             <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                         </div>
                         <div class="row metric-digest-value average">
