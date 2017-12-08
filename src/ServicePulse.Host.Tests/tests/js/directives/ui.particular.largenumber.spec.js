@@ -31,7 +31,7 @@
     it('number value is equal 1200 should return 1200', function () {
         var value = 1200, result;
 
-        result = $filter('largeNumber')(value, '0');
+        result = $filter('largeNumber')(value, 0);
 
         expect(result).toEqual(1200);
     });
@@ -39,7 +39,7 @@
     it('number value is greater than 1 million should return 1M', function () {
         var value = 1000000, result;
 
-        result = $filter('largeNumber')(value, '0');
+        result = $filter('largeNumber')(value, 0);
 
         expect(result).toEqual('1M');
     });

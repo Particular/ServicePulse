@@ -34,7 +34,7 @@
         }
 
         function round(num, decimals) {
-            return +(Math.round(num + `e+${decimals}`) + `e-${decimals}`);
+            return +(Math.round(num + ('e+' + decimals) ) + ('e-' + decimals) );
         }
 
         function formatLargeNumber(value, decimals) {
