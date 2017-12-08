@@ -33,6 +33,10 @@
             }
         }
 
+        function round(num, decimals) {
+            return +(Math.round(num + ('e+' + decimals) ) + ('e-' + decimals) );
+        }
+
         function formatLargeNumber(value, decimals) {
             var exp,
                 suffixes = ['k', 'M', 'G', 'T', 'P', 'E'];
@@ -44,12 +48,12 @@
             }
 
             if (value < 1000000) {
-                return value.toFixed(decimals);
+                return round(value, decimals);
             }
 
             exp = Math.floor(Math.log(value) / Math.log(1000));
 
-            return (value / Math.pow(1000, exp)).toFixed(decimals) + suffixes[exp - 1];
+            return round((value / Math.pow(1000, exp)), decimals) + suffixes[exp - 1];
         }
 
         return {

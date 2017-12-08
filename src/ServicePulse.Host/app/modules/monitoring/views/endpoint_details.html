@@ -57,11 +57,11 @@
                         </div>
                     </div>
                     <div class="row metric-digest-value current">
-                        {{endpoint.isStale ? "" : (endpoint.digest.metrics.queueLength.latest | number:0)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS</span>
+                        {{endpoint.isStale ? "" : (endpoint.digest.metrics.queueLength.latest | metricslargenumber:0)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS</span>
                         <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                     </div>
                     <div class="row metric-digest-value average">
-                        {{endpoint.digest.metrics.queueLength.average | number:0}} <span class="metric-digest-value-suffix">MSGS AVG</span>
+                        {{endpoint.digest.metrics.queueLength.average | metricslargenumber:0}} <span class="metric-digest-value-suffix">MSGS AVG</span>
                     </div>
                 </div>
             </div>
@@ -89,11 +89,11 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.throughput.latest | number:2)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS/S</span>
+                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.throughput.latest | metricslargenumber:2)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS/S</span>
                             <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.throughput.average | number:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
+                            {{endpoint.digest.metrics.throughput.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
                         </div>
                     </div>
                     <div class="col-sm-6 no-side-padding scheduled-retries-rate-values">
@@ -104,11 +104,11 @@
                         </div>
 
                         <div class="row metric-digest-value current">
-                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.retries.latest | number:2)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS/S</span>
+                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.retries.latest | metricslargenumber:2)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS/S</span>
                             <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.retries.average | number:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
+                            {{endpoint.digest.metrics.retries.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
                         </div>
                     </div>
                 </div>
