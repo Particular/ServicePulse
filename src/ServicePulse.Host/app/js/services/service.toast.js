@@ -22,8 +22,8 @@
             this.showToast(text, 'error', 'Error', true);
         }
 
-        this.showWarning = function (text) {
-            this.showToast(text, 'warning', 'Warning', true);
+        this.showWarning = function (text, sticky = true) {
+            this.showToast(text, 'warning', 'Warning', sticky);
         }
     }
 

@@ -2,17 +2,7 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, rx, scConfig, uri, $q, toastService) {
-
-        var isDisconnected = false;
-
-        var notifyDisconnected = function() {
-            if (isDisconnected === false) {
-                toastService.showError("Can not connect to Monitoring.\n Reload the page to check connection");
-            }
-
-            isDisconnected = true;
-        };
+    function Service($http, rx, scConfig, uri, $q) {
 
         function createEndpointsSource(historyPeriod, refreshInterval) {
             return Rx.Observable.interval(refreshInterval).startWith(0)
@@ -39,10 +29,12 @@
                         });
 
                         return result.data;
-                    }, function(error) {
-                        notifyDisconnected();
-                        return error;
-                    });
+                    },
+                    (error) => {
+                        var sourceIndex = scConfig.monitoring_urls.indexOf(url);
+                        return [{ error: error, sourceIndex: sourceIndex }];
+                        }
+                    );
             });
         }
 

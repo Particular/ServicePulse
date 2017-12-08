@@ -246,6 +246,9 @@
                                                             <span ng-if="instance.isStale" class="warning">
                                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                             </span>
+														<span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
+                                                        	<i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
+                                                    	</span>
                                                             <a ng-if="instance.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
                                                                 <i class="fa fa-envelope"></i>
                                                                 <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
@@ -261,6 +264,9 @@
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
+                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
+                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.throughput.displayValue}}
@@ -274,6 +280,9 @@
                                                 <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
+                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
                                                 </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
@@ -289,6 +298,9 @@
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
+                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
+                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{instance.isStale ? "" : instance.metrics.processingTime.displayValue.value}}
@@ -302,6 +314,9 @@
                                                 <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                                 <span ng-if="instance.isStale" class="warning pull-right graphicon">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                </span>
+                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
+                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
                                                 </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
