@@ -34,42 +34,50 @@
             <div class="col-sm-2 col-xl-7">
                 <div class="row box-header">
                     <div class="col-sm-12">
-                        <p>Name</p>
+                        Endpoint name
                     </div>
                 </div>
             </div>
             <div class="col-sm-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding" uib-tooltip="Queue length (# msgs): The estimated number of messages in an endpoint's queue.">
-                        <p>Queue Length <span>(msgs)</span></p>
+                    <div class="col-sm-12 no-side-padding">
+                        <div class="tooltip-trigger">
+                            Queue Length <span class="table-header-unit">(msgs)</span> <i class="fa fa-flask fake-link"></i>
+                            <div class="interactive-tooltip">
+                                <div class="tooltip-contents">
+                                    <p>Queue length: The estimated number of messages in an endpoint's queue.</p>
+                                    <p>NOTE: This is an experimental feature. <a href="https://docs.particular.net/search?q=nservicebus+queue+length+metric+%2bexperimental" target="_blank">Learn more</a> <i class="fa fa-external-link fake-link"></i></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding" uib-tooltip="Throughput (# msgs/s): The number of messages per second successfully processed by a receiving endpoint.">
+            <div class="col-sm-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding">
-                        <p>Throughput <span>(msgs/s)</span></p>
+                    <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                        Throughput <span class="table-header-unit">(msgs/s)</span>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding" uib-tooltip="Scheduled retry rate (# msgs/s): The number of messages per second scheduled for retries (immediate or delayed).">
+            <div class="col-sm-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding">
-                        <p>Scheduled retry rate <span>(msgs/s)</span></p>
+                    <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
+                        Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding" uib-tooltip="Processing time (t): The time taken for a receiving endpoint to successfully process a message.">
+            <div class="col-sm-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding">
-                        <p>Processing Time <span>(t)</span></p>
+                    <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                        Processing Time <span class="table-header-unit">(t)</span>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding" uib-tooltip="Critical time (t): The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+            <div class="col-sm-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding">
-                        <p>Critical Time <span>(t)</span></p>
+                    <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                        Critical Time <span class="table-header-unit">(t)</span>
                     </div>
                 </div>
             </div>
@@ -102,65 +110,69 @@
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.queueLength" class="graph queue-length pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="{{smallGraphsMinimumYAxis.queueLength}}" class="graph queue-length pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.queueLength.displayValue}}
+                                            {{endpoint.isStale ? "" : endpoint.metrics.queueLength.displayValue}}
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.throughput" class="graph throughput pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.throughput.displayValue}}
+                                            {{endpoint.isStale ? "" : endpoint.metrics.throughput.displayValue}}
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.retries" class="graph retries pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.retries.displayValue}}
+                                            {{endpoint.isStale ? "" : endpoint.metrics.retries.displayValue}}
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.processingTime" class="graph processing-time pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.processingTime.displayValue.value}} <span>{{endpoint.metrics.processingTime.displayValue.unit}}</span>
+                                            {{endpoint.isStale ? "" : endpoint.metrics.processingTime.displayValue.value}} <span ng-if="!endpoint.isStale">{{endpoint.metrics.processingTime.displayValue.unit}}</span><i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
-                                            <graph plot-data="endpoint.metrics.criticalTime" class="graph critical-time pull-left"></graph>
+                                            <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             <span ng-if="endpoint.isStale" class="warning graphicon" ng-class="{'graphicon-row-hover': endpoint.hover1}">
                                                 <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                             </span>
                                         </div>
                                         <div class="no-side-padding sparkline-value">
-                                            {{endpoint.metrics.criticalTime.displayValue.value}} <span>{{endpoint.metrics.criticalTime.displayValue.unit}}</span>
+                                            {{endpoint.isStale ? "" : endpoint.metrics.criticalTime.displayValue.value}} <span ng-if="!endpoint.isStale">{{endpoint.metrics.criticalTime.displayValue.unit}}</span>
+                                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                         </div>
                                     </div>
                                 </div>

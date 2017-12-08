@@ -9,12 +9,17 @@
         serviceControlService,
         monitoringService,
         historyPeriods,
-        $filter) {
+        $filter,
+        smallGraphsMinimumYAxis,
+        largeGraphsMinimumYAxis
+    ) {
 
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.loading = true;
         $scope.showInstancesBreakdown = false;
+        $scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
+        $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
 
         var subscription;
 
@@ -63,6 +68,8 @@
                 
                 $scope.endpoint.messageTypes.forEach( (messageType) => fillDisplayValues(messageType));
 
+                $scope.endpoint.isStale = true;
+
                 $scope.endpoint.instances.forEach(function (instance) {
                     fillDisplayValues(instance);
                     serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
@@ -72,7 +79,9 @@
                         }
                     }, function (err) {
                         // Warn user?
-                    });
+                        });
+
+                    $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
                 });
             });
         }
@@ -99,7 +108,9 @@
         'serviceControlService',
         'monitoringService',
         'historyPeriods',
-        '$filter'
+        '$filter',
+        'smallGraphsMinimumYAxis',
+        'largeGraphsMinimumYAxis'
     ];
 
     angular.module('endpoint_details')
