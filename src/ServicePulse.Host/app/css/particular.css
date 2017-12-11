@@ -1734,12 +1734,26 @@ hr.top-separator {
 }
 
 .monitoring-no-data {
-    margin: 60px 0 120px;
+    margin: 60px auto 120px;
+    max-width: 520px;
+    line-height: 26px;
+}
+
+.monitoring-no-data h1 {
+    font-size: 30px;
 }
 
 .monitoring-no-data p {
     font-size: 16px;
     margin-bottom: 20px;
+    margin-top: -18px;
+}
+
+.monitoring-no-data ul {
+    padding-left: 0;
+    text-align: left;
+    font-size: 16px;
+    margin-bottom: 30px;
 }
 
 .monitoring-no-data .btn {

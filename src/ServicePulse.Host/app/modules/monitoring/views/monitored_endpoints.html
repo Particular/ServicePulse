@@ -23,10 +23,15 @@
 <div class="container">
     <section ng-show="true">
         <div class="text-center monitoring-no-data" ng-show="!endpoints.length">
-            <h1>No endpoints available for monitoring</h1>
-                <p>Ensure that your endpoints have auditing enabled and/or have the metrics plug-in enabled</p>
+            <h1>Endpoint monitoring not available</h1>
+                <p>Monitoring is not available due to one or more of these reasons:</p>
+                <ul>
+                    <li>the <strong>monitoring server</strong> is not configured or is unavailable</li>
+                    <li>the <strong>monitoring plugin</strong> is not installed on the endpoints to be monitored</li>
+                    <li>endpoints without the monitoring plugin do not have <strong>auditing</strong> enabled</li>
+                </ul>
             <div class="action-toolbar">
-                <a class="btn btn-default btn-primary" href="https://www.google.com/search?site=&source=hp&q=metrics+%2Fsite%3Adocs.particular.net&oq=metrics+%2Fsite%3Adocs.particular.net">Learn more</a>
+                <a class="btn btn-default btn-primary" href="https://docs.particular.net/search?q=metrics">Learn more</a>
             </div>
         </div>
         
