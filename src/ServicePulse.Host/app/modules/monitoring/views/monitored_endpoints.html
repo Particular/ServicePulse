@@ -99,7 +99,7 @@
                                                 <span ng-if="endpoint.isStale" class="warning">
                                                     <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
                                                 </span>
-                                                <a ng-if="endpoint.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{endpoint.serviceControlId}}">
+                                                <a ng-if="endpoint.errorCount > 0" class="warning" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
                                                     <i class="fa fa-envelope"></i>
                                                     <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                                                 </a>
