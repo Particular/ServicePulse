@@ -80,10 +80,9 @@
                             }
                         }, function (err) {
                             // Warn user?
-                        });
                     });
-
-                    $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
+                        $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
+                    });
                 }
 
                 serviceControlService.getExceptionGroupsForLogicalEndpoint($scope.endpointName).then(function(result) {

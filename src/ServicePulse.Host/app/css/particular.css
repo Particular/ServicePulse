@@ -2015,6 +2015,12 @@ i.fa-exclamation-triangle {
     font-size: 13px;
 }
 
+.pa-monitoring-lost {
+    background-image: url('../img/monitoring-lost.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .monitoring-head .back-nav {
     position: absolute;
     top: 80px;

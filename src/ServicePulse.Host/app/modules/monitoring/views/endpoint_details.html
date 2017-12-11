@@ -6,16 +6,20 @@
         </div>
         <div class="col-sm-10 no-side-padding list-section">
             <h1>
-                {{endpointName}} 
+                {{endpointName}}
                 <div class="endpoint-status">
                     <span ng-if="endpoint.isStale" class="warning">
-                        <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                        <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to endpoint"></i>
                     </span>
                     <a ng-if="endpoint.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{endpoint.serviceControlId}}">
                         <i class="fa fa-envelope"></i>
                         <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                     </a>
+					<span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+	                    <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to monitoring server"></i>
+	                </span>
                 </div>
+                
             </h1>
         </div>
         <div class="col-sm-2 no-side-padding toolbar-menus">
@@ -63,8 +67,8 @@
                         </div>
                     </div>
                     <div class="row metric-digest-value current">
-                        {{endpoint.isStale ? "" : (endpoint.digest.metrics.queueLength.latest | metricslargenumber:0)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS</span>
-                        <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.queueLength.latest | number:0)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span>
+                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
                     </div>
                     <div class="row metric-digest-value average">
                         {{endpoint.digest.metrics.queueLength.average | metricslargenumber:0}} <span class="metric-digest-value-suffix">MSGS AVG</span>
@@ -95,8 +99,8 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.throughput.latest | metricslargenumber:2)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS/S</span>
-                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.throughput.latest | number:2)}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.throughput.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
@@ -110,8 +114,8 @@
                         </div>
 
                         <div class="row metric-digest-value current">
-                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.retries.latest | metricslargenumber:2)}} <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">MSGS/S</span>
-                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.retries.latest | number:2)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS/S</span>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.retries.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
@@ -144,13 +148,11 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.processingTime.latest | durationValue)}} 
-                            <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
-                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.processingTime.latest | durationValue)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.processingTime.average | durationValue}} 
-                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}  AVG</span>
+                            {{endpoint.digest.metrics.processingTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}  AVG</span>
                         </div>
                     </div>
 
@@ -161,13 +163,11 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            {{endpoint.isStale ? "" : (endpoint.digest.metrics.criticalTime.latest | durationValue)}} 
-                            <span ng-if="endpoint.isStale == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
-                            <i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.criticalTime.latest | durationValue)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.criticalTime.average | durationValue}}
-                            <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
+                            {{endpoint.digest.metrics.criticalTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
                         </div>
                     </div>
                 </div>
@@ -238,39 +238,35 @@
                         <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
                             <div class="col-sm-12 no-side-padding">
                                 <div class="row">
-                                        <div class="col-sm-2 col-xl-8 endpoint-name">
-                                            <div class="row box-header">
-                                                <div class="col-sm-12 no-side-padding lead">
-                                                        {{instance.name}}
-                                                        <div class="endpoint-status">
-                                                            <span ng-if="instance.isStale" class="warning">
-                                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                            </span>
-														<span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
-                                                        	<i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
-                                                    	</span>
-                                                            <a ng-if="instance.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
-                                                                <i class="fa fa-envelope"></i>
-                                                                <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
-                                                            </a>
-                                                        </div>
+                                    <div class="col-sm-2 col-xl-8 endpoint-name">
+                                        <div class="row box-header">
+                                            <div class="col-sm-12 no-side-padding lead">
+                                                {{instance.name}}
+                                                <div class="endpoint-status">
+                                                    <span class="warning" ng-if="instance.isStale">
+                                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to endpoint"></i>
+                                                    </span>
+                                                    <span class="warning" ng-if="instance.isScMonitoringDisconnected">
+                                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
+                                                    </span>
+                                                    <span class="warning" ng-if="instance.errorCount">
+                                                        <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
+                                                            <i class="fa fa-envelope"></i>
+                                                            <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
+                                                        </a>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
                                     <div class="col-sm-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
-                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.isStale ? "" : instance.metrics.throughput.displayValue}}
-                                                <i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.throughput.displayValue}}
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -278,16 +274,10 @@
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
-                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.isStale ? "" : instance.metrics.retries.displayValue}}
-                                                <i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.retries.displayValue}}
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -295,16 +285,11 @@
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
-                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.isStale ? "" : instance.metrics.processingTime.displayValue.value}}
-                                                <span ng-if="instance.isStale == false">{{instance.metrics.processingTime.displayValue.unit}}</span><i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.processingTime.displayValue.value}}
+                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.processingTime.displayValue.unit}}</span>
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -312,25 +297,20 @@
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
-                                                <span ng-if="instance.isStale" class="warning pull-right graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                </span>
-                                                <span ng-if="instance.isScMonitoringDisconnected" class="warning graphicon">
-                                                    <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
-                                                </span>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{instance.isStale ? "" : instance.metrics.criticalTime.displayValue.value}} 
-                                                <span ng-if="instance.isStale == false">{{instance.metrics.criticalTime.displayValue.unit}}</span><i ng-if="instance.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.criticalTime.displayValue.value}}
+                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.criticalTime.displayValue.unit}}</span>
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-          </div>
         </div>
     </section>
 
@@ -386,19 +366,22 @@
                                     <div class="col-sm-2 col-xl-8 endpoint-name">
                                         <div class="row box-header">
                                             <div class="col-sm-12 no-side-padding lead message-type-label">
-                                                
-                                                    <div>
-                                                        {{messageType.typeName ? messageType.typeName : 'Unknown'}}
-                                                        <div class="endpoint-status">
-                                                            <span class="warning" ng-if="endpoint.isStale">
-                                                                <i class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
-                                                            </span>
-                                                        </div>
+
+                                                <div>
+                                                    {{messageType.typeName ? messageType.typeName : 'Unknown'}}
+                                                    <div class="endpoint-status">
+                                                        <span class="warning" ng-if="endpoint.isStale">
+                                                            <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to endpoint"></i>
+                                                        </span>
+                                                        <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                                                            <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
+                                                        </span>
                                                     </div>
-                                                    <div ng-show="{{messageType.typeName && messageType.typeName != 'null'}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
-                                                    <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
-                                                    <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}"class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
-                                                    
+                                                </div>
+                                                <div ng-show="{{messageType.typeName && messageType.typeName != 'null'}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                                <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                                <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}" class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -408,7 +391,8 @@
                                                 <graph plot-data="messageType.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{endpoint.isStale ? "" : messageType.metrics.throughput.displayValue}}<i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.throughput.displayValue}}
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -418,7 +402,8 @@
                                                 <graph plot-data="messageType.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{endpoint.isStale ? "" : messageType.metrics.retries.displayValue}}<i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.retries.displayValue}}
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -428,8 +413,9 @@
                                                 <graph plot-data="messageType.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{endpoint.isStale ? "" : messageType.metrics.processingTime.displayValue.value}} 
-                                                <span ng-if="endpoint.isStale == false">{{messageType.metrics.processingTime.displayValue.unit}}</span><i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.processingTime.displayValue.value}}
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.processingTime.displayValue.unit}}</span>
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
@@ -439,8 +425,9 @@
                                                 <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             </div>
                                             <div class="no-side-padding sparkline-value">
-                                                {{endpoint.isStale ? "" : messageType.metrics.criticalTime.displayValue.value}} 
-                                                <span ng-if="endpoint.isStale == false" >{{messageType.metrics.criticalTime.displayValue.unit}}</span><i ng-if="endpoint.isStale" class="fa fa-exclamation-triangle" uib-tooltip="Endpoint does not appear to be connected to the monitoring server anymore"></i>
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.criticalTime.displayValue.value}}
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.criticalTime.displayValue.unit}}</span>
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
                                     </div>
