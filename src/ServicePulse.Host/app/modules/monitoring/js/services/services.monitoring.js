@@ -12,7 +12,7 @@
             }
 
             isDisconnected = true;
-        }
+        };
 
         function createEndpointsSource(historyPeriod, refreshInterval) {
             return Rx.Observable.interval(refreshInterval).startWith(0)
