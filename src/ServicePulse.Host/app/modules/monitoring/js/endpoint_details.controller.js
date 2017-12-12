@@ -46,9 +46,7 @@
             var selectedPeriod = $scope.selectedPeriod;
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
-                if (endpoint.error) {
-                    toastService.showWarning('Could not load endpoint details');
-                } else {
+                if (!endpoint.error) {
                     $scope.endpoint = endpoint;
 
                     $scope.endpoint.instances.sort(function (first, second) {
