@@ -83,6 +83,13 @@
 
                     $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
                 });
+
+                serviceControlService.getExceptionGroupsForLogicalEndpoint($scope.endpointName).then(function(result) {
+                    if (result.data.length > 0) {
+                        $scope.endpoint.serviceControlId = result.data[0].id;
+                        $scope.endpoint.errorCount = result.data[0].count;
+                    }
+                });
             });
         }
 

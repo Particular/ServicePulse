@@ -66,7 +66,12 @@
                 endpoint.isConnected = true;
                 fillDisplayValuesForEndpoint(endpoint);
                 if (index >= 0) {
+                    var previousServiceControlId = $scope.endpoints[index].serviceControlId;
+                    var previousErrorCount = $scope.endpoints[index].errorCount;
+
                     $scope.endpoints[index] = endpoint;
+                    $scope.endpoints[index].serviceControlId = previousServiceControlId;
+                    $scope.endpoints[index].errorCount = previousErrorCount;
                 } else {
                     $scope.endpoints.push(endpoint);
 
@@ -87,14 +92,15 @@
             });
 
             endpointsFromScSubscription =
-                Rx.Observable.interval(5000)
+                Rx.Observable.interval(5000).startWith(0)
                 .flatMap(function(i) {
-                    return Rx.Observable.fromPromise(serviceControlService.getExceptionGroups('Endpoint Name', null));
+                    return Rx.Observable.fromPromise(serviceControlService.getExceptionGroups('Endpoint Name', ''));
                 }).selectMany(function(endpoints) {
                     return endpoints.data;
                 }).subscribe(function (endpoint) {
                     var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.title });
                     if (index >= 0) {
+                        $scope.endpoints[index].serviceControlId = endpoint.id;
                         $scope.endpoints[index].errorCount = endpoint.count;
                     } else {
                         $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, isConnected: false, isServiceControlOnly: true, serviceControlId: endpoint.id });

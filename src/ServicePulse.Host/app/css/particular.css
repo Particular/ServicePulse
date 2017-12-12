@@ -910,13 +910,13 @@ p.endpoint-metadata {
 
 .group-title {
     display: block;
-    font-size: 16px;
+    font-size: 30px;
     margin: 10px 0 0;
 }
 
 h2.group-title, h3.group-title {
     font-weight: bold;
-    line-height: 20px;
+    line-height: 28px;
 }
 
 .group-message-count {
@@ -1772,6 +1772,13 @@ hr.top-separator {
     padding-bottom: 5px;
 }
 
+  .table-head-row p {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #181919;
+      display: inline-block;
+  }
+
 .table-head-row span.table-header-unit {
     color: #777f7f;
 }
@@ -1801,24 +1808,45 @@ p.col-sort-active {
 .endpoint-status {
     display: inline-block;
     position: absolute;
-    top: 2px;
+    margin-left: 7px;
+}
+
+.endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
+    font-size: 20px;
+    color: #CE4844;
+}
+
+h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
+    font-size: 24px;
+}
+
+.endpoint-status i.fa-envelope {
+    position: relative;
+    color: #777f7f;
+}
+
+.endpoint-status i.fa-envelope:hover {
+    color: #23527c;
+}
+
+.endpoint-status i.fa-exclamation-triangle {
+    position: relative;
+    top: 1px;
+    margin-right: 6px;
+}
+
+.endpoint-status .badge {
+    position: relative;
+    top: 6px;
+    font-size: 10px;
+    margin-right: 0;
+    left: -10px;
 }
 
 .endpoint-status i.fa-envelope, .endpoint-name i.fa-exclamation-triangle {
     font-size: 20px;
     color: #CE4844;
     margin-left: 6px;
-}
-
-.endpoint-status i.fa-envelope {
-    position: relative;
-    top: -4px;
-    color: #777f7f;
-}
-
-.endpoint-status i.fa-exclamation-triangle {
-    position: relative;
-    top: -3px;
 }
 
 .endpoint-status .badge {
@@ -1985,4 +2013,9 @@ i.fa-exclamation-triangle {
     text-transform: uppercase;
     margin-bottom: 6px;
     font-size: 13px;
+}
+
+.monitoring-head .back-nav {
+    position: absolute;
+    top: 80px;
 }
