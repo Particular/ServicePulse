@@ -2,7 +2,17 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, rx, scConfig, uri, $q) {
+    function Service($http, rx, scConfig, uri, $q, toastService) {
+
+        var isDisconnected = false;
+
+        var notifyDisconnected = function() {
+            if (isDisconnected === false) {
+                toastService.showError("Can not connect to Monitoring.\n Reload the page to check connection");
+            }
+
+            isDisconnected = true;
+        };
 
         function createEndpointsSource(historyPeriod, refreshInterval) {
             return Rx.Observable.interval(refreshInterval).startWith(0)
@@ -29,6 +39,9 @@
                         });
 
                         return result.data;
+                    }, function(error) {
+                        notifyDisconnected();
+                        return error;
                     });
             });
         }
@@ -38,6 +51,7 @@
                 .then(function (result) {
                     return result.data;
                 }, function (error) {
+                    notifyDisconnected();
                     return { error: error };
                 });
         }
@@ -57,7 +71,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q'];
+    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q', 'toastService'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);
