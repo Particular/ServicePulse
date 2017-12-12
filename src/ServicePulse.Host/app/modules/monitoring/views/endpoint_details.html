@@ -45,14 +45,14 @@
             <div class="col-sm-4 no-side-padding list-section graph-area graph-queue-length">
                 <!-- here goes diagram -->
                 <large-graph ng-if="endpoint.metricDetails.metrics.queueLength"
-                             first-data-series="endpoint.metricDetails.metrics.queueLength"
-                             xAxis-points="endpoint.metricDetails.metrics.queueLength.timeAxisValues"
-                             minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
-                             plot-width="750"
-                             plot-height="200"
-                             first-series-color="#EA7E00"
-                             first-series-fill-color="#EADDCE"
-                             class="large-graph pull-left"></large-graph>
+                                first-data-series="endpoint.metricDetails.metrics.queueLength"
+                                xAxis-points="endpoint.metricDetails.metrics.queueLength.timeAxisValues"
+                                minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
+                                plot-width="750"
+                                plot-height="200"
+                                first-series-color="#EA7E00"
+                                first-series-fill-color="#EADDCE"
+                                class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="row queue-length-values tooltip-trigger">
@@ -67,11 +67,17 @@
                         </div>
                     </div>
                     <div class="row metric-digest-value current">
-                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.queueLength.latest | number:0)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span>
-                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
+                        <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            {{endpoint.digest.metrics.queueLength.latest | metricslargenumber:0}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span>
+                        </div>
+                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
                     <div class="row metric-digest-value average">
-                        {{endpoint.digest.metrics.queueLength.average | metricslargenumber:0}} <span class="metric-digest-value-suffix">MSGS AVG</span>
+                        <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            {{endpoint.digest.metrics.queueLength.average | metricslargenumber:0}} <span class="metric-digest-value-suffix">MSGS</span>
+                        </div>
+                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                        <span class="metric-digest-value-suffix"> AVG</span>
                     </div>
                 </div>
             </div>
@@ -79,17 +85,17 @@
             <div class="col-sm-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
                 <!-- here goes diagram -->
                 <large-graph ng-if="endpoint.metricDetails.metrics.throughput"
-                             first-data-series="endpoint.metricDetails.metrics.throughput"
-                             second-data-series="endpoint.metricDetails.metrics.retries"
-                             xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
-                             minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
-                             plot-width="750"
-                             plot-height="200"
-                             first-series-color="#176397"
-                             first-series-fill-color="#CADCE8"
-                             second-series-color="#CC1252"
-                             second-series-fill-color="#E9C4D1"
-                             class="large-graph pull-left"></large-graph>
+                                first-data-series="endpoint.metricDetails.metrics.throughput"
+                                second-data-series="endpoint.metricDetails.metrics.retries"
+                                xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
+                                minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
+                                plot-width="750"
+                                plot-height="200"
+                                first-series-color="#176397"
+                                first-series-fill-color="#CADCE8"
+                                second-series-color="#CC1252"
+                                second-series-fill-color="#E9C4D1"
+                                class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding throughput-values">
@@ -99,11 +105,18 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.throughput.latest | number:2)}} <span class="metric-digest-value-suffix">MSGS/S</span>
-                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.throughput.latest | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
                             {{endpoint.digest.metrics.throughput.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.throughput.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
                     <div class="col-sm-6 no-side-padding scheduled-retries-rate-values">
@@ -114,11 +127,17 @@
                         </div>
 
                         <div class="row metric-digest-value current">
-                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.retries.latest | number:2)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS/S</span>
-                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.retries.latest | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.retries.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.retries.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
                 </div>
@@ -127,18 +146,18 @@
             <div class="col-sm-4 no-side-padding list-section graph-area graph-critical-processing-times">
                 <!-- here goes diagram -->
                 <large-graph ng-if="endpoint.metricDetails.metrics.processingTime"
-                             first-data-series="endpoint.metricDetails.metrics.criticalTime"
-                             second-data-series="endpoint.metricDetails.metrics.processingTime"
-                             xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
-                             minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
-                             plot-width="750"
-                             plot-height="200"
-                             first-series-color="#2700CB"
-                             first-series-fill-color="#C4BCE5"
-                             second-series-color="#258135"
-                             second-series-fill-color="#BEE6C5"
-                             is-duration-graph="true"
-                             class="large-graph pull-left"></large-graph>
+                                first-data-series="endpoint.metricDetails.metrics.criticalTime"
+                                second-data-series="endpoint.metricDetails.metrics.processingTime"
+                                xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
+                                minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
+                                plot-width="750"
+                                plot-height="200"
+                                first-series-color="#2700CB"
+                                first-series-fill-color="#C4BCE5"
+                                second-series-color="#258135"
+                                second-series-fill-color="#BEE6C5"
+                                is-duration-graph="true"
+                                class="large-graph pull-left"></large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding processing-time-values">
@@ -148,11 +167,17 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.processingTime.latest | durationValue)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
-                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.processingTime.latest | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.processingTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}  AVG</span>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.processingTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}} AVG</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
 
@@ -163,11 +188,17 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : (endpoint.digest.metrics.criticalTime.latest | durationValue)}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
-                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to retrieve data">?</strong>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.criticalTime.latest | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.criticalTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} AVG</span>
+                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.criticalTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} </span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
                 </div>
@@ -243,11 +274,11 @@
                                             <div class="col-sm-12 no-side-padding lead">
                                                 {{instance.name}}
                                                 <div class="endpoint-status">
-                                                    <span class="warning" ng-if="instance.isStale">
-                                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to endpoint"></i>
-                                                    </span>
                                                     <span class="warning" ng-if="instance.isScMonitoringDisconnected">
-                                                        <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
+                                                        <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                                                    </span>
+                                                    <span class="warning" ng-if="instance.isStale">
+                                                        <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
                                                     </span>
                                                     <span class="warning" ng-if="instance.errorCount">
                                                         <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
@@ -288,7 +319,7 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.processingTime.displayValue.value}}
-                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.processingTime.displayValue.unit}}</span>
+                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{instance.metrics.processingTime.displayValue.unit}}</span>
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
@@ -300,7 +331,7 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.criticalTime.displayValue.value}}
-                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.criticalTime.displayValue.unit}}</span>
+                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{instance.metrics.criticalTime.displayValue.unit}}</span>
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
@@ -370,11 +401,11 @@
                                                 <div>
                                                     {{messageType.typeName ? messageType.typeName : 'Unknown'}}
                                                     <div class="endpoint-status">
-                                                        <span class="warning" ng-if="endpoint.isStale">
-                                                            <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to endpoint"></i>
-                                                        </span>
                                                         <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
-                                                            <i class="fa fa-exclamation-triangle" uib-tooltip="Cannot connect to monitoring server"></i>
+                                                            <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                                                        </span>
+                                                        <span class="warning" ng-if="endpoint.isStale">
+                                                            <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
                                                         </span>
                                                     </div>
                                                 </div>
@@ -414,7 +445,7 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.processingTime.displayValue.value}}
-                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.processingTime.displayValue.unit}}</span>
+                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{messageType.metrics.processingTime.displayValue.unit}}</span>
                                                 <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>
@@ -426,7 +457,7 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.criticalTime.displayValue.value}}
-                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.criticalTime.displayValue.unit}}</span>
+                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{messageType.metrics.criticalTime.displayValue.unit}}</span>
                                                 <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                             </div>
                                         </div>

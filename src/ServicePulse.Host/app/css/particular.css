@@ -567,6 +567,10 @@ h1 {
     margin: 0 0 32px;
 }
 
+h1 .warning {
+    font-size: 26px;
+}
+
 p.metadata {
     margin-bottom: 6px;
 }
@@ -1947,6 +1951,10 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     font-size: 22px;
 }
 
+.metric-digest-value div {
+    display: inline-block;
+}
+
 .metric-digest-value-suffix {
     font-weight: normal;
     font-size: 14px;
@@ -2029,10 +2037,41 @@ i.fa-exclamation-triangle {
     font-size: 13px;
 }
 
-.pa-monitoring-lost {
-    background-image: url('../img/monitoring-lost.svg');
+.pa-endpoint-lost.endpoints-overview {
+    background-image: url('../../img/endpoint-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
+}
+
+.pa-monitoring-lost.endpoints-overview {
+    background-image: url('../../img/monitoring-lost.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.pa-endpoint-lost.endpoint-details {
+    background-image: url('../../../img/endpoint-lost.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.pa-monitoring-lost.endpoint-details {
+    background-image: url('../../../img/monitoring-lost.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.monitoring-head .pa-endpoint-lost.endpoint-details, .monitoring-head .pa-monitoring-lost.endpoint-details {
+    width: 23px;
+    height: 23px;
+}
+
+.endpoint-status .pa-endpoint-lost.endpoint-details, .endpoint-status .pa-monitoring-lost.endpoint-details {
+    width: 20px;
+    height: 20px;
+    top: -2px;
+    left: 6px;
+    position: relative;
 }
 
 .monitoring-head .back-nav {
