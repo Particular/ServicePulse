@@ -66,12 +66,12 @@
                 endpoint.isConnected = true;
                 fillDisplayValuesForEndpoint(endpoint);
                 if (index >= 0) {
-                    var serviceControlId = $scope.endpoints[index].serviceControlId;
-                    var errorCount = $scope.endpoints[index].errorCount;
+                    var previousServiceControlId = $scope.endpoints[index].serviceControlId;
+                    var previousErrorCount = $scope.endpoints[index].errorCount;
 
                     $scope.endpoints[index] = endpoint;
-                    $scope.endpoints[index].serviceControlId = serviceControlId;
-                    $scope.endpoints[index].errorCount = errorCount;
+                    $scope.endpoints[index].serviceControlId = previousServiceControlId;
+                    $scope.endpoints[index].errorCount = previousErrorCount;
                 } else {
                     $scope.endpoints.push(endpoint);
 
@@ -105,8 +105,6 @@
                     } else {
                         $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, isConnected: false, isServiceControlOnly: true, serviceControlId: endpoint.id });
                     }
-
-                    $scope.$apply();
                 });
         }
 
