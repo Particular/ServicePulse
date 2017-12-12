@@ -48,9 +48,14 @@
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
                     toastService.showWarning('Could not load endpoint details', false);
-                    if ($scope.endpoints && $scope.endpoints.instances) {
+                    if ($scope.endpoint && $scope.endpoint.instances) {
                         $scope.endpoint.instances.forEach((item) => item.isScMonitoringDisconnected = true);
                     }
+
+                    if ($scope.endpoint && $scope.endpoint.messageTypes) {
+                        $scope.endpoint.messageTypes.forEach((messageType) => messageType.isScMonitoringDisconnected = true);
+                    }
+                    
                 } else {
                     $scope.endpoint = endpoint;
 
