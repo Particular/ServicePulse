@@ -11,7 +11,8 @@
         historyPeriods,
         $filter,
         smallGraphsMinimumYAxis,
-        largeGraphsMinimumYAxis
+        largeGraphsMinimumYAxis,
+        connectivityNotifier
     ) {
 
         $scope.endpointName = $routeParams.endpointName;
@@ -47,7 +48,7 @@
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
-                    toastService.showWarning('Could not load endpoint details', false);
+                    connectivityNotifier.reportFailedConnection();
                     if ($scope.endpoint && $scope.endpoint.instances) {
                         $scope.endpoint.instances.forEach((item) => item.isScMonitoringDisconnected = true);
                     }
@@ -57,6 +58,7 @@
                     }
                     
                 } else {
+                    connectivityNotifier.reportSuccessfulConnection();
                     $scope.endpoint = endpoint;
 
                     $scope.endpoint.instances.sort(function (first, second) {
@@ -123,7 +125,8 @@
         'historyPeriods',
         '$filter',
         'smallGraphsMinimumYAxis',
-        'largeGraphsMinimumYAxis'
+        'largeGraphsMinimumYAxis',
+        'connectivityNotifier'
     ];
 
     angular.module('endpoint_details')
