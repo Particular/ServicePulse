@@ -8,7 +8,7 @@
 
         var notifyDisconnected = function() {
             if (isDisconnected === false) {
-                toastService.showError("Can not connect to Monitoring");
+                toastService.showError("Can not connect to Monitoring.\n Reload the page to check connection");
             }
 
             isDisconnected = true;
