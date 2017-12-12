@@ -38,6 +38,15 @@
             updateUI();
         };
 
+
+        function mergeIn(destination, source) {
+            for (var propName in source) {
+                if (source.hasOwnProperty(propName)) {
+                    destination[propName] = source[propName];
+                }
+            }
+        }
+
         function updateUI() {
             if (subscription) {
                 subscription.dispose();
@@ -45,11 +54,13 @@
 
             var selectedPeriod = $scope.selectedPeriod;
 
+            $scope.endpoint = {};
+
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
                     toastService.showWarning('Could not load endpoint details');
                 } else {
-                    $scope.endpoint = endpoint;
+                    mergeIn($scope.endpoint, endpoint);
 
                     $scope.endpoint.instances.sort(function (first, second) {
                         if (first.id < second.id) {
