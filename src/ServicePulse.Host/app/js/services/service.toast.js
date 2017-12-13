@@ -18,8 +18,8 @@
             this.showToast(text, 'info', title || 'Info', sticky);
         }
 
-        this.showError = function (text) {
-            this.showToast(text, 'error', 'Error', true);
+        this.showError = function (text, sticky = true) {
+            this.showToast(text, 'error', 'Error', sticky);
         }
 
         this.showWarning = function (text, sticky = true) {

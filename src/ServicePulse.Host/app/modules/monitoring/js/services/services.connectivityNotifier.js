@@ -7,14 +7,14 @@
         var isConnected = true;
         function reportFailedConnection() {
             if (isConnected) {
-                toastService.showWarning('Could not connect to SC Monitoring service.');
+                toastService.showError('Could not connect to SC Monitoring service.');
             }
             isConnected = false;
         }
 
         function reportSuccessfulConnection() {
             if (!isConnected) {
-                toastService.showInfo('Connection to SC Monitoring service was successful');
+                toastService.showInfo('Connection to SC Monitoring service was successful', 'Info', true);
             }
             isConnected = true;
         }
@@ -29,6 +29,6 @@
 
     Service.$inject = ['toastService'];
 
-    angular.module('services.monitoringService', ['sc'])
+    angular.module('services.connectivityNotifier', ['sc'])
         .service('connectivityNotifier', Service);
 }(window, window.angular, window.jQuery));
