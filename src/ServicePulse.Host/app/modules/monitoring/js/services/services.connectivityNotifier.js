@@ -2,21 +2,31 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service(toastService) {
+    function Service(toastService, scConfig) {
 
-        var isConnected = true;
-        function reportFailedConnection() {
-            if (isConnected) {
-                toastService.showError('Could not connect to SC Monitoring service.');
+        var isConnectedToSourceIndex = Array(scConfig.monitoring_urls.length).fill(true);
+        
+        function reportFailedConnection(sourceIndex) {
+
+            if (isConnectedToSourceIndex[sourceIndex]) {
+                var message = 'Could not connect to SC Monitoring service.';
+                if (scConfig.monitoring_urls.length > 1) {
+                    message += ' SC Monitoring URL ' + scConfig.monitoring_urls[sourceIndex];
+                }
+                toastService.showError(message);
             }
-            isConnected = false;
+            isConnectedToSourceIndex[sourceIndex] = false;
         }
 
-        function reportSuccessfulConnection() {
-            if (!isConnected) {
-                toastService.showInfo('Connection to SC Monitoring service was successful', 'Info', true);
+        function reportSuccessfulConnection(sourceIndex) {
+            if (!isConnectedToSourceIndex[sourceIndex]) {
+                var message = 'Connection to SC Monitoring service was successful.';
+                if (scConfig.monitoring_urls.length > 1) {
+                    message += ' SC Monitoring URL ' + scConfig.monitoring_urls[sourceIndex];
+                }
+                toastService.showInfo(message, 'Info', true);
             }
-            isConnected = true;
+            isConnectedToSourceIndex[sourceIndex] = true;
         }
 
         var service = {
@@ -27,7 +37,7 @@
         return service;
     }
 
-    Service.$inject = ['toastService'];
+    Service.$inject = ['toastService', 'scConfig'];
 
     angular.module('services.connectivityNotifier', ['sc'])
         .service('connectivityNotifier', Service);

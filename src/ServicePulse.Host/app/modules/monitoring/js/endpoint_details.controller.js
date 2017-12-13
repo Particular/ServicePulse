@@ -48,7 +48,7 @@
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
-                    connectivityNotifier.reportFailedConnection();
+                    connectivityNotifier.reportFailedConnection($routeParams.sourceIndex);
                     if ($scope.endpoint && $scope.endpoint.instances) {
                         $scope.endpoint.instances.forEach((item) => item.isScMonitoringDisconnected = true);
                     }
@@ -58,7 +58,7 @@
                     }
                     
                 } else {
-                    connectivityNotifier.reportSuccessfulConnection();
+                    connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
                     $scope.endpoint = endpoint;
 
                     $scope.endpoint.instances.sort(function (first, second) {
