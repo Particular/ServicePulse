@@ -73,6 +73,7 @@
                     var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.name });
 
                     endpoint.isConnected = true;
+                    endpoint.isScMonitoringDisconnected = false;
                     fillDisplayValuesForEndpoint(endpoint);
                     if (index >= 0) {
                         var previousServiceControlId = $scope.endpoints[index].serviceControlId;
