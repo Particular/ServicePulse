@@ -53,10 +53,8 @@
                         $scope.endpoint.instances.forEach((item) => item.isScMonitoringDisconnected = true);
                     }
 
-                    if ($scope.endpoint && $scope.endpoint.messageTypes) {
-                        $scope.endpoint.messageTypes.forEach((messageType) => messageType.isScMonitoringDisconnected = true);
-                    }
-                    
+                    $scope.endpoint.isScMonitoringDisconnected = true;
+
                 } else {
                     connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
                     $scope.endpoint = endpoint;
