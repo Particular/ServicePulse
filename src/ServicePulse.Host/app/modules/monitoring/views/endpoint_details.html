@@ -67,17 +67,17 @@
                         </div>
                     </div>
                     <div class="row metric-digest-value current">
-                        <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                        <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                             {{endpoint.digest.metrics.queueLength.latest | metricslargenumber:0}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span>
                         </div>
                         <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
                     <div class="row metric-digest-value average">
-                        <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                        <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                             {{endpoint.digest.metrics.queueLength.average | metricslargenumber:0}} <span class="metric-digest-value-suffix">MSGS</span>
                         </div>
                         <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                        <span class="metric-digest-value-suffix"> AVG</span>
+                        <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                     </div>
                 </div>
             </div>
@@ -105,18 +105,17 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.throughput.latest | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            {{endpoint.digest.metrics.throughput.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S AVG</span>
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.throughput.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                            <span class="metric-digest-value-suffix"> AVG</span>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
                     <div class="col-sm-6 no-side-padding scheduled-retries-rate-values">
@@ -127,17 +126,17 @@
                         </div>
 
                         <div class="row metric-digest-value current">
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.retries.latest | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.retries.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                            <span class="metric-digest-value-suffix"> AVG</span>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
                 </div>
@@ -167,17 +166,17 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.processingTime.latest | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.processingTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}} AVG</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                            <span class="metric-digest-value-suffix"> AVG</span>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
 
@@ -188,17 +187,17 @@
                             </span>
                         </div>
                         <div class="row metric-digest-value current">
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.criticalTime.latest | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
-                            <div ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
                                 {{endpoint.digest.metrics.criticalTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} </span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                            <span class="metric-digest-value-suffix"> AVG</span>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                         </div>
                     </div>
                 </div>

@@ -75,6 +75,7 @@
                     $scope.endpoint.messageTypes.forEach((messageType) => fillDisplayValues(messageType));
 
                     $scope.endpoint.isStale = true;
+                    $scope.endpoint.isScMonitoringDisconnected = false;
 
                     $scope.endpoint.instances.forEach(function (instance) {
                         fillDisplayValues(instance);
