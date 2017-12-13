@@ -9,9 +9,9 @@
         function reportFailedConnection(sourceIndex) {
 
             if (isConnectedToSourceIndex[sourceIndex]) {
-                var message = 'Could not connect to SC Monitoring service.';
+                var message = 'Could not connect to the ServiceControl Monitoring service.';
                 if (scConfig.monitoring_urls.length > 1) {
-                    message += ' SC Monitoring URL ' + scConfig.monitoring_urls[sourceIndex];
+                    message = 'Could not connect to the ServiceControl Monitoring service at' + scConfig.monitoring_urls[sourceIndex] + '.';
                 }
                 toastService.showError(message);
             }
@@ -20,9 +20,9 @@
 
         function reportSuccessfulConnection(sourceIndex) {
             if (!isConnectedToSourceIndex[sourceIndex]) {
-                var message = 'Connection to SC Monitoring service was successful.';
+                var message = 'Connection to ServiceControl Monitoring service was successful.';
                 if (scConfig.monitoring_urls.length > 1) {
-                    message += ' SC Monitoring URL ' + scConfig.monitoring_urls[sourceIndex];
+                    message = 'Connection to ServiceControl Monitoring service was successful ' + scConfig.monitoring_urls[sourceIndex] +'.';
                 }
                 toastService.showInfo(message, 'Info', true);
             }
