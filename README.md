@@ -5,9 +5,11 @@ Keep track of the health of your system's endpoints, monitor for any processing 
 
 ## Setting up the project for development
 
-### Connecting to ServiceControl
+### Connecting to ServiceControl and ServiceControl Monitoring
 
-Service Pulse uses [ServiceControl](http://github.com/Particular/ServiceControl) as the source of all presented data.  The ServiceControl url can be set in ServicePulse.Host/app/js/app.constants.js under constant scConfig. Metric informations are requested [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring) which url is set in ServicePulse.Host/app/js/app.constants.js.
+ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl). Endpoint metrics data is provided by [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring).
+
+The URLs for both services can be set in ServicePulse.Host/app/js/app.constants.js under the constant `scConfig`.
 
 ### Setting up package manager
 
