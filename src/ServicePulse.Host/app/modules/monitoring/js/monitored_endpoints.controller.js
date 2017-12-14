@@ -61,46 +61,47 @@
 
             var selectedPeriod = $scope.selectedPeriod;
 
-            subscription = monitoringService.createEndpointsSource(selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
-                if (endpoint.error) {
-                    connectivityNotifier.reportFailedConnection(endpoint.sourceIndex);
-                    if ($scope.endpoints) {
-                        $scope.endpoints.filter((item) => item.sourceIndex === endpoint.sourceIndex)
-                            .forEach((item) => item.isScMonitoringDisconnected = true);
-                    
-                } else {
-                    connectivityNotifier.reportSuccessfulConnection(endpoint.sourceIndex);
-                    var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.name });
-
-                    endpoint.isConnected = true;
-                    endpoint.isScMonitoringDisconnected = false;
-                    fillDisplayValuesForEndpoint(endpoint);
-                    if (index >= 0) {
-                        var previousServiceControlId = $scope.endpoints[index].serviceControlId;
-	                    var previousErrorCount = $scope.endpoints[index].errorCount;
-
-	                    $scope.endpoints[index] = endpoint;
-	                    $scope.endpoints[index].serviceControlId = previousServiceControlId;
-	                    $scope.endpoints[index].errorCount = previousErrorCount;
+            subscription = monitoringService.createEndpointsSource(selectedPeriod.value, selectedPeriod.refreshInterval)
+                .subscribe(function(endpoint) {
+                    if (endpoint.error) {
+                        connectivityNotifier.reportFailedConnection(endpoint.sourceIndex);
+                        if ($scope.endpoints) {
+                            $scope.endpoints.filter((item) => item.sourceIndex === endpoint.sourceIndex)
+                                .forEach((item) => item.isScMonitoringDisconnected = true);
+                        }
                     } else {
-                        $scope.endpoints.push(endpoint);
+                        connectivityNotifier.reportSuccessfulConnection(endpoint.sourceIndex);
+                        var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.name });
 
-                        $scope.endpoints.sort(function(first, second) {
-                            if (first.name < second.name) {
-                                return -1;
-                            }
+                        endpoint.isConnected = true;
+                        endpoint.isScMonitoringDisconnected = false;
+                        fillDisplayValuesForEndpoint(endpoint);
+                        if (index >= 0) {
+                            var previousServiceControlId = $scope.endpoints[index].serviceControlId;
+                            var previousErrorCount = $scope.endpoints[index].errorCount;
 
-                            if (first.name > second.name) {
-                                return 1;
-                            }
+                            $scope.endpoints[index] = endpoint;
+                            $scope.endpoints[index].serviceControlId = previousServiceControlId;
+                            $scope.endpoints[index].errorCount = previousErrorCount;
+                        } else {
+                            $scope.endpoints.push(endpoint);
 
-                            return 0;
-                        });
+                            $scope.endpoints.sort(function(first, second) {
+                                if (first.name < second.name) {
+                                    return -1;
+                                }
+
+                                if (first.name > second.name) {
+                                    return 1;
+                                }
+
+                                return 0;
+                            });
+                        }
                     }
-                }
 
-                $scope.$apply();
-            });
+                    $scope.$apply();
+                });
 
             endpointsFromScSubscription =
                 Rx.Observable.interval(5000).startWith(0)

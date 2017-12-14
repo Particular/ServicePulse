@@ -43,7 +43,6 @@
                 .then(function (result) {
                     return result.data;
                 }, function (error) {
-                    notifyDisconnected();
                     return { error: error };
                 });
         }
