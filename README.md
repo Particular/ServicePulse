@@ -9,7 +9,7 @@ Keep track of the health of your system's endpoints, monitor for any processing 
 
 ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl). Endpoint metrics data is provided by [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring).
 
-The URLs for both services can be set in ServicePulse.Host/app/js/app.constants.js under the constant `scConfig`.
+The URLs for both services can be set in `ServicePulse.Host/app/js/app.constants.js` under the constant `scConfig`.
 
 ### Setting up package manager
 
