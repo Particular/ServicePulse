@@ -32,7 +32,10 @@
     "clean-webpack-plugin": "^0.1.17",
     "css-loader": "^0.28.7",
     "expose-loader": "^0.7.4",
+    "file-loader": "^1.1.6",
     "html-loader": "^0.5.1",
+    "style-loader": "^0.19.1",
+    "url-loader": "^0.6.2",
     "webpack": "^3.8.1"
   },
   "scripts": {

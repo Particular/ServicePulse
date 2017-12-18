@@ -3,9 +3,12 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-    entry: './app/modules/monitoring/monitoring.js',
+    entry: {
+        recoverability: './app/modules/recoverability/recoverability.js',
+        monitoring: './app/modules/monitoring/monitoring.js',
+    },
     output: {
-        filename: 'monitoring.dist.js',
+        filename: '[name].dist.js',
         //filename: 'monitoring.[chunkhash].js',
         path: path.resolve(__dirname, 'dist')
     },
@@ -16,7 +19,7 @@ module.exports = {
             jQuery: 'jquery'
         }),
         new webpack.ProvidePlugin({
-            moment: "moment"
+            moment: 'moment'
         })
     ],
     module: {
@@ -42,12 +45,15 @@ module.exports = {
         }, {
             test: /\.css$/,
             use: [
-                'to-string-loader',
-                'css-loader'
+                { loader: 'style-loader' },
+                { loader: 'css-loader' }
             ]
         }, {
-            test: require.resolve("jquery"), loader: "expose-loader?$!expose-loader?jQuery"
-        }]
+            test: require.resolve('jquery'), loader: 'expose-loader?$!expose-loader?jQuery'
+        },
+        { test: /\.(png|woff|woff2|eot|ttf)$/, use: [{ loader: 'url-loader?limit=100000' }] },
+        { test: /\.svg$/, use: [{ loader: 'file-loader' }] },
+        ]
     },
     devtool: 'eval-source-map',
     watch: true,

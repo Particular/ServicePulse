@@ -17,7 +17,7 @@
         'endpoints',
         'monitored_endpoints',
         'endpoint_details',
-        'recoverability',
+        'wrappers',
         'customChecks',
         'configuration',
         'dashboard',

@@ -1,7 +1,7 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
-    function formatter() {
+    function formatter(moment) {
         var secondDuration = moment.duration(10 * 1000);
         var minuteDuration = moment.duration(60 * 1000);
         var hourDuration = moment.duration(60 * 1000); //this ensure that we never use minute formatting
@@ -62,7 +62,7 @@
         };
     }
 
-    formatter.$inject = [];
+    formatter.$inject = ['moment'];
 
     angular.module('sc')
         .service('formatter', formatter);
