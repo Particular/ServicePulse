@@ -2053,8 +2053,6 @@ i.fa-exclamation-triangle {
 }
 
 .back-nav {
-    position: absolute;
-    top: 80px;
     text-transform: uppercase;
     margin-bottom: 6px;
     font-size: 13px;
@@ -2094,11 +2092,6 @@ i.fa-exclamation-triangle {
     height: 20px;
     left: 6px;
     position: relative;
-}
-
-.monitoring-head .back-nav {
-    position: absolute;
-    top: 80px;
 }
 
 .endpoint-message-types .endpoint-status {
