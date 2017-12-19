@@ -1,6 +1,7 @@
 ﻿const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     entry: {
@@ -20,7 +21,8 @@ module.exports = {
         }),
         new webpack.ProvidePlugin({
             moment: 'moment'
-        })
+        }),
+        new ExtractTextPlugin("vendor.css"),
     ],
     module: {
         rules: [{
@@ -42,13 +44,13 @@ module.exports = {
                     collapseWhitespace: true
                 }
             }]
-        }, {
-            test: /\.css$/,
-            use: [
-                { loader: 'style-loader' },
-                { loader: 'css-loader' }
-            ]
-        }, {
+            }, {
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader"
+                })
+            }, {
             test: require.resolve('jquery'), loader: 'expose-loader?$!expose-loader?jQuery'
         },
         { test: /\.(png|woff|woff2|eot|ttf)$/, use: [{ loader: 'url-loader?limit=100000' }] },
