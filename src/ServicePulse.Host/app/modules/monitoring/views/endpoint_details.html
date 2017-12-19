@@ -9,15 +9,15 @@
                 {{endpointName}}
                 <div class="endpoint-status">
                     <span ng-if="endpoint.isStale" class="warning">
-                        <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to endpoint"></i>
+                        <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
+                    </span>
+                    <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                        <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                     </span>
                     <a ng-if="endpoint.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{endpoint.serviceControlId}}">
                         <i class="fa fa-envelope"></i>
                         <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                     </a>
-					<span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
-	                    <i class="fa fa-exclamation-triangle" uib-tooltip="Unable to connect to monitoring server"></i>
-	                </span>
                 </div>
                 
             </h1>
@@ -218,7 +218,7 @@
         </h5>
     </div>
 
-    <section ng-if="showInstancesBreakdown">
+    <section ng-if="showInstancesBreakdown" class="endpoint-instances">
         <div class="row">
             <div class="col-sm-12 no-side-padding">
 
@@ -270,22 +270,22 @@
                                 <div class="row">
                                     <div class="col-sm-2 col-xl-8 endpoint-name">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding lead">
+                                            <div class="col-lg-max-9 no-side-padding lead">
                                                 {{instance.name}}
-                                                <div class="endpoint-status">
-                                                    <span class="warning" ng-if="instance.isScMonitoringDisconnected">
-                                                        <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
-                                                    </span>
-                                                    <span class="warning" ng-if="instance.isStale">
-                                                        <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
-                                                    </span>
-                                                    <span class="warning" ng-if="instance.errorCount">
-                                                        <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
-                                                            <i class="fa fa-envelope"></i>
-                                                            <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
-                                                        </a>
-                                                    </span>
-                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 endpoint-status">
+                                                <span class="warning" ng-if="instance.isScMonitoringDisconnected">
+                                                    <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                                                </span>
+                                                <span class="warning" ng-if="instance.isStale">
+                                                    <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
+                                                </span>
+                                                <span class="warning" ng-if="instance.errorCount">
+                                                    <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
+                                                        <i class="fa fa-envelope"></i>
+                                                        <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
+                                                    </a>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -344,7 +344,7 @@
         </div>
     </section>
 
-    <section ng-if="!showInstancesBreakdown">
+    <section ng-if="!showInstancesBreakdown" class="endpoint-message-types">
         <div class="row">
             <div class="col-sm-12 no-side-padding">
                 <!-- Breakdown by message type-->
@@ -395,23 +395,29 @@
                                 <div class="row">
                                     <div class="col-sm-2 col-xl-8 endpoint-name">
                                         <div class="row box-header">
-                                            <div class="col-sm-12 no-side-padding lead message-type-label">
-
-                                                <div>
+                                            <div class="col-lg-max-9 no-side-padding lead message-type-label">
+                                                <div class="lead">
                                                     {{messageType.typeName ? messageType.typeName : 'Unknown'}}
-                                                    <div class="endpoint-status">
-                                                        <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
-                                                            <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
-                                                        </span>
-                                                        <span class="warning" ng-if="endpoint.isStale">
-                                                            <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
-                                                        </span>
-                                                    </div>
                                                 </div>
-                                                <div ng-show="{{messageType.typeName && messageType.typeName != 'null'}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
-                                                <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
-                                                <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}" class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
-
+                                                <div class="message-type-properties">
+                                                    <div ng-show="{{messageType.typeName && messageType.typeName != 'null'}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                                    <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                                    <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}" class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
+                                                <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                                                    <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                                                </span>
+                                                <span class="warning" ng-if="endpoint.isStale">
+                                                    <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
+                                                </span>
+                                                <span class="warning" ng-if="endpoint.errorCount">
+                                                    <a ng-if="endpoint.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
+                                                        <i class="fa fa-envelope"></i>
+                                                        <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
+                                                    </a>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>

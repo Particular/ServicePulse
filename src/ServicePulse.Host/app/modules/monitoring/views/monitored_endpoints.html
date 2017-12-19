@@ -93,24 +93,27 @@
                 <div class="row box endpoint-row box-group" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <a class="hard-wrap lead" ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">
-                                <div class="col-sm-2 col-xl-7 endpoint-name">
+                            <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">
+                                <div class="col-sm-2 col-xl-7 endpoint-name name-overview">
                                     <div class="row box-header">
-                                        <div class="col-sm-12 no-side-padding">
+                                        <div class="col-lg-max-8 no-side-padding lead">
 
                                             {{endpoint.name}}
-                                            <div class="endpoint-status">
-                                                <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
-                                                    <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
-                                                </span>
-                                                <span class="warning" ng-if="endpoint.isStale">
-                                                    <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
-                                                </span>
-                                                <a ng-if="endpoint.errorCount > 0" class="warning" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
+
+                                        </div>
+                                        <div class="col-lg-5 endpoint-status">
+                                            <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                                                <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
+                                            </span>
+                                            <span class="warning" ng-if="endpoint.isStale">
+                                                <i class="fa pa-endpoint-lost endpoints-overview" uib-tooltip="Unable to connect to instance"></i>
+                                            </span>
+                                            <span class="warning" ng-if="endpoint.errorCount">
+                                                <a ng-if="endpoint.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
                                                     <i class="fa fa-envelope"></i>
                                                     <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                                                 </a>
-                                            </div>
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
