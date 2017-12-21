@@ -399,11 +399,6 @@
                                                 <div class="lead">
                                                     {{messageType.typeName ? messageType.typeName : 'Unknown'}}
                                                 </div>
-                                                <div class="message-type-properties">
-                                                    <div ng-show="{{messageType.typeName && messageType.typeName != 'null'}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
-                                                    <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
-                                                    <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}" class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
-                                                </div>
                                             </div>
                                             <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
                                                 <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
@@ -419,6 +414,11 @@
                                                     </a>
                                                 </span>
                                             </div>
+                                        </div>
+                                        <div class="row message-type-properties">
+                                            <div ng-show="{{messageType.typeName && messageType.typeName != 'null'}}" class="message-type-part">{{messageType.assemblyName + '-' + messageType.assemblyVersion}}</div>
+                                            <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                            <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}" class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
                                         </div>
                                     </div>
                                     <div class="col-sm-2 col-xl-1 no-side-padding">

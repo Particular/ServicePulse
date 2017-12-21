@@ -1719,7 +1719,7 @@ hr.top-separator {
 }
 
 .endpoint-row {
-    height: 60px;
+    height: 61px;
     position: relative;
     padding: 2px 0 4px;
 }
@@ -2095,7 +2095,12 @@ i.fa-exclamation-triangle {
 }
 
 .endpoint-message-types .endpoint-status {
-    margin-top: -1px;
+    margin-top: -8px;
+}
+
+.row.message-type-properties {
+    position: relative;
+    top: -5px;
 }
 
 i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-overview {
