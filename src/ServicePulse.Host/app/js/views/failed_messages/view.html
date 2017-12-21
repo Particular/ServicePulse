@@ -13,10 +13,10 @@
                     <a class="back-nav" ng-if="!vm.selectedExceptionGroup.parentTitle" href="#/failed-messages/groups">Failed message groups list</a>
                 </div>
                 <div ng-show="!vm.selectedExceptionGroup.id" class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}} | number)</div>
-                <h2 ng-show="vm.selectedExceptionGroup.id" class="active break group-title">
+                <h1 ng-show="vm.selectedExceptionGroup.id" class="active break group-title">
                     <span ng-if="vm.selectedExceptionGroup.parentTitle">{{vm.selectedExceptionGroup.parentTitle}} - </span>
                     {{vm.selectedExceptionGroup.title}}
-                </h2>
+                </h1>
                 <h3 class="active group-title group-message-count">{{vm.selectedExceptionGroup.count | number}} messages in group</h3>
             </div>
         </div>

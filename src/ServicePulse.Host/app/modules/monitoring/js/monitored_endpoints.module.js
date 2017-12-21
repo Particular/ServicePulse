@@ -3,6 +3,7 @@
     angular.module('monitored_endpoints', []);
 
     require('./services/services.monitoring');
+    require('./services/services.connectivityNotifier');
     require('./monitored_endpoints.controller');
     require('./monitored_endpoints.route.js');
     require('./constant.diagrams.js');

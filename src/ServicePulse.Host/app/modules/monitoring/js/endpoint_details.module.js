@@ -3,6 +3,7 @@
 
     angular.module('endpoint_details', []);
 
+    require('./services/services.connectivityNotifier');
     require('./endpoint_details.controller');
     require('./endpoint_details.route.js');
     require('./constant.diagrams.js');
