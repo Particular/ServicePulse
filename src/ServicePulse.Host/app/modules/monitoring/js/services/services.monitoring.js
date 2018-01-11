@@ -29,7 +29,12 @@
                         });
 
                         return result.data;
-                    });
+                    },
+                    (error) => {
+                        var sourceIndex = scConfig.monitoring_urls.indexOf(url);
+                        return [{ error: error, sourceIndex: sourceIndex }];
+                        }
+                    );
             });
         }
 
@@ -57,7 +62,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q'];
+    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q', 'toastService'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);

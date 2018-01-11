@@ -11,7 +11,8 @@
         historyPeriods,
         $filter,
         smallGraphsMinimumYAxis,
-        largeGraphsMinimumYAxis
+        largeGraphsMinimumYAxis,
+        connectivityNotifier
     ) {
 
         $scope.endpointName = $routeParams.endpointName;
@@ -58,9 +59,18 @@
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
-                    toastService.showWarning('Could not load endpoint details');
+                    connectivityNotifier.reportFailedConnection($routeParams.sourceIndex);
+                    if ($scope.endpoint && $scope.endpoint.instances) {
+                        $scope.endpoint.instances.forEach((item) => item.isScMonitoringDisconnected = true);
+                    }
+
+                    $scope.endpoint.isScMonitoringDisconnected = true;
+
                 } else {
+
                     mergeIn($scope.endpoint, endpoint);
+
+                    connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
 
                     $scope.endpoint.instances.sort(function (first, second) {
                         if (first.id < second.id) {
@@ -75,25 +85,24 @@
                     });
 
                     $scope.loading = false;
+                    $scope.endpoint.messageTypes.forEach((messageType) => fillDisplayValues(messageType));
+
+                    $scope.endpoint.isStale = true;
+                    $scope.endpoint.isScMonitoringDisconnected = false;
+
+                    $scope.endpoint.instances.forEach(function (instance) {
+                        fillDisplayValues(instance);
+                        serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
+                            if (result.data.length > 0) {
+                                instance.serviceControlId = result.data[0].id;
+                                instance.errorCount = result.data[0].count;
+                            }
+                        }, function (err) {
+                            // Warn user?
+                    });
+                        $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
+                    });
                 }
-                
-                $scope.endpoint.messageTypes.forEach( (messageType) => fillDisplayValues(messageType));
-
-                $scope.endpoint.isStale = true;
-
-                $scope.endpoint.instances.forEach(function (instance) {
-                    fillDisplayValues(instance);
-                    serviceControlService.getExceptionGroupsForEndpointInstance(instance.id).then(function (result) {
-                        if (result.data.length > 0) {
-                            instance.serviceControlId = result.data[0].id;
-                            instance.errorCount = result.data[0].count;
-                        }
-                    }, function (err) {
-                        // Warn user?
-                        });
-
-                    $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
-                });
 
                 serviceControlService.getExceptionGroupsForLogicalEndpoint($scope.endpointName).then(function(result) {
                     if (result.data.length > 0) {
@@ -128,7 +137,8 @@
         'historyPeriods',
         '$filter',
         'smallGraphsMinimumYAxis',
-        'largeGraphsMinimumYAxis'
+        'largeGraphsMinimumYAxis',
+        'connectivityNotifier'
     ];
 
     angular.module('endpoint_details')

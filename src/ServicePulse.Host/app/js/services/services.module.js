@@ -5,6 +5,7 @@
         'services.streamService',
         'services.serviceControlService',
         'services.monitoringService',
+        'services.connectivityNotifier',
         'services.platformUpdateService',
         'services.semverService',
         'services.notifications',
