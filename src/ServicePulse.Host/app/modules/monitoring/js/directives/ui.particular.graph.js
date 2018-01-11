@@ -64,6 +64,8 @@
                                     })
                                     .curve(d3.curveLinear);
 
+                                d3.select(svg).selectAll("*").remove();
+
                                 var chart = d3.select(svg)
                                     .attr('width', width)
                                     .attr('height', height);
