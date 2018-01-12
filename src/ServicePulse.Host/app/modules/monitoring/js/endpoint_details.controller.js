@@ -39,12 +39,23 @@
             updateUI();
         };
 
+
+        function mergeIn(destination, source) {
+            for (var propName in source) {
+                if (source.hasOwnProperty(propName)) {
+                    destination[propName] = source[propName];
+                }
+            }
+        }
+
         function updateUI() {
             if (subscription) {
                 subscription.dispose();
             }
 
             var selectedPeriod = $scope.selectedPeriod;
+
+            $scope.endpoint = {};
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
@@ -56,8 +67,10 @@
                     $scope.endpoint.isScMonitoringDisconnected = true;
 
                 } else {
+
+                    mergeIn($scope.endpoint, endpoint);
+
                     connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
-                    $scope.endpoint = endpoint;
 
                     $scope.endpoint.instances.sort(function (first, second) {
                         if (first.id < second.id) {

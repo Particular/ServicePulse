@@ -50,6 +50,14 @@
             $filter('graphdecimal')(endpoint.metrics.retries, 2);
         }
 
+        function mergeIn(destination, source) {
+            for (var propName in source) {
+                if (source.hasOwnProperty(propName)) {
+                    destination[propName] = source[propName];
+                }
+            }
+        }
+
         function updateUI() {
             if (subscription) {
                 subscription.dispose();
@@ -77,12 +85,7 @@
                         endpoint.isScMonitoringDisconnected = false;
                         fillDisplayValuesForEndpoint(endpoint);
                         if (index >= 0) {
-                            var previousServiceControlId = $scope.endpoints[index].serviceControlId;
-                            var previousErrorCount = $scope.endpoints[index].errorCount;
-
-                            $scope.endpoints[index] = endpoint;
-                            $scope.endpoints[index].serviceControlId = previousServiceControlId;
-                            $scope.endpoints[index].errorCount = previousErrorCount;
+                          mergeIn($scope.endpoints[index], endpoint);
                         } else {
                             $scope.endpoints.push(endpoint);
 
