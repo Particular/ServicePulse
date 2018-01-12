@@ -280,12 +280,6 @@
                                                 <span class="warning" ng-if="instance.isStale">
                                                     <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
                                                 </span>
-                                                <span class="warning" ng-if="instance.errorCount">
-                                                    <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{instance.serviceControlId}}">
-                                                        <i class="fa fa-envelope"></i>
-                                                        <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
-                                                    </a>
-                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -406,12 +400,6 @@
                                                 </span>
                                                 <span class="warning" ng-if="endpoint.isStale">
                                                     <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
-                                                </span>
-                                                <span class="warning" ng-if="endpoint.errorCount">
-                                                    <a ng-if="endpoint.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
-                                                        <i class="fa fa-envelope"></i>
-                                                        <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
-                                                    </a>
                                                 </span>
                                             </div>
                                         </div>
