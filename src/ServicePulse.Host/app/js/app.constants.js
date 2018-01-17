@@ -5,8 +5,8 @@
         .constant('showPendingRetry', false)
         .constant('scConfig', {
             default_route: '/dashboard',
-            service_control_url: 'http://localhost:33333/api/',
-            monitoring_urls: ['http://localhost:33633/']
+            service_control_url: 'http://localhost:33533/api/',
+            monitoring_urls: ['http://localhost:33833/']
         });
 
 }(window, window.angular));

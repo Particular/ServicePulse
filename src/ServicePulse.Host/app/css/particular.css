@@ -1765,7 +1765,10 @@ hr.top-separator {
 }
 
 .monitoring-head h1 {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .monitoring-head .msg-group-menu {
@@ -2113,6 +2116,32 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+.nav.nav-pills.period-selector {
+    float: right;
+}
+
+.nav-pills.period-selector > li.active > a, .nav-pills.period-selector > li.active > a:hover, .nav-pills.period-selector > li.active > a:focus {
+    color: #000;
+    font-weight: bold;
+    background-color: initial;
+    border-bottom: 3px solid #000;
+}
+
+.nav-pills.period-selector > li > a:hover {
+    color: #00a3c4;
+    font-weight: normal;
+    background-color: initial;
+    border-bottom: 3px solid #00a3c4;
+}
+
+.nav-pills.period-selector > li > a {
+    border-radius: 0px;
+}
+
+.nav.period-selector > li > a {
+    padding: 10px 6px;
 }
 
 @media (min-width: 1200px) {
