@@ -1813,14 +1813,6 @@ p.col-sort-active {
     font-weight: bold;
 }
 
-.endpoint-name {
-    margin-top: 15px;
-}
-
-.endpoint-name a:hover {
-    text-decoration: none !important;
-}
-
 .tooltip-inner {
     width: 200px;
 }
@@ -2112,10 +2104,21 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
     margin-right: 4px;
 }
 
-.endpoint-name .lead {
+.endpoint-name {
+    margin-top: 15px;
+}
+
+.endpoint-name > div > div > a {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    color: #00729C;
+    border-bottom: 1px dotted lightgrey;
+}
+
+.endpoint-name > div > div > a:first-child:hover {
+    border-bottom: 1px solid #00729C;
+    text-decoration: none !important;
 }
 
 .nav.nav-pills.period-selector {

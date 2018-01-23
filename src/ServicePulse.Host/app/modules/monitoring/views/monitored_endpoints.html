@@ -83,16 +83,13 @@
 
         <div class="row">
             <div class="col-sm-12 no-side-padding">
-                <div class="row box endpoint-row box-group" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
+                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">
                                 <div class="col-sm-2 col-xl-7 endpoint-name name-overview">
                                     <div class="row box-header">
                                         <div class="col-lg-max-8 no-side-padding lead">
-
-                                            {{endpoint.name}}
-
+                                            <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">{{endpoint.name}}</a>
                                         </div>
                                         <div class="col-lg-5 no-side-padding endpoint-status">
                                             <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
@@ -173,7 +170,6 @@
                                         No plug-ins installed. 
                                     </div>
                                 </div>
-                            </a>
                         </div>
                     </div>
                 </div>
