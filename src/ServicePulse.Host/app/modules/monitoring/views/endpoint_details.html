@@ -1,5 +1,8 @@
 <div class="container">
-    <div class="row monitoring-head">
+    
+    <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="loading"></div>
+
+    <div class="row monitoring-head" ng-if="!loading">
         <div class="back-nav">
             <span class="fake-link" aria-hidden="true">&#9664;</span>
             <a href="/#/monitored_endpoints">All endpoints</a>
@@ -19,7 +22,7 @@
                         <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                     </a>
                 </div>
-                
+
             </h1>
         </div>
         <div class="col-sm-3 no-side-padding toolbar-menus">
@@ -32,7 +35,7 @@
     </div>
 </div>
 
-<div class="container large-graphs">
+<div class="container large-graphs" ng-if="!loading">
     <div class="container">
         <div class="row">
             <div class="col-sm-4 no-side-padding list-section graph-area graph-queue-length">
@@ -200,7 +203,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" ng-if="!loading">
     <busy ng-show="loading" message="Loading details"></busy>
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">
