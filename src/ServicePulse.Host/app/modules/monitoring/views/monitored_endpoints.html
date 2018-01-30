@@ -15,19 +15,7 @@
 
 <div class="container">
     <section ng-show="true">
-        <div class="text-center monitoring-no-data" ng-show="!endpoints.length">
-            <h1>Endpoint monitoring not available</h1>
-                <p>Monitoring is not available due to one or more of these reasons:</p>
-                <ul>
-                    <li>the <strong>monitoring server</strong> is not configured or is unavailable</li>
-                    <li>the <strong>monitoring plugin</strong> is not installed on the endpoints to be monitored</li>
-                    <li>endpoints without the monitoring plugin do not have <strong>auditing</strong> enabled</li>
-                </ul>
-            <div class="action-toolbar">
-                <a class="btn btn-default btn-primary" href="https://docs.particular.net/monitoring/metrics/">Learn more</a>
-            </div>
-        </div>
-        
+        <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length"></div>
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
             <div class="col-sm-2 col-xl-7">
                 <div class="row box-header">
@@ -44,7 +32,8 @@
                             <div class="interactive-tooltip">
                                 <div class="tooltip-contents">
                                     <p>Queue length: The estimated number of messages in an endpoint's queue.</p>
-                                    <p>WARNING: This is an experimental feature. <a href="https://docs.particular.net/monitoring/metrics/definitions#metrics-captured-queue-length-known-limitations" target="_blank">Learn more</a> <i class="fa fa-external-link fake-link"></i></p>
+                                    <p>WARNING: This is an experimental feature. <a href="https://docs.particular.net/monitoring/metrics/definitions#metrics-captured-queue-length-known-limitations" target="_blank">Learn more</a> <i class="fa fa-external-link fake-link"></i>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -83,16 +72,13 @@
 
         <div class="row">
             <div class="col-sm-12 no-side-padding">
-                <div class="row box endpoint-row box-group" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
+                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <a class="hard-wrap" ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">
                                 <div class="col-sm-2 col-xl-7 endpoint-name name-overview">
                                     <div class="row box-header">
                                         <div class="col-lg-max-8 no-side-padding lead">
-
-                                            {{endpoint.name}}
-
+                                            <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">{{endpoint.name}}</a>
                                         </div>
                                         <div class="col-lg-5 no-side-padding endpoint-status">
                                             <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
@@ -110,7 +96,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                <div class="col-sm-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="{{smallGraphsMinimumYAxis.queueLength}}" class="graph queue-length pull-left"></graph>
@@ -121,7 +107,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                <div class="col-sm-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
@@ -132,7 +118,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                <div class="col-sm-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
@@ -143,7 +129,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                <div class="col-sm-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
@@ -155,7 +141,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="endpoint.isConnected">
+                                <div class="col-sm-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
@@ -167,13 +153,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="col-sm-2 col-xl-1 no-side-padding" ng-if="!endpoint.isConnected">
-                                    <div class="row box-header">
-                                        No plug-ins installed. 
-                                    </div>
-                                </div>
-                            </a>
                         </div>
                     </div>
                 </div>
