@@ -314,8 +314,8 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.processingTime.displayValue.value}}
-                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{instance.metrics.processingTime.displayValue.unit}}</span>
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.processingTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -326,8 +326,8 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.criticalTime.displayValue.value}}
-                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{instance.metrics.criticalTime.displayValue.unit}}</span>
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.criticalTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -440,8 +440,8 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.processingTime.displayValue.value}}
-                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{messageType.metrics.processingTime.displayValue.unit}}</span>
                                                 <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.processingTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -452,8 +452,8 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.criticalTime.displayValue.value}}
-                                                <span ng-if="instance.isStale == false || instance.isScMonitoringDisconnected == false">{{messageType.metrics.criticalTime.displayValue.unit}}</span>
                                                 <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.criticalTime.displayValue.unit}}</span>
                                             </div>
                                         </div>
                                     </div>
