@@ -267,6 +267,7 @@
     <Content Include="app\modules\monitoring\monitoring.webpackconfig.js" />
     <Content Include="app\modules\monitoring\views\endpoint_details.html" />
     <Content Include="app\modules\monitoring\views\monitored_endpoints.html" />
+    <Content Include="app\modules\monitoring\views\monitoring_not_available.html" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\views\dashboard\dashboard.html" />
     <Content Include="app\js\views\endpoints\endpoints.html" />

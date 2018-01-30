@@ -34,11 +34,7 @@
         };
 
         $scope.getDetailsUrl = endpoint => {
-            if (!endpoint.isServiceControlOnly) {
-                return '#/endpoint_details/' + endpoint.name + '/' + endpoint.sourceIndex + '?historyPeriod=' + $scope.selectedPeriod.value;
-            }
-
-            return '#/failed-messages/groups/' + endpoint.serviceControlId;
+            return '#/endpoint_details/' + endpoint.name + '/' + (endpoint.sourceIndex | 0) + '?historyPeriod=' + $scope.selectedPeriod.value;
         };
 
         function fillDisplayValuesForEndpoint(endpoint) {
@@ -81,7 +77,6 @@
                         connectivityNotifier.reportSuccessfulConnection(endpoint.sourceIndex);
                         var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.name });
 
-                        endpoint.isConnected = true;
                         endpoint.isScMonitoringDisconnected = false;
                         fillDisplayValuesForEndpoint(endpoint);
                         if (index >= 0) {
@@ -118,7 +113,7 @@
                         $scope.endpoints[index].serviceControlId = endpoint.id;
                         $scope.endpoints[index].errorCount = endpoint.count;
                     } else {
-                        $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, isConnected: false, isServiceControlOnly: true, serviceControlId: endpoint.id });
+                        $scope.endpoints.push({ name: endpoint.title, errorCount: endpoint.count, serviceControlId: endpoint.id, isScMonitoringDisconnected : true });
                     }
                 });
         }
