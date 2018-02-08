@@ -6,7 +6,7 @@
         $scope,
         $log,
         $timeout,
-        $moment,
+        moment,
         $location,
         scConfig,
         sharedDataService,
@@ -38,14 +38,14 @@
             unit: 'hours',
             buttonText: 'Archived in the last 2 Hours',
             selected: function () {
-                return $moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
+                return moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
             }
         };
 
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.archives = [{}];
-        vm.error_retention_period = $moment.duration("10.00:00:00").asHours();
+        vm.error_retention_period = moment.duration("10.00:00:00").asHours();
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
 
         var localtimeout;
@@ -58,8 +58,8 @@
                     var nObj = obj;
                     nObj.panel = 0;
                    
-                    var countdown = $moment(nObj.last_modified).add(vm.error_retention_period, 'hours');
-                    nObj.delete_soon = countdown < $moment();
+                    var countdown = moment(nObj.last_modified).add(vm.error_retention_period, 'hours');
+                    nObj.delete_soon = countdown < moment();
                     nObj.deleted_in = countdown.format();
                     return nObj;
                 });
@@ -75,12 +75,12 @@
         var init = function () {
 
             vm.configuration = sharedDataService.getConfiguration();
-            vm.error_retention_period = $moment.duration(vm.configuration.data_retention.error_retention_period).asHours();
+            vm.error_retention_period = moment.duration(vm.configuration.data_retention.error_retention_period).asHours();
             vm.total = 1;
             vm.archives = [];
             vm.sort.page = 1;
-            vm.sort.start = $moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
-            vm.sort.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+            vm.sort.start = moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
+            vm.sort.end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
 
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
@@ -239,8 +239,8 @@
                         vm.timeGroup.buttonText = amount + ' ' + unit;
                         break;
                 }
-                vm.sort.start = $moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
-                vm.sort.end = $moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+                vm.sort.start = moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
+                vm.sort.end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             } else {
                 vm.timeGroup.buttonText = 'All Archived';
                 vm.sort.start = vm.sort.end = undefined;
@@ -275,7 +275,7 @@
         "$scope",
         "$log",
         "$timeout",
-        "$moment",
+        "moment",
         "$location",
         "scConfig",
         "sharedDataService",

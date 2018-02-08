@@ -2,7 +2,7 @@
 (function(window, angular, undefined) {
     'use strict';
 
-    function Directive($timeout, $moment) {
+    function Directive($timeout, moment) {
         return {
             restrict: 'E',
             scope: {
@@ -26,7 +26,7 @@
 
                 attrs.$observe('date', function(value) {
                     if (value && attrs.date !== minDate) {
-                        m = $moment(attrs.date);
+                        m = moment(attrs.date);
                         element.attr('title', m.format('LLLL'));
                         updateText();
                         updateLoop();
@@ -46,7 +46,7 @@
         };
     }
 
-    Directive.$inject = ['$timeout', '$moment'];
+    Directive.$inject = ['$timeout', 'moment'];
 
     angular.module('directives.moment', [])
         .directive('spMoment', Directive);

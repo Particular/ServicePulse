@@ -1,7 +1,7 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
     
-    function service($http, $timeout, $q, $rootScope, $interval, $moment, scConfig, uri, notifications, notifyService) {
+    function service($http, $timeout, $q, $rootScope, $interval, moment, scConfig, uri, notifications, notifyService) {
         var notifier = notifyService();
 
         var redirects = {
@@ -23,7 +23,7 @@
         }
 
         notifier.subscribe($rootScope, function (event, response) {
-            response.last_modified = $moment().format('YYYY-MM-DDTHH:mm:ss');
+            response.last_modified = moment().format('YYYY-MM-DDTHH:mm:ss');
             redirects.data.push(response);
             redirects.total++;
             notifier.notify('RedirectsUpdated', { total: redirects.total, data: redirects.data });
@@ -111,7 +111,7 @@
         };
     }
 
-    service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', '$moment', 'scConfig', 'uri', 'notifications', 'notifyService'];
+    service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', 'moment', 'scConfig', 'uri', 'notifications', 'notifyService'];
 
     angular.module('sc')
         .service('redirectService', service);

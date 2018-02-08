@@ -16,16 +16,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="shortcut icon" href="img/ServicePulse.ico">
-
-    <!-- 3rd Party Library Styles -->
-    <link rel="stylesheet" id="bootstrap" href="bower_components/bootstrap/dist/css/bootstrap.css">
     
-	<!-- bower:css -->
-	<link rel="stylesheet" href="bower_components/toaster/toaster.css" />
-	<link rel="stylesheet" href="bower_components/animate-css/animate.css" />
-	<link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.css" />
-	<!-- endbower -->
-	
+    <!-- 3rd Party Library Styles -->
+    <link rel="stylesheet" href="modules/dist/vendor.css">
      
     <!-- Particular Styles -->
     <link rel="stylesheet" href="css/particular.css">
@@ -137,29 +130,8 @@
     }
 </script>
 
-<!-- Vendor -->
-<!-- bower:js -->
-<script src="bower_components/jquery/dist/jquery.js"></script>
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/angular-animate/angular-animate.js"></script>
-<script src="bower_components/moment/moment.js"></script>
-<script src="bower_components/angular-momentjs/angular-momentjs.js"></script>
-<script src="bower_components/angular-route/angular-route.js"></script>
-<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-<script src="bower_components/ng-page-title/dist/ng-page-title.min.js"></script>
-<script src="bower_components/ngstorage/ngStorage.js"></script>
-<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="bower_components/zeroclipboard/dist/ZeroClipboard.js"></script>
-<script src="bower_components/momentjs/moment.js"></script>
-<script src="bower_components/moment-duration-format/lib/moment-duration-format.js"></script>
-<script src="bower_components/ng-infinite-scroll/build/ng-infinite-scroll.js"></script>
-<script src="bower_components/toaster/toaster.js"></script>
-<script src="bower_components/signalr/jquery.signalR.js"></script>
-<script src="bower_components/angular-ui-select/dist/select.js"></script>
-<script src="bower_components/d3/d3.js"></script>
-<script src="bower_components/rxjs/dist/rx.all.js"></script>
-<!-- endbower -->
+<script src="modules/dist/shell.dist.js"></script>
+<script src="modules/dist/monitoring.dist.js"></script>
 
 <script src="lib/page-width-functions.js"></script>
 
@@ -267,8 +239,6 @@
 <script src="js/views/redirect/edit/controller.js"></script>
 <script src="js/views/redirect/edit/service.js"></script>
 
-<!-- Monitoring feature -->
-<script src="modules/monitoring/dist/monitoring.dist.js"></script>
 
 </body>
 </html>
