@@ -110,7 +110,7 @@
     <Content Include="app\js\directives\ui.particular.nodata.js" />
     <Content Include="app\js\directives\ui.particular.nodata.tpl.html" />
     <Content Include="app\js\services\constant.historyperiods.js" />
-    <Content Include="app\modules\recoverability\constant.moment.js" />
+    <Content Include="app\modules\shell\constant.moment.js" />
     <Content Include="app\js\services\constant.rxjs.js" />
     <Content Include="app\js\services\factory.shareddata.js" />
     <Content Include="app\js\services\service.formatter.js" />
@@ -265,11 +265,12 @@
     <Content Include="app\modules\monitoring\js\monitored_endpoints.module.js" />
     <Content Include="app\modules\monitoring\js\monitored_endpoints.route.js" />
     <Content Include="app\modules\monitoring\monitoring.js" />
-    <Content Include="app\modules\monitoring\monitoring.webpackconfig.js" />
+    <Content Include="app\modules\modules.webpackconfig.js" />
     <Content Include="app\modules\monitoring\views\endpoint_details.html" />
     <Content Include="app\modules\monitoring\views\monitored_endpoints.html" />
     <Content Include="app\modules\monitoring\views\monitoring_not_available.html" />
     <Content Include="app\modules\recoverability\recoverability.js" />
+    <Content Include="app\modules\shell\shell.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\views\dashboard\dashboard.html" />
     <Content Include="app\js\views\endpoints\endpoints.html" />

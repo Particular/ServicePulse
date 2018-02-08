@@ -5,7 +5,7 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
     entry: {
-        recoverability: './app/modules/recoverability/recoverability.js',
+        shell: './app/modules/shell/shell.js',
         monitoring: './app/modules/monitoring/monitoring.js',
     },
     output: {
