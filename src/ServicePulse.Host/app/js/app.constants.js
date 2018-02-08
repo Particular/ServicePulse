@@ -6,7 +6,7 @@
         .constant('scConfig', {
             default_route: '/dashboard',
             service_control_url: 'http://localhost:33333/api/',
-            monitoring_urls: ['http://localhost:33633/']
+            monitoring_urls: ['http://localhost:33533/']
         });
 
 }(window, window.angular));
