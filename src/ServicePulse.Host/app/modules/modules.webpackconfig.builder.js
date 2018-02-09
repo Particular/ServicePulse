@@ -1,4 +1,4 @@
-﻿var config = require('./monitoring.webpackconfig.js');
+﻿var config = require('./modules.webpackconfig.js');
 
 delete config.watch;
 delete config.watchOptions;
