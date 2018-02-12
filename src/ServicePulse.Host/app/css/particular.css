@@ -2156,3 +2156,19 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
         float: left;
     }
 }
+
+section[name="message_groups"] .list-section {
+    margin-top: 14px;
+}
+
+section[name="configuration"] .alert {
+    margin: 24px 0 0;
+}
+
+div.alert.alert-warning i.fa.fa-warning {
+    color: #8a6d3b;
+}
+
+div.alert.alert-warning strong {
+    text-transform: uppercase;
+}
