@@ -169,7 +169,7 @@
                         </div>
                         <div class="row metric-digest-value average">
                             <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                {{endpoint.digest.metrics.processingTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}} AVG</span>
+                                {{endpoint.digest.metrics.processingTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                             <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
