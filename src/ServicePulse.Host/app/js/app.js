@@ -7,6 +7,7 @@
         'ngSanitize',
         'ngClipboard',
         'ngStorage',
+        'ngCookies',
         'toaster',
         'ui.bootstrap',
         'infinite-scroll',
