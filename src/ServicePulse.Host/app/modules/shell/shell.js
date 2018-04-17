@@ -3,6 +3,7 @@ require('angular-animate');
 require('angular-route');
 require('angular-sanitize');
 require('ngstorage');
+require('angular-cookies');
 require('angular-ui-bootstrap');
 require('bootstrap');
 require('jquery');
