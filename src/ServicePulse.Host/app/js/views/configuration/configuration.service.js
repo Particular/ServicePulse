@@ -16,10 +16,9 @@
                     data: data,
                     method: 'PATCH'
                 })
-                .success(function (response) {
+                .then(function (response) {
                     defer.resolve(success + ':' + response);
-                })
-                .error(function (response, status, headers, config) {
+                }, function (response, status, headers, config) {
                     if (status === '304' || status === 304) {
                         defer.resolve(success + ':' + response);
                     } else {

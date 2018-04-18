@@ -21,10 +21,9 @@
             error = error || 'error';
 
             $http.patch(url, ids)
-                .success(function (response) {
+                .then(function (response) {
                     defer.resolve(success + ':' + response);
-                })
-                .error(function (response) {
+                }, function (response) {
                     defer.reject(error + ':' + response);
                 });
 

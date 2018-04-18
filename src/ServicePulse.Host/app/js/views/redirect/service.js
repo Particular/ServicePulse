@@ -80,27 +80,35 @@
         getData();
 
         return {
-            createRedirect: function (sourceEndpoint, targetEndpoint, success, error) {
+            createRedirect: function(sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects');
-                var promise = sendPromise(url, 'POST', { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
-                
+                var promise = sendPromise(url,
+                    'POST',
+                    { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint },
+                    success,
+                    error);
+
                 return promise;
             },
-            updateRedirect: function (redirectId, sourceEndpoint, targetEndpoint, success, error) {
+            updateRedirect: function(redirectId, sourceEndpoint, targetEndpoint, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects', redirectId);
-                var promise = sendPromise(url, 'PUT', { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint }, success, error);
-                
+                var promise = sendPromise(url,
+                    'PUT',
+                    { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint },
+                    success,
+                    error);
+
                 return promise;
             },
-            deleteRedirect: function (id, success, error) {
+            deleteRedirect: function(id, success, error) {
                 var url = uri.join(scConfig.service_control_url, 'redirects', id);
                 return $http.delete(url)
-                    .success(function() {
-                        notifications.pushForCurrentRoute(success, 'info');
-                    })
-                    .error(function () {
-                        notifications.pushForCurrentRoute(error, 'danger');
-                });
+                    .then(function() {
+                            notifications.pushForCurrentRoute(success, 'info');
+                        },
+                        function() {
+                            notifications.pushForCurrentRoute(error, 'danger');
+                        });
             },
             getTotalRedirects: function() {
                 return $q.when(redirects.total);

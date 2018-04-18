@@ -13,10 +13,9 @@
             error = error || 'error';
 
             $http.post(url)
-                .success(function (response) {
+                .then(function (response) {
                     defer.resolve(success + ':' + response);
-                })
-                .error(function (response) {
+                }, function (response) {
                     defer.reject(error + ':' + response);
                 });
 
