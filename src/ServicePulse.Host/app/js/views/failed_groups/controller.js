@@ -18,6 +18,7 @@
         $timeout,
         $interval,
         $location,
+        $cookies,
         sharedDataService,
         notifyService,
         serviceControlService,
@@ -159,9 +160,25 @@
                 });
         };
 
+        var storeSelectedClassification = function (classification) {
+            $cookies.put("failed_groups_classification", classification);
+        };
+
+        var getDefaultClassification = function(classifiers) {
+            var storedClassification = $cookies.get("failed_groups_classification");
+
+            if (typeof storedClassification === "undefined") {
+                return classifiers[0];
+            }
+
+            return storedClassification;
+        };
+
         vm.selectClassification = function (newClassification) {
             vm.loadingData = true;
             vm.selectedClassification = newClassification;
+
+            storeSelectedClassification(newClassification);
 
             return autoGetExceptionGroups().then(function () {
                 vm.loadingData = false;
@@ -175,7 +192,7 @@
 
             serviceControlService.getExceptionGroupClassifiers().then(function (classifiers) {
                 vm.availableClassifiers = classifiers;
-                vm.selectedClassification = classifiers[0];
+                vm.selectedClassification = getDefaultClassification(classifiers);
 
                 autoGetExceptionGroups().then(function () {
                     vm.loadingData = false;
@@ -356,6 +373,7 @@
         "$timeout",
         "$interval",
         "$location",
+        "$cookies",
         "sharedDataService",
         "notifyService",
         "serviceControlService",
