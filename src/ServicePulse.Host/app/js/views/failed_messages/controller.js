@@ -7,6 +7,7 @@
         $timeout,
         $location,
         $routeParams,
+        $cookies,
         scConfig,
         toastService,
         sharedDataService,
@@ -30,8 +31,6 @@
         vm.failedMessages = [];
         vm.selectedIds = [];
         vm.sortButtonText = '';
-        vm.sort = "time_of_failure";
-        vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.page = 1;
@@ -43,6 +42,11 @@
 
         var setSortButtonText = function (sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
+        }
+
+        var storeSortOption = function(sort, direction) {
+            $cookies.put('failed_messages_sort', sort);
+            $cookies.put('failed_messages_direction', direction);
         }
 
         var processLoadedMessages = function (data) {
@@ -68,11 +72,23 @@
             }
         }
 
+        function loadDefaultSort() {
+            var sort = $cookies.get("failed_messages_sort");
+            var direction = $cookies.get("failed_messages_direction");
+
+            if (typeof sort === "undefined") sort = "time_of_failure";
+            if (typeof direction === "undefined") direction = "desc";
+
+            vm.sort = sort;
+            vm.direction = direction;
+        }
+
         var init = function() {
             vm.failedMessages = [];
             vm.selectedIds = [];
             vm.page = 1;
             loadGroupDetails();
+            loadDefaultSort();
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults(vm.selectedExceptionGroup);
         }
@@ -180,6 +196,7 @@
 
             vm.sort = sort;
             vm.direction = direction;
+            storeSortOption(sort, direction);
             setSortButtonText(sort, direction);
 
             if (changeToMessagesTab) {
@@ -234,6 +251,7 @@
         "$timeout",
         "$location",
         "$routeParams",
+        "$cookies",
         "scConfig",
         "toastService",
         "sharedDataService",
