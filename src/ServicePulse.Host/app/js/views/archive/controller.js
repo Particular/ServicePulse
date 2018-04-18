@@ -8,6 +8,7 @@
         $timeout,
         moment,
         $location,
+        $cookies,
         scConfig,
         sharedDataService,
         notifyService,
@@ -72,6 +73,19 @@
             vm.loadingData = false;
         };
 
+        var storeGroupOption = function (amount, unit) {
+            $cookies.put('archive_amount', amount);
+            $cookies.put('archive_unit', unit);
+        }
+
+        var loadDefaultGroup = function() {
+            var amount = $cookies.get("archive_amount");
+            var unit = $cookies.get("archive_unit");
+
+            vm.timeGroup.amount = amount;
+            vm.timeGroup.unit = unit;
+        }
+
         var init = function () {
 
             vm.configuration = sharedDataService.getConfiguration();
@@ -79,8 +93,9 @@
             vm.total = 1;
             vm.archives = [];
             vm.sort.page = 1;
-            vm.sort.start = moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
-            vm.sort.end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
+
+            loadDefaultGroup();
+            vm.selectTimeGroup(vm.timeGroup.amount, vm.timeGroup.unit);
 
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
@@ -198,8 +213,8 @@
                 });
         }
 
-
         var selectGroupInternal = function (sortby, direction) {
+
             vm.sort.sortby = sortby || vm.sort.sortby;
             vm.sort.direction = direction || vm.sort.direction;
 
@@ -245,6 +260,8 @@
                 vm.timeGroup.buttonText = 'All Archived';
                 vm.sort.start = vm.sort.end = undefined;
             }
+
+            storeGroupOption(amount, unit);
             selectGroupInternal();
         }
 
@@ -277,6 +294,7 @@
         "$timeout",
         "moment",
         "$location",
+        "$cookies",
         "scConfig",
         "sharedDataService",
         "notifyService",
