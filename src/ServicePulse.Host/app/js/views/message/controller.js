@@ -12,7 +12,8 @@
         serviceControlService,
         archivedMessageService,
         notifyService,
-        sharedDataService) {
+        sharedDataService,
+        prettifyService) {
 
         var vm = this;
         var notifier = notifyService();
@@ -51,7 +52,7 @@
 
             if (!angular.isDefined(message.messageBody)) {
                 serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    message.messageBody = msg.data;
+                    message.messageBody = prettifyService.prettifyText(msg.data);
                 }, function () {
                     message.bodyUnavailable = "message body unavailable";
                 });
@@ -141,16 +142,17 @@
     }
 
     controller.$inject = [
-        "$scope",
-        "$routeParams",
-        "moment",
-        "$window",
-        "scConfig",
-        "toastService",
-        "serviceControlService",
-        "archivedMessageService",
-        "notifyService",
-        "sharedDataService"
+        '$scope',
+        '$routeParams',
+        'moment',
+        '$window',
+        'scConfig',
+        'toastService',
+        'serviceControlService',
+        'archivedMessageService',
+        'notifyService',
+        'sharedDataService',
+        'prettifyService'
     ];
 
     angular.module("sc")
