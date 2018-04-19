@@ -160,11 +160,11 @@
                 });
         };
 
-        var storeSelectedClassification = function (classification) {
+        var saveSelectedClassification = (classification) => {
             $cookies.put("failed_groups_classification", classification);
         };
 
-        var getDefaultClassification = function(classifiers) {
+        var getDefaultClassification = (classifiers) => {
             var storedClassification = $cookies.get("failed_groups_classification");
 
             if (typeof storedClassification === "undefined") {
@@ -178,7 +178,7 @@
             vm.loadingData = true;
             vm.selectedClassification = newClassification;
 
-            storeSelectedClassification(newClassification);
+            saveSelectedClassification(newClassification);
 
             return autoGetExceptionGroups().then(function () {
                 vm.loadingData = false;

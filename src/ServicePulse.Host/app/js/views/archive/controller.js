@@ -32,7 +32,7 @@
             buttonText: function () {
                 return (vm.sort.sortby === 'message_type' ? "Message Type" : "Time Archived") + " " + (vm.sort.direction === 'asc' ? "ASC" : "DESC");
             }
-        }
+        };
 
         vm.timeGroup = {
             amount: 2,
@@ -73,18 +73,20 @@
             vm.loadingData = false;
         };
 
-        var storeGroupOption = function (amount, unit) {
+        var saveGroupOption = (amount, unit) => {
             $cookies.put('archive_amount', amount);
             $cookies.put('archive_unit', unit);
-        }
+        };
 
-        var loadDefaultGroup = function() {
+        var getDefaultGroup = () => {
             var amount = $cookies.get("archive_amount");
             var unit = $cookies.get("archive_unit");
 
-            vm.timeGroup.amount = amount;
-            vm.timeGroup.unit = unit;
-        }
+            return {
+                amount: amount,
+                unit: unit
+            }
+        };
 
         var init = function () {
 
@@ -94,12 +96,14 @@
             vm.archives = [];
             vm.sort.page = 1;
 
-            loadDefaultGroup();
-            vm.selectTimeGroup(vm.timeGroup.amount, vm.timeGroup.unit);
+            var defaultGroup = getDefaultGroup();
 
+            vm.timeGroup.amount = defaultGroup.amount;
+            vm.timeGroup.unit = defaultGroup.unit;
+            vm.selectTimeGroup(vm.timeGroup.amount, vm.timeGroup.unit);
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
-        }
+        };
 
         var startTimer = function (time) {
             time = time || 3000;
@@ -107,7 +111,7 @@
 
                 init();
             }, time);
-        }
+        };
 
         vm.restore = function (timeGroup) {
             var rangeEnd = moment.utc();
@@ -115,7 +119,7 @@
             archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected');
 
             startTimer();
-        }
+        };
 
         var markMessage = function (property) {
             for (var i = 0; i < vm.failedMessages.length; i++) {
@@ -192,7 +196,7 @@
                 .finally(function () {
 
                 });
-        }
+        };
 
         vm.retryExceptionGroup = function (group) {
             markMessage('retried');
@@ -211,7 +215,7 @@
                 .finally(function () {
 
                 });
-        }
+        };
 
         var selectGroupInternal = function (sortby, direction) {
 
@@ -261,9 +265,9 @@
                 vm.sort.start = vm.sort.end = undefined;
             }
 
-            storeGroupOption(amount, unit);
+            saveGroupOption(amount, unit);
             selectGroupInternal();
-        }
+        };
 
         vm.loadMoreResults = function () {
             vm.allMessagesLoaded = vm.archives.length >= vm.total;
@@ -283,7 +287,7 @@
                     vm.total = response.total;
                     processLoadedMessages(response.data);
                 });
-        }
+        };
 
         init();
     }
