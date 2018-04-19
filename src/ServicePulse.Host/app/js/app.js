@@ -21,7 +21,8 @@
         'customChecks',
         'configuration',
         'dashboard',
-        'ui.select']);
+        'ui.select',
+        'prettyXml']);
 
     angular.module('sc')
         .run(['$rootScope', '$location', '$log', function ($rootScope, $location, $log) {
