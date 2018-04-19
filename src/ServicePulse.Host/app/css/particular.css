@@ -1712,6 +1712,10 @@ hr.top-separator {
 
 .graph-values {
     margin-left: 60px;
+    padding-top: 10px;
+    border-top: 3px solid #fff;
+    margin-top: -8.5px;
+    width: 93%;
 }
 
 .graph-message-retries-throughputs, .graph-critical-processing-times {
@@ -2171,4 +2175,11 @@ div.alert.alert-warning i.fa.fa-warning {
 
 div.alert.alert-warning strong {
     text-transform: uppercase;
+}
+
+.graph-padding {
+    position: relative;
+/*    top: -4px;*/
+    height: 4px;
+    background-color: #fff;
 }
