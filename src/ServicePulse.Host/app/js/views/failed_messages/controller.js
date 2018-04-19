@@ -29,6 +29,7 @@
         vm.stats = sharedDataService.getstats();
         vm.failedMessages = [];
         vm.selectedIds = [];
+        vm.lastSelectedIndex = -1;
         vm.sortButtonText = '';
         vm.sort = "time_of_failure";
         vm.direction = "desc";
@@ -101,11 +102,65 @@
             return false;
         };
 
-        vm.toggleRowSelect = function (row) {
+        vm.selectRow = (row) => {
             row.selected = !row.selected;
             vm.updateSelectedIdsWithMessage(row);
+
+            if (typeof row.selected === "undefined")
+                return false;
+
+            return row.selected;
         };
 
+        vm.selectWithShift = (row, index) => {
+            var selectFromIndex = Math.min(index, vm.lastSelectedIndex);
+            var selectToIndex = Math.max(index, vm.lastSelectedIndex);
+            var lastSelected = -1;
+
+            for (var i = selectFromIndex; i <= selectToIndex; i++) {
+
+                if (vm.lastSelectedIndex === i)
+                    continue;
+
+                var r = vm.failedMessages[i];
+                var selected = vm.selectRow(r);
+
+                if (selected) {
+                    lastSelected = i;
+                }
+            }
+
+            vm.lastSelectedIndex = lastSelected;
+
+            if (vm.selectedIds.length === 0) {
+                vm.lastSelectedIndex = -1;
+            }
+
+            //Removes text selection that happens 
+            //due to shift key being down.
+            document.getSelection().removeAllRanges();
+        };
+
+        vm.selectSingleRow = (row, index) => {
+            var selected = vm.selectRow(row, index);
+            if (selected) {
+                vm.lastSelectedIndex = index;
+            }
+
+            if (vm.selectedIds.length === 0) {
+                vm.lastSelectedIndex = -1;
+            }
+        }
+
+        vm.toggleRowSelect = function (row, event, index) {
+
+            if (event.shiftKey) {
+                vm.selectWithShift(row, index);
+            } else {
+                vm.selectSingleRow(row, index);
+            }
+        };
+        
         vm.updateSelectedIdsWithMessage = function(row) {
             if (row.selected) {
                 vm.selectedIds.push(row.id);

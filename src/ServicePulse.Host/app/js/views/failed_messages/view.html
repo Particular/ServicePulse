@@ -63,7 +63,7 @@
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.failedMessages">
                     
-                    <div class="check col-xs-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
+                    <div class="check col-xs-1" ng-click="vm.toggleRowSelect(message, $event, $index)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
                         <div class="checkbox" ng-class="{'check-hover': message.hover}">
                             <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.retried || message.archived" ng-model="message.selected" ng-change="vm.updateSelectedIdsWithMessage(message)">
                             <label for="onoffswitch{{$id}}"></label>
