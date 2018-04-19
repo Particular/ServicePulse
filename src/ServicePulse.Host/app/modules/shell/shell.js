@@ -20,4 +20,4 @@ require('angularjs-toaster/toaster.css');
 require('animate.css/animate.css');
 require('ui-select/dist/select.css');
 require('./constant.moment');
-require('expose-loader?vkbeautify!vkbeautify');
+require('angular-pretty-xml');

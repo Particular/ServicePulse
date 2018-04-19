@@ -6,6 +6,7 @@
   "dependencies": {
     "angular": "1.4.5",
     "angular-animate": "1.4.5",
+    "angular-pretty-xml": "^0.1.1",
     "angular-route": "1.4.5",
     "angular-sanitize": "1.4.5",
     "angular-ui-bootstrap": "0.14.3",
@@ -23,7 +24,6 @@
     "rx": "^4.1.0",
     "signalr": "^2.2.1",
     "ui-select": "^0.18.1",
-    "vkbeautify": "^0.99.3",
     "zeroclipboard": "^2.2.0"
   },
   "devDependencies": {

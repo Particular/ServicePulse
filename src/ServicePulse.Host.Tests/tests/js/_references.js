@@ -18,7 +18,6 @@
 /// <reference path="../../../servicepulse.host/app/js/services/services.stream.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/services.uri.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/service.toast.js" />
-/// <reference path="../../../servicepulse.host/app/js/services/service.prettify.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.listener.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.notifier.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.shareddata.js" />

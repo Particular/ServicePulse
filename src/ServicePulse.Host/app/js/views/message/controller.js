@@ -13,7 +13,7 @@
         archivedMessageService,
         notifyService,
         sharedDataService,
-        prettifyService) {
+        $filter) {
 
         var vm = this;
         var notifier = notifyService();
@@ -50,14 +50,6 @@
             if (!message)
                 return false;
 
-            if (!angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    message.messageBody = prettifyService.prettifyText(msg.data);
-                }, function () {
-                    message.bodyUnavailable = "message body unavailable";
-                });
-            }
-
             if (!angular.isDefined(message.messageHeaders)) {
                 serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
                     message.messageHeaders = msg.data[0].headers;
@@ -65,9 +57,33 @@
                     message.headersUnavailable = "message headers unavailable";
                 });
             }
+
+            if (angular.isDefined(message.messageHeaders) && !angular.isDefined(message.messageBody)) {
+                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
+                    var bodyContentType = getContentType(message.messageHeaders);
+                    message.messageBody = prettifyText(msg.data, bodyContentType);
+                }, function () {
+                    message.bodyUnavailable = "message body unavailable";
+                });
+            }
+            
             message.panel = panelnum;
             return false;
         };
+
+        function prettifyText(text, contentType) {
+            if (contentType === 'application/json') {
+                return $filter('json')(text);
+            }
+            if (contentType === 'text/xml') {
+                return $filter('prettyXml')(text);
+            }
+            return text;
+        }
+
+        function getContentType(headers) {
+            return headers.find((element) => element.key === 'NServiceBus.ContentType').value;
+        }
 
         vm.retryMessage = function () {
             toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
@@ -152,7 +168,7 @@
         'archivedMessageService',
         'notifyService',
         'sharedDataService',
-        'prettifyService'
+        '$filter'
     ];
 
     angular.module("sc")
