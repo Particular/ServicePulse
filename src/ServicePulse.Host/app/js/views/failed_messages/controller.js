@@ -159,8 +159,15 @@
             } else {
                 vm.selectSingleRow(row, index);
             }
+
+            //Stop event propagation since 
+            //there are nested elements
+            if (event.stopPropagation) event.stopPropagation();
+            if (event.preventDefault) event.preventDefault();
+            event.cancelBubble = true;
+            event.returnValue = false;
         };
-        
+         
         vm.updateSelectedIdsWithMessage = function(row) {
             if (row.selected) {
                 vm.selectedIds.push(row.id);
