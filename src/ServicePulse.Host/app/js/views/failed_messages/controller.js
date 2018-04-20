@@ -26,6 +26,11 @@
             $location.path('/failed-messages/groups');
         }
 
+        var selectActions = {
+            Selection: { },
+            Deselection: { }
+        };
+
         vm.stats = sharedDataService.getstats();
         vm.failedMessages = [];
         vm.selectedIds = [];
@@ -35,6 +40,7 @@
         vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
+        vm.lastAction = selectActions.Selection;
         vm.page = 1;
         vm.total = vm.stats.number_of_failed_messages;
 
@@ -102,35 +108,25 @@
             return false;
         };
 
-        vm.selectRow = (row) => {
-            row.selected = !row.selected;
+        vm.selectRow = (row, value) => {
+
+            row.selected = value;
             vm.updateSelectedIdsWithMessage(row);
-
-            if (typeof row.selected === "undefined")
-                return false;
-
-            return row.selected;
         };
 
         vm.selectWithShift = (row, index) => {
             var selectFromIndex = Math.min(index, vm.lastSelectedIndex);
             var selectToIndex = Math.max(index, vm.lastSelectedIndex);
-            var lastSelected = -1;
 
             for (var i = selectFromIndex; i <= selectToIndex; i++) {
 
-                if (vm.lastSelectedIndex === i)
-                    continue;
-
+                var selected = vm.lastAction === selectActions.Selection ? true : false;
                 var r = vm.failedMessages[i];
-                var selected = vm.selectRow(r);
 
-                if (selected) {
-                    lastSelected = i;
-                }
+                vm.selectRow(r, selected);
             }
 
-            vm.lastSelectedIndex = lastSelected;
+            vm.lastSelectedIndex = selectToIndex;
 
             if (vm.selectedIds.length === 0) {
                 vm.lastSelectedIndex = -1;
@@ -142,10 +138,16 @@
         };
 
         vm.selectSingleRow = (row, index) => {
-            var selected = vm.selectRow(row, index);
+            var selected = !row.selected;
+            vm.selectRow(row, selected);
+
             if (selected) {
-                vm.lastSelectedIndex = index;
+                vm.lastAction = selectActions.Selection;
+            } else {
+                vm.lastAction = selectActions.Deselection;
             }
+
+            vm.lastSelectedIndex = index;
 
             if (vm.selectedIds.length === 0) {
                 vm.lastSelectedIndex = -1;
@@ -154,7 +156,7 @@
 
         vm.toggleRowSelect = function (row, event, index) {
 
-            if (event.shiftKey) {
+            if (event.shiftKey && vm.lastSelectedIndex > -1) {
                 vm.selectWithShift(row, index);
             } else {
                 vm.selectSingleRow(row, index);
