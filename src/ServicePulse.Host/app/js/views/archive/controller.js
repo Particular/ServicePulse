@@ -73,12 +73,12 @@
             vm.loadingData = false;
         };
 
-        var saveGroupOption = (amount, unit) => {
+        var saveSelectedArchiveGroup = (amount, unit) => {
             $cookies.put('archive_amount', amount);
             $cookies.put('archive_unit', unit);
         };
 
-        var getDefaultGroup = () => {
+        var getSelectedArchiveGroup = () => {
             var amount = $cookies.get("archive_amount");
             var unit = $cookies.get("archive_unit");
 
@@ -96,11 +96,9 @@
             vm.archives = [];
             vm.sort.page = 1;
 
-            var defaultGroup = getDefaultGroup();
+            var selectedArchiveGroup = getSelectedArchiveGroup();
 
-            vm.timeGroup.amount = defaultGroup.amount;
-            vm.timeGroup.unit = defaultGroup.unit;
-            vm.selectTimeGroup(vm.timeGroup.amount, vm.timeGroup.unit);
+            vm.selectTimeGroup(selectedArchiveGroup.amount, selectedArchiveGroup.unit);
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
         };
@@ -265,7 +263,7 @@
                 vm.sort.start = vm.sort.end = undefined;
             }
 
-            saveGroupOption(amount, unit);
+            saveSelectedArchiveGroup(amount, unit);
             selectGroupInternal();
         };
 
