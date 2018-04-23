@@ -64,10 +64,9 @@
                     url: url,
                     method: 'POST',
                     data: data,
-                }).success(function() {
+                }).then(function() {
                     notifications.pushForCurrentRoute('Retrying all pending retried messages...', 'info');
-                })
-                .error(function() {
+                }, function() {
                     notifications.pushForCurrentRoute('Retrying all pending messages failed', 'danger');
                 });
         }
@@ -75,10 +74,9 @@
         function retryPendingRetriedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry');
             return $http.post(url, selectedMessages)
-                .success(function () {
+                .then(function () {
                     notifications.pushForCurrentRoute('Retrying {{num}} pending retried messages...', 'info', { num: selectedMessages.length });
-                })
-                .error(function () {
+                }, function () {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         }
@@ -103,10 +101,9 @@
                     url: url,
                     method: 'PATCH',
                 data: data
-                }).success(function() {
+                }).then(function() {
                     notifications.pushForCurrentRoute('Resolving all pending retried messages...', 'info');
-                })
-                .error(function() {
+                }, function() {
                     notifications.pushForCurrentRoute('Resolving all pending messages failed', 'danger');
                 });
         }
@@ -119,10 +116,9 @@
                     data: { uniquemessageids: selectedMessages },
                     method: 'PATCH'
                 })
-                .success(function() {
+                .then(function() {
                     notifications.pushForCurrentRoute('Resolving {{num}} messages...', 'info', { num: selectedMessages.length });
-                })
-                .error(function() {
+                }, function() {
                     notifications.pushForCurrentRoute('Resolving messages failed', 'danger');
                 });
         }

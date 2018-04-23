@@ -191,10 +191,9 @@
         function retryPendingMessagesForQueue(queueName) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'queues', queueName, 'retry');
             $http.post(url)
-                .success(function() {
+                .then(function() {
                     notifications.pushForCurrentRoute('Retrying all pending retry messages for queue ' + queueName, 'info');
-                })
-                .error(function() {
+                }, function() {
                     notifications.pushForCurrentRoute('Retrying all pending retried messages for queue ' + queueName + ' failed', 'danger');
                 });
         }
@@ -202,10 +201,9 @@
         function retryAllFailedMessages() {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry', 'all');
             return $http.post(url)
-                .success(function() {
+                .then(function() {
                     notifications.pushForCurrentRoute('Retrying all messages...', 'info');
-                })
-                .error(function() {
+                }, function() {
                     notifications.pushForCurrentRoute('Retrying all messages failed', 'danger');
                 });
         }
@@ -213,10 +211,9 @@
         function retryFailedMessages(selectedMessages) {
             var url = uri.join(scConfig.service_control_url, 'errors', 'retry');
             return $http.post(url, selectedMessages)
-                .success(function() {
+                .then(function() {
                     notifications.pushForCurrentRoute('Retrying {{num}} messages...', 'info', { num: selectedMessages.length });
-                })
-                .error(function() {
+                }, function() {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         }
@@ -229,10 +226,9 @@
                     data: selectedMessages,
                     method: 'PATCH'
                 })
-                .success(function() {
+                .then(function() {
                     notifications.pushForCurrentRoute('Archiving {{num}} messages...', 'info', { num: selectedMessages.length });
-                })
-                .error(function() {
+                }, function() {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
         }
@@ -240,21 +236,21 @@
         function archiveExceptionGroup(id, successText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'archive');
             return $http.post(url)
-                .error(function() {
+                .then(null, function() {
                     notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
                 });
         }
 
         function acknowledgeArchiveGroup(groupId) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', groupId);
-            return $http.delete(url).error(function () {
+            return $http.delete(url).then(null, function () {
                 notifications.pushForCurrentRoute('Archive messages failed', 'danger');
             });
         }
 
         function acknowledgeGroup(id, successText, failureText) {
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'unacknowledgedgroups', id);
-            return $http.delete(url).error( function () {
+            return $http.delete(url).then(null, function () {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         }
@@ -263,7 +259,7 @@
 
             var url = uri.join(scConfig.service_control_url, 'recoverability', 'groups', id, 'errors', 'retry');
             return $http.post(url)
-                .error(function() {
+                .then(null, function() {
                     notifications.pushForCurrentRoute('Retrying messages failed', 'danger');
                 });
         }

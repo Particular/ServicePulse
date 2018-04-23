@@ -7,6 +7,7 @@
         $timeout,
         $location,
         $routeParams,
+        $cookies,
         scConfig,
         toastService,
         sharedDataService,
@@ -30,8 +31,6 @@
         vm.failedMessages = [];
         vm.selectedIds = [];
         vm.sortButtonText = '';
-        vm.sort = "time_of_failure";
-        vm.direction = "desc";
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.page = 1;
@@ -41,9 +40,14 @@
             vm.total = data;
         }, 'MessageFailuresUpdated');
 
-        var setSortButtonText = function (sort, direction) {
+        var setSortButtonText = (sort, direction) => {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
-        }
+        };
+
+        var saveSortOption = (sort, direction) => {
+            $cookies.put('failed_messages_sort', sort);
+            $cookies.put('failed_messages_direction', direction);
+        };
 
         var processLoadedMessages = function (data) {
             if (data.length > 0) {
@@ -60,22 +64,41 @@
             vm.loadingData = false;
         };
 
-        function loadGroupDetails() {
+        var loadGroupDetails = () => {
             if (vm.selectedExceptionGroup.initialLoad && vm.selectedExceptionGroup.id) {
                     serviceControlService.getExceptionGroup(vm.selectedExceptionGroup.id).then(function (result) {
                         vm.selectedExceptionGroup.title = result.data.title;
                 });
             }
-        }
+        };
 
-        var init = function() {
+        var getDefaultSort = () => {
+            var sort = $cookies.get("failed_messages_sort");
+            var direction = $cookies.get("failed_messages_direction");
+
+            if (typeof sort === "undefined") sort = "time_of_failure";
+            if (typeof direction === "undefined") direction = "desc";
+
+            return {
+                sort: sort,
+                direction: direction
+            }
+        };
+
+        var init = function () {
+
+            var defaultSort = getDefaultSort();
+
             vm.failedMessages = [];
             vm.selectedIds = [];
             vm.page = 1;
+            vm.sort = defaultSort.sort;
+            vm.direction = defaultSort.direction;
+
             loadGroupDetails();
             setSortButtonText(vm.sort, vm.direction);
             vm.loadMoreResults(vm.selectedExceptionGroup);
-        }
+        };
 
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
@@ -149,7 +172,7 @@
                 .finally(function () {
 
                 });
-        }
+        };
 
         vm.retryExceptionGroup = function (group) {
 
@@ -171,7 +194,7 @@
                 .finally(function () {
 
                 });
-        }
+        };
 
         var selectGroupInternal = function (group, sort, direction, changeToMessagesTab) {
             if ($scope.loadingData) {
@@ -180,6 +203,7 @@
 
             vm.sort = sort;
             vm.direction = direction;
+            saveSortOption(sort, direction);
             setSortButtonText(sort, direction);
 
             if (changeToMessagesTab) {
@@ -234,6 +258,7 @@
         "$timeout",
         "$location",
         "$routeParams",
+        "$cookies",
         "scConfig",
         "toastService",
         "sharedDataService",

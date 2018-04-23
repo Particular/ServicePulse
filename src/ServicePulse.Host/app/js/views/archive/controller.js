@@ -8,6 +8,7 @@
         $timeout,
         moment,
         $location,
+        $cookies,
         scConfig,
         sharedDataService,
         notifyService,
@@ -31,7 +32,7 @@
             buttonText: function () {
                 return (vm.sort.sortby === 'message_type' ? "Message Type" : "Time Archived") + " " + (vm.sort.direction === 'asc' ? "ASC" : "DESC");
             }
-        }
+        };
 
         vm.timeGroup = {
             amount: 2,
@@ -72,6 +73,21 @@
             vm.loadingData = false;
         };
 
+        var saveSelectedArchiveGroup = (amount, unit) => {
+            $cookies.put('archive_amount', amount);
+            $cookies.put('archive_unit', unit);
+        };
+
+        var getSelectedArchiveGroup = () => {
+            var amount = $cookies.get("archive_amount");
+            var unit = $cookies.get("archive_unit");
+
+            return {
+                amount: amount,
+                unit: unit
+            }
+        };
+
         var init = function () {
 
             vm.configuration = sharedDataService.getConfiguration();
@@ -79,12 +95,13 @@
             vm.total = 1;
             vm.archives = [];
             vm.sort.page = 1;
-            vm.sort.start = moment.utc().subtract(vm.timeGroup.amount, vm.timeGroup.unit).format('YYYY-MM-DDTHH:mm:ss');
-            vm.sort.end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
 
+            var selectedArchiveGroup = getSelectedArchiveGroup();
+
+            vm.selectTimeGroup(selectedArchiveGroup.amount, selectedArchiveGroup.unit);
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
             vm.loadMoreResults();
-        }
+        };
 
         var startTimer = function (time) {
             time = time || 3000;
@@ -92,7 +109,7 @@
 
                 init();
             }, time);
-        }
+        };
 
         vm.restore = function (timeGroup) {
             var rangeEnd = moment.utc();
@@ -100,7 +117,7 @@
             archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected');
 
             startTimer();
-        }
+        };
 
         var markMessage = function (property) {
             for (var i = 0; i < vm.failedMessages.length; i++) {
@@ -177,7 +194,7 @@
                 .finally(function () {
 
                 });
-        }
+        };
 
         vm.retryExceptionGroup = function (group) {
             markMessage('retried');
@@ -196,10 +213,10 @@
                 .finally(function () {
 
                 });
-        }
-
+        };
 
         var selectGroupInternal = function (sortby, direction) {
+
             vm.sort.sortby = sortby || vm.sort.sortby;
             vm.sort.direction = direction || vm.sort.direction;
 
@@ -245,8 +262,10 @@
                 vm.timeGroup.buttonText = 'All Archived';
                 vm.sort.start = vm.sort.end = undefined;
             }
+
+            saveSelectedArchiveGroup(amount, unit);
             selectGroupInternal();
-        }
+        };
 
         vm.loadMoreResults = function () {
             vm.allMessagesLoaded = vm.archives.length >= vm.total;
@@ -266,7 +285,7 @@
                     vm.total = response.total;
                     processLoadedMessages(response.data);
                 });
-        }
+        };
 
         init();
     }
@@ -277,6 +296,7 @@
         "$timeout",
         "moment",
         "$location",
+        "$cookies",
         "scConfig",
         "sharedDataService",
         "notifyService",
