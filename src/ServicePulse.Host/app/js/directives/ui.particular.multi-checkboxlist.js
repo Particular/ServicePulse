@@ -11,7 +11,9 @@
         });
 
         $scope.selectRow = (row, value) => {
-
+            if (row.selected === value) {
+                return;
+            }
             row.selected = value;
             $scope.updateSelectedIdsWithMessage(row);
         };
@@ -20,8 +22,7 @@
             var selectFromIndex = Math.min(index, $scope.multiselection.lastSelectedIndex);
             var selectToIndex = Math.max(index, $scope.multiselection.lastSelectedIndex);
 
-            for (var i = selectFromIndex + 1; i <= selectToIndex; i++) {
-
+            for (var i = selectFromIndex; i <= selectToIndex; i++) {
                 var selected = $scope.multiselection.lastAction === selectActions.Selection ? true : false;
                 var r = $scope.messages[i];
 
