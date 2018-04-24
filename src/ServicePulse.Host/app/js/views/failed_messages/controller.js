@@ -34,7 +34,7 @@
         vm.stats = sharedDataService.getstats();
         vm.failedMessages = [];
         vm.selectedIds = [];
-        vm.lastSelectedIndex = -1;
+        vm.multiselection = {};
         vm.sortButtonText = '';
         vm.sort = "time_of_failure";
         vm.direction = "desc";
@@ -88,95 +88,7 @@
             toastService.showInfo(messageId + ' copied to clipboard');
         };
 
-        vm.togglePanel = function (message, panelnum) {
-            if (!angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    message.messageBody = msg.data;
-                }, function () {
-                    message.bodyUnavailable = "message body unavailable";
-                });
-            }
-
-            if (!angular.isDefined(message.messageHeaders)) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
-                    message.messageHeaders = msg.data[0].headers;
-                }, function () {
-                    message.headersUnavailable = "message headers unavailable";
-                });
-            }
-            message.panel = panelnum;
-            return false;
-        };
-
-        vm.selectRow = (row, value) => {
-
-            row.selected = value;
-            vm.updateSelectedIdsWithMessage(row);
-        };
-
-        vm.selectWithShift = (row, index) => {
-            var selectFromIndex = Math.min(index, vm.lastSelectedIndex);
-            var selectToIndex = Math.max(index, vm.lastSelectedIndex);
-
-            for (var i = selectFromIndex; i <= selectToIndex; i++) {
-
-                var selected = vm.lastAction === selectActions.Selection ? true : false;
-                var r = vm.failedMessages[i];
-
-                vm.selectRow(r, selected);
-            }
-
-            vm.lastSelectedIndex = selectToIndex;
-
-            if (vm.selectedIds.length === 0) {
-                vm.lastSelectedIndex = -1;
-            }
-
-            //Removes text selection that happens 
-            //due to shift key being down.
-            document.getSelection().removeAllRanges();
-        };
-
-        vm.selectSingleRow = (row, index) => {
-            var selected = !row.selected;
-            vm.selectRow(row, selected);
-
-            if (selected) {
-                vm.lastAction = selectActions.Selection;
-            } else {
-                vm.lastAction = selectActions.Deselection;
-            }
-
-            vm.lastSelectedIndex = index;
-
-            if (vm.selectedIds.length === 0) {
-                vm.lastSelectedIndex = -1;
-            }
-        }
-
-        vm.toggleRowSelect = function (row, event, index) {
-
-            if (event.shiftKey && vm.lastSelectedIndex > -1) {
-                vm.selectWithShift(row, index);
-            } else {
-                vm.selectSingleRow(row, index);
-            }
-
-            //Stop event propagation since 
-            //there are nested elements
-            if (event.stopPropagation) event.stopPropagation();
-            if (event.preventDefault) event.preventDefault();
-            event.cancelBubble = true;
-            event.returnValue = false;
-        };
-         
-        vm.updateSelectedIdsWithMessage = function(row) {
-            if (row.selected) {
-                vm.selectedIds.push(row.id);
-            } else {
-                vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
-            }
-        };
+        
 
         vm.retrySelected = function () {
             toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");

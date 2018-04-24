@@ -20,6 +20,7 @@
         'ui.particular.duration',
         'ui.particular.graphduration',
         'ui.particular.graphdecimal',
+        'ui.particular.multicheckboxList',
     ]);
 
 } (window, window.angular));

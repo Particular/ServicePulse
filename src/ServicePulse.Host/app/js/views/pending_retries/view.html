@@ -114,13 +114,7 @@
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.pendingRetryMessages">
 
-                    <div class="check col-xs-1" ng-click="vm.toggleRowSelect(message)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
-                        <div class="checkbox" ng-class="{'check-hover': message.hover}">
-                            <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" ng-disabled="message.submittedForRetrial || message.resolved" ng-model="message.selected" ng-change="vm.updateSelectedIdsWithMessage(message)">
-                            <label for="onoffswitch{{$id}}"></label>
-                        </div>
-
-                    </div>
+                    <multi-checkboxlist messages="vm.pendingRetryMessages" selected-ids="vm.selectedIds" message="message" multiselection="vm.multiselection"></multi-checkboxlist>
 
                     <div class="col-xs-11 failed-message-data" ng-mouseenter="message.hover2 = true" ng-mouseleave="message.hover2 = false">
                         <a href="#/failed-messages/message/{{message.id}}">
