@@ -8,7 +8,7 @@
         toastService,
         serviceControlService,
         monitoringService,
-        historyPeriods,
+        historyPeriodsService,
         $filter,
         smallGraphsMinimumYAxis,
         largeGraphsMinimumYAxis,
@@ -24,21 +24,14 @@
 
         var subscription;
 
-        $scope.periods = historyPeriods;
-        $scope.selectedPeriod = $scope.periods[0];
-
-        if ($location.$$search.historyPeriod) {
-            $scope.selectedPeriod = $scope.periods[$scope.periods.findIndex(function (period) {
-                return period.value == $location.$$search.historyPeriod;
-            })];
-        }
+        $scope.periods = historyPeriodsService.getAllPeriods();
+        $scope.selectedPeriod = historyPeriodsService.getDefaultPeriod();
 
         $scope.selectPeriod = function (period) {
             $scope.selectedPeriod = period;
-
+            historyPeriodsService.saveSelectedPeriod(period);
             updateUI();
         };
-
 
         function mergeIn(destination, source) {
             for (var propName in source) {
@@ -134,7 +127,7 @@
         'toastService',
         'serviceControlService',
         'monitoringService',
-        'historyPeriods',
+        'historyPeriodsService',
         '$filter',
         'smallGraphsMinimumYAxis',
         'largeGraphsMinimumYAxis',
