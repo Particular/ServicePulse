@@ -2176,9 +2176,3 @@ div.alert.alert-warning i.fa.fa-warning {
 div.alert.alert-warning strong {
     text-transform: uppercase;
 }
-
-.graph-padding {
-    position: relative;
-    height: 4px;
-    background-color: #fff;
-}
