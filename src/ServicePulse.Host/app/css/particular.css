@@ -2179,7 +2179,6 @@ div.alert.alert-warning strong {
 
 .graph-padding {
     position: relative;
-/*    top: -4px;*/
     height: 4px;
     background-color: #fff;
 }
