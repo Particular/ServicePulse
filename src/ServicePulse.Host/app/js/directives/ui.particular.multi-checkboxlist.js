@@ -10,7 +10,7 @@
             Deselection: 2
         });
 
-        $scope.selectRow = (row, value) => {
+        $scope.selectRow = function(row, value){
             if (row.selected === value) {
                 return;
             }
@@ -18,7 +18,7 @@
             $scope.updateSelectedIdsWithMessage(row);
         };
 
-        $scope.selectWithShift = (row, index) => {
+        $scope.selectWithShift = function(row, index){
             var selectFromIndex = Math.min(index, $scope.multiselection.lastSelectedIndex);
             var selectToIndex = Math.max(index, $scope.multiselection.lastSelectedIndex);
 
@@ -40,7 +40,7 @@
             document.getSelection().removeAllRanges();
         };
 
-        $scope.selectSingleRow = (row, index) => {
+        $scope.selectSingleRow = function(row, index){
             var selected = !row.selected;
             $scope.selectRow(row, selected);
 

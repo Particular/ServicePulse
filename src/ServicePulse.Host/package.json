@@ -40,7 +40,7 @@
     "webpack": "^3.8.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "..\\packages\\PhantomJS.2.0.0\\tools\\phantomjs\\phantomjs.exe ../ServicePulse.Host.Tests/Scripts/run-jasmine.js ../ServicePulse.Host.Tests/SpecsRunner.html",
     "load": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/modules.webpackconfig.builder.js",
     "setup": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/modules.webpackconfig.js",
     "webpack": "node ./node_modules/webpack/bin/webpack.js --config app/modules/modules.webpackconfig.js"
