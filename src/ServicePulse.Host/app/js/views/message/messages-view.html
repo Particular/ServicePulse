@@ -8,9 +8,9 @@
         </div>
 
 
-        <no-data ng-show="vm.message.notFound" title="message failures" message="Could not find message. This could be because the message URL is invalid or the corresponding message was processed and no longer audited by ServiceControl."></no-data>
+        <no-data ng-show="vm.message.notFound" title="message failures" message="Could not find message. This could be because the message URL is invalid or the corresponding message was processed and no longer tracked by ServiceControl."></no-data>
 
-        <no-data ng-show="vm.message.error" title="message failures" message="An error occured while trying to get the message. Chack ServiceControl logs to learn what the issues is."></no-data>
+        <no-data ng-show="vm.message.error" title="message failures" message="An error occured while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
 
 
         <div class="row" ng-show="!vm.message.notFound && !vm.message.error">
