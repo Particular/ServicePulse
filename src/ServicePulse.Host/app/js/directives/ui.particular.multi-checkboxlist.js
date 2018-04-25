@@ -10,7 +10,7 @@
             Deselection: 2
         });
 
-        function selectRow(row, value){
+        var selectRow = function(row, value){
             if (row.selected === value) {
                 return;
             }
@@ -18,7 +18,7 @@
             updateSelectedIdsWithMessage(row);
         };
 
-        function selectWithShift(row, index){
+        var selectWithShift = function(row, index){
             var selectFromIndex = Math.min(index, $scope.multiselection.lastSelectedIndex);
             var selectToIndex = Math.max(index, $scope.multiselection.lastSelectedIndex);
 
@@ -40,7 +40,7 @@
             document.getSelection().removeAllRanges();
         };
 
-        function selectSingleRow(row, index){
+        var selectSingleRow = function(row, index){
             var selected = !row.selected;
             selectRow(row, selected);
 
@@ -73,7 +73,7 @@
             event.returnValue = false;
         };
 
-        function updateSelectedIdsWithMessage(row) {
+        var updateSelectedIdsWithMessage = function(row) {
             if (row.selected) {
                 $scope.selectedIds.push(row.id);
             } else {
