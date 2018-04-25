@@ -10,15 +10,15 @@
             Deselection: 2
         });
 
-        $scope.selectRow = function(row, value){
+        function selectRow(row, value){
             if (row.selected === value) {
                 return;
             }
             row.selected = value;
-            $scope.updateSelectedIdsWithMessage(row);
+            updateSelectedIdsWithMessage(row);
         };
 
-        $scope.selectWithShift = function(row, index){
+        function selectWithShift(row, index){
             var selectFromIndex = Math.min(index, $scope.multiselection.lastSelectedIndex);
             var selectToIndex = Math.max(index, $scope.multiselection.lastSelectedIndex);
 
@@ -26,7 +26,7 @@
                 var selected = $scope.multiselection.lastAction === selectActions.Selection ? true : false;
                 var r = $scope.messages[i];
 
-                $scope.selectRow(r, selected);
+                selectRow(r, selected);
             }
 
             $scope.multiselection.lastSelectedIndex = selectToIndex;
@@ -40,9 +40,9 @@
             document.getSelection().removeAllRanges();
         };
 
-        $scope.selectSingleRow = function(row, index){
+        function selectSingleRow(row, index){
             var selected = !row.selected;
-            $scope.selectRow(row, selected);
+            selectRow(row, selected);
 
             if (selected) {
                 $scope.multiselection.lastAction = selectActions.Selection;
@@ -60,9 +60,9 @@
         $scope.toggleRowSelect = function (row, event, index) {
 
             if (event.shiftKey && $scope.multiselection.lastSelectedIndex > -1) {
-                $scope.selectWithShift(row, index);
+                selectWithShift(row, index);
             } else {
-                $scope.selectSingleRow(row, index);
+                selectSingleRow(row, index);
             }
 
             //Stop event propagation since 
@@ -73,7 +73,7 @@
             event.returnValue = false;
         };
 
-        $scope.updateSelectedIdsWithMessage = function (row) {
+        function updateSelectedIdsWithMessage(row) {
             if (row.selected) {
                 $scope.selectedIds.push(row.id);
             } else {
