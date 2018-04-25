@@ -27,12 +27,19 @@
             $location.path('/failed-messages/groups');
         }
 
+        var selectActions = {
+            Selection: { },
+            Deselection: { }
+        };
+
         vm.stats = sharedDataService.getstats();
         vm.failedMessages = [];
         vm.selectedIds = [];
+        vm.multiselection = {};
         vm.sortButtonText = '';
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
+        vm.lastAction = selectActions.Selection;
         vm.page = 1;
         vm.total = vm.stats.number_of_failed_messages;
 
@@ -104,38 +111,7 @@
             toastService.showInfo(messageId + ' copied to clipboard');
         };
 
-        vm.togglePanel = function (message, panelnum) {
-            if (!angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    message.messageBody = msg.data;
-                }, function () {
-                    message.bodyUnavailable = "message body unavailable";
-                });
-            }
-
-            if (!angular.isDefined(message.messageHeaders)) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
-                    message.messageHeaders = msg.data[0].headers;
-                }, function () {
-                    message.headersUnavailable = "message headers unavailable";
-                });
-            }
-            message.panel = panelnum;
-            return false;
-        };
-
-        vm.toggleRowSelect = function (row) {
-            row.selected = !row.selected;
-            vm.updateSelectedIdsWithMessage(row);
-        };
-
-        vm.updateSelectedIdsWithMessage = function(row) {
-            if (row.selected) {
-                vm.selectedIds.push(row.id);
-            } else {
-                vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
-            }
-        };
+        
 
         vm.retrySelected = function () {
             toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");

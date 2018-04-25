@@ -119,6 +119,7 @@
         var init = function() {
             vm.pendingRetryMessages = [];
             vm.selectedIds = [];
+            vm.multiselection = {};
             vm.page = 1;
             vm.filter = {
                 searchPhrase: undefined
@@ -164,24 +165,6 @@
             }
             message.panel = panelnum;
             return false;
-        };
-
-        vm.toggleRowSelect = function(row) {
-            if (row.submittedForRetrial || row.resolved) {
-                return;
-            }
-
-            row.selected = !row.selected;
-
-            vm.updateSelectedIdsWithMessage(row);
-        };
-
-        vm.updateSelectedIdsWithMessage = function (row) {
-            if (row.selected) {
-                vm.selectedIds.push(row.id);
-            } else {
-                vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
-            }
         };
 
         vm.retrySelected = function () {
@@ -280,6 +263,7 @@
             vm.pendingRetryMessages = [];
             vm.page = 1;
             vm.selectedIds = [];
+            vm.multiselection = {};
             vm.pendingRetryMessages.forEach(function (item) {
                 item.selected = false;
             });

@@ -20,6 +20,7 @@
         var notifier = notifyService();
 
         vm.selectedIds = [];
+        vm.multiselection = {};
 
         vm.stats = sharedDataService.getstats();
 
@@ -143,23 +144,6 @@
             }
             message.panel = panelnum;
             return false;
-        };
-
-        vm.toggleRowSelect = function (row) {
-            if (row.retried || row.archived) {
-                return;
-            }
-
-            row.selected = !row.selected;
-            vm.updateSelectedIdsWithMessage(row);
-        };
-
-        vm.updateSelectedIdsWithMessage = function (row) {
-            if (row.selected) {
-                vm.selectedIds.push(row.id);
-            } else {
-                vm.selectedIds.splice(vm.selectedIds.indexOf(row.id), 1);
-            }
         };
 
         vm.unarchiveSelected = function () {
