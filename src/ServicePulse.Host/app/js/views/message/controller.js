@@ -149,8 +149,12 @@
                 updateMessageDeleteDate(message, vm.error_retention_period);
                 vm.message = message;
             },
-                function() {
-                    vm.message = null;
+                function (response) {
+                    if (response.status === 404) {
+                        vm.message = { notFound: true };
+                    } else {
+                        vm.message = { error: true };
+                    }
                 });
         };
 
