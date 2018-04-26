@@ -1,10 +1,12 @@
 ﻿<div class="row">
     <div class="col-sm-12">
         <div class="tabs">
-            <h5 ng-class="{ active: isActive('/failed-messages/groups') }"><a href="#/failedGroups">Failed message groups</a> <span class="badge badge-important">
-                <span ng-hide="counters.message === 0" tooltip="There's varying numbers of failed message groups depending on group type">!</span>
-                <span ng-show="counters.message === 0">0</span>
-            </span></h5>
+            <h5 ng-class="{ active: isActive('/failed-messages/groups') }">
+                <a href="#/failedGroups">Failed message groups</a> <span class="badge badge-important">
+                    <span ng-hide="counters.message == 0" tooltip="There's varying numbers of failed message groups depending on group type">!</span>
+                    <span ng-show="counters.message == 0">0</span>
+                </span>
+            </h5>
             <h5 ng-class="{ active: isActive('/failed-messages/all') }"><a ng-click="viewExceptionGroup()">All failed messages</a> <span ng-show="counters.message > 0" class="badge badge-important">{{counters.message | largeNumber:0}}</span></h5>
             <h5 ng-class="{ active: isActive('/failed-messages/archived') }"><a href="#/failed-messages/archived">Archived messages ({{counters.archived | largeNumber:0}})</a></h5>
             <h5 ng-show="{{showPendingRetry}}" ng-class="{ active: isActive('/failed-messages/pending-retries') }"><a href="#/failed-messages/pending-retries">Pending retries ({{counters.pendingRetries | largeNumber:0}})</a></h5>
