@@ -48,7 +48,8 @@
                                 plot-height="200"
                                 first-series-color="#EA7E00"
                                 first-series-fill-color="#EADDCE"
-                                class="large-graph pull-left"></large-graph>
+                                class="large-graph pull-left">
+                </large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="row queue-length-values tooltip-trigger">
@@ -81,17 +82,18 @@
             <div class="col-sm-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
                 <!-- here goes diagram -->
                 <large-graph ng-if="endpoint.metricDetails.metrics.throughput"
-                                first-data-series="endpoint.metricDetails.metrics.throughput"
-                                second-data-series="endpoint.metricDetails.metrics.retries"
-                                xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
-                                minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
-                                plot-width="750"
-                                plot-height="200"
-                                first-series-color="#176397"
-                                first-series-fill-color="#CADCE8"
-                                second-series-color="#CC1252"
-                                second-series-fill-color="#E9C4D1"
-                                class="large-graph pull-left"></large-graph>
+                             first-data-series="endpoint.metricDetails.metrics.throughput"
+                             second-data-series="endpoint.metricDetails.metrics.retries"
+                             xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#176397"
+                             first-series-fill-color="#CADCE8"
+                             second-series-color="#CC1252"
+                             second-series-fill-color="#E9C4D1"
+                             class="large-graph pull-left">
+                </large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding throughput-values">
@@ -141,18 +143,19 @@
             <div class="col-sm-4 no-side-padding list-section graph-area graph-critical-processing-times">
                 <!-- here goes diagram -->
                 <large-graph ng-if="endpoint.metricDetails.metrics.processingTime"
-                                first-data-series="endpoint.metricDetails.metrics.criticalTime"
-                                second-data-series="endpoint.metricDetails.metrics.processingTime"
-                                xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
-                                minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
-                                plot-width="750"
-                                plot-height="200"
-                                first-series-color="#2700CB"
-                                first-series-fill-color="#C4BCE5"
-                                second-series-color="#258135"
-                                second-series-fill-color="#BEE6C5"
-                                is-duration-graph="true"
-                                class="large-graph pull-left"></large-graph>
+                             first-data-series="endpoint.metricDetails.metrics.criticalTime"
+                             second-data-series="endpoint.metricDetails.metrics.processingTime"
+                             xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#2700CB"
+                             first-series-fill-color="#C4BCE5"
+                             second-series-color="#258135"
+                             second-series-fill-color="#BEE6C5"
+                             is-duration-graph="true"
+                             class="large-graph pull-left">
+                </large-graph>
 
                 <div class="col-sm-12 no-side-padding graph-values">
                     <div class="col-sm-6 no-side-padding processing-time-values">
