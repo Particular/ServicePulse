@@ -147,26 +147,6 @@
             toastService.showInfo(messageId + ' copied to clipboard');
         };
 
-        vm.togglePanel = function(message, panelnum) {
-            if (!angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message.message_id).then(function(msg) {
-                    message.messageBody = msg.data;
-                }, function() {
-                    message.bodyUnavailable = "message body unavailable";
-                });
-            }
-
-            if (!angular.isDefined(message.messageHeaders)) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function(msg) {
-                    message.messageHeaders = msg.data[0].headers;
-                }, function() {
-                    message.headersUnavailable = "message headers unavailable";
-                });
-            }
-            message.panel = panelnum;
-            return false;
-        };
-
         vm.retrySelected = function () {
             vm.loadingData = true;
             pendingRetryService.retryPendingRetriedMessages(vm.selectedIds).then(function() {
@@ -341,7 +321,7 @@
 
         vm.loadMoreResults = function() {
             vm.allMessagesLoaded = vm.pendingRetryMessages.length >= vm.total;
-
+             
             if (vm.allMessagesLoaded || vm.loadingData) {
                 return;
             }

@@ -47,7 +47,7 @@
         };
 
         vm.togglePanel = function (message, panelnum) {
-            if (!message)
+            if (message.notFound || message.error)
                 return false;
 
             if (!angular.isDefined(message.messageHeaders)) {
