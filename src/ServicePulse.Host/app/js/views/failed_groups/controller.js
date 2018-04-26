@@ -160,11 +160,11 @@
                 });
         };
 
-        var saveSelectedClassification = (classification) => {
+        var saveSelectedClassification = function(classification) {
             $cookies.put("failed_groups_classification", classification);
         };
 
-        var getDefaultClassification = (classifiers) => {
+        var getDefaultClassification = function(classifiers) {
             var storedClassification = $cookies.get("failed_groups_classification");
 
             if (typeof storedClassification === "undefined") {
