@@ -77,10 +77,10 @@
                         <div class="row">
                                 <div class="col-sm-2 col-xl-7 endpoint-name name-overview">
                                     <div class="row box-header">
-                                        <div class="col-lg-max-8 no-side-padding lead">
-                                            <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">{{endpoint.name}}</a>
+                                        <div class="col-lg-9 no-side-padding lead">
+                                            <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">{{endpoint.name | truncate}}</a>
                                         </div>
-                                        <div class="col-lg-5 no-side-padding endpoint-status">
+                                        <div class="col-lg-4 no-side-padding endpoint-status">
                                             <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                                 <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                             </span>

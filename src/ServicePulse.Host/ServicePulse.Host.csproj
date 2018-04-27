@@ -99,6 +99,7 @@
     <Content Include="app\js\directives\ui.particular.configurationTabs.js" />
     <Content Include="app\modules\modules.webpackconfig.builder.js" />
     <Content Include="app\modules\monitoring\js\constant.diagrams.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.truncate.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.graphdecimal.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.graphduration.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.largeGraph.js" />
