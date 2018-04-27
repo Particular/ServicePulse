@@ -101,6 +101,9 @@
                 }).selectMany(function(endpoints) {
                     return endpoints.data;
                 }).subscribe(function (endpoint) {
+                    if (endpoint.operation_status === 'ArchiveCompleted') {
+                        return;
+                    }
                     var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.title });
                     if (index >= 0) {
                         $scope.endpoints[index].serviceControlId = endpoint.id;
