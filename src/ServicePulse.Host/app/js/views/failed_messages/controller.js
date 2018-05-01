@@ -47,11 +47,11 @@
             vm.total = data;
         }, 'MessageFailuresUpdated');
 
-        var setSortButtonText = (sort, direction) => {
+        var setSortButtonText = function(sort, direction) {
             vm.sortButtonText = (sort === 'message_type' ? "Message Type" : "Time of Failure") + " " + (direction === 'asc' ? "ASC" : "DESC");
         };
 
-        var saveSortOption = (sort, direction) => {
+        var saveSortOption = function(sort, direction) {
             $cookies.put('failed_messages_sort', sort);
             $cookies.put('failed_messages_direction', direction);
         };
@@ -71,7 +71,7 @@
             vm.loadingData = false;
         };
 
-        var loadGroupDetails = () => {
+        var loadGroupDetails = function() {
             if (vm.selectedExceptionGroup.initialLoad && vm.selectedExceptionGroup.id) {
                     serviceControlService.getExceptionGroup(vm.selectedExceptionGroup.id).then(function (result) {
                         vm.selectedExceptionGroup.title = result.data.title;
@@ -79,7 +79,7 @@
             }
         };
 
-        var getDefaultSort = () => {
+        var getDefaultSort = function() {
             var sort = $cookies.get("failed_messages_sort");
             var direction = $cookies.get("failed_messages_direction");
 
