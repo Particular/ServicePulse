@@ -82,7 +82,7 @@
         }
 
         function getContentType(headers) {
-            return headers.find((element) => element.key === 'NServiceBus.ContentType').value;
+            return headers.find(function (element) { return element.key === 'NServiceBus.ContentType'; }).value;
         }
 
         vm.retryMessage = function () {

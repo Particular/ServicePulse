@@ -111,8 +111,6 @@
             toastService.showInfo(messageId + ' copied to clipboard');
         };
 
-        
-
         vm.retrySelected = function () {
             toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
             serviceControlService.retryFailedMessages(vm.selectedIds)

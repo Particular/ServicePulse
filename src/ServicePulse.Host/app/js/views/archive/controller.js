@@ -74,12 +74,12 @@
             vm.loadingData = false;
         };
 
-        var saveSelectedArchiveGroup = (amount, unit) => {
+        var saveSelectedArchiveGroup = function (amount, unit) {
             $cookies.put('archive_amount', amount);
             $cookies.put('archive_unit', unit);
         };
 
-        var getSelectedArchiveGroup = () => {
+        var getSelectedArchiveGroup = function () {
             var amount = $cookies.get("archive_amount");
             var unit = $cookies.get("archive_unit");
 
