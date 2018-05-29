@@ -2182,3 +2182,8 @@ div.alert.alert-warning i.fa.fa-warning {
 div.alert.alert-warning strong {
     text-transform: uppercase;
 }
+
+.sticky-warning.alert.alert-warning {
+    font-size: 16px;
+    margin-bottom: 32px;
+}
