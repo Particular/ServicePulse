@@ -10,6 +10,7 @@
 </div>
 
 <div class="container">
+    <reindexingstatus></reindexingstatus>
 
     <div class="row">
         <div class="col-sm-12">
@@ -23,10 +24,10 @@
                                 <span ng-show="failedheartbeats > 0" class="badge badge-important">{{failedheartbeats | largeNumber:0}}</span>
                                 <h4>
                                     Heartbeats
-                                    
+
                                 </h4>
                             </a>
-                       
+
                         </div>
                         <div class="col-sm-4">
                             <a class="summary-item" ng-class="{  'summary-danger'  : failedmessages > 0 , 'summary-info' : failedmessages === 0 || !failedmessages }" href="#/failed-messages/groups">
@@ -34,7 +35,7 @@
                                 <span ng-show="failedmessages > 0" class="badge badge-important">{{failedmessages | largeNumber:0}}</span>
                                 <h4>
                                     Failed Messages
-                                    
+
                                 </h4>
                             </a>
                         </div>
@@ -44,12 +45,12 @@
                                 <span ng-show="failedcustomchecks > 0" class="badge badge-important">{{failedcustomchecks | largeNumber:0}}</span>
                                 <h4>
                                     Custom Checks
-                                    
+
                                 </h4>
                             </a>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
 
