@@ -8,6 +8,7 @@
         $timeout,
         $location,
         $window,
+        $rootScope,
         serviceControlService,
         version,
         toastService,
@@ -142,6 +143,12 @@
 
         notifier.subscribe($scope, function (event, data) {
             toastService.showInfo(data);
+
+            if (data === 'ServiceControl is busy recreating indexes after a database upgrade...') {
+                $rootScope.busyReindexingDatabase = true;
+            } else if (data === 'Reindexing after database upgrade has completed.') {
+                $rootScope.busyReindexingDatabase = false;
+            }
         }, 'reindexing');
 
         // signalR Listener
@@ -256,6 +263,7 @@
         '$timeout',
         '$location',
         '$window',
+        '$rootScope',
         'serviceControlService',
         'version',
         'toastService',

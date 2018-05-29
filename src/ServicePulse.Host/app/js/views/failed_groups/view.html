@@ -1,4 +1,5 @@
 ﻿<div class="container">
+    <reindexingstatus></reindexingstatus>
 
     <section name="message_groups">
 
@@ -9,7 +10,7 @@
                 <h6>
                     <span class="no-link-underline" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
                     <span class="fake-link" aria-hidden="true" ng-show="!vm.showHistoricRetries"><i class="fa fa-angle-right" aria-hidden="true"></i> </span>
-                    <a type="button" ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 completed retry requests</a>
+                    <a ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 completed retry requests</a>
                 </h6>
             </div>
             <div class="col-sm-12 no-mobile-side-padding" ng-show="vm.showHistoricRetries">
@@ -68,7 +69,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
-                 <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+                <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
             </div>
         </div>
 

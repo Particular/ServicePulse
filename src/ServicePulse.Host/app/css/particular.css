@@ -163,6 +163,12 @@ footer {
     transition: box-shadow 0.25s ease 0s;
 }
 
+.box.bg-warning {
+    background-color: #fcf8e3;
+    margin-bottom: 1em;
+    border: 0px;
+}
+
 .fa {
     color: #929e9e;
 }

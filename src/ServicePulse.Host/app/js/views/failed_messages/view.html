@@ -1,9 +1,10 @@
 ﻿<div class="container">
+    <reindexingstatus></reindexingstatus>
+
     <section name="failed_messages">
         <div ng-show="!vm.selectedExceptionGroup.id">
             <failed-message-tabs></failed-message-tabs>
         </div>
-
 
         <div class="row" ng-show="vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
             <div class="col-sm-12">
@@ -32,7 +33,7 @@
                     <button type="button" class="btn btn-default" confirm-title="Are you sure you want to archive the selected messages?" confirm-message="If you archive, these messages won't be available for retrying unless they're later unarchived." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-archive"></i> Archive {{vm.selectedIds.length | number}} selected</button>
                     <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
                     <button type="button" class="btn btn-default" ng-show="vm.selectedExceptionGroup.id" confirm-title="Are you sure you want to archive this group?" confirm-message="If you archive, the messages in the group won't be available for retrying unless they're later unarchived." confirm-click="vm.archiveExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-archive"></i> Archive all</button>
-                    
+
                     <div class="msg-group-menu dropdown msg-list-dropdown">
                         <label class="control-label">Sort by:</label>
                         <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -62,9 +63,9 @@
         <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.failedMessages">
-                    
+
                     <multi-checkboxlist messages="vm.failedMessages" selected-ids="vm.selectedIds" message="message" multiselection="vm.multiselection"></multi-checkboxlist>
-                    
+
                     <div class="col-xs-11 failed-message-data" ng-mouseenter="message.hover2 = true" ng-mouseleave="message.hover2 = false">
                         <a href="#/failed-messages/message/{{message.id}}">
 
@@ -78,7 +79,7 @@
                                                 <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
                                                 <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning metadata-label">Archived</span>
                                                 <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{message.number_of_processing_attempts}} Retry Failures</span>
-                                                
+
                                                 <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{message.time_of_failure}}"></sp-moment></span>
                                                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
                                                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
