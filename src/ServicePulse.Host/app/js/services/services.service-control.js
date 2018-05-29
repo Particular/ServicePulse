@@ -294,6 +294,12 @@
             return $http.get(url);
         }
 
+        function isBusyUpgradingIndexes() {
+            var url = uri.join(scConfig.service_control_url, 'upgrade');
+
+            return $http.get(url);
+        }
+
         var service = {
             getVersion: getVersion,
             checkLicense: checkLicense,
@@ -326,7 +332,8 @@
             getHeartbeatStats: getHeartbeatStats,
             loadQueueNames: loadQueueNames,
             acknowledgeGroup: acknowledgeGroup,
-            getFailedMessageById: getFailedMessageById
+            getFailedMessageById: getFailedMessageById,
+            isBusyUpgradingIndexes: isBusyUpgradingIndexes
         };
 
         return service;
