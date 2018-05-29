@@ -2183,7 +2183,8 @@ div.alert.alert-warning strong {
     text-transform: uppercase;
 }
 
-.sticky-warning.alert.alert-warning {
+.sticky-warning.alert.alert-warning,
+.alert.alert-warning {
     font-size: 16px;
     margin-bottom: 32px;
 }
