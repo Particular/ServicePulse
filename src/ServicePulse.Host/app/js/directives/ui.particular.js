@@ -19,6 +19,7 @@
         'ui.particular.largeGraph',
         'ui.particular.duration',
         'ui.particular.graphduration',
+        'ui.particular.truncate',
         'ui.particular.graphdecimal',
         'ui.particular.multicheckboxList',
         'ui.particular.reindexingstatus',

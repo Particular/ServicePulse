@@ -9,7 +9,7 @@
         </div>
         <div class="col-sm-9 no-side-padding list-section">
             <h1>
-                {{endpointName}}
+                {{endpointName | truncate}}
                 <div class="endpoint-status">
                     <span ng-if="endpoint.isStale" class="warning">
                         <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
