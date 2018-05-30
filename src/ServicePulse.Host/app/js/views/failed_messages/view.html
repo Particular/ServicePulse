@@ -41,16 +41,16 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a>
                             </li>
                             <li>
-                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a>
                             </li>
                             <li>
-                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_of_failure', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Of Failure (ascending)</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'time_of_failure', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Of Failure (ascending)</a>
                             </li>
                             <li>
-                                <a href="javascript://" ng-click="vm.selectGroup(vm.selectedExceptionGroup, 'time_of_failure', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Of Failure (descending)</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'time_of_failure', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Of Failure (descending)</a>
                             </li>
                         </ul>
                     </div>
