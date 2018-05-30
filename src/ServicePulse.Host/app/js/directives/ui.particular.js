@@ -21,6 +21,7 @@
         'ui.particular.graphduration',
         'ui.particular.graphdecimal',
         'ui.particular.multicheckboxList',
+        'ui.particular.reindexingstatus',
     ]);
 
 } (window, window.angular));
