@@ -8,7 +8,7 @@
             <a href="/#/monitored_endpoints">All endpoints</a>
         </div>
         <div class="col-sm-9 no-side-padding list-section">
-            <h1>
+            <h1 uib-tooltip="{{endpointName}}">
                 {{endpointName}}
                 <div class="endpoint-status">
                     <span ng-if="endpoint.isStale" class="warning">
@@ -391,7 +391,7 @@
                                     <div class="col-sm-2 col-xl-8 endpoint-name">
                                         <div class="row box-header">
                                             <div class="col-lg-max-9 no-side-padding lead message-type-label">
-                                                <div class="lead">
+                                                <div class="lead" uib-tooltip="{{messageType.typeName}}">
                                                     {{messageType.typeName ? messageType.typeName : 'Unknown'}}
                                                 </div>
                                             </div>

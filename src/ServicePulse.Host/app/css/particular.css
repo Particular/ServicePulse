@@ -422,7 +422,9 @@ body {
     font-size: 14px !important;
     font-weight: bold;
     margin-bottom: 3px;
-    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .break {
