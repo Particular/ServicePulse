@@ -116,6 +116,7 @@
     <Content Include="app\js\directives\ui.particular.nodata.js" />
     <Content Include="app\js\directives\ui.particular.nodata.tpl.html" />
     <Content Include="app\js\services\services.historyperiods.js" />
+    <Content Include="app\modules\monitoring\js\services\services.messageTypeParser.js" />
     <Content Include="app\modules\shell\constant.moment.js" />
     <Content Include="app\js\services\constant.rxjs.js" />
     <Content Include="app\js\services\factory.shareddata.js" />

@@ -11,7 +11,8 @@
         'services.notifications',
         'services.exceptionHandler',
         'services.uri',
-        'services.endpoints'
+        'services.endpoints',
+        'services.messageTypeParser'
     ]);
 
 
