@@ -425,6 +425,20 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    direction: rtl;
+    text-align: left;
+}
+
+@supports (-ms-ime-align:auto) {
+    .message-type-label .lead {
+        direction: ltr;
+    }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .message-type-label .lead {
+        direction: ltr;
+    }
 }
 
 .break {
@@ -1827,6 +1841,11 @@ p.col-sort-active {
 
 .tooltip-inner {
     width: 200px;
+}
+
+.message-type-label .tooltip-inner {
+    width: auto;
+    max-width: 600px;
 }
 
 .endpoint-status {

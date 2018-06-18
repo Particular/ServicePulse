@@ -84,6 +84,7 @@
   <ItemGroup>
     <Content Include="app\css\animate-css\animate.css" />
     <Content Include="app\css\animate-css\animate.min.css" />
+    <Content Include="app\css\particular.ie.css" />
     <Content Include="app\css\particular.css" />
     <Content Include="app\img\endpoint-lost.svg" />
     <Content Include="app\img\endpoint.svg" />
