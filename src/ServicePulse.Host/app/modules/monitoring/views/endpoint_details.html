@@ -7,7 +7,7 @@
             <span class="fake-link" aria-hidden="true">&#9664;</span>
             <a href="/#/monitored_endpoints">All endpoints</a>
         </div>
-        <div class="col-sm-9 no-side-padding list-section">
+        <div class="col-sm-9 no-side-padding list-section righ-side-ellipsis">
             <h1 uib-tooltip="{{endpointName}}">
                 {{endpointName}}
                 <div class="endpoint-status">
@@ -221,7 +221,7 @@
                 <busy ng-show="loading" message="Loading details"></busy>
 
                 <div ng-show="!loading" class="row box box-no-click table-head-row">
-                    <div class="col-sm-2 col-xl-8">
+                    <div class="col-sm-4 col-xl-8">
                         <div class="row box-header">
                             <div class="col-sm-12">
                                 Instance Name
@@ -263,9 +263,9 @@
                         <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
                             <div class="col-sm-12 no-side-padding">
                                 <div class="row">
-                                    <div class="col-sm-2 col-xl-8 endpoint-name">
+                                    <div class="col-sm-4 col-xl-8 endpoint-name">
                                         <div class="row box-header">
-                                            <div class="col-lg-max-9 no-side-padding lead">
+                                            <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis">
                                                 {{instance.name}}
                                             </div>
                                             <div class="col-lg-4 endpoint-status">
@@ -346,7 +346,7 @@
                 <busy ng-show="loading" message="Loading details"></busy>
 
                 <div ng-show="!loading" class="row box box-no-click table-head-row">
-                    <div class="col-sm-2 col-xl-8">
+                    <div class="col-sm-4 col-xl-8">
                         <div class="row box-header">
                             <div class="col-sm-12">
                                 Message type name
@@ -388,9 +388,9 @@
                         <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes">
                             <div class="col-sm-12 no-side-padding">
                                 <div class="row">
-                                    <div class="col-sm-2 col-xl-8 endpoint-name">
+                                    <div class="col-sm-4 col-xl-8 endpoint-name">
                                         <div class="row box-header">
-                                            <div class="col-lg-max-9 no-side-padding lead message-type-label">
+                                            <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
                                                 <div class="lead" uib-tooltip-html="messageType.tooltipText">
                                                     {{messageType.typeName ? messageType.typeName : 'Unknown'}}
                                                 </div>

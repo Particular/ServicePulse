@@ -1,4 +1,4 @@
 ﻿/*Hack to keep the default ellipsis on monitoring details screen for message types.*/
-.message-type-label .lead {
+.righ-side-ellipsis {
     direction: ltr;
 }
