@@ -2215,3 +2215,8 @@ div.alert.alert-warning strong {
     font-size: 16px;
     margin-bottom: 32px;
 }
+
+.lead.righ-side-ellipsis {
+    color: #00729C !important;
+}
+
