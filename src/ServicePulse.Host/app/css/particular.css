@@ -1846,7 +1846,7 @@ p.col-sort-active {
     width: 200px;
 }
 
-.message-type-label .tooltip-inner {
+.endpoint-row .tooltip-inner {
     width: auto;
     max-width: 600px;
 }

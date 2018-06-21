@@ -7,9 +7,9 @@
             <span class="fake-link" aria-hidden="true">&#9664;</span>
             <a href="/#/monitored_endpoints">All endpoints</a>
         </div>
-        <div class="col-sm-9 no-side-padding list-section righ-side-ellipsis">
+        <div class="col-sm-9 no-side-padding list-section">
             <h1 uib-tooltip="{{endpointName}}">
-                {{endpointName}}
+                <div class="righ-side-ellipsis">{{endpointName}}</div>
                 <div class="endpoint-status">
                     <span ng-if="endpoint.isStale" class="warning">
                         <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
@@ -388,10 +388,10 @@
                         <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes">
                             <div class="col-sm-12 no-side-padding">
                                 <div class="row">
-                                    <div class="col-sm-4 col-xl-8 endpoint-name">
+                                    <div class="col-sm-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
                                         <div class="row box-header">
                                             <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
-                                                <div class="lead" uib-tooltip-html="messageType.tooltipText">
+                                                <div class="lead" >
                                                     {{messageType.typeName ? messageType.typeName : 'Unknown'}}
                                                 </div>
                                             </div>
