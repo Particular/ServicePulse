@@ -12,7 +12,8 @@
         $filter,
         smallGraphsMinimumYAxis,
         largeGraphsMinimumYAxis,
-        connectivityNotifier
+        connectivityNotifier,
+        messageTypeParser
     ) {
 
         $scope.endpointName = $routeParams.endpointName;
@@ -78,7 +79,10 @@
                     });
 
                     $scope.loading = false;
-                    $scope.endpoint.messageTypes.forEach((messageType) => fillDisplayValues(messageType));
+                    $scope.endpoint.messageTypes.forEach((messageType) => {
+                        fillDisplayValues(messageType);
+                        messageTypeParser.parseTheMessageTypeData(messageType);
+                    });
 
                     $scope.endpoint.isStale = true;
                     $scope.endpoint.isScMonitoringDisconnected = false;
@@ -131,7 +135,8 @@
         '$filter',
         'smallGraphsMinimumYAxis',
         'largeGraphsMinimumYAxis',
-        'connectivityNotifier'
+        'connectivityNotifier',
+        'messageTypeParser'
     ];
 
     angular.module('endpoint_details')

@@ -422,7 +422,26 @@ body {
     font-size: 14px !important;
     font-weight: bold;
     margin-bottom: 3px;
-    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.righ-side-ellipsis {
+    direction: rtl;
+    text-align: left;
+}
+
+@supports (-ms-ime-align:auto) {
+    .righ-side-ellipsis {
+        direction: ltr;
+    }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .righ-side-ellipsis {
+        direction: ltr;
+    }
 }
 
 .break {
@@ -1827,6 +1846,11 @@ p.col-sort-active {
     width: 200px;
 }
 
+.endpoint-row .tooltip-inner {
+    width: auto;
+    max-width: 600px;
+}
+
 .endpoint-status {
     display: inline-block;
     position: absolute;
@@ -2000,7 +2024,7 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     color: #8C8C8C;
     font-weight: normal;
     font-size: 12px;
-    float: left;
+    display: inline-block;
 }
 
 i.fa-exclamation-triangle {
@@ -2106,6 +2130,9 @@ i.fa-exclamation-triangle {
 .row.message-type-properties {
     position: relative;
     top: -5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-overview {
@@ -2188,3 +2215,8 @@ div.alert.alert-warning strong {
     font-size: 16px;
     margin-bottom: 32px;
 }
+
+.lead.righ-side-ellipsis {
+    color: #00729C !important;
+}
+
