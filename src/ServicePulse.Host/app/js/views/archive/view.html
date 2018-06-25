@@ -18,16 +18,16 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="javascript://" ng-click="vm.selectTimeGroup()"><span class="fa fa-calendar" aria-hidden="true"></span> All Archived</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup()"><span class="fa fa-calendar" aria-hidden="true"></span> All Archived</a>
                             </li>
                             <li>
-                                <a href="javascript://" ng-click="vm.selectTimeGroup('2', 'hours')"><span class="fa fa-calendar" aria-hidden="true"></span> Archived in the last 2 Hours</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup('2', 'hours')"><span class="fa fa-calendar" aria-hidden="true"></span> Archived in the last 2 Hours</a>
                             </li>
                             <li>
-                                <a href="javascript://" ng-click="vm.selectTimeGroup('1', 'days')"><span class="fa fa-calendar" aria-hidden="true"></span> Archived in the last 1 Day</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup('1', 'days')"><span class="fa fa-calendar" aria-hidden="true"></span> Archived in the last 1 Day</a>
                             </li>
                             <li>
-                                <a href="javascript://" ng-click="vm.selectTimeGroup('7', 'days')"><span class="fa fa-calendar " aria-hidden="true"></span> Archived in the last 7 Days</a>
+                                <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup('7', 'days')"><span class="fa fa-calendar " aria-hidden="true"></span> Archived in the last 7 Days</a>
                             </li>
                         </ul>
                     </div>

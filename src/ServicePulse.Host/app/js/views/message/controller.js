@@ -46,6 +46,10 @@
             toastService.showInfo(messageId + ' copied to clipboard');
         };
 
+        vm.goBack = function () {
+            $window.history.go(-1);
+        };
+
         vm.togglePanel = function (message, panelnum) {
             if (message.notFound || message.error)
                 return false;

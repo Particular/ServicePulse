@@ -58,7 +58,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li ng-repeat="classifier in vm.availableClassifiers">
-                            <a href="javascript://" ng-click="vm.selectClassification(classifier)">{{classifier}}</a>
+                            <a href="#" ng-click="$event.preventDefault();vm.selectClassification(classifier)">{{classifier}}</a>
                         </li>
                     </ul>
                 </div>

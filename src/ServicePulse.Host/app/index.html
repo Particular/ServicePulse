@@ -5,7 +5,9 @@
     <style>
         /* This helps the ng-show/ng-hide animations start at the right place. */
         /* Since Angular has this but needs to load, this gives us the class early. */
-        .ng-hide { display: none !important; }
+        .ng-hide {
+            display: none !important;
+        }
     </style>
 
     <title page-title pattern="%s • ServicePulse"></title>
@@ -16,16 +18,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="shortcut icon" href="img/ServicePulse.ico">
-    
+
     <!-- 3rd Party Library Styles -->
     <link rel="stylesheet" href="modules/dist/vendor.css">
-     
+
     <!-- Particular Styles -->
     <link rel="stylesheet" href="css/particular.css">
     <!--[if lt IE 9 ]>
         <script type="text/javascript">
             window.location = 'NoIE.html';
         </script>
+    <![endif]-->
+    <!--[if IE]>
+        <link rel="stylesheet" href="css/particular.ie.css">
     <![endif]-->
 
 </head>

@@ -37,16 +37,16 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectTimeGroup()">All Pending Retries</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup()">All Pending Retries</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectTimeGroup('2', 'hours')">Retried in the last 2 Hours</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup('2', 'hours')">Retried in the last 2 Hours</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectTimeGroup('1', 'days')">Retried in the last 1 Day</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup('1', 'days')">Retried in the last 1 Day</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectTimeGroup('7', 'days')">Retried in the last 7 Days</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectTimeGroup('7', 'days')">Retried in the last 7 Days</a>
                                     </li>
                                 </ul>
                             </div>
@@ -61,22 +61,22 @@
                                 </button>
                                 <ul class="dropdown-menu pull-right">
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectGroup('message_type', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Message Type</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectGroup('message_type', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Message Type</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectGroup('message_type', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Message Type</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectGroup('message_type', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Message Type</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectGroup('time_of_failure', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Failure</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectGroup('time_of_failure', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Failure</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectGroup('time_of_failure', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Failure</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectGroup('time_of_failure', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Failure</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectGroup('last_modified', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Retry request</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectGroup('last_modified', 'asc')"><span class="fa fa-long-arrow-down" aria-hidden="true"></span> Time Of Retry request</a>
                                     </li>
                                     <li>
-                                        <a href="javascript://" ng-click="vm.selectGroup('last_modified', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Retry request</a>
+                                        <a href="#" ng-click="$event.preventDefault();vm.selectGroup('last_modified', 'desc')"><span class="fa fa-long-arrow-up" aria-hidden="true"></span> Time Of Retry request</a>
                                     </li>
                                 </ul>
                             </div>

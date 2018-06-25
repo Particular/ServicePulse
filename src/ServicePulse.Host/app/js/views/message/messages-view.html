@@ -4,7 +4,7 @@
     <section name="failed_message">
         <div class="row">
             <div class="col-sm-12">
-                <div><span class="fake-link">&#9664;</span> <a href="javascript:javascript:history.go(-1)">BACK</a></div>
+                <div><span class="fake-link">&#9664;</span> <a href="#" ng-click="$event.preventDefault();vm.goBack();">BACK</a></div>
                 <div ng-show="vm.message" class="active break group-title"><h1 class="message-type-title">{{vm.message.message_type}}</h1></div>
             </div>
         </div>
