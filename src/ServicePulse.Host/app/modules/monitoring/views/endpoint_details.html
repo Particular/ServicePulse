@@ -7,23 +7,22 @@
             <span class="fake-link" aria-hidden="true">&#9664;</span>
             <a href="/#/monitored_endpoints">All endpoints</a>
         </div>
-        <div class="col-sm-9 no-side-padding list-section">
-            <h1>
+        <div class="col-sm-9 no-side-padding list-section ">
+            <h1 class="righ-side-ellipsis col-lg-max-8" uib-tooltip="{{endpointName}}">
                 {{endpointName}}
-                <div class="endpoint-status">
-                    <span ng-if="endpoint.isStale" class="warning">
-                        <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
-                    </span>
-                    <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
-                        <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
-                    </span>
-                    <a ng-if="endpoint.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{endpoint.serviceControlId}}">
-                        <i class="fa fa-envelope" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list."></i>
-                        <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
-                    </a>
-                </div>
-
             </h1>
+            <div class="endpoint-status col-lg-2">
+                <span ng-if="endpoint.isStale" class="warning">
+                    <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
+                </span>
+                <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                    <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                </span>
+                <a ng-if="endpoint.errorCount" class="warning" href="#/failed-messages/groups/{{endpointName}}/{{sourceIndex}}/{{endpoint.serviceControlId}}">
+                    <i class="fa fa-envelope" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list."></i>
+                    <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
+                </a>
+            </div>
         </div>
         <div class="col-sm-3 no-side-padding toolbar-menus">
             <ul class="nav nav-pills period-selector">
