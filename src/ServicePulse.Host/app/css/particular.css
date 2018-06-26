@@ -2192,6 +2192,11 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
         max-width: 76%;
         float: left;
     }
+
+    .col-lg-max-10 {
+        max-width: 88%;
+        float: left;
+    }
 }
 
 section[name="message_groups"] .list-section {
