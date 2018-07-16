@@ -72,8 +72,7 @@
             function(formatter) {
                 return {
                     restrict: 'E',
-                    scope: {                        
-                        dates: '=xaxisPoints',
+                    scope: {
                         firstDataSeries: '=firstDataSeries',
                         secondDataSeries: '=secondDataSeries',
                         isDurationGraph: '=isDurationGraph',
@@ -111,8 +110,10 @@
                             var firstSeries = scope.firstDataSeries;
                             var secondSeries = scope.secondDataSeries;
 
+                            var amountOfValues = Math.max(firstSeries.points.length, secondSeries ? secondSeries.points.length : 0);
+
                             var scaleX = d3.scaleLinear()
-                                .domain([0, firstSeries.points.length - 1])
+                                .domain([0, amountOfValues - 1])
                                 .range([leftMargin, width]);
 
                             chart.append('rect')
