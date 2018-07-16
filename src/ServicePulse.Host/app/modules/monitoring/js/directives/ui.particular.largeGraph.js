@@ -123,7 +123,7 @@
                                 .attr('fill', '#F2F6F7');
 
                             var minimumYaxis = !isNaN(scope.minimumYaxis) ? Number(scope.minimumYaxis) : 10;
-                            var max = Math.max(firstSeries.average, d3.max(firstSeries.points), minimumYaxis);
+                            var max = Math.max(firstSeries.average, firstSeries.points.length > 0 ? d3.max(firstSeries.points) : 0, minimumYaxis);
 
                             if (secondSeries && secondSeries.points.length > 0) {
                                 max = Math.max(max, secondSeries.average, d3.max(secondSeries.points));
