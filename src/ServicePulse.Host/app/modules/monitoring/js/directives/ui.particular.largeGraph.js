@@ -72,8 +72,7 @@
             function(formatter) {
                 return {
                     restrict: 'E',
-                    scope: {                        
-                        dates: '=xaxisPoints',
+                    scope: {
                         firstDataSeries: '=firstDataSeries',
                         secondDataSeries: '=secondDataSeries',
                         isDurationGraph: '=isDurationGraph',
@@ -111,8 +110,10 @@
                             var firstSeries = scope.firstDataSeries;
                             var secondSeries = scope.secondDataSeries;
 
+                            var amountOfValues = Math.max(firstSeries.points.length, secondSeries ? secondSeries.points.length : 0);
+
                             var scaleX = d3.scaleLinear()
-                                .domain([0, firstSeries.points.length - 1])
+                                .domain([0, amountOfValues - 1])
                                 .range([leftMargin, width]);
 
                             chart.append('rect')
@@ -122,7 +123,7 @@
                                 .attr('fill', '#F2F6F7');
 
                             var minimumYaxis = !isNaN(scope.minimumYaxis) ? Number(scope.minimumYaxis) : 10;
-                            var max = Math.max(firstSeries.average, d3.max(firstSeries.points), minimumYaxis);
+                            var max = Math.max(firstSeries.average, firstSeries.points.length > 0 ? d3.max(firstSeries.points) : 0, minimumYaxis);
 
                             if (secondSeries && secondSeries.points.length > 0) {
                                 max = Math.max(max, secondSeries.average, d3.max(secondSeries.points));

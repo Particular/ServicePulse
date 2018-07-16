@@ -41,7 +41,6 @@
                 <!-- here goes diagram -->
                 <large-graph ng-if="endpoint.metricDetails.metrics.queueLength"
                                 first-data-series="endpoint.metricDetails.metrics.queueLength"
-                                xAxis-points="endpoint.metricDetails.metrics.queueLength.timeAxisValues"
                                 minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
                                 plot-width="750"
                                 plot-height="200"
@@ -79,7 +78,6 @@
                 <large-graph ng-if="endpoint.metricDetails.metrics.throughput"
                              first-data-series="endpoint.metricDetails.metrics.throughput"
                              second-data-series="endpoint.metricDetails.metrics.retries"
-                             xAxis-points="endpoint.metricDetails.metrics.throughput.timeAxisValues"
                              minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
                              plot-width="750"
                              plot-height="200"
@@ -140,7 +138,6 @@
                 <large-graph ng-if="endpoint.metricDetails.metrics.processingTime"
                              first-data-series="endpoint.metricDetails.metrics.criticalTime"
                              second-data-series="endpoint.metricDetails.metrics.processingTime"
-                             xAxis-points="endpoint.metricDetails.metrics.criticalTime.timeAxisValues"
                              minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
                              plot-width="750"
                              plot-height="200"
