@@ -27,7 +27,7 @@
         <div class="col-sm-3 no-side-padding toolbar-menus">
             <ul class="nav nav-pills period-selector">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                    <a ng-click="selectPeriod(period)" href="#/endpoint_details/{{endpointName}}/{{sourceIndex}}?historyPeriod={{period.value}}">{{period.text}}</a>
+                    <a ng-click="selectPeriod(period)" href="" ng-href="{{buildUrl(period.value)}}">{{period.text}}</a>
                 </li>
             </ul>
         </div>
@@ -202,10 +202,10 @@
     <busy ng-show="loading" message="Loading details"></busy>
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdown = false" class="ng-binding">Message Types</a>
+            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, 'messageTypeBreakdown')}}" class="ng-binding">Message Types</a>
         </h5>
         <h5 ng-class="{active: showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdown = true" class="ng-binding">Instances</a>
+            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, 'instancesBreakdown')}}" class="ng-binding">Instances</a>
         </h5>
     </div>
 

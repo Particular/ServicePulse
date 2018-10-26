@@ -18,8 +18,8 @@
 
         $scope.endpointName = $routeParams.endpointName;
         $scope.sourceIndex = $routeParams.sourceIndex;
+        $scope.showInstancesBreakdown = $routeParams.tab === 'instancesBreakdown'; 
         $scope.loading = true;
-        $scope.showInstancesBreakdown = false;
         $scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
 
@@ -40,6 +40,14 @@
                     destination[propName] = source[propName];
                 }
             }
+        }
+
+        $scope.buildUrl = function (selectedPeriodValue, showInstancesBreakdownTab) {
+            return `#/endpoint_details/${$scope.endpointName}/${$scope.sourceIndex}?historyPeriod=${selectedPeriodValue}&tab=${$scope.showInstancesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown'}`;
+        }
+
+        $scope.showInstancesBreakdownTab = function(isVisible) {
+            $scope.showInstancesBreakdown = isVisible;
         }
 
         function updateUI() {
