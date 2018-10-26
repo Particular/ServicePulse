@@ -48,7 +48,7 @@
 
         $scope.showInstancesBreakdownTab = function(isVisible) {
             $scope.showInstancesBreakdown = isVisible;
-        }
+        };
 
         function updateUI() {
             if (subscription) {
