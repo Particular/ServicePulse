@@ -253,6 +253,8 @@
                         </div>
                     </div>
                 </div>
+                
+                <no-data ng-show="endpoint.instances.length == 0" message="No messages processed in this period of time."></no-data>
 
                 <div class="row">
                     <div class="col-sm-12 no-side-padding">
@@ -378,6 +380,8 @@
                         </div>
                     </div>
                 </div>
+                
+                <no-data ng-show="endpoint.messageTypes.length == 0" message="No messages processed in this period of time."></no-data>
 
                 <div class="row">
                     <div class="col-sm-12 no-side-padding">
