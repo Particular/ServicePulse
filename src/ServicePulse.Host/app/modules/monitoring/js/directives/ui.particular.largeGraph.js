@@ -110,8 +110,10 @@
                             var firstSeries = scope.firstDataSeries;
                             var secondSeries = scope.secondDataSeries;
 
-                            var amountOfValues = Math.max(firstSeries.points.length, secondSeries ? secondSeries.points.length : 0);
-
+                            var amountOfValues = Math.max(firstSeries.points.length, secondSeries ? secondSeries.points.length : 0) || 10;
+                            if (firstSeries.points.length === 0) {
+                                firstSeries.points = new Array(amountOfValues).fill(0);
+                            }
                             var scaleX = d3.scaleLinear()
                                 .domain([0, amountOfValues - 1])
                                 .range([leftMargin, width]);
