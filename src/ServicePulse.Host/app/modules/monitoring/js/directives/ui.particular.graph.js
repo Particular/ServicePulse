@@ -14,6 +14,9 @@
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         scope.plotData = scope.plotData || { points: [], average: 0 };
+                        if (scope.plotData.points.length === 0) {
+                            scope.plotData.points = new Array(10).fill(0);
+                        }
 
                         scope.$watch('plotData',
                             function() {
