@@ -1590,28 +1590,28 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
 }
 
 .table-head-row .col-xl-7, .endpoint-row .col-xl-7 {
-    width: 20% !important;
+    width: 20%;
 }
 
 .table-head-row .col-xl-8, .endpoint-row .col-xl-8 {
-    width: 36% !important;
+    width: 36%;
 }
 
 .table-head-row .col-xl-1, .endpoint-row .col-xl-1 {
-    width: 16% !important;
+    width: 16%;
 }
 
 @media only screen and (min-width: 1730px) {
     .table-head-row .col-xl-7, .endpoint-row .col-xl-7 {
-        width: 30% !important;
+        width: 30%;
     }
 
     .table-head-row .col-xl-8, .endpoint-row .col-xl-8 {
-        width: 44% !important;
+        width: 44%;
     }
 
     .table-head-row .col-xl-1, .endpoint-row .col-xl-1 {
-        width: 14% !important;
+        width: 14%;
     }
 }
 
