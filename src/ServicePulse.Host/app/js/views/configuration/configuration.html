@@ -22,7 +22,7 @@
                 <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
-                            <div class="col-xs-3 col-sm-2 col-lg-1">
+                            <div class="col-xs-1">
                                 <div class="onoffswitch">
                                     <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" class="onoffswitch-checkbox" ng-click="update(e.id, !e.monitor_heartbeat)" ng-checked="e.monitor_heartbeat">
                                     <label class="onoffswitch-label" for="onoffswitch{{$id}}">
