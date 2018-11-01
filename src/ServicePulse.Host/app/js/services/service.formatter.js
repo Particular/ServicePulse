@@ -24,7 +24,7 @@
                 return time;
             } else if (duration >= secondDuration) {
                 time.value = duration.format('ss');
-                time.unit = 's';
+                time.unit = 'sec';
                 return time;
             } else {
                 time.value = duration.format('s,SSS');
