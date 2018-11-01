@@ -10,7 +10,7 @@
             <div class="col-sm-12">
                 <div>
                     <span class="fake-link" aria-hidden="true">&#9664;</span>
-                    <a class="back-nav" ng-if="vm.selectedExceptionGroup.parentTitle" href="#/endpoint_details/{{vm.selectedExceptionGroup.parentTitle}}/{{vm.selectedExceptionGroup.parentGroupIndex}}/">{{vm.selectedExceptionGroup.parentTitle}} endpoint</a>
+                    <a class="back-nav" ng-if="vm.selectedExceptionGroup.parentTitle" href="#/monitoring/endpoint/{{vm.selectedExceptionGroup.parentTitle}}/{{vm.selectedExceptionGroup.parentGroupIndex}}/">{{vm.selectedExceptionGroup.parentTitle}} endpoint</a>
                     <a class="back-nav" ng-if="!vm.selectedExceptionGroup.parentTitle" href="#/failed-messages/groups">Failed message groups list</a>
                 </div>
                 <div ng-show="!vm.selectedExceptionGroup.id" class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}} | number)</div>
