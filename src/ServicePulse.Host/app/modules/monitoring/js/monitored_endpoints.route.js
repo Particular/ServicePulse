@@ -4,7 +4,7 @@
     function routeProvider($routeProvider) {
         let template = require('./../views/monitored_endpoints.html');
 
-        $routeProvider.when('/monitored_endpoints', {
+        $routeProvider.when('/monitoring', {
             data: {
                 pageTitle: 'Monitored Endpoints'
             },
