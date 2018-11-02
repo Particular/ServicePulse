@@ -6,7 +6,7 @@
         <div class="col-xs-3 no-side-padding toolbar-menus">
             <ul class="nav nav-pills period-selector">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                    <a ng-click="selectPeriod(period)" href="#/monitored_endpoints?historyPeriod={{period.value}}">{{period.text}}</a>
+                    <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}">{{period.text}}</a>
                 </li>
             </ul>
         </div>
