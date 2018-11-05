@@ -112,7 +112,7 @@
         };
 
         vm.retryMessage = function(message, $event) {
-            toastService.showInfo("Retrying the message " + message.id + " ...");
+            toastService.showInfo("Message retry requested");
             serviceControlService.retryFailedMessages([message.id])
                 .then(function() {
                         var indexOfMessage = vm.selectedIds.indexOf(message.id);
