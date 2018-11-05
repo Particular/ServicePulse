@@ -1739,6 +1739,22 @@ hr.top-separator {
     font-size: 11px;
 }
 
+.sparkline-value.sec span {
+    color: #007AFF;
+}
+
+.sparkline-value.min span {
+    color: #AE00FF;
+}
+
+.sparkline-value.h span {
+    color: #FF7DFD;
+}
+
+.sparkline-value.d span {
+    color: #FF0004;
+}
+
 .graph-area {
     width: 33%;
     box-sizing: border-box;

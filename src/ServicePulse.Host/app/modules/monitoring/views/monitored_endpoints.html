@@ -125,10 +125,10 @@
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                         </div>
-                                        <div class="no-side-padding sparkline-value">
+                                        <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                                             {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.processingTime.displayValue.value}}
                                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{endpoint.metrics.processingTime.displayValue.unit}}</span>
+                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.processingTime.displayValue.unit}}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -137,10 +137,10 @@
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                         </div>
-                                        <div class="no-side-padding sparkline-value">
+                                        <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.criticalTime.displayValue.unit">
                                             {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
                                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>
+                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>
                                         </div>
                                     </div>
                                 </div>
