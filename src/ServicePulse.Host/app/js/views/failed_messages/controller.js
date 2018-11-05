@@ -107,6 +107,27 @@
             vm.loadMoreResults(vm.selectedExceptionGroup);
         };
 
+        vm.viewMessage = function (message) {
+            $location.path(`/failed-messages/message/${message.id}`);
+        };
+
+        vm.retryMessage = function(message, $event) {
+            toastService.showInfo("Message retry requested");
+            serviceControlService.retryFailedMessages([message.id])
+                .then(function() {
+                        var indexOfMessage = vm.selectedIds.indexOf(message.id);
+                        if (indexOfMessage) {
+                            vm.selectedIds.splice(indexOfMessage, 1);
+                        }
+
+                        vm.failedMessages = vm.failedMessages.filter(function(item) {
+                            return item.id !== message.id;
+                        });
+                    }
+                );
+            $event.stopPropagation();
+        };
+
         vm.clipComplete = function(messageId) {
             toastService.showInfo(messageId + ' copied to clipboard');
         };

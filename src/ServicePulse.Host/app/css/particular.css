@@ -596,11 +596,19 @@ p.metadata {
     margin-bottom: 6px;
 }
 
+    p.metadata button {
+        position: absolute;
+        right: -35px;
+        top: 26px;
+    }
+
 span.metadata {
     display: inline-block;
     padding: 0px 20px 2px 0;
     color: #777f7f;
 }
+
+
 
 .metadata:first-child {
     padding-left: 0;
