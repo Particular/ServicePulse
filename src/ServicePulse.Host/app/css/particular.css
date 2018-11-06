@@ -1747,16 +1747,33 @@ hr.top-separator {
     font-size: 11px;
 }
 
+
+.sparkline-value.sec {
+    color: #0000FF;
+}
+
 .sparkline-value.sec span {
     color: #007AFF;
 }
 
-.sparkline-value.min span {
-    color: #AE00FF;
+.sparkline-value.min {
+    color: #8B00D0;
 }
 
-.sparkline-value.h span {
-    color: #FF7DFD;
+.sparkline-value.min span {
+    color: #B14AE4;
+}
+
+.sparkline-value.hr {
+    color: #D601DA;
+}
+
+.sparkline-value.hr span {
+    color: #D764D9;
+}
+
+.sparkline-value.d {
+    color: #AD0017;
 }
 
 .sparkline-value.d span {
