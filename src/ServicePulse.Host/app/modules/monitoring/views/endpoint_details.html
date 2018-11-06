@@ -309,10 +309,12 @@
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                             </div>
-                                            <div class="no-side-padding sparkline-value">
+                                            <div class="no-side-padding sparkline-value" ng-class="instance.metrics.processingTime.displayValue.unit">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.processingTime.displayValue.value}}
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
-                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.processingTime.displayValue.unit}}</span>
+                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false" class="unit">
+                                                    {{instance.metrics.processingTime.displayValue.unit}}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -321,10 +323,12 @@
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             </div>
-                                            <div class="no-side-padding sparkline-value">
+                                            <div class="no-side-padding sparkline-value" ng-class="instance.metrics.criticalTime.displayValue.unit">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.criticalTime.displayValue.value}}
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
-                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false">{{instance.metrics.criticalTime.displayValue.unit}}</span>
+                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false" class="unit">
+                                                    {{instance.metrics.criticalTime.displayValue.unit}}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -442,10 +446,12 @@
                                             <div class="no-side-padding">
                                                 <graph plot-data="messageType.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                             </div>
-                                            <div class="no-side-padding sparkline-value">
+                                            <div class="no-side-padding sparkline-value" ng-class="messageType.metrics.processingTime.displayValue.unit">
                                                 {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.processingTime.displayValue.value}}
                                                 <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.processingTime.displayValue.unit}}</span>
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">
+                                                    {{messageType.metrics.processingTime.displayValue.unit}}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -454,10 +460,12 @@
                                             <div class="no-side-padding">
                                                 <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             </div>
-                                            <div class="no-side-padding sparkline-value">
+                                            <div class="no-side-padding sparkline-value" ng-class="messageType.metrics.criticalTime.displayValue.unit">
                                                 {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.criticalTime.displayValue.value}}
                                                 <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{messageType.metrics.criticalTime.displayValue.unit}}</span>
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">
+                                                    {{messageType.metrics.criticalTime.displayValue.unit}}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
