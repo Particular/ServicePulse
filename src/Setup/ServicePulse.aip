@@ -216,7 +216,7 @@
     <ROW Dialog_="FeatureConfiguration" Control="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Attributes="1048577" Text="[BannerBitmap]" Order="500"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_1" Type="Text" X="20" Y="96" Width="53" Height="31" Attributes="65539" Property="TEXT_1_PROP_1" Text="Port" TextStyle="DlgFontBold8" Order="600"/>
     <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="45" Y="94" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="149" Width="247" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="149" Width="205" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_2" Type="Text" X="23" Y="152" Width="89" Height="15" Attributes="65539" Property="TEXT_2_PROP_2" Text="ServiceControl URI" Order="900"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_3" Type="Text" X="20" Y="74" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP_2" Text="Specify the port number ServicePulse will listen on" Order="1000"/>
     <ROW Dialog_="FeatureConfiguration" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="ServicePulse Configuration" TextStyle="[DlgTitleFont]" Order="1100" TextLocId="Control.Text.FolderDlg#Title"/>
@@ -225,6 +225,7 @@
     <ROW Dialog_="FeatureConfiguration" Control="Text_5" Type="Text" X="25" Y="204" Width="89" Height="53" Attributes="65539" Property="TEXT_2_PROP_1_1" Text="Monitoring URI" Order="1400"/>
     <ROW Dialog_="FeatureConfiguration" Control="CheckBox_1" Type="CheckBox" X="20" Y="127" Width="216" Height="21" Attributes="3" Property="ENABLE_SERVICECONTROL" Text="Enable Recoverability and Auditing features" TextStyle="DlgFontBold8" Order="1500"/>
     <ROW Dialog_="FeatureConfiguration" Control="CheckBox_2" Type="CheckBox" X="20" Y="181" Width="142" Height="19" Attributes="3" Property="ENABLE_MONITORING" Text="Enable endpoint monitoring" TextStyle="DlgFontBold8" Order="1600"/>
+    <ROW Dialog_="FeatureConfiguration" Control="TestSCConnectivity" Type="PushButton" X="309" Y="148" Width="37" Height="17" Attributes="3" Text="Test" Order="1700"/>
     <ROW Dialog_="FilesInUse" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="Files in Use" TextStyle="[DlgTitleFont]" Order="600" TextLocId="Control.Text.FilesInUse#Title" MsiKey="FilesInUse#Title"/>
     <ROW Dialog_="FilesInUse" Control="Text" Type="Text" X="20" Y="55" Width="330" Height="30" Attributes="3" Text="The following applications are using files that need to be updated by this setup. You can either close the applications and then click &quot;Retry&quot;, or click &quot;Ignore&quot; so that the installer continues the installation and replaces these files when your system restarts." Order="700" TextLocId="Control.Text.FilesInUse#Text" MsiKey="FilesInUse#Text"/>
     <ROW Dialog_="FilesInUse" Control="List" Type="ListBox" X="20" Y="87" Width="330" Height="130" Attributes="7" Property="FileInUseProcess" Order="800" MsiKey="FilesInUse#List"/>
@@ -300,6 +301,8 @@
     <ROW Dialog_="FeatureConfiguration" Control_="Text_5" Action="Disable" Condition="NOT ENABLE_MONITORING"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Edit_3" Action="Enable" Condition="ENABLE_MONITORING"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Edit_3" Action="Disable" Condition="NOT ENABLE_MONITORING"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Action="Enable" Condition="ENABLE_SERVICECONTROL"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Action="Disable" Condition="NOT ENABLE_SERVICECONTROL"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
