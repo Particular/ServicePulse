@@ -216,17 +216,18 @@
     <ROW Dialog_="FeatureConfiguration" Control="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Attributes="1048577" Text="[BannerBitmap]" Order="500"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_1" Type="Text" X="20" Y="96" Width="53" Height="31" Attributes="65539" Property="TEXT_1_PROP_1" Text="Port" TextStyle="DlgFontBold8" Order="600"/>
     <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="45" Y="94" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="149" Width="205" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_2" Type="Text" X="23" Y="152" Width="89" Height="15" Attributes="65539" Property="TEXT_2_PROP_2" Text="ServiceControl URI" Order="900"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="139" Width="205" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Text_2" Type="Text" X="23" Y="142" Width="89" Height="15" Attributes="65539" Property="TEXT_2_PROP_2" Text="ServiceControl URI" Order="900"/>
     <ROW Dialog_="FeatureConfiguration" Control="Text_3" Type="Text" X="20" Y="74" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP_2" Text="Specify the port number ServicePulse will listen on" Order="1000"/>
     <ROW Dialog_="FeatureConfiguration" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="ServicePulse Configuration" TextStyle="[DlgTitleFont]" Order="1100" TextLocId="Control.Text.FolderDlg#Title"/>
     <ROW Dialog_="FeatureConfiguration" Control="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Attributes="196611" Text="Adjust configuration settings" Order="1200" TextLocId="Control.Text.FolderDlg#Description"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_3" Type="Edit" X="100" Y="201" Width="204" Height="15" Attributes="3" Property="INST_SC_MONITORING_URI" Text="{260}" Order="1300"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_5" Type="Text" X="25" Y="204" Width="89" Height="53" Attributes="65539" Property="TEXT_2_PROP_1_1" Text="Monitoring URI" Order="1400"/>
-    <ROW Dialog_="FeatureConfiguration" Control="CheckBox_1" Type="CheckBox" X="20" Y="127" Width="216" Height="21" Attributes="3" Property="ENABLE_SERVICECONTROL" Text="Enable Recoverability and Auditing features" TextStyle="DlgFontBold8" Order="1500"/>
-    <ROW Dialog_="FeatureConfiguration" Control="CheckBox_2" Type="CheckBox" X="20" Y="181" Width="142" Height="19" Attributes="3" Property="ENABLE_MONITORING" Text="Enable endpoint monitoring" TextStyle="DlgFontBold8" Order="1600"/>
-    <ROW Dialog_="FeatureConfiguration" Control="TestSCConnectivity" Type="PushButton" X="309" Y="148" Width="37" Height="17" Attributes="3" Text="Test" Order="1700"/>
-    <ROW Dialog_="FeatureConfiguration" Control="TestSCMonitoringConnectivity" Type="PushButton" X="309" Y="200" Width="37" Height="17" Attributes="3" Text="Test" Order="1800"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_3" Type="Edit" X="100" Y="182" Width="204" Height="15" Attributes="3" Property="INST_SC_MONITORING_URI" Text="{260}" Order="1300"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Text_5" Type="Text" X="25" Y="185" Width="89" Height="53" Attributes="65539" Property="TEXT_2_PROP_1_1" Text="Monitoring URI" Order="1400"/>
+    <ROW Dialog_="FeatureConfiguration" Control="CheckBox_1" Type="CheckBox" X="20" Y="117" Width="216" Height="21" Attributes="3" Property="ENABLE_SERVICECONTROL" Text="Enable Recoverability and Auditing features" TextStyle="DlgFontBold8" Order="1500"/>
+    <ROW Dialog_="FeatureConfiguration" Control="CheckBox_2" Type="CheckBox" X="20" Y="162" Width="142" Height="19" Attributes="3" Property="ENABLE_MONITORING" Text="Enable endpoint monitoring" TextStyle="DlgFontBold8" Order="1600"/>
+    <ROW Dialog_="FeatureConfiguration" Control="TestSCConnectivity" Type="PushButton" X="309" Y="138" Width="37" Height="17" Attributes="3" Text="Test" Order="1700"/>
+    <ROW Dialog_="FeatureConfiguration" Control="TestSCMonitoringConnectivity" Type="PushButton" X="309" Y="181" Width="37" Height="17" Attributes="3" Text="Test" Order="1800"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Text_4" Type="Text" X="20" Y="211" Width="326" Height="23" Attributes="65539" Property="TEXT_4_PROP" Text="Note: if you don&apos;t yet have a ServiceControl and/or Monitoring instance, we recommend noting down the URIs above and use them when later creating those instances" Order="1900"/>
     <ROW Dialog_="FilesInUse" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="Files in Use" TextStyle="[DlgTitleFont]" Order="600" TextLocId="Control.Text.FilesInUse#Title" MsiKey="FilesInUse#Title"/>
     <ROW Dialog_="FilesInUse" Control="Text" Type="Text" X="20" Y="55" Width="330" Height="30" Attributes="3" Text="The following applications are using files that need to be updated by this setup. You can either close the applications and then click &quot;Retry&quot;, or click &quot;Ignore&quot; so that the installer continues the installation and replaces these files when your system restarts." Order="700" TextLocId="Control.Text.FilesInUse#Text" MsiKey="FilesInUse#Text"/>
     <ROW Dialog_="FilesInUse" Control="List" Type="ListBox" X="20" Y="87" Width="330" Height="130" Attributes="7" Property="FileInUseProcess" Order="800" MsiKey="FilesInUse#List"/>
@@ -395,14 +396,14 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl using the URI specified.  Do you wish to proceed with the install anyway?&#13;\n |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl using the specified URI.&#13;\n |ServicePulse [ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="Particular.ServicePulse"/>
     <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="The specified port  for ServicePulse is invalid. Please choose port between 1 and 49151 |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_4" Type="51" Source="CustomActionData" Target="The URL specified for ServiceControl is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_5" Type="51" Source="CustomActionData" Target="The URL specified for ServiceControl Monitoring is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
-    <ROW Action="AI_DATA_SETTER_6" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl Monitoring using the URI specified.  Do you wish to proceed with the install anyway?&#13;\n |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|IGNORE_SERVICECONTROLMONITORING_OFFLINE|[CLIENTPROCESSID]"/>
-    <ROW Action="AI_DATA_SETTER_7" Type="51" Source="CustomActionData" Target="Successfully connected to ServiceControl using the URI specified.&#13;\n |ServicePulse[ProductVersion] |MB_OK,MB_ICONINFORMATION,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
-    <ROW Action="AI_DATA_SETTER_8" Type="51" Source="CustomActionData" Target="Successfully connected to ServiceControl Monitoring using the URI specified.&#13;\n |ServicePulse[ProductVersion] |MB_OK,MB_ICONINFORMATION,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_6" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl Monitoring using the specified URI.&#13;\n |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|IGNORE_SERVICECONTROLMONITORING_OFFLINE|[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_7" Type="51" Source="CustomActionData" Target="Successfully connected to ServiceControl.&#13;\n |ServicePulse [ProductVersion] |MB_OK,MB_ICONINFORMATION,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_8" Type="51" Source="CustomActionData" Target="Successfully connected to ServiceControl Monitoring&#13;\n |ServicePulse [ProductVersion] |MB_OK,MB_ICONINFORMATION,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
