@@ -336,10 +336,8 @@
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Check_SC_URL" Condition="AI_INSTALL AND ( VALID_PORT = &quot;TRUE&quot; )" Ordering="7"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Check_SP_PORT" Condition="AI_INSTALL" Ordering="4"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Connect_SC" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;TRUE&quot; )" Ordering="8"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Warning_ServiceControl_Unavail_msg" Condition="AI_INSTALL AND ( CONTACT_SERVICECONTROL=&quot;FALSE&quot; )" Ordering="14"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Next" Event="NewDialog" Argument="FolderDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="LicenseAgreementDlg" Control_="Back" Event="NewDialog" Argument="WelcomeDlg" Condition="AI_INSTALL" Ordering="1"/>
-    <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_1" Condition="AI_INSTALL AND ( CONTACT_SERVICECONTROL=&quot;FALSE&quot; )" Ordering="13"/>
     <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="12"/>
     <ROW Dialog_="Configuration" Control_="Next" Event="DoAction" Argument="AI_DATA_SETTER_4" Condition="AI_INSTALL AND ( VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="11"/>
@@ -379,6 +377,8 @@
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Connect_SC" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; )" Ordering="3"/>
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Warning_ServiceControl_Unavail_msg" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;FALSE&quot; )" Ordering="5"/>
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_1" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;FALSE&quot; )" Ordering="4"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Success_ServiceControl_Avail_msg" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;TRUE&quot; )" Ordering="7"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_7" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;TRUE&quot; )" Ordering="6"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
@@ -387,12 +387,13 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl using the URI specified.  Do you wish to proceed with the install anyway?&#13;\n |ServicePulse[ProductVersion] |MB_YESNO,MB_ICONWARNING,MB_DEFBUTTON2|IGNORE_SERVICECONTROL_OFFLINE|[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl using the URI specified.  Do you wish to proceed with the install anyway?&#13;\n |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="Particular.ServicePulse"/>
     <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="The specified port  for ServicePulse is invalid. Please choose port between 1 and 49151 |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_4" Type="51" Source="CustomActionData" Target="The URL specified for ServiceControl is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_5" Type="51" Source="CustomActionData" Target="The URL specified for ServiceControl Monitoring is invalid. |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_6" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl Monitoring using the URI specified.  Do you wish to proceed with the install anyway?&#13;\n |ServicePulse[ProductVersion] |MB_YESNO,MB_ICONWARNING,MB_DEFBUTTON2|IGNORE_SERVICECONTROLMONITORING_OFFLINE|[CLIENTPROCESSID]"/>
+    <ROW Action="AI_DATA_SETTER_7" Type="51" Source="CustomActionData" Target="Successfully connected to ServiceControl using the URI specified.&#13;\n |ServicePulse[ProductVersion] |MB_OK,MB_ICONINFORMATION,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
     <ROW Action="AI_DOWNGRADE" Type="19" Target="4010"/>
     <ROW Action="AI_DeleteCadLzma" Type="51" Source="AI_DeleteLzma" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DeleteLzma" Type="1025" Source="lzmaextractor.dll" Target="DeleteLZMAFiles"/>
@@ -435,6 +436,7 @@
     <ROW Action="SetUrlAcl" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="SetUrlAcl"/>
     <ROW Action="Start_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
     <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
+    <ROW Action="Success_ServiceControl_Avail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_7"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
     <ROW Action="Warning_ServiceControlMonitoring_Unavail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_6"/>
     <ROW Action="Warning_ServiceControl_Unavail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="3" AdditionalSeq="AI_DATA_SETTER_1"/>
