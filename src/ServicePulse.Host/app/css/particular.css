@@ -102,18 +102,6 @@ pre {
     white-space: pre-wrap;
 }
 
-footer {
-    color: #bcc6c2;
-    font-size: 14px;
-    font-weight: normal;
-    height: 31px;
-    margin-top: 100px;
-    padding: 5px 0;
-    text-align: left;
-    text-align: center;
-    width: 100%;
-}
-
     footer span {
         color: #777f7f;
         display: inline-block !important;
@@ -2241,10 +2229,21 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
 }
 
 footer {
+    color: #bcc6c2;
+    font-size: 14px;
+    font-weight: normal;
+    height: 35px;
+    margin-top: 100px;
+    padding: 5px 0;
+    text-align: left;
+    text-align: center;
+    width: 100%;
     background-color: #fff;
     position: fixed;
     bottom: 0;
     border: 1px solid #ddd;
+    box-shadow: 0px -10px 16px #f2f6f7;
+    padding-top: 7px;
 }
 
 footer .row {
