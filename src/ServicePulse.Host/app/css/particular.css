@@ -106,7 +106,7 @@ footer {
     color: #bcc6c2;
     font-size: 14px;
     font-weight: normal;
-    height: 38px;
+    height: 31px;
     margin-top: 100px;
     padding: 5px 0;
     text-align: left;
@@ -900,6 +900,7 @@ p.endpoint-metadata {
 
 .version-info-container {
     width: 100% !important;
+    margin-top: -4px;
 }
 
 .version-info {
@@ -2239,6 +2240,12 @@ footer {
     background-color: #fff;
     position: fixed;
     bottom: 0;
+    border: 1px solid #ddd;
+}
+
+footer .row {
+    display: flex;
+    justify-content: space-between;
 }
 
 footer span {
@@ -2246,12 +2253,17 @@ footer span {
     padding-right: 32px;
 }
 
-footer span[class="ng-isolate-scope"], footer span[ng-if="isSCMonitoringConnected"] {
-    padding-right: 0;
-}
+    footer span[ng-if="isSCConnected"], footer span[ng-if="isSCMonitoringConnected"] {
+        color: #000;
+    }
+
+    footer span[class="ng-isolate-scope"], footer span[ng-if="isSCMonitoringConnected"] {
+        padding-right: 0;
+    }
 
 .connectivity-status div, .connectivity-status span {
     display: inline-block;
+    color: #777f7f;
 }
 
 .connectivity-status i, .connectivity-status div.pa-connection-success {
