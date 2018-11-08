@@ -1,3 +1,5 @@
+# ServicePulse ![Current Version](https://img.shields.io/github/release/particular/servicepulse.svg?style=flat&label=current%20version)
+
 ## Production monitoring for distributed systems
 Real-time monitoring customized to fit distributed applications in general, and your application's specific needs in particular.
  
