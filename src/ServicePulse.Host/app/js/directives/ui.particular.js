@@ -22,6 +22,7 @@
         'ui.particular.graphdecimal',
         'ui.particular.multicheckboxList',
         'ui.particular.reindexingstatus',
+        'ui.particular.monitoringConnectivityStatus'
     ]);
 
 } (window, window.angular));

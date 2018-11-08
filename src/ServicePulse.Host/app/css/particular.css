@@ -2155,7 +2155,7 @@ i.fa-exclamation-triangle {
     background-repeat: no-repeat;
 }
 
-.pa-monitoring-lost.endpoint-details {
+.pa-monitoring-lost.endpoint-details, .pa-connection-failed {
     background-image: url('../../../img/monitoring-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
@@ -2171,6 +2171,20 @@ i.fa-exclamation-triangle {
     height: 20px;
     left: 6px;
     position: relative;
+}
+
+.connectivity-status i, .connectivity-status div.pa-connection-success {
+    width: 10px;
+    height: 10px;
+}
+
+.connectivity-status .connection-failed {
+    color: #CE4844;
+}
+
+.connectivity-status .pa-connection-success {
+    border-radius: 50%;
+    background: #00C468;
 }
 
 .endpoint-message-types .endpoint-status {

@@ -5,7 +5,8 @@
     function Service(toastService, scConfig) {
 
         var isConnectedToSourceIndex = Array(scConfig.monitoring_urls.length).fill(true);
-        
+        var connectivitySource = new Rx.Subject();
+
         function reportFailedConnection(sourceIndex) {
 
             if (isConnectedToSourceIndex[sourceIndex]) {
@@ -13,9 +14,10 @@
                 if (scConfig.monitoring_urls.length > 1) {
                     message = 'Could not connect to the ServiceControl Monitoring service at' + scConfig.monitoring_urls[sourceIndex] + '.';
                 }
-                toastService.showError(message);
+                console.log(message);
             }
             isConnectedToSourceIndex[sourceIndex] = false;
+            emitChange(isConnectedToSourceIndex);
         }
 
         function reportSuccessfulConnection(sourceIndex) {
@@ -24,14 +26,25 @@
                 if (scConfig.monitoring_urls.length > 1) {
                     message = 'Connection to ServiceControl Monitoring service was successful ' + scConfig.monitoring_urls[sourceIndex] +'.';
                 }
-                toastService.showInfo(message, 'Info', true);
+                console.log(message);
             }
             isConnectedToSourceIndex[sourceIndex] = true;
+            emitChange(isConnectedToSourceIndex);
+        }
+
+        function emitChange(connectedToSourceIndex) {
+            var result = connectedToSourceIndex.every(item => item);
+            connectivitySource.onNext(result);
+        };
+
+        function getConnectionStatusSource() {
+            return connectivitySource;
         }
 
         var service = {
             reportFailedConnection: reportFailedConnection,
-            reportSuccessfulConnection: reportSuccessfulConnection
+            reportSuccessfulConnection: reportSuccessfulConnection,
+            getConnectionStatusSource: getConnectionStatusSource,
         };
 
         return service;

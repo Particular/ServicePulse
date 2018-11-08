@@ -118,10 +118,10 @@
 
             switch(data) {
                 case 'SignalR started':
-                    toastService.showInfo('Connected to ServiceControl');
+                    $scope.isSCConnected = true;
                     break;
                 case 'Reconnected':
-                    toastService.showInfo('Reconnected to ServiceControl');
+                    $scope.isSCConnected = true;
                     break;
                 default:
                     toastService.showWarning(data);
@@ -132,7 +132,7 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            toastService.showError(data);
+            $scope.isSCConnected = false;
         }, 'SignalRError');
 
         notifier.subscribe($scope, function(event, data) {

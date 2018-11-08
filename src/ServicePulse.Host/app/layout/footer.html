@@ -4,25 +4,45 @@
             <div class="col-sm-12">
                 <div class="row">
                     <div>
+                        <div class="col-md-1">
+                            <span>
+                                © Particular Software
+                            </span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <span>
+                                <product-version version="{{Version}}" scversion="{{SCVersion}}"></product-version>
+                            </span>
+                        </div>
+
+                        <div class="col-md-2">
+                            <span>
+                                <i class="fa fa-external-link fake-link"></i> <a href="http://docs.particular.net/servicepulse" target="_blank">ServicePulse documentation</a>
+                            </span>
+                        </div>
                         
-                        <span>
-                            <script>document.write(new Date().getFullYear())</script> © Particular Software
-                        </span>
+                        <div class="col-md-2">
+                            <span>
+                                <i class="fa fa-envelope fake-link"></i> <a href="mailto:support@particular.net" target="_blank">support@particular.net</a>
+                            </span>
+                        </div>
 
-                        •
+                        <div class="col-md-3 connectivity-status">
+                            <span>
+                                Service Control:
+                                <span ng-if="isSCConnected">
+                                    <div class="fa pa-connection-success"></div> Connected
+                                </span>
+                                <span ng-if="!isSCConnected" class="connection-failed">
+                                    <i class="fa pa-connection-failed"></i> Not connected
+                                </span>
 
-                        <span>
-                            <i class="fa fa-external-link fake-link"></i> <a href="http://docs.particular.net/servicepulse" target="_blank">ServicePulse documentation</a>
-                        </span>
-
-                        •
-
-                        <span>
-                            <i class="fa fa-envelope fake-link"></i> <a href="mailto:support@particular.net" target="_blank">support@particular.net</a>
-                        </span>
-
-                </div>
-            </div>
+                            </span>
+                            <monitoring-connectivity-status></monitoring-connectivity-status>
+                        </div>
+                    </div>
+                    </div>
         </div>
     </div>
   </div>
