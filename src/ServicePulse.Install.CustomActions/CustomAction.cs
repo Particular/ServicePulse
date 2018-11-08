@@ -1,4 +1,6 @@
-﻿namespace ServicePulse.Install.CustomActions
+﻿using System.Management;
+
+namespace ServicePulse.Install.CustomActions
 {
     using System;
     using System.Diagnostics;
@@ -168,7 +170,51 @@
                 Log(session, "End custom action CheckPulsePort");
             }
         }
-       
+
+        [CustomAction]
+        public static ActionResult DetectExistingPulseInstancePort(Session session)
+        {
+            try
+            {
+                Log(session, "Start custom action DetectExistingPulseInstancePort");
+
+                var managementClass = new ManagementClass("Win32_Service");
+
+                foreach (var wmiService in managementClass.GetInstances())
+                {
+                    if (wmiService["Name"].ToString() == "Particular.ServicePulse")
+                    {
+                        var pathName = wmiService["PathName"].ToString();
+
+                        var match = Regex.Match(pathName, @".*--url=""(?<serviceurl>.+)"".*");
+                        var serviceUrlGroup = match.Groups["serviceurl"];
+
+                        if (serviceUrlGroup.Success)
+                        {
+                            var url = serviceUrlGroup.Value;
+
+                            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                            {
+                                var port = uri.Port;
+
+                                session.Set("INST_PORT_PULSE", port.ToString());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log(session, ex.ToString());
+            }
+            finally 
+            {
+                Log(session, "End custom action DetectExistingPulseInstancePort");
+            }
+
+            return ActionResult.Success;
+        }
+
         [CustomAction]
         public static ActionResult ReadServiceControlUrlFromConfigJS(Session session)
         {

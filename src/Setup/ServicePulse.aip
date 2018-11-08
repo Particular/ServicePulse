@@ -360,13 +360,13 @@
     <ROW Dialog_="VerifyReadyDlg" Control_="Back" Event="NewDialog" Argument="FeatureConfiguration" Condition="AI_INSTALL AND ( ENABLE_FEATURE_SELECTION=&quot;TRUE&quot; )" Ordering="201"/>
     <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="[INST_SC_MONITORING_URI]" Argument="&quot;&quot;" Condition="AI_INSTALL" Ordering="2"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="1" Ordering="0"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="TRUE" Condition="INST_URI" Ordering="8"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="TRUE" Condition="INST_URI" Ordering="10"/>
     <ROW Dialog_="FeatureConfiguration" Control_="CheckBox_1" Event="[INST_URI]" Argument="[DEFAULT_SC_URI]" Condition="( ENABLE_SERVICECONTROL ) AND (NOT INST_URI)" Ordering="0"/>
     <ROW Dialog_="FeatureConfiguration" Control_="CheckBox_2" Event="[INST_SC_MONITORING_URI]" Argument="[DEFAULT_SC_MONITORING_URI]" Condition="( ENABLE_MONITORING ) AND (NOT INST_SC_MONITORING_URI)" Ordering="0"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="TRUE" Condition="INST_SC_MONITORING_URI" Ordering="5"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="TRUE" Condition="INST_SC_MONITORING_URI" Ordering="8"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="1" Ordering="1"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="[INST_SC_MONITORING_URI]" Condition="( NOT INST_SC_MONITORING_URI )" Ordering="7"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="INST_URI" Condition="( NOT INST_URI )" Ordering="9"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="[INST_SC_MONITORING_URI]" Condition="( NOT INST_SC_MONITORING_URI )" Ordering="9"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="INST_URI" Condition="( NOT INST_URI )" Ordering="11"/>
     <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="[INST_URI]" Argument="[DEFAULT_SC_URI]" Condition="AI_INSTALL AND ( NOT INST_URI )" Ordering="3"/>
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Check_SC_URL" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; )" Ordering="0"/>
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="2"/>
@@ -384,6 +384,7 @@
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_6" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND  VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL_MONITORING=&quot;FALSE&quot; )" Ordering="4"/>
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="Success_ServiceControlMonitoring_Avail_msg" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND  VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL_MONITORING=&quot;TRUE&quot; )" Ordering="7"/>
     <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_8" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND  VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL_MONITORING=&quot;TRUE&quot; )" Ordering="6"/>
+    <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="DoAction" Argument="DetectExistingPulseIntancePort" Condition="1" Ordering="7"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
@@ -428,6 +429,7 @@
     <ROW Action="Check_SP_PORT" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="CheckPulsePort" WithoutSeq="true"/>
     <ROW Action="Connect_SC" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ContactServiceControl" WithoutSeq="true"/>
     <ROW Action="Connect_SC_Monitoring" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="ContactServiceControlMonitoring" WithoutSeq="true"/>
+    <ROW Action="DetectExistingPulseIntancePort" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="DetectExistingPulseInstancePort" WithoutSeq="true"/>
     <ROW Action="DetectService" Type="1" Source="aicustact.dll" Target="DetectService" Options="3" AdditionalSeq="AI_DATA_SETTER_2"/>
     <ROW Action="Install_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --install --serviceName=&quot;Particular.ServicePulse&quot; --description=&quot;Monitoring and operations for NServiceBus&quot; --url=http://localhost:[INST_PORT_PULSE] --serviceControlUrl=[INST_URI] --serviceControlMonitoringUrl=[INST_SC_MONITORING_URI] --autostart" Options="1"/>
     <ROW Action="Invalid_ServiceControlMonitoringUrl_Msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_5"/>
