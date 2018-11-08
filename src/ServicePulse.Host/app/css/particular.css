@@ -873,6 +873,10 @@ p.endpoint-metadata {
     font-size: 24px;
 }
 
+.events {
+    margin-top: 30px;
+}
+
 .events .box {
     padding-bottom: 0;
 }
