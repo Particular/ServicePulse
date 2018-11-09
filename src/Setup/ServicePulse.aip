@@ -28,6 +28,8 @@
     <ROW Property="DEFAULT_SC_URI" Value="http://localhost:33333/api"/>
     <ROW Property="DialogBitmap" Value="dialog" MultiBuildValue="DefaultBuild:dialog.jpg" Type="1" MsiKey="DialogBitmap"/>
     <ROW Property="ENABLE_FEATURE_SELECTION" Value="TRUE"/>
+    <ROW Property="ENABLE_MONITORING" Value="TRUE"/>
+    <ROW Property="ENABLE_SERVICECONTROL" Value="TURE"/>
     <ROW Property="IGNORE_SERVICECONTROLMONITORING_OFFLINE" Value="IDNO"/>
     <ROW Property="IGNORE_SERVICECONTROL_OFFLINE" Value="IDNO"/>
     <ROW Property="INST_PORT_PULSE" Value="9090" Type="4"/>
