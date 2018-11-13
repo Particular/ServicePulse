@@ -135,6 +135,9 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
+            if ($scope.isSCConnected) {
+                toastService.showError(data);
+            }
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
         }, 'SignalRError');

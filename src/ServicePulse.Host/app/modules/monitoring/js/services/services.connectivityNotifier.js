@@ -6,6 +6,7 @@
 
         var isConnectedToSourceIndex = Array(scConfig.monitoring_urls.length).fill(true);
         var connectivitySource = new Rx.Subject();
+        var shouldShowFailedMessage = true;
 
         function reportFailedConnection(sourceIndex) {
 
@@ -15,6 +16,10 @@
                     message = 'Could not connect to the ServiceControl Monitoring service at' + scConfig.monitoring_urls[sourceIndex] + '.';
                 }
                 console.log(message);
+                if (shouldShowFailedMessage) {
+                    toastService.showError(message);
+                    shouldShowFailedMessage = false;
+                }
             }
             isConnectedToSourceIndex[sourceIndex] = false;
             emitChange(isConnectedToSourceIndex);
@@ -27,6 +32,7 @@
                     message = 'Connection to ServiceControl Monitoring service was successful ' + scConfig.monitoring_urls[sourceIndex] +'.';
                 }
                 console.log(message);
+                shouldShowFailedMessage = true;
             }
             isConnectedToSourceIndex[sourceIndex] = true;
             emitChange(isConnectedToSourceIndex);
