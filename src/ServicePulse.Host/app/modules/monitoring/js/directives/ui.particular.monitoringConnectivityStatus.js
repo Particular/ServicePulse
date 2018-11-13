@@ -4,8 +4,10 @@
 
 
     function controller($scope, connectivityNotifier) {
+        $scope.isSCMonitoringConnecting = true;
         connectivityNotifier.getConnectionStatusSource().subscribe(value => {
             $scope.isSCMonitoringConnected = value;
+            $scope.isSCMonitoringConnecting = false;
         });
     }
     

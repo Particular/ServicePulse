@@ -2274,6 +2274,14 @@ footer span {
     height: 10px;
 }
 
+.pa-connection-establishing {
+    background-image: url('../img/loader_spinner.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
 .connectivity-status .connection-failed {
     color: #CE4844;
 }
