@@ -3,15 +3,39 @@
     'use strict';
 
 
-    function controller($scope, connectivityNotifier) {
+    function controller($scope, connectivityNotifier, monitoringService, $interval) {
         $scope.isSCMonitoringConnecting = true;
         connectivityNotifier.getConnectionStatusSource().subscribe(value => {
             $scope.isSCMonitoringConnected = value;
             $scope.isSCMonitoringConnecting = false;
         });
+
+        var scMonitoringConnectionPing = $interval(function () {
+            var promises = monitoringService.checkConnections();
+            for (var i = 0; i < promises.length; i++) {
+                promises[i].then(r => {
+                    connectivityNotifier.reportSuccessfulConnection(i);
+                }, e => {
+                    connectivityNotifier.reportFailedConnection(i);
+                });
+            }
+
+        }, 10000);
+
+        // Cancel interval on page changes
+        $scope.$on('$destroy', function () {
+            if (angular.isDefined(scMonitoringConnectionPing)) {
+                $interval.cancel(scMonitoringConnectionPing);
+                scMonitoringConnectionPing = undefined;
+            }
+        });
     }
+
     
-    controller.$inject = ['$scope', 'connectivityNotifier'];
+
+    
+
+    controller.$inject = ['$scope', 'connectivityNotifier', 'monitoringService', '$interval'];
 
     function directive() {
         return {

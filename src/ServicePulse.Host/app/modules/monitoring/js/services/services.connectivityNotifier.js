@@ -52,6 +52,7 @@
             reportSuccessfulConnection: reportSuccessfulConnection,
             getConnectionStatusSource: getConnectionStatusSource,
         };
+        
 
         return service;
     }
