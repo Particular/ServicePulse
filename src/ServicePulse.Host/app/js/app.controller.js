@@ -28,6 +28,7 @@
         $scope.SCVersion = '';
         $scope.is_compatible_with_sc = true;
         $scope.Version = version;
+        $scope.isSCConnecting = true;
 
         $scope.isActive = function(viewLocation) {
             var active = $location.path().startsWith(viewLocation);
@@ -118,10 +119,12 @@
 
             switch(data) {
                 case 'SignalR started':
-                    toastService.showInfo('Connected to ServiceControl');
+                    $scope.isSCConnected = true;
+                    $scope.isSCConnecting = false;
                     break;
                 case 'Reconnected':
-                    toastService.showInfo('Reconnected to ServiceControl');
+                    $scope.isSCConnected = true;
+                    $scope.isSCConnecting = false;
                     break;
                 default:
                     toastService.showWarning(data);
@@ -132,7 +135,11 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            toastService.showError(data);
+            if ($scope.isSCConnected) {
+                toastService.showError(data);
+            }
+            $scope.isSCConnected = false;
+            $scope.isSCConnecting = false;
         }, 'SignalRError');
 
         notifier.subscribe($scope, function(event, data) {

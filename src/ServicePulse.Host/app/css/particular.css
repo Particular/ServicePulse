@@ -95,22 +95,11 @@ body {
     color: #181919;
     overflow-y: scroll;
     padding-top: 100px;
+    padding-bottom: 100px;
 }
 
 pre {
     white-space: pre-wrap;
-}
-
-footer {
-    color: #bcc6c2;
-    font-size: 14px;
-    font-weight: normal;
-    height: 60px;
-    margin-top: 100px;
-    padding: 5px 0;
-    text-align: left;
-    text-align: center;
-    width: 100%;
 }
 
     footer span {
@@ -872,6 +861,10 @@ p.endpoint-metadata {
     font-size: 24px;
 }
 
+.events {
+    margin-top: 30px;
+}
+
 .events .box {
     padding-bottom: 0;
 }
@@ -899,6 +892,7 @@ p.endpoint-metadata {
 
 .version-info-container {
     width: 100% !important;
+    margin-top: -4px;
 }
 
 .version-info {
@@ -2155,7 +2149,7 @@ i.fa-exclamation-triangle {
     background-repeat: no-repeat;
 }
 
-.pa-monitoring-lost.endpoint-details {
+.pa-monitoring-lost.endpoint-details, .pa-connection-failed {
     background-image: url('../../../img/monitoring-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
@@ -2232,6 +2226,69 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
 
 .nav.period-selector > li > a {
     padding: 10px 6px;
+}
+
+footer {
+    color: #bcc6c2;
+    font-size: 14px;
+    font-weight: normal;
+    height: 35px;
+    margin-top: 100px;
+    padding: 5px 0;
+    text-align: left;
+    text-align: center;
+    width: 100%;
+    background-color: #fff;
+    position: fixed;
+    bottom: 0;
+    border: 1px solid #ddd;
+    box-shadow: 0px -10px 16px #f2f6f7;
+    padding-top: 7px;
+}
+
+footer .row {
+    display: flex;
+    justify-content: space-between;
+}
+
+footer span {
+    padding-left: 0;
+    padding-right: 32px;
+}
+
+    footer span[ng-if="isSCConnected"], footer span[ng-if="isSCMonitoringConnected"] {
+        color: #000;
+    }
+
+    footer span[class="ng-isolate-scope"], footer span[ng-if="isSCMonitoringConnected"] {
+        padding-right: 0;
+    }
+
+.connectivity-status div, .connectivity-status span {
+    display: inline-block;
+    color: #777f7f;
+}
+
+.connectivity-status i, .connectivity-status div.pa-connection-success {
+    width: 10px;
+    height: 10px;
+}
+
+.pa-connection-establishing {
+    background-image: url('../img/loader_spinner.gif');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+.connectivity-status .connection-failed {
+    color: #CE4844;
+}
+
+.connectivity-status .pa-connection-success {
+    border-radius: 50%;
+    background: #00C468;
 }
 
 @media (min-width: 0px) {

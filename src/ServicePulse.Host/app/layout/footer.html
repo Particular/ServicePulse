@@ -1,29 +1,29 @@
 ﻿<footer class="footer">
     <div class="container">
         <div class="row">
-            <div class="col-sm-12">
-                <div class="row">
-                    <div>
-                        
-                        <span>
-                            <script>document.write(new Date().getFullYear())</script> © Particular Software
-                        </span>
-
-                        •
-
-                        <span>
-                            <i class="fa fa-external-link fake-link"></i> <a href="http://docs.particular.net/servicepulse" target="_blank">ServicePulse documentation</a>
-                        </span>
-
-                        •
-
-                        <span>
-                            <i class="fa fa-envelope fake-link"></i> <a href="mailto:support@particular.net" target="_blank">support@particular.net</a>
-                        </span>
-
+            <span>
+                <product-version version="{{Version}}" scversion="{{SCVersion}}"></product-version>
+            </span><span>
+                <i class="fa fa-envelope fake-link"></i> <a href="mailto:support@particular.net" target="_blank">support@particular.net</a>
+            </span>
+            <span>
+                <i class="fa fa-external-link fake-link"></i> <a href="http://docs.particular.net/servicepulse" target="_blank">Documentation</a>
+            </span>
+            <div class="connectivity-status">
+                <div>
+                    Service Control:
+                    <span ng-if="isSCConnected && !isSCConnecting">
+                        <div class="fa pa-connection-success"></div> Connected
+                    </span>
+                    <span ng-if="!isSCConnected && !isSCConnecting" class="connection-failed">
+                        <i class="fa pa-connection-failed"></i> Not connected
+                    </span>
+                    <span ng-if="isSCConnecting" class="connection-establishing">
+                        <i class="fa pa-connection-establishing"></i> Connecting
+                    </span>
                 </div>
+                <monitoring-connectivity-status></monitoring-connectivity-status>
             </div>
-        </div>
     </div>
   </div>
 </footer>
