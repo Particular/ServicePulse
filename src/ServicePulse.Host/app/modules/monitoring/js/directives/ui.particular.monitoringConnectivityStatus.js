@@ -11,11 +11,11 @@
         });
 
         var scMonitoringConnectionPing = $interval(function () {
-            var promises = monitoringService.getMonitoredEndpoints().map((p, i) => {
-                p.then(r => {
-                    connectivityNotifier.reportSuccessfulConnection(i);
+            var promises = monitoringService.getMonitoredEndpoints().map((request, index) => {
+                request.then(r => {
+                    connectivityNotifier.reportSuccessfulConnection(index);
                 }, e => {
-                    connectivityNotifier.reportFailedConnection(i);
+                    connectivityNotifier.reportFailedConnection(index);
                 });
             });
         }, 10000);
