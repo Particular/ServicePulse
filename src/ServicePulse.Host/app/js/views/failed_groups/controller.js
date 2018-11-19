@@ -23,7 +23,8 @@
         notifyService,
         serviceControlService,
         failedMessageGroupsService,
-        toastService) {
+        toastService,
+        $routeParams) {
 
         var vm = this;
         var notifier = notifyService();
@@ -164,7 +165,12 @@
             $cookies.put("failed_groups_classification", classification);
         };
 
-        var getDefaultClassification = function(classifiers) {
+        var getDefaultClassification = function (classifiers) {
+            if ($routeParams.groupBy) {
+                saveSelectedClassification($routeParams.groupBy);
+                return $routeParams.groupBy;
+            }
+
             var storedClassification = $cookies.get("failed_groups_classification");
 
             if (typeof storedClassification === "undefined") {
@@ -378,7 +384,8 @@
         "notifyService",
         "serviceControlService",
         "failedMessageGroupsService",
-        "toastService"
+        "toastService",
+        '$routeParams'
     ];
 
     angular.module("sc")
