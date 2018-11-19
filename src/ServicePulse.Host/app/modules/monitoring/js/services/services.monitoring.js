@@ -62,7 +62,7 @@
                 });
         }
 
-        function checkConnections() {
+        function getMonitoredEndpoints() {
             return scConfig.monitoring_urls.map(function (url) {
                 return $http.get(uri.join(url, 'monitored-endpoints') + '?history=1');
             });
