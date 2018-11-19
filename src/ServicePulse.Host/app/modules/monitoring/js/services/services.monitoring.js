@@ -71,7 +71,7 @@
         var service = {
             createEndpointsSource: createEndpointsSource,
             createEndpointDetailsSource: createEndpointDetailsSource,
-            checkConnections: checkConnections,
+            getMonitoredEndpoints: getMonitoredEndpoints,
         };
 
         return service;
