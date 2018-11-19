@@ -2281,6 +2281,10 @@ div.alert.alert-warning strong {
     color: #00729C !important;
 }
 
+.pre-wrap {
+    white-space: pre-wrap;
+}
+
 @media (max-width: 1439px) {
     html, body, nav {
         min-width: 1440px !important;
