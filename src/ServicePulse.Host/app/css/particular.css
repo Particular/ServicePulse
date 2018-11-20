@@ -2317,7 +2317,6 @@ section[name="message_groups"] .list-section {
 
 section[name="configuration"] .alert {
     margin: 24px 0 0;
-    min-width: 1440px;
 }
 
 div.alert.alert-warning i.fa.fa-warning {
@@ -2399,4 +2398,13 @@ div.alert.alert-warning strong {
         margin-bottom: 0;
         padding-bottom: 10px;
     }
+}
+
+@media (max-width: 1550px) {
+
+    footer {
+        height: 29px;
+        font-size: 12px;
+    }
+
 }
