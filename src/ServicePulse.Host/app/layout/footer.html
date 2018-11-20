@@ -12,7 +12,7 @@
             <div class="connectivity-status">
                 <div>
                     Service Control:
-                    <span ng-if="isSCConnected && !isSCConnecting">
+                    <span class="connected-status" ng-if="isSCConnected && !isSCConnecting">
                         <div class="fa pa-connection-success"></div> Connected
                     </span>
                     <span ng-if="!isSCConnected && !isSCConnecting" class="connection-failed">

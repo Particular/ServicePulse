@@ -1,6 +1,6 @@
-﻿<span>
+﻿<span class="monitoring-connected">
     SC Monitoring:
-    <span ng-if="isSCMonitoringConnected && !isSCMonitoringConnecting">
+    <span class="connected-status" ng-if="isSCMonitoringConnected && !isSCMonitoringConnecting">
         <div class="fa pa-connection-success"></div> Connected
     </span>
     <span ng-if="!isSCMonitoringConnected && !isSCMonitoringConnecting" class="connection-failed">

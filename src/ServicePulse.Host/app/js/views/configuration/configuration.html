@@ -16,7 +16,7 @@
             <div class="col-sm-12">
 
                 <div class="alert alert-warning">
-                    <i class="fa fa-warning"></i> <strong>Warning:</strong> The list of endpoints below only contains endpoints with the heartbeats plug-in installed. Toggling heartbeat monitoring on/off won't toggle <a href="https://docs.particular.net/monitoring/metrics/in-servicepulse" target="_blank">performance monitoring</a> <i class="fa fa-external-link fake-link"></i>
+                    <i class="fa fa-warning"></i> <strong>Warning:</strong> The list of endpoints below only contains endpoints with the heartbeats plug-in installed. Toggling heartbeat monitoring won't toggle <a href="https://docs.particular.net/monitoring/metrics/in-servicepulse" target="_blank">performance monitoring</a> <i class="fa fa-external-link fake-link"></i>
                 </div>
 
                 <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
