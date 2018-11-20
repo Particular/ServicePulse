@@ -2210,7 +2210,7 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
     font-weight: bold;
     background-color: initial;
     border-bottom: 3px solid #000;
-    padding-bottom: 2px;
+    padding-bottom: 10px;
 }
 
 .nav-pills.period-selector > li > a:hover {
