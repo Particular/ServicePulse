@@ -2256,11 +2256,11 @@ footer span {
     padding-right: 32px;
 }
 
-    footer span[ng-if="isSCConnected && !isSCConnecting"], footer span[ng-if="isSCMonitoringConnected && !isSCMonitoringConnecting"] {
-        color: #000 !important;
+    footer span.connected-status {
+        color: #000;
     }
 
-    footer span[class="ng-isolate-scope"], footer span[ng-if="isSCMonitoringConnected"] {
+    footer span.monitoring-connected, footer span.monitoring-connected span {
         padding-right: 0;
     }
 
