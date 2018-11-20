@@ -14,9 +14,6 @@
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
                         scope.plotData = scope.plotData || { points: [], average: 0 };
-                        if (scope.plotData.points.length === 0) {
-                            scope.plotData.points = new Array(10).fill(0);
-                        }
 
                         scope.$watch('plotData',
                             function() {
@@ -37,6 +34,9 @@
                                 var horizontalMargin = 2;
 
                                 var points = scope.plotData.points;
+                                if (points.length === 0) {
+                                    points = new Array(10).fill(0);
+                                }
                                 var average = scope.plotData.average || 0;
                                 var minimumYaxis = !isNaN(scope.minimumYaxis) ? Number(scope.minimumYaxis) : 10;
                                 var max = points && points.length ? Math.max(average * 1.5, d3.max(points), minimumYaxis) : 1;
