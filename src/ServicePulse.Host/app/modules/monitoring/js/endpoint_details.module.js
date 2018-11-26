@@ -9,6 +9,7 @@
     require('./endpoint_details.route.js');
     require('./constant.diagrams.js');
 
+    require('./directives/ui.particular.monitoringConnectivityStatus.js');
     require('./directives/ui.particular.graph.js');
     require('./directives/ui.particular.graphdecimal.js');
     require('./directives/ui.particular.duration.js');

@@ -1,12 +1,12 @@
 <div class="container" ng-show="endpoints.length">
     <div class="row monitoring-head">
-        <div class="col-sm-9 no-side-padding list-section">
+        <div class="col-xs-9 no-side-padding list-section">
             <h1>Endpoints overview</h1>
         </div>
-        <div class="col-sm-3 no-side-padding toolbar-menus">
+        <div class="col-xs-3 no-side-padding toolbar-menus">
             <ul class="nav nav-pills period-selector">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                    <a ng-click="selectPeriod(period)" href="#/monitored_endpoints?historyPeriod={{period.value}}">{{period.text}}</a>
+                    <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}">{{period.text}}</a>
                 </li>
             </ul>
         </div>
@@ -17,44 +17,44 @@
     <section ng-show="true">
         <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length"></div>
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
-            <div class="col-sm-2 col-xl-7">
+            <div class="col-xs-2 col-xl-7">
                 <div class="row box-header">
-                    <div class="col-sm-12">
+                    <div class="col-xs-12">
                         Endpoint name
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding">
+            <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding" uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">
+                    <div class="col-xs-12 no-side-padding" uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">
                         Queue Length <span class="table-header-unit">(msgs)</span>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding">
+            <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                    <div class="col-xs-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
                         Throughput <span class="table-header-unit">(msgs/s)</span>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding">
+            <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
+                    <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
                         Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding">
+            <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                    <div class="col-xs-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
                         Processing Time <span class="table-header-unit">(t)</span>
                     </div>
                 </div>
             </div>
-            <div class="col-sm-2 col-xl-1 no-side-padding">
+            <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                    <div class="col-xs-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
                         Critical Time <span class="table-header-unit">(t)</span>
                     </div>
                 </div>
@@ -62,16 +62,16 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-12 no-side-padding">
+            <div class="col-xs-12 no-side-padding">
                 <div class="row box endpoint-row" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
-                    <div class="col-sm-12 no-side-padding">
+                    <div class="col-xs-12 no-side-padding">
                         <div class="row">
-                                <div class="col-sm-2 col-xl-7 endpoint-name name-overview">
+                                <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                                     <div class="row box-header">
                                         <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis" uib-tooltip="{{endpoint.name}}">
                                             <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">{{endpoint.name}}</a>
                                         </div>
-                                        <div class="col-lg-5 no-side-padding endpoint-status">
+                                        <div class="col-xs-5 no-side-padding endpoint-status">
                                             <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                                 <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                             </span>
@@ -87,7 +87,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-xs-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="{{smallGraphsMinimumYAxis.queueLength}}" class="graph queue-length pull-left"></graph>
@@ -98,7 +98,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-xs-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
@@ -109,7 +109,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-xs-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
@@ -120,27 +120,27 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-xs-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
                                         </div>
-                                        <div class="no-side-padding sparkline-value">
+                                        <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                                             {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.processingTime.displayValue.value}}
                                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{endpoint.metrics.processingTime.displayValue.unit}}</span>
+                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.processingTime.displayValue.unit}}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-2 col-xl-1 no-side-padding">
+                                <div class="col-xs-2 col-xl-1 no-side-padding">
                                     <div class="row box-header">
                                         <div class="no-side-padding">
                                             <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                         </div>
-                                        <div class="no-side-padding sparkline-value">
+                                        <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.criticalTime.displayValue.unit">
                                             {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
                                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>
+                                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>
                                         </div>
                                     </div>
                                 </div>

@@ -34,6 +34,9 @@
                                 var horizontalMargin = 2;
 
                                 var points = scope.plotData.points;
+                                if (points.length === 0) {
+                                    points = new Array(10).fill(0);
+                                }
                                 var average = scope.plotData.average || 0;
                                 var minimumYaxis = !isNaN(scope.minimumYaxis) ? Number(scope.minimumYaxis) : 10;
                                 var max = points && points.length ? Math.max(average * 1.5, d3.max(points), minimumYaxis) : 1;

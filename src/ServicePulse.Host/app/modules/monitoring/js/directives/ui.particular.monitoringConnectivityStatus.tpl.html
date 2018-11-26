@@ -1,0 +1,12 @@
+﻿<span class="monitoring-connected">
+    SC Monitoring:
+    <span class="connected-status" ng-if="isSCMonitoringConnected && !isSCMonitoringConnecting">
+        <div class="fa pa-connection-success"></div> Connected
+    </span>
+    <span ng-if="!isSCMonitoringConnected && !isSCMonitoringConnecting" class="connection-failed">
+        <i class="fa pa-connection-failed"></i> Not connected
+    </span>
+    <span ng-if="isSCMonitoringConnecting" class="connection-establishing">
+        <i class="fa pa-connection-establishing"></i> Connecting
+    </span>
+</span>

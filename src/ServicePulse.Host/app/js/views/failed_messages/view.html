@@ -10,7 +10,7 @@
             <div class="col-sm-12">
                 <div>
                     <span class="fake-link" aria-hidden="true">&#9664;</span>
-                    <a class="back-nav" ng-if="vm.selectedExceptionGroup.parentTitle" href="#/endpoint_details/{{vm.selectedExceptionGroup.parentTitle}}/{{vm.selectedExceptionGroup.parentGroupIndex}}/">{{vm.selectedExceptionGroup.parentTitle}} endpoint</a>
+                    <a class="back-nav" ng-if="vm.selectedExceptionGroup.parentTitle" href="#/monitoring/endpoint/{{vm.selectedExceptionGroup.parentTitle}}/{{vm.selectedExceptionGroup.parentGroupIndex}}/">{{vm.selectedExceptionGroup.parentTitle}} endpoint</a>
                     <a class="back-nav" ng-if="!vm.selectedExceptionGroup.parentTitle" href="#/failed-messages/groups">Failed message groups list</a>
                 </div>
                 <div ng-show="!vm.selectedExceptionGroup.id" class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}} | number)</div>
@@ -67,32 +67,32 @@
                     <multi-checkboxlist messages="vm.failedMessages" selected-ids="vm.selectedIds" message="message" multiselection="vm.multiselection"></multi-checkboxlist>
 
                     <div class="col-xs-11 failed-message-data" ng-mouseenter="message.hover2 = true" ng-mouseleave="message.hover2 = false">
-                        <a href="#/failed-messages/message/{{message.id}}">
+                        
+                        <div class="row" ng-class="{rowSelected: message.selected == true}" ng-click="vm.viewMessage(message)">
+                            <div class="col-sm-12">
+                                <div class="row box-header">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <p class="lead break" ng-class="{'msg-type-hover': message.hover2}">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</p>
+                                        <p class="metadata">
+                                            <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
+                                            <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning metadata-label">Archived</span>
+                                            <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{message.number_of_processing_attempts}} Retry Failures</span>
 
-                            <div class="row" ng-class="{rowSelected: message.selected == true}">
+                                            <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{message.time_of_failure}}"></sp-moment></span>
+                                            <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
+                                            <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
+                                            <span class="metadata" ng-show="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{message.redirect}}</span>
+                                            <button type="button" class="btn btn-link btn-sm" ng-click="vm.retryMessage(message, $event)" ng-hide="!message.hover2" >
+                                                <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
+                                            </button>
+                                        </p>
 
-                                <div class="col-sm-12">
-                                    <div class="row box-header">
-                                        <div class="col-sm-12 no-side-padding">
-                                            <p class="lead break" ng-class="{'msg-type-hover': message.hover2}">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</p>
-                                            <p class="metadata">
-                                                <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
-                                                <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning metadata-label">Archived</span>
-                                                <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{message.number_of_processing_attempts}} Retry Failures</span>
+                                        <pre class="stacktrace-preview" isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
 
-                                                <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{message.time_of_failure}}"></sp-moment></span>
-                                                <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
-                                                <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
-                                                <span class="metadata" ng-show="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{message.redirect}}</span>
-                                            </p>
-
-                                            <pre class="stacktrace-preview" isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
-
-                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
 

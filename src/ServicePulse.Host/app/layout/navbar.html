@@ -1,16 +1,6 @@
 ﻿<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span ng-show="showAlertBadgeOnCollapsedMenu()" class="badge badge-important " 
-                      style="top: 0;
-                        right: 0;
-                        position: absolute;">!</span>
-            </button>
             <a class="navbar-brand" href="#/">
                 <img alt="Service Pulse" src="img/logo.svg">
             </a>
@@ -32,8 +22,8 @@
                 </li>
 
 
-                <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('/monitored_endpoints') || isActive('/endpoint_details') }">
-                    <a href="#/monitored_endpoints">
+                <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('/monitoring') || isActive('/monitoring/endpoint') }">
+                    <a href="#/monitoring">
                         <i class="fa fa-heartbeat icon-white"></i>
                         <span class="navbar-label">Monitoring</span>
                     </a>

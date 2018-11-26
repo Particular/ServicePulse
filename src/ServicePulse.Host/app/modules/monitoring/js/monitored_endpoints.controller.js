@@ -27,7 +27,7 @@
         };
 
         $scope.getDetailsUrl = endpoint => {
-            return '#/endpoint_details/' + endpoint.name + '/' + (endpoint.sourceIndex | 0) + '?historyPeriod=' + $scope.selectedPeriod.value;
+            return '#/monitoring/endpoint/' + endpoint.name + '/' + (endpoint.sourceIndex | 0) + '?historyPeriod=' + $scope.selectedPeriod.value;
         };
 
         function fillDisplayValuesForEndpoint(endpoint) {

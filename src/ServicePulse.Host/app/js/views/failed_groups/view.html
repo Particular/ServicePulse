@@ -44,11 +44,11 @@
         </div>
 
         <div class="row">
-            <div class="col-xs-12 col-sm-6 list-section">
+            <div class="col-xs-6 list-section">
                 <h6>Failed message groups</h6>
             </div>
 
-            <div class="col-sm-6 col-xs-12 toolbar-menus no-side-padding">
+            <div class="col-xs-6 toolbar-menus no-side-padding">
 
                 <div class="msg-group-menu dropdown">
                     <label class="control-label">Group by:</label>
@@ -58,7 +58,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li ng-repeat="classifier in vm.availableClassifiers">
-                            <a href="#" ng-click="$event.preventDefault();vm.selectClassification(classifier)">{{classifier}}</a>
+                            <a href="/#/failed-messages/groups?groupBy={{classifier}}">{{classifier}}</a>
                         </li>
                     </ul>
                 </div>

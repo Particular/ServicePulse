@@ -41,10 +41,18 @@
         function loadEndpointDetailsFromMonitoringService(endpointName, sourceIndex, historyPeriod) {
             return $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
                 .then(function (result) {
+                    filterOutSystemMessage(result.data);
                     return result.data;
                 }, function (error) {
                     return { error: error };
                 });
+        }
+
+        function filterOutSystemMessage(data)
+        {
+            data.messageTypes = data.messageTypes.filter(mt => {
+                return mt.id;
+            });
         }
 
         function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod, refreshInterval) {
@@ -54,9 +62,16 @@
                 });
         }
 
+        function getMonitoredEndpoints() {
+            return scConfig.monitoring_urls.map(function (url) {
+                return $http.get(uri.join(url, 'monitored-endpoints') + '?history=1');
+            });
+        }
+
         var service = {
             createEndpointsSource: createEndpointsSource,
-            createEndpointDetailsSource: createEndpointDetailsSource
+            createEndpointDetailsSource: createEndpointDetailsSource,
+            getMonitoredEndpoints: getMonitoredEndpoints,
         };
 
         return service;

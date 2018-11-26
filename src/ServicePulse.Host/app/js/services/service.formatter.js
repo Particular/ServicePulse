@@ -12,11 +12,11 @@
 
             var time = { value: 0, unit: '' };
             if (duration >= dayDuration) {
-                time.value = duration.format('D [d] h [h]');
+                time.value = duration.format('D [d] h [hr]');
                 return time;
             } else if (duration >= hourDuration) {
                 time.value = moment(duration._data).format('HH:mm');
-                time.unit = 'h';
+                time.unit = 'hr';
                 return time;
             } else if (duration >= minuteDuration) {
                 time.value = duration.format('mm:ss');
@@ -24,7 +24,7 @@
                 return time;
             } else if (duration >= secondDuration) {
                 time.value = duration.format('ss');
-                time.unit = 's';
+                time.unit = 'sec';
                 return time;
             } else {
                 time.value = duration.format('s,SSS');
