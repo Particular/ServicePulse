@@ -121,7 +121,7 @@
 
     service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', 'moment', 'scConfig', 'uri', 'notifications', 'notifyService'];
 
-    angular.module('sc')
+    angular.module('configuration.redirect')
         .service('redirectService', service);
 
 })(window, window.angular);

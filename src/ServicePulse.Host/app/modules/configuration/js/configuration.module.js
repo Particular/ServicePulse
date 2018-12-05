@@ -8,6 +8,9 @@
     require('./configuration.service');
 
     require('./directives/ui.particular.configurationTabs');
+    require('./directives/ui.particular.redirectLink');
+
+    require('./redirect/redirect.module');
 
 <<<<<<< HEAD
     require('./license/license.module');
@@ -20,11 +23,16 @@
         'configuration.controller',
         'configuration.service',
 <<<<<<< HEAD
+<<<<<<< HEAD
         'configuration.tabs',
         'configuration.license'
 =======
         'configuration.tabs'
 >>>>>>> Bind tabs control
+=======
+        'configuration.tabs',
+        'configuration.redirect'
+>>>>>>> Move redirects
     ]);
 
 } (window, window.angular));

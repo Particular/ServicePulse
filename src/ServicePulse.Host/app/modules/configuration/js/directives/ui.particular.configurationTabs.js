@@ -50,4 +50,3 @@
         .directive('configurationTabs', directive);
 
 }(window, window.angular, window.jQuery));
-
