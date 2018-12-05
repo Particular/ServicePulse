@@ -35,220 +35,215 @@
 
 </head>
 <body ng-controller="AppCtrl">
-<noscript>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="alert col-sm-10 col-md-10 alert-warning">
-                <h4>Warning!</h4>
-                <p>
-                    You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.
-                </p>
+    <noscript>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="alert col-sm-10 col-md-10 alert-warning">
+                    <h4>Warning!</h4>
+                    <p>
+                        You need to have <a href="http://en.wikipedia.org/wiki/JavaScript" target="_blank">JavaScript</a> enabled to use this site.
+                    </p>
+                </div>
             </div>
         </div>
+    </noscript>
+
+    <ng-include src="'layout/navbar.html'"></ng-include>
+
+    <div class="container-fluid">
+        <a id="pagetop"></a>
+        <div id="view" ng-view=""></div>
     </div>
-</noscript>
 
-<ng-include src="'layout/navbar.html'"></ng-include>
+    <ng-include src="'layout/footer.html'"></ng-include>
 
-<div class="container-fluid">
-    <a id="pagetop"></a>
-    <div id="view" ng-view=""></div>
-</div>
-
-<ng-include src="'layout/footer.html'"></ng-include>
-
-<toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
-</toaster-container>
-<!-- Polyfills -->
-<script type="text/javascript">
-    if (!String.prototype.startsWith) {
-        String.prototype.startsWith = function (searchString, position) {
-            position = position || 0;
-            return this.substr(position, searchString.length) === searchString;
-        };
-    }
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
-    if (!Array.prototype.findIndex) {
-        Object.defineProperty(Array.prototype, 'findIndex', {
-            value: function(predicate) {
-                if (this == null) {
-                    throw new TypeError('"this" is null or not defined');
-                }
-                var o = Object(this);
-                var len = o.length >>> 0;
-
-                if (typeof predicate !== 'function') {
-                    throw new TypeError('predicate must be a function');
-                }
-
-                var thisArg = arguments[1];
-                var k = 0;
-
-                while (k < len) {
-                    var kValue = o[k];
-                    if (predicate.call(thisArg, kValue, k, o)) {
-                        return k;
+    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
+    </toaster-container>
+    <!-- Polyfills -->
+    <script type="text/javascript">
+        if (!String.prototype.startsWith) {
+            String.prototype.startsWith = function (searchString, position) {
+                position = position || 0;
+                return this.substr(position, searchString.length) === searchString;
+            };
+        }
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
+        if (!Array.prototype.findIndex) {
+            Object.defineProperty(Array.prototype, 'findIndex', {
+                value: function (predicate) {
+                    if (this == null) {
+                        throw new TypeError('"this" is null or not defined');
                     }
-                    k++;
+                    var o = Object(this);
+                    var len = o.length >>> 0;
+
+                    if (typeof predicate !== 'function') {
+                        throw new TypeError('predicate must be a function');
+                    }
+
+                    var thisArg = arguments[1];
+                    var k = 0;
+
+                    while (k < len) {
+                        var kValue = o[k];
+                        if (predicate.call(thisArg, kValue, k, o)) {
+                            return k;
+                        }
+                        k++;
+                    }
+
+                    return -1;
                 }
+            });
+        }
 
-                return -1;
-            }
-        });
-    }
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
+        if (!Array.prototype.fill) {
+            Object.defineProperty(Array.prototype, 'fill', {
+                value: function (value) {
 
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
-    if (!Array.prototype.fill) {
-        Object.defineProperty(Array.prototype, 'fill', {
-            value: function(value) {
+                    if (this == null) {
+                        throw new TypeError('this is null or not defined');
+                    }
 
-                if (this == null) {
-                    throw new TypeError('this is null or not defined');
+                    var O = Object(this);
+                    var len = O.length >>> 0;
+
+                    var start = arguments[1];
+                    var relativeStart = start >> 0;
+
+                    var k = relativeStart < 0 ?
+                        Math.max(len + relativeStart, 0) :
+                        Math.min(relativeStart, len);
+
+                    var end = arguments[2];
+                    var relativeEnd = end === undefined ?
+                        len : end >> 0;
+
+                    var final = relativeEnd < 0 ?
+                        Math.max(len + relativeEnd, 0) :
+                        Math.min(relativeEnd, len);
+
+                    while (k < final) {
+                        O[k] = value;
+                        k++;
+                    }
+
+                    return O;
                 }
+            });
+        }
+    </script>
 
-                var O = Object(this);
-                var len = O.length >>> 0;
+    <script src="modules/dist/shell.dist.js"></script>
+    <script src="modules/dist/monitoring.dist.js"></script>
+    <script src="modules/dist/configuration.dist.js"></script>
 
-                var start = arguments[1];
-                var relativeStart = start >> 0;
+    <script src="lib/page-width-functions.js"></script>
 
-                var k = relativeStart < 0 ?
-                    Math.max(len + relativeStart, 0) :
-                    Math.min(relativeStart, len);
+    <!-- App -->
+    <script src="js/app.js"></script>
+    <script src="js/app.constants.js"></script>
+    <script src="js/app.route.js"></script>
+    <script src="js/app.controller.js"></script>
+    <script src="js/app.logging.js"></script>
+    <script src="js/app.http.js"></script>
 
-                var end = arguments[2];
-                var relativeEnd = end === undefined ?
-                    len : end >> 0;
+    <!-- Services -->
+    <script src="js/services/services.module.js"></script>
+    <script src="js/services/services.exception-handler.js"></script>
+    <script src="js/services/services.notifications.js"></script>
+    <script src="js/services/services.platform-update.js"></script>
+    <script src="js/services/services.semver.js"></script>
+    <script src="js/services/services.service-control.js"></script>
+    <script src="js/services/services.stream.js"></script>
+    <script src="js/services/services.uri.js"></script>
+    <script src="js/services/services.historyperiods.js"></script>
+    <script src="js/services/service.toast.js"></script>
+    <script src="js/services/factory.listener.js"></script>
+    <script src="js/services/factory.reindexingChecker.js"></script>
+    <script src="js/services/factory.notifier.js"></script>
+    <script src="js/services/factory.shareddata.js"></script>
+    <script src="js/services/services.endpoints.js"></script>
+    <script src="js/services/constant.rxjs.js"></script>
+    <script src="js/services/service.formatter.js"></script>
 
-                var final = relativeEnd < 0 ?
-                    Math.max(len + relativeEnd, 0) :
-                    Math.min(relativeEnd, len);
+    <!-- Directives -->
+    <script src="js/directives/ngClip.js"></script>
+    <script src="js/directives/moment.js"></script>
+    <script src="js/directives/ui.particular.js"></script>
+    <script src="js/directives/ui.particular.hud.js"></script>
+    <script src="js/directives/ui.particular.productVersion.js"></script>
+    <script src="js/directives/ui.particular.busy.js"></script>
+    <script src="js/directives/ui.particular.nodata.js"></script>
+    <script src="js/directives/ui.particular.confirmclick.js"></script>
+    <script src="js/directives/ui.particular.tabset.js"></script>
+    <script src="js/directives/ui.particular.tab.js"></script>
+    <script src="js/directives/ui.particular.eatclick.js"></script>
+    <script src="js/directives/ui.particular.failedMessageTabs.js"></script>
+    <script src="js/directives/ui.particular.configurationTabs.js"></script>
+    <script src="js/directives/ui.particular.redirectLink.js"></script>
+    <script src="js/directives/ui.particular.largenumber.js"></script>
+    <script src="js/directives/ui.particular.multi-checkboxlist.js"></script>
+    <script src="js/directives/ui.particular.reindexingStatus.js"></script>
 
-                while (k < final) {
-                    O[k] = value;
-                    k++;
-                }
+    <!-- Mystery -->
+    <script src="js/views/event_log_items/eventLogItems.js"></script>
 
-                return O;
-            }
-        });
-    }
-</script>
-
-<script src="modules/dist/shell.dist.js"></script>
-<script src="modules/dist/monitoring.dist.js"></script>
-
-<script src="lib/page-width-functions.js"></script>
-
-<!-- App -->
-<script src="js/app.js"></script>
-<script src="js/app.constants.js"></script>
-<script src="js/app.route.js"></script>
-<script src="js/app.controller.js"></script>
-<script src="js/app.logging.js"></script>
-<script src="js/app.http.js"></script>
-
-<!-- Services -->
-<script src="js/services/services.module.js"></script>
-<script src="js/services/services.exception-handler.js"></script>
-<script src="js/services/services.notifications.js"></script>
-<script src="js/services/services.platform-update.js"></script>
-<script src="js/services/services.semver.js"></script>
-<script src="js/services/services.service-control.js"></script>
-<script src="js/services/services.stream.js"></script>
-<script src="js/services/services.uri.js"></script>
-<script src="js/services/services.historyperiods.js"></script>
-<script src="js/services/service.toast.js"></script>
-<script src="js/services/factory.listener.js"></script>
-<script src="js/services/factory.reindexingChecker.js"></script>
-<script src="js/services/factory.notifier.js"></script>
-<script src="js/services/factory.shareddata.js"></script>
-<script src="js/services/services.endpoints.js"></script>
-<script src="js/services/constant.rxjs.js"></script>
-<script src="js/services/service.formatter.js"></script>
-
-<!-- Directives -->
-<script src="js/directives/ngClip.js"></script>
-<script src="js/directives/moment.js"></script>
-<script src="js/directives/ui.particular.js"></script>
-<script src="js/directives/ui.particular.hud.js"></script>
-<script src="js/directives/ui.particular.productVersion.js"></script>
-<script src="js/directives/ui.particular.busy.js"></script>
-<script src="js/directives/ui.particular.nodata.js"></script>
-<script src="js/directives/ui.particular.confirmclick.js"></script>
-<script src="js/directives/ui.particular.tabset.js"></script>
-<script src="js/directives/ui.particular.tab.js"></script>
-<script src="js/directives/ui.particular.eatclick.js"></script>
-<script src="js/directives/ui.particular.failedMessageTabs.js"></script>
-<script src="js/directives/ui.particular.configurationTabs.js"></script>
-<script src="js/directives/ui.particular.redirectLink.js"></script>
-<script src="js/directives/ui.particular.largenumber.js"></script>
-<script src="js/directives/ui.particular.multi-checkboxlist.js"></script>
-<script src="js/directives/ui.particular.reindexingStatus.js"></script>
-
-<!-- Mystery -->
-<script src="js/views/event_log_items/eventLogItems.js"></script>
-
-<!-- Archive -->
-<script src="js/views/about/route.js"></script>
-<script src="js/views/about/controller.js"></script>
+    <!-- Archive -->
+    <script src="js/views/about/route.js"></script>
+    <script src="js/views/about/controller.js"></script>
 
 
-<!-- Dashboard -->
-<script src="js/views/dashboard/dashboard.module.js"></script>
-<script src="js/views/dashboard/dashboard.route.js"></script>
-<script src="js/views/dashboard/dashboard.controller.js"></script>
+    <!-- Dashboard -->
+    <script src="js/views/dashboard/dashboard.module.js"></script>
+    <script src="js/views/dashboard/dashboard.route.js"></script>
+    <script src="js/views/dashboard/dashboard.controller.js"></script>
 
-<!-- Failed Groups -->
-<script src="js/views/failed_groups/route.js"></script>
-<script src="js/views/failed_groups/controller.js"></script>
-<script src="js/views/failed_groups/service.js"></script>
+    <!-- Failed Groups -->
+    <script src="js/views/failed_groups/route.js"></script>
+    <script src="js/views/failed_groups/controller.js"></script>
+    <script src="js/views/failed_groups/service.js"></script>
 
-<!-- Failed Messages -->
-<script src="js/views/failed_messages/route.js"></script>
-<script src="js/views/failed_messages/controller.js"></script>
-<script src="js/views/failed_messages/service.js"></script>
+    <!-- Failed Messages -->
+    <script src="js/views/failed_messages/route.js"></script>
+    <script src="js/views/failed_messages/controller.js"></script>
+    <script src="js/views/failed_messages/service.js"></script>
 
-<!-- Failed Messages -->
-<script src="js/views/message/route.js"></script>
-<script src="js/views/message/controller.js"></script>
+    <!-- Failed Messages -->
+    <script src="js/views/message/route.js"></script>
+    <script src="js/views/message/controller.js"></script>
 
-<!-- Archive -->
-<script src="js/views/archive/route.js"></script>
-<script src="js/views/archive/controller.js"></script>
-<script src="js/views/archive/service.js"></script>
+    <!-- Archive -->
+    <script src="js/views/archive/route.js"></script>
+    <script src="js/views/archive/controller.js"></script>
+    <script src="js/views/archive/service.js"></script>
 
-<!-- Pending Retries -->
-<script src="js/views/pending_retries/route.js"></script>
-<script src="js/views/pending_retries/controller.js"></script>
-<script src="js/views/pending_retries/service.js"></script>
+    <!-- Pending Retries -->
+    <script src="js/views/pending_retries/route.js"></script>
+    <script src="js/views/pending_retries/controller.js"></script>
+    <script src="js/views/pending_retries/service.js"></script>
 
-<!-- Custom Checks -->
-<script src="js/views/custom_checks/customChecks.module.js"></script>
-<script src="js/views/custom_checks/customChecks.route.js"></script>
-<script src="js/views/custom_checks/customChecks.controller.js"></script>
+    <!-- Custom Checks -->
+    <script src="js/views/custom_checks/customChecks.module.js"></script>
+    <script src="js/views/custom_checks/customChecks.route.js"></script>
+    <script src="js/views/custom_checks/customChecks.controller.js"></script>
 
-<!-- Endpoints -->
-<script src="js/views/endpoints/endpoints.module.js"></script>
-<script src="js/views/endpoints/endpoints.route.js"></script>
-<script src="js/views/endpoints/endpoints.controller.js"></script>
+    <!-- Endpoints -->
+    <script src="js/views/endpoints/endpoints.module.js"></script>
+    <script src="js/views/endpoints/endpoints.route.js"></script>
+    <script src="js/views/endpoints/endpoints.controller.js"></script>
 
-<!-- Configuration -->
-<script src="js/views/configuration/configuration.module.js"></script>
-<script src="js/views/configuration/configuration.route.js"></script>
-<script src="js/views/configuration/configuration.controller.js"></script>
-<script src="js/views/configuration/configuration.service.js"></script>
+    <!-- Redirect -->
+    <script src="js/views/redirect/controller.js"></script>
+    <script src="js/views/redirect/route.js"></script>
+    <script src="js/views/redirect/service.js"></script>
 
-<!-- Redirect -->
-<script src="js/views/redirect/controller.js"></script>
-<script src="js/views/redirect/route.js"></script>
-<script src="js/views/redirect/service.js"></script>
+    <script src="js/views/redirect/edit/controller.js"></script>
+    <script src="js/views/redirect/edit/service.js"></script>
 
-<script src="js/views/redirect/edit/controller.js"></script>
-<script src="js/views/redirect/edit/service.js"></script>
-    
-<!--Polyfills-->
-<script src="js/polyfill/array.prototype.find.js"></script>
+    <!--Polyfills-->
+    <script src="js/polyfill/array.prototype.find.js"></script>
 
 </body>
 </html>

@@ -7,6 +7,7 @@ module.exports = {
     entry: {
         shell: './app/modules/shell/shell.js',
         monitoring: './app/modules/monitoring/monitoring.js',
+        configuration: './app/modules/configuration/configuration.js',
     },
     output: {
         filename: '[name].dist.js',

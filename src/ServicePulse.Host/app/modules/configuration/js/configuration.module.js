@@ -1,6 +1,12 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
+    angular.module('configuration', []);
+
+    require('./configuration.controller');
+    require('./configuration.route');
+    require('./configuration.service');
+
     angular.module('configuration', [
         'ui.bootstrap',
         'configuration.route',
@@ -9,6 +15,3 @@
     ]);
 
 } (window, window.angular));
-
-
-    
