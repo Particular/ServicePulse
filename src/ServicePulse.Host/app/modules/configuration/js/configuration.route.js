@@ -2,6 +2,8 @@
     'use strict';
 
     function routeProvider($routeProvider) {
+        const template = require('./configuration.html');
+
         $routeProvider.when('/configuration',
         {
             redirectTo: '/configuration/endpoints'
@@ -9,11 +11,11 @@
             data: {
                 pageTitle: 'Monitored endpoints - Configuration'
             },
-            templateUrl: 'js/views/configuration/configuration.html',
+            template: template,
             controller: 'ConfigurationCtrl',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'
