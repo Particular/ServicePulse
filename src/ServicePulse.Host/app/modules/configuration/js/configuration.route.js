@@ -2,7 +2,7 @@
     'use strict';
 
     function routeProvider($routeProvider) {
-        const template = require('./configuration.html');
+        const template = require('./../views/configuration.html');
 
         $routeProvider.when('/configuration',
         {
