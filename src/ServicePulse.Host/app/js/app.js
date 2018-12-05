@@ -13,6 +13,7 @@
         'infinite-scroll',
         'services',
         'ui.particular',
+        'ui.particular.reindexingstatus',
         'directives.moment',
         'eventLogItems',
         'endpoints',

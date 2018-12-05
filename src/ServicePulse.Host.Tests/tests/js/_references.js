@@ -34,7 +34,6 @@
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.tab.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.eatclick.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.failedMessageTabs.js" />
-/// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.configurationTabs.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.largenumber.js" />
 /// <reference path="../../../servicepulse.host/app/js/directives/ui.particular.multi-checkboxlist.js" />
 /// <!-- Mystery -->

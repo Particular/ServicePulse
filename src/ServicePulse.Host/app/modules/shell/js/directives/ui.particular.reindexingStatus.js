@@ -1,14 +1,18 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
+    require('angular');
+
     function directive($rootScope) {
+        const template = require('./ui.particular.reindexingstatus.tpl.html');
+
         return {
             scope: {
                 busyReindexingDatabase: '@'
             },
             restrict: 'E',
             replace: true,
-            templateUrl: 'js/directives/ui.particular.reindexingstatus.tpl.html',
+            template: template,
             link: function (scope, element) {
                 scope.busyReindexingDatabase = $rootScope.busyReindexingDatabase;
 
@@ -25,5 +29,4 @@
 
     angular.module('ui.particular.reindexingstatus', [])
         .directive('reindexingstatus', directive);
-
 } (window, window.angular));
