@@ -21,6 +21,13 @@
             });
         }
 
+        function getLicenseDetails() {
+            var url = uri.join(scConfig.service_control_url, 'license');
+            return $http.get(url).then(function (response) {
+                return response.data;
+            });
+        }
+
         function getEventLogItems() {
             var url = uri.join(scConfig.service_control_url, 'eventlogitems');
             return $http.get(url).then(function(response) {
@@ -303,6 +310,7 @@
         var service = {
             getVersion: getVersion,
             checkLicense: checkLicense,
+            getLicenseDetails: getLicenseDetails,
             getConfiguration: getConfiguration,
             getEventLogItems: getEventLogItems,
             getFailedMessages: getFailedMessages,

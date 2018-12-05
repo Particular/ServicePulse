@@ -32,6 +32,13 @@
             }
         };
 
+        var license = {
+            edition: "",
+            expiration_date: undefined,
+            upgrade_protection_expiration: undefined,
+            trial_license: true
+        };
+
         var environment = {
             sc_version: undefined,
             minimum_supported_sc_version: "1.39.0",
@@ -52,6 +59,11 @@
             if (!isValid) {
                 notifier.notify('ExpiredLicense', environment);
             }
+        });
+
+        serviceControlService.getLicenseDetails().then(function (response) {
+            console.log(response);
+            license = response || license;
         });
 
         serviceControlService.getConfiguration().then(function (response) {
@@ -127,6 +139,10 @@
             return configuration;
         }
 
+        function getlicense() {
+            return license;
+        }
+
         function getenvironment() {
             return environment;
         }
@@ -137,6 +153,7 @@
             getstats: getstats,
             getConfiguration: getconfiguration,
             getenvironment: getenvironment,
+            getlicense: getlicense,
             submittedForRetry: storage.submittedForRetry
         };
 

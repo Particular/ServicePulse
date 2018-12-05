@@ -1,0 +1,33 @@
+<div class="container">
+
+    <div class="row">
+        <div class="col-sm-12 no-side-padding">
+            <h1>Configuration</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <section name="license">
+        <configuration-tabs></configuration-tabs>
+        <div class="col-sm-12">
+            <div class="box">
+                <div class="row">
+                    <div style="font-size: 16px; padding: 2em; line-height: 3em;">
+                        <div><b>Platform license type:</b> {{model.licenseType}}</div>
+                        <div ng-show="model.formattedExpirationDate"><b>Expiration date:</b> {{model.formattedExpirationDate}} - {{model.expirationDaysLeft}}</div>
+                        <div ng-show="model.formattedUpgradeProtectionExpiration"><b>Upgrade protection expiry:</b> {{model.formattedUpgradeProtectionExpiration}} - {{model.upgradeDaysLeft}}</div>
+                        <div><b>ServiceControl instance:</b> {{model.scInstanceName}}</div>
+                        <ul style="line-height: 1em;">
+                            <li><a href="#">Install or update a ServiceControl license</a></li>
+                        </ul>
+                        <div style="border-bottom: 1px solid #eeeeee;">&nbsp;</div>
+                        <div style="margin-top: 2em;">
+                            Need help? <a href="https://particular.net/contactus">Contact us</a> <i class="fa fa-external-link fake-link"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

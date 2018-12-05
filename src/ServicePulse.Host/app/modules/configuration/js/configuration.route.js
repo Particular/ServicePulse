@@ -4,10 +4,7 @@
     function routeProvider($routeProvider) {
         const template = require('./../views/configuration.html');
 
-        $routeProvider.when('/configuration',
-        {
-            redirectTo: '/configuration/endpoints'
-        }).when('/configuration/endpoints', {
+        $routeProvider.when('/configuration/endpoints', {
             data: {
                 pageTitle: 'Monitored endpoints - Configuration'
             },
