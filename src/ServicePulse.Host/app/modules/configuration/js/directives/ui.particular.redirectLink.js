@@ -1,27 +1,21 @@
-﻿
-; (function (window, angular, undefined) {
+﻿; (function (window, angular, undefined) {
     'use strict';
 
-
     function controller($scope, redirectModalService) {
-
-        $scope.editRedirect = function() {
-            redirectModalService.displayEditRedirectModal($scope.redirect);
-        };
-
-        $scope.createRedirect = function() {
-            redirectModalService.displayCreateRedirectModal($scope.queue_address);
-        };
+        $scope.editRedirect = () => redirectModalService.displayEditRedirectModal($scope.redirect);
+        $scope.createRedirect = () => redirectModalService.displayCreateRedirectModal($scope.queue_address);
     }
     
     controller.$inject = ['$scope', 'redirectModalService'];
 
     function directive() {
+        const template = require('./ui.particular.redirectLink.tpl.html');
+
         return {
             scope: { redirect: '=redirect', queue_address: '@queueAddress' },
             restrict: 'E',
             replace: true,
-            templateUrl: 'js/directives/ui.particular.redirectLink.tpl.html',
+            template: template,
             controller: controller,
             link: function (scope, element) { }
         };
@@ -30,8 +24,7 @@
     directive.$inject = [];
 
     angular
-        .module('ui.particular.redirectLink', [])
+        .module('configuration.redirect', [])
         .directive('redirectLink', directive);
 
 }(window, window.angular, window.jQuery));
-

@@ -11,7 +11,6 @@
         'ui.particular.productVersion',
         'ui.particular.busy',
         'ui.particular.nodata',
-        'ui.particular.redirectLink',
         'ui.particular.graph',
         'ui.particular.largenumber',
         'ui.particular.metricslargenumber',

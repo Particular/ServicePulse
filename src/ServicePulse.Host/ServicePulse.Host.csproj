@@ -94,6 +94,14 @@
     <Content Include="app\img\redirect-source.svg" />
     <Content Include="app\js\app.http.js" />
     <Content Include="app\js\app.logging.js" />
+    <Content Include="app\modules\configuration\js\redirect\redirect.module.js" />
+    <Content Include="app\modules\configuration\js\redirect\redirect.controller.js" />
+    <Content Include="app\modules\configuration\js\redirect\editredirect.controller.js" />
+    <Content Include="app\modules\configuration\js\redirect\redirectmodal.service.js" />
+    <Content Include="app\modules\configuration\views\redirectmodal.html" />
+    <Content Include="app\modules\configuration\js\redirect\redirect.route.js" />
+    <Content Include="app\modules\configuration\js\redirect\redirect.service.js" />
+    <Content Include="app\modules\configuration\views\redirect.html" />
     <Content Include="app\modules\shell\js\directives\ui.particular.reindexingstatus.tpl.html" />
     <Content Include="app\js\directives\ui.particular.confirmclick.tpl.html" />
     <Content Include="app\js\directives\ui.particular.busy.js" />
@@ -117,10 +125,10 @@
     <Content Include="app\modules\monitoring\js\directives\ui.particular.graphduration.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.largeGraph.js" />
     <Content Include="app\modules\monitoring\js\directives\ui.particular.duration.js" />
-    <Content Include="app\js\directives\ui.particular.redirectLink.js" />
+    <Content Include="app\modules\configuration\js\directives\ui.particular.redirectLink.js" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.js" />
     <Content Include="app\modules\configuration\js\directives\ui.particular.configurationTabs.tpl.html" />
-    <Content Include="app\js\directives\ui.particular.redirectLink.tpl.html" />
+    <Content Include="app\modules\configuration\js\directives\ui.particular.redirectLink.tpl.html" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.tpl.html" />
     <Content Include="app\js\directives\ui.particular.nodata.js" />
     <Content Include="app\js\directives\ui.particular.nodata.tpl.html" />

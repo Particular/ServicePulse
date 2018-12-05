@@ -1,7 +1,6 @@
-﻿;
-(function (window, angular, undefined) {
-    "use strict";
-    
+﻿;(function (window, angular, undefined) {
+    'use strict';
+
     function controller(
         $scope,
         $uibModalInstance,
@@ -10,8 +9,8 @@
         notifyService,
         data,
         serviceControlService,
-        endpointsService) {
-
+        endpointsService
+    ) {
         var notifier = notifyService();
 
         $scope.loadingData = false;
@@ -35,9 +34,9 @@
             $scope.endpoints = data;
         }, 'EndpointsUpdated');
         
-        $scope.cancel = function () {
+        $scope.cancel = function() {
             $uibModalInstance.dismiss('cancel');
-        }
+        };
 
         function isFormInvalid() {
             return $scope.redirectForm.$invalid || !$scope.physicalAddress.selected.physical_address;
@@ -86,17 +85,17 @@
     }
 
     controller.$inject = [
-        "$scope",
-        "$uibModalInstance",
-        "redirectService",
-        "toastService",
-        "notifyService",
-        "data",
-        "serviceControlService",
-        "endpointsService"
+        '$scope',
+        '$uibModalInstance',
+        'redirectService',
+        'toastService',
+        'notifyService',
+        'data',
+        'serviceControlService',
+        'endpointsService'
     ];
 
-    angular.module("sc")
-        .controller("editRedirectController", controller);
+    angular.module('configuration.redirect')
+        .controller('editRedirectController', controller);
 
 })(window, window.angular);
