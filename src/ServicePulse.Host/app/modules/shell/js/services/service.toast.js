@@ -26,7 +26,6 @@
         };
 
         this.showWarning = function(text, sticky) {
-            debugger;
             if (sticky === undefined) {
                 sticky = true;
             }
