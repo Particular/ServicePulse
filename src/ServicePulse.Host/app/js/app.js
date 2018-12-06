@@ -9,6 +9,7 @@
         'ngStorage',
         'ngCookies',
         'toaster',
+        'toastService',
         'ui.bootstrap',
         'infinite-scroll',
         'services',
@@ -28,7 +29,7 @@
 
     angular.module('sc')
         .run(['$rootScope', '$location', '$log', function ($rootScope, $location, $log) {
-            $rootScope.$log = $log;
+            $rootScope.$log = $log; 
         }]);
 
     angular.module('sc').value('$jquery', $);

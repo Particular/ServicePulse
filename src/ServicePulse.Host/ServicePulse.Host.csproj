@@ -156,7 +156,7 @@
     <Content Include="app\js\views\archive\controller.js" />
     <Content Include="app\js\services\factory.listener.js" />
     <Content Include="app\js\services\factory.notifier.js" />
-    <Content Include="app\js\services\service.toast.js" />
+    <Content Include="app\modules\shell\js\services\service.toast.js" />
     <Content Include="app\js\views\message\controller.js" />
     <Content Include="app\js\views\message\route.js" />
     <Content Include="app\js\views\message\messages-view.html" />
@@ -296,6 +296,7 @@
     <Content Include="app\modules\monitoring\views\endpoint_details.html" />
     <Content Include="app\modules\monitoring\views\monitored_endpoints.html" />
     <Content Include="app\modules\monitoring\views\monitoring_not_available.html" />
+    <Content Include="app\modules\shell\js\licensenotifier\license.notifier.js" />
     <Content Include="app\modules\shell\shell.js" />
     <Content Include="app\NoIE.html" />
     <Content Include="app\js\views\dashboard\dashboard.html" />

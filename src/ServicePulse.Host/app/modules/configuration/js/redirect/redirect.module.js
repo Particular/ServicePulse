@@ -3,11 +3,10 @@
 
     angular.module('configuration.redirect', []);
 
-    require('./redirectmodal.service');
-
     require('./redirect.route');
     require('./redirect.controller');
     require('./redirect.service');
+    require('./redirectmodal.service');
 
     require('./editredirect.controller');
 }(window, window.angular));

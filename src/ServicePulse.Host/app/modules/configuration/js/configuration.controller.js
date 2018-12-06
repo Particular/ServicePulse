@@ -1,4 +1,4 @@
-﻿; (function (window, angular, $, undefined) {
+﻿; (function(window, angular, $, undefined) {
     'use strict';
 
     function createWorkflowState(optionalStatus, optionalMessage) {
@@ -10,23 +10,20 @@
 
     function controller(
         $scope,
-        $window,
-        sharedDataService,
         configurationService,
-        notifyService) {
-
+        notifyService
+    ) {
         var notifier = notifyService();
         $scope.model = { endpoints: [] };
 
-
         function autoGetEndPoints() {
             configurationService.getData()
-                .then(function (response) {
+                .then(function(response) {
                     notifier.notify('EndpointCountUpdated', response.data.length);
 
                     if (response.data.length > 0) {
                         // need a map in some ui state for controlling animations
-                        var endPoints = response.data.map(function (obj) {
+                        var endPoints = response.data.map(function(obj) {
                             var nObj = obj;
                             nObj.workflow_state = createWorkflowState('ready', '');
                             return nObj;
@@ -36,29 +33,34 @@
                     }
                 });
         }
+<<<<<<< HEAD
 
         $scope.update = function (id, monitor) {
+=======
+>>>>>>> Move toast service
 
+        $scope.update = (id, monitor) => {
             var result = $.grep($scope.model.endpoints, function (e) { return e.id === id; })[0];
             result.workflow_state = createWorkflowState('working', 'Updating');
-
          
             configurationService.update(id, monitor, 'Updating', 'Update Failed')
-                .then(function (message) {
+                .then(function(message) {
                     result.workflow_state = createWorkflowState('ready', message);
                     result.monitor_heartbeat = monitor;
-                }, function (message) {
+                }, function(message) {
                     result.workflow_state = createWorkflowState('error', message);
                 });
         };
 
         autoGetEndPoints();
+<<<<<<< HEAD
     };
+=======
+    }
+>>>>>>> Move toast service
 
     controller.$inject = [
         '$scope',
-        '$window',
-        'sharedDataService',
         'configurationService',
         'notifyService'];
 
