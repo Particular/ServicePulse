@@ -34,7 +34,7 @@
 
     service.$inject = ['$uibModal'];
 
-    angular.module('configuration.redirect', [])
+    angular.module('configuration.redirect')
         .service('redirectModalService', service);
 
 })(window, window.angular);

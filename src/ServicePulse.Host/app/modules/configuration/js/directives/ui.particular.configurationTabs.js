@@ -3,7 +3,7 @@
 
     angular.module('configuration', []);
 
-    function controller($scope, $location, redirectService, notifyService, sharedDataService) {
+    function controller($scope, $location, /*redirectService,*/ notifyService, sharedDataService) {
         var notifier = notifyService();
 
         $scope.isActive = (viewLocation) => viewLocation === $location.path();
@@ -15,9 +15,9 @@
             redirects: 0
         };
 
-        redirectService.getTotalRedirects().then((data) => {
-            $scope.counters.redirects = data;
-        });
+        //redirectService.getTotalRedirects().then((data) => {
+        //    $scope.counters.redirects = data;
+        //});
 
         notifier.subscribe($scope, (event, data) => {
             $scope.counters.redirects = data;
@@ -28,7 +28,7 @@
         }, 'EndpointCountUpdated');
     }
     
-    controller.$inject = ['$scope', '$location', 'redirectService', 'notifyService', 'sharedDataService'];
+    controller.$inject = ['$scope', '$location', /*'redirectService',*/ 'notifyService', 'sharedDataService'];
 
     function directive() {
         const template = require('./ui.particular.configurationTabs.tpl.html');

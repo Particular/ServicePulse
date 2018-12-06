@@ -1,8 +1,8 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
-    function service(toaster) {
-        this.showToast = function (text, type, title, sticky) {
+    function ToastService(toaster) {
+        this.showToast = function(text, type, title, sticky) {
             sticky = sticky || false;
             toaster.pop({
                 type: type || 'info',
@@ -12,32 +12,32 @@
                 timeout: sticky ? 0 : 5000,
                 showCloseButton: sticky
             });
-        }
+        };
 
-        this.showInfo = function (text, title, sticky) {
+        this.showInfo = function(text, title, sticky) {
             this.showToast(text, 'info', title || 'Info', sticky);
-        }
+        };
 
-        this.showError = function (text, sticky) {
+        this.showError = function(text, sticky) {
             if (sticky === undefined) {
                 sticky = true;
-            } 
+            }
             this.showToast(text, 'error', 'Error', sticky);
-        }
+        };
 
-        this.showWarning = function (text, sticky) {
+        this.showWarning = function(text, sticky) {
             if (sticky === undefined) {
                 sticky = true;
-            } 
+            }
             this.showToast(text, 'warning', 'Warning', sticky);
-        }
+        };
     }
 
-    service.$inject = [
+    ToastService.$inject = [
         'toaster'
     ];
 
-    angular.module('sc')
-        .service('toastService', service);
+    angular.module('toastService', [])
+        .service('toastService', ToastService);
 
 } (window, window.angular));
