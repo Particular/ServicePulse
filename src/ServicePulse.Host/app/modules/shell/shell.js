@@ -23,3 +23,5 @@ require('ui-select/dist/select.css');
 require('./constant.moment');
 require('angular-pretty-xml');
 require('./js/directives/ui.particular.reindexingStatus');
+require('./js/licensenotifier/license.notifier');
+require('./js/services/service.toast');

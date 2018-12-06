@@ -20,7 +20,7 @@
         '$routeProvider'
     ];
 
-    angular.module('configuration.redirect')
+    angular.module('configuration.redirect', [])
         .config(routeProvider);
 
 }(window, window.angular));

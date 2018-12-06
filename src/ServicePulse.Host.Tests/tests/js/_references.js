@@ -17,7 +17,6 @@
 /// <reference path="../../../servicepulse.host/app/js/services/services.service-control.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/services.stream.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/services.uri.js" />
-/// <reference path="../../../servicepulse.host/app/js/services/service.toast.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.listener.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.notifier.js" />
 /// <reference path="../../../servicepulse.host/app/js/services/factory.shareddata.js" />

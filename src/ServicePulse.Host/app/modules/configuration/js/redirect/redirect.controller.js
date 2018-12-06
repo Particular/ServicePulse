@@ -6,7 +6,6 @@
         redirectService,
         redirectModalService,
         notifyService) {
-
         var notifier = notifyService();
         var vm = this;
        
@@ -18,9 +17,9 @@
         }, 'RedirectsUpdated');
 
         function refreshData() {
-            redirectService.getRedirects().then((redirects) => {
-                vm.redirects = redirects.data;
-            });
+            //redirectService.getRedirects().then((redirects) => {
+            //    vm.redirects = redirects.data;
+            //});
         }
 
         vm.createRedirect = () => redirectModalService.displayCreateRedirectModal();
