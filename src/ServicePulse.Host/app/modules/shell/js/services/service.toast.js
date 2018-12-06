@@ -26,6 +26,7 @@
         };
 
         this.showWarning = function(text, sticky) {
+            debugger;
             if (sticky === undefined) {
                 sticky = true;
             }
@@ -37,7 +38,7 @@
         'toaster'
     ];
 
-    angular.module('toastService', [])
+    angular.module('toastService', ['toaster'])
         .service('toastService', ToastService);
 
 } (window, window.angular));

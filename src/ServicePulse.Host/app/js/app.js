@@ -25,7 +25,9 @@
         'configuration',
         'dashboard',
         'ui.select',
-        'prettyXml']);
+        'prettyXml',
+        'licenseNotifierService',
+    ]);
 
     angular.module('sc')
         .run(['$rootScope', '$location', '$log', function ($rootScope, $location, $log) {
