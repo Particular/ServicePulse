@@ -17,7 +17,6 @@
         'directives.moment',
         'eventLogItems',
         'endpoints',
-        'license',
         'monitored_endpoints',
         'endpoint_details',
         'wrappers',

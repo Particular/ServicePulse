@@ -36,6 +36,8 @@
             edition: "",
             expiration_date: undefined,
             upgrade_protection_expiration: undefined,
+            license_type: "",
+            instance_name: "",
             trial_license: true
         };
 
@@ -62,7 +64,6 @@
         });
 
         serviceControlService.getLicenseDetails().then(function (response) {
-            console.log(response);
             license = response || license;
         });
 
