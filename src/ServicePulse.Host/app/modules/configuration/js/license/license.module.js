@@ -5,6 +5,6 @@
 
     require('./license.route');
     require('./license.controller');
-//    require('./license.service');
+    require('./license.service');
 
 } (window, window.angular));

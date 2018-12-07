@@ -94,6 +94,7 @@
     <Content Include="app\img\redirect-source.svg" />
     <Content Include="app\js\app.http.js" />
     <Content Include="app\js\app.logging.js" />
+    <Content Include="app\modules\configuration\js\license\license.service.js" />
     <Content Include="app\modules\configuration\js\license\license.controller.js" />
     <Content Include="app\modules\configuration\views\license.html" />
     <Content Include="app\modules\configuration\js\license\license.module.js" />
