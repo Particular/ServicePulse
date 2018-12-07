@@ -6,7 +6,7 @@
             sticky = sticky || false;
             toaster.pop({
                 type: type || 'info',
-                title: title || 'Message',
+                title: title,
                 body: text,
                 bodyOutputType: 'trustedHtml',
                 timeout: sticky ? 0 : 5000,
@@ -25,11 +25,11 @@
             this.showToast(text, 'error', 'Error', sticky);
         };
 
-        this.showWarning = function(text, sticky) {
+        this.showWarning = function(text, sticky, showTitle = true) {
             if (sticky === undefined) {
                 sticky = true;
             }
-            this.showToast(text, 'warning', 'Warning', sticky);
+            this.showToast(text, 'warning', showTitle ? 'Warning' : '', sticky);
         };
     }
 
