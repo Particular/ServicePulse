@@ -31,7 +31,7 @@ class LicenseNotifierService {
 
             case 'InvalidDueToExpiredSubscription':
             case 'InvalidDueToExpiredUpgradeProtection':
-                lockSystem()
+                lockSystem();
                 break;
         }
     }
