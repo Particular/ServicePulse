@@ -263,7 +263,10 @@
         }, 'RetryOperationCompleted');
 
         reindexingChecker.startTrackingStatus();
-        licenseNotifierService.checkLicense();
+
+        setTimeout(function () {
+            licenseNotifierService.checkLicense();
+        }, 5000);
     };
 
     controller.$inject = [

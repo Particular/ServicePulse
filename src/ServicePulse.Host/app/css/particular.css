@@ -2410,3 +2410,23 @@ div.alert.alert-warning strong {
     }
 
 }
+
+#toast-container > div.toast-warning {
+    
+}
+
+.license-warning,
+.license-warning h5 {
+    color: black;
+}
+
+.btn-license-warning {
+    color: #f89406;
+    background: black;
+}
+
+btn-license-warning-light {
+    border: black;
+    color: black;
+    background: #f89406;
+}
