@@ -9,7 +9,7 @@
                 pageTitle: 'License - Configuration'
             },
             template: template,
-            controller: 'licenseController',
+            controller: 'LicenseController',
             controllerAs: 'vm'
         });
     }
@@ -17,7 +17,7 @@
     routeProvider.$inject = [
         '$routeProvider'
     ];
-
+    
     angular.module('configuration.license', [])
         .config(routeProvider);
 

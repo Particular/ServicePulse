@@ -1,8 +1,6 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
-    require('angular');
-
     function directive($rootScope) {
         const template = require('./ui.particular.reindexingstatus.tpl.html');
 

@@ -3,11 +3,8 @@
 
     angular.module('configuration.license', []);
 
-    require('./license.controller');
     require('./license.route');
+    require('./license.controller');
 //    require('./license.service');
 
 } (window, window.angular));
-
-
-   

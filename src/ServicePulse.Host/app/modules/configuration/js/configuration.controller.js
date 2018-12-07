@@ -34,10 +34,8 @@
 
                         $scope.model.endpoints = endPoints;
                     }
-
-                    
                 });
-        };
+        }
 
         $scope.update = function (id, monitor) {
 
@@ -51,15 +49,10 @@
                     result.monitor_heartbeat = monitor;
                 }, function (message) {
                     result.workflow_state = createWorkflowState('error', message);
-                })
-                .finally(function () {
-         
                 });
         };
 
-
         autoGetEndPoints();
-
     };
 
     controller.$inject = [
@@ -73,4 +66,3 @@
         .controller('ConfigurationCtrl', controller);
 
 } (window, window.angular, window.jQuery));
-
