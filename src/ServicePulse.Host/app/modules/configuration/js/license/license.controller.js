@@ -1,5 +1,4 @@
 ﻿; (function(window, angular, undefined) {
-
     'use strict';
 
     function controller(
@@ -17,7 +16,6 @@
         vm.expirationDaysLeft = formatter.getDayDiff(license.expiration_date);
         vm.formattedUpgradeProtectionExpiration = formatter.formatDate(license.upgrade_protection_expiration);
         vm.upgradeDaysLeft = formatter.getDayDiff(license.upgrade_protection_expiration);
-
     }
 
     controller.$inject = [
@@ -27,6 +25,6 @@
     ];
 
     angular.module('configuration.license')
-        .controller('licenseController', controller);
+        .controller('LicenseController', controller);
 
 }(window, window.angular));

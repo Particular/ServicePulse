@@ -4,14 +4,16 @@
     function routeProvider($routeProvider) {
         const template = require('./../views/configuration.html');
 
-        $routeProvider.when('/configuration/endpoints', {
-            data: {
-                pageTitle: 'Monitored endpoints - Configuration'
-            },
-            template: template,
-            controller: 'ConfigurationCtrl',
-            controllerAs: 'vm'
-        });
+        $routeProvider.when('/configuration', {
+                redirectTo: "/configuration/license"
+            }).when('/configuration/endpoints', {
+                data: {
+                    pageTitle: 'Monitored endpoints - Configuration'
+                },
+                template: template,
+                controller: 'ConfigurationCtrl',
+                controllerAs: 'vm'
+            });
     }
 
     routeProvider.$inject = [
