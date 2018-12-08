@@ -33,6 +33,24 @@
             }
         }
 
+        function formatDate(value) {
+            return value ? moment(value).format("MMMM DD, YYYY") : undefined;
+        }
+
+        function getDayDiff(value) {
+            if (!value) return undefined;
+            var today = moment();
+            var theOtherDay = moment(value);
+            var days = theOtherDay.diff(today, 'd');
+            if (days === 0) return "Today";
+
+            if (days === -1) return "Yesterday";
+            if (days === 1) return "Tomorrow";
+
+            if (days < 0) return (0 - days) + " days ago";
+            return days + " days left";
+        }
+
         function round(num, decimals) {
             return +(Math.round(num + ('e+' + decimals) ) + ('e-' + decimals) );
         }
@@ -58,7 +76,9 @@
 
         return {
             formatTime: formatTime,
-            formatLargeNumber: formatLargeNumber
+            formatLargeNumber: formatLargeNumber,
+            formatDate: formatDate,
+            getDayDiff: getDayDiff
         };
     }
 

@@ -9,12 +9,15 @@
 
     require('./directives/ui.particular.configurationTabs');
 
+    require('./license/license.module');
+
     angular.module('configuration', [
         'ui.bootstrap',
         'configuration.route',
         'configuration.controller',
         'configuration.service',
-        'configuration.tabs'
+        'configuration.tabs',
+        'configuration.license'
     ]);
 
 } (window, window.angular));
