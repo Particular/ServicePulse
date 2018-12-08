@@ -33,11 +33,6 @@
                     }
                 });
         }
-<<<<<<< HEAD
-
-        $scope.update = function (id, monitor) {
-=======
->>>>>>> Move toast service
 
         $scope.update = (id, monitor) => {
             var result = $.grep($scope.model.endpoints, function (e) { return e.id === id; })[0];
@@ -53,11 +48,7 @@
         };
 
         autoGetEndPoints();
-<<<<<<< HEAD
-    };
-=======
     }
->>>>>>> Move toast service
 
     controller.$inject = [
         '$scope',
