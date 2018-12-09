@@ -48,7 +48,7 @@
 
         $scope.showAlertBadgeOnCollapsedMenu = function () {
             return ($scope.failedcustomchecks || 0) + ($scope.failedmessages || 0) + ($scope.failedheartbeats || 0) > 0;
-        }
+        };
 
         function customChecksUpdated(event, data) {
             $timeout(function() { //http://davidburgosonline.com/dev/2014/correctly-fix-angularjs-error-digest-already-in-progress/
