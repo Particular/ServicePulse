@@ -17,7 +17,8 @@
         semverService,
         scConfig,
         uriService,
-        reindexingChecker
+        reindexingChecker,
+        licenseNotifierService
     ) {
         $scope.isMonitoringEnabled = scConfig.monitoring_urls && scConfig.monitoring_urls.reduce(function (currentlyEnabled, url) {
             return currentlyEnabled || url;
@@ -262,6 +263,10 @@
         }, 'RetryOperationCompleted');
 
         reindexingChecker.startTrackingStatus();
+
+        setTimeout(function () {
+            licenseNotifierService.checkLicense();
+        }, 5000);
     };
 
     controller.$inject = [
@@ -279,7 +284,8 @@
         'semverService',
         'scConfig',
         'uri',
-        'reindexingChecker'
+        'reindexingChecker',
+        'licenseNotifierService',
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

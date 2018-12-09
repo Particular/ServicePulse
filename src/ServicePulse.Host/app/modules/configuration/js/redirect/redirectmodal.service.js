@@ -1,14 +1,16 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
-    
-    function service($http, $timeout, $q, $uibModal) {
+
+    function service($uibModal) {
         return {
             displayRedirectModal: function (title, saveButtonText, success, failure, redirect, queueAddress) {
+                const template = require('../../views/redirectmodal.html');
+
                 $uibModal.open({
-                    templateUrl: 'js/views/redirect/edit/view.html',
+                    template: template,
                     controller: 'editRedirectController',
                     resolve: {
-                        data: function () {
+                        data: () => {
                             return {
                                 redirect: redirect,
                                 queueAddress: queueAddress,
@@ -22,17 +24,17 @@
                 });
             },
             displayCreateRedirectModal: function (queueAddress) {
-                this.displayRedirectModal("Create Redirect", "Create", "Redirect was created successfully", "Failed to create the redirect.", null, queueAddress);
+                this.displayRedirectModal('Create Redirect', 'Create', 'Redirect was created successfully', 'Failed to create the redirect.', null, queueAddress);
             },
             displayEditRedirectModal: function (redirect) {
-                this.displayRedirectModal("Modify Redirect", "Modify", "Redirect was updated successfully", "Failed to update the redirect.", redirect);
+                this.displayRedirectModal('Modify Redirect', 'Modify', 'Redirect was updated successfully', 'Failed to update the redirect.', redirect);
             }
         };
     }
 
-    service.$inject = ['$http', '$timeout', '$q', '$uibModal'];
+    service.$inject = ['$uibModal'];
 
-    angular.module('sc')
+    angular.module('configuration.redirect')
         .service('redirectModalService', service);
 
 })(window, window.angular);
