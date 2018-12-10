@@ -1,4 +1,7 @@
-<div class="container">
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <reindexingstatus></reindexingstatus>
 
     <div class="row">
@@ -6,12 +9,7 @@
             <h1>Dashboard</h1>
         </div>
     </div>
-</div>
 
-<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
-<platform-expired ng-if="isPlatformExpired"></platform-expired>
-
-<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <div class="row">
         <div class="col-sm-12">
             <h6>System status</h6>
@@ -24,7 +22,6 @@
                                 <span ng-show="failedheartbeats > 0" class="badge badge-important">{{failedheartbeats | largeNumber:0}}</span>
                                 <h4>
                                     Heartbeats
-
                                 </h4>
                             </a>
 
