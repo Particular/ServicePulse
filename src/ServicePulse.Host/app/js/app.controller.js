@@ -30,6 +30,8 @@
         $scope.is_compatible_with_sc = true;
         $scope.Version = version;
         $scope.isSCConnecting = true;
+        $scope.isPlatformExpired = false;
+        $scope.isPlatformTrialExpired = false;
 
         $scope.isActive = function(viewLocation) {
             var active = $location.path().startsWith(viewLocation);
