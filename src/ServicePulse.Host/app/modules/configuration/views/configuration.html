@@ -1,4 +1,7 @@
-<div class="container">
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <reindexingstatus></reindexingstatus>
 
     <div class="row">
@@ -8,7 +11,7 @@
     </div>
 </div>
 
-<div class="container">
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <section name="configuration">
         <configuration-tabs></configuration-tabs>
 
