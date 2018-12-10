@@ -267,17 +267,17 @@
         }, 'RetryOperationCompleted');
 
         reindexingChecker.startTrackingStatus();
-
-        notifier.subscribe($scope, (_, license) => {
-            licenseNotifierService.warnOfLicenseProblem(license.license_status);
-
-            $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
-            $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
-        }, 'LicenseUpdated');
-
+        
         setTimeout(function () {
-            licenseService.getLicense();
-        }, 3000);
+            licenseService.getLicense().then(function (license) {
+                license.license_status = 'ValidWithExpiredUpgradeProtection';
+
+                licenseNotifierService.warnOfLicenseProblem(license.license_status);
+
+                $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
+                $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status)
+            });
+        }, 0);
     }
 
     controller.$inject = [
