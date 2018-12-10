@@ -27,6 +27,7 @@
         'ui.select',
         'prettyXml',
         'licenseNotifierService',
+        'platformexpired',
     ]);
 
     angular.module('sc')

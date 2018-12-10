@@ -6,7 +6,7 @@ class LicenseNotifierService {
     }
 
     checkLicense() {
-        const licenseStatus = 'ValidWithExpiredUpgradeProtection';// for testing. Should load this value.
+        const licenseStatus = 'ValidWithExpiringTrial';// for testing. Should load this value.
 
         switch (licenseStatus) {
             case 'ValidWithExpiredUpgradeProtection':

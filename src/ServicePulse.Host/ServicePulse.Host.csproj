@@ -108,7 +108,6 @@
     <Content Include="app\modules\configuration\js\redirect\redirect.service.js" />
     <Content Include="app\modules\configuration\views\redirect.html" />
     <Content Include="app\modules\shell\js\directives\platformTrialExpired.html" />
-    <Content Include="app\modules\shell\js\directives\platformTrialExpired.js" />
     <Content Include="app\modules\shell\js\directives\platformExpired.js" />
     <Content Include="app\modules\shell\js\directives\platformExpired.html" />
     <Content Include="app\modules\shell\js\directives\ui.particular.reindexingstatus.tpl.html" />
