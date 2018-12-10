@@ -115,7 +115,6 @@
     <Content Include="app\js\directives\ui.particular.busy.js" />
     <Content Include="app\js\directives\ui.particular.busy.tpl.html" />
     <Content Include="app\modules\configuration\js\directives\ui.particular.configurationTabs.js" />
-    <Content Include="app\modules\configuration\directives\ui.particular.configurationTabs.js" />
     <Content Include="app\js\directives\ui.particular.multi-checkboxlist.tpl.html" />
     <Content Include="app\js\directives\ui.particular.multi-checkboxlist.js" />
     <Content Include="app\modules\shell\js\directives\ui.particular.reindexingStatus.js" />
@@ -137,7 +136,6 @@
     <Content Include="app\modules\configuration\js\directives\ui.particular.redirectLink.js" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.js" />
     <Content Include="app\modules\configuration\js\directives\ui.particular.configurationTabs.tpl.html" />
-    <Content Include="app\modules\configuration\directives\ui.particular.configurationTabs.tpl.html" />
     <Content Include="app\js\directives\ui.particular.redirectLink.tpl.html" />
     <Content Include="app\modules\configuration\js\directives\ui.particular.redirectLink.tpl.html" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.tpl.html" />
