@@ -168,13 +168,6 @@
     <Content Include="app\js\views\message\route.js" />
     <Content Include="app\js\views\message\messages-view.html" />
     <Content Include="app\js\views\pending_retries\service.js" />
-    <Content Include="app\js\views\redirect\controller.js" />
-    <Content Include="app\js\views\redirect\edit\controller.js" />
-    <Content Include="app\js\views\redirect\edit\service.js" />
-    <Content Include="app\js\views\redirect\edit\view.html" />
-    <Content Include="app\js\views\redirect\route.js" />
-    <Content Include="app\js\views\redirect\service.js" />
-    <Content Include="app\js\views\redirect\view.html" />
     <Content Include="app\js\views\failed_groups\controller.js" />
     <Content Include="app\js\views\failed_groups\route.js" />
     <Content Include="app\js\views\failed_groups\service.js" />

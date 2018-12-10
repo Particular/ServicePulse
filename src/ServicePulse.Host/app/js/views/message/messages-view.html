@@ -1,4 +1,7 @@
-﻿<div class="container">
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <reindexingstatus></reindexingstatus>
 
     <section name="failed_message">
@@ -9,11 +12,9 @@
             </div>
         </div>
 
-
         <no-data ng-show="vm.message.notFound" title="message failures" message="Could not find message. This could be because the message URL is invalid or the corresponding message was processed and no longer tracked by ServiceControl."></no-data>
 
         <no-data ng-show="vm.message.error" title="message failures" message="An error occured while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
-
 
         <div class="row" ng-show="!vm.message.notFound && !vm.message.error">
             <div class="row">
@@ -51,7 +52,6 @@
             <div>
                 <div class="row" ng-show="vm.message">
                     <div class="col-sm-12" ng-click="vm.toggleRowSelect(vm.message)">
-
                         <div class="row">
                             <div isolate-click class="col-sm-12 no-side-padding">
                                 <div class="tabs msg-tabs">
@@ -76,7 +76,6 @@
                                 <pre isolate-click ng-show="vm.message.panel === 3 && vm.message.messageBody">{{vm.message.messageBody}}</pre>
                                 <div isolate-click class="alert alert-info" ng-show="vm.message.panel === 3 && vm.message.bodyUnavailable">{{vm.message.bodyUnavailable}}</div>
                             </div>
-
                         </div>
                     </div>
                 </div>
