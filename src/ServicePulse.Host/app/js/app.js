@@ -28,6 +28,7 @@
         'prettyXml',
         'licenseNotifierService',
         'platformexpired',
+        'configuration.license',
     ]);
 
     angular.module('sc')

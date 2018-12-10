@@ -14,21 +14,21 @@
             trial_license: true
         };
 
-//        var license;
-
         function getData() {
             var url = uri.join(scConfig.service_control_url, 'license');
+
             return $http.get(url).then(function (response) {
                 license = response.data;
+
                 notifier.notify('LicenseUpdated', { license: response.data });
+
+                return license;
             });
         }
 
-        getData();
-
         return {
             getLicense: function () {
-                return $q.when(license);
+                return getData();
             }
         };
     }
