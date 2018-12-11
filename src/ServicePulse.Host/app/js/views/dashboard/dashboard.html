@@ -1,4 +1,7 @@
-<div class="container">
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <reindexingstatus></reindexingstatus>
 
     <div class="row">
@@ -6,9 +9,7 @@
             <h1>Dashboard</h1>
         </div>
     </div>
-</div>
 
-<div class="container">
     <div class="row">
         <div class="col-sm-12">
             <h6>System status</h6>
@@ -21,7 +22,6 @@
                                 <span ng-show="failedheartbeats > 0" class="badge badge-important">{{failedheartbeats | largeNumber:0}}</span>
                                 <h4>
                                     Heartbeats
-
                                 </h4>
                             </a>
 
@@ -32,7 +32,6 @@
                                 <span ng-show="failedmessages > 0" class="badge badge-important">{{failedmessages | largeNumber:0}}</span>
                                 <h4>
                                     Failed Messages
-
                                 </h4>
                             </a>
                         </div>
@@ -42,7 +41,6 @@
                                 <span ng-show="failedcustomchecks > 0" class="badge badge-important">{{failedcustomchecks | largeNumber:0}}</span>
                                 <h4>
                                     Custom Checks
-
                                 </h4>
                             </a>
                         </div>
@@ -54,6 +52,6 @@
 
         </div>
     </div>
-</div>
 
-<div class="row" ng-include="'js/views/event_log_items/eventLogItems.tpl.html'"></div>
+    <div class="row" ng-include="'js/views/event_log_items/eventLogItems.tpl.html'"></div>
+</div>

@@ -1,4 +1,7 @@
-<div class="container">
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <reindexingstatus></reindexingstatus>
 
     <div class="row">
@@ -6,11 +9,8 @@
             <h1>Custom checks</h1>
         </div>
     </div>
-</div>
 
-<div class="container">
     <section name="custom_checks">
-
         <busy ng-show="loadingData" message="fetching more data"></busy>
 
         <no-data ng-show="!loadingData && model.total == 0" message="No failed custom checks"></no-data>
@@ -21,7 +21,6 @@
                     <div class="row box box-warning box-no-click" ng-repeat="item in model.data | orderBy: '-reported_at'">
                         <div class="col-sm-12 no-side-padding">
                             <div class="row">
-
                                 <div class="col-xs-10">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
@@ -41,8 +40,6 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>

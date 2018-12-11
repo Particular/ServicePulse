@@ -1,5 +1,7 @@
-<div class="container">
-    
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="loading"></div>
 
     <div class="row monitoring-head" ng-if="!loading">
@@ -34,19 +36,19 @@
     </div>
 </div>
 
-<div class="container large-graphs" ng-if="!loading">
+<div class="container large-graphs" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired">
     <div class="container">
         <div class="row">
             <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
                 <!-- here goes diagram -->
                 <large-graph ng-if="endpoint.metricDetails.metrics.queueLength"
-                                first-data-series="endpoint.metricDetails.metrics.queueLength"
-                                minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
-                                plot-width="750"
-                                plot-height="200"
-                                first-series-color="#EA7E00"
-                                first-series-fill-color="#EADDCE"
-                                class="large-graph pull-left">
+                             first-data-series="endpoint.metricDetails.metrics.queueLength"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#EA7E00"
+                             first-series-fill-color="#EADDCE"
+                             class="large-graph pull-left">
                 </large-graph>
 
                 <div class="col-xs-12 no-side-padding graph-values">
@@ -198,7 +200,7 @@
     </div>
 </div>
 
-<div class="container" ng-if="!loading">
+<div class="container" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired">
     <busy ng-show="loading" message="Loading details"></busy>
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">
@@ -253,7 +255,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <no-data ng-show="endpoint.instances.length == 0" message="No messages processed in this period of time."></no-data>
 
                 <div class="row">
@@ -384,7 +386,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <no-data ng-show="endpoint.messageTypes.length == 0" message="No messages processed in this period of time."></no-data>
 
                 <div class="row">
@@ -395,7 +397,7 @@
                                     <div class="col-xs-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
                                         <div class="row box-header">
                                             <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
-                                                <div class="lead" >
+                                                <div class="lead">
                                                     {{messageType.typeName ? messageType.typeName : 'Unknown'}}
                                                 </div>
                                             </div>
@@ -413,7 +415,7 @@
                                                 {{messageType.assemblyName + '-' + messageType.assemblyVersion}}
                                             </div>
                                             <div ng-show="{{messageType.typeName && messageType.typeName != 'null' && messageType.containsTypeHierarchy}}" class="message-type-part" ng-repeat="type in messageType.messageTypeHierarchy">
-                                                {{type.assemblyName + '-' + type.assemblyVersion}}  
+                                                {{type.assemblyName + '-' + type.assemblyVersion}}
                                             </div>
                                             <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
                                             <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}" class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>

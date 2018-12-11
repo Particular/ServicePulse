@@ -1,4 +1,7 @@
-﻿<div class="container">
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <reindexingstatus></reindexingstatus>
 
     <section name="failed_messages">
@@ -76,8 +79,5 @@
                 </div>
             </div>
         </div>
-
-
     </section>
-
 </div>

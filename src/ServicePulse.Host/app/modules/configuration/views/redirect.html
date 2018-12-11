@@ -1,12 +1,15 @@
-﻿<div class="container">
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <div class="row">
         <div class="col-sm-12">
             <h1>Configuration</h1>
         </div>
     </div>
 </div>
-<div class="container">
 
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <section name="redirects">
 
         <configuration-tabs></configuration-tabs>

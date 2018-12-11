@@ -24,4 +24,5 @@ require('./constant.moment');
 require('angular-pretty-xml');
 require('./js/directives/ui.particular.reindexingStatus');
 require('./js/services/service.toast');
+require('./js/directives/platformExpired');
 require('./js/licensenotifier/license.notifier');

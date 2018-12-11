@@ -107,12 +107,14 @@
     <Content Include="app\modules\configuration\js\redirect\redirect.route.js" />
     <Content Include="app\modules\configuration\js\redirect\redirect.service.js" />
     <Content Include="app\modules\configuration\views\redirect.html" />
+    <Content Include="app\modules\shell\js\directives\platformTrialExpired.html" />
+    <Content Include="app\modules\shell\js\directives\platformExpired.js" />
+    <Content Include="app\modules\shell\js\directives\platformExpired.html" />
     <Content Include="app\modules\shell\js\directives\ui.particular.reindexingstatus.tpl.html" />
     <Content Include="app\js\directives\ui.particular.confirmclick.tpl.html" />
     <Content Include="app\js\directives\ui.particular.busy.js" />
     <Content Include="app\js\directives\ui.particular.busy.tpl.html" />
     <Content Include="app\modules\configuration\js\directives\ui.particular.configurationTabs.js" />
-    <Content Include="app\modules\configuration\directives\ui.particular.configurationTabs.js" />
     <Content Include="app\js\directives\ui.particular.multi-checkboxlist.tpl.html" />
     <Content Include="app\js\directives\ui.particular.multi-checkboxlist.js" />
     <Content Include="app\modules\shell\js\directives\ui.particular.reindexingStatus.js" />
@@ -134,7 +136,6 @@
     <Content Include="app\modules\configuration\js\directives\ui.particular.redirectLink.js" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.js" />
     <Content Include="app\modules\configuration\js\directives\ui.particular.configurationTabs.tpl.html" />
-    <Content Include="app\modules\configuration\directives\ui.particular.configurationTabs.tpl.html" />
     <Content Include="app\js\directives\ui.particular.redirectLink.tpl.html" />
     <Content Include="app\modules\configuration\js\directives\ui.particular.redirectLink.tpl.html" />
     <Content Include="app\js\directives\ui.particular.failedMessageTabs.tpl.html" />
@@ -165,13 +166,6 @@
     <Content Include="app\js\views\message\route.js" />
     <Content Include="app\js\views\message\messages-view.html" />
     <Content Include="app\js\views\pending_retries\service.js" />
-    <Content Include="app\js\views\redirect\controller.js" />
-    <Content Include="app\js\views\redirect\edit\controller.js" />
-    <Content Include="app\js\views\redirect\edit\service.js" />
-    <Content Include="app\js\views\redirect\edit\view.html" />
-    <Content Include="app\js\views\redirect\route.js" />
-    <Content Include="app\js\views\redirect\service.js" />
-    <Content Include="app\js\views\redirect\view.html" />
     <Content Include="app\js\views\failed_groups\controller.js" />
     <Content Include="app\js\views\failed_groups\route.js" />
     <Content Include="app\js\views\failed_groups\service.js" />

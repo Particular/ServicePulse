@@ -1,4 +1,7 @@
-<div class="container">
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
     <reindexingstatus></reindexingstatus>
 
     <div class="row">
@@ -6,9 +9,7 @@
             <h1>Endpoint heartbeats</h1>
         </div>
     </div>
-</div>
 
-<div class="container">
     <div class="tabs">
         <h5 ng-class="{active: isActiveEndpoints != true}"><a ng-click="isActiveEndpoints = false">Inactive Endpoints ({{model.inactive.length | number}})</a></h5>
         <h5 ng-class="{active: isActiveEndpoints == true}"><a ng-click="isActiveEndpoints = true">Active Endpoints ({{model.active.length | number}})</a></h5>

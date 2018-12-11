@@ -37,7 +37,6 @@
         }, 'LicenseUpdated');
 
         refreshData();
-
     }
 
     controller.$inject = [
