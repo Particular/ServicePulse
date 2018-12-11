@@ -9,7 +9,7 @@
 
 <div class="container">
     <section name="license">
-        <configuration-tabs></configuration-tabs>
+        <configuration-tabs ng-if="!isPlatformExpired && !isPlatformTrialExpired"></configuration-tabs>
         <busy ng-show="vm.loadingData" message="loading license"></busy>
 
         <div class="col-sm-12" ng-show="!vm.loadingData">
@@ -21,7 +21,7 @@
                         <div ng-show="vm.formattedUpgradeProtectionExpiration"><b>Upgrade protection expiry:</b> {{vm.formattedUpgradeProtectionExpiration}} - {{vm.upgradeDaysLeft}}</div>
                         <div><b>ServiceControl instance:</b> {{vm.scInstanceName}}</div>
                         <ul style="line-height: 1em;">
-                            <li><a href="#">Install or update a ServiceControl license</a></li>
+                            <li><a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a></li>
                         </ul>
                         <div style="border-bottom: 1px solid #eeeeee;">&nbsp;</div>
                         <div style="margin-top: 2em;">

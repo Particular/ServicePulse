@@ -1859,6 +1859,22 @@ hr.top-separator {
     border-color: #00A3C4;
 }
 
+.btn-primary i {
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #00A3C4;
+    border-color: #00A3C4;
+}
+
+.btn-secondary:hover {
+    color: #00A3C4;
+    border-color: #00A3C4;
+}
+
 .table-head-row {
     font-size: 12px;
     text-transform: uppercase;

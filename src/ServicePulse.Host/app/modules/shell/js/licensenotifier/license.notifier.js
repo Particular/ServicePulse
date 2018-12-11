@@ -5,9 +5,7 @@ class LicenseNotifierService {
         this.toastService = toastService;
     }
 
-    checkLicense() {
-        const licenseStatus = 'ValidWithExpiringTrial';// for testing. Should load this value.
-
+    warnOfLicenseProblem(licenseStatus) {
         switch (licenseStatus) {
             case 'ValidWithExpiredUpgradeProtection':
                 this.warnOfExpiredUpgradeProtection();
@@ -24,16 +22,16 @@ class LicenseNotifierService {
             case 'ValidWithExpiringUpgradeProtection':
                 this.warnOfExpiringUpgradeProtection();
                 break;
-
-            case 'InvalidDueToExpiredTrial':
-                lockSystemBecauseTrialExpired();
-                break;
-
-            case 'InvalidDueToExpiredSubscription':
-            case 'InvalidDueToExpiredUpgradeProtection':
-                lockSystem();
-                break;
         }
+    }
+
+    isPlatformTrialExpired(licenseStatus) {
+        return licenseStatus === 'InvalidDueToExpiredTrial';
+    }
+
+    isPlatformExpired(licenseStatus) {
+        return licenseStatus === 'InvalidDueToExpiredSubscription' ||
+            licenseStatus === 'InvalidDueToExpiredUpgradeProtection';
     }
 
     warnOfExpiredUpgradeProtection() {
@@ -54,14 +52,6 @@ class LicenseNotifierService {
     warnOfExpiringUpgradeProtection() {
         const template = require('./upgradeprotectionexpiring.html');
         this.toastService.showWarning(template, true, false);
-    }
-
-    lockSystemBecauseTrialExpired() {
-
-    }
-
-    lockSystem() {
-
     }
 }
 
