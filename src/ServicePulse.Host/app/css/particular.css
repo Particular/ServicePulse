@@ -2446,3 +2446,25 @@ btn-license-warning-light {
     color: black;
     background: #f89406;
 }
+
+span.fa-exclamation-triangle.warning {
+    color: #f89406;
+    background: linear-gradient(black,black) center/20% 72% no-repeat;
+}
+
+span.fa-exclamation-triangle.danger {
+    color: #ce4844;
+    font-weight: normal !important;
+}
+.license-expired {
+    color: #ce4844;
+}
+.license-expired-text {
+    color: #999999;
+    margin-left: 30px;
+    margin-top: -20px;
+}
+.license-page-extend-trial {
+    margin-left: 25px;
+    margin-top: -15px;
+}

@@ -270,7 +270,7 @@
         
         setTimeout(function () {
             licenseService.getLicense().then(function (license) {
-                license.license_status = 'InvalidDueToExpiredTrial';
+//                license.license_status = 'InvalidDueToExpiredTrial';
 
                 licenseNotifierService.warnOfLicenseProblem(license.license_status);
 
