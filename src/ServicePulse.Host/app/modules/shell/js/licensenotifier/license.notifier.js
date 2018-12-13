@@ -25,6 +25,13 @@ class LicenseNotifierService {
         }
     }
 
+    isValidWithWarning(licenseStatus) {
+        return licenseStatus === "ValidWithExpiringUpgradeProtection" ||
+            licenseStatus === "ValidWithExpiringTrial" ||
+            licenseStatus === "ValidWithExpiredUpgradeProtection" ||
+            licenseStatus === "ValidWithExpiringSubscription";
+    }
+
     isPlatformTrialExpired(licenseStatus) {
         return licenseStatus === 'InvalidDueToExpiredTrial';
     }

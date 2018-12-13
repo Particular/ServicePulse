@@ -36,6 +36,7 @@
             vm.isExpired = licenseMatches(status,
                 "InvalidDueToExpiredTrial",
                 "InvalidDueToExpiredSubscription",
+                "ValidWithExpiredUpgradeProtection",
                 "InvalidDueToExpiredUpgradeProtection");
 
             if (vm.isExpiring || (vm.isExpired && vm.isUpgradeProtectionLicense)) {

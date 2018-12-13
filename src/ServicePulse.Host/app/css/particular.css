@@ -2455,6 +2455,7 @@ span.fa-exclamation-triangle.warning {
 span.fa-exclamation-triangle.danger {
     color: #ce4844;
     font-weight: normal !important;
+    background: linear-gradient(white,white) center/20% 72% no-repeat;
 }
 .license-expired {
     color: #ce4844;
