@@ -108,7 +108,7 @@
         };
 
         vm.viewMessage = function (message) {
-            $location.path(`/failed-messages/message/${message.id}`);
+            $location.path("/failed-messages/message/" + message.id);
         };
 
         vm.retryMessage = function(message, $event) {
