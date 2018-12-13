@@ -9,7 +9,7 @@
 
 <div class="container">
     <section name="license">
-        <configuration-tabs ng-if="!isPlatformExpired && !isPlatformTrialExpired"></configuration-tabs>
+        <configuration-tabs></configuration-tabs>
         <busy ng-show="vm.loadingData" message="loading license"></busy>
 
         <div class="col-sm-12" ng-show="!vm.loadingData">
@@ -23,7 +23,7 @@
                             <b>License expiry date:</b>
                             <span class="{{vm.isExpired ? 'license-expired' : ''}}">
                                 {{vm.formattedExpirationDate}} {{vm.expirationDaysLeft}}
-                                <exclamation type="{{vm.expiredWarningType}}" ng-show="vm.isExpiring || vm.isExpired"/>
+                                <exclamation type="{{vm.expiredWarningType}}"/>
                             </span>
                             <div class="license-expired-text" ng-show="vm.isExpired && vm.isSubscriptionLicense">
                                 Your license expired. Please update the license to continue using the Particular Service Platform.
@@ -39,7 +39,7 @@
                         <div ng-show="vm.isUpgradeProtectionLicense">
                             <span>
                                 <b>Upgrade protection expiry date:</b> {{vm.formattedUpgradeProtectionExpiration}} {{vm.upgradeDaysLeft}}
-                                <exclamation type="{{vm.expiredWarningType}}" ng-show="vm.isExpiring || vm.isExpired"/>
+                                <exclamation type="{{vm.expiredWarningType}}"/>
                             </span>
                             <div class="license-expired-text" 
                                  ng-show="vm.isExpiring || vm.isExpired">
