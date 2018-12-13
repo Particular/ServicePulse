@@ -1568,7 +1568,6 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
         .navbar-nav > li {
             float: none;
             float: none;
-            .navbar-label
         }
 
     .navbar-nav > li > a {
@@ -2362,7 +2361,7 @@ div.alert.alert-warning strong {
     ul.navbar-nav {
         margin: 0 8px 0 0;
         padding-right: 16px;
-        display: bloc;
+        display: block;
     }
 
     .navbar-nav > li > a {
