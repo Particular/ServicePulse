@@ -15,7 +15,7 @@
         <div class="col-sm-12" ng-show="!vm.loadingData">
             <div class="box">
                 <div class="row">
-                    <div style="font-size: 16px; padding: 2em; line-height: 3em;">
+                    <div class="license-info">
 
                         <div><b>Platform license type:</b> {{vm.licenseType}}</div>
 
@@ -48,13 +48,11 @@
                         </div>
 
                         <div><b>ServiceControl instance:</b> {{vm.scInstanceName}}</div>
-                        <ul style="line-height: 1em;">
+                        <ul class="license-install-info">
                             <li><a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a></li>
                         </ul>
 
-                        <div style="border-bottom: 1px solid #eeeeee;">&nbsp;</div>
-
-                        <div style="margin-top: 2em;">
+                        <div class="need-help">
                             Need help? <a href="https://particular.net/contactus">Contact us</a> <i class="fa fa-external-link fake-link"></i>
                         </div>
                     </div>
