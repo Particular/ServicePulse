@@ -11,7 +11,7 @@ Once you have your change merged into `master` (AVOID BUNDLING CHANGES, RELEASE 
 
 ![Promote](promote.png)
 
-![Promote_dialog](promote-dialog.png)
+![Promote_dialog](promote_dialog.png)
 
 ### 3. Deploy using OctopusDeploy
 You are now ready to go to [OctopusDeploy](http://deploy.particular.net/app#/projects/servicepulse).
