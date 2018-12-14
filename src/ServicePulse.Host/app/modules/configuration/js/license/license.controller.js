@@ -14,6 +14,7 @@
 
         function mapLicenseToVm(license) {
             vm.licenseType = license.license_type;
+            vm.licenseEdition = license.edition ? ", " + license.edition : "";
             vm.scInstanceName = license.instance_name;
             vm.license_status = license.license_status;
             if (license.expiration_date) {
@@ -38,11 +39,15 @@
                 "InvalidDueToExpiredSubscription",
                 "ValidWithExpiredUpgradeProtection",
                 "InvalidDueToExpiredUpgradeProtection");
+            vm.isValid = !licenseMatches(status,
+                "InvalidDueToExpiredTrial",
+                "InvalidDueToExpiredSubscription",
+                "InvalidDueToExpiredUpgradeProtection");
 
-            if (vm.isExpiring || (vm.isExpired && vm.isUpgradeProtectionLicense)) {
-                vm.expiredWarningType = "warning";
-            } else if (vm.isExpired) {
+            if (!vm.isValid) {
                 vm.expiredWarningType = "danger";
+            } else if (vm.isExpiring || (vm.isExpired && vm.isUpgradeProtectionLicense)) {
+                vm.expiredWarningType = "warning";
             }
 
             vm.expirationDaysLeft = vm.isExpired ? " - expired" : formatter.getDayDiffFromToday(license.expiration_date);
