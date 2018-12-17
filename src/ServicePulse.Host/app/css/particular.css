@@ -2501,7 +2501,7 @@ span.fa-exclamation-triangle.danger {
     top: -16px;
 }
 
-#toast-container > .toast-danger {
+#toast-container > .toast-error {
     background-image: url('../img/toast-danger.svg') !important;
     background-position-y: 22px;
     background-size: 28px 28px;
