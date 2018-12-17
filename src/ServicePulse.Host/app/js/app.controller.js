@@ -34,6 +34,7 @@
 
         $scope.isPlatformExpired = false;
         $scope.isPlatformTrialExpired = false;
+        $scope.isInvalidDueToUpgradeProtectionExpired = false;
 
         $scope.isActive = function(viewLocation) {
             var active = $location.path().startsWith(viewLocation);
@@ -275,8 +276,10 @@
 
                 $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
                 $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
+                $scope.isInvalidDueToUpgradeProtectionExpired =
+                    licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
 
-                if ($scope.isPlatformExpired || $scope.isPlatformTrialExpired) {
+                if ($scope.isPlatformExpired || $scope.isPlatformTrialExpired || $scope.isInvalidDueToUpgradeProtectionExpired) {
                     $scope.licensewarning = "danger";
                 }
                 if (licenseNotifierService.isValidWithWarning(license.license_status)) {

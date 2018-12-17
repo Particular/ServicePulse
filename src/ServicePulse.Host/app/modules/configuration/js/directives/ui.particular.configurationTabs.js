@@ -29,12 +29,13 @@
 
         licenseService.getLicense().then(function(license) {
 
-            $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
-            $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
+            $scope.isExpired = licenseNotifierService.isPlatformExpired(license.license_status) ||
+                licenseNotifierService.isPlatformTrialExpired(license.license_status) ||
+                licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
             if (licenseNotifierService.isValidWithWarning(license.license_status)) {
                 $scope.licensewarning = "warning";
             }
-            if ($scope.isPlatformTrialExpired || $scope.isPlatformExpired) {
+            if ($scope.isExpired) {
                 $scope.licensewarning = "danger";
             }
         });

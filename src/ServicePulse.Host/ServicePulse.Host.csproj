@@ -111,6 +111,7 @@
     <Content Include="app\modules\configuration\js\redirect\redirect.route.js" />
     <Content Include="app\modules\configuration\js\redirect\redirect.service.js" />
     <Content Include="app\modules\configuration\views\redirect.html" />
+    <Content Include="app\modules\shell\js\directives\upgradeProtectionExpired.html" />
     <Content Include="app\modules\shell\js\directives\platformTrialExpired.html" />
     <Content Include="app\modules\shell\js\directives\platformExpired.js" />
     <Content Include="app\modules\shell\js\directives\platformExpired.html" />

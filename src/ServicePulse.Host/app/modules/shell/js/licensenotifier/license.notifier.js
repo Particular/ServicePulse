@@ -37,8 +37,11 @@ class LicenseNotifierService {
     }
 
     isPlatformExpired(licenseStatus) {
-        return licenseStatus === 'InvalidDueToExpiredSubscription' ||
-            licenseStatus === 'InvalidDueToExpiredUpgradeProtection';
+        return licenseStatus === 'InvalidDueToExpiredSubscription';
+    }
+
+    isInvalidDueToUpgradeProtectionExpired(licenseStatus) {
+        return licenseStatus === 'InvalidDueToExpiredUpgradeProtection';
     }
 
     warnOfExpiredUpgradeProtection() {
