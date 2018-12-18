@@ -17,11 +17,12 @@
             vm.licenseEdition = license.edition ? ', ' + license.edition : '';
             vm.scInstanceName = license.instance_name;
             vm.license_status = license.license_status;
+            
             if (license.expiration_date) {
                 vm.formattedExpirationDate = new Date(license.expiration_date.replace('Z', '')).toLocaleDateString();
             }
+            
             if (license.upgrade_protection_expiration) {
-
                 vm.formattedUpgradeProtectionExpiration =
                     new Date(license.upgrade_protection_expiration.replace('Z', '')).toLocaleDateString();
             }
@@ -46,6 +47,7 @@
 
             vm.upgradeDaysLeft = getUpgradeDaysLeft(license.upgrade_protection_expiration, vm.isValid);
             vm.expirationDaysLeft = getExpirationDaysLeft(license.expiration_date, vm.isValid, vm.isExpiring);
+            
             if (!vm.isValid) {
                 vm.expiredWarningType = 'danger';
             } else if (vm.isExpiring || (vm.isExpired && vm.isUpgradeProtectionLicense)) {
@@ -55,6 +57,7 @@
 
         function getExpirationDaysLeft(expirationDate, isValid, isExpiring) {
             if (!isValid) return ' - expired';
+            
             const expiringIn = formatter.getDayDiffFromToday(expirationDate);
             if (!isExpiring) return ' - ' + expiringIn + ' days left';
             if (expiringIn === 0) return ' - expiring today';
