@@ -19,7 +19,8 @@
         uriService,
         reindexingChecker,
         licenseNotifierService,
-        licenseService
+        licenseService,
+        license,
     ) {
         $scope.isMonitoringEnabled = scConfig.monitoring_urls && scConfig.monitoring_urls.reduce(function (currentlyEnabled, url) {
             return currentlyEnabled || url;
@@ -34,6 +35,10 @@
 
         $scope.isPlatformExpired = false;
         $scope.isPlatformTrialExpired = false;
+
+        licenseNotifierService.warnOfLicenseProblem(license.license_status);
+        $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
+        $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
 
         $scope.isActive = function(viewLocation) {
             var active = $location.path().startsWith(viewLocation);
@@ -267,17 +272,6 @@
         }, 'RetryOperationCompleted');
 
         reindexingChecker.startTrackingStatus();
-        
-        setTimeout(function () {
-            licenseService.getLicense().then(function (license) {
-                license.license_status = 'InvalidDueToExpiredTrial';
-
-                licenseNotifierService.warnOfLicenseProblem(license.license_status);
-
-                $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
-                $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status)
-            });
-        }, 0);
     }
 
     controller.$inject = [
@@ -298,6 +292,7 @@
         'reindexingChecker',
         'licenseNotifierService',
         'licenseService',
+        'license',
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

@@ -13,7 +13,7 @@
         vm.loadingData = true;
 
         function mapLicenseToVm(license) {
-            vm.licenseType = license.license_type;
+            vm.licenseType = license.license_type || 'Upgrade ServiceControl to v3.4.0+ to see more information about this license';
             vm.scInstanceName = license.instance_name;
             vm.formattedExpirationDate = formatter.formatDate(license.expiration_date);
             vm.expirationDaysLeft = formatter.getDayDiff(license.expiration_date);

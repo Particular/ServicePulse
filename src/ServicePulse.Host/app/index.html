@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html lang="en" ng-app="sc">
+<html lang="en">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <style>
@@ -52,8 +52,18 @@
 
     <div class="container-fluid">
         <a id="pagetop"></a>
-        <div id="view" ng-view="">
+        <div ng-if="::false">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="row box">
+                        <div class="col-sm-12">
+                            <div class="loading"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+        <div id="view" ng-view=""></div>
     </div>
 
     <ng-include src="'layout/footer.html'"></ng-include>
@@ -149,6 +159,7 @@
     <script src="js/app.controller.js"></script>
     <script src="js/app.logging.js"></script>
     <script src="js/app.http.js"></script>
+    <script src="js/app.bootstrap.js"></script>
 
     <!-- Services -->
     <script src="js/services/services.module.js"></script>
