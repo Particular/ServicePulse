@@ -279,11 +279,11 @@
                 $scope.isInvalidDueToUpgradeProtectionExpired = licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
 
                 if ($scope.isPlatformExpired || $scope.isPlatformTrialExpired || $scope.isInvalidDueToUpgradeProtectionExpired) {
-                    $scope.licensewarning = "danger";
+                    $scope.licensewarning = 'danger';
                 }
 
                 if (licenseNotifierService.isValidWithWarning(license.license_status)) {
-                    $scope.licensewarning = "warning";
+                    $scope.licensewarning = 'warning';
                 }
             });
         }, 0);
