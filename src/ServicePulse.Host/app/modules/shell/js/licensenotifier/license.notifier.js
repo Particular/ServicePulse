@@ -25,13 +25,23 @@ class LicenseNotifierService {
         }
     }
 
+    isValidWithWarning(licenseStatus) {
+        return licenseStatus === "ValidWithExpiringUpgradeProtection" ||
+            licenseStatus === "ValidWithExpiringTrial" ||
+            licenseStatus === "ValidWithExpiredUpgradeProtection" ||
+            licenseStatus === "ValidWithExpiringSubscription";
+    }
+
     isPlatformTrialExpired(licenseStatus) {
         return licenseStatus === 'InvalidDueToExpiredTrial';
     }
 
     isPlatformExpired(licenseStatus) {
-        return licenseStatus === 'InvalidDueToExpiredSubscription' ||
-            licenseStatus === 'InvalidDueToExpiredUpgradeProtection';
+        return licenseStatus === 'InvalidDueToExpiredSubscription';
+    }
+
+    isInvalidDueToUpgradeProtectionExpired(licenseStatus) {
+        return licenseStatus === 'InvalidDueToExpiredUpgradeProtection';
     }
 
     warnOfExpiredUpgradeProtection() {

@@ -1,7 +1,8 @@
 <platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
 <platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
-<div class="container" ng-show="endpoints.length" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
+<div class="container" ng-show="endpoints.length" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="row monitoring-head">
         <div class="col-xs-9 no-side-padding list-section">
             <h1>Endpoints overview</h1>
@@ -16,7 +17,7 @@
     </div>
 </div>
 
-<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <section ng-show="true">
         <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length"></div>
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">

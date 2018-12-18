@@ -1,7 +1,8 @@
 <platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
 <platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
-<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired">
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="loading"></div>
 
     <div class="row monitoring-head" ng-if="!loading">
@@ -36,7 +37,7 @@
     </div>
 </div>
 
-<div class="container large-graphs" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired">
+<div class="container large-graphs" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="container">
         <div class="row">
             <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
@@ -200,7 +201,7 @@
     </div>
 </div>
 
-<div class="container" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired">
+<div class="container" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <busy ng-show="loading" message="Loading details"></busy>
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">

@@ -93,8 +93,12 @@
     <Content Include="app\img\redirect-destination.svg" />
     <Content Include="app\img\redirect-source.svg" />
     <Content Include="app\js\app.bootstrap.js" />
+    <Content Include="app\img\toast-danger.svg" />
+    <Content Include="app\img\toast-warning.svg" />
     <Content Include="app\js\app.http.js" />
     <Content Include="app\js\app.logging.js" />
+    <Content Include="app\js\directives\ui.particular.exclamation.js" />
+    <Content Include="app\js\directives\ui.particular.exclamation.tpl.html" />
     <Content Include="app\modules\configuration\js\license\license.service.js" />
     <Content Include="app\modules\configuration\js\license\license.controller.js" />
     <Content Include="app\modules\configuration\views\license.html" />
@@ -108,6 +112,7 @@
     <Content Include="app\modules\configuration\js\redirect\redirect.route.js" />
     <Content Include="app\modules\configuration\js\redirect\redirect.service.js" />
     <Content Include="app\modules\configuration\views\redirect.html" />
+    <Content Include="app\modules\shell\js\directives\upgradeProtectionExpired.html" />
     <Content Include="app\modules\shell\js\directives\platformTrialExpired.html" />
     <Content Include="app\modules\shell\js\directives\platformExpired.js" />
     <Content Include="app\modules\shell\js\directives\platformExpired.html" />

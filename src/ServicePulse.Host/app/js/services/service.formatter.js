@@ -37,18 +37,20 @@
             return value ? moment(value).format("MMMM DD, YYYY") : undefined;
         }
 
-        function getDayDiff(value) {
+        function getDayDiffFromToday(value) {
             if (!value) return undefined;
-            var today = moment();
-            var theOtherDay = moment(value);
-            var days = theOtherDay.diff(today, 'd');
-            if (days === 0) return "Today";
-
-            if (days === -1) return "Yesterday";
-            if (days === 1) return "Tomorrow";
-
-            if (days < 0) return (0 - days) + " days ago";
-            return days + " days left";
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            var diff = new Date(value.replace("Z", "")) - today;
+            var diffInDays = parseInt(diff / 1000 / 60 / 60 / 24);
+            if (diffInDays > 10) return " - " + diffInDays + " days left";
+            if (diffInDays === 0) {
+                return " - expiring today";
+            }
+            if (diffInDays === 1) {
+                return " - expiring tomorrow";
+            }
+            return " - expiring in " + diffInDays + " days";
         }
 
         function round(num, decimals) {
@@ -78,7 +80,7 @@
             formatTime: formatTime,
             formatLargeNumber: formatLargeNumber,
             formatDate: formatDate,
-            getDayDiff: getDayDiff
+            getDayDiffFromToday: getDayDiffFromToday    
         };
     }
 

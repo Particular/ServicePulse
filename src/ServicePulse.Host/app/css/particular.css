@@ -2446,3 +2446,104 @@ btn-license-warning-light {
     color: black;
     background: #f89406;
 }
+
+span.fa-exclamation-triangle.warning {
+    color: #F3BC52;
+    background: linear-gradient(black,black) center/20% 72% no-repeat;
+}
+
+span.fa-exclamation-triangle.danger {
+    color: #ce4844;
+    font-weight: normal !important;
+    background: linear-gradient(white,white) center/20% 72% no-repeat;
+}
+
+.license-info {
+    font-size: 16px;
+    padding: 2em;
+    line-height: 3em;
+}
+
+.license-expired {
+    color: #ce4844;
+}
+.license-expired-text {
+    color: #777F7F;
+    margin-left: 24px;
+    margin-top: -16px;
+}
+.license-page-extend-trial {
+    margin-left: 25px;
+    margin-top: -15px;
+}
+
+.license-install-info {
+    line-height: 1em;
+}
+
+.need-help {
+    margin-top: 38px;
+    padding-top: 20px;
+    border-top: 2px solid #F2F2F2;
+}
+
+#toast-container {
+    bottom: 50px;
+}
+
+#toast-container > div {
+    width: 400px;
+    padding: 24px 24px 24px 56px;
+}
+
+.toast-close-button {
+    right: -10px;
+    top: -16px;
+}
+
+#toast-container > .toast-error {
+    background-image: url('../img/toast-danger.svg') !important;
+    background-position-y: 22px;
+    background-size: 28px 28px;
+}
+
+#toast-container > .toast-warning {
+    background-color: #F3BC52;
+    background-image: url('../img/toast-warning.svg') !important;
+    background-position-y: 22px;
+    background-size: 28px 28px;
+}
+
+#toast-container > .toast-warning:after {
+    background-color: rgba(0,0,0,0);
+}
+
+.toast-message a.btn.btn-license-warning {
+    margin-top: 16px;
+    color: #F3BC52;
+}
+
+.toast-message a.btn.btn-license-warning:hover {
+    opacity: 0.75;
+}
+
+.toast-message a.btn.btn-license-warning-light {
+    margin-top: 16px;
+    margin-left: 10px;
+    color: #000;
+    border: 1px solid #000;
+    background-color: rgba(0,0,0,0);
+}
+
+.toast-message a.btn.btn-license-warning-light:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+.toast-warning .toast-close-button {
+    color: #000;
+    opacity: 0.5;
+}
+
+.monitoring-no-data a.btn.btn-default.btn-secondary {
+    margin-left: 10px;
+}

@@ -3,7 +3,7 @@
 
     angular.module('configuration', []);
 
-    function controller($scope, $location, redirectService, notifyService, sharedDataService) {
+    function controller($scope, $location, redirectService, notifyService, sharedDataService, licenseService, licenseNotifierService) {
         var notifier = notifyService();
 
         $scope.isActive = (viewLocation) => viewLocation === $location.path();
@@ -26,9 +26,23 @@
         notifier.subscribe($scope, (event, data) => {
             $scope.counters.endpoints = data;
         }, 'EndpointCountUpdated');
+
+        licenseService.getLicense().then(function(license) {
+
+            $scope.isExpired = licenseNotifierService.isPlatformExpired(license.license_status) ||
+                licenseNotifierService.isPlatformTrialExpired(license.license_status) ||
+                licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
+            if (licenseNotifierService.isValidWithWarning(license.license_status)) {
+                $scope.licensewarning = "warning";
+            }
+            if ($scope.isExpired) {
+                $scope.licensewarning = "danger";
+            }
+        });
     }
     
-    controller.$inject = ['$scope', '$location', 'redirectService', 'notifyService', 'sharedDataService'];
+    controller.$inject = ['$scope', '$location', 'redirectService', 'notifyService', 'sharedDataService',
+        'licenseService', 'licenseNotifierService'];
 
     function directive() {
         const template = require('./ui.particular.configurationTabs.tpl.html');
