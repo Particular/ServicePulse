@@ -33,24 +33,12 @@
             }
         }
 
-        function formatDate(value) {
-            return value ? moment(value).format('MMMM DD, YYYY') : undefined;
-        }
-
         function getDayDiffFromToday(value) {
             if (!value) return undefined;
             var today = new Date();
             today.setHours(0, 0, 0, 0);
             var diff = new Date(value.replace('Z', '')) - today;
-            var diffInDays = parseInt(diff / 1000 / 60 / 60 / 24);
-            if (diffInDays > 10) return ' - ' + diffInDays + ' days left';
-            if (diffInDays === 0) {
-                return ' - expiring today';
-            }
-            if (diffInDays === 1) {
-                return ' - expiring tomorrow';
-            }
-            return ' - expiring in ' + diffInDays + ' days';
+            return parseInt(diff / 1000 / 60 / 60 / 24);
         }
 
         function round(num, decimals) {
@@ -79,7 +67,6 @@
         return {
             formatTime: formatTime,
             formatLargeNumber: formatLargeNumber,
-            formatDate: formatDate,
             getDayDiffFromToday: getDayDiffFromToday    
         };
     }

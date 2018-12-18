@@ -44,15 +44,33 @@
                 'InvalidDueToExpiredSubscription',
                 'InvalidDueToExpiredUpgradeProtection');
 
+            vm.upgradeDaysLeft = getUpgradeDaysLeft(license.upgrade_protection_expiration, vm.isValid);
+            vm.expirationDaysLeft = getExpirationDaysLeft(license.expiration_date, vm.isValid, vm.isExpiring);
             if (!vm.isValid) {
                 vm.expiredWarningType = 'danger';
             } else if (vm.isExpiring || (vm.isExpired && vm.isUpgradeProtectionLicense)) {
                 vm.expiredWarningType = 'warning';
             }
+        }
 
-            vm.expirationDaysLeft = vm.isExpired ? ' - expired' : formatter.getDayDiffFromToday(license.expiration_date);
-            vm.upgradeDaysLeft =
-                vm.isExpired ? ' - expired' : formatter.getDayDiffFromToday(license.upgrade_protection_expiration);
+        function getExpirationDaysLeft(expirationDate, isValid, isExpiring) {
+            if (!isValid) return ' - expired';
+            const expiringIn = formatter.getDayDiffFromToday(expirationDate);
+            if (!isExpiring) return ' - ' + expiringIn + ' days left';
+            if (expiringIn === 0) return ' - expiring today';
+            if (expiringIn === 1) return ' - expiring tomorrow';
+            return ' - expiring in ' + expiringIn + ' days';
+        }
+
+        function getUpgradeDaysLeft(expirationDate, isValid)
+        {
+            if (!isValid) return ' - expired';
+
+            const expiringIn = formatter.getDayDiffFromToday(expirationDate);
+            if (expiringIn <= 0) return ' - expired';
+            if (expiringIn === 0) return ' - expiring today';
+            if (expiringIn === 1) return ' - 1 day left';
+            return ' - ' + expiringIn + ' days left';
         }
 
         function licenseMatches(status, ...matches) {
