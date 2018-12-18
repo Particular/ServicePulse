@@ -27,14 +27,15 @@
             $scope.counters.endpoints = data;
         }, 'EndpointCountUpdated');
 
-        licenseService.getLicense().then(function(license) {
-
+        licenseService.getLicense().then((license) => {
             $scope.isExpired = licenseNotifierService.isPlatformExpired(license.license_status) ||
                 licenseNotifierService.isPlatformTrialExpired(license.license_status) ||
                 licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
+
             if (licenseNotifierService.isValidWithWarning(license.license_status)) {
                 $scope.licensewarning = 'warning';
             }
+
             if ($scope.isExpired) {
                 $scope.licensewarning = 'danger';
             }
