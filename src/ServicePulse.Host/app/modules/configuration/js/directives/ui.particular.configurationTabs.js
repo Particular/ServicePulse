@@ -33,10 +33,10 @@
                 licenseNotifierService.isPlatformTrialExpired(license.license_status) ||
                 licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
             if (licenseNotifierService.isValidWithWarning(license.license_status)) {
-                $scope.licensewarning = "warning";
+                $scope.licensewarning = 'warning';
             }
             if ($scope.isExpired) {
-                $scope.licensewarning = "danger";
+                $scope.licensewarning = 'danger';
             }
         });
     }
