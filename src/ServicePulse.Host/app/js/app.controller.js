@@ -33,7 +33,12 @@
         $scope.Version = version;
         $scope.isSCConnecting = true;
 
-        licenseNotifierService.warnOfLicenseProblem(license.license_status);
+
+        setTimeout(function () {
+            // This delay needs to be here for the toastr service to be ready.
+            licenseNotifierService.warnOfLicenseProblem(license.license_status);
+        }, 3000);
+
         $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
         $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
         $scope.isInvalidDueToUpgradeProtectionExpired = licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
