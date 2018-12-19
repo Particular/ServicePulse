@@ -5,7 +5,7 @@
         $scope,
         licenseService,
         formatter,
-        notifyService
+        notifyService,
     ) {
         var notifier = notifyService();
         var vm = this;
@@ -14,12 +14,70 @@
 
         function mapLicenseToVm(license) {
             vm.licenseType = license.license_type;
+            vm.licenseEdition = license.edition ? ', ' + license.edition : '';
             vm.scInstanceName = license.instance_name;
-            vm.formattedExpirationDate = formatter.formatDate(license.expiration_date);
-            vm.expirationDaysLeft = formatter.getDayDiff(license.expiration_date);
-            vm.formattedUpgradeProtectionExpiration =
-                formatter.formatDate(license.upgrade_protection_expiration);
-            vm.upgradeDaysLeft = formatter.getDayDiff(license.upgrade_protection_expiration);
+            vm.license_status = license.license_status;
+            
+            if (license.expiration_date) {
+                vm.formattedExpirationDate = new Date(license.expiration_date.replace('Z', '')).toLocaleDateString();
+            }
+            
+            if (license.upgrade_protection_expiration) {
+                vm.formattedUpgradeProtectionExpiration =
+                    new Date(license.upgrade_protection_expiration.replace('Z', '')).toLocaleDateString();
+            }
+
+            var status = license.license_status;
+            vm.isTrialLicense = license.license_type === 'Trial';
+            vm.isUpgradeProtectionLicense = license.upgrade_protection_expiration !== '';
+            vm.isSubscriptionLicense = license.expiration_date !== "" && !vm.isTrialLicense;
+            vm.isExpiring = licenseMatches(status,
+                'ValidWithExpiringSubscription',
+                'ValidWithExpiringTrial',
+                'ValidWithExpiringUpgradeProtection');
+            vm.isExpired = licenseMatches(status,
+                'InvalidDueToExpiredTrial',
+                'InvalidDueToExpiredSubscription',
+                'ValidWithExpiredUpgradeProtection',
+                'InvalidDueToExpiredUpgradeProtection');
+            vm.isValid = !licenseMatches(status,
+                'InvalidDueToExpiredTrial',
+                'InvalidDueToExpiredSubscription',
+                'InvalidDueToExpiredUpgradeProtection');
+
+            vm.upgradeDaysLeft = getUpgradeDaysLeft(license.upgrade_protection_expiration, vm.isValid);
+            vm.expirationDaysLeft = getExpirationDaysLeft(license.expiration_date, vm.isValid, vm.isExpiring);
+            
+            if (!vm.isValid) {
+                vm.expiredWarningType = 'danger';
+            } else if (vm.isExpiring || (vm.isExpired && vm.isUpgradeProtectionLicense)) {
+                vm.expiredWarningType = 'warning';
+            }
+        }
+
+        function getExpirationDaysLeft(expirationDate, isValid, isExpiring) {
+            if (!isValid) return ' - expired';
+            
+            const expiringIn = formatter.getDayDiffFromToday(expirationDate);
+            if (!isExpiring) return ' - ' + expiringIn + ' days left';
+            if (expiringIn === 0) return ' - expiring today';
+            if (expiringIn === 1) return ' - expiring tomorrow';
+            return ' - expiring in ' + expiringIn + ' days';
+        }
+
+        function getUpgradeDaysLeft(expirationDate, isValid)
+        {
+            if (!isValid) return ' - expired';
+
+            const expiringIn = formatter.getDayDiffFromToday(expirationDate);
+            if (expiringIn <= 0) return ' - expired';
+            if (expiringIn === 0) return ' - expiring today';
+            if (expiringIn === 1) return ' - 1 day left';
+            return ' - ' + expiringIn + ' days left';
+        }
+
+        function licenseMatches(status, ...matches) {
+            return matches.filter(m => m === status).length > 0;
         }
 
         function refreshData() {
@@ -43,7 +101,7 @@
         '$scope',
         'licenseService',
         'formatter',
-        'notifyService'
+        'notifyService',
     ];
 
     angular.module('configuration.license')

@@ -34,6 +34,7 @@
 
         $scope.isPlatformExpired = false;
         $scope.isPlatformTrialExpired = false;
+        $scope.isInvalidDueToUpgradeProtectionExpired = false;
 
         $scope.isActive = function(viewLocation) {
             var active = $location.path().startsWith(viewLocation);
@@ -270,12 +271,20 @@
         
         setTimeout(function () {
             licenseService.getLicense().then(function (license) {
-                license.license_status = 'InvalidDueToExpiredTrial';
 
                 licenseNotifierService.warnOfLicenseProblem(license.license_status);
 
                 $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
-                $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status)
+                $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
+                $scope.isInvalidDueToUpgradeProtectionExpired = licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
+
+                if ($scope.isPlatformExpired || $scope.isPlatformTrialExpired || $scope.isInvalidDueToUpgradeProtectionExpired) {
+                    $scope.licensewarning = 'danger';
+                }
+
+                if (licenseNotifierService.isValidWithWarning(license.license_status)) {
+                    $scope.licensewarning = 'warning';
+                }
             });
         }, 0);
     }

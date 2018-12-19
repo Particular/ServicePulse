@@ -19,7 +19,8 @@
         'ui.particular.graphduration',
         'ui.particular.graphdecimal',
         'ui.particular.multicheckboxList',
-        'ui.particular.monitoringConnectivityStatus'
+        'ui.particular.monitoringConnectivityStatus',
+        'ui.particular.exclamation'
     ]);
 
 } (window, window.angular));

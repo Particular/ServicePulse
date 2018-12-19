@@ -31,7 +31,22 @@
             }
         };
     }
+
+    function upgradeProtectionExpiredDirective() {
+        const template = require('./upgradeProtectionExpired.html');
+
+        return {
+            scope: {
+            },
+            restrict: 'E',
+            replace: true,
+            template: template,
+            link: function (scope, element) {
+            }
+        };
+    }
     
     angular.module('platformexpired').directive('platformTrialExpired', trialExpiredDirective);
     angular.module('platformexpired').directive('platformExpired', directive);
+    angular.module('platformexpired').directive('upgradeProtectionExpired', upgradeProtectionExpiredDirective);
 } (window, window.angular));
