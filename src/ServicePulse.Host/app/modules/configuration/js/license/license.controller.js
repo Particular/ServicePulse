@@ -13,10 +13,10 @@
         vm.loadingData = true;
 
         function mapLicenseToVm(license) {
-            vm.licenseType = license.license_type || 'Upgrade ServiceControl to v3.4.0+ to see more information about this license';
+            vm.licenseType = license.license_type;
             vm.licenseEdition = license.license_type && license.edition ? ', ' + license.edition : '';
 
-            vm.scInstanceName = license.instance_name;
+            vm.scInstanceName = license.instance_name || 'Upgrade ServiceControl to v3.4.0+ to see more information about this license';
             vm.license_status = license.license_status;
             if (license.expiration_date) {
                 vm.formattedExpirationDate = new Date(license.expiration_date.replace('Z', '')).toLocaleDateString();
