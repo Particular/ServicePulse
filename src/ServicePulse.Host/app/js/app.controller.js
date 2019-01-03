@@ -20,7 +20,7 @@
         reindexingChecker,
         licenseNotifierService,
         licenseService,
-        license,
+        license
     ) {
         $scope.isMonitoringEnabled = scConfig.monitoring_urls && scConfig.monitoring_urls.reduce(function (currentlyEnabled, url) {
             return currentlyEnabled || url;
