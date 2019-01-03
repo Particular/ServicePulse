@@ -19,16 +19,20 @@
 
 });
 
-describe('licenseController', function() {
-    beforeEach(module('configuration.license'));
+describe('licenseController', function () {
+    beforeEach(function () {
+        module('ngRoute');
+        module('sc');
+        module('configuration.license');
+    });
 
     var licenseController, formatter, licenseService, notifyService;
 
-    beforeEach(inject(function(_licenseController_, _formatter_, _licenseService_, _notifyService_) {
-        licenseController = _licenseController_;
+    beforeEach(inject(function (_$controller_, _formatter_, _licenseService_, _notifyService_, $rootScope) {
+        licenseController = _$controller_('LicenseController', { $scope: $rootScope });
         formatter = _formatter_;
         licenseService = _licenseService_;
-        notifyService = _notifyService;
+        notifyService = _notifyService_;
     }));
 
     it('should do something', function() {

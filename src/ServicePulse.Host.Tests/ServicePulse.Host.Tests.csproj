@@ -83,6 +83,7 @@
     <Content Include="tests\js\jasmine_test_example.js" />
     <Content Include="tests\js\jasmine_test_example_tests.js" />
     <Content Include="tests\js\angular-mocks.js" />
+    <Content Include="tests\js\services\license.notifier.spec.js" />
     <Content Include="tests\js\services\services.messageTypeParser.spec.js" />
     <Content Include="tests\js\services\services.monitoring.spec.js" />
     <Content Include="tests\js\views\failed_groups\controller.spec.js" />
