@@ -5,6 +5,6 @@ describe("Unit: Configuration Data Service ", function () {
 
     it('should contain a configurationService',
           inject(function (configurationService) {
-              expect(typeof (configurationService) == typeof (undefined)).toEqual(false);;
+              expect(typeof (configurationService) == typeof (undefined)).toEqual(false);
           }));
 });
