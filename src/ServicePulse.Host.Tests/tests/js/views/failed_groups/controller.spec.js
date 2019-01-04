@@ -207,7 +207,7 @@
                     });
                 }));
 
-                it('when an event is pubslished group get its state updated',
+                it('when an event is published group get its state updated',
                     function () {
 
                         spyOn(root, '$broadcast');

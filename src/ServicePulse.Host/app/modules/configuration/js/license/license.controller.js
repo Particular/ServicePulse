@@ -12,24 +12,24 @@
 
         vm.loadingData = true;
 
-        function mapLicenseToVm(license) {
+        vm.mapLicenseToVm = (license) => {
             vm.licenseType = license.license_type;
             vm.licenseEdition = license.edition ? ', ' + license.edition : '';
             vm.scInstanceName = license.instance_name;
             vm.license_status = license.license_status;
-            
+
             if (license.expiration_date) {
                 vm.formattedExpirationDate = new Date(license.expiration_date.replace('Z', '')).toLocaleDateString();
             }
-            
+
             if (license.upgrade_protection_expiration) {
                 vm.formattedUpgradeProtectionExpiration =
                     new Date(license.upgrade_protection_expiration.replace('Z', '')).toLocaleDateString();
             }
 
             var status = license.license_status;
-            vm.isTrialLicense = license.license_type === 'Trial';
-            vm.isUpgradeProtectionLicense = license.upgrade_protection_expiration !== '';
+            vm.isTrialLicense = license.trial_license;
+            vm.isUpgradeProtectionLicense = license.upgrade_protection_expiration !== undefined && license.upgrade_protection_expiration !== '';
             vm.isSubscriptionLicense = license.expiration_date !== "" && !vm.isTrialLicense;
             vm.isExpiring = licenseMatches(status,
                 'ValidWithExpiringSubscription',
@@ -47,13 +47,13 @@
 
             vm.upgradeDaysLeft = getUpgradeDaysLeft(license.upgrade_protection_expiration, vm.isValid);
             vm.expirationDaysLeft = getExpirationDaysLeft(license.expiration_date, vm.isValid, vm.isExpiring);
-            
+
             if (!vm.isValid) {
                 vm.expiredWarningType = 'danger';
             } else if (vm.isExpiring || (vm.isExpired && vm.isUpgradeProtectionLicense)) {
                 vm.expiredWarningType = 'warning';
             }
-        }
+        };
 
         function getExpirationDaysLeft(expirationDate, isValid, isExpiring) {
             if (!isValid) return ' - expired';
@@ -83,14 +83,14 @@
         function refreshData() {
             licenseService.getLicense().then((license) => {
                 if (license.license_type) {
-                    mapLicenseToVm(license);
+                    vm.mapLicenseToVm(license);
                     vm.loadingData = false;
                 }
             });
         }
 
         notifier.subscribe($scope, (_, response) => {
-            mapLicenseToVm(response.license);
+            vm.mapLicenseToVm(response.license);
             vm.loadingData = false;
         }, 'LicenseUpdated');
 
