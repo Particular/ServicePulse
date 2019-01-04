@@ -30,7 +30,7 @@
             var status = license.license_status;
             vm.isTrialLicense = license.trial_license;
             vm.isUpgradeProtectionLicense = license.upgrade_protection_expiration !== undefined && license.upgrade_protection_expiration !== '';
-            vm.isSubscriptionLicense = license.expiration_date !== "" && !vm.isTrialLicense;
+            vm.isSubscriptionLicense = license.expiration_date !== undefined && license.expiration_date !== "" && !vm.isTrialLicense;
             vm.isExpiring = licenseMatches(status,
                 'ValidWithExpiringSubscription',
                 'ValidWithExpiringTrial',
