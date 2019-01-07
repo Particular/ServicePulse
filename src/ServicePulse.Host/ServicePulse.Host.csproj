@@ -92,6 +92,7 @@
     <Content Include="app\img\monitoring-lost.svg" />
     <Content Include="app\img\redirect-destination.svg" />
     <Content Include="app\img\redirect-source.svg" />
+    <Content Include="app\js\app.bootstrap.js" />
     <Content Include="app\img\toast-danger.svg" />
     <Content Include="app\img\toast-warning.svg" />
     <Content Include="app\js\app.http.js" />

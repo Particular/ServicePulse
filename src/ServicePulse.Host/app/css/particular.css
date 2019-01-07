@@ -2547,3 +2547,13 @@ span.fa-exclamation-triangle.danger {
 .monitoring-no-data a.btn.btn-default.btn-secondary {
     margin-left: 10px;
 }
+
+.sp-loader {
+    width: 100%;
+    height: 90vh;
+    margin-top: -100px;
+    background-image: url('../img/sp-loader.gif');
+    background-size: 150px 150px;
+    background-position: center center;
+    background-repeat: no-repeat;
+}

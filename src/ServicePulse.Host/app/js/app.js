@@ -42,5 +42,4 @@
         $locationProvider.hashPrefix('');
     }]);
 
-
 }(window, window.angular, window.jQuery));

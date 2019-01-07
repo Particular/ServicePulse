@@ -3,7 +3,7 @@
 
     function routeProvider($routeProvider, scConfig) {
         $routeProvider.otherwise({ redirectTo: scConfig.default_route });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider',
