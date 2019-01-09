@@ -33,7 +33,6 @@
         $scope.Version = version;
         $scope.isSCConnecting = true;
 
-
         setTimeout(function () {
             // This delay needs to be here for the toastr service to be ready.
             licenseNotifierService.warnOfLicenseProblem(license.license_status);
