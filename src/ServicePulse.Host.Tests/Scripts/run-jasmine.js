@@ -1,5 +1,5 @@
 var system = require('system'),
-  env = system.env;
+    env = system.env;
 
 /**
  * Wait until the test condition is true or a timeout occurs. Useful for waiting
@@ -45,13 +45,13 @@ var page = require('webpage').create();
 
 /**
  *
-##teamcity[testSuiteStarted name='suite.name']
-##teamcity[testSuiteStarted name='nested.suite']
-##teamcity[testStarted name='package_or_namespace.ClassName.TestName']
-##teamcity[testFailed name='package_or_namespace.ClassName.TestName' message='The number should be 20000' details='expected:<20000> but was:<10000>']
-##teamcity[testFinished name='package_or_namespace.ClassName.TestName']
-##teamcity[testSuiteFinished name='nested.suite']
-##teamcity[testSuiteFinished name='suite.name']
+ ##teamcity[testSuiteStarted name='suite.name']
+ ##teamcity[testSuiteStarted name='nested.suite']
+ ##teamcity[testStarted name='package_or_namespace.ClassName.TestName']
+ ##teamcity[testFailed name='package_or_namespace.ClassName.TestName' message='The number should be 20000' details='expected:<20000> but was:<10000>']
+ ##teamcity[testFinished name='package_or_namespace.ClassName.TestName']
+ ##teamcity[testSuiteFinished name='nested.suite']
+ ##teamcity[testSuiteFinished name='suite.name']
  */
 // Route "console.log()" calls from within the Page context to the main Phantom context (i.e. current "this")
 page.onConsoleMessage = function (msg) {
@@ -102,7 +102,9 @@ page.open(system.args[1], function (status) {
     } else {
         waitFor(function () {
             return page.evaluate(function () {
-                return document.body.querySelector('.symbolSummary .pending') === null
+                return document.body.querySelector('.symbolSummary .pending') === null &&
+                    (document.body.querySelector('.alert > .bar.passed') !== null ||
+                        document.body.querySelector('.alert > .bar.failed') !== null);
             });
         }, function () {
             var exitCode = page.evaluate(function () {
