@@ -13,6 +13,9 @@
         angular.element(document).ready(function () {
             angular.bootstrap(document, ['sc']);
         });
-    }, function (error) {
+    }, function () {
+        window.document.getElementById('cantConnectMessage').style.display = 'block';
+        window.document.getElementById('connectingToServiceControl').style.display = 'none';
+        window.document.getElementById('serviceControlUrl').innerHTML = ' hosted at <a href="' + scConfig.service_control_url + '">' + scConfig.service_control_url + '</a>';
     });
 }(window, window.angular, window.jQuery));
