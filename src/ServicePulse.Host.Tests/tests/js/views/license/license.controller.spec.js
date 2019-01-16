@@ -36,7 +36,7 @@
             expiration_date: getDateFromNow(365).toISOString(),
             status: 'valid',
             license_status: 'Valid'
-        }
+        };
         licenseController.mapLicenseToVm(license);
         expect(licenseController.license_status).toEqual('Valid');
         expect(licenseController.licenseEdition).toEqual(', Ultimate');

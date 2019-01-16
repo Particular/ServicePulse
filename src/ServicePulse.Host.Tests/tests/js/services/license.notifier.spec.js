@@ -21,7 +21,7 @@
         licenseNotifierService.warnOfLicenseProblem('ValidWithExpiringSubscription');
         expect(toastSpy).toHaveBeenCalled();
         var template = toastSpy.calls.argsFor(0);
-        expect(template[0]).toContain("Platform license expiring");
+        expect(template[0]).toContain("Platform license expires");
     });
 
     it('should warn of expiring upgrade protection', () => {
@@ -29,7 +29,7 @@
         licenseNotifierService.warnOfLicenseProblem('ValidWithExpiringUpgradeProtection');
         expect(toastSpy).toHaveBeenCalled();
         var template = toastSpy.calls.argsFor(0);
-        expect(template[0]).toContain("Upgrade protection expiring");
+        expect(template[0]).toContain("Upgrade protection expires");
     });
 
     it('should warn of expired upgrade protection', () => {
