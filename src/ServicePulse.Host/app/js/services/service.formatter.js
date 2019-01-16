@@ -38,7 +38,7 @@
             var today = new Date();
             today.setHours(0, 0, 0, 0);
             var diff = new Date(value.replace('Z', '')) - today;
-            return parseInt(diff / 1000 / 60 / 60 / 24);
+            return Math.round(diff / 1000 / 60 / 60 / 24);
         }
 
         function round(num, decimals) {
