@@ -98,3 +98,6 @@ _Chutzpah.*/
 
 # Webpack results
 src/ServicePulse.Host/app/modules/dist
+
+#Rider 
+src/.idea/
