@@ -16,6 +16,8 @@
         failedMessageGroupsService,
         archivedMessageService) {
 
+        serviceControlService.performingDataLoadInitially = true;
+
         var vm = this;
         var notifier = notifyService();
 
@@ -86,7 +88,7 @@
             return {
                 amount: amount,
                 unit: unit
-            }
+            };
         };
 
         var init = function () {
@@ -266,6 +268,8 @@
                 vm.sort.direction,
                 vm.sort.start,
                 vm.sort.end).then(function (response) {
+                    notifier.notify('InitialLoadComplete');
+
                     vm.total = response.total;
                     processLoadedMessages(response.data);
                 });

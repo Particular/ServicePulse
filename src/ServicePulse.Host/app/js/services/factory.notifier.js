@@ -12,6 +12,8 @@
                             callback(event, data);
                         });
                     scope.$on('$destroy', handler);
+
+                    return handler;
                 },
                 notify: function (event, data) {
                     $rootScope.$emit(event, data);

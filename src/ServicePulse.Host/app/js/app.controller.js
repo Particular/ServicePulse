@@ -26,6 +26,7 @@
             return currentlyEnabled || url;
         }, false);
 
+        $scope.loadingInitialData = true;
         $scope.isRecoverabilityEnabled = scConfig.service_control_url;
 
         $scope.SCVersion = '';
@@ -167,6 +168,19 @@
             logit(event, message);
             toastService.showError(message);
         }, 'HttpError');
+
+        $scope.$on('$viewContentLoaded', function (event) {
+            if ($scope.loadingInitialData) {
+                if (serviceControlService.performingDataLoadInitially) {
+                    var unsubscribe = notifier.subscribe($scope, function () {
+                        $scope.loadingInitialData = false;
+                        unsubscribe();
+                    }, 'InitialLoadComplete');
+                } else {
+                    $scope.loadingInitialData = false;
+                }
+            }
+        });
 
         notifier.subscribe($scope, function (event, data) {
             toastService.showInfo(data);

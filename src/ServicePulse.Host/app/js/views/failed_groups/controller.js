@@ -28,6 +28,8 @@
 
         var vm = this;
         var notifier = notifyService();
+
+        serviceControlService.performingDataLoadInitially = true;
        
         vm.loadingData = false;
         vm.exceptionGroups = [];
@@ -203,6 +205,8 @@
                 autoGetExceptionGroups().then(function () {
                     vm.loadingData = false;
                     vm.initialLoadComplete = true;
+                    
+                    notifier.notify('InitialLoadComplete');
 
                     return true;
                 });
