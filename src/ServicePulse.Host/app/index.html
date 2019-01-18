@@ -48,11 +48,11 @@
         </div>
     </noscript>
 
-    <ng-include src="'layout/navbar.html'"></ng-include>
+    <ng-include src="'layout/navbar.html'" ng-show="!loadingInitialData"></ng-include>
 
     <div class="container-fluid">
         <a id="pagetop"></a>
-        <div id="connectingToServiceControl" ng-if="::false">
+        <div id="connectingToServiceControl" ng-if="loadingInitialData">
             <div class="row">
                 <div class="sp-loader"></div>
             </div>
@@ -68,10 +68,10 @@
                 </div>
             </div>
         </div>
-        <div id="view" ng-view=""></div>
+        <div id="view" ng-view="" ng-show="!loadingInitialData"></div>
     </div>
 
-    <ng-include src="'layout/footer.html'"></ng-include>
+    <ng-include src="'layout/footer.html'" ng-show="!loadingInitialData"></ng-include>
 
     <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
     </toaster-container>
