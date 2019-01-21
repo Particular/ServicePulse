@@ -1,4 +1,8 @@
-﻿<div class="container">
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <reindexingstatus></reindexingstatus>
 
     <section name="failed_messages">
@@ -67,7 +71,7 @@
                     <multi-checkboxlist messages="vm.failedMessages" selected-ids="vm.selectedIds" message="message" multiselection="vm.multiselection"></multi-checkboxlist>
 
                     <div class="col-xs-11 failed-message-data" ng-mouseenter="message.hover2 = true" ng-mouseleave="message.hover2 = false">
-                        
+
                         <div class="row" ng-class="{rowSelected: message.selected == true}" ng-click="vm.viewMessage(message)">
                             <div class="col-sm-12">
                                 <div class="row box-header">
@@ -82,7 +86,7 @@
                                             <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
                                             <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
                                             <span class="metadata" ng-show="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{message.redirect}}</span>
-                                            <button type="button" class="btn btn-link btn-sm" ng-click="vm.retryMessage(message, $event)" ng-hide="!message.hover2" >
+                                            <button type="button" class="btn btn-link btn-sm" ng-click="vm.retryMessage(message, $event)" ng-hide="!message.hover2">
                                                 <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
                                             </button>
                                         </p>

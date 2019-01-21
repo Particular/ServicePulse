@@ -11,8 +11,6 @@
         'ui.particular.productVersion',
         'ui.particular.busy',
         'ui.particular.nodata',
-        'ui.particular.configurationTabs',
-        'ui.particular.redirectLink',
         'ui.particular.graph',
         'ui.particular.largenumber',
         'ui.particular.metricslargenumber',
@@ -21,8 +19,8 @@
         'ui.particular.graphduration',
         'ui.particular.graphdecimal',
         'ui.particular.multicheckboxList',
-        'ui.particular.reindexingstatus',
-        'ui.particular.monitoringConnectivityStatus'
+        'ui.particular.monitoringConnectivityStatus',
+        'ui.particular.exclamation'
     ]);
 
 } (window, window.angular));

@@ -42,10 +42,11 @@
                         <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks | largeNumber:0}}</span>
                     </a>
                 </li>
-                <li ng-class="{ active: isActive('/configuration/endpoints') || isActive('/configuration/redirects') }">
+                <li ng-class="{ active: isActive('/configuration') }">
                     <a href="#/configuration">
                         <i class="fa fa-cog icon-white"></i>
                         <span class="navbar-label">Configuration</span>
+                        <exclamation type="{{licensewarning}}" />
                     </a>
                 </li>
                 <li>

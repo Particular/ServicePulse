@@ -1,12 +1,16 @@
-﻿<div class="container">
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="row">
         <div class="col-sm-12">
             <h1>Configuration</h1>
         </div>
     </div>
 </div>
-<div class="container">
 
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <section name="redirects">
 
         <configuration-tabs></configuration-tabs>

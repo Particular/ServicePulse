@@ -4,21 +4,21 @@
 
     function controller(
         $scope,
-        $timeout,
+        $rootScope,
         $location,
         $routeParams,
         $cookies,
-        scConfig,
         toastService,
         sharedDataService,
         notifyService,
         serviceControlService,
         failedMessageGroupsService) {
 
+        serviceControlService.performingDataLoadInitially = true;
+
         var vm = this;
-
         var notifier = notifyService();
-
+        
         vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
         vm.selectedExceptionGroup.parentTitle = $routeParams.parentGroupId;
         vm.selectedExceptionGroup.parentGroupIndex = $routeParams.parentGroupIndex;
@@ -68,6 +68,7 @@
                 vm.allMessagesLoaded = (vm.failedMessages.length >= vm.selectedExceptionGroup.count);
                 vm.page++;
             }
+
             vm.loadingData = false;
         };
 
@@ -225,7 +226,6 @@
             }
 
             vm.loadingData = true;
-            delete group.initialLoad;
 
             var allExceptionsGroupSelected = (!group || !group.id);
 
@@ -242,6 +242,12 @@
                 }
 
                 processLoadedMessages(response.data);
+
+                if (group.initialLoad) {
+                    notifier.notify('InitialLoadComplete');
+                }
+
+                delete group.initialLoad;
             });
         };
 
@@ -249,20 +255,18 @@
     }
 
     controller.$inject = [
-        "$scope",
-        "$timeout",
-        "$location",
-        "$routeParams",
-        "$cookies",
-        "scConfig",
-        "toastService",
-        "sharedDataService",
-        "notifyService",
-        "serviceControlService",
-        "failedMessageGroupsService"
+        '$scope',
+        '$rootScope',
+        '$location',
+        '$routeParams',
+        '$cookies',
+        'toastService',
+        'sharedDataService',
+        'notifyService',
+        'serviceControlService',
+        'failedMessageGroupsService'
     ];
 
-    angular.module("sc")
-        .controller("failedMessagesController", controller);
-
+    angular.module('sc')
+        .controller('failedMessagesController', controller);
 })(window, window.angular);

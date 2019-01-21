@@ -1,4 +1,8 @@
-﻿<div class="container">
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <reindexingstatus></reindexingstatus>
 
     <section name="message_groups">
@@ -227,6 +231,3 @@
         </div>
     </section>
 </div>
-
-
-

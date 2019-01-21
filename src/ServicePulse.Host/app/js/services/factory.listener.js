@@ -43,7 +43,7 @@
                         notifier.notify('SignalREvent', 'SignalR started');
 
                         connection.error(function (error) {
-                            notifier.notify('SignalRError', "The was a problem communicating with ServiceControl.");
+                            notifier.notify('SignalRError', "There was a problem communicating with ServiceControl.");
                         });
 
                         connection.reconnected(function () {

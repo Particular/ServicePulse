@@ -33,6 +33,14 @@
             }
         }
 
+        function getDayDiffFromToday(value) {
+            if (!value) return undefined;
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            var diff = new Date(value.replace('Z', '')) - today;
+            return Math.round(diff / 1000 / 60 / 60 / 24);
+        }
+
         function round(num, decimals) {
             return +(Math.round(num + ('e+' + decimals) ) + ('e-' + decimals) );
         }
@@ -58,7 +66,8 @@
 
         return {
             formatTime: formatTime,
-            formatLargeNumber: formatLargeNumber
+            formatLargeNumber: formatLargeNumber,
+            getDayDiffFromToday: getDayDiffFromToday    
         };
     }
 

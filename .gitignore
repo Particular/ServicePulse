@@ -88,6 +88,7 @@ src/scaffolding.config
 
 # npm artifacts
 src/ServicePulse.Host/node_modules
+src/ServicePulse.Host.Tests/node_modules
 package-lock.json
 
 # bower artifacts
@@ -98,3 +99,6 @@ _Chutzpah.*/
 
 # Webpack results
 src/ServicePulse.Host/app/modules/dist
+
+#Rider 
+src/.idea/

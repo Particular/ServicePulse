@@ -17,18 +17,39 @@
         semverService,
         scConfig,
         uriService,
-        reindexingChecker
+        reindexingChecker,
+        licenseNotifierService,
+        licenseService,
+        license
     ) {
         $scope.isMonitoringEnabled = scConfig.monitoring_urls && scConfig.monitoring_urls.reduce(function (currentlyEnabled, url) {
             return currentlyEnabled || url;
         }, false);
 
+        $scope.loadingInitialData = true;
         $scope.isRecoverabilityEnabled = scConfig.service_control_url;
 
         $scope.SCVersion = '';
         $scope.is_compatible_with_sc = true;
         $scope.Version = version;
         $scope.isSCConnecting = true;
+
+        setTimeout(function () {
+            // This delay needs to be here for the toastr service to be ready.
+            licenseNotifierService.warnOfLicenseProblem(license.license_status);
+        }, 3000);
+
+        $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
+        $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
+        $scope.isInvalidDueToUpgradeProtectionExpired = licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
+          
+        if ($scope.isPlatformExpired || $scope.isPlatformTrialExpired || $scope.isInvalidDueToUpgradeProtectionExpired) {
+            $scope.licensewarning = "danger";
+        }
+
+        if (licenseNotifierService.isValidWithWarning(license.license_status)) {
+            $scope.licensewarning = "warning";
+        }
 
         $scope.isActive = function(viewLocation) {
             var active = $location.path().startsWith(viewLocation);
@@ -47,7 +68,7 @@
 
         $scope.showAlertBadgeOnCollapsedMenu = function () {
             return ($scope.failedcustomchecks || 0) + ($scope.failedmessages || 0) + ($scope.failedheartbeats || 0) > 0;
-        }
+        };
 
         function customChecksUpdated(event, data) {
             $timeout(function() { //http://davidburgosonline.com/dev/2014/correctly-fix-angularjs-error-digest-already-in-progress/
@@ -147,6 +168,19 @@
             logit(event, message);
             toastService.showError(message);
         }, 'HttpError');
+
+        $scope.$on('$viewContentLoaded', function (event) {
+            if ($scope.loadingInitialData) {
+                if (serviceControlService.performingDataLoadInitially) {
+                    var unsubscribe = notifier.subscribe($scope, function () {
+                        $scope.loadingInitialData = false;
+                        unsubscribe();
+                    }, 'InitialLoadComplete');
+                } else {
+                    $scope.loadingInitialData = false;
+                }
+            }
+        });
 
         notifier.subscribe($scope, function (event, data) {
             toastService.showInfo(data);
@@ -262,7 +296,7 @@
         }, 'RetryOperationCompleted');
 
         reindexingChecker.startTrackingStatus();
-    };
+    }
 
     controller.$inject = [
         '$scope',
@@ -279,7 +313,10 @@
         'semverService',
         'scConfig',
         'uri',
-        'reindexingChecker'
+        'reindexingChecker',
+        'licenseNotifierService',
+        'licenseService',
+        'license',
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

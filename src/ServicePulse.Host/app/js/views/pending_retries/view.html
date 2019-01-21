@@ -1,14 +1,18 @@
-﻿<div class="container">
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <section name="pending_retries">
-        
+
         <failed-message-tabs></failed-message-tabs>
-        
+
         <div class="row">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
                     <div class="row">
                         <div class="col-md-6 col-xs-12 toolbar-inputs no-side-padding">
-                            
+
                             <div class="filter-input">
                                 <div class="input-group">
                                     <div class="input-group-addon"><i class="fa fa-filter" aria-hidden="true"></i> <span class="hidden-xs">Filter</span></div>
@@ -25,10 +29,9 @@
                                     </span>
                                 </div>
                             </div>
-                            
                         </div>
+
                         <div class="col-md-6 col-xs-12 toolbar-menus no-side-padding">
-                            
                             <div class="filter-period-menu dropdown">
                                 <label class="control-label"><i class="fa fa-calendar" aria-hidden="true"></i> Period:</label>
                                 <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -80,7 +83,6 @@
                                     </li>
                                 </ul>
                             </div>
-
                         </div>
                     </div>
                     <div class="row">
@@ -100,27 +102,23 @@
                             </p>
                         </div>
                     </div>
-
-                    </div>
                 </div>
             </div>
+        </div>
 
         <no-data ng-show="vm.pendingRetryMessages.length === 0 && !vm.loadingData" title="pending retries" message="There are no messages waiting to be retried."></no-data>
 
         <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
 
         <div ng-show="vm.pendingRetryMessages.length > 0" infinite-scroll="vm.loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
-            
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.pendingRetryMessages">
-
                     <multi-checkboxlist messages="vm.pendingRetryMessages" selected-ids="vm.selectedIds" message="message" multiselection="vm.multiselection"></multi-checkboxlist>
 
                     <div class="col-xs-11 failed-message-data" ng-mouseenter="message.hover2 = true" ng-mouseleave="message.hover2 = false">
                         <a href="#/failed-messages/message/{{message.id}}">
 
                             <div class="row" ng-class="{rowSelected: message.selected == true}">
-
                                 <div class="col-sm-12">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
@@ -139,7 +137,6 @@
                                             </p>
 
                                             <pre class="stacktrace-preview" isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
-
                                         </div>
                                     </div>
                                 </div>
@@ -147,16 +144,7 @@
                         </a>
                     </div>
                 </div>
-
             </div>
-
-
-
-
-
-
-
-
         </div>
     </section>
 </div>

@@ -24,7 +24,7 @@ Install the following dependencies if you don't have them installed yet
  - [Node.js](https://nodejs.org/en/download/)
  - [Git for Windows](https://git-for-windows.github.io/)
  
-#### Set up node and bower
+#### Set up node
  
  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
  - run the following command `npm run setup`. This script will install all node and bower dependencies and update index.html to include them if needed.
