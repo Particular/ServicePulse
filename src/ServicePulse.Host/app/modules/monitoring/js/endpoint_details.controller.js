@@ -57,7 +57,11 @@
 
             var selectedPeriod = $scope.selectedPeriod;
 
-            $scope.endpoint = {};
+            $scope.endpoint = {
+                messageTypesPage: 1,
+                messageTypesTotalItems: 0,
+                messageTypesItemsPerPage: 10
+            };
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
@@ -87,6 +91,9 @@
                     });
 
                     $scope.loading = false;
+
+                    $scope.endpoint.messageTypesTotalItems = $scope.endpoint.messageTypes.length;
+
                     $scope.endpoint.messageTypes.forEach((messageType) => {
                         fillDisplayValues(messageType);
                         messageTypeParser.parseTheMessageTypeData(messageType);

@@ -392,7 +392,7 @@
 
                 <div class="row">
                     <div class="col-xs-12 no-side-padding">
-                        <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes">
+                        <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage">
                             <div class="col-xs-12 no-side-padding">
                                 <div class="row">
                                     <div class="col-xs-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
@@ -479,5 +479,6 @@
                 </div>
             </div>
         </div>
+        <uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10"></uib-pagination>
     </section>
 </div>
