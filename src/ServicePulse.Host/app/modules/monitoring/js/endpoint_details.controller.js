@@ -34,10 +34,12 @@
             updateUI();
         };
 
-        function mergeIn(destination, source) {
+        function mergeIn(destination, source, propertiesToSkip) {
             for (var propName in source) {
                 if (source.hasOwnProperty(propName)) {
-                    destination[propName] = source[propName];
+                    if(!propertiesToSkip || !propertiesToSkip.includes(propName)) {
+                        destination[propName] = source[propName];
+                    }
                 }
             }
         }
@@ -60,7 +62,8 @@
             $scope.endpoint = {
                 messageTypesPage: 1,
                 messageTypesTotalItems: 0,
-                messageTypesItemsPerPage: 10
+                messageTypesItemsPerPage: 10,
+                messageTypesAvailable: false
             };
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
@@ -74,7 +77,23 @@
 
                 } else {
 
-                    mergeIn($scope.endpoint, endpoint);
+                    if ($scope.endpoint.messageTypesTotalItems > 0 &&
+                        $scope.endpoint.messageTypesTotalItems !== endpoint.messageTypes.length &&
+                        !$scope.endpoint.messageTypesForceReload) {
+
+                        mergeIn($scope.endpoint, endpoint, ['messageTypes']);
+
+                        if (!$scope.endpoint.messageTypesAvilable) {
+
+                            $scope.endpoint.messageTypesAvilable = true;
+
+                            toastService.showInfo("Available message types changed. Click to update the view.", "Info", true, updateUI);
+                        }
+
+                    } else {
+                        mergeIn($scope.endpoint, endpoint);
+                    }
+
 
                     connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
 
