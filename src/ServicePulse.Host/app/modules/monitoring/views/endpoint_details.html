@@ -205,10 +205,10 @@
     <busy ng-show="loading" message="Loading details"></busy>
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, 'messageTypeBreakdown')}}" class="ng-binding">Message Types</a>
+            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, 'messageTypeBreakdown')}}" class="ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
         </h5>
         <h5 ng-class="{active: showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, 'instancesBreakdown')}}" class="ng-binding">Instances</a>
+            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, 'instancesBreakdown')}}" class="ng-binding">Instances ({{endpoint.instances.length}})</a>
         </h5>
     </div>
 
