@@ -52,19 +52,38 @@
             $scope.showInstancesBreakdown = isVisible;
         };
 
+        $scope.endpoint = {
+            messageTypesPage: 1,
+            messageTypesTotalItems: 0,
+            messageTypesItemsPerPage: 10,
+            messageTypesAvailable: false,
+            messageTypesUpdatedSet: [],
+            messageTypesForceReload: function() {
+                $scope.endpoint.messageTypesAvailable = false;
+
+                $scope.endpoint.messageTypes = $scope.endpoint.messageTypesUpdatedSet;
+                $scope.endpoint.messageTypesUpdatedSet = null;
+
+                processMessageTypes();
+            }
+        };
+
+        function processMessageTypes() {
+
+            $scope.endpoint.messageTypesTotalItems = $scope.endpoint.messageTypes.length;
+
+            $scope.endpoint.messageTypes.forEach((messageType) => {
+                fillDisplayValues(messageType);
+                messageTypeParser.parseTheMessageTypeData(messageType);
+            });
+        };
+
         function updateUI() {
             if (subscription) {
                 subscription.dispose();
             }
 
             var selectedPeriod = $scope.selectedPeriod;
-
-            $scope.endpoint = {
-                messageTypesPage: 1,
-                messageTypesTotalItems: 0,
-                messageTypesItemsPerPage: 10,
-                messageTypesAvailable: false
-            };
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
                 if (endpoint.error) {
@@ -78,22 +97,16 @@
                 } else {
 
                     if ($scope.endpoint.messageTypesTotalItems > 0 &&
-                        $scope.endpoint.messageTypesTotalItems !== endpoint.messageTypes.length &&
-                        !$scope.endpoint.messageTypesForceReload) {
+                        $scope.endpoint.messageTypesTotalItems !== endpoint.messageTypes.length) {
 
                         mergeIn($scope.endpoint, endpoint, ['messageTypes']);
 
-                        if (!$scope.endpoint.messageTypesAvilable) {
-
-                            $scope.endpoint.messageTypesAvilable = true;
-
-                            toastService.showInfo("Available message types changed. Click to update the view.", "Info", true, updateUI);
-                        }
+                        $scope.endpoint.messageTypesAvailable = true;
+                        $scope.endpoint.messageTypesUpdatedSet = endpoint.messageTypes;
 
                     } else {
                         mergeIn($scope.endpoint, endpoint);
                     }
-
 
                     connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
 
@@ -111,12 +124,7 @@
 
                     $scope.loading = false;
 
-                    $scope.endpoint.messageTypesTotalItems = $scope.endpoint.messageTypes.length;
-
-                    $scope.endpoint.messageTypes.forEach((messageType) => {
-                        fillDisplayValues(messageType);
-                        messageTypeParser.parseTheMessageTypeData(messageType);
-                    });
+                    processMessageTypes();
 
                     $scope.endpoint.isStale = true;
                     $scope.endpoint.isScMonitoringDisconnected = false;

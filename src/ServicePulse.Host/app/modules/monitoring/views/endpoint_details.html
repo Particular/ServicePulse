@@ -345,6 +345,9 @@
     </section>
 
     <section ng-if="!showInstancesBreakdown" class="endpoint-message-types">
+        <div ng-show="endpoint.messageTypesAvailable" class="alert alert-warning">
+            <i class="fa fa-warning"></i> <strong>Warning:</strong> The number of available message types has changed. Click <a ng-click="endpoint.messageTypesForceReload()">here </a> to re-load the view
+        </div>
         <div class="row">
             <div class="col-xs-12 no-side-padding">
                 <!-- Breakdown by message type-->
