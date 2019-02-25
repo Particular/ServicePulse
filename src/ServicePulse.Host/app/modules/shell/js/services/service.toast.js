@@ -2,7 +2,7 @@
     'use strict';
 
     function ToastService(toaster) {
-        this.showToast = function(text, type, title, sticky, onHide) {
+        this.showToast = function(text, type, title, sticky) {
             sticky = sticky || false;
             toaster.pop({
                 type: type || 'info',
@@ -10,13 +10,12 @@
                 body: text,
                 bodyOutputType: 'trustedHtml',
                 timeout: sticky ? 0 : 5000,
-                showCloseButton: sticky,
-                onHideCallback: onHide
-        });
+                showCloseButton: sticky
+            });
         };
 
-        this.showInfo = function(text, title, sticky, onHide) {
-            this.showToast(text, 'info', title || 'Info', sticky, onHide);
+        this.showInfo = function(text, title, sticky) {
+            this.showToast(text, 'info', title || 'Info', sticky);
         };
 
         this.showError = function(text, sticky) {
