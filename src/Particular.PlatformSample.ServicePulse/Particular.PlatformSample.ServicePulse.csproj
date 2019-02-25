@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <IncludeBuildOutput>False</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>True</SuppressDependenciesWhenPacking>
+    <Description>Particular ServicePulse binaries for use by Particular.PlatformSample. Not intended for use outside of Particular.PlatformSample.</Description>
+    <PackageProjectUrl>https://docs.particular.net/servicepulse/</PackageProjectUrl>
+    <NoWarn>$(NoWarn);NU5118;NU5100</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServicePulse.Host\ServicePulse.Host.csproj" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Particular.Packaging" Version="0.2.1" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\ServicePulse.Host\app\**\*" PackagePath="platform\servicepulse" Visible="false" Link="hidden"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="buildProps\**\*" />
+    <Content Include="buildProps\**\*" PackagePath="" />
+  </ItemGroup>
+
+</Project>

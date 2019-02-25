@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Host", "ServicePulse.Host\ServicePulse.Host.csproj", "{D120B791-BD1B-4E06-B4E1-69801A73209B}"
 EndProject
@@ -26,6 +26,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.SignalrClient", "SmokeTest.SignalrClient\SmokeTest.SignalrClient.csproj", "{C23C4E96-744E-49F6-A4AB-9324E43A166A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.ClientNoHeartbeat", "SmokeTest.ClientNoHeartbeat\SmokeTest.ClientNoHeartbeat.csproj", "{02E77C87-7BA9-4142-A87A-928D419ABE91}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Particular.PlatformSample.ServicePulse", "Particular.PlatformSample.ServicePulse\Particular.PlatformSample.ServicePulse.csproj", "{67FD72C8-A459-4235-AD10-3DF5B68A3172}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{02E77C87-7BA9-4142-A87A-928D419ABE91}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02E77C87-7BA9-4142-A87A-928D419ABE91}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02E77C87-7BA9-4142-A87A-928D419ABE91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67FD72C8-A459-4235-AD10-3DF5B68A3172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67FD72C8-A459-4235-AD10-3DF5B68A3172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67FD72C8-A459-4235-AD10-3DF5B68A3172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67FD72C8-A459-4235-AD10-3DF5B68A3172}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,5 +91,8 @@ Global
 		{122AD54A-B249-41C7-858F-CB75E7C0F463} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
 		{C23C4E96-744E-49F6-A4AB-9324E43A166A} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
 		{02E77C87-7BA9-4142-A87A-928D419ABE91} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4947D2DF-3120-4B1C-BA22-26B4BBC1592C}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,5 @@
+assembly-versioning-scheme: Major
+next-version: 1.16
+branches:
+  release:
+    tag: rc
