@@ -3,9 +3,10 @@
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="loading"></div>
+    <div class="sp-loader" ng-if="loading"></div>
+    <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="!loading && !loadedSuccessfuly"></div>
 
-    <div class="row monitoring-head" ng-if="!loading">
+    <div class="row monitoring-head" ng-if="loadedSuccessfuly">
         <div class="back-nav">
             <span class="fake-link" aria-hidden="true">&#9664;</span>
             <a href="/#/monitoring">All endpoints</a>
@@ -37,7 +38,7 @@
     </div>
 </div>
 
-<div class="container large-graphs" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+<div class="container large-graphs" ng-if="loadedSuccessfuly && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="container">
         <div class="row">
             <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
@@ -201,8 +202,7 @@
     </div>
 </div>
 
-<div class="container" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <busy ng-show="loading" message="Loading details"></busy>
+<div class="container" ng-if="loadedSuccessfuly && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">
             <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, endpoint.messageTypesPage)}}" class="ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
@@ -216,10 +216,8 @@
         <div class="row">
             <div class="col-xs-12 no-side-padding">
 
-                <!-- Breakdown by instance -->
-                <busy ng-show="loading" message="Loading details"></busy>
-
-                <div ng-show="!loading" class="row box box-no-click table-head-row">
+                <!-- Breakdown by instance-->
+                <div ng-show="loadedSuccessfuly" class="row box box-no-click table-head-row">
                     <div class="col-xs-8">
                         <div class="row box-header">
                             <div class="col-xs-12">
@@ -350,10 +348,9 @@
         </div>
         <div class="row">
             <div class="col-xs-12 no-side-padding">
+                
                 <!-- Breakdown by message type-->
-                <busy ng-show="loading" message="Loading details"></busy>
-
-                <div ng-show="!loading" class="row box box-no-click table-head-row">
+                <div ng-show="loadedSuccessfuly" class="row box box-no-click table-head-row">
                     <div class="col-xs-4 col-xl-8">
                         <div class="row box-header">
                             <div class="col-xs-12">

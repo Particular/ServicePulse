@@ -20,6 +20,7 @@
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.showInstancesBreakdown = $routeParams.tab === 'instancesBreakdown'; 
         $scope.loading = true;
+        $scope.loadedSuccessfuly = false;
         $scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
 
@@ -96,6 +97,9 @@
             var selectedPeriod = $scope.selectedPeriod;
 
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
+
+                $scope.loading = false;
+
                 if (endpoint.error) {
                     connectivityNotifier.reportFailedConnection($routeParams.sourceIndex);
                     if ($scope.endpoint && $scope.endpoint.instances) {
@@ -132,8 +136,6 @@
                         return 0;
                     });
 
-                    $scope.loading = false;
-
                     processMessageTypes();
 
                     $scope.endpoint.isStale = true;
@@ -151,6 +153,8 @@
                     });
                         $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
                     });
+
+                    $scope.loadedSuccessfuly = true;
                 }
 
                 serviceControlService.getExceptionGroupsForLogicalEndpoint($scope.endpointName).then(function(result) {
