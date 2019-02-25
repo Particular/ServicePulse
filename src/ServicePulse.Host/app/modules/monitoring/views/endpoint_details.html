@@ -30,7 +30,7 @@
         <div class="col-xs-3 no-side-padding toolbar-menus">
             <ul class="nav nav-pills period-selector">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                    <a ng-click="selectPeriod(period)" ng-href="{{buildUrl(period.value)}}">{{period.text}}</a>
+                    <a ng-click="selectPeriod(period)" ng-href="{{buildUrl(period.value, showInstancesBreakdown, showInstacesBreakdown ? 1 : endpoint.messageTypesPage)}}">{{period.text}}</a>
                 </li>
             </ul>
         </div>
@@ -205,10 +205,10 @@
     <busy ng-show="loading" message="Loading details"></busy>
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, 'messageTypeBreakdown')}}" class="ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
+            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, endpoint.messageTypesPage)}}" class="ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
         </h5>
         <h5 ng-class="{active: showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, 'instancesBreakdown')}}" class="ng-binding">Instances ({{endpoint.instances.length}})</a>
+            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, 1)}}" class="ng-binding">Instances ({{endpoint.instances.length}})</a>
         </h5>
     </div>
 
@@ -482,6 +482,8 @@
                 </div>
             </div>
         </div>
-        <uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10"></uib-pagination>
+        <uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" 
+                        ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10"
+                        ng-change="updateUrl()"></uib-pagination>
     </section>
 </div>

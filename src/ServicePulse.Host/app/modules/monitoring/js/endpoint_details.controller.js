@@ -44,8 +44,18 @@
             }
         }
 
-        $scope.buildUrl = function (selectedPeriodValue, showInstancesBreakdownTab) {
-            return `#/monitoring/endpoint/${$scope.endpointName}/${$scope.sourceIndex}?historyPeriod=${selectedPeriodValue}&tab=${$scope.showInstancesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown'}`;
+        $scope.buildUrl = function (selectedPeriodValue, showInstacesBreakdown, breakdownPageNo) {
+
+            var breakdownTabName = showInstacesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown';
+
+            return `#/monitoring/endpoint/${$scope.endpointName}/${$scope.sourceIndex}?historyPeriod=${selectedPeriodValue}&tab=${breakdownTabName}&pageNo=${breakdownPageNo}`;
+        };
+
+        $scope.updateUrl = function () {
+
+            var updatedUrl = $scope.buildUrl($scope.selectedPeriod.value, $scope.showInstancesBreakdown, $scope.endpoint.messageTypesPage);
+
+            window.location.hash = updatedUrl;
         };
 
         $scope.showInstancesBreakdownTab = function(isVisible) {
@@ -53,7 +63,7 @@
         };
 
         $scope.endpoint = {
-            messageTypesPage: 1,
+            messageTypesPage: !$scope.showInstancesBreakdown ? $routeParams.pageNo : 1,
             messageTypesTotalItems: 0,
             messageTypesItemsPerPage: 10,
             messageTypesAvailable: false,
