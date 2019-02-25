@@ -482,8 +482,8 @@
                 </div>
             </div>
         </div>
-        <uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" 
-                        ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10"
-                        ng-change="updateUrl()"></uib-pagination>
+        <ul uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems"
+                        ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10" boundary-link-numbers="true"
+                        ng-change="updateUrl()"></ul>
     </section>
 </div>
