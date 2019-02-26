@@ -2564,5 +2564,16 @@ span.fa-exclamation-triangle.danger {
     position:fixed;
 }
 
-#cantConnectMessage h1 {
+.list-pagination {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    background-color: #00A3C4;
+    border-color: #ddd;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: #00729C;
 }
