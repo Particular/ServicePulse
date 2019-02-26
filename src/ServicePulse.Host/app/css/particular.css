@@ -526,6 +526,7 @@ h6 {
 
             .tabs h5.active a {
                 color: #181919;
+                text-decoration: none;
             }
 
     .tabs a {
