@@ -2581,11 +2581,11 @@ span.fa-exclamation-triangle.danger {
 
 .endpoint-data-changed {
     text-align: center;
-    margin: 26px 0 6px;
+    margin: 26px 0 0;
 }
 
 .endpoint-data-changed a {
-    color: #23527c;
+    text-decoration: underline;
 }
 
 .endpoint-data-changed a:hover {
