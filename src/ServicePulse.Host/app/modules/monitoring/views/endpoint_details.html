@@ -218,35 +218,35 @@
 
                 <!-- Breakdown by instance-->
                 <div ng-show="loadedSuccessfuly" class="row box box-no-click table-head-row">
-                    <div class="col-xs-8">
+                    <div class="col-xs-4 col-xl-8">
                         <div class="row box-header">
                             <div class="col-xs-12">
                                 Instance Name
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
                                 Throughput <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
                                 Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
                                 Processing Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
                                 Critical Time <span class="table-header-unit">(t)</span>
@@ -262,12 +262,12 @@
                         <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
                             <div class="col-xs-12 no-side-padding">
                                 <div class="row">
-                                    <div class="col-xs-8 endpoint-name">
+                                    <div class="col-xs-4 col-xl-8 endpoint-name">
                                         <div class="row box-header">
                                             <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis" uib-tooltip="{{instance.name}}">
                                                 {{instance.name}}
                                             </div>
-                                            <div class="col-xs-4 endpoint-status">
+                                            <div class="col-lg-4 no-side-padding endpoint-status">
                                                 <span class="warning" ng-if="instance.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                                                 </span>
@@ -283,7 +283,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
@@ -294,7 +294,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-2 col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
@@ -305,7 +305,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
@@ -319,7 +319,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
