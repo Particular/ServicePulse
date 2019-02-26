@@ -2596,3 +2596,7 @@ span.fa-exclamation-triangle.danger {
 .sticky {
     position: sticky;
 }
+
+div[content="Unable to connect to instance"], div[content="Unable to connect to monitoring server"] {
+    z-index: 99999;
+}
