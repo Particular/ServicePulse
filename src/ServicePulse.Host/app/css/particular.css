@@ -2578,3 +2578,20 @@ span.fa-exclamation-triangle.danger {
 .pagination > li > a, .pagination > li > span {
     color: #00729C;
 }
+
+.endpoint-data-changed {
+    text-align: center;
+    margin: 26px 0 6px;
+}
+
+.endpoint-data-changed a {
+    color: #23527c;
+}
+
+.endpoint-data-changed a:hover {
+    cursor: pointer;
+}
+
+.sticky {
+    position: sticky;
+}

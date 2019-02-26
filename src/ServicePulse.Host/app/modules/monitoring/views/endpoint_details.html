@@ -343,12 +343,14 @@
     </section>
 
     <section ng-if="!showInstancesBreakdown" class="endpoint-message-types">
-        <div ng-show="endpoint.messageTypesAvailable" class="alert alert-warning">
-            <i class="fa fa-warning"></i> <strong>Warning:</strong> The number of available message types has changed. Click <a ng-click="endpoint.messageTypesForceReload()">here </a> to re-load the view
-        </div>
+        
         <div class="row">
             <div class="col-xs-12 no-side-padding">
-                
+
+                <div ng-show="endpoint.messageTypesAvailable" class="alert alert-warning endpoint-data-changed">
+                    <i class="fa fa-warning"></i> <strong>Warning:</strong> The number of available message types has changed. <a ng-click="endpoint.messageTypesForceReload()">Click here to re-load the view</a>
+                </div>
+
                 <!-- Breakdown by message type-->
                 <div ng-show="loadedSuccessfuly" class="row box box-no-click table-head-row">
                     <div class="col-xs-4 col-xl-8">
@@ -478,7 +480,7 @@
                     </div>
                 </div>
                 <div class="row list-pagination">
-                        <ul uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10" boundary-link-numbers="true" ng-change="updateUrl()"></ul>
+                    <ul uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10" boundary-link-numbers="true" ng-change="updateUrl()"></ul>
                 </div>
             </div>
         </div>
