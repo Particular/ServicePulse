@@ -19,6 +19,7 @@
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <section ng-show="true">
+        <div class="sp-loader" ng-if="loading"></div>
         <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading"></div>
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
             <div class="col-xs-2 col-xl-7">

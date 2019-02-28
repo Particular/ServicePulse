@@ -28,7 +28,9 @@
                             endpoint.sourceIndex = sourceIndex;
                         });
 
-                        return result.data;
+                        return result.data.length !== 0
+                                ? result.data
+                                : [{empty: true, sourceIndex: sourceIndex}];
                     },
                     (error) => {
                         var sourceIndex = scConfig.monitoring_urls.indexOf(url);

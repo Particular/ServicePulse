@@ -1,4 +1,4 @@
-﻿(function(window, angular, undefined) {
+(function(window, angular, undefined) {
     'use strict';
 
     function controller(
@@ -63,6 +63,10 @@
                 .subscribe(function (endpoint) {
 
                     $scope.loading = false;
+
+                    if (endpoint.empty) {
+                        return;
+                    }
 
                     if (endpoint.error) {
                         connectivityNotifier.reportFailedConnection(endpoint.sourceIndex);
