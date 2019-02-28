@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)\..\platform\servicepulse\**\*" CopyToOutputDirectory="PreserveNewest" Link="platform\servicepulse\%(RecursiveDir)%(Filename)%(Extension)" />
+    <None Include="$(MSBuildThisFileDirectory)\..\platform\servicepulse\**\*" CopyToOutputDirectory="PreserveNewest" Link="platform\servicepulse\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
 </Project>
