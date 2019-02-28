@@ -61,6 +61,8 @@
 
         $scope.showInstancesBreakdownTab = function(isVisible) {
             $scope.showInstancesBreakdown = isVisible;
+
+            $scope.endpoint.messageTypesForceReload();
         };
 
         $scope.endpoint = {
@@ -69,13 +71,15 @@
             messageTypesItemsPerPage: 10,
             messageTypesAvailable: false,
             messageTypesUpdatedSet: [],
-            messageTypesForceReload: function() {
-                $scope.endpoint.messageTypesAvailable = false;
+            messageTypesForceReload: function () {
+                if ($scope.endpoint.messageTypesAvailable) {
+                    $scope.endpoint.messageTypesAvailable = false;
 
-                $scope.endpoint.messageTypes = $scope.endpoint.messageTypesUpdatedSet;
-                $scope.endpoint.messageTypesUpdatedSet = null;
+                    $scope.endpoint.messageTypes = $scope.endpoint.messageTypesUpdatedSet;
+                    $scope.endpoint.messageTypesUpdatedSet = null;
 
-                processMessageTypes();
+                    processMessageTypes();
+                }
             }
         };
 
