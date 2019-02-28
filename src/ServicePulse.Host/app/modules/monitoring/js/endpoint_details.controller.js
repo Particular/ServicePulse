@@ -183,12 +183,16 @@
 
         updateUI();
 
-        $('.endpoint-message-types').scroll(function () {
-            if ($(this).scrollTop() > 65) {
-                $('.endpoint-data-changed').addClass('sticky');
-            } else {
-                $('.endpoint-data-changed').removeClass('sticky');
-            }
+        $(function () {
+            $(window).on('load scroll', function () {
+                if ($(this).scrollTop() > 510) {
+                    $('.endpoint-data-changed').addClass('sticky');
+                    $('.table-head-row').addClass('add-top-margin');
+                } else {
+                    $('.endpoint-data-changed').removeClass('sticky');
+                    $('.table-head-row').removeClass('add-top-margin');
+                }
+            });
         });
     }
 

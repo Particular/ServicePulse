@@ -2593,8 +2593,17 @@ span.fa-exclamation-triangle.danger {
     cursor: pointer;
 }
 
-.sticky {
-    position: sticky;
+.endpoint-data-changed.sticky {
+    position: fixed;
+    top: 50px;
+    width: 92%;
+    z-index: 999999;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.15);
+    transition-duration: 0.5s;
+}
+
+.table-head-row.add-top-margin {
+    margin-top: 86px;
 }
 
 div[content="Unable to connect to instance"], div[content="Unable to connect to monitoring server"] {
