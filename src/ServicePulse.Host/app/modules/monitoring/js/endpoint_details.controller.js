@@ -182,6 +182,14 @@
         });
 
         updateUI();
+
+        $('.endpoint-message-types').scroll(function () {
+            if ($(this).scrollTop() > 65) {
+                $('.endpoint-data-changed').addClass('sticky');
+            } else {
+                $('.endpoint-data-changed').removeClass('sticky');
+            }
+        });
     }
 
     controller.$inject = [
