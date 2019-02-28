@@ -4,12 +4,12 @@
     function service($cookies) {
 
         var periods = [
-                { value: 1,  text: "1m",  refreshInterval:  1 * 1000 },
-                { value: 5,  text: "5m",  refreshInterval:  5 * 1000 },
-                { value: 10, text: "10m", refreshInterval: 10 * 1000 },
-                { value: 15, text: "15m", refreshInterval: 15 * 1000 },
-                { value: 30, text: "30m", refreshInterval: 30 * 1000 },
-                { value: 60, text: "1h",  refreshInterval: 60 * 1000 }
+                { value: 1,  text: "1m",  refreshInterval: 1 * 1000,  refreshIntervalText: "1 sec" },
+                { value: 5,  text: "5m",  refreshInterval: 5 * 1000,  refreshIntervalText: "5 sec"  },
+                { value: 10, text: "10m", refreshInterval: 10 * 1000, refreshIntervalText: "10 sec" },
+                { value: 15, text: "15m", refreshInterval: 15 * 1000, refreshIntervalText: "15 sec" },
+                { value: 30, text: "30m", refreshInterval: 30 * 1000, refreshIntervalText: "30 sec" },
+                { value: 60, text: "1h",  refreshInterval: 60 * 1000, refreshIntervalText: "60 sec" }
         ];
 
         this.saveSelectedPeriod = function(period) {
