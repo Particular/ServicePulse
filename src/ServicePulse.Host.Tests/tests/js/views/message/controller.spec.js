@@ -69,6 +69,23 @@
             expect(controller.message.retried).toEqual(false);
             expect(serviceControlService.retryFailedMessages).toHaveBeenCalled();
         });
+
+        it('and the headers contain content type, GetContentType returns it', function () {
+            var originalValue = 'xml';
+            var headers = [];
+            headers.push({key: 'NServiceBus.ContentType', value: originalValue});
+            headers.push({key: 'bla', value:1});
+            var headerValue = controller.getContentType(headers);            
+
+            expect(headerValue).toEqual(originalValue);
+        });
+
+        it('and the headers are empty GetContentType returns null', function () {
+            var headers = [];            
+            var headerValue = controller.getContentType(headers);
+
+            expect(headerValue).toEqual(null);
+        });
     });
 
     describe('when archiving a message', function () {
