@@ -63,7 +63,7 @@
         $scope.showInstancesBreakdownTab = function(isVisible) {
             $scope.showInstancesBreakdown = isVisible;
 
-            $scope.endpoint.messageTypesForceReload();
+            $scope.endpoint.refreshMessageTypes();
         };
 
         $scope.endpoint = {
@@ -72,7 +72,7 @@
             messageTypesItemsPerPage: 10,
             messageTypesAvailable: false,
             messageTypesUpdatedSet: [],
-            messageTypesForceReload: function () {
+            refreshMessageTypes: function () {
                 if ($scope.endpoint.messageTypesAvailable) {
                     $scope.endpoint.messageTypesAvailable = false;
 
