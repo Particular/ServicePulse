@@ -5,6 +5,7 @@
         $scope,
         $routeParams,
         $location,
+        $window,
         toastService,
         serviceControlService,
         monitoringService,
@@ -56,7 +57,7 @@
 
             var updatedUrl = $scope.buildUrl($scope.selectedPeriod.value, $scope.showInstancesBreakdown, $scope.endpoint.messageTypesPage);
 
-            window.location.hash = updatedUrl;
+            $window.location.hash = updatedUrl;
         };
 
         $scope.showInstancesBreakdownTab = function(isVisible) {
@@ -200,6 +201,7 @@
         '$scope',
         '$routeParams',
         '$location',
+        '$window',
         'toastService',
         'serviceControlService',
         'monitoringService',
