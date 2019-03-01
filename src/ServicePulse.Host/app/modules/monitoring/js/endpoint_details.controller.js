@@ -20,7 +20,7 @@
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.showInstancesBreakdown = $routeParams.tab === 'instancesBreakdown'; 
         $scope.loading = true;
-        $scope.loadedSuccessfuly = false;
+        $scope.loadedSuccessfully = false;
         $scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
 
@@ -158,7 +158,7 @@
                         $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
                     });
 
-                    $scope.loadedSuccessfuly = true;
+                    $scope.loadedSuccessfully = true;
                 }
 
                 serviceControlService.getExceptionGroupsForLogicalEndpoint($scope.endpointName).then(function(result) {
