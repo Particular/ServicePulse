@@ -183,18 +183,6 @@
         });
 
         updateUI();
-
-        $(function () {
-            $(window).on('load scroll', function () {
-                if ($(this).scrollTop() > 510) {
-                    $('.endpoint-data-changed').addClass('sticky');
-                    $('.table-head-row').addClass('add-top-margin');
-                } else {
-                    $('.endpoint-data-changed').removeClass('sticky');
-                    $('.table-head-row').removeClass('add-top-margin');
-                }
-            });
-        });
     }
 
     controller.$inject = [

@@ -20,7 +20,8 @@
         'ui.particular.graphdecimal',
         'ui.particular.multicheckboxList',
         'ui.particular.monitoringConnectivityStatus',
-        'ui.particular.exclamation'
+        'ui.particular.exclamation',
+        'ui.particular.messageTypesChangeIndicator'
     ]);
 
 } (window, window.angular));

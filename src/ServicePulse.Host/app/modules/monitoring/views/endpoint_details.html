@@ -346,10 +346,8 @@
         
         <div class="row">
             <div class="col-xs-12 no-side-padding">
-
-                <div ng-show="endpoint.messageTypesAvailable" class="alert alert-warning endpoint-data-changed">
-                    <i class="fa fa-warning"></i> <strong>Warning:</strong> The number of available message types has changed. <a ng-click="endpoint.refreshMessageTypes()">Click here to reload the view</a>
-                </div>
+                
+                <message-types-change-indicator refresh="endpoint.refreshMessageTypes" message-types-available="endpoint.messageTypesAvailable"></message-types-change-indicator>
 
                 <!-- Breakdown by message type-->
                 <div ng-show="loadedSuccessfully" class="row box box-no-click table-head-row">
