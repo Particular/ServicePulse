@@ -133,10 +133,6 @@
     <ROW Name="lzmaextractor.dll" SourcePath="&lt;AI_CUSTACTS&gt;lzmaextractor.dll"/>
     <ROW Name="viewer.exe" SourcePath="&lt;AI_CUSTACTS&gt;viewer.exe"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiCheckBoxComponent">
-    <ROW Property="ENABLE_SERVICECONTROL" Value="TRUE"/>
-    <ROW Property="ENABLE_MONITORING" Value="TRUE"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
     <ROW Dialog_="AdminBrowseDlg" Control="OK" Type="PushButton" X="304" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_OK]" Order="300" TextLocId="-" MsiKey="AdminBrowseDlg#OK"/>
     <ROW Dialog_="AdminBrowseDlg" Control="Cancel" Type="PushButton" X="240" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Cancel]" Order="400" TextLocId="-" MsiKey="AdminBrowseDlg#Cancel"/>
@@ -211,22 +207,11 @@
     <ROW Dialog_="FeatureConfiguration" Control="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Attributes="3" Text="[ButtonText_Back]" Order="300" TextLocId="-"/>
     <ROW Dialog_="FeatureConfiguration" Control="BottomLine" Type="Line" X="0" Y="234" Width="372" Height="0" Attributes="1" Order="400"/>
     <ROW Dialog_="FeatureConfiguration" Control="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" Attributes="1048577" Text="[BannerBitmap]" Order="500"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_1" Type="Text" X="20" Y="81" Width="53" Height="31" Attributes="65539" Property="TEXT_1_PROP_1" Text="Port" TextStyle="DlgFontBold8" Order="600"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="45" Y="79" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_2" Type="Edit" X="99" Y="124" Width="218" Height="15" Attributes="3" Property="INST_URI" Text="{260}" Order="800"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_2" Type="Text" X="23" Y="127" Width="89" Height="15" Attributes="65539" Property="TEXT_2_PROP_2" Text="ServiceControl URI" Order="900"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_3" Type="Text" X="20" Y="59" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP_2" Text="Specify the port number ServicePulse will listen on" Order="1000"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="ServicePulse Configuration" TextStyle="[DlgTitleFont]" Order="1100" TextLocId="Control.Text.FolderDlg#Title"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Attributes="196611" Text="Adjust configuration settings" Order="1200" TextLocId="Control.Text.FolderDlg#Description"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Edit_3" Type="Edit" X="100" Y="167" Width="217" Height="15" Attributes="3" Property="INST_SC_MONITORING_URI" Text="{260}" Order="1300"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_5" Type="Text" X="25" Y="169" Width="89" Height="18" Attributes="65539" Property="TEXT_2_PROP_1_1" Text="Monitoring URI" Order="1400"/>
-    <ROW Dialog_="FeatureConfiguration" Control="CheckBox_1" Type="CheckBox" X="20" Y="102" Width="216" Height="21" Attributes="3" Property="ENABLE_SERVICECONTROL" Text="Enable Recoverability and Auditing features" TextStyle="DlgFontBold8" Order="1500"/>
-    <ROW Dialog_="FeatureConfiguration" Control="CheckBox_2" Type="CheckBox" X="20" Y="147" Width="142" Height="19" Attributes="3" Property="ENABLE_MONITORING" Text="Enable endpoint monitoring" TextStyle="DlgFontBold8" Order="1600"/>
-    <ROW Dialog_="FeatureConfiguration" Control="TestSCConnectivity" Type="PushButton" X="323" Y="123" Width="37" Height="17" Attributes="3" Text="Test" Order="1700"/>
-    <ROW Dialog_="FeatureConfiguration" Control="TestSCMonitoringConnectivity" Type="PushButton" X="323" Y="166" Width="37" Height="17" Attributes="3" Text="Test" Order="1800"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_4" Type="Text" X="46" Y="197" Width="301" Height="23" Attributes="65539" Property="TEXT_4_PROP" Text="if you don&apos;t yet have a ServiceControl and/or Monitoring instance, it is recommended " Order="1900"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_6" Type="Text" X="20" Y="197" Width="28" Height="19" Attributes="65539" Property="TEXT_6_PROP" Text="Note:" TextStyle="DlgFontBold8" Order="2000"/>
-    <ROW Dialog_="FeatureConfiguration" Control="Text_7" Type="Text" X="46" Y="209" Width="302" Height="12" Attributes="65539" Property="TEXT_7_PROP" Text="to note down the above URIs and use them when later creating those instances." Order="2100"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Text_1" Type="Text" X="15" Y="82" Width="53" Height="31" Attributes="65539" Property="TEXT_1_PROP_1" Text="Port" TextStyle="DlgFontBold8" Order="600"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Edit_1" Type="Edit" X="40" Y="80" Width="32" Height="15" Attributes="3" Property="INST_PORT_PULSE" Text="{260}" Order="700"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Text_3" Type="Text" X="15" Y="60" Width="272" Height="16" Attributes="65539" Property="TEXT_3_PROP_2" Text="Specify the port number ServicePulse will listen on" Order="800"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="ServicePulse Configuration" TextStyle="[DlgTitleFont]" Order="900" TextLocId="Control.Text.FolderDlg#Title"/>
+    <ROW Dialog_="FeatureConfiguration" Control="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Attributes="196611" Text="Adjust configuration settings" Order="1000" TextLocId="Control.Text.FolderDlg#Description"/>
     <ROW Dialog_="FilesInUse" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="Files in Use" TextStyle="[DlgTitleFont]" Order="600" TextLocId="Control.Text.FilesInUse#Title" MsiKey="FilesInUse#Title"/>
     <ROW Dialog_="FilesInUse" Control="Text" Type="Text" X="20" Y="55" Width="330" Height="30" Attributes="3" Text="The following applications are using files that need to be updated by this setup. You can either close the applications and then click &quot;Retry&quot;, or click &quot;Ignore&quot; so that the installer continues the installation and replaces these files when your system restarts." Order="700" TextLocId="Control.Text.FilesInUse#Text" MsiKey="FilesInUse#Text"/>
     <ROW Dialog_="FilesInUse" Control="List" Type="ListBox" X="20" Y="87" Width="330" Height="130" Attributes="7" Property="FileInUseProcess" Order="800" MsiKey="FilesInUse#List"/>
@@ -293,20 +278,6 @@
     <ROW Dialog_="WelcomeDlg" Control="Description" Type="Text" X="135" Y="86" Width="220" Height="32" Attributes="196611" Text="The [Wizard] will install [ProductName] on your computer.  Click &quot;[Text_Next]&quot; to continue or &quot;Cancel&quot; to exit the [Wizard]." Order="600" TextLocId="Control.Text.WelcomeDlg#Description" MsiKey="WelcomeDlg#Description"/>
     <ATTRIBUTE name="DeletedRows" value="AdminBrowseDlg#Logo@AdminInstallPointDlg#Logo@BrowseDlg#Logo@CustomizeDlg#Logo@DiskCostDlg#Logo@FilesInUse#Logo@FolderDlg#Logo@LicenseAgreementDlg#Logo@MaintenanceTypeDlg#Logo@MsiRMFilesInUse#Logo@OutOfDiskDlg#Logo@OutOfRbDiskDlg#Logo@ProgressDlg#Logo@VerifyReadyDlg#Logo"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlConditionComponent">
-    <ROW Dialog_="FeatureConfiguration" Control_="Edit_2" Action="Enable" Condition="ENABLE_SERVICECONTROL"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="Edit_2" Action="Disable" Condition="NOT ENABLE_SERVICECONTROL"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="Text_2" Action="Enable" Condition="ENABLE_SERVICECONTROL"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="Text_2" Action="Disable" Condition="NOT ENABLE_SERVICECONTROL"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="Text_5" Action="Enable" Condition="ENABLE_MONITORING"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="Text_5" Action="Disable" Condition="NOT ENABLE_MONITORING"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="Edit_3" Action="Enable" Condition="ENABLE_MONITORING"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="Edit_3" Action="Disable" Condition="NOT ENABLE_MONITORING"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Action="Enable" Condition="ENABLE_SERVICECONTROL"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Action="Disable" Condition="NOT ENABLE_SERVICECONTROL"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Action="Enable" Condition="ENABLE_MONITORING"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Action="Disable" Condition="NOT ENABLE_MONITORING"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="LicenseAgreementDlg" Condition="AI_INSTALL" Ordering="1"/>
     <ROW Dialog_="VerifyReadyDlg" Control_="Install" Event="EndDialog" Argument="Return" Condition="AI_INSTALL" Ordering="197"/>
@@ -360,29 +331,11 @@
     <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="[INST_SC_MONITORING_URI]" Argument="&quot;&quot;" Condition="AI_INSTALL" Ordering="2"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="DoAction" Argument="ReadServiceControlUrlFromConfigJS" Condition="1" Ordering="0"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="TRUE" Condition="INST_URI" Ordering="10"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="CheckBox_1" Event="[INST_URI]" Argument="[DEFAULT_SC_URI]" Condition="( ENABLE_SERVICECONTROL ) AND (NOT INST_URI)" Ordering="0"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="CheckBox_2" Event="[INST_SC_MONITORING_URI]" Argument="[DEFAULT_SC_MONITORING_URI]" Condition="( ENABLE_MONITORING ) AND (NOT INST_SC_MONITORING_URI)" Ordering="0"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="TRUE" Condition="INST_SC_MONITORING_URI" Ordering="8"/>
     <ROW Dialog_="FeatureConfiguration" Control_="Back" Event="NewDialog" Argument="FolderDlg" Condition="1" Ordering="1"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_MONITORING]" Argument="[INST_SC_MONITORING_URI]" Condition="( NOT INST_SC_MONITORING_URI )" Ordering="9"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="[ENABLE_SERVICECONTROL]" Argument="INST_URI" Condition="( NOT INST_URI )" Ordering="11"/>
     <ROW Dialog_="Configuration" Control_="TemplateSeqDlgDialogInitializer" Event="[INST_URI]" Argument="[DEFAULT_SC_URI]" Condition="AI_INSTALL AND ( NOT INST_URI )" Ordering="3"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Check_SC_URL" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; )" Ordering="0"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Invalid_ServiceControlUrl_Msg" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="2"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_4" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;FALSE&quot; )" Ordering="1"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Connect_SC" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; )" Ordering="3"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Warning_ServiceControl_Unavail_msg" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;FALSE&quot; )" Ordering="5"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_1" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;FALSE&quot; )" Ordering="4"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="Success_ServiceControl_Avail_msg" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;TRUE&quot; )" Ordering="7"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_7" Condition="AI_INSTALL AND ( ENABLE_SERVICECONTROL=&quot;TRUE&quot; AND VALID_CONTROL_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL=&quot;TRUE&quot; )" Ordering="6"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="Check_SC_Monitoring_URL" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; )" Ordering="0"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="Invalid_ServiceControlMonitoringUrl_Msg" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND VALID_CONTROL_MONITORING_URL=&quot;FALSE&quot; )" Ordering="2"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_5" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND VALID_CONTROL_MONITORING_URL=&quot;FALSE&quot; )" Ordering="1"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="Connect_SC_Monitoring" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; )" Ordering="3"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="Warning_ServiceControlMonitoring_Unavail_msg" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND  VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL_MONITORING=&quot;FALSE&quot; )" Ordering="5"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_6" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND  VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL_MONITORING=&quot;FALSE&quot; )" Ordering="4"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="Success_ServiceControlMonitoring_Avail_msg" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND  VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL_MONITORING=&quot;TRUE&quot; )" Ordering="7"/>
-    <ROW Dialog_="FeatureConfiguration" Control_="TestSCMonitoringConnectivity" Event="DoAction" Argument="AI_DATA_SETTER_8" Condition="AI_INSTALL AND ( ENABLE_MONITORING=&quot;TRUE&quot; AND  VALID_CONTROL_MONITORING_URL=&quot;TRUE&quot; AND CONTACT_SERVICECONTROL_MONITORING=&quot;TRUE&quot; )" Ordering="6"/>
     <ROW Dialog_="FeatureConfiguration" Control_="FeatureConfigurationDialogInitializer" Event="DoAction" Argument="DetectExistingPulseIntancePort" Condition="1" Ordering="7"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
