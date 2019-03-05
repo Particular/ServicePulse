@@ -4,6 +4,7 @@
             <h5 ng-class="{ active: isActive('/configuration/license') }"><a href="#/configuration/license">License</a> <exclamation type="{{licensewarning}}" /></h5>
             <h5 ng-class="{ active: isActive('/configuration/endpoints') }" ng-show="!isExpired"><a href="#/configuration/endpoints">Endpoint heartbeats ({{counters.endpoints | number}})</a></h5>
             <h5 ng-class="{ active: isActive('/configuration/redirects') }" ng-show="!isExpired"><a href="#/configuration/redirects">Retry redirects ({{counters.redirects | number}})</a></h5>
+            <h5 ng-class="{ active: isActive('/configuration/connections') }" ng-show="!isExpired"><a href="#/configuration/connections">Connections</a></h5>
         </div>
     </div>
 </div>
