@@ -218,10 +218,14 @@
             selectGroupInternal(group, sort, direction, true);
         };
 
-        vm.loadMoreResults = function(group) {
+        vm.loadMoreResults = function(group, isInfiniteScrolling) {
             vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
 
             if (!group.initialLoad && (vm.allMessagesLoaded || vm.loadingData)) {
+                return;
+            }
+
+            if (group.initialLoad && isInfiniteScrolling) {
                 return;
             }
 
