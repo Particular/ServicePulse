@@ -42,7 +42,7 @@
     "webpack": "^3.8.1"
   },
   "scripts": {
-    "test": "..\\packages\\PhantomJS.2.0.0\\tools\\phantomjs\\phantomjs.exe ../ServicePulse.Host.Tests/Scripts/run-jasmine.js ../ServicePulse.Host.Tests/SpecsRunner.html",
+    "test": "cd ../ServicePulse.Host.Tests && npm test",
     "load": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/modules.webpackconfig.builder.js",
     "setup": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/modules/modules.webpackconfig.js",
     "webpack": "node ./node_modules/webpack/bin/webpack.js --config app/modules/modules.webpackconfig.js"

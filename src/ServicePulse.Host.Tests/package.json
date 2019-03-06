@@ -13,8 +13,9 @@
     "karma-teamcity-reporter": "^1.1.0"
   },
   "scripts": {
-    "test": "karma start --browsers Chrome",    
-    "test-chrome-teamcity": "karma start --browsers Chrome --reporters teamcity --single-run",
-    "test-firefox-teamcity": "karma start --browsers Firefox --reporters teamcity --single-run"
+    "test": "karma start --browsers ChromeHeadless",
+    "test-firefox": "karma start --browsers FirefoxHeadless",
+    "test-chrome-teamcity": "karma start --browsers ChromeHeadless --reporters teamcity --single-run",
+    "test-firefox-teamcity": "karma start --browsers FirefoxHeadless --reporters teamcity --single-run"
   }
 }

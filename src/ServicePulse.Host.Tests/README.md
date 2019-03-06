@@ -1,30 +1,9 @@
 ## Setting up javascript unit tests
 
-### Running the tests in Resharper
-We use Resharper to manage our development javascript tests
+### Running the tests in npm
 
-First, install [PhantomJs](http://phantomjs.org/), a headless browser. It comes as a zip, don't forget to unlock the zip before extracting it. I put mine here `C:\Apps\phantomjs-2.0.0-windows\bin\phantomjs.exe`.
-
-From the Resharper menu in Visual Studio select Options...
-
-In the Tasks tab expand Unit Testing and highlight Javascript Tests 
-
-You will need to
-
-- Enable [QUnit](http://qunitjs.com/) support  
-- Enable [Jasmine](http://jasmine.github.io/) support 
-- Set the Jasmine version to 2.0
-- You will need to specify path to the PhantomJS.exe. 
-- Add the command line arguments `--proxy-type=none`
-- Optionally add a path to a custom html harness `SpecsRunner.html`
-
-
-Like this 
-
-<img src="readme_fig_1.png" />
-
-
-When you open up a javascript test file you will be able to run the test like you would a regular C# unit test.
-
-### Running the tests in the browser
-Alternatively the unit tests can be run in a browser by opening SpecsRunner.html in a browser.
+We are using npm, jasmine and karma to run our tests. First that one need to do to run unit tests is:
+ - run `npm install` in the ServicePulse.Host.Test folder
+ - run `npm test` that will run headless chrome to execute the test
+    - if a need arise to run test on firefox there is a command `npm run test-firefox`  
+ 
