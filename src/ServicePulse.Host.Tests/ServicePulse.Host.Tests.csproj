@@ -61,7 +61,6 @@
     </Content>
     <Content Include="karma.conf.js" />
     <Content Include="package.json" />
-    <Content Include="SpecsRunner.html" />
     <Content Include="tests\js\configuration\configuration.spec.js" />
     <Content Include="tests\js\directives\ui.particular.multi-checkboxlist.spec.js" />
     <Content Include="tests\js\directives\ui.particular.largenumber.spec.js" />
