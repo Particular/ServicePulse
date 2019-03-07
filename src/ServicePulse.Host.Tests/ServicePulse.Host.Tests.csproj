@@ -55,35 +55,15 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\packages\PhantomJS.2.0.0\tools\phantomjs\phantomjs.exe">
-      <Link>phantomjs.exe</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\ServicePulse.Host\app\js\app.constants.js">
       <Link>app.constants.js</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\jasmine\jasmine.css" />
-    <Content Include="Content\jasmine\jasmine_favicon.png" />
     <Content Include="karma.conf.js" />
     <Content Include="package.json" />
-    <Content Include="phantomjs-license.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="README_fig_1.PNG" />
-    <Content Include="Scripts\jasmine\boot.js" />
-    <Content Include="Scripts\jasmine\console.js" />
-    <Content Include="Scripts\jasmine\jasmine-html.js" />
-    <Content Include="Scripts\jasmine\jasmine.js" />
-    <Content Include="Scripts\run-jasmine.js" />
-    <Content Include="SpecsRunner.html" />
-    <Content Include="tests\js\angular.js" />
-    <Content Include="tests\js\angular_tests.js" />
     <Content Include="tests\js\configuration\configuration.spec.js" />
     <Content Include="tests\js\directives\ui.particular.multi-checkboxlist.spec.js" />
     <Content Include="tests\js\directives\ui.particular.largenumber.spec.js" />
-    <Content Include="tests\js\jasmine_test_example.js" />
-    <Content Include="tests\js\jasmine_test_example_tests.js" />
     <Content Include="tests\js\angular-mocks.js" />
     <Content Include="tests\js\services\license.notifier.spec.js" />
     <Content Include="tests\js\services\services.messageTypeParser.spec.js" />
@@ -95,7 +75,6 @@
     <Content Include="tests\js\views\monitored_endpoints\controller.spec.js" />
     <Content Include="tests\js\views\pending_retries\controller.spec.js" />
     <Content Include="tests\js\views\redirect\edit\controller.spec.js" />
-    <Content Include="tests\js\_references.js" />
     <Content Include="tests\js\services\services.spec.js" />
   </ItemGroup>
   <ItemGroup>
