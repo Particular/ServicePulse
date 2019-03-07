@@ -3,68 +3,74 @@
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <reindexingstatus></reindexingstatus>
+    <div ng-include="'js/views/sc_connecting.html'" ng-show="isSCConnecting"></div>
+    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting"></div>
 
-    <div class="row">
-        <div class="col-sm-12 no-side-padding">
-            <h1>Endpoint heartbeats</h1>
-        </div>
-    </div>
+    <section ng-show="isSCConnected">
 
-    <div class="tabs">
-        <h5 ng-class="{active: isActiveEndpoints != true}"><a ng-click="isActiveEndpoints = false">Inactive Endpoints ({{model.inactive.length | number}})</a></h5>
-        <h5 ng-class="{active: isActiveEndpoints == true}"><a ng-click="isActiveEndpoints = true">Active Endpoints ({{model.active.length | number}})</a></h5>
-    </div>
+        <reindexingstatus></reindexingstatus>
 
-    <section ng-show="isActiveEndpoints" name="active_endpoints">
-        <no-data ng-show="model.active.length == 0" message="No active endpoints"></no-data>
         <div class="row">
             <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="endpoint in model.active | orderBy:'name'">
-                    <div class="col-sm-12 no-side-padding">
-                        <div class="row">
-
-                            <div class="col-sm-12 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} </p>
-                                        <p>
-                                            latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
+                <h1>Endpoint heartbeats</h1>
             </div>
         </div>
-    </section>
 
-    <section ng-show="!isActiveEndpoints" name="inactive_endpoints">
-        <no-data ng-show="model.inactive.length == 0" message="No inactive endpoints"></no-data>
-        <div class="row">
-            <div class="col-sm-12 no-side-padding">
-                <div class="row box box-no-click" ng-repeat="endpoint in model.inactive | orderBy:'name'">
-                    <div class="col-sm-12 no-side-padding">
-                        <div class="row">
-                            <div class="col-sm-12 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} </p>
-                                        <p>
-                                            latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
-                                        </p>
-                                        <p ng-show="!endpoint.heartbeat_information">No plugin installed</p>
+        <div class="tabs">
+            <h5 ng-class="{active: isActiveEndpoints != true}"><a ng-click="isActiveEndpoints = false">Inactive Endpoints ({{model.inactive.length | number}})</a></h5>
+            <h5 ng-class="{active: isActiveEndpoints == true}"><a ng-click="isActiveEndpoints = true">Active Endpoints ({{model.active.length | number}})</a></h5>
+        </div>
+
+        <section ng-show="isActiveEndpoints" name="active_endpoints">
+            <no-data ng-show="model.active.length == 0" message="No active endpoints"></no-data>
+            <div class="row">
+                <div class="col-sm-12 no-side-padding">
+                    <div class="row box box-no-click" ng-repeat="endpoint in model.active | orderBy:'name'">
+                        <div class="col-sm-12 no-side-padding">
+                            <div class="row">
+
+                                <div class="col-sm-12 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} </p>
+                                            <p>
+                                                latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
-        </div>
+        </section>
+
+        <section ng-show="!isActiveEndpoints" name="inactive_endpoints">
+            <no-data ng-show="model.inactive.length == 0" message="No inactive endpoints"></no-data>
+            <div class="row">
+                <div class="col-sm-12 no-side-padding">
+                    <div class="row box box-no-click" ng-repeat="endpoint in model.inactive | orderBy:'name'">
+                        <div class="col-sm-12 no-side-padding">
+                            <div class="row">
+                                <div class="col-sm-12 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} </p>
+                                            <p>
+                                                latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
+                                            </p>
+                                            <p ng-show="!endpoint.heartbeat_information">No plugin installed</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </section>
 </div>

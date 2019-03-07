@@ -3,46 +3,51 @@
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <reindexingstatus></reindexingstatus>
+    <div ng-include="'js/views/sc_connecting.html'" ng-show="isSCConnecting"></div>
+    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting"></div>
 
-    <div class="row">
-        <div class="col-sm-12 padded">
-            <h1>Custom checks</h1>
-        </div>
-    </div>
-
-    <section name="custom_checks">
-        <busy ng-show="loadingData" message="fetching more data"></busy>
-
-        <no-data ng-show="!loadingData && model.total == 0" message="No failed custom checks"></no-data>
+    <section ng-show="isSCConnected">
+        <reindexingstatus></reindexingstatus>
 
         <div class="row">
-            <div class="col-sm-12">
-                <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
-                    <div class="row box box-warning box-no-click" ng-repeat="item in model.data | orderBy: '-reported_at'">
-                        <div class="col-sm-12 no-side-padding">
-                            <div class="row">
-                                <div class="col-xs-10">
-                                    <div class="row box-header">
-                                        <div class="col-sm-12 no-side-padding">
-                                            <p class="lead pre-wrap">{{item.failure_reason}}</p>
-                                            <p>{{item.custom_check_id}} </p>
-                                            <p>
-                                                {{item.category}} reported by {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}} <sp-moment date="{{item.reported_at}}"></sp-moment>
-                                            </p>
+            <div class="col-sm-12 padded">
+                <h1>Custom checks</h1>
+            </div>
+        </div>
+
+        <section name="custom_checks">
+            <busy ng-show="loadingData" message="fetching more data"></busy>
+
+            <no-data ng-show="!loadingData && model.total == 0" message="No failed custom checks"></no-data>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="disableLoadingData">
+                        <div class="row box box-warning box-no-click" ng-repeat="item in model.data | orderBy: '-reported_at'">
+                            <div class="col-sm-12 no-side-padding">
+                                <div class="row">
+                                    <div class="col-xs-10">
+                                        <div class="row box-header">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <p class="lead pre-wrap">{{item.failure_reason}}</p>
+                                                <p>{{item.custom_check_id}} </p>
+                                                <p>
+                                                    {{item.category}} reported by {{item.originating_endpoint.name}} on {{item.originating_endpoint.host}} <sp-moment date="{{item.reported_at}}"></sp-moment>
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-xs-2 pull-right">
-                                    <button type="button" class="btn btn-default pull-right" title="Dismiss this custom check so it doesn't show up as an alert" ng-click="dismiss(item)">
-                                        Dismiss
-                                    </button>
+                                    <div class="col-xs-2 pull-right">
+                                        <button type="button" class="btn btn-default pull-right" title="Dismiss this custom check so it doesn't show up as an alert" ng-click="dismiss(item)">
+                                            Dismiss
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </section>
 </div>
