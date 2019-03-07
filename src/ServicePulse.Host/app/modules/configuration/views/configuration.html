@@ -16,66 +16,72 @@
     <section name="configuration">
         <configuration-tabs></configuration-tabs>
 
-        <div class="row">
-            <div class="col-sm-12">
+        <div ng-include="'js/views/sc_connecting.html'" ng-show="isSCConnecting"></div>
+        <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting"></div>
 
-                <div class="alert alert-warning">
-                    <i class="fa fa-warning"></i> <strong>Warning:</strong> The list of endpoints below only contains endpoints with the heartbeats plug-in installed. Toggling heartbeat monitoring won't toggle <a href="https://docs.particular.net/monitoring/metrics/in-servicepulse" target="_blank">performance monitoring</a> <i class="fa fa-external-link fake-link"></i>
-                </div>
+        <section ng-show="isSCConnected">
 
-                <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
-                    <div class="col-sm-12 no-side-padding">
-                        <div class="row">
-                            <div class="col-xs-1">
-                                <div class="onoffswitch">
-                                    <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" class="onoffswitch-checkbox" ng-click="update(e.id, !e.monitor_heartbeat)" ng-checked="e.monitor_heartbeat">
-                                    <label class="onoffswitch-label" for="onoffswitch{{$id}}">
-                                        <span class="onoffswitch-inner"></span>
-                                        <span class="onoffswitch-switch"></span>
-                                    </label>
+            <div class="row">
+                <div class="col-sm-12">
+
+                    <div class="alert alert-warning">
+                        <i class="fa fa-warning"></i> <strong>Warning:</strong> The list of endpoints below only contains endpoints with the heartbeats plug-in installed. Toggling heartbeat monitoring won't toggle <a href="https://docs.particular.net/monitoring/metrics/in-servicepulse" target="_blank">performance monitoring</a> <i class="fa fa-external-link fake-link"></i>
+                    </div>
+
+                    <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | orderBy:'name'">
+                        <div class="col-sm-12 no-side-padding">
+                            <div class="row">
+                                <div class="col-xs-1">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" id="onoffswitch{{$id}}" name="onoffswitch{{$id}}" class="onoffswitch-checkbox" ng-click="update(e.id, !e.monitor_heartbeat)" ng-checked="e.monitor_heartbeat">
+                                        <label class="onoffswitch-label" for="onoffswitch{{$id}}">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                    <span ng-show="e.monitor_heartbeat"></span><span ng-show="!e.monitor_heartbeat"></span>
                                 </div>
-                                <span ng-show="e.monitor_heartbeat"></span><span ng-show="!e.monitor_heartbeat"></span>
-                            </div>
-                            <div class="col-xs-9 col-sm-10 col-lg-11">
-                                <div class="row box-header">
-                                    <div class="col-xs-12">
-                                        <p class="lead">
-                                            {{e.name}}<span class="de-emphasize">@</span>{{e.host_display_name}}
-                                        </p>
-                                        <p class="endpoint-metadata" ng-show="e.heartbeat_information">
-                                            <i class="fa fa-heart"></i> <sp-moment date="{{e.heartbeat_information.last_report_at}}" />
-                                        </p>
-                                        <p class="endpoint-metadata" ng-show="!e.heartbeat_information">
-                                            <i class="fa fa-heart"></i> No recent heartbeat information available
-                                        </p>
-                                        <p class="endpoint-metadata" ng-show="!e.heartbeat_information">
-                                            <i class="fa fa-plug"></i> No heartbeat plugin installed
-                                        </p>
+                                <div class="col-xs-9 col-sm-10 col-lg-11">
+                                    <div class="row box-header">
+                                        <div class="col-xs-12">
+                                            <p class="lead">
+                                                {{e.name}}<span class="de-emphasize">@</span>{{e.host_display_name}}
+                                            </p>
+                                            <p class="endpoint-metadata" ng-show="e.heartbeat_information">
+                                                <i class="fa fa-heart"></i> <sp-moment date="{{e.heartbeat_information.last_report_at}}" />
+                                            </p>
+                                            <p class="endpoint-metadata" ng-show="!e.heartbeat_information">
+                                                <i class="fa fa-heart"></i> No recent heartbeat information available
+                                            </p>
+                                            <p class="endpoint-metadata" ng-show="!e.heartbeat_information">
+                                                <i class="fa fa-plug"></i> No heartbeat plugin installed
+                                            </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="row box box-info box-no-click" ng-show="model.endpoints.length == 0">
-                    <div class="col-sm-12">
-                        <div class="row">
-                            <div class="col-sm-1">
-                                <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
-                            </div>
-                            <div class="col-sm-11">
-                                <div class="row box-header">
-                                    <div class="col-sm-12">
-                                        <p class="lead hard-wrap">Nothing to configure</p>
+                    <div class="row box box-info box-no-click" ng-show="model.endpoints.length == 0">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-1">
+                                    <span class="subdued glyphicon glyphicon-info-sign fa-2x" aria-hidden="true"></span>
+                                </div>
+                                <div class="col-sm-11">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12">
+                                            <p class="lead hard-wrap">Nothing to configure</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </section>
 </div>
 
