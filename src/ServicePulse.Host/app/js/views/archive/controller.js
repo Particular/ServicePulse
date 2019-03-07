@@ -42,7 +42,7 @@
             unit: 'hours',
             buttonText: 'Archived in the last 2 Hours',
             selected: function () {
-                return moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);;
+                return moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);
             }
         };
 
@@ -50,7 +50,7 @@
         vm.loadingData = false;
         vm.archives = [{}];
         vm.error_retention_period = moment.duration("10.00:00:00").asHours();
-        vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 }
+        vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 };
 
         var localtimeout;
         
