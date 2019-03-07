@@ -29,7 +29,7 @@ Install the following dependencies if you don't have them installed yet
  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
  - run the following command `npm run setup`. This script will install all node and bower dependencies and update index.html to include them if needed.
 
-After doing the above steps one can open visual studio and continue working on this project.
+After doing the above steps one can open visual studio and continue working on this project. You can also run this project from node using `npm run serve`.
 
 ### Configuring automated tests
 
