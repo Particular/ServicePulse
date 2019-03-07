@@ -15,6 +15,13 @@
   <ItemGroup>
     <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012" PrivateAssets="All" />
     <PackageReference Include="Nancy.Hosting.Self" Version="1.4.1" />
+    <Content Include="app\js\views\sc_connecting.html" />
+    <Content Include="app\js\views\sc_not_available.html" />
+    <Content Include="app\modules\configuration\js\connections\connections.controller.js" />
+    <Content Include="app\modules\configuration\js\connections\connections.module.js" />
+    <Content Include="app\modules\configuration\js\connections\connections.route.js" />
+    <Content Include="app\modules\configuration\js\connections\connections.service.js" />
+    <Content Include="app\modules\configuration\views\connections.html" />
   </ItemGroup>
 
   <ItemGroup>
