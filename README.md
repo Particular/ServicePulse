@@ -39,7 +39,7 @@ Install the following dependencies if you don't have them installed yet
  
 In case `npm run setup` fails with an error related to git submodule not properly configured, run the following command `npm install` to ensure all required dependencies are available, and then run `npm run setup`.
 
-After doing the above steps one can open Visual Studio and continue working on this project.
+After doing the above steps one can open Visual Studio and continue working on this project. You can also run this project from node using `npm run serve`.
 
 ### Configuring automated tests
 
