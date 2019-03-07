@@ -10,11 +10,11 @@
     require('./directives/ui.particular.configurationTabs');
     require('./directives/ui.particular.redirectLink');
 
-    require('./redirect/redirect.module');
-
     require('./license/license.module');
 
     require('./redirect/redirect.module');
+
+    require('./connections/connections.module');
 
     angular.module('configuration', [
         'ui.bootstrap',
@@ -24,6 +24,7 @@
         'configuration.tabs',
         'configuration.redirect',
         'configuration.license',
+        'configuration.connections',
     ]);
 
 } (window, window.angular));
