@@ -526,6 +526,7 @@ h6 {
 
             .tabs h5.active a {
                 color: #181919;
+                text-decoration: none;
             }
 
     .tabs a {
@@ -1915,6 +1916,7 @@ p.col-sort-active {
     position: absolute;
     top: 1px;
     margin-left: 7px;
+    padding-left: 0;
 }
 
 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
@@ -2350,7 +2352,7 @@ div.alert.alert-warning strong {
     margin-bottom: 32px;
 }
 
-.lead.righ-side-ellipsis {
+.lead.endpoint-details-link.righ-side-ellipsis {
     color: #00729C !important;
 }
 
@@ -2564,5 +2566,46 @@ span.fa-exclamation-triangle.danger {
     position:fixed;
 }
 
-#cantConnectMessage h1 {
+.list-pagination {
+    display: flex;
+    justify-content: center;
+}
+
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
+    background-color: #00A3C4;
+    border-color: #ddd;
+}
+
+.pagination > li > a, .pagination > li > span {
+    color: #00729C;
+}
+
+.endpoint-data-changed {
+    text-align: center;
+    margin: 26px 0 0;
+}
+
+.endpoint-data-changed a {
+    text-decoration: underline;
+}
+
+.endpoint-data-changed a:hover {
+    cursor: pointer;
+}
+
+.endpoint-data-changed.sticky {
+    position: fixed;
+    top: 50px;
+    width: 92%;
+    z-index: 999999;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.15);
+    transition-duration: 0.5s;
+}
+
+.table-head-row.add-top-margin {
+    margin-top: 86px;
+}
+
+div[content="Unable to connect to instance"], div[content="Unable to connect to monitoring server"] {
+    z-index: 99999;
 }

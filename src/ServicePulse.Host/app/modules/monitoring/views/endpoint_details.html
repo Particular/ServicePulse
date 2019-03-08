@@ -3,9 +3,10 @@
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="loading"></div>
+    <div class="sp-loader" ng-if="loading"></div>
+    <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="!loading && !loadedSuccessfully"></div>
 
-    <div class="row monitoring-head" ng-if="!loading">
+    <div class="row monitoring-head" ng-if="loadedSuccessfully">
         <div class="back-nav">
             <span class="fake-link" aria-hidden="true">&#9664;</span>
             <a href="/#/monitoring">All endpoints</a>
@@ -30,14 +31,14 @@
         <div class="col-xs-3 no-side-padding toolbar-menus">
             <ul class="nav nav-pills period-selector">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                    <a ng-click="selectPeriod(period)" ng-href="{{buildUrl(period.value)}}">{{period.text}}</a>
+                    <a ng-click="selectPeriod(period)" ng-href="{{buildUrl(period.value, showInstancesBreakdown, showInstacesBreakdown ? 1 : endpoint.messageTypesPage)}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
                 </li>
             </ul>
         </div>
     </div>
 </div>
 
-<div class="container large-graphs" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+<div class="container large-graphs" ng-if="loadedSuccessfully && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="container">
         <div class="row">
             <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
@@ -201,14 +202,13 @@
     </div>
 </div>
 
-<div class="container" ng-if="!loading && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <busy ng-show="loading" message="Loading details"></busy>
+<div class="container" ng-if="loadedSuccessfully && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="tabs">
         <h5 ng-class="{active: !showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, 'messageTypeBreakdown')}}" class="ng-binding">Message Types</a>
+            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, endpoint.messageTypesPage)}}" class="ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
         </h5>
         <h5 ng-class="{active: showInstancesBreakdown}">
-            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, 'instancesBreakdown')}}" class="ng-binding">Instances</a>
+            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, 1)}}" class="ng-binding">Instances ({{endpoint.instances.length}})</a>
         </h5>
     </div>
 
@@ -216,39 +216,37 @@
         <div class="row">
             <div class="col-xs-12 no-side-padding">
 
-                <!-- Breakdown by instance -->
-                <busy ng-show="loading" message="Loading details"></busy>
-
-                <div ng-show="!loading" class="row box box-no-click table-head-row">
-                    <div class="col-xs-8">
+                <!-- Breakdown by instance-->
+                <div ng-show="loadedSuccessfully" class="row box box-no-click table-head-row">
+                    <div class="col-xs-4 col-xl-8">
                         <div class="row box-header">
                             <div class="col-xs-12">
                                 Instance Name
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
                                 Throughput <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
                                 Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
                                 Processing Time <span class="table-header-unit">(t)</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-1 no-side-padding">
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
                             <div class="col-xs-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
                                 Critical Time <span class="table-header-unit">(t)</span>
@@ -264,12 +262,12 @@
                         <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
                             <div class="col-xs-12 no-side-padding">
                                 <div class="row">
-                                    <div class="col-xs-8 endpoint-name">
+                                    <div class="col-xs-4 col-xl-8 endpoint-name">
                                         <div class="row box-header">
                                             <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis" uib-tooltip="{{instance.name}}">
                                                 {{instance.name}}
                                             </div>
-                                            <div class="col-xs-4 endpoint-status">
+                                            <div class="col-lg-4 no-side-padding endpoint-status">
                                                 <span class="warning" ng-if="instance.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                                                 </span>
@@ -285,7 +283,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
@@ -296,7 +294,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-2 col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
@@ -307,7 +305,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
@@ -321,7 +319,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-xs-1 no-side-padding">
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
                                         <div class="row box-header">
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
@@ -345,12 +343,14 @@
     </section>
 
     <section ng-if="!showInstancesBreakdown" class="endpoint-message-types">
+        
         <div class="row">
             <div class="col-xs-12 no-side-padding">
-                <!-- Breakdown by message type-->
-                <busy ng-show="loading" message="Loading details"></busy>
+                
+                <message-types-change-indicator refresh="endpoint.refreshMessageTypes" message-types-available="endpoint.messageTypesAvailable"></message-types-change-indicator>
 
-                <div ng-show="!loading" class="row box box-no-click table-head-row">
+                <!-- Breakdown by message type-->
+                <div ng-show="loadedSuccessfully" class="row box box-no-click table-head-row">
                     <div class="col-xs-4 col-xl-8">
                         <div class="row box-header">
                             <div class="col-xs-12">
@@ -392,7 +392,7 @@
 
                 <div class="row">
                     <div class="col-xs-12 no-side-padding">
-                        <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes">
+                        <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage">
                             <div class="col-xs-12 no-side-padding">
                                 <div class="row">
                                     <div class="col-xs-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
@@ -476,6 +476,9 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="row list-pagination">
+                    <ul uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10" boundary-link-numbers="true" ng-change="updateUrl()"></ul>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-﻿(function(window, angular, undefined) {
+(function(window, angular, undefined) {
     'use strict';
 
     function controller(
@@ -19,6 +19,7 @@
         $scope.selectedPeriod = historyPeriodsService.getDefaultPeriod();
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
         $scope.endpoints = [];
+        $scope.loading = true;
 
         $scope.selectPeriod = function (period) {
             $scope.selectedPeriod = period;
@@ -59,7 +60,14 @@
             var selectedPeriod = $scope.selectedPeriod;
 
             subscription = monitoringService.createEndpointsSource(selectedPeriod.value, selectedPeriod.refreshInterval)
-                .subscribe(function(endpoint) {
+                .subscribe(function (endpoint) {
+
+                    $scope.loading = false;
+
+                    if (endpoint.empty) {
+                        return;
+                    }
+
                     if (endpoint.error) {
                         connectivityNotifier.reportFailedConnection(endpoint.sourceIndex);
                         if ($scope.endpoints) {

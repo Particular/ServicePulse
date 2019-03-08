@@ -10,7 +10,7 @@
         <div class="col-xs-3 no-side-padding toolbar-menus">
             <ul class="nav nav-pills period-selector">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                    <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}">{{period.text}}</a>
+                    <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
                 </li>
             </ul>
         </div>
@@ -19,7 +19,8 @@
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <section ng-show="true">
-        <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length"></div>
+        <div class="sp-loader" ng-if="loading"></div>
+        <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading"></div>
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
             <div class="col-xs-2 col-xl-7">
                 <div class="row box-header">
@@ -72,7 +73,7 @@
                         <div class="row">
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                                 <div class="row box-header">
-                                    <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis" uib-tooltip="{{endpoint.name}}">
+                                    <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link" uib-tooltip="{{endpoint.name}}">
                                         <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">{{endpoint.name}}</a>
                                     </div>
                                     <div class="col-xs-5 no-side-padding endpoint-status">

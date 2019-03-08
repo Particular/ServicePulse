@@ -16,4 +16,5 @@
     require('./directives/ui.particular.graphduration.js');
     require('./directives/ui.particular.largeGraph.js');
     require('./directives/ui.particular.metricslargenumber.js');
+    require('./directives/ui.particular.messageTypesChangeIndicator.js');
 }(window, window.angular));

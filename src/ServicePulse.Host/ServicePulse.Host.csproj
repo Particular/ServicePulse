@@ -112,6 +112,8 @@
     <Content Include="app\modules\configuration\js\redirect\redirect.route.js" />
     <Content Include="app\modules\configuration\js\redirect\redirect.service.js" />
     <Content Include="app\modules\configuration\views\redirect.html" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.messageTypesChangeIndicator.js" />
+    <Content Include="app\modules\monitoring\js\directives\ui.particular.messageTypesChangeIndicator.tpl.html" />
     <Content Include="app\modules\shell\js\directives\upgradeProtectionExpired.html" />
     <Content Include="app\modules\shell\js\directives\platformTrialExpired.html" />
     <Content Include="app\modules\shell\js\directives\platformExpired.js" />

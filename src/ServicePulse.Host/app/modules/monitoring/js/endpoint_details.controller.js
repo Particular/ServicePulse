@@ -5,6 +5,7 @@
         $scope,
         $routeParams,
         $location,
+        $window,
         toastService,
         serviceControlService,
         monitoringService,
@@ -20,6 +21,7 @@
         $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.showInstancesBreakdown = $routeParams.tab === 'instancesBreakdown'; 
         $scope.loading = true;
+        $scope.loadedSuccessfully = false;
         $scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
 
@@ -34,20 +36,62 @@
             updateUI();
         };
 
-        function mergeIn(destination, source) {
+        function mergeIn(destination, source, propertiesToSkip) {
             for (var propName in source) {
                 if (source.hasOwnProperty(propName)) {
-                    destination[propName] = source[propName];
+                    if(!propertiesToSkip || !propertiesToSkip.includes(propName)) {
+                        destination[propName] = source[propName];
+                    }
                 }
             }
         }
 
-        $scope.buildUrl = function (selectedPeriodValue, showInstancesBreakdownTab) {
-            return `#/monitoring/endpoint/${$scope.endpointName}/${$scope.sourceIndex}?historyPeriod=${selectedPeriodValue}&tab=${$scope.showInstancesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown'}`;
+        $scope.buildUrl = function (selectedPeriodValue, showInstacesBreakdown, breakdownPageNo) {
+
+            var breakdownTabName = showInstacesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown';
+
+            return `#/monitoring/endpoint/${$scope.endpointName}/${$scope.sourceIndex}?historyPeriod=${selectedPeriodValue}&tab=${breakdownTabName}&pageNo=${breakdownPageNo}`;
+        };
+
+        $scope.updateUrl = function () {
+
+            var updatedUrl = $scope.buildUrl($scope.selectedPeriod.value, $scope.showInstancesBreakdown, $scope.endpoint.messageTypesPage);
+
+            $window.location.hash = updatedUrl;
         };
 
         $scope.showInstancesBreakdownTab = function(isVisible) {
             $scope.showInstancesBreakdown = isVisible;
+
+            $scope.endpoint.refreshMessageTypes();
+        };
+
+        $scope.endpoint = {
+            messageTypesPage: !$scope.showInstancesBreakdown ? $routeParams.pageNo : 1,
+            messageTypesTotalItems: 0,
+            messageTypesItemsPerPage: 10,
+            messageTypesAvailable: false,
+            messageTypesUpdatedSet: [],
+            refreshMessageTypes: function () {
+                if ($scope.endpoint.messageTypesAvailable) {
+                    $scope.endpoint.messageTypesAvailable = false;
+
+                    $scope.endpoint.messageTypes = $scope.endpoint.messageTypesUpdatedSet;
+                    $scope.endpoint.messageTypesUpdatedSet = null;
+
+                    processMessageTypes();
+                }
+            }
+        };
+
+        function processMessageTypes() {
+
+            $scope.endpoint.messageTypesTotalItems = $scope.endpoint.messageTypes.length;
+
+            $scope.endpoint.messageTypes.forEach((messageType) => {
+                fillDisplayValues(messageType);
+                messageTypeParser.parseTheMessageTypeData(messageType);
+            });
         };
 
         function updateUI() {
@@ -57,9 +101,10 @@
 
             var selectedPeriod = $scope.selectedPeriod;
 
-            $scope.endpoint = {};
-
             subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
+
+                $scope.loading = false;
+
                 if (endpoint.error) {
                     connectivityNotifier.reportFailedConnection($routeParams.sourceIndex);
                     if ($scope.endpoint && $scope.endpoint.instances) {
@@ -70,7 +115,17 @@
 
                 } else {
 
-                    mergeIn($scope.endpoint, endpoint);
+                    if ($scope.endpoint.messageTypesTotalItems > 0 &&
+                        $scope.endpoint.messageTypesTotalItems !== endpoint.messageTypes.length) {
+
+                        mergeIn($scope.endpoint, endpoint, ['messageTypes']);
+
+                        $scope.endpoint.messageTypesAvailable = true;
+                        $scope.endpoint.messageTypesUpdatedSet = endpoint.messageTypes;
+
+                    } else {
+                        mergeIn($scope.endpoint, endpoint);
+                    }
 
                     connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
 
@@ -86,11 +141,7 @@
                         return 0;
                     });
 
-                    $scope.loading = false;
-                    $scope.endpoint.messageTypes.forEach((messageType) => {
-                        fillDisplayValues(messageType);
-                        messageTypeParser.parseTheMessageTypeData(messageType);
-                    });
+                    processMessageTypes();
 
                     $scope.endpoint.isStale = true;
                     $scope.endpoint.isScMonitoringDisconnected = false;
@@ -107,6 +158,8 @@
                     });
                         $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
                     });
+
+                    $scope.loadedSuccessfully = true;
                 }
 
                 serviceControlService.getExceptionGroupsForLogicalEndpoint($scope.endpointName).then(function(result) {
@@ -136,6 +189,7 @@
         '$scope',
         '$routeParams',
         '$location',
+        '$window',
         'toastService',
         'serviceControlService',
         'monitoringService',
