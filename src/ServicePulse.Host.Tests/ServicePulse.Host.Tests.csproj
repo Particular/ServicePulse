@@ -1,97 +1,27 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{113A09CC-9665-4E87-9FC7-7E5C8C0AFE71}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServicePulse.Host.Tests</RootNamespace>
-    <AssemblyName>ServicePulse.Host.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=3.2.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.2.1\lib\net40\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\ServicePulse.Host\ServicePulse.Host.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="CommandLineTests\CaseLessOptionSetTests.cs" />
-    <Compile Include="CommandLineTests\HostArgsTests.cs" />
-    <Compile Include="VerifyAppConstantsJSTextReplacement.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="Particular.Approvals" Version="0.2.0" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="README.md" />
-  </ItemGroup>
+
   <ItemGroup>
     <Content Include="..\ServicePulse.Host\app\js\app.constants.js">
       <Link>app.constants.js</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="karma.conf.js" />
-    <Content Include="package.json" />
-    <Content Include="tests\js\configuration\configuration.spec.js" />
-    <Content Include="tests\js\directives\ui.particular.multi-checkboxlist.spec.js" />
-    <Content Include="tests\js\directives\ui.particular.largenumber.spec.js" />
-    <Content Include="tests\js\angular-mocks.js" />
-    <Content Include="tests\js\services\license.notifier.spec.js" />
-    <Content Include="tests\js\services\services.messageTypeParser.spec.js" />
-    <Content Include="tests\js\services\services.monitoring.spec.js" />
-    <Content Include="tests\js\views\failed_groups\controller.spec.js" />
-    <Content Include="tests\js\views\failed_messages\controller.spec.js" />
-    <Content Include="tests\js\views\license\license.controller.spec.js" />
-    <Content Include="tests\js\views\message\controller.spec.js" />
-    <Content Include="tests\js\views\monitored_endpoints\controller.spec.js" />
-    <Content Include="tests\js\views\pending_retries\controller.spec.js" />
-    <Content Include="tests\js\views\redirect\edit\controller.spec.js" />
-    <Content Include="tests\js\services\services.spec.js" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\ServicePulse.Host\ServicePulse.Host.csproj">
-      <Project>{d120b791-bd1b-4e06-b4e1-69801a73209b}</Project>
-      <Name>ServicePulse.Host</Name>
-    </ProjectReference>
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
