@@ -27,6 +27,7 @@
         }, false);
 
         $scope.loadingInitialData = true;
+        $scope.scConnectedAtLeastOnce = false;
         $scope.isRecoverabilityEnabled = scConfig.service_control_url;
 
         $scope.SCVersion = '';
@@ -142,10 +143,12 @@
                 case 'SignalR started':
                     $scope.isSCConnected = true;
                     $scope.isSCConnecting = false;
+                    $scope.scConnectedAtLeastOnce = true;
                     break;
                 case 'Reconnected':
                     $scope.isSCConnected = true;
                     $scope.isSCConnecting = false;
+                    $scope.scConnectedAtLeastOnce = true;
                     break;
                 default:
                     toastService.showWarning(data);

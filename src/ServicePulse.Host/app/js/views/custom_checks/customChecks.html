@@ -4,9 +4,9 @@
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="sp-loader" ng-if="isSCConnecting"></div>
-    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting"></div>
+    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
 
-    <section ng-show="isSCConnected">
+    <section ng-show="isSCConnected || scConnectedAtLeastOnce">
         <reindexingstatus></reindexingstatus>
 
         <div class="row">
