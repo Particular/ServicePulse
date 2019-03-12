@@ -11,7 +11,7 @@
     <section name="license">
         <configuration-tabs></configuration-tabs>
 
-        <div ng-include="'js/views/sc_connecting.html'" ng-show="isSCConnecting"></div>
+        <div class="sp-loader" ng-if="isSCConnecting"></div>
         <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting"></div>
 
         <section ng-show="isSCConnected">

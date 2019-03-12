@@ -48,7 +48,7 @@
         </div>
     </noscript>
 
-    <ng-include src="'layout/navbar.html'" ng-show="!loadingInitialData"></ng-include>
+    <ng-include src="'layout/navbar.html'"></ng-include>
 
     <div class="container-fluid">
         <a id="pagetop"></a>
@@ -57,10 +57,10 @@
                 <div class="sp-loader"></div>
             </div>
         </div>
-        <div id="view" ng-view="" ng-show="!loadingInitialData"></div>
+        <div id="view" ng-view=""></div>
     </div>
 
-    <ng-include src="'layout/footer.html'" ng-show="!loadingInitialData"></ng-include>
+    <ng-include src="'layout/footer.html'"></ng-include>
 
     <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
     </toaster-container>
