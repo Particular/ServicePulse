@@ -37,6 +37,7 @@
         }]);
 
     angular.module('sc').value('$jquery', $);
+    angular.module('sc').service('connectionFactory', window.connectionFactory);
 
     angular.module('sc').config(['$locationProvider', function ($locationProvider) {
         $locationProvider.hashPrefix('');

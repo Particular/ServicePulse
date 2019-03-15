@@ -3,7 +3,6 @@
 
     function controller(
         $scope,
-        connectionsService,
         notifyService) {
         var notifier = notifyService();
         var vm = this;
@@ -14,7 +13,6 @@
 
     controller.$inject = [
         '$scope',
-        'connectionsService',
         'notifyService'
     ];
 
