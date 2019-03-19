@@ -3,8 +3,9 @@
     'use strict';
 
 
-    function controller($scope, connectivityNotifier, monitoringService, $interval) {
+    function controller($scope, connectivityNotifier, monitoringService, $interval, connectionsFactory) {
         $scope.isSCMonitoringConnecting = true;
+        $scope.monitoringUrl = connectionsFactory.getMonitoringUrl();
         connectivityNotifier.getConnectionStatusSource().subscribe(value => {
             $scope.isSCMonitoringConnected = value;
             $scope.isSCMonitoringConnecting = false;
@@ -33,7 +34,7 @@
 
     
 
-    controller.$inject = ['$scope', 'connectivityNotifier', 'monitoringService', '$interval'];
+    controller.$inject = ['$scope', 'connectivityNotifier', 'monitoringService', '$interval', 'connectionsFactory'];
 
     function directive() {
         return {
