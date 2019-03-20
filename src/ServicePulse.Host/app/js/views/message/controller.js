@@ -7,7 +7,7 @@
         $routeParams,
         moment,
         $window,
-        scConfig,
+        connectionsFactory,
         toastService,
         serviceControlService,
         archivedMessageService,
@@ -136,7 +136,7 @@
         
         vm.debugInServiceInsight = function () {
             var messageId = vm.message.message_id;
-            var dnsName = scConfig.service_control_url.toLowerCase();
+            var dnsName = connectionsFactory.getServiceControlUrl().toLowerCase();
 
             if (dnsName.indexOf("https") === 0) {
                 dnsName = dnsName.replace("https://", "");
@@ -173,7 +173,7 @@
         '$routeParams',
         'moment',
         '$window',
-        'scConfig',
+        'connectionsFactory',
         'toastService',
         'serviceControlService',
         'archivedMessageService',

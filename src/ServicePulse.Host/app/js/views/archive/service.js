@@ -7,11 +7,12 @@
             $timeout,
             $q,
             notifyService,
-            scConfig,
+            connectionsFactory,
             uri
         ) {
 
         var notifier = notifyService();
+        var scu = connectionsFactory.getServiceControlUrl();
 
         function patchPromise(url, success, error, ids) {
 
@@ -35,9 +36,9 @@
             getArchivedMessages: function (sort, page, direction, start, end) {
                 var url = '';
                 if (start && end) {
-                    url = uri.join(scConfig.service_control_url, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction + '&modified=' + start + '...' + end);
+                    url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction + '&modified=' + start + '...' + end);
                 } else {
-                    url = uri.join(scConfig.service_control_url, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction);
+                    url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction);
                 } 
 
                 return $http.get(url).then(function (response) {
@@ -51,7 +52,7 @@
 
             getArchivedCount: function () {
 
-                var url = uri.join(scConfig.service_control_url, 'errors?status=archived');
+                var url = uri.join(scu, 'errors?status=archived');
 
                 return $http.head(url).then(function (response) {
                    
@@ -61,19 +62,19 @@
 
             restoreFromArchive: function (startdate, enddate, success, error) {
 
-                var url = uri.join(scConfig.service_control_url, 'errors', startdate.format('YYYY-MM-DDTHH:mm:ss') + '...' + enddate.format('YYYY-MM-DDTHH:mm:ss'), 'unarchive');
+                var url = uri.join(scu, 'errors', startdate.format('YYYY-MM-DDTHH:mm:ss') + '...' + enddate.format('YYYY-MM-DDTHH:mm:ss'), 'unarchive');
                 return patchPromise(url, success, error);
             },
 
             restoreMessageFromArchive: function (id, success, error) {
 
-                var url = uri.join(scConfig.service_control_url, 'errors', 'unarchive');
+                var url = uri.join(scu, 'errors', 'unarchive');
                 return patchPromise(url, success, error, [id]);
             },
 
             restoreMessagesFromArchive: function (ids, success, error) {
 
-                var url = uri.join(scConfig.service_control_url, 'errors', 'unarchive');
+                var url = uri.join(scu, 'errors', 'unarchive');
                 return patchPromise(url, success, error, ids);
             }
         };
@@ -85,7 +86,7 @@
         '$timeout',
         '$q',
         'notifyService',
-        'scConfig',
+        'connectionsFactory',
         'uri'
     ];
 

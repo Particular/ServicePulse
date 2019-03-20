@@ -15,20 +15,22 @@
         signalRListener,
         notifyService,
         semverService,
-        scConfig,
+        connectionsFactory,
         uriService,
         reindexingChecker,
         licenseNotifierService,
         licenseService,
         license
     ) {
-        $scope.isMonitoringEnabled = scConfig.monitoring_urls && scConfig.monitoring_urls.reduce(function (currentlyEnabled, url) {
-            return currentlyEnabled || url;
-        }, false);
+        var mu = connectionsFactory.getMonitoringUrl();
+        var scu = connectionsFactory.getServiceControlUrl();
+
+        $scope.isMonitoringEnabled = mu !== null && mu !== undefined;
 
         $scope.loadingInitialData = true;
         $scope.scConnectedAtLeastOnce = false;
-        $scope.isRecoverabilityEnabled = scConfig.service_control_url;
+        $scope.isRecoverabilityEnabled = scu !== null && scu !== undefined;
+        $scope.serviceControlUrl = scu;
 
         $scope.SCVersion = '';
         $scope.is_compatible_with_sc = true;
@@ -196,7 +198,7 @@
         }, 'reindexing');
 
         // signalR Listener
-        var listener = signalRListener(uriService.join(scConfig.service_control_url, 'messagestream'));
+        var listener = signalRListener(uriService.join(scu, 'messagestream'));
 
         listener.subscribe($scope, function(message) {
             notifier.notify('SignalREvent', message);
@@ -314,7 +316,7 @@
         'signalRListener',
         'notifyService',
         'semverService',
-        'scConfig',
+        'connectionsFactory',
         'uri',
         'reindexingChecker',
         'licenseNotifierService',

@@ -1,11 +1,12 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
-    function Service(notifications, $log, $rootScope, scConfig, $jquery, uri) {
+    function Service(notifications, $log, $rootScope, connectionsFactory, $jquery, uri) {
 
         var subscriberRegistry = {}, registryKey = 1;
 
-        var url = uri.join(scConfig.service_control_url, 'messagestream');
+        var scu = connectionsFactory.getServiceControlUrl();
+        var url = uri.join(scu, 'messagestream');
 
         var connection = $jquery.connection(url);
 
@@ -41,7 +42,7 @@
 
             })
             .fail(function () {
-                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scConfig.service_control_url });
+                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scu });
             });
 
         function callSubscribers(messageType, message) {
@@ -86,7 +87,7 @@
         };
     };
 
-    Service.$inject = ['notifications', '$log', '$rootScope', 'scConfig', '$jquery', 'uri'];
+    Service.$inject = ['notifications', '$log', '$rootScope', 'connectionsFactory', '$jquery', 'uri'];
 
     angular
         .module('services.streamService', [])

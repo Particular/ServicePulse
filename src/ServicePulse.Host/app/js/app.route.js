@@ -1,13 +1,12 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
-    function routeProvider($routeProvider, scConfig) {
-        $routeProvider.otherwise({ redirectTo: scConfig.default_route });
+    function routeProvider($routeProvider) {
+        $routeProvider.otherwise({ redirectTo: window.defaultConfig.default_route });
     }
 
     routeProvider.$inject = [
-        '$routeProvider',
-        'scConfig'
+        '$routeProvider'
     ];
 
     angular.module('sc')

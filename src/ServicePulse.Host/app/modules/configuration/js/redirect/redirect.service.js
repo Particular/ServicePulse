@@ -1,8 +1,9 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
     
-    function service($http, $timeout, $q, $rootScope, $interval, moment, scConfig, uri, notifications, notifyService) {
+    function service($http, $timeout, $q, $rootScope, $interval, moment, connectionsFactory, uri, notifications, notifyService) {
         var notifier = notifyService();
+        var scu = connectionsFactory.getServiceControlUrl();
 
         var redirects = {
             total :0,
@@ -10,7 +11,7 @@
         };
 
         function getData() {
-            var url = uri.join(scConfig.service_control_url, 'redirects');
+            var url = uri.join(scu, 'redirects');
             return $http.get(url).then(function (response) {
                 redirects.data = response.data;
                 redirects.data.forEach(function(item) {
@@ -81,7 +82,7 @@
 
         return {
             createRedirect: function(sourceEndpoint, targetEndpoint, success, error) {
-                var url = uri.join(scConfig.service_control_url, 'redirects');
+                var url = uri.join(scu, 'redirects');
                 var promise = sendPromise(url,
                     'POST',
                     { "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint },
@@ -91,7 +92,7 @@
                 return promise;
             },
             updateRedirect: function(redirectId, sourceEndpoint, targetEndpoint, success, error) {
-                var url = uri.join(scConfig.service_control_url, 'redirects', redirectId);
+                var url = uri.join(scu, 'redirects', redirectId);
                 var promise = sendPromise(url,
                     'PUT',
                     { "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint },
@@ -101,7 +102,7 @@
                 return promise;
             },
             deleteRedirect: function(id, success, error) {
-                var url = uri.join(scConfig.service_control_url, 'redirects', id);
+                var url = uri.join(scu, 'redirects', id);
                 return $http.delete(url)
                     .then(function() {
                             notifications.pushForCurrentRoute(success, 'info');
@@ -119,7 +120,7 @@
         };
     }
 
-    service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', 'moment', 'scConfig', 'uri', 'notifications', 'notifyService'];
+    service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', 'moment', 'connectionsFactory', 'uri', 'notifications', 'notifyService'];
 
     angular.module('configuration.redirect')
         .service('redirectService', service);

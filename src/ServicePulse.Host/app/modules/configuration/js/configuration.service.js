@@ -2,7 +2,9 @@
 (function (window, angular, undefined) {
     'use strict';
 
-    function Service($http, $q, scConfig, uri) {
+    function Service($http, $q, connectionsFactory, uri) {
+
+        var scu = connectionsFactory.getServiceControlUrl();
 
         function patchPromise(url, data, success, error) {
 
@@ -30,7 +32,7 @@
         }
 
         function getData() {
-            var url = uri.join(scConfig.service_control_url, 'endpoints');
+            var url = uri.join(scu, 'endpoints');
             return $http.get(url).then(function (response) {
                 return {
                     data: response.data
@@ -41,7 +43,7 @@
         var service = {
             getData: getData,
             update: function (id, newState, success, error) {
-                var url = uri.join(scConfig.service_control_url, 'endpoints', id);
+                var url = uri.join(scu, 'endpoints', id);
                 return patchPromise(url, { "monitor_heartbeat": newState }, success, error);
             }
         };
@@ -50,7 +52,7 @@
 
     }
 
-    Service.$inject = ['$http', '$q', 'scConfig', 'uri'];
+    Service.$inject = ['$http', '$q', 'connectionsFactory', 'uri'];
 
     angular.module('configuration.service', [])
         .factory('configurationService', Service);

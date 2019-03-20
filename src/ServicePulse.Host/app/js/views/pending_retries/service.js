@@ -3,10 +3,12 @@
 
 
 
-    function service($http, moment, scConfig, notifications, uri) {
+    function service($http, moment, connectionsFactory, notifications, uri) {
+
+        var scu = connectionsFactory.getServiceControlUrl();
 
         function getPendingRetryMessages(searchPhrase, sortBy, page, direction, start, end) {
-            var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
+            var url = uri.join(scu, 'errors?status=retryissued&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
 
             if (start && end) {
                 url = url + '&modified=' + start + '...' + end;
@@ -26,7 +28,7 @@
 
 
         function getTotalPendingRetryMessages(searchPhrase, start, end) {
-            var url = uri.join(scConfig.service_control_url, 'errors?status=retryissued');
+            var url = uri.join(scu, 'errors?status=retryissued');
 
             if (start && end) {
                 url = url + '&modified=' + start + '...' + end;
@@ -52,10 +54,10 @@
             var url = null;
             var data = {};
             if (searchPhrase) {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', 'retry');
+                url = uri.join(scu, 'pendingretries', 'queues', 'retry');
                 data.queueaddress = searchPhrase;
             } else {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry');
+                url = uri.join(scu, 'pendingretries', 'retry');
             }
             data.from = start;
             data.to = end;
@@ -72,7 +74,7 @@
         }
 
         function retryPendingRetriedMessages(selectedMessages) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'retry');
+            var url = uri.join(scu, 'pendingretries', 'retry');
             return $http.post(url, selectedMessages)
                 .then(function () {
                     notifications.pushForCurrentRoute('Retrying {{num}} pending retried messages...', 'info', { num: selectedMessages.length });
@@ -89,10 +91,10 @@
             var data = {};
             var url = null;
             if (searchPhrase) {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'queues', 'resolve');
+                url = uri.join(scu, 'pendingretries', 'queues', 'resolve');
                 data.queueaddress = searchPhrase;
             } else {
-                url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve');
+                url = uri.join(scu, 'pendingretries', 'resolve');
             }
             data.from = start;
             data.to = end;
@@ -109,7 +111,7 @@
         }
 
         function markAsResolvedMessages(selectedMessages) {
-            var url = uri.join(scConfig.service_control_url, 'pendingretries', 'resolve');
+            var url = uri.join(scu, 'pendingretries', 'resolve');
 
             return $http({
                     url: url,
@@ -133,7 +135,7 @@
         };
     }
 
-    service.$inject = ['$http', 'moment', 'scConfig', 'notifications', 'uri'];
+    service.$inject = ['$http', 'moment', 'connectionsFactory', 'notifications', 'uri'];
 
     angular.module('sc')
         .service('pendingRetryService', service);
