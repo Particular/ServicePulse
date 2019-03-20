@@ -13,7 +13,7 @@
 
     function connectionFactory() {
 
-        let mus = null;
+        let mu = null;
         let scu = null;
 
         function extractQuerystringFromHash() {
@@ -51,39 +51,45 @@
             //}
         }
 
-        this.getMonitoringUrls = function () {
+        this.getMonitoringUrl = function () {
 
-            console.debug('getMonitoringUrls');
-            if (mus && mus !== null) {
-                console.debug('returning previously retrievd Monitoring Urls: ', mus);
-                return mus;
+            console.debug('getMonitoringUrl');
+            if (mu && mu !== null) {
+                console.debug('returning cached Monitoring Url: ', mu);
+                return mu;
             }
 
-            mus = qs['mus'];
-            if (mus && mus !== null) {
-                console.debug('Monitoring Urls found in QS: ', mus);
-                window.localStorage.setItem('mus', mus);
-                console.debug('Monitoring Urls local storage value aligned with QS.');
-                return mus;
+            mu = qs['mu'];
+            if (mu && mu !== null) {
+                console.debug('Monitoring Url found in QS: ', mu);
+                window.localStorage.setItem('mu', mu);
+                console.debug('Monitoring Url local storage value aligned with QS.');
+                return mu;
             }
 
-            mus = window.localStorage.getItem('mus');
-            if (mus && mus !== null) {
-                console.debug('Monitoring Urls found in local storage: ', mus);
-                qs['mus'] = mus;
+            mu = window.localStorage.getItem('mu');
+            if (mu && mu !== null) {
+                console.debug('Monitoring Url found in local storage: ', mu);
+                qs['mu'] = mu;
                 rebuildHash();
-                return mus;
+                return mu;
             }
 
-            console.debug('returning default Monitoring Url: ', window.defaultConfig.monitoring_urls);
-            return window.defaultConfig.monitoring_urls;
+            if (window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.length > 0) {
+                mu = window.defaultConfig.monitoring_urls[0];
+                console.debug('setting Monitoring Url to its default value: ', window.defaultConfig.monitoring_urls);
+                return mu;
+            }
+
+            console.info('Monitoring Url is not defined, returning null.');
+            return null;
         };
 
         this.getServiceControlUrl = function () {
 
             console.debug('getServiceControlUrl');
             if (scu && scu !== null) {
-                console.debug('returning previously retrievd ServiceControl Url: ', scu);
+                console.debug('returning cached ServiceControl Url: ', scu);
                 return scu;
             }
 
@@ -103,8 +109,14 @@
                 return scu;
             }
 
-            console.debug('returning default SC Url: ', window.defaultConfig.service_control_url);
-            return window.defaultConfig.service_control_url;
+            if (window.defaultConfig.service_control_url) {
+                scu = window.defaultConfig.service_control_url;
+                console.debug('setting ServiceControl Url to its default value: ', window.defaultConfig.service_control_url);
+                return scu;
+            }
+
+            console.info('ServiceControl Url is not defined, returning null.');
+            return null;
         };
     }
 
