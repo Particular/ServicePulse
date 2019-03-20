@@ -11,6 +11,9 @@
         vm.loadingData = false;
         vm.configuredServiceControlUrl = connectionsManager.getServiceControlUrl();
         vm.configuredMonitoringUrl = connectionsManager.getMonitoringUrl();
+        vm.testAndSave = function () {
+            connectionsManager.updateConnections(vm.configuredServiceControlUrl, vm.configuredMonitoringUrl);
+        };
     }
 
     controller.$inject = [

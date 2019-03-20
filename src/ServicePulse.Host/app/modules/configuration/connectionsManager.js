@@ -48,6 +48,28 @@
 
         this.getMonitoringUrl = function () { return mu; };
         this.getServiceControlUrl = function () { return scu; };
+        this.updateConnections = function (serviceControlUrl, monitoringUrl) {
+
+            if (!serviceControlUrl) {
+                throw 'ServiceControl URL is mandatory';
+            }
+
+            urlParams.set('scu', serviceControlUrl);
+
+            if (monitoringUrl) {
+                urlParams.set('mu', monitoringUrl);
+            } else {
+                urlParams.delete('mu');
+            }
+
+            //values have changed. They'll be reset after page reloads
+            window.localStorage.removeItem('scu');
+            window.localStorage.removeItem('mu');
+
+            let newLocation = window.location + '?' + urlParams.toString() + window.location.hash;
+            console.debug('new location: ', newLocation);
+            window.location.search = urlParams.toString();
+        };
     }
 
     window.connectionsManager = new connectionsManager();
