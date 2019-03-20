@@ -12,12 +12,10 @@
         });
 
         var scMonitoringConnectionPing = $interval(function () {
-            var promises = monitoringService.getMonitoredEndpoints().map((request, index) => {
-                request.then(r => {
-                    connectivityNotifier.reportSuccessfulConnection(index);
-                }, e => {
-                    connectivityNotifier.reportFailedConnection(index);
-                });
+            var promise = monitoringService.getMonitoredEndpoints().then(r => {
+                connectivityNotifier.reportSuccessfulConnection();
+            }, e => {
+                connectivityNotifier.reportFailedConnection();
             });
         }, 10000);
 

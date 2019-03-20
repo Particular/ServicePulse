@@ -28,7 +28,7 @@
         };
 
         $scope.getDetailsUrl = endpoint => {
-            return '#/monitoring/endpoint/' + endpoint.name + '/' + (endpoint.sourceIndex | 0) + '?historyPeriod=' + $scope.selectedPeriod.value;
+            return '#/monitoring/endpoint/' + endpoint.name + '?historyPeriod=' + $scope.selectedPeriod.value;
         };
 
         function fillDisplayValuesForEndpoint(endpoint) {
@@ -69,14 +69,13 @@
                     }
 
                     if (endpoint.error) {
-                        connectivityNotifier.reportFailedConnection(endpoint.sourceIndex);
+                        connectivityNotifier.reportFailedConnection();
                         if ($scope.endpoints) {
-                            $scope.endpoints.filter((item) => item.sourceIndex === endpoint.sourceIndex)
-                                .forEach((item) => item.isScMonitoringDisconnected = true);
+                            $scope.endpoints.forEach((item) => item.isScMonitoringDisconnected = true);
                         }
                     } else {
-                        connectivityNotifier.reportSuccessfulConnection(endpoint.sourceIndex);
-                        var index = $scope.endpoints.findIndex(function(item) { return item.name === endpoint.name });
+                        connectivityNotifier.reportSuccessfulConnection();
+                        var index = $scope.endpoints.findIndex(function (item) { return item.name === endpoint.name; });
 
                         endpoint.isScMonitoringDisconnected = false;
                         fillDisplayValuesForEndpoint(endpoint);

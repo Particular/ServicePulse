@@ -18,7 +18,6 @@
     ) {
 
         $scope.endpointName = $routeParams.endpointName;
-        $scope.sourceIndex = $routeParams.sourceIndex;
         $scope.showInstancesBreakdown = $routeParams.tab === 'instancesBreakdown'; 
         $scope.loading = true;
         $scope.loadedSuccessfully = false;
@@ -50,7 +49,7 @@
 
             var breakdownTabName = showInstacesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown';
 
-            return `#/monitoring/endpoint/${$scope.endpointName}/${$scope.sourceIndex}?historyPeriod=${selectedPeriodValue}&tab=${breakdownTabName}&pageNo=${breakdownPageNo}`;
+            return `#/monitoring/endpoint/${$scope.endpointName}?historyPeriod=${selectedPeriodValue}&tab=${breakdownTabName}&pageNo=${breakdownPageNo}`;
         };
 
         $scope.updateUrl = function () {
@@ -101,12 +100,12 @@
 
             var selectedPeriod = $scope.selectedPeriod;
 
-            subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, $routeParams.sourceIndex, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
+            subscription = monitoringService.createEndpointDetailsSource($routeParams.endpointName, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
 
                 $scope.loading = false;
 
                 if (endpoint.error) {
-                    connectivityNotifier.reportFailedConnection($routeParams.sourceIndex);
+                    connectivityNotifier.reportFailedConnection();
                     if ($scope.endpoint && $scope.endpoint.instances) {
                         $scope.endpoint.instances.forEach((item) => item.isScMonitoringDisconnected = true);
                     }
@@ -127,7 +126,7 @@
                         mergeIn($scope.endpoint, endpoint);
                     }
 
-                    connectivityNotifier.reportSuccessfulConnection($routeParams.sourceIndex);
+                    connectivityNotifier.reportSuccessfulConnection();
 
                     $scope.endpoint.instances.sort(function (first, second) {
                         if (first.id < second.id) {

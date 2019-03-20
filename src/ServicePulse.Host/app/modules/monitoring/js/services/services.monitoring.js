@@ -2,46 +2,34 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, rx, scConfig, uri, $q) {
+    function Service($http, rx, connectionsFactory, uri, $q) {
+
+        var mu = connectionsFactory.getMonitoringUrl();
 
         function createEndpointsSource(historyPeriod, refreshInterval) {
             return Rx.Observable.interval(refreshInterval).startWith(0)
                 .flatMap(function (i) {
-                    return Rx.Observable.fromArray(loadEndpointDataFromMonitoringService(historyPeriod))
-                        .flatMap(function (p) {
-                            var o = Rx.Observable.fromPromise(p);
-                            o = o.catch(Rx.Observable.empty());
-                            return o;
-                        });
+                    return Rx.Observable.fromPromise(loadEndpointDataFromMonitoringService(historyPeriod));
                 }).selectMany(function (endpoints) {
                     return endpoints;
                 });
         }
 
         function loadEndpointDataFromMonitoringService(historyPeriod) {
-            return scConfig.monitoring_urls.map(function (url) {
-                return $http.get(uri.join(url, 'monitored-endpoints') + '?history=' + historyPeriod)
-                    .then(function (result) {
-                        var sourceIndex = scConfig.monitoring_urls.indexOf(url);
-
-                        result.data.forEach(function (endpoint) {
-                            endpoint.sourceIndex = sourceIndex;
-                        });
-
-                        return result.data.length !== 0
-                                ? result.data
-                                : [{empty: true, sourceIndex: sourceIndex}];
-                    },
+            return $http.get(uri.join(mu, 'monitored-endpoints') + '?history=' + historyPeriod)
+                .then(function (result) {
+                    return result.data.length !== 0
+                        ? result.data
+                        : [{ empty: true }];
+                },
                     (error) => {
-                        var sourceIndex = scConfig.monitoring_urls.indexOf(url);
-                        return [{ error: error, sourceIndex: sourceIndex }];
-                        }
-                    );
-            });
+                        return [{ error: error }];
+                    }
+                );
         }
 
-        function loadEndpointDetailsFromMonitoringService(endpointName, sourceIndex, historyPeriod) {
-            return $http.get(uri.join(scConfig.monitoring_urls[sourceIndex], 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
+        function loadEndpointDetailsFromMonitoringService(endpointName, historyPeriod) {
+            return $http.get(uri.join(mu, 'monitored-endpoints', endpointName) + "?history=" + historyPeriod)
                 .then(function (result) {
                     filterOutSystemMessage(result.data);
                     return result.data;
@@ -57,17 +45,15 @@
             });
         }
 
-        function createEndpointDetailsSource(endpointName, sourceIndex, historyPeriod, refreshInterval) {
+        function createEndpointDetailsSource(endpointName, historyPeriod, refreshInterval) {
             return Rx.Observable.interval(refreshInterval).startWith(0)
                 .flatMap(function (i) {
-                    return Rx.Observable.fromPromise(loadEndpointDetailsFromMonitoringService(endpointName, sourceIndex, historyPeriod));
+                    return Rx.Observable.fromPromise(loadEndpointDetailsFromMonitoringService(endpointName, historyPeriod));
                 });
         }
 
         function getMonitoredEndpoints() {
-            return scConfig.monitoring_urls.map(function (url) {
-                return $http.get(uri.join(url, 'monitored-endpoints') + '?history=1');
-            });
+            return $http.get(uri.join(mu, 'monitored-endpoints') + '?history=1');
         }
 
         var service = {
@@ -79,7 +65,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'rx', 'scConfig', 'uri', '$q', 'toastService'];
+    Service.$inject = ['$http', 'rx', 'connectionsFactory', 'uri', '$q', 'toastService'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);
