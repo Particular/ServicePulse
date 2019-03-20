@@ -3,17 +3,20 @@
 
     function controller(
         $scope,
-        notifyService) {
+        notifyService,
+        connectionsManager) {
         var notifier = notifyService();
         var vm = this;
        
         vm.loadingData = false;
-        vm.connections = [];
+        vm.configuredServiceControlUrl = connectionsManager.getServiceControlUrl();
+        vm.configuredMonitoringUrl = connectionsManager.getMonitoringUrl();
     }
 
     controller.$inject = [
         '$scope',
-        'notifyService'
+        'notifyService',
+        'connectionsManager'
     ];
 
     angular.module('configuration.connections')

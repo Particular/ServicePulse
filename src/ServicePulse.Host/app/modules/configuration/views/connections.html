@@ -18,6 +18,21 @@
         <div class="row">
             <div class="col-sm-12">
                 <h3>Configure your connection settings!</h3>
+
+                <form name="" novalidate>
+                    <label for="serviceControlUrl">ServiceControl API Url</label>
+                    <i class="fa fa-info-circle" uib-tooltip="Defines the ServiceControl API Url used by ServicePulse"></i>
+                    <div>
+                        <input type="text" id="serviceControlUrl" name="serviceControlUrl" ng-model="vm.configuredServiceControlUrl" placeholder="ServiceControl API Url" class="form-control" required>
+                    </div>
+
+                    <label for="monitoringUrl">Monitoring Url</label>
+                    <i class="fa fa-info-circle" uib-tooltip="Defines the Monitoring Url used by ServicePulse"></i>
+                    <div>
+                        <input type="text" id="monitoringUrl" name="monitoringUrl" ng-model="vm.configuredMonitoringUrl" placeholder="Monitoring Url" class="form-control" required>
+                    </div>
+                </form>
+
             </div>
         </div>
 
