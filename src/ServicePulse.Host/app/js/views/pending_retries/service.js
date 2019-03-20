@@ -3,9 +3,9 @@
 
 
 
-    function service($http, moment, connectionsFactory, notifications, uri) {
+    function service($http, moment, connectionsManager, notifications, uri) {
 
-        var scu = connectionsFactory.getServiceControlUrl();
+        var scu = connectionsManager.getServiceControlUrl();
 
         function getPendingRetryMessages(searchPhrase, sortBy, page, direction, start, end) {
             var url = uri.join(scu, 'errors?status=retryissued&page=' + page + '&sort=' + sortBy + '&direction=' + direction);
@@ -135,7 +135,7 @@
         };
     }
 
-    service.$inject = ['$http', 'moment', 'connectionsFactory', 'notifications', 'uri'];
+    service.$inject = ['$http', 'moment', 'connectionsManager', 'notifications', 'uri'];
 
     angular.module('sc')
         .service('pendingRetryService', service);

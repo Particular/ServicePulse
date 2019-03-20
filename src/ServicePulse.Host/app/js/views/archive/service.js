@@ -7,12 +7,12 @@
             $timeout,
             $q,
             notifyService,
-            connectionsFactory,
+            connectionsManager,
             uri
         ) {
 
         var notifier = notifyService();
-        var scu = connectionsFactory.getServiceControlUrl();
+        var scu = connectionsManager.getServiceControlUrl();
 
         function patchPromise(url, success, error, ids) {
 
@@ -86,7 +86,7 @@
         '$timeout',
         '$q',
         'notifyService',
-        'connectionsFactory',
+        'connectionsManager',
         'uri'
     ];
 

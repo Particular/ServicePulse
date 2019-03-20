@@ -1,11 +1,11 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
-    function Service(notifications, $log, $rootScope, connectionsFactory, $jquery, uri) {
+    function Service(notifications, $log, $rootScope, connectionsManager, $jquery, uri) {
 
         var subscriberRegistry = {}, registryKey = 1;
 
-        var scu = connectionsFactory.getServiceControlUrl();
+        var scu = connectionsManager.getServiceControlUrl();
         var url = uri.join(scu, 'messagestream');
 
         var connection = $jquery.connection(url);
@@ -87,7 +87,7 @@
         };
     };
 
-    Service.$inject = ['notifications', '$log', '$rootScope', 'connectionsFactory', '$jquery', 'uri'];
+    Service.$inject = ['notifications', '$log', '$rootScope', 'connectionsManager', '$jquery', 'uri'];
 
     angular
         .module('services.streamService', [])

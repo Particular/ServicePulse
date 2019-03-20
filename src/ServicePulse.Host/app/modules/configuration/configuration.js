@@ -1,2 +1,2 @@
 ﻿require('./js/configuration.module');
-require('./connectionsFactory');
+require('./connectionsManager');

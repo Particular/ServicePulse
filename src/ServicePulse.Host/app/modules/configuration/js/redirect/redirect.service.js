@@ -1,9 +1,9 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
     
-    function service($http, $timeout, $q, $rootScope, $interval, moment, connectionsFactory, uri, notifications, notifyService) {
+    function service($http, $timeout, $q, $rootScope, $interval, moment, connectionsManager, uri, notifications, notifyService) {
         var notifier = notifyService();
-        var scu = connectionsFactory.getServiceControlUrl();
+        var scu = connectionsManager.getServiceControlUrl();
 
         var redirects = {
             total :0,
@@ -120,7 +120,7 @@
         };
     }
 
-    service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', 'moment', 'connectionsFactory', 'uri', 'notifications', 'notifyService'];
+    service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', 'moment', 'connectionsManager', 'uri', 'notifications', 'notifyService'];
 
     angular.module('configuration.redirect')
         .service('redirectService', service);

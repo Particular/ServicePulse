@@ -1,6 +1,6 @@
 ﻿//require("jquery");
 
-//export default class connectionsFactory {
+//export default class connectionsManager {
 
 //    constructor() {
 //        this.state = "duke";
@@ -11,7 +11,7 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function connectionsFactory() {
+    function connectionsManager() {
 
         let mu = null;
         let scu = null;
@@ -120,8 +120,8 @@
         };
     }
 
-    window.connectionsFactory = new connectionsFactory();
+    window.connectionsManager = new connectionsManager();
     angular.module('configuration')
-        .service('connectionsFactory', function () { return window.connectionsFactory; });
+        .service('connectionsManager', function () { return window.connectionsManager; });
 
 }(window, window.angular, window.jQuery));

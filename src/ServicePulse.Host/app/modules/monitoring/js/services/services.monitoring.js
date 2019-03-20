@@ -2,9 +2,9 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, rx, connectionsFactory, uri, $q) {
+    function Service($http, rx, connectionsManager, uri, $q) {
 
-        var mu = connectionsFactory.getMonitoringUrl();
+        var mu = connectionsManager.getMonitoringUrl();
 
         function createEndpointsSource(historyPeriod, refreshInterval) {
             return Rx.Observable.interval(refreshInterval).startWith(0)
@@ -65,7 +65,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'rx', 'connectionsFactory', 'uri', '$q', 'toastService'];
+    Service.$inject = ['$http', 'rx', 'connectionsManager', 'uri', '$q', 'toastService'];
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);

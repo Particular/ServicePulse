@@ -3,7 +3,7 @@
 
 
 
-    function service($http, $timeout, $q, connectionsFactory, uri) {
+    function service($http, $timeout, $q, connectionsManager, uri) {
 
         function postPromise(url, success, error) {
 
@@ -25,17 +25,17 @@
         return {
            
             retryGroup: function (id, success, error) {
-                var url = uri.join(connectionsFactory.getServiceControlUrl(), 'recoverability', 'groups', id, 'errors', 'retry');
+                var url = uri.join(connectionsManager.getServiceControlUrl(), 'recoverability', 'groups', id, 'errors', 'retry');
                 return postPromise(url, success, error);
             },
             archiveGroup: function (id, success, error) {
-                var url = uri.join(connectionsFactory.getServiceControlUrl(), 'recoverability', 'groups', id, 'errors', 'archive');
+                var url = uri.join(connectionsManager.getServiceControlUrl(), 'recoverability', 'groups', id, 'errors', 'archive');
                 return postPromise(url, success, error);
             }
         };
     }
 
-    service.$inject = ['$http', '$timeout', '$q', 'connectionsFactory', 'uri'];
+    service.$inject = ['$http', '$timeout', '$q', 'connectionsManager', 'uri'];
 
     angular.module('sc')
         .service('failedMessageGroupsService', service);

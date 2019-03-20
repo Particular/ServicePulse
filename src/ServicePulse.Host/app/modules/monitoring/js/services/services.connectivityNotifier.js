@@ -2,9 +2,9 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service(toastService, connectionsFactory) {
+    function Service(toastService, connectionsManager) {
 
-        var mu = connectionsFactory.getMonitoringUrl();
+        var mu = connectionsManager.getMonitoringUrl();
         var isConnected = true;
         var connectivitySource = new Rx.Subject();
         var shouldShowFailedMessage = true;
@@ -52,7 +52,7 @@
         return service;
     }
 
-    Service.$inject = ['toastService', 'connectionsFactory'];
+    Service.$inject = ['toastService', 'connectionsManager'];
 
     angular.module('services.connectivityNotifier', ['sc'])
         .service('connectivityNotifier', Service);

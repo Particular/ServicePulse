@@ -2,9 +2,9 @@
 (function (window, angular, undefined) {
     'use strict';
 
-    function Service($http, $q, connectionsFactory, uri) {
+    function Service($http, $q, connectionsManager, uri) {
 
-        var scu = connectionsFactory.getServiceControlUrl();
+        var scu = connectionsManager.getServiceControlUrl();
 
         function patchPromise(url, data, success, error) {
 
@@ -52,7 +52,7 @@
 
     }
 
-    Service.$inject = ['$http', '$q', 'connectionsFactory', 'uri'];
+    Service.$inject = ['$http', '$q', 'connectionsManager', 'uri'];
 
     angular.module('configuration.service', [])
         .factory('configurationService', Service);

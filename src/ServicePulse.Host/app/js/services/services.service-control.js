@@ -2,9 +2,9 @@
 (function(window, angular, $, undefined) {
     'use strict';
 
-    function Service($http, connectionsFactory, notifications, uri) {
+    function Service($http, connectionsManager, notifications, uri) {
 
-        var scu = connectionsFactory.getServiceControlUrl();
+        var scu = connectionsManager.getServiceControlUrl();
 
         function getVersion() {
             var url = uri.join(scu);
@@ -341,7 +341,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'connectionsFactory', 'notifications', 'uri'];
+    Service.$inject = ['$http', 'connectionsManager', 'notifications', 'uri'];
 
     angular.module('services.serviceControlService', [])
         .service('serviceControlService', Service);

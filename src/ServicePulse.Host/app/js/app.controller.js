@@ -15,15 +15,15 @@
         signalRListener,
         notifyService,
         semverService,
-        connectionsFactory,
+        connectionsManager,
         uriService,
         reindexingChecker,
         licenseNotifierService,
         licenseService,
         license
     ) {
-        var mu = connectionsFactory.getMonitoringUrl();
-        var scu = connectionsFactory.getServiceControlUrl();
+        var mu = connectionsManager.getMonitoringUrl();
+        var scu = connectionsManager.getServiceControlUrl();
 
         $scope.isMonitoringEnabled = mu !== null && mu !== undefined;
 
@@ -316,7 +316,7 @@
         'signalRListener',
         'notifyService',
         'semverService',
-        'connectionsFactory',
+        'connectionsManager',
         'uri',
         'reindexingChecker',
         'licenseNotifierService',

@@ -6,7 +6,7 @@
     var injector = angular.injector(['ng']);
     var $http = injector.get('$http');
 
-    var scUrl = window.connectionsFactory.getServiceControlUrl();
+    var scUrl = window.connectionsManager.getServiceControlUrl();
     console.debug('Retrieving license from ServiceControl at: ', scUrl);
 
     $http.get(scUrl + '/license').then(function (response) {

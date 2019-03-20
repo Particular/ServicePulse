@@ -2,7 +2,7 @@
 (function (window, angular, undefined) {
     'use strict';
 
-    function service($http, $q, connectionsFactory, uri, notifyService) {
+    function service($http, $q, connectionsManager, uri, notifyService) {
         var notifier = notifyService();
 
         var license = {
@@ -15,7 +15,7 @@
         };
 
         function getData() {
-            var url = uri.join(connectionsFactory.getServiceControlUrl(), 'license');
+            var url = uri.join(connectionsManager.getServiceControlUrl(), 'license');
 
             return $http.get(url).then(function (response) {
                 license = response.data;
@@ -33,7 +33,7 @@
         };
     }
 
-    service.$inject = ['$http', '$q', 'connectionsFactory', 'uri', 'notifyService'];
+    service.$inject = ['$http', '$q', 'connectionsManager', 'uri', 'notifyService'];
 
     angular.module('configuration.license')
         .service('licenseService', service);
