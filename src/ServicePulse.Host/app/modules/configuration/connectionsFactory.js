@@ -20,7 +20,7 @@
             let temp = {};
             let hashQs = decodeURIComponent(window.location.hash).split('?');
             if (hashQs.length === 2) {
-                let segments = hashQs[1].split(';');
+                let segments = hashQs[1].split('&');
                 for (var i = 0; i < segments.length; i++) {
                     let segment = segments[i].split('=');
                     temp[segment[0]] = segment[1];
@@ -41,7 +41,7 @@
             //    for (var i = 0; i < qs.length; i++) {
             //        let element = qs[i];
             //        console.debug('element', element);
-            //        newHash += element[0] + '=' + element[1] + ';';
+            //        newHash += element[0] + '=' + element[1] + '&';
             //    }
             //    let newEncodedHash = encodeURIComponent(newHash);
             //    window.location.hash = newEncodedHash;
