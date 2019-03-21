@@ -25,6 +25,7 @@
     "rx": "^4.1.0",
     "signalr": "^2.2.1",
     "ui-select": "^0.18.1",
+    "url-search-params-polyfill": "^5.0.0",
     "zeroclipboard": "^2.2.0"
   },
   "devDependencies": {

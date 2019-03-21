@@ -1,4 +1,5 @@
-﻿//require("jquery");
+﻿require('url-search-params-polyfill');
+//require("jquery");
 
 //export default class connectionsManager {
 
@@ -66,9 +67,9 @@
             window.localStorage.removeItem('scu');
             window.localStorage.removeItem('mu');
 
-            let newLocation = window.location + '?' + urlParams.toString() + window.location.hash;
-            console.debug('new location: ', newLocation);
-            window.location.search = urlParams.toString();
+            let newSearch = urlParams.toString();
+            console.debug('updateConnections - new query string: ', newSearch);
+            window.location.search = newSearch;
         };
     }
 
