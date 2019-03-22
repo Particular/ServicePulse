@@ -49,7 +49,7 @@ For information how to run automated tests please follow [ServicePulse.Host.Test
 
 ServicePulse is supported on the following desktop browser versions:
 
-- Chrome 70+
+- Chrome [latest major version](https://chromereleases.googleblog.com/)
 - Edge with EdgeHTML v17+
 - Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/organizations/)
 - Internet Explorer 11
