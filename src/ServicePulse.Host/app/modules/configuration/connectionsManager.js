@@ -26,7 +26,7 @@
         } else if (window.localStorage.getItem('scu')) {
             scu = window.localStorage.getItem('scu');
             console.debug('ServiceControl Url, not in QS, found in local storage: ', scu);
-        } else if (window.defaultConfig.service_control_url) {
+        } else if (window.defaultConfig && window.defaultConfig.service_control_url) {
             scu = window.defaultConfig.service_control_url;
             console.debug('setting ServiceControl Url to its default value: ', window.defaultConfig.service_control_url);
         } else {
@@ -40,7 +40,7 @@
         } else if (window.localStorage.getItem('mu')) {
             mu = window.localStorage.getItem('mu');
             console.debug('Monitoring Url, not in QS, found in local storage: ', mu);
-        } else if (window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.lenght > 0) {
+        } else if (window.defaultConfig && window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.length) {
             mu = window.defaultConfig.monitoring_urls[0];
             console.debug('setting Monitoring Url to its default value: ', window.defaultConfig.monitoring_urls);
         } else {
