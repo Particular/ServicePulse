@@ -19,19 +19,31 @@
             <div class="col-sm-12">
                 <h3>Configure your connection settings!</h3>
 
-                <form name="" novalidate>
-                    <label for="serviceControlUrl">ServiceControl API Url</label>
-                    <i class="fa fa-info-circle" uib-tooltip="Defines the ServiceControl API Url used by ServicePulse"></i>
-                    <div>
-                        <input type="text" id="serviceControlUrl" name="serviceControlUrl" ng-model="vm.configuredServiceControlUrl" placeholder="ServiceControl API Url" class="form-control" required>
+                <form novalidate>
+                    <div class="row connection">
+                        <label for="serviceControlUrl">ServiceControl API Url</label>
+                        <i class="fa fa-info-circle" uib-tooltip="Defines the ServiceControl API Url used by ServicePulse"></i>
+                        <div>
+                            <input type="text" id="serviceControlUrl" name="serviceControlUrl" ng-model="vm.configuredServiceControlUrl" placeholder="ServiceControl API Url" class="form-control" required />
+                            <button type="button" ng-click="vm.testServiceControlUrl()">Test</button>
+                            <i ng-show="vm.serviceControlValid == true && !vm.testingServiceControl" class="fa fa-check"></i>
+                            <i ng-show="vm.serviceControlValid == false && !vm.testingServiceControl" class="fa fa-times warning"></i>
+                            <i ng-show="vm.testingServiceControl" class="glyphicon glyphicon-refresh rotate"></i>
+                        </div>
                     </div>
 
-                    <label for="monitoringUrl">Monitoring Url</label>
-                    <i class="fa fa-info-circle" uib-tooltip="Defines the Monitoring Url used by ServicePulse"></i>
-                    <div>
-                        <input type="text" id="monitoringUrl" name="monitoringUrl" ng-model="vm.configuredMonitoringUrl" placeholder="Monitoring Url" class="form-control" required>
+                    <div class="row connection">
+                        <label for="monitoringUrl">Monitoring Url</label>
+                        <i class="fa fa-info-circle" uib-tooltip="Defines the Monitoring Url used by ServicePulse"></i>
+                        <div>
+                            <input type="text" id="monitoringUrl" name="monitoringUrl" ng-model="vm.configuredMonitoringUrl" placeholder="Monitoring Url" class="form-control" required />
+                            <button type="button" ng-click="vm.testMonitoringUrl()">Test</button>
+                            <i ng-show="vm.monitoringValid == true && !vm.testingMonitoring" class="fa fa-check"></i>
+                            <i ng-show="vm.monitoringValid == false && !vm.testingMonitoring" class="fa fa-times warning"></i>
+                            <i ng-show="vm.testingMonitoring" class="glyphicon glyphicon-refresh rotate"></i>
+                        </div>
+                        <button type="button" ng-click="vm.save()">Test and Save</button>
                     </div>
-                    <button type="button" ng-click="vm.testAndSave()">Test and Save</button>
                 </form>
 
             </div>
@@ -39,6 +51,3 @@
 
     </section>
 </div>
-
-
-

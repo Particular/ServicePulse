@@ -2,7 +2,8 @@
     'use strict';
 
     function controller(
-        connectionsManager) {
+        connectionsManager,
+        $http) {
         var vm = this;
 
         var initialServiceControlUrl = connectionsManager.getServiceControlUrl();
@@ -11,23 +12,41 @@
         vm.loadingData = false;
         vm.configuredServiceControlUrl = initialServiceControlUrl;
         vm.configuredMonitoringUrl = initialMonitoringUrl;
-        
-        vm.testAndSave = function () {
 
-            if (vm.configuredServiceControlUrl !== initialServiceControlUrl) {
-                //changed -> needs validation
+        vm.testServiceControlUrl = () => {
+            if (vm.configuredServiceControlUrl) {
+                vm.testingServiceControl = true;
+                $http.get(vm.configuredServiceControlUrl).then(() => {
+                    vm.serviceControlValid = true;
+                }, (error) => {
+                    vm.serviceControlValid = false;
+                }).then(() => {
+                    vm.testingServiceControl = false;
+                });
             }
+        };
 
-            if (vm.configuredMonitoringUrl !== initialMonitoringUrl) {
-                //changed -> needs validation
+        vm.testMonitoringUrl = () => {
+            if (vm.configuredMonitoringUrl) {
+                vm.testingMonitoring = true;
+                $http.get(vm.configuredMonitoringUrl).then(() => {
+                    vm.monitoringValid = true;
+                }, (error) => {
+                    vm.monitoringValid = false;
+                }).then(() => {
+                    vm.testingMonitoring = false;
+                });
             }
+        };
 
+        vm.save = () => {
             connectionsManager.updateConnections(vm.configuredServiceControlUrl, vm.configuredMonitoringUrl);
         };
     }
 
     controller.$inject = [
-        'connectionsManager'
+        'connectionsManager',
+        '$http',
     ];
 
     angular.module('configuration.connections')
