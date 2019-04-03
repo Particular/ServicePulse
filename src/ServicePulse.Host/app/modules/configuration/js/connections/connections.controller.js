@@ -11,6 +11,7 @@
         vm.loadingData = false;
         vm.configuredServiceControlUrl = initialServiceControlUrl;
         vm.configuredMonitoringUrl = initialMonitoringUrl;
+        
         vm.testAndSave = function () {
 
             if (vm.configuredServiceControlUrl !== initialServiceControlUrl) {
