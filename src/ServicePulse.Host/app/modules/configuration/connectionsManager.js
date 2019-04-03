@@ -1,14 +1,5 @@
 ﻿require('url-search-params-polyfill');
-//require("jquery");
 
-//export default class connectionsManager {
-
-//    constructor() {
-//        this.state = "duke";
-//    }
-//}
-
-;
 (function (window, angular, $, undefined) {
     'use strict';
 
