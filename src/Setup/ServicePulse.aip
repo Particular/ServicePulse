@@ -58,7 +58,6 @@
     <ROW Component="AI_CustomARPName" ComponentId="{0F1C90D1-A696-4DB2-9737-BB96B63E50DF}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{DF00D24A-7668-4F3D-9629-2A1537091C3F}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{72AA4BC4-A6EC-4E71-89D3-5FF4A798C6F6}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
-    <ROW Component="APPDIR" ComponentId="{C52555BD-B541-4AA9-BB71-4EA74F875CA3}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="Nancy.Hosting.Self.dll" ComponentId="{C2DFBFD8-7865-49DB-87B0-F72E44F72B77}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.dll"/>
     <ROW Component="Nancy.Hosting.Self.xml" ComponentId="{41498FA4-2B44-4BD2-8799-6D47E4DBF940}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.xml" Type="0"/>
     <ROW Component="Nancy.dll" ComponentId="{4ABB345E-B929-4F10-ADC5-8C26618D7D41}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.dll"/>
@@ -69,7 +68,7 @@
     <ROW Component="ServicePulse.Host.exe" ComponentId="{AE9BCD73-377B-49A1-812D-AEBB7013AA5F}" Directory_="APPDIR" Attributes="0" KeyPath="ServicePulse.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath APPDIR Nancy.Hosting.Self.dll Nancy.Hosting.Self.xml Nancy.dll ParticularSoftware ProductInformation SHORTCUTDIR ServicePulse ServicePulse.Host.exe"/>
+    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath Nancy.Hosting.Self.dll Nancy.Hosting.Self.xml Nancy.dll ParticularSoftware ProductInformation SHORTCUTDIR ServicePulse ServicePulse.Host.exe"/>
     <ATTRIBUTE name="CurrentFeature" value="ServicePulse"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
@@ -388,7 +387,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
-    <ROW Directory_="APPDIR" Component_="APPDIR" ManualDelete="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
@@ -509,10 +507,6 @@
     <ROW Condition="(VersionNT64 OR ((VersionNT &lt;&gt; 501) OR (ServicePackLevel = 3))) AND ((VersionNT &lt;&gt; 502) OR (ServicePackLevel = 2))" Description="[ProductName] cannot be installed on [WindowsTypeNT5XDisplay]." DescriptionLocId="AI.LaunchCondition.NoNT5X" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiLockPermComponent">
-    <ROW LockObject="APPDIR" Table="CreateFolder" User="Everyone" Permission="1880096767" Flags="0"/>
-    <ROW LockObject="ServicePulse" Table="Registry" User="Everyone" Permission="1880096767" Flags="0"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegLocatorComponent">
     <ROW Signature_="AI_DotNet40SearchSgn" Root="2" Key="SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full" Name="Install" Type="2"/>
     <ROW Signature_="AI_EXE_PATH_CU" Root="1" Key="Software\Caphyon\Advanced Installer\LZMA\[ProductCode]\[ProductVersion]" Name="AI_ExePath" Type="2"/>
@@ -544,7 +538,7 @@
     <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#0" Component_="AI_CustomARPName"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
-    <ROW FileKey="_" Component_="APPDIR" DirProperty="APPDIR" InstallMode="2"/>
+    <ROW FileKey="_" Component_="Nancy.Hosting.Self.xml" DirProperty="APPDIR" InstallMode="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="classic"/>
