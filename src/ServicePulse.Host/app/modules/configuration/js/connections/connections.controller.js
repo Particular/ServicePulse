@@ -2,11 +2,7 @@
     'use strict';
 
     function controller(
-        $scope,
-        $http,
-        notifyService,
         connectionsManager) {
-        var notifier = notifyService();
         var vm = this;
 
         var initialServiceControlUrl = connectionsManager.getServiceControlUrl();
@@ -30,9 +26,6 @@
     }
 
     controller.$inject = [
-        '$scope',
-        '$http',
-        'notifyService',
         'connectionsManager'
     ];
 
