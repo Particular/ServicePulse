@@ -9,19 +9,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     <PackageReference Include="Particular.Approvals" Version="0.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\ServicePulse.Host\app\js\app.constants.js">
-      <Link>app.constants.js</Link>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
+    <Content Include="..\ServicePulse.Host\app\js\app.constants.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
