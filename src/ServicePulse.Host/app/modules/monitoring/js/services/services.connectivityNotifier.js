@@ -12,7 +12,7 @@
         function reportFailedConnection() {
 
             if (isConnected) {
-                var message = 'Could not connect to the ServiceControl Monitoring service at' + mu + '.';
+                var message = 'Could not connect to the ServiceControl Monitoring service at ' + mu + '.';
                 console.log(message);
                 if (shouldShowFailedMessage) {
                     toastService.showError(message);
