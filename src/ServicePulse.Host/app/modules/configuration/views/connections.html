@@ -18,13 +18,13 @@
         <div class="col-sm-12">
             <div class="box">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         
                         <form novalidate>
                             <div class="row connection">
                                 <h3>ServiceControl</h3>                                
                                 
-                                <div class="col-sm-9 form-group">
+                                <div class="col-sm-4 form-group">
                                     <label for="serviceControlUrl">URL</label>
                                     <input type="text" id="serviceControlUrl" name="serviceControlUrl" ng-model="vm.configuredServiceControlUrl" class="form-control" required />                                    
                                 </div>
@@ -34,16 +34,18 @@
                                     <input type="text" id="serviceControlPort" name="serviceControlPort" class="form-control" required />
                                 </div>
 
-                                <button type="button" ng-click="vm.testServiceControlUrl()">Test</button>
-                                <i ng-show="vm.serviceControlValid == true && !vm.testingServiceControl" class="fa fa-check"></i>
-                                <i ng-show="vm.serviceControlValid == false && !vm.testingServiceControl" class="fa fa-times warning"></i>
-                                <i ng-show="vm.testingServiceControl" class="glyphicon glyphicon-refresh rotate"></i>
+                                <div class="col-sm-5">
+                                    <button class="btn btn-default" type="button" ng-click="vm.testServiceControlUrl()">Test</button>
+                                    <span class="connection-test connection-testing" ng-show="vm.testingServiceControl"><i class="glyphicon glyphicon-refresh rotate"></i> Testing</span>
+                                    <span class="connection-test connection-successful" ng-show="vm.serviceControlValid == true && !vm.testingServiceControl"><i class="fa fa-check"></i> Connection successful</span>
+                                    <span class="connection-test connection-failed" ng-show="vm.serviceControlValid == false && !vm.testingServiceControl"><i class="fa fa-exclamation-triangle"></i> Connection failed</span>
+                                </div>
                                 
                             </div>
 
                             <div class="row connection">
                                 <h3>ServiceControl Monitoring</h3>                                                            
-                                <div class="col-sm-9 form-group px-0">
+                                <div class="col-sm-4 form-group">
                                     <label for="monitoringUrl">URL</label>
                                     <input type="text" id="monitoringUrl" name="monitoringUrl" ng-model="vm.configuredMonitoringUrl" class="form-control" required />                                    
                                 </div>
@@ -53,16 +55,18 @@
                                     <input type="text" id="monitoringPort" name="monitoringPort" ng-model="vm.configuredMonitoringUrl" class="form-control" required />                                    
                                 </div>
 
-                                <button type="button" ng-click="vm.testMonitoringUrl()">Test</button>
-                                <i ng-show="vm.monitoringValid == true && !vm.testingMonitoring" class="fa fa-check"></i>
-                                <i ng-show="vm.monitoringValid == false && !vm.testingMonitoring" class="fa fa-times warning"></i>
-                                <i ng-show="vm.testingMonitoring" class="glyphicon glyphicon-refresh rotate"></i>
+                                <div class="col-sm-5">
+                                    <button class="btn btn-default" type="button" ng-click="vm.testMonitoringUrl()">Test</button>
+                                    <span class="connection-test connection-testing" ng-show="vm.testingMonitoring"><i class="glyphicon glyphicon-refresh rotate"></i> Testing</span>
+                                    <span class="connection-test connection-successful" ng-show="vm.monitoringValid == true && !vm.testingMonitoring"><i class="fa fa-check"></i> Connection successful</span>
+                                    <span class="connection-test connection-failed" ng-show="vm.monitoringValid == false && !vm.testingMonitoring"><i class="fa fa-exclamation-triangle"></i> Connection failed</span>
+                                </div>
                                 
                             </div>
 
-                            <button class="btn btn-primary" type="button" ng-click="vm.save()">Test and Save</button>
-                            <span class="connection-test connection-successful"><i class="fa fa-check"></i> Connection successful</span>
-                            <span class="connection-test connection-failed hide"><i class="fa fa-exclamation-triangle"></i> Unable to establish connection</span>
+                            <button class="btn btn-primary" type="button" ng-click="vm.save()">Save</button>
+                            <span class="connection-test connection-successful"><i class="fa fa-check"></i> Connection saved</span>
+                            <span class="connection-test connection-failed hide"><i class="fa fa-exclamation-triangle"></i> Unable to save</span>
                         </form>
 
                     </div>

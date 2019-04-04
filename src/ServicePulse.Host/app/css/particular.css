@@ -2667,7 +2667,14 @@ form .connection .form-group {
 
 form .connection .form-group input {
     font-size: 16px;
-    padding: 20px 12px;
+    padding: 18px 12px;
+}
+
+form .connection .btn-default {
+    margin-top: 25px;
+    padding: 8px 16px;
+    border-color: #00A3C4;
+    color: #00A3C4;
 }
 
 button[ng-click="vm.save()"] {
