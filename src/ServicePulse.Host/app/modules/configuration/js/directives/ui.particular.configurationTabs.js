@@ -27,6 +27,12 @@
             $scope.counters.endpoints = data;
         }, 'EndpointCountUpdated');
 
+        notifier.subscribe($scope, (event, data) => {
+            $scope.isSCConnected = data.isConnected;
+            $scope.isSCConnecting = data.isSCConnecting;
+            $scope.scConnectedAtLeastOnce= data.scConnectedAtLeastOnce;
+        }, 'ServiceControlConnectionStatusChanged');
+
         licenseService.getLicense().then((license) => {
             $scope.isExpired = licenseNotifierService.isPlatformExpired(license.license_status) ||
                 licenseNotifierService.isPlatformTrialExpired(license.license_status) ||

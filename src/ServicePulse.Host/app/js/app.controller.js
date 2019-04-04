@@ -169,6 +169,12 @@
                     toastService.showWarning(data);
                     break;
             }
+
+            notifier.notify('ServiceControlConnectionStatusChanged', {
+                isConnected : $scope.isSCConnected,
+                isSCConnecting: $scope.isSCConnecting,
+                scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
+            });
        
         }, 'SignalREvent');
 
@@ -179,6 +185,12 @@
             }
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
+
+            notifier.notify('ServiceControlConnectionStatusChanged', {
+                isConnected : $scope.isSCConnected,
+                isSCConnecting: $scope.isSCConnecting,
+                scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
+            });
         }, 'SignalRError');
 
         notifier.subscribe($scope, function(event, data) {

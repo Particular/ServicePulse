@@ -545,6 +545,12 @@ h6 {
         text-decoration: none;
     }
 
+    .tabs h5.disabled > a {
+        color: #5f6363;
+        cursor: default;
+        text-decoration: none;
+    }
+
 .system-status:hover {
     background-color: #fff;
     border-color: #eee !important;
