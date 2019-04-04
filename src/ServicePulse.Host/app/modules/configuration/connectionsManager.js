@@ -20,7 +20,7 @@ class ConnectionsManager {
 
         if (urlParams.has('mu')) {
             this.monitoringUrl = urlParams.get('mu');
-            window.localStorage.setItem('mu', mu);
+            window.localStorage.setItem('mu', this.monitoringUrl);
             console.debug(`Monitoring Url found in QS and stored in local storage: ${this.monitoringUrl}`);
         } else if (window.localStorage.getItem('mu')) {
             this.monitoringUrl = window.localStorage.getItem('mu');
