@@ -61,6 +61,12 @@ class ConnectionsManager {
     }
 }
 
+window.defaultConfig = {
+    default_route: '/dashboard',
+    service_control_url: 'http://localhost:33333/api/',
+    monitoring_urls: ['http://localhost:33633/']
+};
 window.connectionsManager = new ConnectionsManager();
+
 angular.module('configuration')
     .service('connectionsManager', function () { return window.connectionsManager; });
