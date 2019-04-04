@@ -39,7 +39,7 @@
         $scope.isSCConnecting = true;
 
         $scope.$on('$locationChangeStart', function(event, next, current) {
-            if( (!$scope.isMonitoringEnabled || !$scope.isSCConnected) && !$scope.scConnectedAtLeastOnce){
+            if( !$scope.isSCConnected && !$scope.scConnectedAtLeastOnce){
                 
                 var routeData = $route.routes[$location.path()].data;
                 if(routeData && routeData.redirectWhenNotConnected){
