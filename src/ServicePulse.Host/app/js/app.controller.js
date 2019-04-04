@@ -20,7 +20,8 @@
         reindexingChecker,
         licenseNotifierService,
         licenseService,
-        license
+        license,
+        $route
     ) {
         var mu = connectionsManager.getMonitoringUrl();
         var scu = connectionsManager.getServiceControlUrl();
@@ -36,6 +37,18 @@
         $scope.is_compatible_with_sc = true;
         $scope.Version = version;
         $scope.isSCConnecting = true;
+
+        $scope.$on('$locationChangeStart', function(event, next, current) {
+            if( (!$scope.isMonitoringEnabled || !$scope.isSCConnected) && !$scope.scConnectedAtLeastOnce){
+                
+                var routeData = $route.routes[$location.path()].data;
+                if(routeData && routeData.redirectWhenNotConnected){
+                    $log.debug('not connected, and never connected once. Current route is a configuration route that requires redirect to: ', routeData.redirectWhenNotConnected);
+                    event.preventDefault();
+                    $location.path(routeData.redirectWhenNotConnected); 
+                }
+            }
+        });
 
         setTimeout(function () {
             // This delay needs to be here for the toastr service to be ready.
@@ -322,6 +335,7 @@
         'licenseNotifierService',
         'licenseService',
         'license',
+        '$route'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);
