@@ -7,7 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicePulse.Host", "Servic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicePulse.Install.CustomActions", "ServicePulse.Install.CustomActions\ServicePulse.Install.CustomActions.csproj", "{7E47B904-EF48-4F26-AAB5-BE435BCDC696}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "Setup\Setup.csproj", "{FA2792B9-B82D-4936-871E-16812FA60D13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Setup", "Setup\Setup.csproj", "{FA2792B9-B82D-4936-871E-16812FA60D13}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7E47B904-EF48-4F26-AAB5-BE435BCDC696} = {7E47B904-EF48-4F26-AAB5-BE435BCDC696}
+		{D120B791-BD1B-4E06-B4E1-69801A73209B} = {D120B791-BD1B-4E06-B4E1-69801A73209B}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{CBD21A52-A2D6-45FF-B921-A0743CFB13F7}"
 EndProject
