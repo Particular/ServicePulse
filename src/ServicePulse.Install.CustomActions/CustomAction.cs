@@ -96,7 +96,7 @@ namespace ServicePulse.Install.CustomActions
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
                     if (response == null)
-                    { 
+                    {
                         throw new Exception("No response");
                     }
 
@@ -126,12 +126,12 @@ namespace ServicePulse.Install.CustomActions
         public static ActionResult SetUrlAcl(Session session)
         {
            Log(session, "Start custom action SetUrlAcl");
-           var port = session.Get("INST_PORT_PULSE"); 
+           var port = session.Get("INST_PORT_PULSE");
            var aclUrl =  string.Format("http://+:{0}/", port);
-           
+
            RunNetsh(string.Format("http del urlacl url={0}", aclUrl));
-           // sddl=D:(A;;GX;;;WD) maps to the same as setting user=Everyone  
-           // user=everyone fails if the OS language is not English,  localised lookup of NTAccount fails as MSI is set to English US 
+           // sddl=D:(A;;GX;;;WD) maps to the same as setting user=Everyone
+           // user=everyone fails if the OS language is not English,  localised lookup of NTAccount fails as MSI is set to English US
            var addUrlAclCommand = string.Format("http add urlacl url={0} sddl=D:(A;;GX;;;WD)", aclUrl);
            var exitCode = RunNetsh(addUrlAclCommand);
            if (exitCode != 0)
@@ -207,7 +207,7 @@ namespace ServicePulse.Install.CustomActions
             {
                 Log(session, ex.ToString());
             }
-            finally 
+            finally
             {
                 Log(session, "End custom action DetectExistingPulseInstancePort");
             }
@@ -278,7 +278,7 @@ namespace ServicePulse.Install.CustomActions
                 Log(session, "End custom action ReadServiceControlUrlFromConfigJS");
             }
         }
-        
+
         static string ExtractServiceControlURI(string file)
         {
             var pattern = new Regex(@"(service_control_url\s*\:\s*['""])(.*?)(['""])");
@@ -297,7 +297,7 @@ namespace ServicePulse.Install.CustomActions
         {
            var pi = new ProcessStartInfo
            {
-               Arguments = command, 
+               Arguments = command,
                FileName = Path.Combine(Environment.SystemDirectory, "netsh.exe"),
                WindowStyle = ProcessWindowStyle.Hidden
            };
@@ -307,7 +307,7 @@ namespace ServicePulse.Install.CustomActions
                p.Start();
                p.WaitForExit();
                return p.ExitCode;
-           }            
+           }
         }
 
         static bool UrlIsValid(string url, Session session)

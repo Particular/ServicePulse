@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Host", "ServicePulse.Host\ServicePulse.Host.csproj", "{D120B791-BD1B-4E06-B4E1-69801A73209B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicePulse.Host", "ServicePulse.Host\ServicePulse.Host.csproj", "{D120B791-BD1B-4E06-B4E1-69801A73209B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Install.CustomActions", "ServicePulse.Install.CustomActions\ServicePulse.Install.CustomActions.csproj", "{7E47B904-EF48-4F26-AAB5-BE435BCDC696}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicePulse.Install.CustomActions", "ServicePulse.Install.CustomActions\ServicePulse.Install.CustomActions.csproj", "{7E47B904-EF48-4F26-AAB5-BE435BCDC696}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "Setup\Setup.csproj", "{FA2792B9-B82D-4936-871E-16812FA60D13}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "installer", "installer", "{CBD21A52-A2D6-45FF-B921-A0743CFB13F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse.Host.Tests", "ServicePulse.Host.Tests\ServicePulse.Host.Tests.csproj", "{113A09CC-9665-4E87-9FC7-7E5C8C0AFE71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicePulse.Host.Tests", "ServicePulse.Host.Tests\ServicePulse.Host.Tests.csproj", "{113A09CC-9665-4E87-9FC7-7E5C8C0AFE71}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SmokeTesting", "SmokeTesting", "{E4018B8E-ED2B-464C-B9A7-70BD97448D4B}"
 EndProject
@@ -84,6 +84,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{7E47B904-EF48-4F26-AAB5-BE435BCDC696} = {CBD21A52-A2D6-45FF-B921-A0743CFB13F7}
 		{FA2792B9-B82D-4936-871E-16812FA60D13} = {CBD21A52-A2D6-45FF-B921-A0743CFB13F7}
 		{A9B109A2-71C7-40C5-B1F4-D637D3808796} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
 		{CBC386E8-36FB-4427-A212-88F75C65A6A9} = {E4018B8E-ED2B-464C-B9A7-70BD97448D4B}
