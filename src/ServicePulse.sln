@@ -19,19 +19,24 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServicePulse.Host.Tests", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SmokeTesting", "SmokeTesting", "{E4018B8E-ED2B-464C-B9A7-70BD97448D4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.Client", "SmokeTest.Client\SmokeTest.Client.csproj", "{A9B109A2-71C7-40C5-B1F4-D637D3808796}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmokeTest.Client", "SmokeTest.Client\SmokeTest.Client.csproj", "{A9B109A2-71C7-40C5-B1F4-D637D3808796}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.Server", "SmokeTest.Server\SmokeTest.Server.csproj", "{CBC386E8-36FB-4427-A212-88F75C65A6A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmokeTest.Server", "SmokeTest.Server\SmokeTest.Server.csproj", "{CBC386E8-36FB-4427-A212-88F75C65A6A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.3rdParty", "SmokeTest.3rdParty\SmokeTest.3rdParty.csproj", "{267DA5B2-2F82-4F26-A8B3-E164B226FA98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmokeTest.3rdParty", "SmokeTest.3rdParty\SmokeTest.3rdParty.csproj", "{267DA5B2-2F82-4F26-A8B3-E164B226FA98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.Shared", "SmokeTest.Shared\SmokeTest.Shared.csproj", "{122AD54A-B249-41C7-858F-CB75E7C0F463}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmokeTest.Shared", "SmokeTest.Shared\SmokeTest.Shared.csproj", "{122AD54A-B249-41C7-858F-CB75E7C0F463}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.SignalrClient", "SmokeTest.SignalrClient\SmokeTest.SignalrClient.csproj", "{C23C4E96-744E-49F6-A4AB-9324E43A166A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmokeTest.SignalrClient", "SmokeTest.SignalrClient\SmokeTest.SignalrClient.csproj", "{C23C4E96-744E-49F6-A4AB-9324E43A166A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmokeTest.ClientNoHeartbeat", "SmokeTest.ClientNoHeartbeat\SmokeTest.ClientNoHeartbeat.csproj", "{02E77C87-7BA9-4142-A87A-928D419ABE91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmokeTest.ClientNoHeartbeat", "SmokeTest.ClientNoHeartbeat\SmokeTest.ClientNoHeartbeat.csproj", "{02E77C87-7BA9-4142-A87A-928D419ABE91}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Particular.PlatformSample.ServicePulse", "Particular.PlatformSample.ServicePulse\Particular.PlatformSample.ServicePulse.csproj", "{67FD72C8-A459-4235-AD10-3DF5B68A3172}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8A8684CA-DF74-43CD-ADD1-507AB0D2A8D5}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -21,8 +21,6 @@ class Program
             Console.WriteLine("Press any key to exit");
 
             var exit = false;
-            var emulateFailures = false;
-            var count = 1;
             do
             {
                 Console.ForegroundColor = ConsoleColor.White;
@@ -46,14 +44,14 @@ class Program
                         SendMessage(bus, false, text);
                         break;
                     case ConsoleKey.B:
-                        
+
                         for (var i = 0; i < 1000; i++)
                         {
                             SendMessage(bus, true, text);
                         }
                         break;
                     case ConsoleKey.C:
-                        
+
                         while (!Console.KeyAvailable)
                         {
                             SendMessage(bus, true, text);
@@ -68,12 +66,12 @@ class Program
                     default:
                         Console.WriteLine("Option not valid, Try again.");
                         continue;
-                        
+
                 }
 
-                
-                
-                
+
+
+
 
             } while (!exit);
         }
