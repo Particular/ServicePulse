@@ -2,8 +2,9 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service(toastService, connectionsManager) {
+    function Service(toastService, connectionsManager, notifyService) {
 
+        var notifier = notifyService();
         var mu = connectionsManager.getMonitoringUrl();
         var isConnected = true;
         var connectivitySource = new Rx.Subject();
@@ -36,6 +37,10 @@
         function emitChange(connected) {
             var result = connected;
             connectivitySource.onNext(result);
+
+            notifier.notify('MonitoringConnectionStatusChanged', {
+                isMonitoringConnected : connected
+            });
         };
 
         function getConnectionStatusSource() {
@@ -52,7 +57,7 @@
         return service;
     }
 
-    Service.$inject = ['toastService', 'connectionsManager'];
+    Service.$inject = ['toastService', 'connectionsManager', 'notifyService'];
 
     angular.module('services.connectivityNotifier', ['sc'])
         .service('connectivityNotifier', Service);

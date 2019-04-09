@@ -3,10 +3,20 @@
 
     angular.module('configuration', []);
 
-    function controller($scope, $location, redirectService, notifyService, sharedDataService, licenseService, licenseNotifierService) {
+    function controller($scope, $location, redirectService, notifyService, sharedDataService, licenseService, licenseNotifierService, connectionsStatus) {
         var notifier = notifyService();
 
         $scope.isActive = (viewLocation) => viewLocation === $location.path();
+        $scope.isSCConnected = connectionsStatus.isSCConnected;
+        $scope.scConnectedAtLeastOnce = connectionsStatus.scConnectedAtLeastOnce;
+
+        notifier.subscribe($scope, (event, data) => {
+            $scope.isSCConnected = connectionsStatus.isSCConnected;
+            $scope.scConnectedAtLeastOnce = connectionsStatus.scConnectedAtLeastOnce;
+
+            console.warn('ConfigurationTabs::ConnectionStatus', connectionsStatus);
+
+        }, 'ConnectionsStatusChanged');
         
         var stats = sharedDataService.getstats();
 
@@ -27,12 +37,6 @@
             $scope.counters.endpoints = data;
         }, 'EndpointCountUpdated');
 
-        notifier.subscribe($scope, (event, data) => {
-            $scope.isSCConnected = data.isSCConnected;
-            $scope.isSCConnecting = data.isSCConnecting;
-            $scope.scConnectedAtLeastOnce= data.scConnectedAtLeastOnce;
-        }, 'ServiceControlConnectionStatusChanged');
-
         licenseService.getLicense().then((license) => {
             $scope.isExpired = licenseNotifierService.isPlatformExpired(license.license_status) ||
                 licenseNotifierService.isPlatformTrialExpired(license.license_status) ||
@@ -48,8 +52,14 @@
         });
     }
     
-    controller.$inject = ['$scope', '$location', 'redirectService', 'notifyService', 'sharedDataService',
-        'licenseService', 'licenseNotifierService'];
+    controller.$inject = ['$scope', 
+                        '$location', 
+                        'redirectService', 
+                        'notifyService',
+                        'sharedDataService',
+                        'licenseService',
+                        'licenseNotifierService',
+                        'connectionsStatus'];
 
     function directive() {
         const template = require('./ui.particular.configurationTabs.tpl.html');
