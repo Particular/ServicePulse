@@ -28,7 +28,7 @@
         }, 'EndpointCountUpdated');
 
         notifier.subscribe($scope, (event, data) => {
-            $scope.isSCConnected = data.isConnected;
+            $scope.isSCConnected = data.isSCConnected;
             $scope.isSCConnecting = data.isSCConnecting;
             $scope.scConnectedAtLeastOnce= data.scConnectedAtLeastOnce;
         }, 'ServiceControlConnectionStatusChanged');

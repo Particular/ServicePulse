@@ -171,7 +171,7 @@
             }
 
             notifier.notify('ServiceControlConnectionStatusChanged', {
-                isConnected : $scope.isSCConnected,
+                isSCConnected : $scope.isSCConnected,
                 isSCConnecting: $scope.isSCConnecting,
                 scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
             });
@@ -187,7 +187,7 @@
             $scope.isSCConnecting = false;
 
             notifier.notify('ServiceControlConnectionStatusChanged', {
-                isConnected : $scope.isSCConnected,
+                isSCConnected : $scope.isSCConnected,
                 isSCConnecting: $scope.isSCConnecting,
                 scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
             });
