@@ -2419,6 +2419,12 @@ div.alert.alert-warning strong {
     }
 }
 
+@media (max-width: 1439px) and screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    nav.navbar {
+        margin-top: 0;
+    }
+}
+
 @media (max-width: 1550px) {
 
     footer {
