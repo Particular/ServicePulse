@@ -23,8 +23,6 @@ internal class Program
 
 
             var exit = false;
-            var emulateFailures = false;
-            var count = 1;
             do
             {
                 Console.ForegroundColor = ConsoleColor.White;
