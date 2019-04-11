@@ -3,15 +3,18 @@
 
     function controller(
         connectionsManager,
-        $http) {
+        $http,
+        connectionsStatus) {
         var vm = this;
 
         var initialServiceControlUrl = connectionsManager.getServiceControlUrl();
         var initialMonitoringUrl = connectionsManager.getMonitoringUrl();
 
         vm.loadingData = false;
+        vm.connectionsStatus = connectionsStatus;
         vm.configuredServiceControlUrl = initialServiceControlUrl;
         vm.configuredMonitoringUrl = initialMonitoringUrl;
+        vm.isMonitoringEnabled = vm.configuredMonitoringUrl !== null && vm.configuredMonitoringUrl !== undefined;
 
         vm.testServiceControlUrl = () => {
             if (vm.configuredServiceControlUrl) {
@@ -47,6 +50,7 @@
     controller.$inject = [
         'connectionsManager',
         '$http',
+        'connectionsStatus',
     ];
 
     angular.module('configuration.connections')
