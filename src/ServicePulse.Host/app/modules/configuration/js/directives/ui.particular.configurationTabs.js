@@ -7,16 +7,7 @@
         var notifier = notifyService();
 
         $scope.isActive = (viewLocation) => viewLocation === $location.path();
-        $scope.isSCConnected = connectionsStatus.isSCConnected;
-        $scope.scConnectedAtLeastOnce = connectionsStatus.scConnectedAtLeastOnce;
-
-        notifier.subscribe($scope, (event, data) => {
-            $scope.isSCConnected = connectionsStatus.isSCConnected;
-            $scope.scConnectedAtLeastOnce = connectionsStatus.scConnectedAtLeastOnce;
-
-            console.warn('ConfigurationTabs::ConnectionStatus', connectionsStatus);
-
-        }, 'ConnectionsStatusChanged');
+        $scope.connectionsStatus = connectionsStatus;
         
         var stats = sharedDataService.getstats();
 
