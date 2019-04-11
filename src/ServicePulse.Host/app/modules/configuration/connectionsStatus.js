@@ -1,25 +1,27 @@
+import { timingSafeEqual } from "crypto";
+
 class ConnectionsStatus {
     constructor(notifyService, $rootScope) {
         var notifier = notifyService();
 
         notifier.subscribe($rootScope, (event, data) => {
-            this.isSCConnected = data.isSCConnected;
-            this.isSCConnecting = data.isSCConnecting;
-            this.scConnectedAtLeastOnce = data.scConnectedAtLeastOnce;
+            if(data.isSCConnected !== this.isSCConnected 
+                || data.isSCConnecting !== this.isSCConnecting 
+                || data.scConnectedAtLeastOnce !== this.scConnectedAtLeastOnce){
+                
+                this.isSCConnected = data.isSCConnected;
+                this.isSCConnecting = data.isSCConnecting;
+                this.scConnectedAtLeastOnce = data.scConnectedAtLeastOnce;
 
-            console.warn('ConnectionsStatus::ServiceControlConnectionStatusChanged', data);
-
-            notifier.notify('ConnectionsStatusChanged', {});
-
+                notifier.notify('ConnectionsStatusChanged', {});
+            }
         }, 'ServiceControlConnectionStatusChanged');
 
         notifier.subscribe($rootScope, (event, data) => {
-            this.isMonitoringConnected = data.isMonitoringConnected;
-
-            console.warn('ConnectionsStatus::MonitoringConnectionStatusChanged', data);
-
-            notifier.notify('ConnectionsStatusChanged', {});
-
+            if(data.isMonitoringConnected !== this.isMonitoringConnected){
+                this.isMonitoringConnected = data.isMonitoringConnected;
+                notifier.notify('ConnectionsStatusChanged', {});
+            }
         }, 'MonitoringConnectionStatusChanged');
     }
 }
