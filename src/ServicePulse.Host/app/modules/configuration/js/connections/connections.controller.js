@@ -14,7 +14,7 @@
         vm.connectionsStatus = connectionsStatus;
         vm.configuredServiceControlUrl = initialServiceControlUrl;
         vm.configuredMonitoringUrl = initialMonitoringUrl;
-        vm.isMonitoringEnabled = vm.configuredMonitoringUrl !== null && vm.configuredMonitoringUrl !== undefined;
+        vm.isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
 
         vm.testServiceControlUrl = () => {
             if (vm.configuredServiceControlUrl) {

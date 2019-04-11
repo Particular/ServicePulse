@@ -26,7 +26,7 @@
         var mu = connectionsManager.getMonitoringUrl();
         var scu = connectionsManager.getServiceControlUrl();
 
-        $scope.isMonitoringEnabled = mu !== null && mu !== undefined;
+        $scope.isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
 
         $scope.loadingInitialData = true;
         $scope.scConnectedAtLeastOnce = false;

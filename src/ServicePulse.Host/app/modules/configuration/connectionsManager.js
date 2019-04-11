@@ -33,10 +33,24 @@ class ConnectionsManager {
         }
     }
 
-    getMonitoringUrl() { return this.monitoringUrl; }
+    getIsMonitoringEnabled() { 
+        return this.monitoringUrl !== '!' 
+            && this.monitoringUrl !== ''
+            && this.monitoringUrl !== null
+            && this.monitoringUrl !== undefined; 
+    }
+    
+    getMonitoringUrl() {
+        if(this.getIsMonitoringEnabled()){
+            return this.monitoringUrl;    
+        }
+        return null; 
+    }
+    
     getServiceControlUrl() { return this.serviceControlUrl; }
 
     updateConnections(serviceControlUrl, monitoringUrl) {
+
         const urlParams = new URLSearchParams(window.location.search);
 
         if (!serviceControlUrl) {
@@ -45,11 +59,11 @@ class ConnectionsManager {
 
         urlParams.set('scu', serviceControlUrl);
 
-        if (monitoringUrl) {
-            urlParams.set('mu', monitoringUrl);
-        } else {
-            urlParams.delete('mu');
-        }
+        if (!monitoringUrl) {
+            monitoringUrl = '!'; //disabled
+        } 
+        
+        urlParams.set('mu', monitoringUrl);
 
         //values have changed. They'll be reset after page reloads
         window.localStorage.removeItem('scu');
