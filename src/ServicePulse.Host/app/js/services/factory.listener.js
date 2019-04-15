@@ -1,7 +1,7 @@
 ; (function (window, angular, undefined) {
     'use strict';
 
-    function factory($rootScope, $jquery, notifyService) {
+    function factory($rootScope, $jquery, notifyService, toastService, $window) {
 
         function listener(msgUrl) {
 
@@ -58,7 +58,10 @@
                         });
                     })
                     .fail(function () {
-                        notifier.notify('SignalRError', 'Can not connect to ServiceControl');
+                        if ($window.location.hash.indexOf('/configuration/connections') < 0) {
+                            // Uses the toastService directly to avoid breaking the notifier class. The previous notifier calls should all be removed at some point too.
+                            toastService.showError('Could not connect to ServiceControl. <a href="#/configuration/connections">Click here to change the connection settings.</a>', true, false);
+                        }
                     });
             }
 
@@ -84,7 +87,9 @@
     factory.$inject = [
         '$rootScope',
         '$jquery',
-        'notifyService'
+        'notifyService',
+        'toastService',
+        '$window'
     ];
 
     angular.module('sc')
