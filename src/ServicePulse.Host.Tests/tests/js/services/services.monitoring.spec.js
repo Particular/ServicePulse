@@ -29,7 +29,7 @@
     }));
 
     it('should push endpoints retrieved from monitoring server', function (done) {
-        scConfig.monitoring_urls = ['http://localhost:33633/'];
+        window.defaultConfig.monitoring_urls = ['http://localhost:33633/'];
 
         $httpBackend.whenGET('http://localhost:33633/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
 
@@ -47,28 +47,6 @@
                 expect(monitoredEndpoints[1].data.criticalTime).toEqual([]);
                 expect(monitoredEndpoints[1].data.processingTime).toEqual([]);
 
-                subscription.dispose();
-                done();
-            }
-        });
-
-        setTimeout(function () {
-            $httpBackend.flush();
-        }, 0);
-    });
-
-    it('should push endpoints retrieved from multiple monitoring servers', function (done) {
-        $httpBackend.whenGET('http://localhost:1234/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
-        $httpBackend.whenGET('http://localhost:5678/monitored-endpoints?history=5').respond(monitoredEndpointWithData);
-
-        scConfig.monitoring_urls = ['http://localhost:1234/', 'http://localhost:5678/'];
-
-        var monitoredEndpoints = [];
-        var subscription = monitoringService.createEndpointsSource(5).subscribe(function (response) {
-            monitoredEndpoints.push(response);
-
-            if (monitoredEndpoints.length == 4) {
-                expect(monitoredEndpoints.length).toEqual(4);
                 subscription.dispose();
                 done();
             }
