@@ -39,7 +39,6 @@
 
                 connection.start()
                     .done(function () {
-
                         notifier.notify('SignalREvent', 'SignalR started');
 
                         connection.error(function (error) {
@@ -51,7 +50,6 @@
                         });
 
                         connection.stateChanged(function (change) {
-
                             if (change.newState === $jquery.signalR.connectionState.disconnected) {
                                 notifier.notify('SignalRError', 'The server is offline');
                             }

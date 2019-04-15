@@ -164,6 +164,11 @@
                     $scope.isSCConnected = true;
                     $scope.isSCConnecting = false;
                     $scope.scConnectedAtLeastOnce = true;
+
+                    if ($scope.signalRConnectionErrorToast) {
+                        toastService.clear($scope.signalRConnectionErrorToast);
+                        $scope.signalRConnectionErrorToast = undefined;
+                    }
                     break;
                 default:
                     toastService.showWarning(data);
@@ -181,7 +186,7 @@
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
             if ($scope.isSCConnected) {
-                toastService.showError(data);
+                $scope.signalRConnectionErrorToast = toastService.showError(data);
             }
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
