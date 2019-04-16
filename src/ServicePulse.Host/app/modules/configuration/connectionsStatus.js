@@ -2,6 +2,7 @@ import { timingSafeEqual } from "crypto";
 
 class ConnectionsStatus {
     constructor(notifyService, $rootScope) {
+
         var notifier = notifyService();
 
         notifier.subscribe($rootScope, (event, data) => {
@@ -13,14 +14,14 @@ class ConnectionsStatus {
                 this.isSCConnecting = data.isSCConnecting;
                 this.scConnectedAtLeastOnce = data.scConnectedAtLeastOnce;
 
-                notifier.notify('ConnectionsStatusChanged', {});
+                notifier.notify('ConnectionsStatusChanged', { status: this });
             }
         }, 'ServiceControlConnectionStatusChanged');
 
         notifier.subscribe($rootScope, (event, data) => {
             if(data.isMonitoringConnected !== this.isMonitoringConnected){
                 this.isMonitoringConnected = data.isMonitoringConnected;
-                notifier.notify('ConnectionsStatusChanged', {});
+                notifier.notify('ConnectionsStatusChanged', { status: this });
             }
         }, 'MonitoringConnectionStatusChanged');
     }
@@ -29,4 +30,6 @@ class ConnectionsStatus {
 angular.module('configuration')
     .service('connectionsStatus', ['notifyService', '$rootScope', function (notifyService, $rootScope) { 
         return new ConnectionsStatus(notifyService, $rootScope); 
+    }]).run(['connectionsStatus', function(connectionsStatus){
+        //make sure the service is initialized as the app starts, otherwise it won't raise notifications unless it's required as dependency
     }]);
