@@ -40,6 +40,10 @@ a {
     margin-left: 4px;
 }
 
+.navbar-nav > li > a > span.no-margin {
+    margin: 0;
+}
+
 .navbar-toggle {
     margin-top: 13px;
 }
