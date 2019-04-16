@@ -23,6 +23,8 @@
         license,
         $route
     ) {
+        var notifier = notifyService();
+
         var mu = connectionsManager.getMonitoringUrl();
         var scu = connectionsManager.getServiceControlUrl();
 
@@ -114,7 +116,27 @@
             $log.debug(data);
         }
 
-        var notifier = notifyService();
+        notifier.subscribe($scope, function(event, data){
+
+            console.warn('app.controller::ConnectionsStatusChanged', data);
+            console.warn('app.controller::ConnectionsStatusChanged -> connectionsManager.getIsMonitoringEnabled()', connectionsManager.getIsMonitoringEnabled());
+
+            if(connectionsManager.getIsMonitoringEnabled()){
+                if((data.status.isSCConnected || data.status.isSCConnecting) && data.status.isMonitoringConnected){
+                    $scope.connectionswarning = undefined;
+                }else if(!data.status.isSCConnected || !data.status.isMonitoringConnected){
+                    $scope.connectionswarning = "danger";
+                }
+            }else{
+                if(data.status.isSCConnected || data.status.isSCConnecting){
+                    $scope.connectionswarning = undefined;
+                }else if(!data.status.isSCConnected){
+                    $scope.connectionswarning = "danger";
+                }
+            }
+
+            console.warn('app.controller::ConnectionsStatusChanged -> $scope.connectionswarning', $scope.connectionswarning)
+        }, 'ConnectionsStatusChanged');
 
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
@@ -185,9 +207,9 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            if ($scope.isSCConnected) {
-                $scope.signalRConnectionErrorToast = toastService.showError(data);
-            }
+            // if ($scope.isSCConnected) {
+            //     $scope.signalRConnectionErrorToast = toastService.showError(data);
+            // }
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
 
