@@ -56,6 +56,8 @@
                         });
                     })
                     .fail(function () {
+                        //notification is needed for other part of Pulse that depend on the notifier to get connectivity status.
+                        notifier.notify('SignalRError');
                         if ($window.location.hash.indexOf('/configuration/connections') < 0) {
                             // Uses the toastService directly to avoid breaking the notifier class. The previous notifier calls should all be removed at some point too.
                             toastService.showError('Could not connect to ServiceControl. <a href="#/configuration/connections">Click here to change the connection settings.</a>', true, false);
