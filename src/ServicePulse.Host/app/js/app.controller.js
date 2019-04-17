@@ -118,9 +118,6 @@
 
         notifier.subscribe($scope, function(event, data){
 
-            console.warn('app.controller::ConnectionsStatusChanged', data);
-            console.warn('app.controller::ConnectionsStatusChanged -> connectionsManager.getIsMonitoringEnabled()', connectionsManager.getIsMonitoringEnabled());
-
             if(connectionsManager.getIsMonitoringEnabled()){
                 if((data.status.isSCConnected || data.status.isSCConnecting) && data.status.isMonitoringConnected){
                     $scope.connectionswarning = undefined;
@@ -134,8 +131,6 @@
                     $scope.connectionswarning = "danger";
                 }
             }
-
-            console.warn('app.controller::ConnectionsStatusChanged -> $scope.connectionswarning', $scope.connectionswarning)
         }, 'ConnectionsStatusChanged');
 
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
