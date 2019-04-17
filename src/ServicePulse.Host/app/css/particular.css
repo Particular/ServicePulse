@@ -2699,7 +2699,7 @@ button[ng-click="vm.save()"] {
 
 span.connection-test {
     position: relative;
-    top: 16px;
+    top: 14px;
     left: 10px;
     text-transform: uppercase;
     font-weight: bold;
@@ -2722,4 +2722,8 @@ span.connection-failed, span.connection-failed i, .failed-validation, .failed-va
 .form-control:focus {
     border-color: #00a3c4;
     box-shadow: 0 0 2px rgb(0, 163, 196);
+}
+
+span.auxilliary-label {
+    color: #aaa;
 }
