@@ -44,3 +44,13 @@ After doing the above steps one can open Visual Studio and continue working on t
 ### Configuring automated tests
 
 For information how to run automated tests please follow [ServicePulse.Host.Tests/Readme](https://github.com/Particular/ServicePulse/blob/master/src/ServicePulse.Host.Tests/README.md).
+
+## Supported browser versions
+
+ServicePulse is supported on the following desktop browser versions:
+
+- Chrome [latest major version](https://chromereleases.googleblog.com/)
+- Edge with EdgeHTML v17+
+- Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/organizations/)
+- Internet Explorer 11
+- Safari [latest major version](https://developer.apple.com/safari/download/)
