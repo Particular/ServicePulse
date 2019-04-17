@@ -1907,6 +1907,10 @@ hr.top-separator {
     opacity: 0.7;
 }
 
+.btn-secondary.disabled {
+    border-color: #00A3C4;
+}
+
 .table-head-row {
     font-size: 12px;
     text-transform: uppercase;
