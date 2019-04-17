@@ -2462,12 +2462,6 @@ div.alert.alert-warning strong {
     background: black;
 }
 
-btn-license-warning-light {
-    border: black;
-    color: black;
-    background: #f89406;
-}
-
 span.fa-exclamation-triangle.warning {
     color: #F3BC52;
     background: linear-gradient(black,black) center/20% 72% no-repeat;
