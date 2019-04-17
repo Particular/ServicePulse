@@ -60,7 +60,7 @@
                         notifier.notify('SignalRError');
                         if ($window.location.hash.indexOf('/configuration/connections') < 0) {
                             // Uses the toastService directly to avoid breaking the notifier class. The previous notifier calls should all be removed at some point too.
-                            toastService.showError('Could not connect to ServiceControl. <a href="#/configuration/connections">Click here to change the connection settings.</a>', true, false);
+                            toastService.showError('Could not connect to ServiceControl. <a class="btn btn-default" href="#/configuration/connections">View connection settings</a>', true, false);
                         }
                     });
             }

@@ -2507,6 +2507,12 @@ span.fa-exclamation-triangle.danger {
     padding: 24px 24px 24px 56px;
 }
 
+#toast-container > div:hover {
+    box-shadow: 0 0 12px #999999;
+    opacity: 0.8;
+    cursor: default;
+}
+
 .toast-close-button {
     right: -10px;
     top: -16px;
@@ -2514,14 +2520,14 @@ span.fa-exclamation-triangle.danger {
 
 #toast-container > .toast-error {
     background-image: url('../img/toast-danger.svg') !important;
-    background-position-y: 22px;
+    background-position-y: 30px;
     background-size: 28px 28px;
 }
 
 #toast-container > .toast-warning {
     background-color: #F3BC52;
     background-image: url('../img/toast-warning.svg') !important;
-    background-position-y: 22px;
+    background-position-y: 30px;
     background-size: 28px 28px;
 }
 
@@ -2534,8 +2540,16 @@ span.fa-exclamation-triangle.danger {
     color: #F3BC52;
 }
 
-.toast-message a.btn.btn-license-warning:hover {
-    opacity: 0.75;
+.toast-message a.btn.btn-license-warning:hover, .toast-error a.btn.btn-default:hover {
+    opacity: 0.85;
+}
+
+.toast-error a.btn.btn-default {
+    color: #bd362f;
+    padding-right: 20px;
+    padding-left: 20px;
+    border: none;
+    margin-top: 16px;
 }
 
 .toast-message a.btn.btn-license-warning-light {
