@@ -1864,7 +1864,6 @@ hr.top-separator {
 }
 
 .btn-default {
-    margin-top: 25px;
     padding: 8px 16px;
 }
 
@@ -2739,4 +2738,8 @@ span.connection-failed, span.connection-failed i, .failed-validation, .failed-va
 
 span.auxilliary-label {
     color: #aaa;
+}
+
+.btn-connection-test {
+    margin-top: 25px;
 }

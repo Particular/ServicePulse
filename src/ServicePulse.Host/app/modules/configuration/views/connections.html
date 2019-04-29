@@ -32,7 +32,7 @@
                                 </div>
 
                                 <div class="col-sm-5 no-side-padding">
-                                    <button class="btn btn-default btn-secondary" ng-class="{ disabled: !vm.configuredServiceControlUrl }" type="button"
+                                    <button class="btn btn-default btn-secondary btn-connection-test" ng-class="{ disabled: !vm.configuredServiceControlUrl }" type="button"
                                         ng-click="vm.testServiceControlUrl()">Test</button>
                                     <span class="connection-test connection-testing"
                                         ng-show="vm.testingServiceControl"><i
@@ -58,7 +58,7 @@
                                 </div>
 
                                 <div class="col-sm-5 no-side-padding">
-                                    <button class="btn btn-default btn-secondary" ng-class="{ disabled: !vm.configuredMonitoringUrl }" type="button"
+                                    <button class="btn btn-default btn-secondary btn-connection-test" ng-class="{ disabled: !vm.configuredMonitoringUrl }" type="button"
                                         ng-click="vm.testMonitoringUrl()">Test</button>
                                     <span class="connection-test connection-testing" ng-show="vm.testingMonitoring"><i
                                             class="glyphicon glyphicon-refresh rotate"></i> Testing</span>
