@@ -20,9 +20,9 @@
             string directoryPath = args.OutputPath;
             var assembly = Assembly.GetExecutingAssembly();
 
-            using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\app.constants.js"))
+            using (var resourceStream = assembly.GetManifestResourceStream(@"app\js\config\app.constants.js"))
             {
-                var destinationPath = Path.Combine(directoryPath, "js\\app.constants.js");
+                var destinationPath = Path.Combine(directoryPath, "js\\config\\app.constants.js");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationPath));
 
@@ -43,21 +43,21 @@
         
         public static void UpdateConfig(string directoryPath, string serviceControlUrl)
         {
-            var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
+            var appJsPath = Path.Combine(directoryPath, "js/config/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
             File.WriteAllText(appJsPath, Regex.Replace(appJsCode, @"(service_control_url\s*\:\s*['""])(.*?)(['""])", "$1" + serviceControlUrl + "$3"));
         }
 
         public static void UpdateMonitoringConfig(string directoryPath, string serviceControlMonitoringUrl)
         {
-            var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
+            var appJsPath = Path.Combine(directoryPath, "js/config/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
             File.WriteAllText(appJsPath, Regex.Replace(appJsCode, @"(monitoring_urls\s*\:\s*[\s*['""]*)(.*?)(['""]])", "$1" + serviceControlMonitoringUrl + "$3"));
         }
 
         public static void UpdateVersion(string directoryPath)
         {
-            var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");
+            var appJsPath = Path.Combine(directoryPath, "js/config/app.constants.js");
             var appJsCode = File.ReadAllText(appJsPath);
             var updatedContent = Regex.Replace(appJsCode, @"(constant\(\s*'version'\s*,\s*')(.*?)(')", "${1}" + GetFileVersion() + "$3");
             File.WriteAllText(appJsPath, updatedContent);
