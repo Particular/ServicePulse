@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\ServicePulse.Host\app\js\app.constants.js" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\ServicePulse.Host\app\js\config\app.constants.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
