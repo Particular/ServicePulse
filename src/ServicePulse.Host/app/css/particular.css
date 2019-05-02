@@ -2700,7 +2700,7 @@ form .connection .form-group {
 
 form .connection .form-group input {
     font-size: 16px;
-    padding: 18px 12px;
+    height: 44px;
 }
 
 button[ng-click="vm.save()"] {
@@ -2742,4 +2742,6 @@ span.auxilliary-label {
 
 .btn-connection-test {
     margin-top: 25px;
+    padding-top: 11px;
+    padding-bottom: 11px;
 }
