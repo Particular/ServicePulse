@@ -63,6 +63,8 @@
                             toastService.showError('Could not connect to ServiceControl. <a class="btn btn-default" href="#/configuration/connections">View connection settings</a>', true, false);
                         }
                     });
+
+                notifier.notify('SignalREvent', 'SignalR starting');
             }
 
 

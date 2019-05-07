@@ -172,6 +172,10 @@
             logit(event, data);
 
             switch(data) {
+                case 'SignalR starting':
+                    $scope.isSCConnected = false;
+                    $scope.isSCConnecting = true;
+                    break;
                 case 'SignalR started':
                     $scope.isSCConnected = true;
                     $scope.isSCConnecting = false;

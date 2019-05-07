@@ -26,7 +26,7 @@
 
                                 <div class="col-sm-7 form-group">
                                     <label for="serviceControlUrl">CONNECTION URL<span
-                                            ng-show="!connectionsStatus.isSCConnected" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span></label>
+                                            ng-show="vm.unableToConnectToServiceControl" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span></label>
                                     <input type="text" id="serviceControlUrl" name="serviceControlUrl"
                                         ng-model="vm.configuredServiceControlUrl" class="form-control" style="color: #000;" required />
                                 </div>
@@ -51,7 +51,7 @@
                                 <h3>ServiceControl Monitoring</h3>
                                 <div class="col-sm-7 form-group">
                                     <label for="monitoringUrl">CONNECTION URL <span class="auxilliary-label">(OPTIONAL)</span><span
-                                        ng-show="isMonitoringEnabled && !connectionsStatus.isMonitoringConnected" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span>
+                                        ng-show="vm.unableToConnectToMonitoring" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span>
                                         </label>
                                     <input type="text" id="monitoringUrl" name="monitoringUrl"
                                         ng-model="vm.configuredMonitoringUrl" class="form-control" required />

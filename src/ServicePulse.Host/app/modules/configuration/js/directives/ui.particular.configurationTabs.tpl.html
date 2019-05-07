@@ -14,7 +14,7 @@
                     ({{counters.redirects | number}})</a></h5>
             <h5 ng-class="{ active: isActive('/configuration/connections') }" ng-show="!isExpired"><a
                     href="#/configuration/connections">Connections
-                    <span ng-show="!connectionsStatus.isSCConnected || !connectionsStatus.isMonitoringConnected"> <i
+                    <span ng-show="unableToConnectToServiceControl || unableToConnectToMonitoring"> <i
                             class="fa fa-exclamation-triangle"></i></span></a>
             </h5>
         </div>

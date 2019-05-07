@@ -2,19 +2,39 @@
     'use strict';
 
     function controller(
+        $scope,
         connectionsManager,
         $http,
+        notifyService,
         connectionsStatus) {
+
         var vm = this;
+        var notifier = notifyService();
 
         var initialServiceControlUrl = connectionsManager.getServiceControlUrl();
         var initialMonitoringUrl = connectionsManager.getMonitoringUrl();
+        var isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
 
         vm.loadingData = false;
-        vm.connectionsStatus = connectionsStatus;
         vm.configuredServiceControlUrl = initialServiceControlUrl;
         vm.configuredMonitoringUrl = initialMonitoringUrl;
-        vm.isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
+
+        vm.unableToConnectToServiceControl = undefined;
+        vm.unableToConnectToMonitoring = undefined;
+        var evalConnectionsStatus = function(){
+            if(connectionsStatus.isSCConnecting){
+                vm.unableToConnectToServiceControl = false;
+            }else{
+                vm.unableToConnectToServiceControl = !connectionsStatus.isSCConnected;
+            }
+            vm.unableToConnectToMonitoring = isMonitoringEnabled && !connectionsStatus.isMonitoringConnected;
+        }
+
+        notifier.subscribe($scope, (event, data) => {
+            evalConnectionsStatus();
+        }, 'ConnectionsStatusChanged');
+
+        evalConnectionsStatus();
 
         vm.testServiceControlUrl = () => {
             if (vm.configuredServiceControlUrl) {
@@ -48,8 +68,10 @@
     }
 
     controller.$inject = [
+        '$scope',
         'connectionsManager',
         '$http',
+        'notifyService',
         'connectionsStatus',
     ];
 
