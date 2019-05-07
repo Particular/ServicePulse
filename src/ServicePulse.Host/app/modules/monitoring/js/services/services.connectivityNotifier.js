@@ -6,7 +6,8 @@
 
         var notifier = notifyService();
         var mu = connectionsManager.getMonitoringUrl();
-        var isConnected = true;
+        var isConnected = false;
+        var isConnecting = false;
         var connectivitySource = new Rx.Subject();
         var shouldShowFailedMessage = true;
 
@@ -21,7 +22,8 @@
                 }
             }
             isConnected = false;
-            emitChange(isConnected);
+            isConnecting = false;
+            emitChange();
         }
 
         function reportSuccessfulConnection() {
@@ -31,15 +33,26 @@
                 shouldShowFailedMessage = true;
             }
             isConnected = true;
-            emitChange(isConnected);
+            isConnecting = false;
+            emitChange();
         }
 
-        function emitChange(connected) {
-            var result = connected;
+        function reportConnecting(){
+            isConnecting = true;
+            emitChange();
+        }
+
+        function emitChange() {
+            var result = {
+                isConnected: isConnected,
+                isConnecting: isConnecting
+            };
+
             connectivitySource.onNext(result);
 
             notifier.notify('MonitoringConnectionStatusChanged', {
-                isMonitoringConnected : connected
+                isMonitoringConnected : isConnected,
+                isMonitoringConnecting : isConnecting
             });
         };
 
@@ -48,6 +61,7 @@
         }
 
         var service = {
+            reportConnecting: reportConnecting,
             reportFailedConnection: reportFailedConnection,
             reportSuccessfulConnection: reportSuccessfulConnection,
             getConnectionStatusSource: getConnectionStatusSource,

@@ -6,6 +6,8 @@
     function controller($scope, $location, redirectService, notifyService, sharedDataService, licenseService, licenseNotifierService, connectionsStatus, connectionsManager) {
         var notifier = notifyService();
 
+        var isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
+
         $scope.isActive = (viewLocation) => viewLocation === $location.path();
         
         $scope.connectionsStatus = connectionsStatus;
@@ -18,13 +20,20 @@
             }else{
                 $scope.unableToConnectToServiceControl = !connectionsStatus.isSCConnected;
             }
-            $scope.unableToConnectToMonitoring = connectionsManager.getIsMonitoringEnabled() && !connectionsStatus.isMonitoringConnected;
+            
+            if(!isMonitoringEnabled || connectionsStatus.isMonitoringConnecting || connectionsStatus.isMonitoringConnecting === undefined){
+                $scope.unableToConnectToMonitoring = false;
+            }else{
+                $scope.unableToConnectToMonitoring = !connectionsStatus.isMonitoringConnected;
+            }
         }
 
         notifier.subscribe($scope, (event, data) => {
             evalConnectionsStatus();
         }, 'ConnectionsStatusChanged');
         
+        evalConnectionsStatus();
+
         var stats = sharedDataService.getstats();
 
         $scope.counters = {

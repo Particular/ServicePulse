@@ -19,15 +19,21 @@
         vm.configuredServiceControlUrl = initialServiceControlUrl;
         vm.configuredMonitoringUrl = initialMonitoringUrl;
 
-        vm.unableToConnectToServiceControl = undefined;
-        vm.unableToConnectToMonitoring = undefined;
+        vm.unableToConnectToServiceControl = false;
+        vm.unableToConnectToMonitoring = false;
+        
         var evalConnectionsStatus = function(){
             if(connectionsStatus.isSCConnecting){
                 vm.unableToConnectToServiceControl = false;
             }else{
                 vm.unableToConnectToServiceControl = !connectionsStatus.isSCConnected;
             }
-            vm.unableToConnectToMonitoring = isMonitoringEnabled && !connectionsStatus.isMonitoringConnected;
+
+            if(!isMonitoringEnabled || connectionsStatus.isMonitoringConnecting || connectionsStatus.isMonitoringConnecting === undefined){
+                vm.unableToConnectToMonitoring = false;
+            }else{
+                vm.unableToConnectToMonitoring = !connectionsStatus.isMonitoringConnected;
+            }
         }
 
         notifier.subscribe($scope, (event, data) => {

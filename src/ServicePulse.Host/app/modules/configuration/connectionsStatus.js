@@ -19,8 +19,12 @@ class ConnectionsStatus {
         }, 'ServiceControlConnectionStatusChanged');
 
         notifier.subscribe($rootScope, (event, data) => {
-            if(data.isMonitoringConnected !== this.isMonitoringConnected){
+            if(data.isMonitoringConnected !== this.isMonitoringConnected
+                || data.isMonitoringConnecting !== this.isMonitoringConnecting){
+
                 this.isMonitoringConnected = data.isMonitoringConnected;
+                this.isMonitoringConnecting = data.isMonitoringConnecting;
+                
                 notifier.notify('ConnectionsStatusChanged', { status: this });
             }
         }, 'MonitoringConnectionStatusChanged');

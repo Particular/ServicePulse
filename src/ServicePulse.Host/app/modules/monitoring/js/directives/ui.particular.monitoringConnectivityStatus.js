@@ -4,11 +4,17 @@
 
 
     function controller($scope, connectivityNotifier, monitoringService, $interval, connectionsManager) {
-        $scope.isSCMonitoringConnecting = true;
+        
+        $scope.isSCMonitoringConnecting= connectionsManager.getIsMonitoringEnabled()
+        
+        if($scope.isSCMonitoringConnecting){
+            connectivityNotifier.reportConnecting();
+        }
+
         $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
         connectivityNotifier.getConnectionStatusSource().subscribe(value => {
-            $scope.isSCMonitoringConnected = value;
-            $scope.isSCMonitoringConnecting = false;
+            $scope.isSCMonitoringConnected = value.isConnected;
+            $scope.isSCMonitoringConnecting = value.isConnecting;
         });
 
         var scMonitoringConnectionPing = $interval(function () {
