@@ -6,7 +6,8 @@
         connectionsManager,
         $http,
         notifyService,
-        connectionsStatus) {
+        connectionsStatus,
+        uri) {
 
         var vm = this;
         var notifier = notifyService();
@@ -58,7 +59,13 @@
         vm.testMonitoringUrl = () => {
             if (vm.configuredMonitoringUrl) {
                 vm.testingMonitoring = true;
-                $http.get(vm.configuredMonitoringUrl).then(() => {
+                /*
+                Monitoring root URL doesn't support CORS, 
+                so to test connectivity we need to hit one
+                of the Monitoring API URLs that are CORS enabled.
+                */
+                var urlToTest = uri.join(vm.configuredMonitoringUrl, '/monitored-endpoints');
+                $http.get(urlToTest).then(() => {
                     vm.monitoringValid = true;
                 }, (error) => {
                     vm.monitoringValid = false;
@@ -79,6 +86,7 @@
         '$http',
         'notifyService',
         'connectionsStatus',
+        'uri',
     ];
 
     angular.module('configuration.connections')
