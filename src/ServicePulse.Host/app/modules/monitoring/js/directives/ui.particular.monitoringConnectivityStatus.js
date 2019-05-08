@@ -17,11 +17,22 @@
             $scope.isSCMonitoringConnecting = value.isConnecting;
         });
 
+        var lastReport = undefined;
         var scMonitoringConnectionPing = $interval(function () {
             var promise = monitoringService.getMonitoredEndpoints().then(r => {
+                if(lastReport === 'success'){
+                    return;
+                }
+
                 connectivityNotifier.reportSuccessfulConnection();
+                lastReport = 'success';
             }, e => {
+                if(lastReport === 'failed'){
+                    return;
+                }
+
                 connectivityNotifier.reportFailedConnection();
+                lastReport = 'failed';
             });
         }, 10000);
 
