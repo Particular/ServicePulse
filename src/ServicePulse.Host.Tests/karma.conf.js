@@ -8,7 +8,7 @@ module.exports = function(config) {
             '../../ServicePulse.Host.Tests/tests/js/angular-mocks.js',
             './js/app.js',            
             './js/**/*.html',
-            './js/app.constants.js',
+            './js/config/app.constants.js',
             './js/**/*.module.js',
             './js/**/*.tabset.js',
             './js/**/*.js',            

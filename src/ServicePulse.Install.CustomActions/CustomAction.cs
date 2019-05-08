@@ -225,7 +225,7 @@ namespace ServicePulse.Install.CustomActions
                 var configFiles = new[]
                 {
                     @"app\config.js",   /* Pre SC 1.3 path */
-                    @"app\js\app.constants.js"  /* Post SC 1.3 path */
+                    @"app\js\config\app.constants.js"  /* Post SC 1.3 path */
                 };
 
                 string uri = null, monitoringUrl = null;
