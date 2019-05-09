@@ -22,17 +22,17 @@
 
         vm.unableToConnectToServiceControl = false;
         vm.unableToConnectToMonitoring = false;
-        
-        var evalConnectionsStatus = function(){
-            if(connectionsStatus.isSCConnecting){
+
+        var evalConnectionsStatus = function () {
+            if (connectionsStatus.isSCConnecting) {
                 vm.unableToConnectToServiceControl = false;
-            }else{
+            } else {
                 vm.unableToConnectToServiceControl = !connectionsStatus.isSCConnected;
             }
 
-            if(!isMonitoringEnabled || connectionsStatus.isMonitoringConnecting || connectionsStatus.isMonitoringConnecting === undefined){
+            if (!isMonitoringEnabled || connectionsStatus.isMonitoringConnecting || connectionsStatus.isMonitoringConnecting === undefined) {
                 vm.unableToConnectToMonitoring = false;
-            }else{
+            } else {
                 vm.unableToConnectToMonitoring = !connectionsStatus.isMonitoringConnected;
             }
         }
@@ -43,8 +43,18 @@
 
         evalConnectionsStatus();
 
+        function prependSchemeIfMissing(userUrl) {
+            var url = userUrl.toLowerCase();
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+                return userUrl;
+            }
+
+            return 'http://' + userUrl;
+        }
+
         vm.testServiceControlUrl = () => {
             if (vm.configuredServiceControlUrl) {
+                vm.configuredServiceControlUrl = prependSchemeIfMissing(vm.configuredServiceControlUrl);
                 vm.testingServiceControl = true;
                 $http.get(vm.configuredServiceControlUrl).then(() => {
                     vm.serviceControlValid = true;
@@ -58,6 +68,7 @@
 
         vm.testMonitoringUrl = () => {
             if (vm.configuredMonitoringUrl) {
+                vm.configuredMonitoringUrl = prependSchemeIfMissing(vm.configuredMonitoringUrl);
                 vm.testingMonitoring = true;
                 /*
                 Monitoring root URL doesn't support CORS, 
