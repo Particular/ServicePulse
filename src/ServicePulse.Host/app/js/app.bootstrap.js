@@ -1,6 +1,6 @@
 ; (function (window, angular, $, undefined) {
     'use strict';
-        
+
     var serviceControlApp = angular.module('sc');
 
     var injector = angular.injector(['ng']);
