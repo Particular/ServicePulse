@@ -41,9 +41,9 @@
         $scope.isSCConnecting = true;
 
         $scope.$on('$locationChangeStart', function(event, next, current) {
-            if( !$scope.isSCConnected && !$scope.scConnectedAtLeastOnce){
-                
+            if(!$scope.isSCConnected && !$scope.scConnectedAtLeastOnce) {
                 var routeData = $route.routes[$location.path()].data;
+
                 if(routeData && routeData.redirectWhenNotConnected){
                     $log.debug('not connected, and never connected once. Current route is a configuration route that requires redirect to: ', routeData.redirectWhenNotConnected);
                     event.preventDefault();
@@ -116,19 +116,18 @@
             $log.debug(data);
         }
 
-        notifier.subscribe($scope, function(event, data){
-
-            if(connectionsManager.getIsMonitoringEnabled()){
-                if((data.status.isSCConnected || data.status.isSCConnecting) && (data.status.isMonitoringConnected || data.status.isMonitoringConnecting || data.status.isMonitoringConnecting === undefined)){
+        notifier.subscribe($scope, function(event, data) {
+            if (connectionsManager.getIsMonitoringEnabled()) {
+                if ((data.status.isSCConnected || data.status.isSCConnecting) && (data.status.isMonitoringConnected || data.status.isMonitoringConnecting || data.status.isMonitoringConnecting === undefined)){
                     $scope.connectionswarning = undefined;
-                }else if(!data.status.isSCConnected || !data.status.isMonitoringConnected){
-                    $scope.connectionswarning = "danger";
+                } else if (!data.status.isSCConnected || !data.status.isMonitoringConnected) {
+                    $scope.connectionswarning = 'danger';
                 }
-            }else{
-                if(data.status.isSCConnected || data.status.isSCConnecting){
+            } else {
+                if (data.status.isSCConnected || data.status.isSCConnecting) {
                     $scope.connectionswarning = undefined;
-                }else if(!data.status.isSCConnected){
-                    $scope.connectionswarning = "danger";
+                } else if (!data.status.isSCConnected) {
+                    $scope.connectionswarning = 'danger';
                 }
             }
         }, 'ConnectionsStatusChanged');
@@ -206,16 +205,14 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            // if ($scope.isSCConnected) {
-            //     $scope.signalRConnectionErrorToast = toastService.showError(data);
-            // }
+            
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
 
             notifier.notify('ServiceControlConnectionStatusChanged', {
                 isSCConnected : $scope.isSCConnected,
-                isSCConnecting: $scope.isSCConnecting,
-                scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
+                isSCConnecting : $scope.isSCConnecting,
+                scConnectedAtLeastOnce : $scope.scConnectedAtLeastOnce
             });
         }, 'SignalRError');
 
