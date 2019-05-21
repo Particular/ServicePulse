@@ -6,9 +6,9 @@ class ConnectionsStatus {
         var notifier = notifyService();
 
         notifier.subscribe($rootScope, (event, data) => {
-            if(data.isSCConnected !== this.isSCConnected 
+            if (data.isSCConnected !== this.isSCConnected 
                 || data.isSCConnecting !== this.isSCConnecting 
-                || data.scConnectedAtLeastOnce !== this.scConnectedAtLeastOnce){
+                || data.scConnectedAtLeastOnce !== this.scConnectedAtLeastOnce) {
                 
                 this.isSCConnected = data.isSCConnected;
                 this.isSCConnecting = data.isSCConnecting;
@@ -19,8 +19,8 @@ class ConnectionsStatus {
         }, 'ServiceControlConnectionStatusChanged');
 
         notifier.subscribe($rootScope, (event, data) => {
-            if(data.isMonitoringConnected !== this.isMonitoringConnected
-                || data.isMonitoringConnecting !== this.isMonitoringConnecting){
+            if (data.isMonitoringConnected !== this.isMonitoringConnected
+                || data.isMonitoringConnecting !== this.isMonitoringConnecting) {
 
                 this.isMonitoringConnected = data.isMonitoringConnected;
                 this.isMonitoringConnecting = data.isMonitoringConnecting;
