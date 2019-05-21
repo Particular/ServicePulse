@@ -37,7 +37,7 @@
             emitChange();
         }
 
-        function reportConnecting(){
+        function reportConnecting() {
             isConnecting = true;
             emitChange();
         }
