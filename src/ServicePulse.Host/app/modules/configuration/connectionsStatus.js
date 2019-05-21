@@ -34,6 +34,6 @@ class ConnectionsStatus {
 angular.module('configuration')
     .service('connectionsStatus', ['notifyService', '$rootScope', function (notifyService, $rootScope) { 
         return new ConnectionsStatus(notifyService, $rootScope); 
-    }]).run(['connectionsStatus', function(connectionsStatus){
+    }]).run(['connectionsStatus', function(connectionsStatus) {
         //make sure the service is initialized as the app starts, otherwise it won't raise notifications unless it's required as dependency
     }]);
