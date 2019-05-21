@@ -118,7 +118,7 @@
 
         notifier.subscribe($scope, function(event, data) {
             if (connectionsManager.getIsMonitoringEnabled()) {
-                if ((data.status.isSCConnected || data.status.isSCConnecting) && (data.status.isMonitoringConnected || data.status.isMonitoringConnecting || data.status.isMonitoringConnecting === undefined)){
+                if ((data.status.isSCConnected || data.status.isSCConnecting) && (data.status.isMonitoringConnected || data.status.isMonitoringConnecting || data.status.isMonitoringConnecting === undefined)) {
                     $scope.connectionswarning = undefined;
                 } else if (!data.status.isSCConnected || !data.status.isMonitoringConnected) {
                     $scope.connectionswarning = 'danger';
