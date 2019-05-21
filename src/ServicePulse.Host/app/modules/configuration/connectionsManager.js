@@ -41,7 +41,7 @@ class ConnectionsManager {
     }
     
     getMonitoringUrl() {
-        if(this.getIsMonitoringEnabled()) {
+        if (this.getIsMonitoringEnabled()) {
             return this.monitoringUrl;
         }
         return null; 
