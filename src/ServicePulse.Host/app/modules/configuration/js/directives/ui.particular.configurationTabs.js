@@ -15,15 +15,15 @@
         $scope.unableToConnectToMonitoring = undefined;
 
         var evalConnectionsStatus = function(){
-            if(connectionsStatus.isSCConnecting){
+            if (connectionsStatus.isSCConnecting) {
                 $scope.unableToConnectToServiceControl = false;
-            }else{
+            } else {
                 $scope.unableToConnectToServiceControl = !connectionsStatus.isSCConnected;
             }
             
-            if(!isMonitoringEnabled || connectionsStatus.isMonitoringConnecting || connectionsStatus.isMonitoringConnecting === undefined){
+            if (!isMonitoringEnabled || connectionsStatus.isMonitoringConnecting || connectionsStatus.isMonitoringConnecting === undefined) {
                 $scope.unableToConnectToMonitoring = false;
-            }else{
+            } else {
                 $scope.unableToConnectToMonitoring = !connectionsStatus.isMonitoringConnected;
             }
         }
