@@ -4,10 +4,9 @@
 
 
     function controller($scope, connectivityNotifier, monitoringService, $interval, connectionsManager) {
+        $scope.isSCMonitoringConnecting = connectionsManager.getIsMonitoringEnabled()
         
-        $scope.isSCMonitoringConnecting= connectionsManager.getIsMonitoringEnabled()
-        
-        if($scope.isSCMonitoringConnecting){
+        if ($scope.isSCMonitoringConnecting) {
             connectivityNotifier.reportConnecting();
         }
 
