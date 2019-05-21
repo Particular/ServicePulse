@@ -14,7 +14,7 @@
         $scope.unableToConnectToServiceControl = undefined;
         $scope.unableToConnectToMonitoring = undefined;
 
-        var evalConnectionsStatus = function(){
+        var evalConnectionsStatus = function() {
             if (connectionsStatus.isSCConnecting) {
                 $scope.unableToConnectToServiceControl = false;
             } else {
