@@ -19,7 +19,6 @@ namespace ServicePulse.Host.Tests
         Regex version_regex = new Regex(@"(constant\s*\(\s*'version'\s*,\s*['""])(.*?)(['""])");
 
         [Test]
-        [Ignore("app.constant.js is no longer needed")]
         public void app_constants_js_validation()
         {
             var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app.constants.js");
