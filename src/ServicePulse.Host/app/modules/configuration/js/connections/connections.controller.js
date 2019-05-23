@@ -41,8 +41,6 @@
             evalConnectionsStatus();
         }, 'ConnectionsStatusChanged');
 
-        evalConnectionsStatus();
-
         function prependSchemeIfMissing(userUrl) {
             var url = userUrl.toLowerCase();
             if (url.startsWith('http://') || url.startsWith('https://')) {
@@ -89,6 +87,8 @@
         vm.save = () => {
             connectionsManager.updateConnections(vm.configuredServiceControlUrl, vm.configuredMonitoringUrl);
         };
+
+        evalConnectionsStatus();
     }
 
     controller.$inject = [
