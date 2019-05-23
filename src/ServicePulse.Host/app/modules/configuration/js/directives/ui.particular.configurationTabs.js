@@ -31,8 +31,6 @@
         notifier.subscribe($scope, (event, data) => {
             evalConnectionsStatus();
         }, 'ConnectionsStatusChanged');
-        
-        evalConnectionsStatus();
 
         var stats = sharedDataService.getstats();
 
@@ -66,6 +64,8 @@
                 $scope.licensewarning = 'danger';
             }
         });
+
+        evalConnectionsStatus();
     }
     
     controller.$inject = ['$scope', 
