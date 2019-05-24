@@ -36,7 +36,11 @@
             $rootScope.$log = $log; 
         }]);
 
-    angular.module('sc').value('$jquery', $);
+    angular.module('sc')
+        .value('$jquery', $)
+        .constant('version', window.defaultConfig.version)
+        .constant('showPendingRetry', false)
+        .constant('scConfig', window.defaultConfig);
 
     angular.module('sc').config(['$locationProvider', function ($locationProvider) {
         $locationProvider.hashPrefix('');
