@@ -13,7 +13,8 @@
         archivedMessageService,
         notifyService,
         sharedDataService,
-        $filter) {
+        $filter,
+        messageEditorModalService) {
 
         var vm = this;
         var notifier = notifyService();
@@ -118,6 +119,11 @@
                 });
         };
 
+        vm.editMessage = function(){
+            var messageId = vm.message.message_id;
+            messageEditorModalService.displayEditMessageModal(messageId);
+        };
+
         function updateMessageDeleteDate(message, errorRetentionPeriod) {
             var countdown = moment(message.last_modified).add(errorRetentionPeriod, 'hours');
             message.delete_soon = countdown < moment();
@@ -179,7 +185,8 @@
         'archivedMessageService',
         'notifyService',
         'sharedDataService',
-        '$filter'
+        '$filter',
+        'messageEditorModalService',
     ];
 
     angular.module("sc")
