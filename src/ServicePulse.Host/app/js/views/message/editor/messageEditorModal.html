@@ -2,7 +2,32 @@
     <h3 class="modal-title">Message editor</h3>
 </div>
 <div class="modal-body">
-            
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="row">
+                <div isolate-click class="col-sm-12 no-side-padding">
+                    <div class="tabs msg-tabs">
+                        <h5 ng-class="{active: message.panel === 0}" ng-click="togglePanel(message, 0)"><a>Headers</a></h5>
+                        <h5 ng-class="{active: message.panel === 1}" ng-click="togglePanel(message, 1)"><a>Message body</a></h5>
+                    </div>
+
+                    <table isolate-click class="table" ng-show="message.panel === 0 && message.messageHeaders">
+                        <tbody>
+                            <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
+                                <td nowrap="nowrap">{{header.key}}</td>
+                                <td>
+                                    <pre>{{header.value}}</pre>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div isolate-click class="alert alert-info" ng-show="message.panel === 0 && message.headersUnavailable">{{message.headersUnavailable}}</div>
+                    <pre isolate-click ng-show="message.panel === 1 && message.messageBody">{{message.messageBody}}</pre>
+                    <div isolate-click class="alert alert-info" ng-show="message.panel === 1 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
+                </div>
+            </div>
+        </div>
+    </div>        
 </div>
 <div class="modal-footer">
     <button type="submit" class="btn btn-primary" ng-click="">Edit & retry</button>
