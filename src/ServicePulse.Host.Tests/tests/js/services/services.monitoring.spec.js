@@ -22,10 +22,10 @@
 
     var monitoringService, $httpBackend, scConfig;
 
-    beforeEach(inject(function (_monitoringService_, _$httpBackend_, _scConfig_) {
+    beforeEach(inject(function (_monitoringService_, _$httpBackend_) {
         monitoringService = _monitoringService_;
         $httpBackend = _$httpBackend_;
-        scConfig = _scConfig_;
+        scConfig = window.defaultConfig;
     }));
 
     it('should push endpoints retrieved from monitoring server', function (done) {
@@ -37,7 +37,7 @@
         var subscription = monitoringService.createEndpointsSource(5).subscribe(function (response) {
             monitoredEndpoints.push(response);
 
-            if (monitoredEndpoints.length == 2) {
+            if (monitoredEndpoints.length === 2) {
                 expect(monitoredEndpoints[0].name).toEqual("Samples.Metrics.Tracing.Endpoint1");
                 expect(monitoredEndpoints[0].data.timestamps).toEqual([]);
                 expect(monitoredEndpoints[0].data.criticalTime).toEqual([]);
