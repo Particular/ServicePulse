@@ -120,7 +120,7 @@
         };
 
         vm.editMessage = function(){
-            var messageId = vm.message.message_id;
+            var messageId = vm.message.id;
             messageEditorModalService.displayEditMessageModal(messageId);
         };
 
