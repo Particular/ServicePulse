@@ -1,13 +1,10 @@
-﻿using System.Reflection;
-
-namespace ServicePulse.Host.Tests
+﻿namespace ServicePulse.Host.Tests
 {
+    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    
     using System.Text.RegularExpressions;
-    using NUnit.Framework;
 
     [TestFixture]
     public class VerifyAppConstantsJSTextReplacement
@@ -16,14 +13,14 @@ namespace ServicePulse.Host.Tests
         // this both user configurable and updated during installation
 
         Regex sc_url_regex = new Regex(@"(service_control_url\s*\:\s*['""])(.*?)(['""])");
-        Regex version_regex = new Regex(@"(constant\s*\(\s*'version'\s*,\s*['""])(.*?)(['""])");
+        Regex version_regex = new Regex(@"(version\s*\:\s*['""])(.*?)(['""])");
 
         [Test]
         public void app_constants_js_validation()
         {
             var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app.constants.js");
             Assert.IsTrue(File.Exists(pathToConfig), "app.constants.js does not exist - this will break installation code");
-            
+
             var config = File.ReadAllText(pathToConfig);
             var matchUrl = sc_url_regex.Match(config);
             Assert.IsTrue(matchUrl.Success, "regex failed to match app.constant.js for SC URI update");
@@ -37,35 +34,71 @@ namespace ServicePulse.Host.Tests
         [Test]
         public void replace_version_regex_tests()
         {
-            var configSnippets = new Dictionary<string, string>
+            var configSnippets = new Dictionary<string, (string ConfigSnippet, Regex VersionRegex)>()
             {
-                 {"1.3.0", @"angular.module('sc')
-                    .constant('version', '1.3.0')
-                    .constant('scConfig';"},
-                 {"1.3.0-beta1", @"angular.module('sc')
-                    .constant ( 'version' , '1.3.0-beta1')
-                    .constant('scConfig';"},
-                 {"", @"angular.module('sc')
-                    .constant('version' , '' )
-                    .constant('scConfig';"}
+                {
+                    "1.3.0",
+                    (
+                        ConfigSnippet: @"angular.module('sc')
+                            .constant('version', '1.3.0')
+                            .constant('scConfig';",
+                        VersionRegex: new Regex(@"(constant\s*\(\s*'version'\s*,\s*['""])(.*?)(['""])")
+                    )
+                },
+                {
+                    "1.3.0-beta1",
+                    (
+                        ConfigSnippet: @"angular.module('sc')
+                            .constant ( 'version' , '1.3.0-beta1')
+                            .constant('scConfig';",
+                        VersionRegex: new Regex(@"(constant\s*\(\s*'version'\s*,\s*['""])(.*?)(['""])")
+                    )
+                },
+                {
+                    "",
+                    (
+                        ConfigSnippet: @"angular.module('sc')
+                            .constant('version' , '' )
+                            .constant('scConfig';",
+                        VersionRegex: new Regex(@"(constant\s*\(\s*'version'\s*,\s*['""])(.*?)(['""])")
+                    )
+                },
+                {
+                    "1.20.0",
+                    (
+                        ConfigSnippet: @"window.defaultConfig = {
+                                version: '1.20.0',
+                                service_control_url: '
+                            };",
+                        VersionRegex: new Regex(@"(version\s*\:\s*['""])(.*?)(['""])")
+                    )
+                },
             };
 
             foreach (var config in configSnippets)
             {
                 var expectedResult = config.Key;
-                var text = config.Value;
+                var text = config.Value.ConfigSnippet;
 
-                var match = version_regex.Match(text);
+                var match = config.Value.VersionRegex.Match(text);
                 Assert.IsTrue(match.Success, "regex failed to match version string");
                 Assert.IsTrue(match.Groups[2].Value.Equals(expectedResult), string.Format("Version regex did not return expected value which was {0}", expectedResult));
             }
         }
-        
+
         [Test]
-        public void test_regex_match_against_config_variants ()
+        public void test_regex_match_against_config_variants()
         {
             var configVariations = new[]
             {
+                // Standard 1.20.0 config            
+                @"window.defaultConfig = {
+                    default_route: '/dashboard',
+                    version: '1.20.0',
+                    service_control_url: 'http://localhost:33333/api/',
+                    monitoring_urls: ['http://localhost:33633/']
+                };
+                ",
                 // Standard 1.3 config            
                 @"angular.module('sc')
                     .constant('version', '1.3.0')
