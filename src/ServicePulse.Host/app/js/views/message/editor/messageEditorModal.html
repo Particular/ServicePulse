@@ -16,13 +16,25 @@
                             <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
                                 <td nowrap="nowrap">{{header.key}}</td>
                                 <td>
-                                    <pre>{{header.value}}</pre>
+                                    <input isolate-click
+                                        edit-on-focus 
+                                        class="form-control"
+                                        autocomplete="off"
+                                        type="text"
+                                        ng-readonly="true"
+                                        ng-model="header.value" />
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                     <div isolate-click class="alert alert-info" ng-show="message.panel === 0 && message.headersUnavailable">{{message.headersUnavailable}}</div>
-                    <pre isolate-click ng-show="message.panel === 1 && message.messageBody">{{message.messageBody}}</pre>
+                    <textarea isolate-click
+                        edit-on-focus
+                        class="form-control"
+                        ng-show="message.panel === 1 && message.messageBody"
+                        ng-model="message.messageBody"
+                        ng-readonly="true">
+                    </textarea>
                     <div isolate-click class="alert alert-info" ng-show="message.panel === 1 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
                 </div>
             </div>
