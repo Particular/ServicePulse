@@ -8,7 +8,12 @@
         serviceControlService,
         moment,
         $filter) {
-        console.debug('messageId: ', messageId);
+
+        var sensitiveHeaders = [];
+        var lockedHeaders = [];
+        var originalMessageBody = undefined;
+        var originalMessageHeaders = undefined;
+        $scope.message = undefined;
 
         function prettifyText(text, contentType) {
             if (contentType === 'application/json') {
@@ -42,6 +47,7 @@
             if (!angular.isDefined(message.messageHeaders)) {
                 serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
                     message.messageHeaders = msg.data[0].headers;
+                    angular.merge(originalMessageHeaders, message.messageHeaders);
                 }, function () {
                     message.headersUnavailable = "message headers unavailable";
                 });
@@ -53,6 +59,7 @@
                     message.bodyContentType = bodyContentType;
                     message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
                     message.messageBody = prettifyText(msg.data, bodyContentType);
+                    angular.merge(originalMessageBody, message.messageBody);
                 }, function () {
                     message.bodyUnavailable = "message body unavailable";
                 });
@@ -62,11 +69,26 @@
             return false;
         };
 
+        $scope.isBodyChanged = function(){
+            return $scope.message.messageBody !== originalMessageBody;
+        }
+
+        $scope.isHeaderChanged = function(key){
+            return $scope.message.messageHeaders[key] !== originalMessageHeaders[key];
+        }
+
+        $scope.isHeaderLocked = function(key){
+            return lockedHeaders.includes(key);
+        }
+
+        $scope.isHeaderSensitive = function(key){
+            return sensitiveHeaders.includes(key);
+        }
+
         function loadMessageById (id) {
             return serviceControlService.getFailedMessageById(id)
                 .then(function (response) {
-                    var message = response.data;
-                    $scope.message = message;
+                    $scope.message = response.data;
                 },
                 function (response) {
                     if (response.status === 404) {
@@ -76,8 +98,6 @@
                     }
                 });
         };
-
-        $scope.message = null;
 
         $scope.cancel = function() {
             $uibModalInstance.dismiss('cancel');
