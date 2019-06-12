@@ -97,6 +97,13 @@
             return $http.get(url);
         }
 
+        function getEditAndRetryConfig() {
+            var url = uri.join(scu,'edit', 'config');
+            return $http.get(url).then(function(response) {
+                return response.data;
+            });
+        }
+
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
             var url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
             return $http.get(url).then(function(response) {
