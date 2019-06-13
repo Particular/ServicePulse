@@ -1,5 +1,5 @@
 assembly-versioning-scheme: Major
-next-version: 1.19
+next-version: 1.20
 branches:
   release:
     tag: rc

@@ -1,0 +1,88 @@
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Configuration</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <section name="connections">
+
+        <configuration-tabs></configuration-tabs>
+
+        <div class="col-sm-12">
+            <div class="box">
+                <div class="row">
+                    <div class="col-sm-12">
+
+                        <form novalidate>
+                            <div class="row connection">
+                                <h3>ServiceControl</h3>
+
+                                <div class="col-sm-7 form-group">
+                                    <label for="serviceControlUrl">CONNECTION URL<span
+                                            ng-show="vm.unableToConnectToServiceControl" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span></label>
+                                    <input type="text" id="serviceControlUrl" name="serviceControlUrl"
+                                        ng-model="vm.configuredServiceControlUrl" class="form-control" style="color: #000;" required />
+                                </div>
+
+                                <div class="col-sm-5 no-side-padding">
+                                    <button class="btn btn-default btn-secondary btn-connection-test" ng-class="{ disabled: !vm.configuredServiceControlUrl }" type="button"
+                                        ng-click="vm.testServiceControlUrl()">Test</button>
+                                    <span class="connection-test connection-testing"
+                                        ng-show="vm.testingServiceControl"><i
+                                            class="glyphicon glyphicon-refresh rotate"></i> Testing</span>
+                                    <span class="connection-test connection-successful"
+                                        ng-show="vm.serviceControlValid == true && !vm.testingServiceControl"><i
+                                            class="fa fa-check"></i> Connection successful</span>
+                                    <span class="connection-test connection-failed"
+                                        ng-show="vm.serviceControlValid == false && !vm.testingServiceControl"><i
+                                            class="fa fa-exclamation-triangle"></i> Connection failed</span>
+                                </div>
+
+                            </div>
+
+                            <div class="row connection">
+                                <h3>ServiceControl Monitoring</h3>
+                                <div class="col-sm-7 form-group">
+                                    <label for="monitoringUrl">CONNECTION URL <span class="auxilliary-label">(OPTIONAL)</span><span
+                                        ng-show="vm.unableToConnectToMonitoring" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span>
+                                        </label>
+                                    <input type="text" id="monitoringUrl" name="monitoringUrl"
+                                        ng-model="vm.configuredMonitoringUrl" class="form-control" required />
+                                </div>
+
+                                <div class="col-sm-5 no-side-padding">
+                                    <button class="btn btn-default btn-secondary btn-connection-test" ng-class="{ disabled: !vm.configuredMonitoringUrl }" type="button"
+                                        ng-click="vm.testMonitoringUrl()">Test</button>
+                                    <span class="connection-test connection-testing" ng-show="vm.testingMonitoring"><i
+                                            class="glyphicon glyphicon-refresh rotate"></i> Testing</span>
+                                    <span class="connection-test connection-successful"
+                                        ng-show="vm.monitoringValid == true && !vm.testingMonitoring"><i
+                                            class="fa fa-check"></i> Connection successful</span>
+                                    <span class="connection-test connection-failed"
+                                        ng-show="vm.monitoringValid == false && !vm.testingMonitoring"><i
+                                            class="fa fa-exclamation-triangle"></i> Connection failed</span>
+                                </div>
+
+                            </div>
+
+                            <button class="btn btn-primary" type="button" ng-click="vm.save()">Save</button>
+                            <span class="connection-test connection-successful hide"><i class="fa fa-check"></i>
+                                Connection saved</span>
+                            <span class="connection-test connection-failed hide"><i
+                                    class="fa fa-exclamation-triangle"></i> Unable to save</span>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>

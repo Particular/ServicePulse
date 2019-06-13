@@ -3,14 +3,15 @@
         <div class="row">
             <span>
                 <product-version version="{{Version}}" scversion="{{SCVersion}}"></product-version>
-            </span><span>
+            </span>
+            <span>
                 <i class="fa fa-envelope fake-link"></i> <a href="mailto:support@particular.net" target="_blank">support@particular.net</a>
             </span>
             <span>
                 <i class="fa fa-external-link fake-link"></i> <a href="http://docs.particular.net/servicepulse" target="_blank">Documentation</a>
             </span>
             <div class="connectivity-status">
-                <div>
+                <div uib-tooltip="ServiceControl URL {{serviceControlUrl}}">
                     Service Control:
                     <span class="connected-status" ng-if="isSCConnected && !isSCConnecting">
                         <div class="fa pa-connection-success"></div> Connected
@@ -24,6 +25,6 @@
                 </div>
                 <monitoring-connectivity-status ng-if="isMonitoringEnabled"></monitoring-connectivity-status>
             </div>
+        </div>
     </div>
-  </div>
 </footer>

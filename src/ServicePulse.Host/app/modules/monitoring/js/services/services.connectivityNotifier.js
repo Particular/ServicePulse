@@ -2,45 +2,58 @@
 (function (window, angular, $, undefined) {
     'use strict';
 
-    function Service(toastService, scConfig) {
+    function Service(toastService, connectionsManager, notifyService) {
 
-        var isConnectedToSourceIndex = Array(scConfig.monitoring_urls.length).fill(true);
+        var notifier = notifyService();
+        var mu = connectionsManager.getMonitoringUrl();
+        var isConnected = false;
+        var isConnecting = false;
         var connectivitySource = new Rx.Subject();
         var shouldShowFailedMessage = true;
 
-        function reportFailedConnection(sourceIndex) {
+        function reportFailedConnection() {
 
-            if (isConnectedToSourceIndex[sourceIndex]) {
-                var message = 'Could not connect to the ServiceControl Monitoring service.';
-                if (scConfig.monitoring_urls.length > 1) {
-                    message = 'Could not connect to the ServiceControl Monitoring service at' + scConfig.monitoring_urls[sourceIndex] + '.';
-                }
+            if (isConnected) {
+                var message = 'Could not connect to the ServiceControl Monitoring service at ' + mu + '. <a class="btn btn-default" href="#/configuration/connections">View connection settings</a>';
                 console.log(message);
                 if (shouldShowFailedMessage) {
                     toastService.showError(message);
                     shouldShowFailedMessage = false;
                 }
             }
-            isConnectedToSourceIndex[sourceIndex] = false;
-            emitChange(isConnectedToSourceIndex);
+            isConnected = false;
+            isConnecting = false;
+            emitChange();
         }
 
-        function reportSuccessfulConnection(sourceIndex) {
-            if (!isConnectedToSourceIndex[sourceIndex]) {
-                var message = 'Connection to ServiceControl Monitoring service was successful.';
-                if (scConfig.monitoring_urls.length > 1) {
-                    message = 'Connection to ServiceControl Monitoring service was successful ' + scConfig.monitoring_urls[sourceIndex] +'.';
-                }
+        function reportSuccessfulConnection() {
+            if (!isConnected) {
+                var message = 'Connection to ServiceControl Monitoring service was successful ' + mu + '.';
                 console.log(message);
                 shouldShowFailedMessage = true;
             }
-            isConnectedToSourceIndex[sourceIndex] = true;
-            emitChange(isConnectedToSourceIndex);
+            isConnected = true;
+            isConnecting = false;
+            emitChange();
         }
 
-        function emitChange(connectedToSourceIndex) {
-            var result = connectedToSourceIndex.every(item => item);
+        function reportConnecting() {
+            isConnecting = true;
+            emitChange();
+        }
+
+        function emitChange() {
+            var result = {
+                isConnected: isConnected,
+                isConnecting: isConnecting
+            };
+
             connectivitySource.onNext(result);
+
+            notifier.notify('MonitoringConnectionStatusChanged', {
+                isMonitoringConnected : isConnected,
+                isMonitoringConnecting : isConnecting
+            });
         };
 
         function getConnectionStatusSource() {
@@ -48,6 +61,7 @@
         }
 
         var service = {
+            reportConnecting: reportConnecting,
             reportFailedConnection: reportFailedConnection,
             reportSuccessfulConnection: reportSuccessfulConnection,
             getConnectionStatusSource: getConnectionStatusSource,
@@ -57,7 +71,7 @@
         return service;
     }
 
-    Service.$inject = ['toastService', 'scConfig'];
+    Service.$inject = ['toastService', 'connectionsManager', 'notifyService'];
 
     angular.module('services.connectivityNotifier', ['sc'])
         .service('connectivityNotifier', Service);

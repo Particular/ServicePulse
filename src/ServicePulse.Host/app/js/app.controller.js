@@ -15,24 +15,42 @@
         signalRListener,
         notifyService,
         semverService,
-        scConfig,
+        connectionsManager,
         uriService,
         reindexingChecker,
         licenseNotifierService,
         licenseService,
-        license
+        license,
+        $route
     ) {
-        $scope.isMonitoringEnabled = scConfig.monitoring_urls && scConfig.monitoring_urls.reduce(function (currentlyEnabled, url) {
-            return currentlyEnabled || url;
-        }, false);
+        var notifier = notifyService();
+
+        var mu = connectionsManager.getMonitoringUrl();
+        var scu = connectionsManager.getServiceControlUrl();
+
+        $scope.isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
 
         $scope.loadingInitialData = true;
-        $scope.isRecoverabilityEnabled = scConfig.service_control_url;
+        $scope.scConnectedAtLeastOnce = false;
+        $scope.isRecoverabilityEnabled = scu !== null && scu !== undefined;
+        $scope.serviceControlUrl = scu;
 
         $scope.SCVersion = '';
         $scope.is_compatible_with_sc = true;
         $scope.Version = version;
         $scope.isSCConnecting = true;
+
+        $scope.$on('$locationChangeStart', function(event, next, current) {
+            if (!$scope.isSCConnected && !$scope.scConnectedAtLeastOnce) {
+                var routeData = $route.routes[$location.path()].data;
+
+                if (routeData && routeData.redirectWhenNotConnected) {
+                    $log.debug('not connected, and never connected once. Current route is a configuration route that requires redirect to: ', routeData.redirectWhenNotConnected);
+                    event.preventDefault();
+                    $location.path(routeData.redirectWhenNotConnected); 
+                }
+            }
+        });
 
         setTimeout(function () {
             // This delay needs to be here for the toastr service to be ready.
@@ -98,7 +116,21 @@
             $log.debug(data);
         }
 
-        var notifier = notifyService();
+        notifier.subscribe($scope, function(event, data) {
+            if (connectionsManager.getIsMonitoringEnabled()) {
+                if ((data.status.isSCConnected || data.status.isSCConnecting) && (data.status.isMonitoringConnected || data.status.isMonitoringConnecting || data.status.isMonitoringConnecting === undefined)) {
+                    $scope.connectionswarning = undefined;
+                } else if (!data.status.isSCConnected || !data.status.isMonitoringConnected) {
+                    $scope.connectionswarning = 'danger';
+                }
+            } else {
+                if (data.status.isSCConnected || data.status.isSCConnecting) {
+                    $scope.connectionswarning = undefined;
+                } else if (!data.status.isSCConnected) {
+                    $scope.connectionswarning = 'danger';
+                }
+            }
+        }, 'ConnectionsStatusChanged');
 
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
@@ -139,28 +171,49 @@
             logit(event, data);
 
             switch(data) {
+                case 'SignalR starting':
+                    $scope.isSCConnected = false;
+                    $scope.isSCConnecting = true;
+                    break;
                 case 'SignalR started':
                     $scope.isSCConnected = true;
                     $scope.isSCConnecting = false;
+                    $scope.scConnectedAtLeastOnce = true;
                     break;
                 case 'Reconnected':
                     $scope.isSCConnected = true;
                     $scope.isSCConnecting = false;
+                    $scope.scConnectedAtLeastOnce = true;
+
+                    if ($scope.signalRConnectionErrorToast) {
+                        toastService.clear($scope.signalRConnectionErrorToast);
+                        $scope.signalRConnectionErrorToast = undefined;
+                    }
                     break;
                 default:
                     toastService.showWarning(data);
                     break;
             }
+
+            notifier.notify('ServiceControlConnectionStatusChanged', {
+                isSCConnected : $scope.isSCConnected,
+                isSCConnecting: $scope.isSCConnecting,
+                scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
+            });
        
         }, 'SignalREvent');
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            if ($scope.isSCConnected) {
-                toastService.showError(data);
-            }
+            
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
+
+            notifier.notify('ServiceControlConnectionStatusChanged', {
+                isSCConnected : $scope.isSCConnected,
+                isSCConnecting : $scope.isSCConnecting,
+                scConnectedAtLeastOnce : $scope.scConnectedAtLeastOnce
+            });
         }, 'SignalRError');
 
         notifier.subscribe($scope, function(event, data) {
@@ -193,7 +246,7 @@
         }, 'reindexing');
 
         // signalR Listener
-        var listener = signalRListener(uriService.join(scConfig.service_control_url, 'messagestream'));
+        var listener = signalRListener(uriService.join(scu, 'messagestream'));
 
         listener.subscribe($scope, function(message) {
             notifier.notify('SignalREvent', message);
@@ -311,12 +364,13 @@
         'signalRListener',
         'notifyService',
         'semverService',
-        'scConfig',
+        'connectionsManager',
         'uri',
         'reindexingChecker',
         'licenseNotifierService',
         'licenseService',
         'license',
+        '$route'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

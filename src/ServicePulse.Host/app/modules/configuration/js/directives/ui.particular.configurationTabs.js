@@ -3,11 +3,35 @@
 
     angular.module('configuration', []);
 
-    function controller($scope, $location, redirectService, notifyService, sharedDataService, licenseService, licenseNotifierService) {
+    function controller($scope, $location, redirectService, notifyService, sharedDataService, licenseService, licenseNotifierService, connectionsStatus, connectionsManager) {
         var notifier = notifyService();
+
+        var isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
 
         $scope.isActive = (viewLocation) => viewLocation === $location.path();
         
+        $scope.connectionsStatus = connectionsStatus;
+        $scope.unableToConnectToServiceControl = undefined;
+        $scope.unableToConnectToMonitoring = undefined;
+
+        var evalConnectionsStatus = function() {
+            if (connectionsStatus.isSCConnecting) {
+                $scope.unableToConnectToServiceControl = false;
+            } else {
+                $scope.unableToConnectToServiceControl = !connectionsStatus.isSCConnected;
+            }
+            
+            if (!isMonitoringEnabled || connectionsStatus.isMonitoringConnecting || connectionsStatus.isMonitoringConnecting === undefined) {
+                $scope.unableToConnectToMonitoring = false;
+            } else {
+                $scope.unableToConnectToMonitoring = !connectionsStatus.isMonitoringConnected;
+            }
+        }
+
+        notifier.subscribe($scope, (event, data) => {
+            evalConnectionsStatus();
+        }, 'ConnectionsStatusChanged');
+
         var stats = sharedDataService.getstats();
 
         $scope.counters = {
@@ -40,10 +64,19 @@
                 $scope.licensewarning = 'danger';
             }
         });
+
+        evalConnectionsStatus();
     }
     
-    controller.$inject = ['$scope', '$location', 'redirectService', 'notifyService', 'sharedDataService',
-        'licenseService', 'licenseNotifierService'];
+    controller.$inject = ['$scope', 
+                        '$location', 
+                        'redirectService', 
+                        'notifyService',
+                        'sharedDataService',
+                        'licenseService',
+                        'licenseNotifierService',
+                        'connectionsStatus',
+                        'connectionsManager'];
 
     function directive() {
         const template = require('./ui.particular.configurationTabs.tpl.html');

@@ -3,20 +3,35 @@
     'use strict';
 
 
-    function controller($scope, connectivityNotifier, monitoringService, $interval) {
-        $scope.isSCMonitoringConnecting = true;
+    function controller($scope, connectivityNotifier, monitoringService, $interval, connectionsManager) {
+        $scope.isSCMonitoringConnecting = connectionsManager.getIsMonitoringEnabled()
+        
+        if ($scope.isSCMonitoringConnecting) {
+            connectivityNotifier.reportConnecting();
+        }
+
+        $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
         connectivityNotifier.getConnectionStatusSource().subscribe(value => {
-            $scope.isSCMonitoringConnected = value;
-            $scope.isSCMonitoringConnecting = false;
+            $scope.isSCMonitoringConnected = value.isConnected;
+            $scope.isSCMonitoringConnecting = value.isConnecting;
         });
 
+        var lastReport = undefined;
         var scMonitoringConnectionPing = $interval(function () {
-            var promises = monitoringService.getMonitoredEndpoints().map((request, index) => {
-                request.then(r => {
-                    connectivityNotifier.reportSuccessfulConnection(index);
-                }, e => {
-                    connectivityNotifier.reportFailedConnection(index);
-                });
+            var promise = monitoringService.getMonitoredEndpoints().then(r => {
+                if (lastReport === 'success') {
+                    return;
+                }
+
+                connectivityNotifier.reportSuccessfulConnection();
+                lastReport = 'success';
+            }, e => {
+                if (lastReport === 'failed') {
+                    return;
+                }
+
+                connectivityNotifier.reportFailedConnection();
+                lastReport = 'failed';
             });
         }, 10000);
 
@@ -33,7 +48,7 @@
 
     
 
-    controller.$inject = ['$scope', 'connectivityNotifier', 'monitoringService', '$interval'];
+    controller.$inject = ['$scope', 'connectivityNotifier', 'monitoringService', '$interval', 'connectionsManager'];
 
     function directive() {
         return {

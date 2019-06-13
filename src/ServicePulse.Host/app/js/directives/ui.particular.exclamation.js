@@ -6,7 +6,7 @@
             scope: {
                 type: '@'
             },
-            restrict: 'E',
+            restrict: 'EA',
             replace: true,
             templateUrl: 'js/directives/ui.particular.exclamation.tpl.html',
             link: function (scope, element) { }

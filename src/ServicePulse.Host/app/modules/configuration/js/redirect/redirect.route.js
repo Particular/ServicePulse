@@ -8,7 +8,8 @@
             redirectTo: "/configuration/redirects"
         }).when('/configuration/redirects', {
             data: {
-                pageTitle: 'Retry Redirects - Configuration'
+                pageTitle: 'Retry Redirects - Configuration',
+                redirectWhenNotConnected: '/configuration/connections'
             },
             template: template,
             controller: 'redirectController',

@@ -48,7 +48,7 @@
         </div>
     </noscript>
 
-    <ng-include src="'layout/navbar.html'" ng-show="!loadingInitialData"></ng-include>
+    <ng-include src="'layout/navbar.html'"></ng-include>
 
     <div class="container-fluid">
         <a id="pagetop"></a>
@@ -57,21 +57,10 @@
                 <div class="sp-loader"></div>
             </div>
         </div>
-        <div id="cantConnectMessage">
-            <div class="row text-center monitoring-no-data">
-                <h1>Cannot connect to ServiceControl</h1>
-                <p>
-                    ServicePulse is unable to connect to the ServiceControl instance<span id="serviceControlUrl"></span>. Please ensure that ServiceControl is running and accesible from your machine.
-                </p>
-                <div class="action-toolbar">
-                    <a href="https://docs.particular.net/servicepulse/installation#configuring-servicepulse" class="btn btn-default btn-primary">Learn more</a>
-                </div>
-            </div>
-        </div>
-        <div id="view" ng-view="" ng-show="!loadingInitialData"></div>
+        <div id="view" ng-view=""></div>
     </div>
 
-    <ng-include src="'layout/footer.html'" ng-show="!loadingInitialData"></ng-include>
+    <ng-include src="'layout/footer.html'"></ng-include>
 
     <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
     </toaster-container>
@@ -151,6 +140,8 @@
         }
     </script>
 
+    <script src="js/app.constants.js"></script>
+
     <script src="modules/dist/shell.dist.js"></script>
     <script src="modules/dist/monitoring.dist.js"></script>
     <script src="modules/dist/configuration.dist.js"></script>
@@ -159,7 +150,6 @@
 
     <!-- App -->
     <script src="js/app.js"></script>
-    <script src="js/app.constants.js"></script>
     <script src="js/app.route.js"></script>
     <script src="js/app.controller.js"></script>
     <script src="js/app.logging.js"></script>

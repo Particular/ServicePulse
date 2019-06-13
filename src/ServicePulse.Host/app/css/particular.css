@@ -40,6 +40,10 @@ a {
     margin-left: 4px;
 }
 
+.navbar-nav > li > a > span.no-margin {
+    margin: 0;
+}
+
 .navbar-toggle {
     margin-top: 13px;
 }
@@ -545,6 +549,16 @@ h6 {
         text-decoration: none;
     }
 
+    .tabs h5.disabled > a {
+        color: #aaa;
+        cursor: default;
+        text-decoration: none;
+    }
+
+    .tabs h5.disabled > a:hover {
+        cursor: not-allowed;
+    }
+    
 .system-status:hover {
     background-color: #fff;
     border-color: #eee !important;
@@ -1849,9 +1863,22 @@ hr.top-separator {
     padding-right: 0;
 }
 
+.btn-default {
+    padding: 8px 16px;
+}
+
+.btn.btn-default.disabled {
+    opacity: 0.4;
+}
+
+.btn.btn-default.disabled:hover {
+    border-color: #00A3C4;
+}
+
 .btn-primary {
     background-color: #00A3C4;
     border-color: #0686AA;
+    color: #fff;
 }
 
 .btn-primary:hover {
@@ -1865,13 +1892,19 @@ hr.top-separator {
 }
 
 .btn-secondary {
-    background-color: transparent;
+    background-color: #fff;
     color: #00A3C4;
     border-color: #00A3C4;
 }
 
 .btn-secondary:hover {
     color: #00A3C4;
+    border-color: #00A3C4;
+    background-color: #fff;
+    opacity: 0.7;
+}
+
+.btn-secondary.disabled {
     border-color: #00A3C4;
 }
 
@@ -2419,6 +2452,12 @@ div.alert.alert-warning strong {
     }
 }
 
+@media (max-width: 1439px) and screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    nav.navbar {
+        margin-top: 0;
+    }
+}
+
 @media (max-width: 1550px) {
 
     footer {
@@ -2426,10 +2465,6 @@ div.alert.alert-warning strong {
         font-size: 12px;
     }
 
-}
-
-#toast-container > div.toast-warning {
-    
 }
 
 .license-warning,
@@ -2440,12 +2475,6 @@ div.alert.alert-warning strong {
 .btn-license-warning {
     color: #f89406;
     background: black;
-}
-
-btn-license-warning-light {
-    border: black;
-    color: black;
-    background: #f89406;
 }
 
 span.fa-exclamation-triangle.warning {
@@ -2497,6 +2526,12 @@ span.fa-exclamation-triangle.danger {
     padding: 24px 24px 24px 56px;
 }
 
+#toast-container > div:hover {
+    box-shadow: 0 0 12px #999999;
+    opacity: 0.8;
+    cursor: default;
+}
+
 .toast-close-button {
     right: -10px;
     top: -16px;
@@ -2504,14 +2539,14 @@ span.fa-exclamation-triangle.danger {
 
 #toast-container > .toast-error {
     background-image: url('../img/toast-danger.svg') !important;
-    background-position-y: 22px;
+    background-position-y: 30px;
     background-size: 28px 28px;
 }
 
 #toast-container > .toast-warning {
     background-color: #F3BC52;
     background-image: url('../img/toast-warning.svg') !important;
-    background-position-y: 22px;
+    background-position-y: 30px;
     background-size: 28px 28px;
 }
 
@@ -2524,8 +2559,16 @@ span.fa-exclamation-triangle.danger {
     color: #F3BC52;
 }
 
-.toast-message a.btn.btn-license-warning:hover {
-    opacity: 0.75;
+.toast-message a.btn.btn-license-warning:hover, .toast-error a.btn.btn-default:hover {
+    opacity: 0.85;
+}
+
+.toast-error a.btn.btn-default {
+    color: #bd362f;
+    padding-right: 20px;
+    padding-left: 20px;
+    border: none;
+    margin-top: 16px;
 }
 
 .toast-message a.btn.btn-license-warning-light {
@@ -2608,4 +2651,97 @@ span.fa-exclamation-triangle.danger {
 
 div[content="Unable to connect to instance"], div[content="Unable to connect to monitoring server"] {
     z-index: 99999;
+}
+
+.rotate {
+    -webkit-animation: glyphicon-spin-r 2s infinite linear;
+    animation: glyphicon-spin-r 2s infinite linear;
+}
+
+@-webkit-keyframes glyphicon-spin-r {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+@keyframes glyphicon-spin-r {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
+section[name="connections"] .box {
+    padding-bottom: 50px;
+}
+
+form .connection h3 {
+    margin-bottom: 16px;
+}
+
+form .connection .form-group {
+    padding-left: 0;
+}
+
+.connection:nth-child(2) h3 {
+    margin-top: 40px;
+}
+
+form .connection .form-group input {
+    font-size: 16px;
+    height: 44px;
+}
+
+button[ng-click="vm.save()"] {
+    padding-right: 24px;
+    padding-left: 24px;
+    margin-top: 30px;
+}
+
+span.connection-test {
+    position: relative;
+    top: 14px;
+    left: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+span.failed-validation {
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+span.connection-successful, span.connection-successful i {
+    color: #00C468 !important;
+}
+
+span.connection-failed, span.connection-failed i, .failed-validation, .failed-validation i {
+    color: #CE4844 !important;
+}
+
+.form-control:focus {
+    border-color: #00a3c4;
+    box-shadow: 0 0 2px rgb(0, 163, 196);
+}
+
+span.auxilliary-label {
+    color: #aaa;
+}
+
+.btn-connection-test {
+    margin-top: 25px;
+    padding-top: 11px;
+    padding-bottom: 11px;
 }

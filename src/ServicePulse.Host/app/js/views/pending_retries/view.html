@@ -3,7 +3,10 @@
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <section name="pending_retries">
+    <div class="sp-loader" ng-if="isSCConnecting"></div>
+    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
+
+    <section name="pending_retries" ng-show="isSCConnected || scConnectedAtLeastOnce">
 
         <failed-message-tabs></failed-message-tabs>
 

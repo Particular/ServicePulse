@@ -6,7 +6,8 @@
 
         $routeProvider.when('/configuration/license', {
             data: {
-                pageTitle: 'License - Configuration'
+                pageTitle: 'License - Configuration',
+                redirectWhenNotConnected: '/configuration/connections'
             },
             template: template,
             controller: 'LicenseController',
