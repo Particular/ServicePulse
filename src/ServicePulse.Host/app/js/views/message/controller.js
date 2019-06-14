@@ -14,7 +14,8 @@
         notifyService,
         sharedDataService,
         $filter,
-        messageEditorModalService) {
+        messageEditorModalService,
+        editAndRetryConfig) {
 
         var vm = this;
         var notifier = notifyService();
@@ -119,9 +120,14 @@
                 });
         };
 
+        vm.isEditAndRetryEnabled = editAndRetryConfig.enabled;
+
         vm.editMessage = function(){
+            if(!editAndRetryConfig.enabled){
+                throw 'Edit & Retry is disabled.';
+            }
             var messageId = vm.message.id;
-            messageEditorModalService.displayEditMessageModal(messageId);
+            messageEditorModalService.displayEditMessageModal(messageId, editAndRetryConfig);
         };
 
         function updateMessageDeleteDate(message, errorRetentionPeriod) {
@@ -187,6 +193,7 @@
         'sharedDataService',
         '$filter',
         'messageEditorModalService',
+        'editAndRetryConfig',
     ];
 
     angular.module("sc")

@@ -49,7 +49,7 @@
                             <button type="button" ng-hide="vm.message.archived" ng-disabled="vm.message.retried || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to archive this message?" confirm-message="If you archive, this message won't be available for retrying unless it is later unarchived." confirm-click="vm.archiveMessage()"><i class="fa fa-archive"></i> Archive message</button>
                             <button type="button" ng-hide="!vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to un-archive this message?" confirm-message="Unarchived message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Unarchive</button>
                             <button type="button" ng-disabled="vm.message.retried || vm.message.archived || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
-                            <button type="button" class="btn btn-default" ng-click="vm.editMessage()"><i class="fa fa-edit"></i> Edit & retry</button>
+                            <button type="button" class="btn btn-default" ng-show="vm.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-edit"></i> Edit & retry</button>
                             <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" tooltip="Browse this message in ServiceInsight, if installed"><img src="img/si-icon.svg"> View in ServiceInsight</button>
                         </div>
                     </div>
