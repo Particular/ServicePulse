@@ -3,17 +3,19 @@
 
     function service($uibModal) {
         return {
-            displayEditMessageModal: function (messageId) {
-
+            displayEditMessageModal: function (messageId, editAndRetryConfig) {
                 $uibModal.open({
                     templateUrl: 'js/views/message/editor/messageEditorModal.html',
                     controller: 'messageEditorModalController',
                     resolve: {
                         messageId: function(){
                             return messageId;
+                        },
+                        editAndRetryConfig: function(){
+                            return editAndRetryConfig;
                         }
                     }
-                });
+                });               
             }
         };
     }

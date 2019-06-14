@@ -3,14 +3,15 @@
 
     function controller(
         messageId,
+        editAndRetryConfig,
         $uibModalInstance,
         $scope,
         serviceControlService,
         moment,
         $filter) {
 
-        var sensitiveHeaders = [];
-        var lockedHeaders = [];
+        var sensitiveHeaders = editAndRetryConfig.sensitiveHeaders;
+        var lockedHeaders = editAndRetryConfig.lockedHeaders;
         var originalMessageBody = undefined;
         var originalMessageHeaders = undefined;
         $scope.message = undefined;
@@ -111,6 +112,7 @@
 
     controller.$inject = [
         'messageId',
+        'editAndRetryConfig',
         '$uibModalInstance',
         '$scope',
         'serviceControlService',
