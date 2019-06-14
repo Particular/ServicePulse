@@ -11,7 +11,7 @@
     }));
 
     describe('when retrying a message', function () {
-        var controller, serviceControlService, root, q, messageEditorModalService;
+        var controller, serviceControlService, root, q, messageEditorModalService, editAndRetryConfig;
         
         beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
@@ -25,6 +25,11 @@
             };
             messageEditorModalService = {
                 displayEditMessageModal: function(messageId) {},
+            };
+            editAndRetryConfig = {
+                enabled: true,
+                lockedHeaders: [],
+                sensitiveHeaders: [],
             };
 
             controller = $controller("messagesController", {
@@ -41,6 +46,7 @@
                     }
                 },
                 messageEditorModalService: messageEditorModalService,
+                editAndRetryConfig: editAndRetryConfig,
             });
         }));
 
@@ -93,7 +99,7 @@
     });
 
     describe('when archiving a message', function () {
-        var controller, serviceControlService, root, messageEditorModalService;
+        var controller, serviceControlService, root, messageEditorModalService, editAndRetryConfig;
 
         beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
@@ -106,6 +112,11 @@
             };
             messageEditorModalService = {
                 displayEditMessageModal: function(messageId) {},
+            };
+            editAndRetryConfig = {
+                enabled: true,
+                lockedHeaders: [],
+                sensitiveHeaders: [],
             };
 
             controller = $controller('messagesController', {
@@ -122,6 +133,7 @@
                     }
                 },
                 messageEditorModalService: messageEditorModalService,
+                editAndRetryConfig: editAndRetryConfig,
             });
         }));
 
@@ -157,7 +169,7 @@
     });
 
     describe('when unarchiving a message', function () {
-        var controller, serviceControlService, root, archivedMessageService, q, messageEditorModalService;
+        var controller, serviceControlService, root, archivedMessageService, q, messageEditorModalService, editAndRetryConfig;
 
         beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
@@ -171,6 +183,11 @@
                 displayEditMessageModal: function(messageId) {},
             };
             archivedMessageService = { restoreMessageFromArchive: function () { } };
+            editAndRetryConfig = {
+                enabled: true,
+                lockedHeaders: [],
+                sensitiveHeaders: [],
+            };
 
             controller = $controller('messagesController', {
                 $scope: {},
@@ -186,6 +203,7 @@
                     }
                 },
                 messageEditorModalService: messageEditorModalService,
+                editAndRetryConfig: editAndRetryConfig,
             });
         }));
 
