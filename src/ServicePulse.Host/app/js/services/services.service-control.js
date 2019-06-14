@@ -100,7 +100,21 @@
         function getEditAndRetryConfig() {
             var url = uri.join(scu,'edit', 'config');
             return $http.get(url).then(function(response) {
+                console.warn('remove fake configuration for development purposes.');
                 return response.data;
+            }, function(){
+                //TODO: remove! this is for development purpose only.
+                return {
+                    enabled: true,
+                    lockedHeaders: [
+                        'NServiceBus.MessageId', 
+                        'NServiceBus.ExceptionInfo.ExceptionType', 
+                        'NServiceBus.ExceptionInfo.HelpLink',
+                        'NServiceBus.ExceptionInfo.Message', 
+                        'NServiceBus.ExceptionInfo.Source', 
+                        'NServiceBus.ExceptionInfo.StackTrace'],
+                    sensitiveHeaders: ['NServiceBus.MessageIntent'],
+                };
             });
         }
 
@@ -342,6 +356,7 @@
             loadQueueNames: loadQueueNames,
             acknowledgeGroup: acknowledgeGroup,
             getFailedMessageById: getFailedMessageById,
+            getEditAndRetryConfig: getEditAndRetryConfig,
             isBusyUpgradingIndexes: isBusyUpgradingIndexes
         };
 
