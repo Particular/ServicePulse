@@ -4,7 +4,7 @@
     function service($uibModal) {
         return {
             displayEditMessageModal: function (messageId, editAndRetryConfig) {
-                $uibModal.open({
+                return $uibModal.open({
                     templateUrl: 'js/views/message/editor/messageEditorModal.html',
                     controller: 'messageEditorModalController',
                     backdrop: 'static',

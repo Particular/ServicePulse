@@ -127,7 +127,12 @@
                 throw 'Edit & Retry is disabled.';
             }
             var messageId = vm.message.id;
-            messageEditorModalService.displayEditMessageModal(messageId, editAndRetryConfig);
+            var modalInstance = messageEditorModalService.displayEditMessageModal(messageId, editAndRetryConfig);
+            modalInstance.result.then(function(result){
+                //closed
+            }, function(reason){
+                //dismissed
+            })
         };
 
         function updateMessageDeleteDate(message, errorRetentionPeriod) {
