@@ -7,6 +7,7 @@
                 $uibModal.open({
                     templateUrl: 'js/views/message/editor/messageEditorModal.html',
                     controller: 'messageEditorModalController',
+                    backdrop: 'static',
                     resolve: {
                         messageId: function(){
                             return messageId;
