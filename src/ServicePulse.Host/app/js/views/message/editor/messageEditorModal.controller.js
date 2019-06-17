@@ -12,8 +12,8 @@
 
         var sensitiveHeaders = editAndRetryConfig.sensitiveHeaders;
         var lockedHeaders = editAndRetryConfig.lockedHeaders;
-        var originalMessageBody = undefined;
-        var originalMessageHeaders = undefined;
+        var originalMessageBody = '';
+        var originalMessageHeaders = {};
         $scope.message = undefined;
 
         function prettifyText(text, contentType) {
