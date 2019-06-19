@@ -14,10 +14,10 @@
                     <table isolate-click class="table" ng-show="message.panel === 0 && message.messageHeaders">
                         <tbody>
                             <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
-                                <td nowrap="nowrap">{{header.key}}</td>
+                                <td nowrap="nowrap">{{header.key}}<span ng-show="isHeaderLocked(header.key)">&nbsp;<i class="fa fa-lock" aria-hidden="true"></i></span></td>
                                 <td>
                                     <input isolate-click
-                                        edit-on-focus 
+                                        edit-on-focus="{{isHeaderLocked(header.key) === false}}"
                                         class="form-control"
                                         autocomplete="off"
                                         type="text"
