@@ -9,9 +9,8 @@
         serviceControlService,
         moment,
         $filter) {
-
-        var sensitiveHeaders = editAndRetryConfig.sensitiveHeaders;
-        var lockedHeaders = editAndRetryConfig.lockedHeaders;
+        var sensitive_headers = editAndRetryConfig.sensitive_headers;
+        var locked_headers = editAndRetryConfig.locked_headers;
         var originalMessageBody = '';
         var originalMessageHeaders = {};
         $scope.message = undefined;
@@ -79,11 +78,11 @@
         }
 
         $scope.isHeaderLocked = function(key){
-            return lockedHeaders.includes(key);
+            return locked_headers.includes(key);
         }
 
         $scope.isHeaderSensitive = function(key){
-            return sensitiveHeaders.includes(key);
+            return sensitive_headers.includes(key);
         }
 
         function loadMessageById (id) {
