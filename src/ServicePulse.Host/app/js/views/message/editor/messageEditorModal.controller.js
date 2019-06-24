@@ -103,6 +103,18 @@
             $uibModalInstance.dismiss('cancel');
         };
 
+        $scope.retryEditedMessage = function(){
+            var editedMessage = {
+                MessageBody: $scope.message.messageBody,
+                MessageHeaders: $scope.message.messageHeaders,
+            };
+
+            return serviceControlService.retryEditedMessage(messageId, editedMessage)
+                .then(function () {
+                    $uibModalInstance.close('retried');
+                });
+        };
+
         loadMessageById(messageId)
             .then(function () { 
                 $scope.togglePanel($scope.message, 0); 

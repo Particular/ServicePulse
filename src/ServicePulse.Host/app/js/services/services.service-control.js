@@ -104,6 +104,16 @@
             });
         }
 
+        function retryEditedMessage( messageId, editedMessage ) {
+            return $http({
+                url: uri.join(scu,'edit', messageId),
+                method: 'POST',
+                data: editedMessage
+            }).then(function(response) {
+                return response;
+            });
+        }
+
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
             var url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
             return $http.get(url).then(function(response) {
@@ -343,6 +353,7 @@
             acknowledgeGroup: acknowledgeGroup,
             getFailedMessageById: getFailedMessageById,
             getEditAndRetryConfig: getEditAndRetryConfig,
+            retryEditedMessage : retryEditedMessage,
             isBusyUpgradingIndexes: isBusyUpgradingIndexes
         };
 
