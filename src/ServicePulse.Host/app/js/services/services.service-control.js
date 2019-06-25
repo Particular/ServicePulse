@@ -108,9 +108,10 @@
             return $http({
                 url: uri.join(scu,'edit', messageId),
                 method: 'POST',
-                data: editedMessage
-            }).then(function(response) {
-                return response;
+                data: editedMessage,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
         }
 

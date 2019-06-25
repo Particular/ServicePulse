@@ -105,8 +105,8 @@
 
         $scope.retryEditedMessage = function(){
             var editedMessage = {
-                MessageBody: $scope.message.messageBody,
-                MessageHeaders: $scope.message.messageHeaders,
+                message_body: $scope.message.messageBody,
+                message_headers: $scope.message.messageHeaders,
             };
 
             return serviceControlService.retryEditedMessage(messageId, editedMessage)
