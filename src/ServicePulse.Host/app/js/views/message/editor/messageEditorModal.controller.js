@@ -48,22 +48,6 @@
             return true;
         };
 
-        $scope.isBodyChanged = function(){
-            return $scope.message.messageBody !== originalMessageBody;
-        }
-
-        $scope.isHeaderChanged = function(key){
-            return $scope.message.messageHeaders[key] !== originalMessageHeaders[key];
-        }
-
-        $scope.isHeaderLocked = function(key){
-            return locked_headers.includes(key);
-        }
-
-        $scope.isHeaderSensitive = function(key){
-            return sensitive_headers.includes(key);
-        }
-
         function loadMessageById (id) {
             return serviceControlService.getFailedMessageById(id)
                 .then(function (response) {
@@ -74,6 +58,33 @@
                         .then(function (msg) {
                             $scope.message.messageHeaders = msg.data[0].headers;
                             angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
+
+                            for(var i = 0; i < $scope.message.messageHeaders.length; i++){
+                                var header = $scope.message.messageHeaders[i];
+                                header.isSensitive = sensitive_headers.includes(header.key);
+                                header.isLocked = locked_headers.includes(header.key);
+                            }
+
+                            $scope.$watch('message.messageHeaders', function (newVal, oldVal) {
+                                for(var i = 0; i < newVal.length; i++){
+                                    var newHeader = newVal[i];
+                                    var oldHeader = undefined;
+
+                                    for(var j = 0; j < oldVal.length; j++){
+                                        if(oldHeader == undefined){
+                                            var temp = oldVal[j];
+                                            if(temp.key === newHeader.key){
+                                                oldHeader = temp;
+                                            }
+                                        }
+                                    }
+
+                                    if(newHeader.value !== oldHeader.value){
+                                        newHeader.isChanged = true;
+                                        return;
+                                    }
+                                }
+                            }, true);
 
                             return serviceControlService.getMessageBody($scope.message.message_id)
                                 .then(function (msg) {
