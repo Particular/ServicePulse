@@ -43,30 +43,9 @@
         $scope.togglePanel = function (message, panelnum) {
             if (message.notFound || message.error)
                 return false;
-
-            if (!angular.isDefined(message.messageHeaders)) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
-                    message.messageHeaders = msg.data[0].headers;
-                    angular.merge(originalMessageHeaders, message.messageHeaders);
-                }, function () {
-                    message.headersUnavailable = "message headers unavailable";
-                });
-            }
-
-            if (angular.isDefined(message.messageHeaders) && !angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    var bodyContentType = getContentType(message.messageHeaders);
-                    message.bodyContentType = bodyContentType;
-                    message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
-                    message.messageBody = prettifyText(msg.data, bodyContentType);
-                    angular.merge(originalMessageBody, message.messageBody);
-                }, function () {
-                    message.bodyUnavailable = "message body unavailable";
-                });
-            }
             
             message.panel = panelnum;
-            return false;
+            return true;
         };
 
         $scope.isBodyChanged = function(){
@@ -89,6 +68,26 @@
             return serviceControlService.getFailedMessageById(id)
                 .then(function (response) {
                     $scope.message = response.data;
+
+                    //In theory loding body and headers could be done in parallel waiting for both promises.
+                    return serviceControlService.getMessageHeaders($scope.message.message_id)
+                        .then(function (msg) {
+                            $scope.message.messageHeaders = msg.data[0].headers;
+                            angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
+
+                            return serviceControlService.getMessageBody($scope.message.message_id)
+                                .then(function (msg) {
+                                    var bodyContentType = getContentType($scope.message.messageHeaders);
+                                    $scope.message.bodyContentType = bodyContentType;
+                                    $scope.message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
+                                    $scope.message.messageBody = prettifyText(msg.data, bodyContentType);
+                                    angular.merge(originalMessageBody, $scope.message.messageBody);
+                                }, function () {
+                                    message.bodyUnavailable = "message body unavailable";
+                            });
+                        }, function () {
+                            $scope.message.headersUnavailable = "message headers unavailable";
+                        });
                 },
                 function (response) {
                     if (response.status === 404) {
