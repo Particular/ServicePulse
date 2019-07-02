@@ -109,14 +109,42 @@
                 });
         };
 
+        var findHeaderByKey = function(key){
+            for(var i = 0; i < $scope.message.messageHeaders.length; i++) {
+                if($scope.message.messageHeaders[i].key === key) {
+                    return $scope.message.messageHeaders[i];
+                }
+            }
+
+            return null;
+        }
+
+        $scope.markHeaderAsRemoved = function(key){
+            var header = findHeaderByKey(key);
+            header.isMarkedAsRemoved = true;
+        }
+
+        $scope.undoMarkHeaderAsRemoved = function(key){
+            var header = findHeaderByKey(key);
+            header.isMarkedAsRemoved = false;
+        }
+
         $scope.cancel = function() {
             $uibModalInstance.dismiss('cancel');
         };
 
         $scope.retryEditedMessage = function(){
+
+            var headers = [];
+            for(var i = 0; i < $scope.message.messageHeaders.length; i++) {
+                if(!$scope.message.messageHeaders[i].isMarkedAsRemoved){
+                    headers.push($scope.message.messageHeaders[i]);
+                }
+            }
+
             var editedMessage = {
                 message_body: $scope.message.messageBody,
-                message_headers: $scope.message.messageHeaders,
+                message_headers: headers,
             };
 
             return serviceControlService.retryEditedMessage(messageId, editedMessage)

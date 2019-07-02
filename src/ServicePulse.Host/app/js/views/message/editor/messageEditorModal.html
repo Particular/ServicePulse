@@ -14,19 +14,32 @@
                     <table isolate-click class="table" ng-show="message.panel === 0 && message.messageHeaders">
                         <tbody>
                             <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
-                                <td nowrap="nowrap">{{header.key}}
+                                <td nowrap="nowrap"><span ng-style="{'text-decoration': (header.isMarkedAsRemoved) ? 'line-through' : 'none'}">{{header.key}}</span>
                                     <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock" aria-hidden="true"></i></span>
                                     <span ng-show="header.isChanged && header.isSensitive">&nbsp;<i class="fa fa-user-secret" aria-hidden="true"></i></span>
                                     <span ng-show="header.isChanged">&nbsp;<i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
                                 </td>
                                 <td>
                                     <input isolate-click
-                                        edit-on-focus="{{header.isLocked === false}}"
+                                        ng-show="header.isMarkedAsRemoved"
+                                        class="form-control"
+                                        autocomplete="off"
+                                        type="text"
+                                        ng-readonly="true"
+                                        style="text-decoration: line-through"
+                                        ng-model="header.value" />
+                                    <input isolate-click
+                                        ng-hide="header.isMarkedAsRemoved"
+                                        edit-on-focus="{{!header.isLocked}}"
                                         class="form-control"
                                         autocomplete="off"
                                         type="text"
                                         ng-readonly="true"
                                         ng-model="header.value" />
+                                </td>
+                                <td>
+                                    <span ng-hide="header.isLocked || header.isMarkedAsRemoved"><a class="btn" ng-click="markHeaderAsRemoved(header.key)"><i class="fa fa-trash" aria-hidden="true"></i></a></span>
+                                    <span ng-show="header.isMarkedAsRemoved"><a class="btn" ng-click="undoMarkHeaderAsRemoved(header.key)"><i class="fa fa-undo" aria-hidden="true"></i></a></span>
                                 </td>
                             </tr>
                         </tbody>
