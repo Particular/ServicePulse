@@ -172,6 +172,8 @@
                 message.retried = message.status === 'retryIssued';
                 updateMessageDeleteDate(message, vm.error_retention_period);
                 vm.message = message;
+
+                console.warn(vm.message);
             },
                 function (response) {
                     if (response.status === 404) {
