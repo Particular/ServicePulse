@@ -38,6 +38,7 @@
             return false;
         }
         
+        $scope.isEvent = false;
         $scope.getContentType = getContentType;
 
         $scope.togglePanel = function (message, panelnum) {
@@ -57,6 +58,7 @@
                     return serviceControlService.getMessageHeaders($scope.message.message_id)
                         .then(function (msg) {
                             $scope.message.messageHeaders = msg.data[0].headers;
+                            $scope.isEvent = $scope.message.messageHeaders['NServiceBus.MessageIntent'] === 'Publish';
                             angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
 
                             for(var i = 0; i < $scope.message.messageHeaders.length; i++){
