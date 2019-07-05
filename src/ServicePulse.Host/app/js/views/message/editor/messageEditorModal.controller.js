@@ -2,7 +2,7 @@
     'use strict';
 
     function controller(
-        messageId,
+        failedMessageId,
         editAndRetryConfig,
         $uibModalInstance,
         $scope,
@@ -147,20 +147,20 @@
                 message_headers: headers,
             };
 
-            return serviceControlService.retryEditedMessage(messageId, editedMessage)
+            return serviceControlService.retryEditedMessage(failedMessageId, editedMessage)
                 .then(function () {
                     $uibModalInstance.close('retried');
                 });
         };
 
-        loadMessageById(messageId)
+        loadMessageById(failedMessageId)
             .then(function () { 
                 $scope.togglePanel($scope.message, 0); 
             });
     }
 
     controller.$inject = [
-        'messageId',
+        'failedMessageId',
         'editAndRetryConfig',
         '$uibModalInstance',
         '$scope',

@@ -126,8 +126,8 @@
             if(!editAndRetryConfig.enabled){
                 throw 'Edit & Retry is disabled.';
             }
-            var messageId = vm.message.id;
-            var modalInstance = messageEditorModalService.displayEditMessageModal(messageId, editAndRetryConfig);
+            var failedMessageId = vm.message.id;
+            var modalInstance = messageEditorModalService.displayEditMessageModal(failedMessageId, editAndRetryConfig);
             modalInstance.result.then(function(result){
                 //closed
             }, function(reason){
