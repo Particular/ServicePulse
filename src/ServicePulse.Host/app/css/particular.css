@@ -2766,3 +2766,8 @@ span.auxilliary-label {
 .modal-msg-editor textarea {
     height: calc(100% - 80px);
 }
+
+.modal-msg-editor tr td:first-child {
+    padding-top: 15px;
+    padding-left: 0;
+}
