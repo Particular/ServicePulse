@@ -2754,3 +2754,7 @@ span.auxilliary-label {
     overflow-y: auto;
     height: 85vh;
 }
+
+.modal-msg-editor .msg-tabs {
+    margin-top: 20px;
+}
