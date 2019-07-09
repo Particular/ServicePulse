@@ -2742,6 +2742,15 @@ span.auxilliary-label {
     padding-bottom: 11px;
 }
 
+.modal-open .modal.modal-msg-editor {
+    overflow-y: hidden;
+}
+
 .modal-msg-editor .modal-dialog {
     width: 70%;
+}
+
+.modal-msg-editor .modal-body {
+    overflow-y: auto;
+    height: 85vh;
 }
