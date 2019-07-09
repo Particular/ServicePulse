@@ -2758,3 +2758,11 @@ span.auxilliary-label {
 .modal-msg-editor .msg-tabs {
     margin-top: 20px;
 }
+
+.modal-msg-editor .row, .modal-msg-editor .col-sm-12 {
+    height: 100%;
+}
+
+.modal-msg-editor textarea {
+    height: calc(100% - 80px);
+}
