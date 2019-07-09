@@ -989,10 +989,6 @@ nav {
     padding-right: 0;
 }
 
-.modal-open {
-    overflow-y: scroll;
-}
-
 .row.list-count {
     margin-left: -10px;
     font-weight: bold;
