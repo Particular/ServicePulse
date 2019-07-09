@@ -1931,10 +1931,6 @@ p.col-sort-active {
     font-weight: bold;
 }
 
-.tooltip-inner {
-    width: 200px;
-}
-
 .endpoint-row .tooltip-inner {
     width: auto;
     max-width: 600px;
