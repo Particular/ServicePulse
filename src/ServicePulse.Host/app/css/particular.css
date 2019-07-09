@@ -2808,3 +2808,8 @@ span.auxilliary-label {
 .modal .btn.btn-primary {
     padding: 8px 20px;
 }
+
+.modal-msg-editor button.close {
+    position: relative;
+    top: 6px;
+}
