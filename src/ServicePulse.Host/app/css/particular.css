@@ -2741,3 +2741,7 @@ span.auxilliary-label {
     padding-top: 11px;
     padding-bottom: 11px;
 }
+
+.modal-msg-editor .modal-dialog {
+    width: 70%;
+}

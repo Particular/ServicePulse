@@ -8,6 +8,7 @@
                     templateUrl: 'js/views/message/editor/messageEditorModal.html',
                     controller: 'messageEditorModalController',
                     backdrop: 'static',
+                    windowTopClass: 'modal-msg-editor',
                     resolve: {
                         failedMessageId: function(){
                             return failedMessageId;
