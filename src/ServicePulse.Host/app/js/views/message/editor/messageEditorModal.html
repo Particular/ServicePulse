@@ -41,8 +41,8 @@
                                         ng-model="header.value" />
                                 </td>
                                 <td>
-                                    <span ng-hide="header.isLocked || header.isMarkedAsRemoved"><a class="btn" ng-click="markHeaderAsRemoved(header.key)"><i class="fa fa-trash" aria-hidden="true"></i></a></span>
-                                    <span ng-show="header.isMarkedAsRemoved"><a class="btn" ng-click="undoMarkHeaderAsRemoved(header.key)"><i class="fa fa-undo" aria-hidden="true"></i></a></span>
+                                    <span ng-hide="header.isLocked || header.isMarkedAsRemoved"><a ng-click="markHeaderAsRemoved(header.key)"><i class="fa fa-trash" aria-hidden="true"></i></a></span>
+                                    <span ng-show="header.isMarkedAsRemoved"><a ng-click="undoMarkHeaderAsRemoved(header.key)"><i class="fa fa-undo" aria-hidden="true"></i></a></span>
                                 </td>
                             </tr>
                         </tbody>

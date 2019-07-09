@@ -2771,3 +2771,24 @@ span.auxilliary-label {
     padding-top: 15px;
     padding-left: 0;
 }
+
+.modal-msg-editor tr td:nth-child(3) {
+    width: 40px;
+    padding: 12px 0 0 24px;
+}
+
+.modal-msg-editor tr td:nth-child(3) a {
+    font-size: 18px;
+}
+
+.modal-msg-editor tr td:nth-child(3) a:hover {
+    cursor: pointer;
+}
+
+.modal-msg-editor tr td:nth-child(3) i.fa.fa-trash {
+    color: #CE4844;
+}
+
+.modal-msg-editor tr td:nth-child(3) i.fa.fa-undo {
+    color: #00a3c4;
+}
