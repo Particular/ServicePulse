@@ -2808,3 +2808,7 @@ span.auxilliary-label {
 .modal-msg-editor tr td:nth-child(3) i.fa.fa-undo {
     color: #00a3c4;
 }
+
+.modal .btn.btn-primary {
+    padding: 8px 20px;
+}
