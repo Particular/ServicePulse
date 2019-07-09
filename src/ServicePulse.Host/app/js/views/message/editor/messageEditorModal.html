@@ -19,8 +19,8 @@
                             <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
                                 <td nowrap="nowrap"><span ng-style="{'text-decoration': (header.isMarkedAsRemoved) ? 'line-through' : 'none'}">{{header.key}}</span>
                                     <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock" aria-hidden="true"></i></span>
-                                    <span ng-show="header.isChanged && header.isSensitive">&nbsp;<i class="fa fa-user-secret" aria-hidden="true"></i></span>
-                                    <span ng-show="header.isChanged">&nbsp;<i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+                                    <span ng-show="header.isChanged && header.isSensitive">&nbsp;<i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
+                                    <span ng-show="header.isChanged">&nbsp;<i class="fa fa-pencil" aria-hidden="true"></i></span>
                                 </td>
                                 <td>
                                     <input isolate-click

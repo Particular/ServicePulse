@@ -2773,6 +2773,21 @@ span.auxilliary-label {
     width: 30%;
 }
 
+.modal-msg-editor tr td:first-child i.fa {
+    font-size: 18px;
+    padding-left: 6px;
+    position: relative;
+    top: 1px;
+}
+
+.modal-msg-editor tr td:first-child i.fa.fa-exclamation-triangle {
+    color: #FF9000 ;
+}
+
+.modal-msg-editor tr td:first-child i.fa.fa-pencil {
+    color: #8543E9 !important;
+}
+
 .modal-msg-editor tr td:nth-child(3) {
     width: 40px;
     padding: 12px 0 0 24px;
@@ -2787,7 +2802,7 @@ span.auxilliary-label {
 }
 
 .modal-msg-editor tr td:nth-child(3) i.fa.fa-trash {
-    color: #CE4844;
+    color: #555;
 }
 
 .modal-msg-editor tr td:nth-child(3) i.fa.fa-undo {
