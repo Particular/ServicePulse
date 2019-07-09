@@ -2770,6 +2770,7 @@ span.auxilliary-label {
 .modal-msg-editor tr td:first-child {
     padding-top: 15px;
     padding-left: 0;
+    width: 30%;
 }
 
 .modal-msg-editor tr td:nth-child(3) {
