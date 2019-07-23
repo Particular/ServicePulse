@@ -16,28 +16,18 @@
 
                     <table isolate-click class="table" ng-show="message.panel === 0 && message.messageHeaders">
                         <tbody>
-                            <tr class="interactiveList" ng-repeat="header in message.messageHeaders">
-                                <td nowrap="nowrap"><span ng-style="{'text-decoration': (header.isMarkedAsRemoved) ? 'line-through' : 'none'}">{{header.key}}</span>
+                            <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }" ng-repeat="header in message.messageHeaders">
+                                <td nowrap="nowrap"><span>{{header.key}}</span>
                                     <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock" uib-tooltip="Protected system header"></i></span>
                                     <span ng-show="header.isChanged && header.isSensitive">&nbsp;<i class="fa fa-exclamation-triangle" uib-tooltip="WARNING: This is a basic message header. Proceed with caution."></i></span>
                                     <span ng-show="header.isChanged">&nbsp;<i class="fa fa-pencil" uib-tooltip="Edited"></i></span>
                                 </td>
                                 <td>
                                     <input isolate-click
-                                        ng-show="header.isMarkedAsRemoved"
                                         class="form-control"
                                         autocomplete="off"
                                         type="text"
-                                        ng-readonly="true"
-                                        style="text-decoration: line-through"
-                                        ng-model="header.value" />
-                                    <input isolate-click
-                                        ng-hide="header.isMarkedAsRemoved"
-                                        edit-on-focus="{{!header.isLocked}}"
-                                        class="form-control"
-                                        autocomplete="off"
-                                        type="text"
-                                        ng-readonly="true"
+                                        ng-disabled="header.isLocked"
                                         ng-model="header.value" />
                                 </td>
                                 <td>
