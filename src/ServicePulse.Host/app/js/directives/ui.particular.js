@@ -7,7 +7,6 @@
         'ui.particular.isolateClick',
         'ui.particular.failedMessageTabs',
         'ui.particular.eatClick',
-        'ui.particular.editOnFocus',
         'ui.particular.hud',
         'ui.particular.productVersion',
         'ui.particular.busy',
