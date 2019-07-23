@@ -142,10 +142,6 @@
             var header = findHeaderByKey($scope.message.messageHeaders, key);
             var originalHeader = findHeaderByKey(originalMessageHeaders, key);
             header.isMarkedAsRemoved = false;
-
-            console.warn(header);
-            console.warn(originalHeader);
-
             header.value = originalHeader.value;
         }
 
