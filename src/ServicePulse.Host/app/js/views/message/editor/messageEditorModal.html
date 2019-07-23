@@ -22,7 +22,7 @@
                         <tbody>
                             <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }"
                                 ng-repeat="header in message.messageHeaders track by header.key">
-                                <td nowrap="nowrap"><span>{{header.key}}</span>
+                                <td nowrap="nowrap"><span ng-class="{ 'header-removed': header.isMarkedAsRemoved }">{{header.key}}</span>
                                     <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock"
                                             uib-tooltip="Protected system header"></i></span>
                                     <span
@@ -33,7 +33,7 @@
                                             uib-tooltip="Edited"></i></span>
                                 </td>
                                 <td>
-                                    <input isolate-click class="form-control" autocomplete="off" type="text"
+                                    <input isolate-click class="form-control" autocomplete="off" type="text" ng-class="{ 'header-removed': header.isMarkedAsRemoved }"
                                         ng-disabled="header.isLocked" ng-model="header.value" />
                                 </td>
                                 <td>
