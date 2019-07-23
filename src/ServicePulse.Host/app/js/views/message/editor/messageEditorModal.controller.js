@@ -100,7 +100,12 @@
                                     $scope.message.bodyContentType = bodyContentType;
                                     $scope.message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
                                     $scope.message.messageBody = prettifyText(msg.data, bodyContentType);
-                                    originalMessageBody = angular.merge(originalMessageBody, $scope.message.messageBody);
+                                    $scope.message.isBodyChanged = false;
+                                    originalMessageBody = $scope.message.messageBody;
+
+                                    $scope.$watch('message.messageBody', function(newBody, oldBody){
+                                        $scope.message.isBodyChanged = newBody !== originalMessageBody;
+                                    }, false);
 
                                 }, function () {
                                     message.bodyUnavailable = "message body unavailable";
@@ -133,7 +138,7 @@
             header.isMarkedAsRemoved = true;
         }
 
-        $scope.resetChanges = function(key){
+        $scope.resetHeaderChanges = function(key){
             var header = findHeaderByKey($scope.message.messageHeaders, key);
             var originalHeader = findHeaderByKey(originalMessageHeaders, key);
             header.isMarkedAsRemoved = false;
@@ -142,6 +147,10 @@
             console.warn(originalHeader);
 
             header.value = originalHeader.value;
+        }
+
+        $scope.resetBodyChanges = function(){
+            $scope.message.messageBody = originalMessageBody;
         }
 
         $scope.cancel = function() {
@@ -162,10 +171,12 @@
                 message_headers: headers,
             };
 
-            return serviceControlService.retryEditedMessage(failedMessageId, editedMessage)
-                .then(function () {
-                    $uibModalInstance.close('retried');
-                });
+            console.warn(editedMessage);
+
+            // return serviceControlService.retryEditedMessage(failedMessageId, editedMessage)
+            //     .then(function () {
+            //         $uibModalInstance.close('retried');
+            //     });
         };
 
         loadMessageById(failedMessageId)

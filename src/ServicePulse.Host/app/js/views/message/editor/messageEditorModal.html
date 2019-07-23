@@ -3,55 +3,77 @@
 </div>
 <div class="modal-body">
     <div class="row" ng-show="isEvent">
-        <div class="col-sm-12">The edited message is event. Editing an event, that could have already been handled by other subscribers, has the risk of changing the semantic meaning of the event itself, with the result of altering the system behavior. Consequances are unpredictable.</div>
+        <div class="col-sm-12">The edited message is event. Editing an event, that could have already been handled by
+            other subscribers, has the risk of changing the semantic meaning of the event itself, with the result of
+            altering the system behavior. Consequances are unpredictable.</div>
     </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="row">
                 <div isolate-click class="col-sm-12 no-side-padding">
                     <div class="tabs msg-tabs">
-                        <h5 ng-class="{active: message.panel === 0}" ng-click="togglePanel(message, 0)"><a>Headers</a></h5>
-                        <h5 ng-class="{active: message.panel === 1}" ng-click="togglePanel(message, 1)"><a>Message body</a></h5>
+                        <h5 ng-class="{active: message.panel === 0}" ng-click="togglePanel(message, 0)"><a>Headers</a>
+                        </h5>
+                        <h5 ng-class="{active: message.panel === 1}" ng-click="togglePanel(message, 1)"><a>Message
+                                body</a></h5>
                     </div>
 
                     <table isolate-click class="table" ng-show="message.panel === 0 && message.messageHeaders">
                         <tbody>
-                            <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }" ng-repeat="header in message.messageHeaders track by header.key">
+                            <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }"
+                                ng-repeat="header in message.messageHeaders track by header.key">
                                 <td nowrap="nowrap"><span>{{header.key}}</span>
-                                    <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock" uib-tooltip="Protected system header"></i></span>
-                                    <span ng-show="(header.isChanged || header.isMarkedAsRemoved) && header.isSensitive">&nbsp;<i class="fa fa-exclamation-triangle" uib-tooltip="WARNING: This is a basic message header. Proceed with caution."></i></span>
-                                    <span ng-show="header.isChanged">&nbsp;<i class="fa fa-pencil" uib-tooltip="Edited"></i></span>
+                                    <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock"
+                                            uib-tooltip="Protected system header"></i></span>
+                                    <span
+                                        ng-show="(header.isChanged || header.isMarkedAsRemoved) && header.isSensitive">&nbsp;<i
+                                            class="fa fa-exclamation-triangle"
+                                            uib-tooltip="WARNING: This is a basic message header. Proceed with caution."></i></span>
+                                    <span ng-show="header.isChanged">&nbsp;<i class="fa fa-pencil"
+                                            uib-tooltip="Edited"></i></span>
                                 </td>
                                 <td>
-                                    <input isolate-click
-                                        class="form-control"
-                                        autocomplete="off"
-                                        type="text"
-                                        ng-disabled="header.isLocked"
-                                        ng-model="header.value" />
+                                    <input isolate-click class="form-control" autocomplete="off" type="text"
+                                        ng-disabled="header.isLocked" ng-model="header.value" />
                                 </td>
                                 <td>
-                                    <span ng-hide="header.isLocked || header.isMarkedAsRemoved"><a ng-click="markHeaderAsRemoved(header.key)"><i class="fa fa-trash" uib-tooltip="Remove header"></i></a></span>
-                                    <span ng-show="(header.isMarkedAsRemoved || header.isChanged)"><a ng-click="resetChanges(header.key)"><i class="fa fa-undo" uib-tooltip="Reset changes"></i></a></span>
+                                    <span ng-hide="header.isLocked || header.isMarkedAsRemoved"><a
+                                            ng-click="markHeaderAsRemoved(header.key)"><i class="fa fa-trash"
+                                                uib-tooltip="Remove header"></i></a></span>
+                                    <span ng-show="(header.isMarkedAsRemoved || header.isChanged)"><a
+                                            ng-click="resetHeaderChanges(header.key)"><i class="fa fa-undo"
+                                                uib-tooltip="Reset changes"></i></a></span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <div isolate-click class="alert alert-info" ng-show="message.panel === 0 && message.headersUnavailable">{{message.headersUnavailable}}</div>
-                    <textarea isolate-click
-                        edit-on-focus
-                        class="form-control"
-                        ng-show="message.panel === 1 && message.messageBody"
-                        ng-model="message.messageBody"
-                        ng-readonly="true">
-                    </textarea>
-                    <div isolate-click class="alert alert-info" ng-show="message.panel === 1 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
+                    <div isolate-click class="alert alert-info"
+                        ng-show="message.panel === 0 && message.headersUnavailable">{{message.headersUnavailable}}</div>
+                    <div ng-show="message.panel === 1 && message.messageBody">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <textarea isolate-click class="form-control" ng-model="message.messageBody" ng-disabled="!message.isContentTypeSupported">
+                                </textarea>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span ng-show="message.isBodyChanged"><a
+                                    ng-click="resetBodyChanges()"><i class="fa fa-undo"
+                                        uib-tooltip="Reset changes"></i></a></span>                                
+                            </div>
+                        </div>                        
+                        <div isolate-click class="alert alert-info"
+                            ng-show="message.panel === 1 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>        
+    </div>
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-    <button type="submit" class="btn btn-primary" confirm-title="Are you sure you want to retry the edited message?" confirm-message="Retrying an edited message might cause unexpected consequences on the system." confirm-click="retryEditedMessage()">Edit & retry</button>
+    <button type="submit" class="btn btn-primary" confirm-title="Are you sure you want to retry the edited message?"
+        confirm-message="Retrying an edited message might cause unexpected consequences on the system."
+        confirm-click="retryEditedMessage()">Edit & retry</button>
 </div>
