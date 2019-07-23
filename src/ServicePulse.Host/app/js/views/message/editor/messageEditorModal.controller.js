@@ -12,7 +12,7 @@
         var sensitive_headers = editAndRetryConfig.sensitive_headers;
         var locked_headers = editAndRetryConfig.locked_headers;
         var originalMessageBody = '';
-        var originalMessageHeaders = {};
+        var originalMessageHeaders = [];
         $scope.message = undefined;
 
         function prettifyText(text, contentType) {
@@ -59,15 +59,18 @@
                         .then(function (msg) {
                             $scope.message.messageHeaders = msg.data[0].headers;
                             $scope.isEvent = $scope.message.messageHeaders['NServiceBus.MessageIntent'] === 'Publish';
-                            angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
+                            originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
 
                             for(var i = 0; i < $scope.message.messageHeaders.length; i++){
                                 var header = $scope.message.messageHeaders[i];
                                 header.isSensitive = sensitive_headers.includes(header.key);
                                 header.isLocked = locked_headers.includes(header.key);
+                                header.isMarkedAsRemoved = false;
+                                header.isChanged = false;
                             }
 
                             $scope.$watch('message.messageHeaders', function (newVal, oldVal) {
+
                                 for(var i = 0; i < newVal.length; i++){
                                     var newHeader = newVal[i];
                                     var oldHeader = undefined;
@@ -81,8 +84,11 @@
                                         }
                                     }
 
+                                    var originalHeader = findHeaderByKey(originalMessageHeaders, newHeader.key);
+
                                     if(newHeader.value !== oldHeader.value){
-                                        newHeader.isChanged = true;
+                                        //when newHeader.value === originalHeader.value but the value is changed it's a reset operation
+                                        newHeader.isChanged = newHeader.value !== originalHeader.value;
                                         return;
                                     }
                                 }
@@ -94,7 +100,8 @@
                                     $scope.message.bodyContentType = bodyContentType;
                                     $scope.message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
                                     $scope.message.messageBody = prettifyText(msg.data, bodyContentType);
-                                    angular.merge(originalMessageBody, $scope.message.messageBody);
+                                    originalMessageBody = angular.merge(originalMessageBody, $scope.message.messageBody);
+
                                 }, function () {
                                     message.bodyUnavailable = "message body unavailable";
                             });
@@ -111,10 +118,10 @@
                 });
         };
 
-        var findHeaderByKey = function(key){
-            for(var i = 0; i < $scope.message.messageHeaders.length; i++) {
-                if($scope.message.messageHeaders[i].key === key) {
-                    return $scope.message.messageHeaders[i];
+        var findHeaderByKey = function(headers, key){
+            for(var i = 0; i < headers.length; i++) {
+                if(headers[i].key === key) {
+                    return headers[i];
                 }
             }
 
@@ -122,13 +129,19 @@
         }
 
         $scope.markHeaderAsRemoved = function(key){
-            var header = findHeaderByKey(key);
+            var header = findHeaderByKey($scope.message.messageHeaders, key);
             header.isMarkedAsRemoved = true;
         }
 
-        $scope.undoMarkHeaderAsRemoved = function(key){
-            var header = findHeaderByKey(key);
+        $scope.resetChanges = function(key){
+            var header = findHeaderByKey($scope.message.messageHeaders, key);
+            var originalHeader = findHeaderByKey(originalMessageHeaders, key);
             header.isMarkedAsRemoved = false;
+
+            console.warn(header);
+            console.warn(originalHeader);
+
+            header.value = originalHeader.value;
         }
 
         $scope.cancel = function() {

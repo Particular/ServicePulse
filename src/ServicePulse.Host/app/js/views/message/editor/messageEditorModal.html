@@ -16,7 +16,7 @@
 
                     <table isolate-click class="table" ng-show="message.panel === 0 && message.messageHeaders">
                         <tbody>
-                            <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }" ng-repeat="header in message.messageHeaders">
+                            <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }" ng-repeat="header in message.messageHeaders track by header.key">
                                 <td nowrap="nowrap"><span>{{header.key}}</span>
                                     <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock" uib-tooltip="Protected system header"></i></span>
                                     <span ng-show="(header.isChanged || header.isMarkedAsRemoved) && header.isSensitive">&nbsp;<i class="fa fa-exclamation-triangle" uib-tooltip="WARNING: This is a basic message header. Proceed with caution."></i></span>
@@ -31,8 +31,8 @@
                                         ng-model="header.value" />
                                 </td>
                                 <td>
-                                    <span ng-hide="header.isLocked || header.isMarkedAsRemoved"><a ng-click="markHeaderAsRemoved(header.key)"><i class="fa fa-trash" uib-tooltip="Clear header"></i></a></span>
-                                    <span ng-show="header.isMarkedAsRemoved"><a ng-click="undoMarkHeaderAsRemoved(header.key)"><i class="fa fa-undo" uib-tooltip="Undo"></i></a></span>
+                                    <span ng-hide="header.isLocked || header.isMarkedAsRemoved"><a ng-click="markHeaderAsRemoved(header.key)"><i class="fa fa-trash" uib-tooltip="Remove header"></i></a></span>
+                                    <span ng-show="(header.isMarkedAsRemoved || header.isChanged)"><a ng-click="resetChanges(header.key)"><i class="fa fa-undo" uib-tooltip="Reset changes"></i></a></span>
                                 </td>
                             </tr>
                         </tbody>
