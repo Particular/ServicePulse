@@ -2818,3 +2818,7 @@ span.auxilliary-label {
     position: relative;
     top: 6px;
 }
+
+.modal-msg-editor td[nowrap="nowrap"] {
+    font-weight: bold;
+}
