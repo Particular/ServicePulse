@@ -2806,6 +2806,10 @@ span.auxilliary-label {
     color: #00a3c4;
 }
 
+.modal-msg-editor tr td:nth-child(3) i.fa:hover {
+    opacity: 0.8;
+}
+
 .modal .btn.btn-primary {
     padding: 8px 20px;
 }
