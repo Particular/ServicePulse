@@ -22,7 +22,8 @@
                         <tbody>
                             <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }"
                                 ng-repeat="header in message.messageHeaders track by header.key">
-                                <td nowrap="nowrap"><span ng-class="{ 'header-removed': header.isMarkedAsRemoved }">{{header.key}}</span>
+                                <td nowrap="nowrap"><span
+                                        ng-class="{ 'header-removed': header.isMarkedAsRemoved }">{{header.key}}</span>
                                     <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock"
                                             uib-tooltip="Protected system header"></i></span>
                                     <span
@@ -33,7 +34,8 @@
                                             uib-tooltip="Edited"></i></span>
                                 </td>
                                 <td>
-                                    <input isolate-click class="form-control" autocomplete="off" type="text" ng-class="{ 'header-removed': header.isMarkedAsRemoved }"
+                                    <input isolate-click class="form-control" autocomplete="off" type="text"
+                                        ng-class="{ 'header-removed': header.isMarkedAsRemoved }"
                                         ng-disabled="header.isLocked" ng-model="header.value" />
                                 </td>
                                 <td>
@@ -52,17 +54,17 @@
                     <div ng-show="message.panel === 1 && message.messageBody">
                         <div class="row">
                             <div class="col-sm-12">
-                                <textarea isolate-click class="form-control" ng-model="message.messageBody" ng-disabled="!message.isContentTypeSupported">
+                                <textarea isolate-click class="form-control" ng-model="message.messageBody"
+                                    ng-disabled="!message.isContentTypeSupported">
                                 </textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <span ng-show="message.isBodyChanged"><a
-                                    ng-click="resetBodyChanges()"><i class="fa fa-undo"
-                                        uib-tooltip="Reset changes"></i></a></span>                                
+                                <span ng-show="message.isBodyChanged"><a ng-click="resetBodyChanges()"><i
+                                            class="fa fa-undo" uib-tooltip="Reset changes"></i></a></span>
                             </div>
-                        </div>                        
+                        </div>
                         <div isolate-click class="alert alert-info"
                             ng-show="message.panel === 1 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
                     </div>
@@ -71,9 +73,27 @@
         </div>
     </div>
 </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
-    <button type="submit" class="btn btn-primary" confirm-title="Are you sure you want to retry the edited message?"
-        confirm-message="Retrying an edited message might cause unexpected consequences on the system."
-        confirm-click="retryEditedMessage()">Edit & retry</button>
+<div class="modal-footer cancel-confirmation" ng-show="showCancelConfirmation">
+    <div class="row">
+        <div class="col-sm-8">
+            There are pending changes, are you sure you want to cancel? Changes will be lost.
+        </div>
+        <div class="col-sm-4">
+                <button type="button" class="btn btn-default" ng-click="closeDialog()">Yes</button>
+                <button type="button" class="btn btn-primary" ng-click="cancelDialogClose()">No</button>
+        </div>
+    </div>
+</div>
+<div class="modal-footer edit-retry-confirmation" ng-show="showEditAndRetryConfirmation">
+    <div class="row">
+        <div class="col-sm-8">Are you sure you want to retry the edited message? Retrying an edited message might cause unexpected consequences on the system.</div>
+        <div class="col-sm-4">
+                <button type="button" class="btn btn-default" ng-click="retryEditedMessage()">Yes</button>
+                <button type="button" class="btn btn-primary" ng-click="cancelEditRequest()">No</button>
+        </div>
+    </div>
+</div>
+<div class="modal-footer" ng-hide="(showEditAndRetryConfirmation || showCancelConfirmation)">
+    <button type="button" class="btn btn-default" ng-click="confirmCancellationIfNeeded()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="confirmEditAndRetry()">Edit & retry</button>
 </div>

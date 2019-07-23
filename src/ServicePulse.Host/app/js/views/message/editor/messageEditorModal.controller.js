@@ -149,8 +149,38 @@
             $scope.message.messageBody = originalMessageBody;
         }
 
-        $scope.cancel = function () {
+        $scope.confirmCancellationIfNeeded = function(){
+
+            if($scope.message.isBodyChanged){
+                $scope.showCancelConfirmation = true;
+                return;
+            }
+
+            for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
+                var header = $scope.message.messageHeaders[i];
+                if(header.isChanged || header.isMarkedAsRemoved){
+                    $scope.showCancelConfirmation = true;
+                    return;
+                }
+            }
+
+            $scope.closeDialog();
+        };
+
+        $scope.closeDialog = function () {
             $uibModalInstance.dismiss('cancel');
+        };
+
+        $scope.cancelDialogClose = function () {
+            $scope.showCancelConfirmation = false;
+        };
+
+        $scope.confirmEditAndRetry = function(){
+            $scope.showEditAndRetryConfirmation = true;
+        };
+
+        $scope.cancelEditRequest = function(){
+            $scope.showEditAndRetryConfirmation = false;
         };
 
         $scope.retryEditedMessage = function () {
