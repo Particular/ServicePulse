@@ -37,19 +37,19 @@
 
             return false;
         }
-        
+
         $scope.isEvent = false;
         $scope.getContentType = getContentType;
 
         $scope.togglePanel = function (message, panelnum) {
             if (message.notFound || message.error)
                 return false;
-            
+
             message.panel = panelnum;
             return true;
         };
 
-        function loadMessageById (id) {
+        function loadMessageById(id) {
             return serviceControlService.getFailedMessageById(id)
                 .then(function (response) {
                     $scope.message = response.data;
@@ -61,7 +61,7 @@
                             $scope.isEvent = $scope.message.messageHeaders['NServiceBus.MessageIntent'] === 'Publish';
                             originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
 
-                            for(var i = 0; i < $scope.message.messageHeaders.length; i++){
+                            for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
                                 var header = $scope.message.messageHeaders[i];
                                 header.isSensitive = sensitive_headers.includes(header.key);
                                 header.isLocked = locked_headers.includes(header.key);
@@ -71,14 +71,14 @@
 
                             $scope.$watch('message.messageHeaders', function (newVal, oldVal) {
 
-                                for(var i = 0; i < newVal.length; i++){
+                                for (var i = 0; i < newVal.length; i++) {
                                     var newHeader = newVal[i];
                                     var oldHeader = undefined;
 
-                                    for(var j = 0; j < oldVal.length; j++){
-                                        if(oldHeader == undefined){
+                                    for (var j = 0; j < oldVal.length; j++) {
+                                        if (oldHeader == undefined) {
                                             var temp = oldVal[j];
-                                            if(temp.key === newHeader.key){
+                                            if (temp.key === newHeader.key) {
                                                 oldHeader = temp;
                                             }
                                         }
@@ -86,7 +86,7 @@
 
                                     var originalHeader = findHeaderByKey(originalMessageHeaders, newHeader.key);
 
-                                    if(newHeader.value !== oldHeader.value){
+                                    if (newHeader.value !== oldHeader.value) {
                                         //when newHeader.value === originalHeader.value but the value is changed it's a reset operation
                                         newHeader.isChanged = newHeader.value !== originalHeader.value;
                                         return;
@@ -103,29 +103,29 @@
                                     $scope.message.isBodyChanged = false;
                                     originalMessageBody = $scope.message.messageBody;
 
-                                    $scope.$watch('message.messageBody', function(newBody, oldBody){
+                                    $scope.$watch('message.messageBody', function (newBody, oldBody) {
                                         $scope.message.isBodyChanged = newBody !== originalMessageBody;
                                     }, false);
 
                                 }, function () {
                                     message.bodyUnavailable = "message body unavailable";
-                            });
+                                });
                         }, function () {
                             $scope.message.headersUnavailable = "message headers unavailable";
                         });
                 },
-                function (response) {
-                    if (response.status === 404) {
-                        $scope.message = { notFound: true };
-                    } else {
-                        $scope.message = { error: true };
-                    }
-                });
+                    function (response) {
+                        if (response.status === 404) {
+                            $scope.message = { notFound: true };
+                        } else {
+                            $scope.message = { error: true };
+                        }
+                    });
         };
 
-        var findHeaderByKey = function(headers, key){
-            for(var i = 0; i < headers.length; i++) {
-                if(headers[i].key === key) {
+        var findHeaderByKey = function (headers, key) {
+            for (var i = 0; i < headers.length; i++) {
+                if (headers[i].key === key) {
                     return headers[i];
                 }
             }
@@ -133,31 +133,31 @@
             return null;
         }
 
-        $scope.markHeaderAsRemoved = function(key){
+        $scope.markHeaderAsRemoved = function (key) {
             var header = findHeaderByKey($scope.message.messageHeaders, key);
             header.isMarkedAsRemoved = true;
         }
 
-        $scope.resetHeaderChanges = function(key){
+        $scope.resetHeaderChanges = function (key) {
             var header = findHeaderByKey($scope.message.messageHeaders, key);
             var originalHeader = findHeaderByKey(originalMessageHeaders, key);
             header.isMarkedAsRemoved = false;
             header.value = originalHeader.value;
         }
 
-        $scope.resetBodyChanges = function(){
+        $scope.resetBodyChanges = function () {
             $scope.message.messageBody = originalMessageBody;
         }
 
-        $scope.cancel = function() {
+        $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
 
-        $scope.retryEditedMessage = function(){
+        $scope.retryEditedMessage = function () {
 
             var headers = [];
-            for(var i = 0; i < $scope.message.messageHeaders.length; i++) {
-                if(!$scope.message.messageHeaders[i].isMarkedAsRemoved){
+            for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
+                if (!$scope.message.messageHeaders[i].isMarkedAsRemoved) {
                     headers.push($scope.message.messageHeaders[i]);
                 }
             }
@@ -167,17 +167,15 @@
                 message_headers: headers,
             };
 
-            console.warn(editedMessage);
-
-            // return serviceControlService.retryEditedMessage(failedMessageId, editedMessage)
-            //     .then(function () {
-            //         $uibModalInstance.close('retried');
-            //     });
+            return serviceControlService.retryEditedMessage(failedMessageId, editedMessage)
+                .then(function () {
+                    $uibModalInstance.close('retried');
+                });
         };
 
         loadMessageById(failedMessageId)
-            .then(function () { 
-                $scope.togglePanel($scope.message, 0); 
+            .then(function () {
+                $scope.togglePanel($scope.message, 0);
             });
     }
 
