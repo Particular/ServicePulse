@@ -19,7 +19,7 @@
                             <tr class="interactiveList" ng-class="{ 'header-removed': header.isMarkedAsRemoved }" ng-repeat="header in message.messageHeaders">
                                 <td nowrap="nowrap"><span>{{header.key}}</span>
                                     <span ng-show="header.isLocked">&nbsp;<i class="fa fa-lock" uib-tooltip="Protected system header"></i></span>
-                                    <span ng-show="header.isChanged && header.isSensitive">&nbsp;<i class="fa fa-exclamation-triangle" uib-tooltip="WARNING: This is a basic message header. Proceed with caution."></i></span>
+                                    <span ng-show="(header.isChanged || header.isMarkedAsRemoved) && header.isSensitive">&nbsp;<i class="fa fa-exclamation-triangle" uib-tooltip="WARNING: This is a basic message header. Proceed with caution."></i></span>
                                     <span ng-show="header.isChanged">&nbsp;<i class="fa fa-pencil" uib-tooltip="Edited"></i></span>
                                 </td>
                                 <td>
