@@ -2755,7 +2755,7 @@ span.auxilliary-label {
     margin-top: 20px;
 }
 
-.modal-msg-editor .row, .modal-msg-editor .col-sm-12 {
+.modal-msg-editor .row, .modal-msg-editor .col-sm-12, .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"] {
     height: 100%;
 }
 
