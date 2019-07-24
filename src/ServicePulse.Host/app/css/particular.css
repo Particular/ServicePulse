@@ -2755,12 +2755,12 @@ span.auxilliary-label {
     margin-top: 20px;
 }
 
-.modal-msg-editor .row, .modal-msg-editor .col-sm-12, .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"] {
+.modal-msg-editor .row, .modal-msg-editor .col-sm-12 {
     height: 100%;
 }
 
 .modal-msg-editor textarea {
-    height: calc(100% - 80px);
+    height: calc(100% - 110px);
 }
 
 .modal-msg-editor tr td:first-child {
@@ -2849,4 +2849,17 @@ input.header-removed {
     position: relative;
     top: 1px;
     margin-right: 20px;
+}
+
+.reset-body {
+    color: #00A3C4;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    margin-top: 15px;
+    display: block;
+}
+
+.reset-body i.fa.fa-undo {
+    color: #00A3C4;
 }
