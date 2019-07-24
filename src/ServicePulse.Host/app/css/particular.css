@@ -2822,3 +2822,22 @@ span.auxilliary-label {
 .modal-msg-editor td[nowrap="nowrap"] {
     font-weight: bold;
 }
+
+span.header-removed {
+    position: relative;
+}
+
+span.header-removed:after {
+    border-bottom: 2px solid #ce4844;
+    content: "";
+    left: 0;
+    margin-top: calc(2px / 2 * -1);
+    position: absolute;
+    right: 0;
+    top: 50%;
+}
+
+input.header-removed {
+    opacity: 0.3;
+    pointer-events: none;
+}
