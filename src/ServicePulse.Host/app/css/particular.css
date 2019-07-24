@@ -2847,6 +2847,13 @@ input.header-removed {
     pointer-events: none;
 }
 
+.cancel-confirmation, .edit-retry-confirmation {
+    background: #181919;
+    color: #fff;
+    border-bottom-right-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
 .cancel-confirmation div, .edit-retry-confirmation div {
     display: inline-block;
     font-weight: bold;
