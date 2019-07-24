@@ -74,24 +74,14 @@
     </div>
 </div>
 <div class="modal-footer cancel-confirmation" ng-show="showCancelConfirmation">
-    <div class="row">
-        <div class="col-sm-8">
-            There are pending changes, are you sure you want to cancel? Changes will be lost.
-        </div>
-        <div class="col-sm-4">
-                <button type="button" class="btn btn-default" ng-click="closeDialog()">Yes</button>
-                <button type="button" class="btn btn-primary" ng-click="cancelDialogClose()">No</button>
-        </div>
-    </div>
+    <div> Are you sure you want to cancel? Any changes you made will be lost.</div>
+    <button type="button" class="btn btn-default" ng-click="closeDialog()">Yes</button>
+    <button type="button" class="btn btn-primary" ng-click="cancelDialogClose()">No</button>
 </div>
 <div class="modal-footer edit-retry-confirmation" ng-show="showEditAndRetryConfirmation">
-    <div class="row">
-        <div class="col-sm-8">Are you sure you want to retry the edited message? Retrying an edited message might cause unexpected consequences on the system.</div>
-        <div class="col-sm-4">
-                <button type="button" class="btn btn-default" ng-click="retryEditedMessage()">Yes</button>
-                <button type="button" class="btn btn-primary" ng-click="cancelEditRequest()">No</button>
-        </div>
-    </div>
+    <div>Are you sure you want to retry the edited message? Retrying an edited message may cause unexpected consequences in the system.</div>
+    <button type="button" class="btn btn-default" ng-click="retryEditedMessage()">Yes</button>
+    <button type="button" class="btn btn-primary" ng-click="cancelEditRequest()">No</button>
 </div>
 <div class="modal-footer" ng-hide="(showEditAndRetryConfirmation || showCancelConfirmation)">
     <button type="button" class="btn btn-default" ng-click="confirmCancellationIfNeeded()">Cancel</button>

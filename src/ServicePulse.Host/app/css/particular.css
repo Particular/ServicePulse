@@ -2841,3 +2841,12 @@ input.header-removed {
     opacity: 0.3;
     pointer-events: none;
 }
+
+.cancel-confirmation div, .edit-retry-confirmation div {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 14px;
+    position: relative;
+    top: 1px;
+    margin-right: 20px;
+}
