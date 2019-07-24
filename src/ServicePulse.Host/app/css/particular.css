@@ -2888,3 +2888,9 @@ input.header-removed {
 .modal-msg-editor .row.msg-editor-content table {
     margin-top: 20px;
 }
+
+table[ng-show="vm.message.panel === 2 && vm.message.messageHeaders"] td[nowrap="nowrap"] {
+    font-weight: bold;
+    padding-top: 20px;
+    padding-left: 0;
+}
