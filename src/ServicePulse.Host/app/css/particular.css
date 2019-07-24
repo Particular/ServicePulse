@@ -2864,6 +2864,10 @@ input.header-removed {
     display: block;
 }
 
+.reset-body a:hover {
+    cursor: pointer;
+}
+
 .reset-body i.fa.fa-undo {
     color: #00A3C4;
 }
