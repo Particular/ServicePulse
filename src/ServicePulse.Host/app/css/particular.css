@@ -2759,8 +2759,12 @@ span.auxilliary-label {
     height: 100%;
 }
 
-.modal-msg-editor textarea {
+.modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"] {
     height: calc(100% - 110px);
+}
+
+.modal-msg-editor textarea {
+    height: 100%;
 }
 
 .modal-msg-editor tr td:first-child {
