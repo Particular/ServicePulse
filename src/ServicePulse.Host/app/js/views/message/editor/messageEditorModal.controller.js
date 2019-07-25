@@ -58,7 +58,10 @@
                     return serviceControlService.getMessageHeaders($scope.message.message_id)
                         .then(function (msg) {
                             $scope.message.messageHeaders = msg.data[0].headers;
-                            $scope.isEvent = $scope.message.messageHeaders['NServiceBus.MessageIntent'] === 'Publish';
+                            var intentHeader = findHeaderByKey($scope.message.messageHeaders, 'NServiceBus.MessageIntent');
+                            if(intentHeader){
+                                $scope.isEvent = intentHeader.value === 'Publish';
+                            }
                             originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
 
                             for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
