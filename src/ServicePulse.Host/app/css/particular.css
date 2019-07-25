@@ -2748,7 +2748,7 @@ span.auxilliary-label {
 
 .modal-msg-editor .modal-body {
     overflow-y: auto;
-    height: 85vh;
+    height: 80vh;
 }
 
 .modal-msg-editor .msg-tabs {
