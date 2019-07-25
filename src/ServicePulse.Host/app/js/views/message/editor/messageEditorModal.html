@@ -61,7 +61,7 @@
                         <textarea isolate-click class="form-control" ng-model="message.messageBody"
                                 ng-disabled="!message.isContentTypeSupported">
                             </textarea>
-                        <span ng-show="message.isBodyEmpty">Message body cannot be empty.</span>
+                        <span class="empty-error" ng-show="message.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
                         <span class="reset-body" ng-show="message.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a ng-click="resetBodyChanges()">Reset changes</a></span>
                         <div isolate-click class="alert alert-info"
                             ng-show="message.panel === 1 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>

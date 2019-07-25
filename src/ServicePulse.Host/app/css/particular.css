@@ -2759,7 +2759,7 @@ span.auxilliary-label {
     height: 100%;
 }
 
-.modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"] {
+.modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"], .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody !== undefined && message.messageBody !== null"] {
     height: calc(100% - 75px);
 }
 
@@ -2863,21 +2863,32 @@ input.header-removed {
     margin-right: 20px;
 }
 
-.reset-body {
+.modal-msg-editor .reset-body {
     color: #00A3C4;
     font-weight: bold;
-    width: 100%;
-    text-align: center;
+    text-align: left;
     margin-top: 15px;
-    display: block;
+    display: inline-block;
 }
 
-.reset-body a:hover {
+.modal-msg-editor .reset-body a:hover {
     cursor: pointer;
 }
 
-.reset-body i.fa.fa-undo {
+.modal-msg-editor .reset-body i.fa.fa-undo {
     color: #00A3C4;
+}
+
+.modal-msg-editor .empty-error {
+    display: inline-block;
+    float: right;
+    margin-top: 15px;
+    color: #ce4844;
+    font-weight: bold;
+}
+
+.modal-msg-editor .empty-error i.fa.fa-exclamation-triangle {
+    color: #ce4844;
 }
 
 .modal-msg-editor .row.msg-editor-tabs {
