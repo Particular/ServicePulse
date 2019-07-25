@@ -57,10 +57,11 @@
                     </table>
                     <div isolate-click class="alert alert-info"
                         ng-show="message.panel === 0 && message.headersUnavailable">{{message.headersUnavailable}}</div>
-                    <div ng-show="message.panel === 1 && message.messageBody">
+                    <div ng-show="message.panel === 1 && message.messageBody !== undefined && message.messageBody !== null">
                         <textarea isolate-click class="form-control" ng-model="message.messageBody"
                                 ng-disabled="!message.isContentTypeSupported">
                             </textarea>
+                        <span ng-show="message.isBodyEmpty">Message body cannot be empty.</span>
                         <span class="reset-body" ng-show="message.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a ng-click="resetBodyChanges()">Reset changes</a></span>
                         <div isolate-click class="alert alert-info"
                             ng-show="message.panel === 1 && message.bodyUnavailable">{{message.bodyUnavailable}}</div>
@@ -82,5 +83,5 @@
 </div>
 <div class="modal-footer" ng-hide="(showEditAndRetryConfirmation || showCancelConfirmation)">
     <button type="button" class="btn btn-default" ng-click="confirmCancellationIfNeeded()">Cancel</button>
-    <button type="button" class="btn btn-primary" ng-click="confirmEditAndRetry()">Edit & retry</button>
+    <button type="button" ng-disabled="message.isBodyEmpty" class="btn btn-primary" ng-click="confirmEditAndRetry()">Edit & retry</button>
 </div>

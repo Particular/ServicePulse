@@ -105,6 +105,7 @@
 
                                     $scope.$watch('message.messageBody', function (newBody, oldBody) {
                                         $scope.message.isBodyChanged = newBody !== originalMessageBody;
+                                        $scope.message.isBodyEmpty = !newBody || newBody.trim().length === 0;
                                     }, false);
 
                                 }, function () {
