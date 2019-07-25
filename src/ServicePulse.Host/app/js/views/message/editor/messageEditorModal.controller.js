@@ -186,6 +186,8 @@
 
         $scope.retryEditedMessage = function () {
 
+            $scope.showEditRetryGenericError = false;
+
             var headers = [];
             for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
                 if (!$scope.message.messageHeaders[i].isMarkedAsRemoved) {
@@ -201,6 +203,8 @@
             return serviceControlService.retryEditedMessage(failedMessageId, editedMessage)
                 .then(function () {
                     $uibModalInstance.close('retried');
+                }, function(){
+                    $scope.showEditRetryGenericError = true;
                 });
         };
 
