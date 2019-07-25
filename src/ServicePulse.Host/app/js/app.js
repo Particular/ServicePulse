@@ -39,7 +39,7 @@
     angular.module('sc')
         .value('$jquery', $)
         .constant('version', window.defaultConfig.version)
-        .constant('showPendingRetry', window.defaultConfig.showPendingRetry)
+        .constant('showPendingRetry', (window.defaultConfig.showPendingRetry || false))
         .constant('scConfig', window.defaultConfig);
 
     angular.module('sc').config(['$locationProvider', function ($locationProvider) {
