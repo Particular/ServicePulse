@@ -207,6 +207,7 @@
                 .then(function () {
                     $uibModalInstance.close('retried');
                 }, function(){
+                    $scope.showEditAndRetryConfirmation = false;
                     $scope.showEditRetryGenericError = true;
                 });
         };
