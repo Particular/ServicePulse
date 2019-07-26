@@ -80,11 +80,11 @@
     <button type="button" class="btn btn-primary" ng-click="cancelDialogClose()">No</button>
 </div>
 <div class="modal-footer edit-retry-confirmation" ng-show="showEditAndRetryConfirmation">
-    <div>Are you sure you want to continue? Retrying an edited message may cause unexpected consequences in the system.</div>
+    <div>Are you sure you want to continue? If you edited the message, it may cause unexpected consequences in the system.</div>
     <button type="button" class="btn btn-default" ng-click="retryEditedMessage()">Yes</button>
     <button type="button" class="btn btn-primary" ng-click="cancelEditRequest()">No</button>
 </div>
 <div class="modal-footer" ng-hide="(showEditAndRetryConfirmation || showCancelConfirmation)">
     <button type="button" class="btn btn-default" ng-click="confirmCancellationIfNeeded()">Cancel</button>
-    <button type="button" ng-disabled="message.isBodyEmpty" class="btn btn-primary" ng-click="confirmEditAndRetry()">Edit & retry</button>
+    <button type="button" ng-disabled="message.isBodyEmpty" class="btn btn-primary" ng-click="confirmEditAndRetry()">Retry</button>
 </div>
