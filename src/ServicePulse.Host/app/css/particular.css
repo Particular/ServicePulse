@@ -2912,3 +2912,12 @@ table[ng-show="vm.message.panel === 2 && vm.message.messageHeaders"] td[nowrap="
     padding-top: 20px;
     padding-left: 0;
 }
+
+.modal-msg-editor .row.alert.alert-danger {
+    height: 52px;
+    font-weight: bold;
+}
+
+.modal-msg-editor .row.alert.alert-danger i.fa.fa-exclamation-triangle {
+    color: #ce4844;
+}
