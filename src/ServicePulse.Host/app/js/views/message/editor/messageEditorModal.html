@@ -2,13 +2,13 @@
     <h3 class="modal-title">Edit and retry message</h3>
 </div>
 <div class="modal-body">
-    <div class="row" ng-show="isEvent">
-        <div class="col-sm-12">The edited message is an event. Editing an event, that could have already been successfully handled by
-            other subscribers, has the risk of changing the semantic meaning of the event itself, with the result of
-            altering the system behavior. Proceed with caution.</div>
+    <div class="row alert alert-warning" ng-show="isEvent">
+        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by
+            other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
+            altering the system behavior.</div>
     </div>
     <div class="row alert alert-danger" ng-show="showEditRetryGenericError">
-        <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please consult ServiceControl logs for more details on the failure.</div>
+        <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
     </div>
     <div class="row">
         <div class="col-sm-12">

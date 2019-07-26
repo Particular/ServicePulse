@@ -2913,9 +2913,17 @@ table[ng-show="vm.message.panel === 2 && vm.message.messageHeaders"] td[nowrap="
     padding-left: 0;
 }
 
-.modal-msg-editor .row.alert.alert-danger {
-    height: 52px;
+.modal-msg-editor .row.alert.alert-warning, .modal-msg-editor .row.alert.alert-danger {
+    height: initial;
+    display: block;
+    overflow: auto;
     font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.modal-msg-editor .row.alert.alert-warning i.fa.fa-exclamation-circle {
+    color: #8a6d3b;
 }
 
 .modal-msg-editor .row.alert.alert-danger i.fa.fa-exclamation-triangle {
