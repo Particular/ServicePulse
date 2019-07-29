@@ -7,6 +7,9 @@
             other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
             altering the system behavior.</div>
     </div>
+    <div class="row alert alert-warning" ng-show="!message.isContentTypeSupported">
+        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> Message body cannot be edited: content type ({{message.bodyContentType}}) not supported. Only msessages with body content serizalised as Json or XML can be edited.</div>
+    </div>
     <div class="row alert alert-danger" ng-show="showEditRetryGenericError">
         <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
     </div>
