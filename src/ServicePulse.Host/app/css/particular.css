@@ -2760,7 +2760,7 @@ span.auxilliary-label {
 }
 
 .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"], .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody !== undefined && message.messageBody !== null"] {
-    height: calc(100% - 75px);
+    height: calc(100% - 260px);
 }
 
 .modal-msg-editor textarea {
@@ -2894,13 +2894,14 @@ input.header-removed {
 .modal-msg-editor .row.msg-editor-tabs {
     height: 52px;
     position: relative;
-    box-shadow: -10px 26px 20px #fff;
+    box-shadow: -10px 20px 20px #fff;
     z-index: 10;
 }
 
 .modal-msg-editor .row.msg-editor-content {
     height: calc(100% - 37px);
     overflow-y: auto;
+    padding-right: 15px;
 }
 
 .modal-msg-editor .row.msg-editor-content table {
@@ -2913,13 +2914,17 @@ table[ng-show="vm.message.panel === 2 && vm.message.messageHeaders"] td[nowrap="
     padding-left: 0;
 }
 
-.modal-msg-editor .row.alert.alert-warning, .modal-msg-editor .row.alert.alert-danger {
+.modal-msg-editor .row.alert {
     height: initial;
     display: block;
     overflow: auto;
     font-weight: bold;
     margin-bottom: 10px;
     font-size: 14px;
+}
+
+.modal-msg-editor .row.alert:first-of-type {
+    margin-top: 20px;
 }
 
 .modal-msg-editor .row.alert.alert-warning i.fa.fa-exclamation-circle {
