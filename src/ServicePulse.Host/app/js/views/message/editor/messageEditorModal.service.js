@@ -10,10 +10,10 @@
                     backdrop: 'static',
                     windowTopClass: 'modal-msg-editor',
                     resolve: {
-                        failedMessageId: function(){
+                        failedMessageId: function() {
                             return failedMessageId;
                         },
-                        editAndRetryConfig: function(){
+                        editAndRetryConfig: function() {
                             return editAndRetryConfig;
                         }
                     }
