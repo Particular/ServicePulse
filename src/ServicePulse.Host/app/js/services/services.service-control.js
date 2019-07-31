@@ -104,7 +104,7 @@
             });
         }
 
-        function retryEditedMessage( messageId, editedMessage ) {
+        function retryEditedMessage(messageId, editedMessage) {
             return $http({
                 url: uri.join(scu,'edit', messageId),
                 method: 'POST',
