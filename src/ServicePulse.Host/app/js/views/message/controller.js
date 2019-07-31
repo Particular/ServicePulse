@@ -128,7 +128,7 @@
             }
             var failedMessageId = vm.message.id;
             var modalInstance = messageEditorModalService.displayEditMessageModal(failedMessageId, editAndRetryConfig);
-            modalInstance.result.then(function(result){
+            modalInstance.result.then(function(result) {
                 //closed
             }, function(reason){
                 //dismissed
