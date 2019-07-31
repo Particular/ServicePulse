@@ -122,7 +122,7 @@
 
         vm.isEditAndRetryEnabled = editAndRetryConfig.enabled;
 
-        vm.editMessage = function(){
+        vm.editMessage = function() {
             if(!editAndRetryConfig.enabled){
                 throw 'Edit & Retry is disabled.';
             }
@@ -132,7 +132,7 @@
                 //closed
             }, function(reason){
                 //dismissed
-            })
+            });
         };
 
         function updateMessageDeleteDate(message, errorRetentionPeriod) {
