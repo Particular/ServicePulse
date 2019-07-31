@@ -157,17 +157,12 @@ $scope.message.messageHeaders.forEach(function (header) {
 
         $scope.confirmCancellationIfNeeded = function () {
 
-            if ($scope.message.isBodyChanged) {
-                $scope.showCancelConfirmation = true;
-                return;
-            }
+            $scope.showCancelConfirmation = $scope.message.isBodyChanged || $scope.message.messageHeaders.some(function (header) {
+                return header.isChanged || header.isMarkedAsRemoved; }
+            );
 
-            for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
-                var header = $scope.message.messageHeaders[i];
-                if(header.isChanged || header.isMarkedAsRemoved){
-                    $scope.showCancelConfirmation = true;
-                    return;
-                }
+            if($scope.showCancelConfirmation){
+                return;
             }
 
             $scope.closeDialog();
