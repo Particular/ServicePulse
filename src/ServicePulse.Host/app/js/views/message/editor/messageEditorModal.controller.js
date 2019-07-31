@@ -56,7 +56,7 @@
                         .then(function (msg) {
                             $scope.message.messageHeaders = msg.data[0].headers;
                             var intentHeader = findHeaderByKey($scope.message.messageHeaders, 'NServiceBus.MessageIntent');
-                            if(intentHeader){
+                            if (intentHeader) {
                                 $scope.isEvent = intentHeader.value === 'Publish';
                             }
                             originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
