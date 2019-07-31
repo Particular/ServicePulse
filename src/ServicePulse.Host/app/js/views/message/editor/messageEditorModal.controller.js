@@ -51,7 +51,7 @@
                 .then(function (response) {
                     $scope.message = response.data;
 
-                    //In theory loding body and headers could be done in parallel waiting for both promises.
+                    //In theory loading body and headers could be done in parallel waiting for both promises.
                     return serviceControlService.getMessageHeaders($scope.message.message_id)
                         .then(function (msg) {
                             $scope.message.messageHeaders = msg.data[0].headers;
