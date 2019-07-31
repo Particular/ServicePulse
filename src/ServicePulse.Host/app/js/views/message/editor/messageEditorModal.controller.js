@@ -46,73 +46,53 @@
             return true;
         };
 
+        var loadMessageBody = function(){
+            return serviceControlService.getMessageBody($scope.message.message_id)
+                .then(function (msg) {
+                    var bodyContentType = getContentType($scope.message.messageHeaders);
+                    
+                    $scope.message.bodyContentType = bodyContentType;
+                    $scope.message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
+                    $scope.message.messageBody = prettifyText(msg.data, bodyContentType);
+                    $scope.message.isBodyChanged = false;
+                    originalMessageBody = $scope.message.messageBody;
+
+                }, function () {
+                    message.bodyUnavailable = "message body unavailable";
+                });
+        }
+
+        var loadMessageHeadersAndMessageBody = function(){
+
+            return serviceControlService.getMessageHeaders($scope.message.message_id)
+                .then(function (response) {
+
+                    $scope.message.messageHeaders = response.data[0].headers;
+                    var intentHeader = findHeaderByKey($scope.message.messageHeaders, 'NServiceBus.MessageIntent');
+                    if (intentHeader) {
+                        $scope.isEvent = intentHeader.value === 'Publish';
+                    }
+                    originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
+        
+                    $scope.message.messageHeaders.forEach(function (header) {
+                        header.isSensitive = sensitive_headers.includes(header.key);
+                        header.isLocked = locked_headers.includes(header.key);
+                        header.isMarkedAsRemoved = false;
+                        header.isChanged = false;
+                    });
+
+                    return loadMessageBody();
+
+                }, function () {
+                    $scope.message.headersUnavailable = "message headers unavailable";
+                });
+        }
+
         function loadMessageById(id) {
             return serviceControlService.getFailedMessageById(id)
                 .then(function (response) {
                     $scope.message = response.data;
-
-                    //In theory loading body and headers could be done in parallel waiting for both promises.
-                    return serviceControlService.getMessageHeaders($scope.message.message_id)
-                        .then(function (msg) {
-                            $scope.message.messageHeaders = msg.data[0].headers;
-                            var intentHeader = findHeaderByKey($scope.message.messageHeaders, 'NServiceBus.MessageIntent');
-                            if (intentHeader) {
-                                $scope.isEvent = intentHeader.value === 'Publish';
-                            }
-                            originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
-
-                            $scope.message.messageHeaders.forEach(function (header) {
-                                header.isSensitive = sensitive_headers.includes(header.key);
-                                header.isLocked = locked_headers.includes(header.key);
-                                header.isMarkedAsRemoved = false;
-                                header.isChanged = false;
-                            });
-
-                            $scope.$watch('message.messageHeaders', function (newVal, oldVal) {
-
-                                for (var i = 0; i < newVal.length; i++) {
-                                    var newHeader = newVal[i];
-                                    var oldHeader = undefined;
-
-                                    for (var j = 0; j < oldVal.length; j++) {
-                                        if (oldHeader == undefined) {
-                                            var temp = oldVal[j];
-                                            if (temp.key === newHeader.key) {
-                                                oldHeader = temp;
-                                            }
-                                        }
-                                    }
-
-                                    var originalHeader = findHeaderByKey(originalMessageHeaders, newHeader.key);
-
-                                    if (newHeader.value !== oldHeader.value) {
-                                        //when newHeader.value === originalHeader.value but the value is changed it's a reset operation
-                                        newHeader.isChanged = newHeader.value !== originalHeader.value;
-                                        return;
-                                    }
-                                }
-                            }, true);
-
-                            return serviceControlService.getMessageBody($scope.message.message_id)
-                                .then(function (msg) {
-                                    var bodyContentType = getContentType($scope.message.messageHeaders);
-                                    $scope.message.bodyContentType = bodyContentType;
-                                    $scope.message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
-                                    $scope.message.messageBody = prettifyText(msg.data, bodyContentType);
-                                    $scope.message.isBodyChanged = false;
-                                    originalMessageBody = $scope.message.messageBody;
-
-                                    $scope.$watch('message.messageBody', function (newBody, oldBody) {
-                                        $scope.message.isBodyChanged = newBody !== originalMessageBody;
-                                        $scope.message.isBodyEmpty = !newBody || newBody.trim().length === 0;
-                                    }, false);
-
-                                }, function () {
-                                    message.bodyUnavailable = "message body unavailable";
-                                });
-                        }, function () {
-                            $scope.message.headersUnavailable = "message headers unavailable";
-                        });
+                    return loadMessageHeadersAndMessageBody();
                 },
                     function (response) {
                         if (response.status === 404) {
@@ -194,10 +174,49 @@
                 });
         };
 
+        var discoverChangedHeader = function(newHeaders, oldHeaders){
+            
+            newHeaders.forEach(function (newHeader) {
+                var oldHeader = undefined;
+                oldHeaders.forEach(function (temp) {
+                    if (oldHeader == undefined && temp.key === newHeader.key) {
+                            oldHeader = temp;
+                    }
+                });
+
+                if (newHeader.value !== oldHeader.value) {
+                    //when newHeader.value === originalHeader.value but the value is changed it's a reset operation
+                    var originalHeader = findHeaderByKey(originalMessageHeaders, newHeader.key);
+                    newHeader.isChanged = newHeader.value !== originalHeader.value;
+                    return;
+                }
+            });
+        }
+
+        var unwatchMessageHeaders = function(){}
+        var unwatchMessageBody = function(){}
+
         loadMessageById(failedMessageId)
             .then(function () {
+
+                unwatchMessageHeaders = $scope.$watch('message.messageHeaders', function (newHeaders, oldHeaders) {
+                    discoverChangedHeader(newHeaders, oldHeaders)
+                }, true);
+
+                unwatchMessageBody = $scope.$watch('message.messageBody', function (newBody, oldBody) {
+                    $scope.message.isBodyChanged = newBody !== originalMessageBody;
+                    $scope.message.isBodyEmpty = !newBody || newBody.trim().length === 0;
+                }, false);
+
+
+
                 $scope.togglePanel($scope.message, 0);
             });
+
+        $scope.$on('$destroy', function() {
+            unwatchMessageHeaders();
+            unwatchMessageBody();
+        });
     }
 
     controller.$inject = [
