@@ -124,14 +124,8 @@
         };
 
         var findHeaderByKey = function (headers, key) {
-            for (var i = 0; i < headers.length; i++) {
-                if (headers[i].key === key) {
-                    return headers[i];
-                }
-            }
-
-            return null;
-        }
+            return headers.find(function (header) { return header.key === key; });
+        };
 
         $scope.markHeaderAsRemoved = function (key) {
             var header = findHeaderByKey($scope.message.messageHeaders, key);
