@@ -61,7 +61,12 @@
                             }
                             originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
 
-                            for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
+$scope.message.messageHeaders.forEach(function (header) {
+    header.isSensitive = sensitive_headers.includes(header.key);
+    header.isLocked = locked_headers.includes(header.key);
+    header.isMarkedAsRemoved = false;
+    header.isChanged = false;
+});
                                 var header = $scope.message.messageHeaders[i];
                                 header.isSensitive = sensitive_headers.includes(header.key);
                                 header.isLocked = locked_headers.includes(header.key);
