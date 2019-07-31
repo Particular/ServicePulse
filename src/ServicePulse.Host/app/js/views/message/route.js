@@ -14,14 +14,14 @@
             controller: 'messagesController',
             controllerAs: 'vm',
             resolve: {
-                editAndRetryConfig: ['serviceControlService', function(serviceControlService){
-                    if(!cachedEditAndRetryConfig){
+                editAndRetryConfig: ['serviceControlService', function(serviceControlService) {
+                    if (!cachedEditAndRetryConfig) {
                         return serviceControlService.getEditAndRetryConfig()
                             .then(function(config) {
                                 cachedEditAndRetryConfig = config;
                                 return config;
                             });
-                    }else{
+                    } else {
                         return cachedEditAndRetryConfig;
                     }
                 }]
