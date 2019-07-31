@@ -106,7 +106,7 @@
 
         function retryEditedMessage(messageId, editedMessage) {
             return $http({
-                url: uri.join(scu,'edit', messageId),
+                url: uri.join(scu, 'edit', messageId),
                 method: 'POST',
                 data: editedMessage,
                 headers: {
