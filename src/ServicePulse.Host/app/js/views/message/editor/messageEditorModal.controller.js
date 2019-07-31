@@ -181,7 +181,7 @@ $scope.message.messageHeaders.forEach(function (header) {
             $scope.showCancelConfirmation = false;
         };
 
-        $scope.confirmEditAndRetry = function(){
+        $scope.confirmEditAndRetry = function () {
             $scope.showEditAndRetryConfirmation = true;
         };
 
