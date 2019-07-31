@@ -61,18 +61,12 @@
                             }
                             originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
 
-$scope.message.messageHeaders.forEach(function (header) {
-    header.isSensitive = sensitive_headers.includes(header.key);
-    header.isLocked = locked_headers.includes(header.key);
-    header.isMarkedAsRemoved = false;
-    header.isChanged = false;
-});
-                                var header = $scope.message.messageHeaders[i];
+                            $scope.message.messageHeaders.forEach(function (header) {
                                 header.isSensitive = sensitive_headers.includes(header.key);
                                 header.isLocked = locked_headers.includes(header.key);
                                 header.isMarkedAsRemoved = false;
                                 header.isChanged = false;
-                            }
+                            });
 
                             $scope.$watch('message.messageHeaders', function (newVal, oldVal) {
 
