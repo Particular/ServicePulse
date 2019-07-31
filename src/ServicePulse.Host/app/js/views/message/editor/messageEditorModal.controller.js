@@ -157,7 +157,7 @@ $scope.message.messageHeaders.forEach(function (header) {
 
         $scope.confirmCancellationIfNeeded = function(){
 
-            if($scope.message.isBodyChanged){
+            if ($scope.message.isBodyChanged) {
                 $scope.showCancelConfirmation = true;
                 return;
             }
