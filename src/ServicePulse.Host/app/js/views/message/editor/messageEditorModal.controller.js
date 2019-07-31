@@ -38,8 +38,9 @@
         $scope.getContentType = getContentType;
 
         $scope.togglePanel = function (message, panelnum) {
-            if (message.notFound || message.error)
+            if (message.notFound || message.error) {
                 return false;
+            }
 
             message.panel = panelnum;
             return true;
