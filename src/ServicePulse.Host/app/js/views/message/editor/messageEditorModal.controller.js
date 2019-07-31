@@ -31,11 +31,7 @@
         }
 
         function isContentTypeSupported(contentType) {
-            if (contentType === 'application/json' || contentType === 'text/xml') {
-                return true;
-            }
-
-            return false;
+            return contentType === 'application/json' || contentType === 'text/xml';
         }
 
         $scope.isEvent = false;
