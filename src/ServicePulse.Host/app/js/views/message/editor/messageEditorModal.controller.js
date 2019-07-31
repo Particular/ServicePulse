@@ -188,12 +188,9 @@ $scope.message.messageHeaders.forEach(function (header) {
 
             $scope.showEditRetryGenericError = false;
 
-            var headers = [];
-            for (var i = 0; i < $scope.message.messageHeaders.length; i++) {
-                if (!$scope.message.messageHeaders[i].isMarkedAsRemoved) {
-                    headers.push($scope.message.messageHeaders[i]);
-                }
-            }
+            var headers = $scope.message.messageHeaders.filter(function (header) {
+                return !header.isMarkedAsRemoved;
+            });
 
             var editedMessage = {
                 message_body: $scope.message.messageBody,
