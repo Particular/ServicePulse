@@ -25,8 +25,12 @@
             return text;
         }
 
+        function findHeaderByKey(headers, key) {
+            return headers.find(function (header) { return header.key === key; });
+        };
+
         function getContentType(headers) {
-            var header = headers.find(function (element) { return element.key === 'NServiceBus.ContentType'; });
+            var header = findHeaderByKey(headers, 'NServiceBus.ContentType');
             return header ? header.value : null;
         }
 
@@ -46,7 +50,7 @@
             return true;
         };
 
-        var loadMessageBody = function(){
+        var loadMessageBody = function() {
             return serviceControlService.getMessageBody($scope.message.message_id)
                 .then(function (msg) {
                     var bodyContentType = getContentType($scope.message.messageHeaders);
@@ -56,14 +60,12 @@
                     $scope.message.messageBody = prettifyText(msg.data, bodyContentType);
                     $scope.message.isBodyChanged = false;
                     originalMessageBody = $scope.message.messageBody;
-
                 }, function () {
                     message.bodyUnavailable = "message body unavailable";
                 });
         }
 
-        var loadMessageHeadersAndMessageBody = function(){
-
+        var loadMessageHeadersAndMessageBody = function() {
             return serviceControlService.getMessageHeaders($scope.message.message_id)
                 .then(function (response) {
 
@@ -103,10 +105,6 @@
                     });
         };
 
-        var findHeaderByKey = function (headers, key) {
-            return headers.find(function (header) { return header.key === key; });
-        };
-
         $scope.markHeaderAsRemoved = function (key) {
             var header = findHeaderByKey($scope.message.messageHeaders, key);
             header.isMarkedAsRemoved = true;
@@ -124,7 +122,6 @@
         }
 
         $scope.confirmCancellationIfNeeded = function () {
-
             $scope.showCancelConfirmation = $scope.message.isBodyChanged || $scope.message.messageHeaders.some(function (header) {
                 return header.isChanged || header.isMarkedAsRemoved; }
             );
@@ -153,7 +150,6 @@
         };
 
         $scope.retryEditedMessage = function () {
-
             $scope.showEditRetryGenericError = false;
 
             var headers = $scope.message.messageHeaders.filter(function (header) {
@@ -174,15 +170,9 @@
                 });
         };
 
-        var discoverChangedHeader = function(newHeaders, oldHeaders){
-            
+        var discoverChangedHeader = function(newHeaders, oldHeaders) {
             newHeaders.forEach(function (newHeader) {
-                var oldHeader = undefined;
-                oldHeaders.forEach(function (temp) {
-                    if (oldHeader == undefined && temp.key === newHeader.key) {
-                            oldHeader = temp;
-                    }
-                });
+                var oldHeader = findHeaderByKey(oldHeaders, newHeader.key);
 
                 if (newHeader.value !== oldHeader.value) {
                     //when newHeader.value === originalHeader.value but the value is changed it's a reset operation
@@ -191,14 +181,13 @@
                     return;
                 }
             });
-        }
+        };
 
-        var unwatchMessageHeaders = function(){}
-        var unwatchMessageBody = function(){}
+        var unwatchMessageHeaders = function() { };
+        var unwatchMessageBody = function() { };
 
         loadMessageById(failedMessageId)
             .then(function () {
-
                 unwatchMessageHeaders = $scope.$watch('message.messageHeaders', function (newHeaders, oldHeaders) {
                     discoverChangedHeader(newHeaders, oldHeaders)
                 }, true);
@@ -207,8 +196,6 @@
                     $scope.message.isBodyChanged = newBody !== originalMessageBody;
                     $scope.message.isBodyEmpty = !newBody || newBody.trim().length === 0;
                 }, false);
-
-
 
                 $scope.togglePanel($scope.message, 0);
             });
