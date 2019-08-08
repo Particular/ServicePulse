@@ -101,8 +101,8 @@
             var url = uri.join(scu,'edit', 'config');
             return $http.get(url).then(function(response) {
                 return response.data;
-            }, function(response){
-                if(response.status === 404){
+            }, function(response) {
+                if (response.status === 404) {
                     return {
                         enabled: false
                     };
