@@ -1,6 +1,8 @@
 ﻿; (function (window, angular, undefined) {
     'use strict';
 
+    var cachedEditAndRetryConfig = undefined;
+
     function routeProvider($routeProvider) {
         $routeProvider.when('/message/:messageId', {
             redirectTo: '/failed-messages/message/:messageId'
@@ -10,7 +12,20 @@
             },
             templateUrl: 'js/views/message/messages-view.html',
             controller: 'messagesController',
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            resolve: {
+                editAndRetryConfig: ['serviceControlService', function(serviceControlService) {
+                    if (!cachedEditAndRetryConfig) {
+                        return serviceControlService.getEditAndRetryConfig()
+                            .then(function(config) {
+                                cachedEditAndRetryConfig = config;
+                                return config;
+                            });
+                    } else {
+                        return cachedEditAndRetryConfig;
+                    }
+                }]
+            }
         });
     };
 

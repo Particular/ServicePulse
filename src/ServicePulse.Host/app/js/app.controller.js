@@ -41,8 +41,9 @@
         $scope.isSCConnecting = true;
 
         $scope.$on('$locationChangeStart', function(event, next, current) {
-            if (!$scope.isSCConnected && !$scope.scConnectedAtLeastOnce) {
-                var routeData = $route.routes[$location.path()].data;
+            var route = $route.routes[$location.path()];
+            if (route && !$scope.isSCConnected && !$scope.scConnectedAtLeastOnce) {
+                var routeData = route.data;
 
                 if (routeData && routeData.redirectWhenNotConnected) {
                     $log.debug('not connected, and never connected once. Current route is a configuration route that requires redirect to: ', routeData.redirectWhenNotConnected);

@@ -11,7 +11,7 @@
     }));
 
     describe('when retrying a message', function () {
-        var controller, serviceControlService, root, q;
+        var controller, serviceControlService, root, q, messageEditorModalService, editAndRetryConfig;
         
         beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
@@ -22,6 +22,14 @@
                 getFailedMessageById: function() {
                     return $q.defer().promise;
                 }
+            };
+            messageEditorModalService = {
+                displayEditMessageModal: function(messageId) {},
+            };
+            editAndRetryConfig = {
+                enabled: true,
+                lockedHeaders: [],
+                sensitiveHeaders: [],
             };
 
             controller = $controller("messagesController", {
@@ -36,7 +44,9 @@
                     getConfiguration () {
                         return { data_retention: { error_retention_period: 7 } };
                     }
-                }
+                },
+                messageEditorModalService: messageEditorModalService,
+                editAndRetryConfig: editAndRetryConfig,
             });
         }));
 
@@ -89,7 +99,7 @@
     });
 
     describe('when archiving a message', function () {
-        var controller, serviceControlService, root;
+        var controller, serviceControlService, root, messageEditorModalService, editAndRetryConfig;
 
         beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
@@ -100,6 +110,15 @@
                     return $q.defer().promise;
                 }
             };
+            messageEditorModalService = {
+                displayEditMessageModal: function(messageId) {},
+            };
+            editAndRetryConfig = {
+                enabled: true,
+                lockedHeaders: [],
+                sensitiveHeaders: [],
+            };
+
             controller = $controller('messagesController', {
                 $scope: {},
                 $routeParams: { messageId: "some-message-id" },
@@ -112,7 +131,9 @@
                     getConfiguration () {
                         return { data_retention: { error_retention_period: 7 } };
                     }
-                }
+                },
+                messageEditorModalService: messageEditorModalService,
+                editAndRetryConfig: editAndRetryConfig,
             });
         }));
 
@@ -148,7 +169,7 @@
     });
 
     describe('when unarchiving a message', function () {
-        var controller, serviceControlService, root, archivedMessageService, q;
+        var controller, serviceControlService, root, archivedMessageService, q, messageEditorModalService, editAndRetryConfig;
 
         beforeEach(inject(function ($rootScope, $q) {
             root = $rootScope;
@@ -158,7 +179,15 @@
                     return $q.defer().promise;
                 }
             };
+            messageEditorModalService = {
+                displayEditMessageModal: function(messageId) {},
+            };
             archivedMessageService = { restoreMessageFromArchive: function () { } };
+            editAndRetryConfig = {
+                enabled: true,
+                lockedHeaders: [],
+                sensitiveHeaders: [],
+            };
 
             controller = $controller('messagesController', {
                 $scope: {},
@@ -172,7 +201,9 @@
                     getConfiguration () {
                         return { data_retention: { error_retention_period: 7 } };
                     }
-                }
+                },
+                messageEditorModalService: messageEditorModalService,
+                editAndRetryConfig: editAndRetryConfig,
             });
         }));
 

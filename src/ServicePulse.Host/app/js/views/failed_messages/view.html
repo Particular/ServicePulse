@@ -85,7 +85,8 @@
                                                 <span ng-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
                                                 <span ng-if="message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning metadata-label">Archived</span>
                                                 <span ng-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{message.number_of_processing_attempts}} Retry Failures</span>
-
+                                                <span ng-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
+                                                
                                                 <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{message.time_of_failure}}"></sp-moment></span>
                                                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
                                                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>

@@ -97,6 +97,32 @@
             return $http.get(url);
         }
 
+        function getEditAndRetryConfig() {
+            var url = uri.join(scu,'edit', 'config');
+            return $http.get(url).then(function(response) {
+                return response.data;
+            }, function(response) {
+                if (response.status === 404) {
+                    return {
+                        enabled: false
+                    };
+                }
+
+                return response;
+            });
+        }
+
+        function retryEditedMessage(messageId, editedMessage) {
+            return $http({
+                url: uri.join(scu, 'edit', messageId),
+                method: 'POST',
+                data: editedMessage,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+        }
+
         function getFailedMessagesForExceptionGroup(groupId, sortBy, page) {
             var url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
             return $http.get(url).then(function(response) {
@@ -335,6 +361,8 @@
             loadQueueNames: loadQueueNames,
             acknowledgeGroup: acknowledgeGroup,
             getFailedMessageById: getFailedMessageById,
+            getEditAndRetryConfig: getEditAndRetryConfig,
+            retryEditedMessage : retryEditedMessage,
             isBusyUpgradingIndexes: isBusyUpgradingIndexes
         };
 

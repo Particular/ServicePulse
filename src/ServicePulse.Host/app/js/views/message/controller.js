@@ -13,7 +13,9 @@
         archivedMessageService,
         notifyService,
         sharedDataService,
-        $filter) {
+        $filter,
+        messageEditorModalService,
+        editAndRetryConfig) {
 
         var vm = this;
         var notifier = notifyService();
@@ -118,6 +120,21 @@
                 });
         };
 
+        vm.isEditAndRetryEnabled = editAndRetryConfig.enabled;
+
+        vm.editMessage = function() {
+            if(!editAndRetryConfig.enabled){
+                throw 'Edit & Retry is disabled.';
+            }
+            var failedMessageId = vm.message.id;
+            var modalInstance = messageEditorModalService.displayEditMessageModal(failedMessageId, editAndRetryConfig);
+            modalInstance.result.then(function(result) {
+                //closed
+            }, function(reason){
+                //dismissed
+            });
+        };
+
         function updateMessageDeleteDate(message, errorRetentionPeriod) {
             var countdown = moment(message.last_modified).add(errorRetentionPeriod, 'hours');
             message.delete_soon = countdown < moment();
@@ -179,7 +196,9 @@
         'archivedMessageService',
         'notifyService',
         'sharedDataService',
-        '$filter'
+        '$filter',
+        'messageEditorModalService',
+        'editAndRetryConfig',
     ];
 
     angular.module("sc")
