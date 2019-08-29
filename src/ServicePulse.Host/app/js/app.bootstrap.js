@@ -1,4 +1,4 @@
-; (function (window, angular, $, undefined) {
+(function (window, angular, $) {
     'use strict';
 
     var serviceControlApp = angular.module('sc');
