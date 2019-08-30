@@ -1,5 +1,4 @@
-
-; (function (window, angular, ZeroClipboard, undefined) {
+(function (window, angular, ZeroClipboard) {
     'use strict';
 
     function link(scope, element, attrs) {
