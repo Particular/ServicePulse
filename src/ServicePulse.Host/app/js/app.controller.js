@@ -1,5 +1,4 @@
-﻿;
-(function(window, angular, undefined) {
+﻿(function(window, angular, $) {
     'use strict';
 
     function controller(
@@ -25,7 +24,6 @@
     ) {
         var notifier = notifyService();
 
-        var mu = connectionsManager.getMonitoringUrl();
         var scu = connectionsManager.getServiceControlUrl();
 
         $scope.isMonitoringEnabled = connectionsManager.getIsMonitoringEnabled();
@@ -40,7 +38,7 @@
         $scope.Version = version;
         $scope.isSCConnecting = true;
 
-        $scope.$on('$locationChangeStart', function(event, next, current) {
+        $scope.$on('$locationChangeStart', function (event, next, current) {
             var route = $route.routes[$location.path()];
             if (route && !$scope.isSCConnected && !$scope.scConnectedAtLeastOnce) {
                 var routeData = route.data;
@@ -375,4 +373,4 @@
     ];
 
     angular.module('sc').controller('AppCtrl', controller);
-}(window, window.angular));
+}(window, window.angular, window.jQuery));
