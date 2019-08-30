@@ -1,9 +1,9 @@
-; (function (angular) {
+(function (angular) {
     'use strict';
 
     function logProvider($logProvider) {
- 		$logProvider.debugEnabled(true);
-    };
+        $logProvider.debugEnabled(true);
+    }
 
     logProvider.$inject = [
         '$logProvider'
