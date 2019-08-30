@@ -1,9 +1,9 @@
-﻿; (function (angular) {
+﻿(function (angular) {
     'use strict';
 
     function httpProvider($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
-    };
+    }
 
     httpProvider.$inject = [
         '$httpProvider'
