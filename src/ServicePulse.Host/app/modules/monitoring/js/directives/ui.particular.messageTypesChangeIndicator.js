@@ -1,4 +1,4 @@
-﻿(function (window, angular) {
+﻿(function (window, angular, $) {
     'use strict';
 
     angular.module('ui.particular.messageTypesChangeIndicator', [])
@@ -24,4 +24,4 @@
                     }
                 };
             });
-}(window, window.angular));
+}(window, window.angular, window.jQuery));
