@@ -1,4 +1,4 @@
-﻿(function (window, angular, undefined) {
+﻿(function (window, angular) {
     'use strict';
 
     function routeProvider($routeProvider) {
@@ -13,7 +13,7 @@
             controllerAs: 'vm',
             reloadOnSearch: false
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'
