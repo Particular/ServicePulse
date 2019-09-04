@@ -1,5 +1,4 @@
-﻿
-; (function (window, angular, $, undefined) {
+﻿(function (window, angular, $) {
     'use strict';
 
 
@@ -18,7 +17,7 @@
 
         var lastReport = undefined;
         var scMonitoringConnectionPing = $interval(function () {
-            var promise = monitoringService.getMonitoredEndpoints().then(r => {
+            monitoringService.getMonitoredEndpoints().then(r => {
                 if (lastReport === 'success') {
                     return;
                 }
