@@ -1,4 +1,4 @@
-﻿; (function (window, angular, undefined) {
+﻿(function (window, angular) {
     'use strict';
 
     function modalController($scope, $uibModalInstance, confirmMessage, confirmClick, confirmTitle, confirmOkOnly, confirmSecondParagraph) {
@@ -19,7 +19,7 @@
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
-    };
+    }
 
     function directive($log, $uibModal) {
 

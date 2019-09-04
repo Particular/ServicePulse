@@ -1,5 +1,4 @@
-
-; (function (window, angular, undefined) {
+(function (window, angular) {
     'use strict';
 
     function service($rootScope, $interval, notifyService, serviceControlService) {

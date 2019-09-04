@@ -1,4 +1,4 @@
-﻿; (function (window, angular, undefined) {
+﻿(function (window, angular) {
     'use strict';
     
     function service($http, $timeout, $q, $rootScope, $interval, moment, connectionsManager, uri, notifications, notifyService) {

@@ -1,4 +1,4 @@
-﻿(function(window, angular, $, undefined) {
+﻿(function(window, angular, $) {
     'use strict';
 
 
@@ -7,7 +7,7 @@
         var notifier = notifyService();
 
         $scope.isActive = function(viewLocation) {
-            return (viewLocation === $location.path());;
+            return (viewLocation === $location.path());
         };
 
         var stats = sharedDataService.getstats();

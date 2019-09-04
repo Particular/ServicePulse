@@ -1,4 +1,4 @@
-﻿(function(window, angular, undefined) {
+﻿(function(window, angular) {
 	'use strict';
 
     angular.module('ui.particular.largenumber', [])

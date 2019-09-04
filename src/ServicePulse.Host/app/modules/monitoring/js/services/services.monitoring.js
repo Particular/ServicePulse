@@ -1,5 +1,4 @@
-﻿;
-(function (window, angular, $, undefined) {
+﻿(function (window, angular, $, undefined) {
     'use strict';
 
     function Service($http, rx, connectionsManager, uri, $q) {

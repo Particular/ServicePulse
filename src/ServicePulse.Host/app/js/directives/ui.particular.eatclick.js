@@ -1,4 +1,4 @@
-﻿; (function (window, angular, $, undefined) {
+﻿(function (window, angular, $) {
     'use strict';
 
     function Directive() {
@@ -17,7 +17,7 @@
 
 }(window, window.angular, window.jQuery));
 
-; (function (window, angular, $, undefined) {
+(function (window, angular, $) {
     'use strict';
 
     function directive() {

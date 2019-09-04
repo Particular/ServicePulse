@@ -1,9 +1,6 @@
-﻿; (function (window, angular, undefined) {
+﻿(function (window, angular) {
     'use strict';
-
-    function link(scope, element, attrs) {
-    }
-
+    
     function Directive($window) {
 
         var directive = {
