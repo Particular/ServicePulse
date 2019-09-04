@@ -1,4 +1,4 @@
-; (function (window, angular, undefined) {
+(function (window, angular) {
     'use strict';
 
     function factory($rootScope, $jquery, notifyService, toastService, $window) {
@@ -21,7 +21,7 @@
                     anon.call(subscriptions['all'], message);
                 }
 
-            };
+            }
 
             if ($jquery) {
                 // you got to have jQuery for this to work

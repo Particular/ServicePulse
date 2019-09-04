@@ -1,5 +1,4 @@
-
-; (function (window, angular, undefined) {
+(function (window, angular) {
     'use strict';
 
     function Service($rootScope, $interpolate) {
@@ -18,14 +17,14 @@
             
             notificationsArray.push(notificationObj);
             return notificationObj;
-        };
+        }
 
         function prepareNotification(message, type, interpolateParams, otherProperties) {
             return angular.extend({
                 message: $interpolate(message)(interpolateParams),
                 type: type
             }, otherProperties);
-        };
+        }
 
         $rootScope.$on('$routeChangeSuccess', function () {
             notifications.ROUTE_CURRENT.length = 0;
@@ -35,19 +34,19 @@
 
         function getCurrent() {
             return [].concat(notifications.STICKY, notifications.ROUTE_CURRENT);
-        };
+        }
 
         function pushSticky(message, type, interpolateParams, otherProperties) {
             return addNotification(notifications.STICKY, angular.extend(prepareNotification(message, type, interpolateParams, otherProperties), { disableClosing: true }));
-        };
+        }
 
         function pushForCurrentRoute(message, type, interpolateParams, otherProperties) {
             return addNotification(notifications.ROUTE_CURRENT, prepareNotification(message, type, interpolateParams, otherProperties));
-        };
+        }
 
         function pushForNextRoute(message, type, interpolateParams, otherProperties) {
             return addNotification(notifications.ROUTE_NEXT, prepareNotification(message, type, interpolateParams, otherProperties));
-        };
+        }
 
         function remove(notification) {
 
@@ -60,7 +59,7 @@
                 }
 
             });
-        };
+        }
 
         function removeByText(text) {
 
@@ -74,7 +73,7 @@
                 self.remove(notification);
             });
 
-        };
+        }
 
         function removeAll() {
 
@@ -83,7 +82,7 @@
                 notificationsByType.length = 0;
 
             });
-        };
+        }
 
         var service = {
             getCurrent: getCurrent,

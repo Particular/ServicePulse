@@ -1,4 +1,4 @@
-﻿; (function (window, angular, undefined) {
+﻿(function (window, angular) {
     'use strict';
 
     function Controller($scope, platformUpdateService, semverService) {
@@ -10,7 +10,7 @@
                 .getReleases()
                 .then(function (result) {
 
-                    if (result.hasOwnProperty('SP')) {
+                    if (Object.prototype.hasOwnProperty.call(result, 'SP')) {
                         if (semverService.isUpgradeAvailable($scope.version, result.SP[0]['tag'])) {
                             $scope.newspversion = true;
                             $scope.newspversionlink = result.SP[0]['release'];
@@ -18,7 +18,7 @@
                         }
                     }
 
-                    if (result.hasOwnProperty('SC')) {
+                    if (Object.prototype.hasOwnProperty.call(result, 'SC')) {
                         if (semverService.isUpgradeAvailable($scope.scversion, result.SC[0]['tag'])) {
                             $scope.newscversion = true;
                             $scope.newscversionlink = result.SC[0]['release'];
@@ -45,7 +45,7 @@
             controller: Controller,
             link: function (scope, element) { }
         };
-    };
+    }
 
     Directive.$inject = [];
 

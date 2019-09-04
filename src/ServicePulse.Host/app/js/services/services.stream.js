@@ -1,4 +1,4 @@
-; (function (window, angular, undefined) {
+(function (window, angular) {
     'use strict';
 
     function Service(notifications, $log, $rootScope, connectionsManager, $jquery, uri) {

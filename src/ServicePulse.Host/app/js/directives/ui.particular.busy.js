@@ -1,4 +1,4 @@
-﻿; (function (window, angular, undefined) {
+﻿(function (window, angular) {
     'use strict';
 
     function directive() {
@@ -11,7 +11,7 @@
             templateUrl: 'js/directives/ui.particular.busy.tpl.html',
             link: function (scope, element) { }
         };
-    };
+    }
 
     directive.$inject = [];
 

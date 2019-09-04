@@ -1,6 +1,5 @@
 ﻿/// <reference path="service.js" />
-;
-(function(window, angular, undefined) {
+(function(window, angular) {
     "use strict";
 
     function controller(
