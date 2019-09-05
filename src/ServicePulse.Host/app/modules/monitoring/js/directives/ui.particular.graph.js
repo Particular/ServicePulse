@@ -1,4 +1,4 @@
-﻿(function(window, angular) {
+﻿(function(window, angular, d3) {
     'use strict';
 
     angular.module('ui.particular.graph', [])
@@ -101,4 +101,4 @@
                 };
             });
 
-}(window, window.angular));
+}(window, window.angular, window.d3));

@@ -1,4 +1,4 @@
-﻿(function (window, angular, $, undefined) {
+﻿(function (window, angular, $, Rx) {
     'use strict';
 
     function Service($http, rx, connectionsManager, uri, $q) {
@@ -68,4 +68,4 @@
 
     angular.module('services.monitoringService', ['sc'])
         .service('monitoringService', Service);
-}(window, window.angular, window.jQuery));
+}(window, window.angular, window.jQuery, window.Rx));

@@ -1,4 +1,4 @@
-﻿(function(window, angular) {
+﻿(function(window, angular, d3) {
     'use strict';
 
     function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
@@ -182,4 +182,4 @@
                 };
             });
 
-}(window, window.angular));
+}(window, window.angular, window.d3));

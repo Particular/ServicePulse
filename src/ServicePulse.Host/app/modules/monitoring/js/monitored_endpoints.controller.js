@@ -1,4 +1,4 @@
-(function(window, angular) {
+(function(window, angular, Rx) {
     'use strict';
 
     function controller(
@@ -127,7 +127,7 @@
             subscription.dispose();
             endpointsFromScSubscription.dispose();
         });
-    };
+    }
 
     controller.$inject = [
         '$scope',
@@ -145,4 +145,4 @@
     angular.module('monitored_endpoints')
         .controller('monitoredEndpointsCtrl', controller);
 
-}(window, window.angular));
+}(window, window.angular, window.Rx));
