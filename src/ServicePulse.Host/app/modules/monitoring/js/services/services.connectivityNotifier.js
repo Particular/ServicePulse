@@ -1,4 +1,4 @@
-﻿(function (window, angular, $) {
+﻿(function (window, angular, $, Rx) {
     'use strict';
 
     function Service(toastService, connectionsManager, notifyService) {
@@ -74,4 +74,4 @@
 
     angular.module('services.connectivityNotifier', ['sc'])
         .service('connectivityNotifier', Service);
-}(window, window.angular, window.jQuery));
+}(window, window.angular, window.jQuery, window.Rx));
