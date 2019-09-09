@@ -13,7 +13,7 @@
             controllerAs: 'vm',
             reloadOnSearch: false
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

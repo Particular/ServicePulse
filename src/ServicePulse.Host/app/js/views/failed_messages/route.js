@@ -31,7 +31,7 @@
                 controller: 'failedMessagesController',
                 controllerAs: 'vm'
             });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

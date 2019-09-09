@@ -48,7 +48,7 @@
         notifier.subscribe($scope, function(event, data) {
             $scope.model.push(angular.extend(data));
         }, "EventLogItemAdded");
-    };
+    }
 
     controller.$inject = [
         "$scope",

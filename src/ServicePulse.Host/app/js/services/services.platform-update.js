@@ -26,7 +26,7 @@
                     // swallow errors
                     return {};
                 });
-        };
+        }
 
         return {
             getReleases: getReleases

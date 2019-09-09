@@ -27,7 +27,7 @@
 
         function findHeaderByKey(headers, key) {
             return headers.find(function (header) { return header.key === key; });
-        };
+        }
 
         function getContentType(headers) {
             var header = findHeaderByKey(headers, 'NServiceBus.ContentType');
@@ -103,7 +103,7 @@
                             $scope.message = { error: true };
                         }
                     });
-        };
+        }
 
         $scope.markHeaderAsRemoved = function (key) {
             var header = findHeaderByKey($scope.message.messageHeaders, key);

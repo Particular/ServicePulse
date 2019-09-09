@@ -12,7 +12,7 @@
             controller: 'pendingRetriesController',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

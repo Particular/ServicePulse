@@ -49,8 +49,8 @@
                     $scope.disableLoadingData = true;
                 }
             });
-        };
-    };
+        }
+    }
 
     controller.$inject = [
         '$scope',

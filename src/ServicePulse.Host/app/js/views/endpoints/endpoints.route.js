@@ -11,7 +11,7 @@
             controller: 'EndpointsCtrl',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

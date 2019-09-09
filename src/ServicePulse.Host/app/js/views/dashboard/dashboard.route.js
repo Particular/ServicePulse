@@ -11,7 +11,7 @@
             controller: 'DashboardCtrl',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

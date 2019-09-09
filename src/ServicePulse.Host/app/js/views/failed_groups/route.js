@@ -12,7 +12,7 @@
             controller: 'failedMessageGroupsController',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'
