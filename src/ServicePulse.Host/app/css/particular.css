@@ -612,7 +612,9 @@ span.metadata {
     color: #777f7f;
 }
 
-
+span.metadata.metadata-link i.fa {
+    color: #00a3c4;
+}
 
 .metadata:first-child {
     padding-left: 0;
@@ -2933,4 +2935,8 @@ table[ng-show="vm.message.panel === 2 && vm.message.messageHeaders"] td[nowrap="
 
 .modal-msg-editor .row.alert.alert-danger i.fa.fa-exclamation-triangle {
     color: #ce4844;
+}
+
+span.label {
+    background-image: none;
 }

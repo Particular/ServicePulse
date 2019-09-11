@@ -29,11 +29,8 @@
                             <span ng-if="vm.message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning metadata-label">Archived</span>
                             <span ng-if="vm.message.resolved" tooltip="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
                             <span ng-if="vm.message.number_of_processing_attempts > 1" tooltip="This message has already failed {{vm.message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{vm.message.number_of_processing_attempts}} Retry Failures</span>
-                            <span ng-if="vm.message.edited">
-                                <span tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
-                                <a ng-href="#/failed-messages/message/{{vm.message.edit_of}}" tooltip="Click to load the original message"> View original message</a>
-                            </span>
-
+                            <span ng-if="vm.message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
+                            <span class="metadata metadata-link" ng-if="vm.message.edited"><i class="fa fa-history" aria-hidden="true"></i> <a ng-href="#/failed-messages/message/{{vm.message.edit_of}}">View previous version</a></span>
                             <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{vm.message.time_of_failure}}"></sp-moment></span>
                             <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{vm.message.receiving_endpoint.name}}</span>
                             <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{vm.message.receiving_endpoint.host}}</span>
