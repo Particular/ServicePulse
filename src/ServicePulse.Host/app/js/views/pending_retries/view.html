@@ -113,7 +113,7 @@
 
         <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
 
-        <div ng-show="vm.pendingRetryMessages.length > 0" infinite-scroll="vm.loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData">
+        <div ng-show="vm.pendingRetryMessages.length > 0" infinite-scroll="vm.loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData" class="clearfix">
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.pendingRetryMessages">
                     <multi-checkboxlist messages="vm.pendingRetryMessages" selected-ids="vm.selectedIds" message="message" multiselection="vm.multiselection"></multi-checkboxlist>
