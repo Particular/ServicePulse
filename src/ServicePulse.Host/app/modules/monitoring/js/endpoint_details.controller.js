@@ -91,7 +91,7 @@
                 fillDisplayValues(messageType);
                 messageTypeParser.parseTheMessageTypeData(messageType);
             });
-        };
+        }
 
         function updateUI() {
             if (subscription) {

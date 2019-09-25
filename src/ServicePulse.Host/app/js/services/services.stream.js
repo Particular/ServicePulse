@@ -59,7 +59,7 @@
                     }
                 }
             }
-        };
+        }
 
         function onSubscribe(messageType, handler) {
             if (!subscriberRegistry[messageType]) {
@@ -77,7 +77,7 @@
             };
 
             return unsubscribeAction;
-        };
+        }
 
         return {
             subscribe: onSubscribe,
@@ -85,7 +85,7 @@
                 connection.send(JSON.stringify({ message: message, type: messageType }));
             }
         };
-    };
+    }
 
     Service.$inject = ['notifications', '$log', '$rootScope', 'connectionsManager', '$jquery', 'uri'];
 

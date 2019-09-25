@@ -12,7 +12,7 @@
             controller: 'CustomChecksCtrl',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

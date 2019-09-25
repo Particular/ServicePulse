@@ -10,7 +10,7 @@
             controller: 'aboutController',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

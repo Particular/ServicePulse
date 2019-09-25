@@ -12,7 +12,7 @@
             controller: 'archivedMessageController',
             controllerAs: 'vm'
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

@@ -27,7 +27,7 @@
                 }]
             }
         });
-    };
+    }
 
     routeProvider.$inject = [
         '$routeProvider'

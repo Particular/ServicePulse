@@ -83,7 +83,7 @@
         }
 
         updateUI();
-    };
+    }
 
     controller.$inject = [
         '$scope',
