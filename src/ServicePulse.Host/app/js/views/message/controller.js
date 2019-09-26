@@ -56,8 +56,8 @@
                 return false;
 
             if (!angular.isDefined(message.messageHeaders)) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function (msg) {
-                    message.messageHeaders = msg.data[0].headers;
+                serviceControlService.getMessageHeaders(message.message_id).then(function (response) {
+                    message.messageHeaders = response.headers;
                 }, function () {
                     message.headersUnavailable = "message headers unavailable";
                 });
