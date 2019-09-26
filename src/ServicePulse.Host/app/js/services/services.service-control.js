@@ -144,7 +144,7 @@
         function getMessageHeaders(messageId) {
             var url = uri.join(scu, 'messages', 'search', messageId);
             return $http.get(url).then(function(response) {
-                var matchingMessage = response.data.find(function(m) { return m.message_id === messageId });
+                var matchingMessage = response.data.find(function(m) { return m.message_id === messageId; });
                 return {
                     headers: matchingMessage.headers
                 }
