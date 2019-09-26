@@ -147,7 +147,7 @@
                 var matchingMessage = response.data.find(function(m) { return m.message_id === messageId; });
                 return {
                     headers: matchingMessage.headers
-                }
+                };
             });
         }
 
