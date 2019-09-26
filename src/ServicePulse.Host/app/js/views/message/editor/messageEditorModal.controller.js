@@ -69,7 +69,7 @@
             return serviceControlService.getMessageHeaders($scope.message.message_id)
                 .then(function (response) {
 
-                    $scope.message.messageHeaders = response.data[0].headers;
+                    $scope.message.messageHeaders = response.headers;
                     var intentHeader = findHeaderByKey($scope.message.messageHeaders, 'NServiceBus.MessageIntent');
                     if (intentHeader) {
                         $scope.isEvent = intentHeader.value === 'Publish';
