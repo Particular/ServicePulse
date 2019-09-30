@@ -4,7 +4,6 @@
     function directive($route, $rootScope, $window) {
         return {
             scope: {
-                type: '@'
             },
             restrict: 'E',
             replace: true,
