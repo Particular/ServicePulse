@@ -21,7 +21,8 @@
         'ui.particular.multicheckboxList',
         'ui.particular.monitoringConnectivityStatus',
         'ui.particular.exclamation',
-        'ui.particular.messageTypesChangeIndicator'
+        'ui.particular.messageTypesChangeIndicator',
+        'ui.particular.pageTitleFromRoute',
     ]);
 
 } (window, window.angular));
