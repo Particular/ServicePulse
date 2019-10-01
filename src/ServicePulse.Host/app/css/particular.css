@@ -1251,6 +1251,10 @@ input[type=checkbox] {
     visibility: hidden;
 }
 
+input#immediatelyRetry {
+    visibility: visible;
+}
+
 .checkbox {
     margin-top: 1px;
     margin-left: 1px;
