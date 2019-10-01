@@ -16,11 +16,6 @@
 
             <div class="row" ng-show="vm.selectedExceptionGroup.id && vm.failedMessages.length > 0">
                 <div class="col-sm-12">
-                    <div>
-                        <span class="fake-link" aria-hidden="true">&#9664;</span>
-                        <a class="back-nav" ng-if="vm.selectedExceptionGroup.parentTitle" href="#/monitoring/endpoint/{{vm.selectedExceptionGroup.parentTitle}}/{{vm.selectedExceptionGroup.parentGroupIndex}}/">{{vm.selectedExceptionGroup.parentTitle}} endpoint</a>
-                        <a class="back-nav" ng-if="!vm.selectedExceptionGroup.parentTitle" href="#/failed-messages/groups">Failed message groups list</a>
-                    </div>
                     <div ng-show="!vm.selectedExceptionGroup.id" class="active">All failed messages ({{vm.failedMessages.length}} / {{vm.selectedExceptionGroup.count}} | number)</div>
                     <h1 ng-show="vm.selectedExceptionGroup.id" class="active break group-title">
                         <span ng-if="vm.selectedExceptionGroup.parentTitle">{{vm.selectedExceptionGroup.parentTitle}} - </span>

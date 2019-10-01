@@ -7,10 +7,6 @@
     <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="!loading && !loadedSuccessfully"></div>
 
     <div class="row monitoring-head" ng-if="loadedSuccessfully">
-        <div class="back-nav">
-            <span class="fake-link" aria-hidden="true">&#9664;</span>
-            <a href="#/monitoring">All endpoints</a>
-        </div>
         <div class="col-xs-9 no-side-padding list-section ">
             <h1 class="righ-side-ellipsis col-lg-max-10" uib-tooltip="{{endpointName}}">
                 {{endpointName}}
