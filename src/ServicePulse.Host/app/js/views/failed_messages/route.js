@@ -8,14 +8,6 @@
             {
                 redirectTo: '/failed-messages/groups/:groupId'
             })
-            .when('/failed-messages/groups/:parentGroupId/:parentGroupIndex/:groupId', {
-                data: {
-                    pageTitle: 'Failed Messages'
-                },
-                templateUrl: 'js/views/failed_messages/view.html',
-                controller: 'failedMessagesController',
-                controllerAs: 'vm'
-            })
             .when('/failed-messages/groups/:groupId', {
                 data: {
                     pageTitle: 'Failed Messages'

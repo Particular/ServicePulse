@@ -19,8 +19,6 @@
         var notifier = notifyService();
         
         vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
-        vm.selectedExceptionGroup.parentTitle = $routeParams.parentGroupId;
-        vm.selectedExceptionGroup.parentGroupIndex = $routeParams.parentGroupIndex;
 
         if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
             $location.path('/failed-messages/groups');
