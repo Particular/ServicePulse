@@ -68,7 +68,7 @@
 
                 vm.archives = vm.archives.concat(exgroups);
                 vm.allMessagesLoaded = (vm.archives.length >= vm.total);
-                vm.page++;
+                vm.sort.page++;
             }
 
             vm.loadingData = false;
@@ -156,6 +156,7 @@
                     // We are going to have to wait for service control to tell us the job has been done
                     // group.workflow_state = createWorkflowState('success', message);
                     notifier.notify('RestoreFromArchiveRequestAccepted');
+                    $scope.$emit('list:updated');
 
                 }, function (message) {
                     // group.workflow_state = createWorkflowState('error', message);

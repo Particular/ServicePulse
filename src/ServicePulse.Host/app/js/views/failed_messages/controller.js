@@ -153,6 +153,8 @@
                     vm.failedMessages = vm.failedMessages.filter(function(item) {
                         return !item.selected;
                     });
+
+                    $scope.$emit("list:updated");
                 });
         };
 
