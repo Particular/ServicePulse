@@ -30,7 +30,7 @@
             return defer.promise;
         }
 
-        function getData() {
+        function getEndpoints() {
             var url = uri.join(scu, 'endpoints');
             return $http.get(url).then(function (response) {
                 return {
@@ -40,7 +40,7 @@
         }
 
         var service = {
-            getData: getData,
+            getEndpoints: getEndpoints,
             update: function (id, newState, success, error) {
                 var url = uri.join(scu, 'endpoints', id);
                 return patchPromise(url, { "monitor_heartbeat": newState }, success, error);

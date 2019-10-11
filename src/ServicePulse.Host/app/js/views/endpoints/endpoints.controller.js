@@ -18,7 +18,7 @@
         });
 
         function updateUI() {
-            configurationService.getData().then(function(endpoints) {
+            configurationService.getEndpoints().then(function(endpoints) {
 
                 var endpointList = endpoints.data;
 
