@@ -17,7 +17,7 @@
         $scope.model = { endpoints: [] };
 
         function autoGetEndPoints() {
-            configurationService.getData()
+            configurationService.getEndpoints()
                 .then(function(response) {
                     notifier.notify('EndpointCountUpdated', response.data.length);
 

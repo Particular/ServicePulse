@@ -18,8 +18,7 @@
         });
 
         function updateUI() {
-            configurationService.getData().then(function(endpoints) {
-
+            configurationService.getEndpoints().then(function(endpoints) {
                 var endpointList = endpoints.data;
 
                 // remove unmonitored
@@ -79,6 +78,12 @@
                 timeoutId = $timeout(function() {
                     updateUI();
                 }, 5000);
+            });
+        }
+
+        $scope.deleteEndpoint = function(endpoint) {
+            configurationService.deleteEndpoint(endpoint.id).then(function() {
+                $scope.model.inactive.splice($scope.model.inactive.indexOf(endpoint), 1);
             });
         }
 

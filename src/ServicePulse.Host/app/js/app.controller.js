@@ -20,7 +20,8 @@
         licenseNotifierService,
         licenseService,
         license,
-        $route
+        $route,
+        configurationService
     ) {
         var notifier = notifyService();
 
@@ -37,6 +38,8 @@
         $scope.is_compatible_with_sc = true;
         $scope.Version = version;
         $scope.isSCConnecting = true;
+
+        $scope.isDeleteEndpointsEnabled = false;
 
         $scope.$on('$locationChangeStart', function (event, next, current) {
             var route = $route.routes[$location.path()];
@@ -55,6 +58,10 @@
             // This delay needs to be here for the toastr service to be ready.
             licenseNotifierService.warnOfLicenseProblem(license.license_status);
         }, 3000);
+
+        configurationService.isEndpointDeleteSupported().then(function(deleteEnabled) {
+            $scope.isDeleteEndpointsEnabled = deleteEnabled;
+        });
 
         $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
         $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
@@ -369,7 +376,8 @@
         'licenseNotifierService',
         'licenseService',
         'license',
-        '$route'
+        '$route',
+        'configurationService'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

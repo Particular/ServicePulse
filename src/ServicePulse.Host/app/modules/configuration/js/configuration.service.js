@@ -1,60 +1,73 @@
-﻿(function (window, angular) {
-    'use strict';
-
-    function Service($http, $q, connectionsManager, uri) {
-
-        var scu = connectionsManager.getServiceControlUrl();
-
-        function patchPromise(url, data, success, error) {
-
-            var defer = $q.defer();
-
-            success = success || 'success';
-            error = error || 'error';
-
-            $http({
-                    url: url,
-                    data: data,
-                    method: 'PATCH'
-                })
-                .then(function (response) {
-                    defer.resolve(success + ':' + response);
-                }, function (response, status, headers, config) {
-                    if (status === '304' || status === 304) {
-                        defer.resolve(success + ':' + response);
-                    } else {
-                        defer.reject(error + ':' + response);
-                    }
-                });
-
-            return defer.promise;
-        }
-
-        function getData() {
-            var url = uri.join(scu, 'endpoints');
-            return $http.get(url).then(function (response) {
-                return {
-                    data: response.data
-                };
-            });
-        }
-
-        var service = {
-            getData: getData,
-            update: function (id, newState, success, error) {
-                var url = uri.join(scu, 'endpoints', id);
-                return patchPromise(url, { "monitor_heartbeat": newState }, success, error);
-            }
-        };
-
-        return service;
-
+﻿class ConfigurationService {
+    constructor($http, $q, connectionsManager, uri) {
+        this.scu = connectionsManager.getServiceControlUrl();
+        this.$http = $http;
+        this.$q = $q;
+        this.uri = uri;
     }
 
-    Service.$inject = ['$http', '$q', 'connectionsManager', 'uri'];
+    patchPromise(url, data, success, error) {
+        var defer = this.$q.defer();
 
-    angular.module('configuration.service', [])
-        .factory('configurationService', Service);
+        success = success || 'success';
+        error = error || 'error';
 
+        this.$http({
+                url: url,
+                data: data,
+                method: 'PATCH'
+            })
+            .then(function (response) {
+                defer.resolve(success + ':' + response);
+            }, function (response, status) {
+                if (status === '304' || status === 304) {
+                    defer.resolve(success + ':' + response);
+                } else {
+                    defer.reject(error + ':' + response);
+                }
+            });
 
-}(window, window.angular));
+        return defer.promise;
+    }
+
+    getEndpoints() {
+        var url = this.uri.join(this.scu, 'endpoints');
+        return this.$http.get(url).then(function (response) {
+            return {
+                data: response.data
+            };
+        });
+    }
+
+    update(id, newState, success, error) {
+        var url = this.uri.join(this.scu, 'endpoints', id);
+        return this.patchPromise(url, { "monitor_heartbeat": newState }, success, error);
+    }
+
+    isEndpointDeleteSupported() {
+        var url = this.uri.join(this.scu, 'endpoints');
+        return this.$http({
+            method: 'OPTIONS',
+            url
+        }).then((response) => {
+            let headers = response.headers();
+
+            let allow = headers.allow;
+            let deleteAllowed = allow.indexOf(`DELETE`) >= 0;
+
+            return deleteAllowed;
+        }, function(error) {
+            return false;
+        });
+    }
+
+    deleteEndpoint(endpointId) {
+        var url = this.uri.join(this.scu, 'endpoints', endpointId);
+        return this.$http.delete(url);
+    }
+}
+
+angular.module('configuration.service', [])
+.factory('configurationService', ['$http', '$q', 'connectionsManager', 'uri', function ($http, $q, connectionsManager, uri) { 
+    return new ConfigurationService($http, $q, connectionsManager, uri); 
+}]);
