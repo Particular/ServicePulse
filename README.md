@@ -41,6 +41,24 @@ In case `npm run setup` fails with an error related to git submodule not properl
 
 After doing the above steps one can open Visual Studio and continue working on this project. You can also run this project from node using `npm run serve`.
 
+#### Provided npm scripts
+ - `test` - runs js tests in ServicePulse.Host.Test project
+ - `setup` - this command runs few commands
+ 	- installs the npm packages
+ 	- runs `webpack`  
+ - `load` - this command does the same thing that `setup` but webpack is run only once to produce artifacts. This command is used by the builder
+ - `serve` - serves js artifacts using `http-server`
+ - `webpack` - runs webpack command, which does the following things for the given modules (monitoring, configuration)
+	 - joins js together 
+	 - runs babel transpiler 
+	 - has a file watcher to run the above whenever file is saved
+ - `lint` - checks with eslint all js files
+ - `dev` - runs in parallel two scripts `webpack` and `serve`
+
+NOTE:
+Webpack observes files and updates the artifacts whenever they are changed, however at the moment not every bit of code is processed by webpack. Only monitoring and configuration is.
+
+
 ### Configuring automated tests
 
 For information how to run automated tests please follow [ServicePulse.Host.Tests/Readme](https://github.com/Particular/ServicePulse/blob/master/src/ServicePulse.Host.Tests/README.md).
