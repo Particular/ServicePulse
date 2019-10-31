@@ -1,5 +1,6 @@
-FROM microsoft/iis
+FROM mcr.microsoft.com/dotnet/framework/samples:dotnetapp-windowsservercore-ltsc2019
 
+RUN powershell -NoProfile -Command Add-WindowsFeature web-server, web-webserver
 RUN powershell -NoProfile -Command Remove-Item -Recurse C:\inetpub\wwwroot\*
 
 WORKDIR /inetpub/wwwroot
