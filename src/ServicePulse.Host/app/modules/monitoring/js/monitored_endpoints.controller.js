@@ -31,6 +31,10 @@
             return '#/monitoring/endpoint/' + endpoint.name + '?historyPeriod=' + $scope.selectedPeriod.value;
         };
 
+        $scope.totalThroughput = () => {
+            return Math.round($scope.endpoints.reduce((total, currentEndpoint) => total + currentEndpoint.metrics.throughput.average, 0));
+        };
+
         function fillDisplayValuesForEndpoint(endpoint) {
 
             $filter('graphduration')(endpoint.metrics.processingTime);
