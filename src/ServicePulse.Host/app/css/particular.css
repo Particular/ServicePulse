@@ -2944,3 +2944,19 @@ table[ng-show="vm.message.panel === 2 && vm.message.messageHeaders"] td[nowrap="
 span.label {
     background-image: none;
 }
+
+a[ng-click="deleteEndpoint(endpoint)"] {
+    margin-left: 5px;
+}
+
+a[ng-click="deleteEndpoint(endpoint)"]:hover {
+    cursor: pointer;
+}
+
+a[ng-click="deleteEndpoint(endpoint)"] i {
+    color: #00a3c4;
+}
+
+a[ng-click="deleteEndpoint(endpoint)"]:hover i {
+    color: #00729c;
+}
