@@ -58,7 +58,7 @@
                                 <div class="col-sm-12 no-side-padding">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} <a ng-if="isDeleteEndpointsEnabled" ng-click="deleteEndpoint(endpoint)"><i class="fa fa-trash" uib-tooltip="Remove endpoint from list"></i></a></p>
+                                            <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} <a class="remove-item" ng-if="isDeleteEndpointsEnabled" ng-click="deleteEndpoint(endpoint)"><i class="fa fa-trash" uib-tooltip="Remove endpoint from list"></i></a></p>
                                             <p>
                                                 latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
                                             </p>

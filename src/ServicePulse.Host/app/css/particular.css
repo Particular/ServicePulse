@@ -2945,18 +2945,18 @@ span.label {
     background-image: none;
 }
 
-a[ng-click="deleteEndpoint(endpoint)"] {
+a.remove-item {
     margin-left: 5px;
 }
 
-a[ng-click="deleteEndpoint(endpoint)"]:hover {
+a.remove-item:hover {
     cursor: pointer;
 }
 
-a[ng-click="deleteEndpoint(endpoint)"] i {
+a.remove-item i {
     color: #00a3c4;
 }
 
-a[ng-click="deleteEndpoint(endpoint)"]:hover i {
+a.remove-item:hover i {
     color: #00729c;
 }
