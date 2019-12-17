@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0013" PrivateAssets="All" />
+    <PackageReference Include="GitVersionTask" Version="5.1.2" PrivateAssets="All" />
     <PackageReference Include="Nancy.Hosting.Self" Version="1.4.1" />
     <Content Include="app\modules\configuration\connectionsManager.js" />
     <Content Include="app\js\views\sc_not_available.html" />
