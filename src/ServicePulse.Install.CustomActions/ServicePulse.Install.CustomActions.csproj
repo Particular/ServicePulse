@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="WiX" Version="3.11.1" />
+    <PackageReference Include="WiX" Version="3.11.2" />
   </ItemGroup>
 
    <ItemGroup>
