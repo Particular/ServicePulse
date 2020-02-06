@@ -82,7 +82,11 @@ namespace ServicePulse.Host.Owin
 
         public bool LookupFileInfo()
         {
-            _fileInfo = null; //TODO implement file finding logic
+            var found = FindFile(out _fileInfo);
+            if (!found)
+            {
+                return false;
+            }
 
             _length = _fileInfo.Length;
 
@@ -96,7 +100,22 @@ namespace ServicePulse.Host.Owin
             _etagQuoted = '\"' + _etag + '\"';
             return true;
         }
-        
+
+        private bool FindFile(out IFileInfo fileInfo)
+        {
+            var requestPath = _context.Request.Path.ToString();
+
+            if (requestPath.Equals("/"))
+            {
+                requestPath = "/index.html";
+            }
+
+            var filePath = "app" + requestPath.Replace('/', '\\');
+
+            return FileOnDiskFinder.FindFile(filePath, out fileInfo); //TODO fix support for embedded files
+        }
+
+
         public void ComprehendRequestHeaders()
         {
             ComputeIfMatch();
