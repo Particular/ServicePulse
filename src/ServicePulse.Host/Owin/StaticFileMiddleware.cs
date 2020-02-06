@@ -39,6 +39,35 @@ namespace ServicePulse.Host.Owin
         {
             var context = new OwinContext(environment);
 
+            var fileContext = new StaticFileContext(context);
+            if (fileContext.ValidateMethod()
+                && fileContext.LookupContentType()
+                && fileContext.LookupFileInfo())
+            {
+                fileContext.ComprehendRequestHeaders();
+
+                switch (fileContext.GetPreconditionState())
+                {
+                    case StaticFileContext.PreconditionState.Unspecified:
+                    case StaticFileContext.PreconditionState.ShouldProcess:
+                        if (fileContext.IsHeadMethod)
+                        {
+                            return fileContext.SendStatusAsync(Constants.Status200Ok);
+                        }
+                        return fileContext.SendAsync();
+
+                    case StaticFileContext.PreconditionState.NotModified:
+                        return fileContext.SendStatusAsync(Constants.Status304NotModified);
+
+                    case StaticFileContext.PreconditionState.PreconditionFailed:
+                        return fileContext.SendStatusAsync(Constants.Status412PreconditionFailed);
+
+                    default:
+                        throw new NotImplementedException(fileContext.GetPreconditionState().ToString());
+                }
+            }
+
+
             return _next(environment);
         }
     }
