@@ -76,8 +76,9 @@ namespace ServicePulse.Host.Owin
 
        public bool LookupContentType()
        {
-           return false;
-       }
+           var fileName = Path.GetFileName(_context.Request.Path.ToString());
+           return FileExtensionContentTypeProvider.TryGetContentType(fileName, out _contentType);
+        }
 
         public bool LookupFileInfo()
         {
