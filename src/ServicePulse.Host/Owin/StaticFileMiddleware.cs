@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
-using StaticFileMiddleware = ServicePulse.Host.Owin.StaticFileMiddleware;
 
 namespace ServicePulse.Host.Owin
 {
@@ -67,7 +66,6 @@ namespace ServicePulse.Host.Owin
                 }
             }
 
-
             return _next(environment);
         }
     }
@@ -86,7 +84,7 @@ namespace ServicePulse.Host.Owin
         {
             if (builder == null)
             {
-                throw new ArgumentNullException("builder");
+                throw new ArgumentNullException(nameof(builder));
             }
             return builder.Use<StaticFileMiddleware>();
         }
