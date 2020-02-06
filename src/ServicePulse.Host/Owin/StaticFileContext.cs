@@ -103,14 +103,7 @@ namespace ServicePulse.Host.Owin
 
         private bool FindFile(out IFileInfo fileInfo)
         {
-            var requestPath = _context.Request.Path.ToString();
-
-            if (requestPath.Equals("/"))
-            {
-                requestPath = "/index.html";
-            }
-
-            var filePath = "app" + requestPath.Replace('/', '\\');
+            var filePath = "app" + _context.Request.Path.ToString().Replace('/', '\\');
 
             return FileOnDiskFinder.FindFile(filePath, out fileInfo) || EmbeddedFileFinder.FindEmbeddedFile(filePath, out fileInfo);
         }

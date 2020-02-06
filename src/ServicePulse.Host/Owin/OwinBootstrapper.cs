@@ -6,6 +6,7 @@ namespace ServicePulse.Host.Owin
     {
         public void Configuration(IAppBuilder app)
         {
+            app.UseIndexUrlRewriter();
             app.UseStaticFiles();
         }
     }
