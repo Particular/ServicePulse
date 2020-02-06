@@ -112,7 +112,7 @@ namespace ServicePulse.Host.Owin
 
             var filePath = "app" + requestPath.Replace('/', '\\');
 
-            return FileOnDiskFinder.FindFile(filePath, out fileInfo); //TODO fix support for embedded files
+            return FileOnDiskFinder.FindFile(filePath, out fileInfo) || EmbeddedFileFinder.FindEmbeddedFile(filePath, out fileInfo);
         }
 
 
