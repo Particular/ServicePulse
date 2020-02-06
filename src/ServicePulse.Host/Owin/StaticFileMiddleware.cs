@@ -10,34 +10,14 @@ namespace ServicePulse.Host.Owin
 {
     using AppFunc = Func<IDictionary<string, object>, Task>;
 
-    public class StaticFileMiddleware
+    public class StaticFileMiddleware : OwinMiddleware
     {
-        private readonly AppFunc _next;
-
-        /// <summary>
-        /// Creates a new instance of the StaticFileMiddleware.
-        /// </summary>
-        /// <param name="next">The next middleware in the pipeline.</param>
-        public StaticFileMiddleware(AppFunc next)
+        public StaticFileMiddleware(OwinMiddleware next) : base(next)
         {
-            if (next == null)
-            {
-                throw new ArgumentNullException("next");
-            }
-
-            _next = next;
-            
         }
-
-        /// <summary>
-        /// Processes a request to determine if it matches a known file, and if so, serves it.
-        /// </summary>
-        /// <param name="environment">OWIN environment dictionary which stores state information about the request, response and relevant server state.</param>
-        /// <returns></returns>
-        public Task Invoke(IDictionary<string, object> environment)
+        
+        public override Task Invoke(IOwinContext context)
         {
-            var context = new OwinContext(environment);
-
             var fileContext = new StaticFileContext(context);
             if (fileContext.ValidateMethod()
                 && fileContext.LookupContentType()
@@ -53,6 +33,7 @@ namespace ServicePulse.Host.Owin
                         {
                             return fileContext.SendStatusAsync(Constants.Status200Ok);
                         }
+
                         return fileContext.SendAsync();
 
                     case StaticFileContext.PreconditionState.NotModified:
@@ -66,7 +47,7 @@ namespace ServicePulse.Host.Owin
                 }
             }
 
-            return _next(environment);
+            return Next.Invoke(context);
         }
     }
 

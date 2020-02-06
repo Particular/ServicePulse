@@ -7,7 +7,9 @@ namespace ServicePulse.Host.Owin
 {
     public class IndexUrlRewriterMiddleware : OwinMiddleware
     {
-        public IndexUrlRewriterMiddleware(OwinMiddleware next) : base(next) { }
+        public IndexUrlRewriterMiddleware(OwinMiddleware next) : base(next)
+        {
+        }
 
         public override Task Invoke(IOwinContext context)
         {
