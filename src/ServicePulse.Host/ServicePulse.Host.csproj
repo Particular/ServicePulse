@@ -16,7 +16,6 @@
     <PackageReference Include="GitVersionTask" Version="5.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.7" />
     <PackageReference Include="Microsoft.Owin.SelfHost" Version="4.1.0" />
-    <PackageReference Include="Nancy.Hosting.Self" Version="1.4.1" />
     <Content Include="app\js\polyfill\array.prototype.includes.js" />
     <Content Include="app\modules\configuration\connectionsManager.js" />
     <Content Include="app\js\views\sc_not_available.html" />

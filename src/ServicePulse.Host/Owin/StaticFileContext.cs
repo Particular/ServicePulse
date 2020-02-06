@@ -19,7 +19,6 @@ namespace ServicePulse.Host.Owin
         private readonly IOwinResponse _response;
         private string _method;
         private bool _isGet;
-        private PathString _subPath;
         private string _contentType;
         private IFileInfo _fileInfo;
         private long _length;
@@ -42,7 +41,6 @@ namespace ServicePulse.Host.Owin
             _method = null;
             _isGet = false;
             IsHeadMethod = false;
-            _subPath = PathString.Empty;
             _contentType = null;
             _fileInfo = null;
             _length = 0;
