@@ -38,6 +38,41 @@ namespace ServicePulse.Host.Tests
             middleware.Invoke(context);
             Assert.AreEqual(("application/javascript"), context.Response.ContentType);
         }
+
+        [Test]
+        public void Should_only_handle_get_and_head()
+        {
+            var middleware = new StaticFileMiddleware(new DummyNext());
+            var context = new OwinContext
+            {
+                Request =
+                {
+                    Path = new PathString("/whatever"),
+                    Method = "POST"
+                }
+            };
+            middleware.Invoke(context);
+            Assert.AreEqual(null, context.Response.ContentLength);
+            Assert.AreEqual(null, context.Response.ContentType);
+        }
+
+        [TestCase("HEAD")]
+        [TestCase("GET")]
+        public void Should_handle_get_and_head(string method)
+        {
+            var middleware = new StaticFileMiddleware(new DummyNext());
+            var context = new OwinContext
+            {
+                Request =
+                {
+                    Path = new PathString("/filename.js"),
+                    Method = method
+                }
+            };
+            middleware.Invoke(context);
+            Assert.IsNotNull(context.Response.ContentLength);
+            Assert.IsNotEmpty(context.Response.ContentType);
+        }
     }
 
     public class DummyNext : OwinMiddleware
