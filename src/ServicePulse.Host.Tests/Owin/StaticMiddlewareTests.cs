@@ -3,7 +3,7 @@ using Microsoft.Owin;
 using NUnit.Framework;
 using ServicePulse.Host.Owin;
 
-namespace ServicePulse.Host.Tests
+namespace ServicePulse.Host.Tests.Owin
 {
     [TestFixture]
     public class StaticMiddlewareTests
@@ -184,15 +184,14 @@ namespace ServicePulse.Host.Tests
             Assert.AreEqual(("text/html"), context.Response.ContentType);
         }
 
-    }
-
-    public class DummyNext : OwinMiddleware
-    {
-        public DummyNext() : base(null) { }
-
-        public override Task Invoke(IOwinContext context)
+        public class DummyNext : OwinMiddleware
         {
-            return Task.CompletedTask;
+            public DummyNext() : base(null) { }
+
+            public override Task Invoke(IOwinContext context)
+            {
+                return Task.CompletedTask;
+            }
         }
     }
 }
