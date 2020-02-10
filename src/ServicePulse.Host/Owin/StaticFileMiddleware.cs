@@ -1,15 +1,11 @@
-﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
-
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
 
 namespace ServicePulse.Host.Owin
 {
-    using AppFunc = Func<IDictionary<string, object>, Task>;
-
     public class StaticFileMiddleware : OwinMiddleware
     {
         public StaticFileMiddleware(OwinMiddleware next) : base(next)
@@ -18,11 +14,12 @@ namespace ServicePulse.Host.Owin
         
         public override Task Invoke(IOwinContext context)
         {
+            var path = context.Request.Path.ToString();
             var fileContext = new StaticFileContext(context);
-            if (fileContext.ValidateMethod()
-                && fileContext.LookupContentType()
-                && fileContext.LookupFileInfo())
+            if (fileContext.ValidateMethod() && FindFile(path, out var fileInfo))
             {
+                FileExtensionContentTypeProvider.TryGetContentType(Path.GetFileName(path), out var contentType);
+                fileContext.SetPayload(fileInfo, contentType);
                 fileContext.ComprehendRequestHeaders();
 
                 switch (fileContext.GetPreconditionState())
@@ -48,6 +45,13 @@ namespace ServicePulse.Host.Owin
             }
 
             return Next.Invoke(context);
+        }
+
+        private bool FindFile(string path, out IFileInfo fileInfo)
+        {
+            var filePath = "app" + path.Replace('/', '\\');
+
+            return FileOnDiskFinder.FindFile(filePath, out fileInfo) || EmbeddedFileFinder.FindEmbeddedFile(filePath, out fileInfo);
         }
     }
 

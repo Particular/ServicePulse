@@ -62,8 +62,8 @@ namespace ServicePulse.Host.Owin
             PreconditionFailed,
         }
 
-        public bool IsHeadMethod { get; private set; }
-
+        public bool IsHeadMethod { get; private set; } 
+        
         public bool ValidateMethod()
         {
             _method = _request.Method;
@@ -72,20 +72,10 @@ namespace ServicePulse.Host.Owin
             return _isGet || IsHeadMethod;
         }
 
-       public bool LookupContentType()
-       {
-           var fileName = Path.GetFileName(_context.Request.Path.ToString());
-           return FileExtensionContentTypeProvider.TryGetContentType(fileName, out _contentType);
-        }
-
-        public bool LookupFileInfo()
+        public bool SetPayload(IFileInfo fileInfo, string contentType)
         {
-            var found = FindFile(out _fileInfo);
-            if (!found)
-            {
-                return false;
-            }
-
+            _contentType = contentType;
+            _fileInfo = fileInfo;
             _length = _fileInfo.Length;
 
             var last = _fileInfo.LastModified;
@@ -98,15 +88,7 @@ namespace ServicePulse.Host.Owin
             _etagQuoted = '\"' + _etag + '\"';
             return true;
         }
-
-        private bool FindFile(out IFileInfo fileInfo)
-        {
-            var filePath = "app" + _context.Request.Path.ToString().Replace('/', '\\');
-
-            return FileOnDiskFinder.FindFile(filePath, out fileInfo) || EmbeddedFileFinder.FindEmbeddedFile(filePath, out fileInfo);
-        }
-
-
+        
         public void ComprehendRequestHeaders()
         {
             ComputeIfMatch();
@@ -149,7 +131,7 @@ namespace ServicePulse.Host.Owin
             }
         }
 
-        internal static bool TryParseHttpDate(string dateString, out DateTime parsedDate)
+        private static bool TryParseHttpDate(string dateString, out DateTime parsedDate)
         {
             return DateTime.TryParseExact(dateString, "r", (IFormatProvider)CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
         }
