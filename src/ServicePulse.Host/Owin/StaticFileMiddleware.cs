@@ -18,7 +18,7 @@ namespace ServicePulse.Host.Owin
             var fileContext = new StaticFileContext(context);
             if (fileContext.ValidateMethod() && FindFile(path, out var fileInfo))
             {
-                FileExtensionContentTypeProvider.TryGetContentType(Path.GetFileName(path), out var contentType);
+                var contentType = FindContentType(path);
                 fileContext.SetPayload(fileInfo, contentType);
                 fileContext.ComprehendRequestHeaders();
 
@@ -47,11 +47,17 @@ namespace ServicePulse.Host.Owin
             return Next.Invoke(context);
         }
 
-        private bool FindFile(string path, out IFileInfo fileInfo)
+        private static bool FindFile(string path, out IFileInfo fileInfo)
         {
             var filePath = "app" + path.Replace('/', '\\');
 
             return FileOnDiskFinder.FindFile(filePath, out fileInfo) || EmbeddedFileFinder.FindEmbeddedFile(filePath, out fileInfo);
+        }
+
+        private static string FindContentType(string path)
+        {
+            FileExtensionContentTypeProvider.TryGetContentType(Path.GetFileName(path), out var contentType);
+            return contentType ?? ("application/octet-stream");
         }
     }
 
