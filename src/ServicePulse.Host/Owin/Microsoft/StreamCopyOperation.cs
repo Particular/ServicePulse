@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace ServicePulse.Host.Owin
+namespace ServicePulse.Host.Owin.Microsoft
 {
     public class StreamCopyOperation
     {

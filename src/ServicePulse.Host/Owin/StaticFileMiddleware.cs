@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 using Owin;
+using ServicePulse.Host.Owin.Microsoft;
 
 namespace ServicePulse.Host.Owin
 {

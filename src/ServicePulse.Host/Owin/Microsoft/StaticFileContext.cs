@@ -3,12 +3,11 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Owin;
 
-namespace ServicePulse.Host.Owin
+namespace ServicePulse.Host.Owin.Microsoft
 {
     using SendFileFunc = Func<string, long, long?, CancellationToken, Task>;
 
