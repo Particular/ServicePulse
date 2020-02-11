@@ -1,9 +1,10 @@
-﻿namespace ServicePulse.Host.Hosting
+﻿using Microsoft.Owin.Hosting;
+using ServicePulse.Host.Owin;
+
+namespace ServicePulse.Host.Hosting
 {
     using System;
     using System.ServiceProcess;
-    using global::Nancy.Hosting.Self;
-    using Nancy;
 
     internal class Host : ServiceBase
     {
@@ -25,13 +26,12 @@
 
         protected override void OnStart(string[] args)
         {
-            nancyHost = new NancyHost(new Uri(arguments.Url), new PulseBootstrapper());
-            nancyHost.Start();
+            owinHost = WebApp.Start<OwinBootstrapper>(arguments.Url);
         }
 
         protected override void OnStop()
         {
-            nancyHost.Dispose();
+            owinHost.Dispose();
         }
 
         protected override void Dispose(bool disposing)
@@ -41,6 +41,6 @@
         }
 
         readonly HostArguments arguments;
-        NancyHost nancyHost;
+        IDisposable owinHost;
     }
 }
