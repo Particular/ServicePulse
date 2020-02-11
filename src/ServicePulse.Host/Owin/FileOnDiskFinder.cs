@@ -6,18 +6,18 @@ namespace ServicePulse.Host.Owin
 {
     public static class FileOnDiskFinder
     {
-        public static bool FindFile(string filePath, out IFileInfo fileInfo)
+        public static IFileInfo FindFile(string filePath)
         {
             var fileWithFullDirectoryPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, filePath));
+
+            IFileInfo fileInfo = null;
 
             if (File.Exists(fileWithFullDirectoryPath))
             {
                 fileInfo = new PhysicalFileInfo(new FileInfo(fileWithFullDirectoryPath));
-                return true;
             }
 
-            fileInfo = null;
-            return false;
+            return fileInfo;
         }
     }
 }

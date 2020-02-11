@@ -10,27 +10,24 @@ namespace ServicePulse.Host.Owin
     {
         private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
         
-        public static bool FindEmbeddedFile(string filePath, out IFileInfo fileInfo)
+        public static IFileInfo FindEmbeddedFile(string filePath)
         {
             var lastModified = new FileInfo(Assembly.Location).LastWriteTime;
-
+            
             var resource = Assembly.GetManifestResourceStream(filePath);
             if (resource != null)
             {
-                fileInfo = new EmbeddedResourceFileInfo(Assembly, filePath, string.Empty, lastModified);
-                return true;
+                return new EmbeddedResourceFileInfo(Assembly, filePath, string.Empty, lastModified);
             }
             
             var matchingKey = Assembly.GetManifestResourceNames()
                 .FirstOrDefault(name => string.Compare(filePath, name, StringComparison.OrdinalIgnoreCase) == 0);
             if (matchingKey != null)
             {
-                fileInfo = new EmbeddedResourceFileInfo(Assembly, matchingKey, string.Empty, lastModified);
-                return true;
+                return new EmbeddedResourceFileInfo(Assembly, matchingKey, string.Empty, lastModified);
             }
-
-            fileInfo = null;
-            return false;
+            
+            return null;
         }
     }
 }

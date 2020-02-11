@@ -17,42 +17,58 @@ namespace ServicePulse.Host.Owin
         {
             var path = context.Request.Path.ToString();
             var fileContext = new StaticFileContext(context);
-            if (fileContext.ValidateMethod() && FindFile(path, out var fileInfo))
+            if (fileContext.ValidateMethod())
             {
-                var contentType = FindContentType(path);
-                fileContext.SetPayload(fileInfo, contentType);
-                fileContext.ComprehendRequestHeaders();
-
-                switch (fileContext.GetPreconditionState())
+                var fileInfo = FindFile(path);
+                if (fileInfo != null)
                 {
-                    case StaticFileContext.PreconditionState.Unspecified:
-                    case StaticFileContext.PreconditionState.ShouldProcess:
-                        if (fileContext.IsHeadMethod)
-                        {
-                            return fileContext.SendStatusAsync(Constants.Status200Ok);
-                        }
+                    var contentType = FindContentType(path);
+                    fileContext.SetPayload(fileInfo, contentType);
+                    fileContext.ComprehendRequestHeaders();
 
-                        return fileContext.SendAsync();
+                    switch (fileContext.GetPreconditionState())
+                    {
+                        case StaticFileContext.PreconditionState.Unspecified:
+                        case StaticFileContext.PreconditionState.ShouldProcess:
+                            if (fileContext.IsHeadMethod)
+                            {
+                                return fileContext.SendStatusAsync(Constants.Status200Ok);
+                            }
 
-                    case StaticFileContext.PreconditionState.NotModified:
-                        return fileContext.SendStatusAsync(Constants.Status304NotModified);
+                            return fileContext.SendAsync();
 
-                    case StaticFileContext.PreconditionState.PreconditionFailed:
-                        return fileContext.SendStatusAsync(Constants.Status412PreconditionFailed);
+                        case StaticFileContext.PreconditionState.NotModified:
+                            return fileContext.SendStatusAsync(Constants.Status304NotModified);
 
-                    default:
-                        throw new NotImplementedException(fileContext.GetPreconditionState().ToString());
+                        case StaticFileContext.PreconditionState.PreconditionFailed:
+                            return fileContext.SendStatusAsync(Constants.Status412PreconditionFailed);
+
+                        default:
+                            throw new NotImplementedException(fileContext.GetPreconditionState().ToString());
+                    }
                 }
             }
 
             return Next.Invoke(context);
         }
 
-        private static bool FindFile(string path, out IFileInfo fileInfo)
+        private static IFileInfo FindFile(string path)
         {
             var filePath = "app" + path.Replace('/', '\\');
 
-            return FileOnDiskFinder.FindFile(filePath, out fileInfo) || EmbeddedFileFinder.FindEmbeddedFile(filePath, out fileInfo);
+            var fileOnDisk = FileOnDiskFinder.FindFile(filePath);
+            if (fileOnDisk != null)
+            {
+                return fileOnDisk;
+            }
+            
+            var fileEmbedded = EmbeddedFileFinder.FindEmbeddedFile(filePath);
+            if (fileEmbedded != null)
+            {
+                return fileEmbedded;
+            }
+
+            return null;
         }
 
         private static string FindContentType(string path)
