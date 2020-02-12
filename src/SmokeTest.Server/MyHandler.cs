@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NServiceBus;
 
 namespace SmokeTest.Server.Particular.Core.Deliberately.Insanely.Long.NamespaceToEmulateTheCrazyNamespaceLengthsPeopleGiveNamespacesInTheirSystems
 {
     public class MyHandler : IHandleMessages<MyMessage>
     {
-        public void Handle(MyMessage message)
+        public Task Handle(MyMessage message, IMessageHandlerContext context)
         {
             Console.WriteLine(@"Message received. Id: {0}", message.Id);
 
             if (Program.goodretries || !message.KillMe)
             {
-                return;
+                return Task.FromResult(0);
             }
 
             if (!Program.emulateFailures)
@@ -23,7 +24,7 @@ namespace SmokeTest.Server.Particular.Core.Deliberately.Insanely.Long.NamespaceT
                 throw new InvalidOperationException(message + "Uh oh...Nulls are bad MK");
             }
 
-
+            return Task.FromResult(0);
         }
 
         static void RandomException(string message)

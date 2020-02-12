@@ -1,63 +1,58 @@
 ﻿using System;
+using System.Threading.Tasks;
 using NServiceBus;
-using NServiceBus.Features;
 
 class Program
 {
     public static bool emulateFailures = false;
     public static bool goodretries = false;
-    static void Main()
+    static async Task Main()
     {
-        var busConfiguration = new BusConfiguration();
-        busConfiguration.EndpointName("SmokeTest.Server");
-        busConfiguration.UseSerialization<JsonSerializer>();
-        busConfiguration.EnableInstallers();
-        busConfiguration.UsePersistence<InMemoryPersistence>();
+        var endpointConfiguration = new EndpointConfiguration("SmokeTest.Server");
 
-        // To disable second level retries(SLR), uncomment the following line. SLR is enabled by default.
-        busConfiguration.DisableFeature<SecondLevelRetries>();
+        endpointConfiguration.UseTransport<LearningTransport>();
 
-       
-        using (var bus = Bus.Create(busConfiguration).Start())
+        var enpointInstance = await Endpoint.Start(endpointConfiguration);
+
+        var exit = false;
+        do
         {
-            var exit = false;
-            do
-            {
-                Console.Clear();
-                Console.WriteLine("-------------------------------------");
-                Console.ForegroundColor = emulateFailures ? ConsoleColor.Red : ConsoleColor.Green;
-                Console.WriteLine("Throw Exceptions To Emulate Failures {0}!", emulateFailures ? "On" : "Off");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("-------------------------------------");
-                Console.WriteLine("[ A ] Emulate Failures");
-                Console.WriteLine("[ B ] Process Messages Normally");
-                Console.WriteLine("[ C ] Allow Retries {0}", goodretries);
-                Console.WriteLine("[ Q ] Quit");
-                Console.WriteLine("-------------------------------------");
-                Console.Write("Make a Choice: ");
+            Console.Clear();
+            Console.WriteLine("-------------------------------------");
+            Console.ForegroundColor = emulateFailures ? ConsoleColor.Red : ConsoleColor.Green;
+            Console.WriteLine("Throw Exceptions To Emulate Failures {0}!", emulateFailures ? "On" : "Off");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("-------------------------------------");
+            Console.WriteLine("[ A ] Emulate Failures");
+            Console.WriteLine("[ B ] Process Messages Normally");
+            Console.WriteLine("[ C ] Allow Retries {0}", goodretries);
+            Console.WriteLine("[ Q ] Quit");
+            Console.WriteLine("-------------------------------------");
+            Console.Write("Make a Choice: ");
 
-                var key = Console.ReadKey();
-                Console.WriteLine();
-                switch (key.Key)
-                {
-                    case ConsoleKey.A:
-                        emulateFailures = true;
-                        break;
-                    case ConsoleKey.B:
-                        emulateFailures = false;
-                        break;
-                    case ConsoleKey.C:
-                        goodretries = !goodretries;
-                        break;
-                    case ConsoleKey.Q:
-                        exit = true;
-                        break;
-                    default:
-                        Console.WriteLine("Option not valid, Try again.");
-                        break;
-                }
-            } while (!exit);
-        }
+            var key = Console.ReadKey();
+            Console.WriteLine();
+            switch (key.Key)
+            {
+                case ConsoleKey.A:
+                    emulateFailures = true;
+                    break;
+                case ConsoleKey.B:
+                    emulateFailures = false;
+                    break;
+                case ConsoleKey.C:
+                    goodretries = !goodretries;
+                    break;
+                case ConsoleKey.Q:
+                    exit = true;
+                    break;
+                default:
+                    Console.WriteLine("Option not valid, Try again.");
+                    break;
+            }
+        } while (!exit);
+
+        await enpointInstance.Stop();
     }
 }
 
