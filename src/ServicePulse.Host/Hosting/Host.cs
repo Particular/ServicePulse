@@ -26,7 +26,8 @@ namespace ServicePulse.Host.Hosting
 
         protected override void OnStart(string[] args)
         {
-            owinHost = WebApp.Start<OwinBootstrapper>(arguments.Url);
+            var hostingUrl = UrlHelper.RewriteLocalhostUrl(arguments.Url);
+            owinHost = WebApp.Start<OwinBootstrapper>(hostingUrl);
         }
 
         protected override void OnStop()
