@@ -1,9 +1,10 @@
 using System;
 using System.Net.Http;
+using System.Threading.Tasks;
+using NServiceBus.CustomChecks;
 using NServiceBus.Logging;
-using ServiceControl.Plugin.CustomChecks;
 
-abstract class Monitor : PeriodicCheck
+abstract class Monitor : CustomCheck
 {
     Uri uri;
     static ILog logger = LogManager.GetLogger<Monitor>();
@@ -14,7 +15,7 @@ abstract class Monitor : PeriodicCheck
         this.uri = uri;
     }
 
-    public override CheckResult PerformCheck()
+    public override async Task<CheckResult> PerformCheck()
     {
         try
         {
@@ -22,7 +23,7 @@ abstract class Monitor : PeriodicCheck
             {
                 Timeout = TimeSpan.FromSeconds(3),
             })
-            using (HttpResponseMessage response = client.GetAsync(uri).Result)
+            using (var response = await client.GetAsync(uri))
             {
                 if (response.IsSuccessStatusCode)
                 {
