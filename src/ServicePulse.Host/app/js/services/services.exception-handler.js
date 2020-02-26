@@ -1,3 +1,6 @@
+(function (window, angular) {
+    'use strict';
+
 angular.module('services.exceptionHandler', ['services.notifications']);
 
 angular.module('services.exceptionHandler').factory('exceptionHandlerFactory', ['$injector', function ($injector) {
@@ -25,3 +28,5 @@ angular.module('services.exceptionHandler').config(['$provide', function ($provi
         return exceptionHandlerFactory($delegate);
     }]);
 }]);
+
+}(window, window.angular, window.Rx));
