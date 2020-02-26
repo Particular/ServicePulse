@@ -1,4 +1,4 @@
-﻿require('angular');
+﻿var angular = require('angular');
 
 class LicenseNotifierService {
     constructor(toastService) {

@@ -1,4 +1,6 @@
-﻿class ConfigurationService {
+﻿var angular = require('angular');
+
+class ConfigurationService {
     constructor($http, $q, connectionsManager, uri) {
         this.scu = connectionsManager.getServiceControlUrl();
         this.$http = $http;

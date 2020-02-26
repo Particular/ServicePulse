@@ -1,4 +1,5 @@
 ﻿require('url-search-params-polyfill');
+var angular = require('angular');
 
 class ConnectionsManager {
     constructor() {
