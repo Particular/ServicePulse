@@ -21,13 +21,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="app\index.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="app\filename.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="app\filename.unknown">
+    <None Update="app\js\app.constants.js">
+      <LogicalName>%(RelativeDir)%(Filename)%(Extension)</LogicalName>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
