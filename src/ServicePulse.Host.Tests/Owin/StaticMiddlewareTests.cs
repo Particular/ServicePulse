@@ -8,21 +8,21 @@ namespace ServicePulse.Host.Tests.Owin
     [TestFixture]
     public class StaticMiddlewareTests
     {
-        [Test]
-        public void Should_default_to_octetstream_mimetype()
-        {
-            var middleware = new StaticFileMiddleware(new DummyNext());
-            var context = new OwinContext
-            {
-                Request =
-                {
-                    Path = new PathString("/filename.unknown"),
-                    Method = "GET"
-                }
-            };
-            middleware.Invoke(context);
-            Assert.AreEqual(("application/octet-stream"), context.Response.ContentType);
-        }
+        //[Test]
+        //public void Should_default_to_octetstream_mimetype()
+        //{
+        //    var middleware = new StaticFileMiddleware(new DummyNext());
+        //    var context = new OwinContext
+        //    {
+        //        Request =
+        //        {
+        //            Path = new PathString("/js/filename.unknown"),
+        //            Method = "GET"
+        //        }
+        //    };
+        //    middleware.Invoke(context);
+        //    Assert.AreEqual(("application/octet-stream"), context.Response.ContentType);
+        //}
         [Test]
         public void Should_return_correct_mimetype()
         {
@@ -31,7 +31,7 @@ namespace ServicePulse.Host.Tests.Owin
             {
                 Request =
                 {
-                    Path = new PathString("/filename.js"),
+                    Path = new PathString("/js/app.constants.js"),
                     Method = "GET"
                 }
             };
@@ -65,50 +65,13 @@ namespace ServicePulse.Host.Tests.Owin
             {
                 Request =
                 {
-                    Path = new PathString("/filename.js"),
+                    Path = new PathString("/js/app.js"),
                     Method = method
                 }
             };
             middleware.Invoke(context);
             Assert.IsNotNull(context.Response.ContentLength);
             Assert.IsNotEmpty(context.Response.ContentType);
-        }
-
-        [Test]
-        public void Should_find_file_on_disk()
-        {
-            var middleware = new StaticFileMiddleware(new DummyNext());
-            var context = new OwinContext
-            {
-                Request =
-                {
-                    Path = new PathString("/filename.js"),
-                    Method = "GET"
-                }
-            };
-            middleware.Invoke(context);
-            const long sizeOfFileOnDisk = 11; // this is the /app/filename.js file
-            Assert.AreEqual(sizeOfFileOnDisk, context.Response.ContentLength);
-            Assert.AreEqual(("application/javascript"), context.Response.ContentType);
-        }
-
-
-        [Test]
-        public void Should_find_file_on_disk_is_case_insensitive()
-        {
-            var middleware = new StaticFileMiddleware(new DummyNext());
-            var context = new OwinContext
-            {
-                Request =
-                {
-                    Path = new PathString("/fileNAME.js"),
-                    Method = "GET"
-                }
-            };
-            middleware.Invoke(context);
-            const long sizeOfFileOnDisk = 11; // this is the /app/filename.js file
-            Assert.AreEqual(sizeOfFileOnDisk, context.Response.ContentLength);
-            Assert.AreEqual(("application/javascript"), context.Response.ContentType);
         }
 
         [Test]
@@ -167,21 +130,50 @@ namespace ServicePulse.Host.Tests.Owin
         }
 
         [Test]
-        public void Should_find_prefer_file_on_disk_over_embedded_if_both_exist()
+        public void Should_find_prefer_constants_file_on_disk_over_embedded_if_both_exist()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
             {
                 Request =
                 {
-                    Path = new PathString("/index.html"), //this exists both BOTH embedded in ServicePulse.Host.exe and on disk
+                    Path = new PathString("/js/app.constants.js"), //this exists both BOTH embedded in ServicePulse.Host.exe and on disk
                     Method = "GET"
                 }
             };
             middleware.Invoke(context);
-            const long sizeOfFileOnDisk = 23; // this is the /app/filename.js file
+            const long sizeOfFileOnDisk = 231; // this is the /app/js/app.constants.js file
             Assert.AreEqual(sizeOfFileOnDisk, context.Response.ContentLength);
-            Assert.AreEqual(("text/html"), context.Response.ContentType);
+            Assert.AreEqual(("application/javascript"), context.Response.ContentType);
+        }
+
+        [Test]
+        public void Should_not_find_other_files_on_disk()
+        {
+            var middleware = new StaticFileMiddleware(new DummyNext());
+            var context = new OwinContext
+            {
+                Request =
+                {
+                    Path = new PathString("/filename.js"),
+                    Method = "GET"
+                }
+            };
+            middleware.Invoke(context);
+            Assert.AreEqual(null, context.Response.ContentLength);
+            Assert.AreEqual(null, context.Response.ContentType);
+
+            context = new OwinContext
+            {
+                Request =
+                {
+                    Path = new PathString("/../ServicePulse.Host.exe.config"),
+                    Method = "GET"
+                }
+            };
+            middleware.Invoke(context);
+            Assert.AreEqual(null, context.Response.ContentLength);
+            Assert.AreEqual(null, context.Response.ContentType);
         }
 
         public class DummyNext : OwinMiddleware
