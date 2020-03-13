@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitVersionTask" Version="5.1.3" PrivateAssets="All" />
+    <PackageReference Include="GitVersionTask" Version="5.2.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.7" />
     <PackageReference Include="Microsoft.Owin.SelfHost" Version="4.1.0" />
     <Content Include="app\js\polyfill\array.prototype.includes.js" />
