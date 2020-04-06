@@ -1,1 +1,3 @@
-
+exclusions:
+- src/NServiceBus.snk
+- LICENSE.md
