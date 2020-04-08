@@ -12,9 +12,12 @@ results
 CommonAssemblyInfo.cs
 lib/sqlite/System.Data.SQLite.dll
 *.orig
+*.zip
 Samples/DataBus/storage
 packages
 PrecompiledWeb
+tempstorage
+.learningtransport
 core-only
 Release
 Artifacts
@@ -26,8 +29,6 @@ _NCrunch_NServiceBus/*
 logs
 run-git.cmd
 src/Chocolatey/Build/*
-npm-debug.log
-
 
 installer/[F|f]iles
 installer/[C|c]ustom[A|a]ctions
@@ -42,6 +43,9 @@ installer/ServiceControl-cache
 # User-specific files
 *.suo
 *.user
+*.json.lock
+*.nuget.targets
+*.lock.json
 *.userosscache
 *.sln.docstates
 .vs/
@@ -86,19 +90,6 @@ src/scaffolding.config
 # Approval tests temp file
 *.received.*
 
-# npm artifacts
-src/ServicePulse.Host/node_modules
-src/ServicePulse.Host.Tests/node_modules
-package-lock.json
-
-# bower artifacts
-src/ServicePulse.Host/app/bower_components
-
-# Chutzpah folders
-_Chutzpah.*/
-
-# Webpack results
-src/ServicePulse.Host/app/modules/dist
-
-#Rider 
-src/.idea/
+# JetBrains Rider
+.idea/
+*.sln.iml
