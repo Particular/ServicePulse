@@ -1,0 +1,18 @@
+src/scaffolding.config
+
+# Approval tests temp file
+*.received.*
+
+# npm artifacts
+ServicePulse.Host/node_modules
+ServicePulse.Host.Tests/node_modules
+package-lock.json	
+
+# bower artifacts	
+ServicePulse.Host/app/bower_components	
+
+# Chutzpah folders	
+_Chutzpah.*/	
+
+# Webpack results	
+ServicePulse.Host/app/modules/dist	

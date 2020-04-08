@@ -80,25 +80,3 @@ _NCrunch_*
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
-
-src/scaffolding.config
-
-# Approval tests temp file
-*.received.*
-
-# npm artifacts
-src/ServicePulse.Host/node_modules
-src/ServicePulse.Host.Tests/node_modules
-package-lock.json
-
-# bower artifacts
-src/ServicePulse.Host/app/bower_components
-
-# Chutzpah folders
-_Chutzpah.*/
-
-# Webpack results
-src/ServicePulse.Host/app/modules/dist
-
-#Rider 
-src/.idea/
