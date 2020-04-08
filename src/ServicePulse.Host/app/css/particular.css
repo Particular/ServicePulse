@@ -2944,3 +2944,19 @@ table[ng-show="vm.message.panel === 2 && vm.message.messageHeaders"] td[nowrap="
 span.label {
     background-image: none;
 }
+
+a.remove-item {
+    margin-left: 5px;
+}
+
+a.remove-item:hover {
+    cursor: pointer;
+}
+
+a.remove-item i {
+    color: #00a3c4;
+}
+
+a.remove-item:hover i {
+    color: #00729c;
+}
