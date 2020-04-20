@@ -25,6 +25,7 @@ namespace ServicePulse.Host.Owin.Microsoft
         private string _lastModifiedString;
         private string _etag;
         private string _etagQuoted;
+        private bool _isStatic;
 
         private PreconditionState _ifMatchState;
         private PreconditionState _ifNoneMatchState;
@@ -47,6 +48,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             _etag = null;
             _etagQuoted = null;
             _lastModifiedString = null;
+            _isStatic = false;
             _ifMatchState = PreconditionState.Unspecified;
             _ifNoneMatchState = PreconditionState.Unspecified;
             _ifModifiedSinceState = PreconditionState.Unspecified;
@@ -81,6 +83,8 @@ namespace ServicePulse.Host.Owin.Microsoft
             // Truncate to the second.
             _lastModified = new DateTime(last.Year, last.Month, last.Day, last.Hour, last.Minute, last.Second, last.Kind);
             _lastModifiedString = _lastModified.ToString(Constants.HttpDateFormat, CultureInfo.InvariantCulture);
+
+            _isStatic = contentType.IndexOf("image/", StringComparison.OrdinalIgnoreCase) == 0;
 
             long etagHash = _lastModified.ToFileTimeUtc() ^ _length;
             _etag = Convert.ToString(etagHash, 16);
@@ -154,6 +158,15 @@ namespace ServicePulse.Host.Owin.Microsoft
             }
         }
 
+        public void ApplyCacheControlHeaders()
+        {
+            if (_isStatic)
+            {
+                // 604800 = 1 week
+                _response.Headers.Set("Cache-Control", "public,max-age=604800,immutable");
+            }
+        }
+
         public void ApplyResponseHeaders(int statusCode)
         {
             _response.StatusCode = statusCode;
@@ -199,6 +212,7 @@ namespace ServicePulse.Host.Owin.Microsoft
         public Task SendStatusAsync(int statusCode)
         {
             ApplyResponseHeaders(statusCode);
+            ApplyCacheControlHeaders();
 
             return Constants.CompletedTask;
         }
@@ -206,6 +220,7 @@ namespace ServicePulse.Host.Owin.Microsoft
         public Task SendAsync()
         {
             ApplyResponseHeaders(Constants.Status200Ok);
+            ApplyCacheControlHeaders();
 
             var physicalPath = _fileInfo.PhysicalPath;
             var sendFile = _response.Get<SendFileFunc>(Constants.SendFileAsyncKey);
