@@ -93,3 +93,6 @@ src/scaffolding.config
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# Webpack results	
+src/ServicePulse.Host/app/modules/dist/
