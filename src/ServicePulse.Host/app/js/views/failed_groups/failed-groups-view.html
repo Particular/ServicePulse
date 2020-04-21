@@ -57,7 +57,6 @@
                 </div>
 
                 <div class="col-xs-6 toolbar-menus no-side-padding">
-
                     <div class="msg-group-menu dropdown">
                         <label class="control-label">Group by:</label>
                         <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -68,6 +67,18 @@
                             <li ng-repeat="classifier in vm.availableClassifiers">
                                 <a href="/#/failed-messages/groups?groupBy={{classifier}}">{{classifier}}</a>
                             </li>
+                        </ul>
+                    </div>
+
+                    <div class="msg-group-menu dropdown">
+                        <label class="control-label">Sort by:</label>
+                        <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{vm.selectedSort}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat-start="sort in vm.sortSelectors"><a href="/#/failed-messages/groups?sortBy={{sort.description}}">{{sort.description}}</a></li>
+                            <li ng-repeat-end><a href="/#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">{{sort.description}} (Desc)</a></li>
                         </ul>
                     </div>
                 </div>
