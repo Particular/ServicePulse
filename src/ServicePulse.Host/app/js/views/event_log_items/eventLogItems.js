@@ -27,7 +27,11 @@
                     $location.path('/endpoints');
                     break;
                 case 'MessageFailures':
-                    $location.path('/failed-messages/groups');
+                    var newlocation = '/failed-messages/groups';
+                    if (eventLogItem.related_to && eventLogItem.related_to[0].search('message') > 0) {
+                        newlocation = '/failed-messages' + eventLogItem.related_to[0];
+                    }
+                    $location.path(newlocation);
                     break;
                 case 'Recoverability':
                     $location.path('/failed-messages/groups');

@@ -31,6 +31,9 @@ Install the following dependencies if you don't have them installed yet
 
  - [Node.js](https://nodejs.org/en/download/)
  - [Git for Windows](https://git-for-windows.github.io/)
+ - Chutzpah
+   - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
+   - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
 
 #### Set up node
 
