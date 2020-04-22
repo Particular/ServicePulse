@@ -1,9 +1,8 @@
 ﻿(function (window, angular, $) {
     'use strict';
 
-
     function controller($scope, connectivityNotifier, monitoringService, $interval, connectionsManager) {
-        $scope.isSCMonitoringConnecting = connectionsManager.getIsMonitoringEnabled()
+        $scope.isSCMonitoringConnecting = connectionsManager.getIsMonitoringEnabled();
         
         if ($scope.isSCMonitoringConnecting) {
             connectivityNotifier.reportConnecting();
@@ -24,7 +23,7 @@
 
                 connectivityNotifier.reportSuccessfulConnection();
                 lastReport = 'success';
-            }, e => {
+            }, () => {
                 if (lastReport === 'failed') {
                     return;
                 }
@@ -42,10 +41,6 @@
             }
         });
     }
-
-    
-
-    
 
     controller.$inject = ['$scope', 'connectivityNotifier', 'monitoringService', '$interval', 'connectionsManager'];
 
@@ -67,4 +62,3 @@
         .directive('monitoringConnectivityStatus', directive);
 
 }(window, window.angular, window.jQuery));
-

@@ -37,8 +37,7 @@
                 });
         }
 
-        function filterOutSystemMessage(data)
-        {
+        function filterOutSystemMessage(data) {
             data.messageTypes = data.messageTypes.filter(mt => {
                 return mt.id;
             });
@@ -55,10 +54,17 @@
             return $http.get(uri.join(mu, 'monitored-endpoints') + '?history=1');
         }
 
+        function getServiceControlMonitoringVersion() {
+            return $http.get(mu).then(function(response) {
+                return response.headers('X-Particular-Version');
+            });
+        }
+
         var service = {
             createEndpointsSource: createEndpointsSource,
             createEndpointDetailsSource: createEndpointDetailsSource,
             getMonitoredEndpoints: getMonitoredEndpoints,
+            getServiceControlMonitoringVersion: getServiceControlMonitoringVersion
         };
 
         return service;
