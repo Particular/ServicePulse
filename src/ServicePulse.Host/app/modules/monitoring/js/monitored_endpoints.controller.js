@@ -72,6 +72,7 @@
                 .subscribe(function (endpoint) {
 
                     $scope.loading = false;
+                    $scope.hasData = !endpoint.empty;
 
                     if (endpoint.empty) {
                         return;
