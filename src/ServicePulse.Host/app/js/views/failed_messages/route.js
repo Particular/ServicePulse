@@ -12,14 +12,14 @@
                 data: {
                     pageTitle: 'Failed Messages'
                 },
-                templateUrl: 'js/views/failed_messages/view.html',
+                templateUrl: 'js/views/failed_messages/failed-messages-view.html',
                 controller: 'failedMessagesController',
                 controllerAs: 'vm'
             }).when('/failed-messages/all', {
                 data: {
                     pageTitle: 'Failed Messages'
                 },
-                templateUrl: 'js/views/failed_messages/view.html',
+                templateUrl: 'js/views/failed_messages/failed-messages-view.html',
                 controller: 'failedMessagesController',
                 controllerAs: 'vm'
             });

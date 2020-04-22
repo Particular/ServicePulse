@@ -6,7 +6,7 @@
             data: {
                 pageTitle: 'About'
             },
-            templateUrl: 'js/views/about/view.html',
+            templateUrl: 'js/views/about/about-view.html',
             controller: 'aboutController',
             controllerAs: 'vm'
         });
