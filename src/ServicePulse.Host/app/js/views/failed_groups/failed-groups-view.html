@@ -78,7 +78,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li ng-repeat-start="sort in vm.sortSelectors"><a href="/#/failed-messages/groups?sortBy={{sort.description}}">{{sort.description}}</a></li>
-                            <li ng-repeat-end><a href="/#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">{{sort.description}} (Desc)</a></li>
+                            <li ng-repeat-end><a href="/#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">{{sort.description}} <span>(Descending)</span></a></li>
                         </ul>
                     </div>
                 </div>

@@ -2960,3 +2960,7 @@ a.remove-item i {
 a.remove-item:hover i {
     color: #00729c;
 }
+
+ul.dropdown-menu li a span {
+    color: #aaa;
+}
