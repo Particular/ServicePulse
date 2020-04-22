@@ -676,8 +676,8 @@ div.btn-toolbar, div.form-inline {
 
 .control-label {
     float: left;
-    padding-top: 6px;
-    margin-right: 6px;
+    padding-top: 7.5px;
+    margin-right: -10px;
 }
 
 .row.filter-toolbar, .row.action-toolbar {
