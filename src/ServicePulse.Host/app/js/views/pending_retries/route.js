@@ -8,7 +8,7 @@
             data: {
                 pageTitle: 'Pending Retries'
             },
-            templateUrl: 'js/views/pending_retries/view.html',
+            templateUrl: 'js/views/pending_retries/pending-retries-view.html',
             controller: 'pendingRetriesController',
             controllerAs: 'vm'
         });
