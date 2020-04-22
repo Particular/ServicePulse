@@ -7,4 +7,10 @@ https://www.opensource.org/licenses/rpl1.5.txt
 
 If you do not wish to release the source of software you build using NServiceBus, you may use NServiceBus source and/or binaries under the License Agreement described here:
 
-https://particular.net/LicenseAgreement
+https://particular.net/eula/non-production
+
+### [OWin/AspNetKatana](https://github.com/aspnet/AspNetKatana/) 
+
+Owin(AspNetKatana) is licensed under the Apache License 2.0 license as described [here](https://github.com/aspnet/AspNetKatana/blob/dev/LICENSE.txt).
+
+Parts of the Owin sources are compiled into ServicePulse as allowed under the license terms found [here](https://github.com/aspnet/AspNetKatana/blob/dev/LICENSE.txt).
