@@ -1,12 +1,14 @@
 ﻿<div class="text-center monitoring-no-data">
-    <h1>Endpoint monitoring not available</h1>
-    <p>Monitoring is not available due to one or more of these reasons:</p>
+    <h1>No connectivity</h1>
+    <p>Monitoring is not available at <strong>{{monitoringUrl}}</strong></p>
+
+    <h3>Potential causes:</h3>
     <ul>
-        <li>the <strong>monitoring server</strong> is not configured or is unavailable</li>
-        <li>no endpoints with <strong>monitoring plugin</strong> available yet</li>
-        <li>endpoints without the monitoring plugin do not have <strong>auditing</strong> enabled</li>
+        <li>the <strong>monitoring server</strong> not running</li>
+        <li>the <strong>monitoring server address</strong> is incorrect</li>
+        <li>the <strong>monitoring server</strong> not accessible (validate the configured hostname in ServiceControl Management Utility)</li>
     </ul>
     <div class="action-toolbar">
-        <a href="#/configuration/connections" class="btn btn-default btn-primary">View Connection Details</a> <a class="btn btn-default btn-secondary" href="https://docs.particular.net/monitoring/metrics/">Learn more</a>
+        <a href="#/configuration/connections" class="btn btn-default btn-primary">View Connection Details</a>
     </div>
 </div>
