@@ -1,21 +1,31 @@
 ﻿(function(window, angular) {
-
     'use strict';
+
+    function createWorkflowState(optionalStatus, optionalMessage) {
+        return {
+            status: optionalStatus || 'working',
+            message: optionalMessage || 'working'
+        };
+    }
 
     function controller(
         $scope,
-        $timeout,
+        $interval,
         sharedDataService,
-        configurationService) {
+        configurationService,
+        notifyService) {
 
-        var timeoutId;
-
+        var notifier = notifyService();
  
-        $scope.model = { active: [], inactive: [] };
+        $scope.model = { active: [], inactive: [], endpoints: [] };
 
         $scope.$on('$destroy', function() {
             $timeout.cancel(timeoutId);
         });
+
+        var timeoutId = $interval(function() {
+            updateUI();
+        }, 5000);
 
         function updateUI() {
             configurationService.getEndpoints().then(function(endpoints) {
@@ -30,7 +40,7 @@
 
                 for (i = 0; i < $scope.model.active.length; i++) {
                     obj = $scope.model.active[i];
-                    if (unmonitored.indexOf(obj.id) !== -1) {
+                    if (unmonitored.find(function (endpoint) { return endpoint.id == obj.id; }) !== -1) {
                         $scope.model.active.splice(i, 1);
                         i--; // we just made the array 1 shorter
                     }
@@ -38,7 +48,7 @@
 
                 for (i = 0; i < $scope.model.inactive.length; i++) {
                     obj = $scope.model.inactive[i];
-                    if (unmonitored.indexOf(obj.id) !== -1) {
+                    if (unmonitored.find(function (endpoint) { return endpoint.id == obj.id; }) !== -1) {
                         $scope.model.inactive.splice(i, 1);
                         i--;
                     }
@@ -74,10 +84,6 @@
 
                     }
                 }
-
-                timeoutId = $timeout(function() {
-                    updateUI();
-                }, 5000);
             });
         }
 
@@ -87,14 +93,51 @@
             });
         }
 
+        function autoGetEndPoints() {
+            configurationService.getEndpoints()
+                .then(function(response) {
+                    notifier.notify('EndpointCountUpdated', response.data.length);
+
+                    if (response.data.length > 0) {
+                        // need a map in some ui state for controlling animations
+                        var endPoints = response.data.map(function(obj) {
+                            var nObj = obj;
+                            nObj.workflow_state = createWorkflowState('ready', '');
+                            return nObj;
+                        });
+
+                        $scope.model.endpoints = endPoints;
+                    }
+                });
+        }
+
+        $scope.update = function (id, monitor) {
+            var result = $.grep($scope.model.endpoints, function (e) {
+                return e.id === id;
+            })[0];
+
+            result.workflow_state = createWorkflowState('working', 'Updating');
+         
+            configurationService.update(id, monitor, 'Updating', 'Update Failed')
+                .then(function(message) {
+                    result.workflow_state = createWorkflowState('ready', message);
+                    result.monitor_heartbeat = monitor;
+                }, function(message) {
+                    result.workflow_state = createWorkflowState('error', message);
+                });
+        };
+
+        autoGetEndPoints();
+
         updateUI();
     }
 
     controller.$inject = [
         '$scope',
-        '$timeout',
+        '$interval',
         'sharedDataService',
-        'configurationService'
+        'configurationService',
+        'notifyService'
     ];
 
     angular.module('endpoints')
