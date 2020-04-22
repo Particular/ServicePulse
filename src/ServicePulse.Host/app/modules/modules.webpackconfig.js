@@ -34,7 +34,9 @@ module.exports = {
                     const html = fs.readFileSync('./app/index.html', 'utf8');
                     const now = Date.now();
 
-                    let htmlOutput = html.split('.js"></script>').join('.js?v=' + now + '"></script>');
+                    let tokenizedMarkup = html.split('.js?v=').map(token => token.split('"></script>'));
+                    let flattenedTokens = tokenizedMarkup.reduce((acc, val) => acc.concat(val), []);
+                    let htmlOutput = flattenedTokens.filter((token, index) => index % 2 == 0).join('.js?v=' + now + '"></script>');
 
                     fs.writeFileSync('./app/index.html', htmlOutput);
                 }
