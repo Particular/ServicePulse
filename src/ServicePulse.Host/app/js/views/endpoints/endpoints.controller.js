@@ -20,7 +20,7 @@
         $scope.model = { active: [], inactive: [], endpoints: [] };
 
         $scope.$on('$destroy', function() {
-            $timeout.cancel(timeoutId);
+            $interval.cancel(timeoutId);
         });
 
         var timeoutId = $interval(function() {
