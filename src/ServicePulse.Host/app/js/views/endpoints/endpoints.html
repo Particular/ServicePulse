@@ -35,6 +35,13 @@
                         <li ng-repeat-end><a ng-click="changeSort(sort, 'desc')">{{sort}} <span>(Descending)</span></a></li>
                     </ul>
                 </div>
+
+                <div>
+                    <div class="msg-group-menu dropdown">
+                        <label class="control-label">Filter by:</label>
+                        <input type="text" placeholder="Filter" class="form-control-static" ng-model="endpointFilter" />
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -42,7 +49,7 @@
             <no-data ng-show="model.active.length == 0" message="No active endpoints"></no-data>
             <div class="row">
                 <div class="col-sm-12 no-side-padding">
-                    <div class="row box box-no-click" ng-repeat="endpoint in model.active">
+                    <div class="row box box-no-click" ng-repeat="endpoint in model.active | filter:endpointFilter">
                         <div class="col-sm-12 no-side-padding">
                             <div class="row">
 
@@ -69,7 +76,7 @@
             <no-data ng-show="model.inactive.length == 0" message="No inactive endpoints"></no-data>
             <div class="row">
                 <div class="col-sm-12 no-side-padding">
-                    <div class="row box box-no-click" ng-repeat="endpoint in model.inactive">
+                    <div class="row box box-no-click" ng-repeat="endpoint in model.inactive | filter:endpointFilter">
                         <div class="col-sm-12 no-side-padding">
                             <div class="row">
                                 <div class="col-sm-12 no-side-padding">
@@ -98,7 +105,7 @@
                     <i class="fa fa-warning"></i> <strong>Warning:</strong> The list of endpoints below only contains endpoints with the heartbeats plug-in installed. Toggling heartbeat monitoring won't toggle <a href="https://docs.particular.net/monitoring/metrics/in-servicepulse" target="_blank">performance monitoring</a> <i class="fa fa-external-link fake-link"></i>
                 </div>
                 
-                <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints">
+                <div class="row box box-no-click" ng-class="{'box-info': e.monitor_heartbeat, 'box-danger':  !e.monitor_heartbeat}" ng-repeat="e in model.endpoints | filter:endpointFilter">
                     <div class="col-sm-12 no-side-padding">
                         <div class="row">
                             <div class="col-xs-1">
