@@ -19,6 +19,12 @@
  
         $scope.model = { active: [], inactive: [], endpoints: [] };
 
+        $scope.sortOptions = ['Name', 'Latest heartbeat'];
+        $scope.sort = 'Name';
+        $scope.sortDir = '';
+
+        $scope.isInactiveEndpoints = true;
+
         $scope.$on('$destroy', function() {
             $interval.cancel(timeoutId);
         });
@@ -84,6 +90,11 @@
 
                     }
                 }
+
+                var sort = getSortFunction();
+
+                $scope.model.inactive.sort(sort);
+                $scope.model.active.sort(sort);
             });
         }
 
@@ -107,6 +118,7 @@
                         });
 
                         $scope.model.endpoints = endPoints;
+                        $scope.model.endpoints.sort(getSortFunction());
                     }
                 });
         }
@@ -125,6 +137,34 @@
                 }, function(message) {
                     result.workflow_state = createWorkflowState('error', message);
                 });
+        };
+
+        $scope.changeSort = function(sortBy, sortDir) {
+            $scope.sort = sortBy;
+            $scope.sortDir = sortDir === 'asc' ? '' : ' (Descending)';
+
+            var sort = getSortFunction();
+
+            $scope.model.inactive.sort(sort);
+            $scope.model.active.sort(sort);
+            $scope.model.endpoints.sort(sort);
+        };
+
+        var getSortFunction = function() {
+            var multiplier = -1;
+            if ($scope.sortDir === ' (Descending)') {
+                multiplier = 1;
+            }
+
+            if ($scope.sort === 'Latest heartbeat') {
+                return function (firstElement, secondElement) {
+                    return firstElement.heartbeat_information.last_report_at < secondElement.heartbeat_information.last_report_at ? multiplier : -multiplier;
+                };
+            }
+
+            return function (firstElement, secondElement) {
+                return firstElement.name.toLowerCase() < secondElement.name.toLowerCase() ? multiplier : -multiplier;
+            };
         };
 
         autoGetEndPoints();
