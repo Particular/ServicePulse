@@ -152,6 +152,7 @@
 
                         // need a map in some ui state for controlling animations
                         vm.exceptionGroups = response.data.map(initializeGroupState);
+                        vm.exceptionGroups.sort(getSort());
 
                         if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
                             vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
@@ -181,6 +182,79 @@
             return storedClassification;
         };
 
+        var comparers = {
+            asc: function (selector) {
+                return function (firstElement, secondElement) {
+                    return selector(firstElement) < selector(secondElement) ? -1 : 1;
+                }
+            },
+            desc: function (selector) {
+                return function (firstElement, secondElement) {
+                    return selector(firstElement) < selector(secondElement) ? 1 : -1;
+                }
+            }
+        };
+
+        vm.sortSelectors = [{
+            description: 'Name',
+            selector: function (group) { return group.title; }
+        }, {
+            description: 'Number of messages',
+            selector: function (group) { return group.count; }
+        }, {
+            description: 'First Failed Time',
+            selector: function (group) { return group.first; }
+        }, {
+            description: 'Last Failed Time',
+            selector: function (group) { return group.last; }
+        }, {
+            description: 'Last Retried Time',
+            selector: function (group) { return group.last_operation_completion_time; }
+        }];
+
+        var saveSort = function(sortCriteria, sortDirection) {
+            $cookies.put('sortCriteria', sortCriteria);
+            $cookies.put('sortDirection', sortDirection);
+
+            vm.selectedSort = getDefaultSortSelection();
+        };
+
+        var getSort = function() {
+            var sortBy = vm.sortSelectors[0].description;
+            var sortDir = 'asc';
+
+            if ($routeParams.sortBy) {
+                sortBy = $routeParams.sortBy;
+                sortDir = ($routeParams.sortdir || 'asc').toLowerCase();
+
+                saveSort($routeParams.sortBy, sortDir);
+            } else if ($cookies.get('sortCriteria')) {
+                sortBy = $cookies.get('sortCriteria');
+                sortDir = ($cookies.get('sortDirection') || 'asc').toLowerCase();
+            }
+
+            var propertySelector = vm.sortSelectors.find(function (selector) { return selector.description.toLowerCase() === sortBy.toLowerCase(); }).selector;
+            return comparers[sortDir](propertySelector);
+        };
+
+        var getDefaultSortSelection = function() {
+            var sortBy = vm.sortSelectors[0].description;
+            var sortDir = '';
+
+            if ($cookies.get('sortCriteria')) {
+                sortBy = $cookies.get('sortCriteria');
+                sortDir = ($cookies.get('sortDirection') || 'asc').toLowerCase();
+
+                if (sortDir === 'asc') {
+                    sortDir = '';
+                } else {
+                    sortDir = ' (Desc)'
+                }
+            }
+
+            return vm.sortSelectors.find(function (selector) { return selector.description.toLowerCase() === sortBy.toLowerCase(); }).description + sortDir;
+        };
+
         vm.selectClassification = function (newClassification) {
             vm.loadingData = true;
             vm.selectedClassification = newClassification;
@@ -196,6 +270,8 @@
 
         var initialLoad = function () {
             vm.loadingData = true;
+
+            vm.selectedSort = getDefaultSortSelection();
 
             serviceControlService.getExceptionGroupClassifiers().then(function (classifiers) {
                 vm.availableClassifiers = classifiers;
@@ -245,6 +321,7 @@
                         })
                         .forEach(function(group) {
                             vm.exceptionGroups.push(group);
+                            vm.exceptionGroups.sort(getSort());
                             initializeGroupState(group);
                         });
 

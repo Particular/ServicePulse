@@ -676,8 +676,8 @@ div.btn-toolbar, div.form-inline {
 
 .control-label {
     float: left;
-    padding-top: 6px;
-    margin-right: 6px;
+    padding-top: 7.5px;
+    margin-right: -10px;
 }
 
 .row.filter-toolbar, .row.action-toolbar {
@@ -2959,4 +2959,8 @@ a.remove-item i {
 
 a.remove-item:hover i {
     color: #00729c;
+}
+
+ul.dropdown-menu li a span {
+    color: #aaa;
 }
