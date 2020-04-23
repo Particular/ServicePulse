@@ -11,7 +11,9 @@
         rx,
         $filter,
         smallGraphsMinimumYAxis,
-        connectivityNotifier) {
+        connectivityNotifier,
+        connectionsManager
+        ) {
 
         var subscription, endpointsFromScSubscription;
 
@@ -20,6 +22,9 @@
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
         $scope.endpoints = [];
         $scope.loading = true;
+        $scope.location = $location;
+        $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
+        $scope.hasData = false; // TODO: UI toggles between 'no connectivity' and 'no data' but unknown how to set this via the monitoringService rx observable. 
 
         $scope.selectPeriod = function (period) {
             $scope.selectedPeriod = period;
@@ -67,6 +72,7 @@
                 .subscribe(function (endpoint) {
 
                     $scope.loading = false;
+                    $scope.hasData = !endpoint.empty;
 
                     if (endpoint.empty) {
                         return;
@@ -143,7 +149,8 @@
         'rx',
         '$filter',
         'smallGraphsMinimumYAxis',
-        'connectivityNotifier'
+        'connectivityNotifier',
+        'connectionsManager'
     ];
 
     angular.module('monitored_endpoints')
