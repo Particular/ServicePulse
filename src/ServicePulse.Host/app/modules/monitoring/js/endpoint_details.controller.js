@@ -65,6 +65,15 @@
             $scope.endpoint.refreshMessageTypes();
         };
 
+        $scope.removeEndpoint = (instance) => {
+            instance.busy = true;
+            monitoringService.removeEndpointInstance(instance.id).then(() => {
+                $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
+            }, () => {
+                instance.busy = false
+            });
+        };
+
         $scope.endpoint = {
             messageTypesPage: !$scope.showInstancesBreakdown ? $routeParams.pageNo : 1,
             messageTypesTotalItems: 0,

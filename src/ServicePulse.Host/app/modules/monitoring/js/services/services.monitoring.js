@@ -60,11 +60,16 @@
             });
         }
 
+        function removeEndpointInstance(instanceId) {
+            return $http.delete(uri.join(mu, 'monitored-instance', instanceId));
+        }
+
         var service = {
-            createEndpointsSource: createEndpointsSource,
-            createEndpointDetailsSource: createEndpointDetailsSource,
-            getMonitoredEndpoints: getMonitoredEndpoints,
-            getServiceControlMonitoringVersion: getServiceControlMonitoringVersion
+            createEndpointsSource,
+            createEndpointDetailsSource,
+            getMonitoredEndpoints,
+            getServiceControlMonitoringVersion,
+            removeEndpointInstance
         };
 
         return service;
