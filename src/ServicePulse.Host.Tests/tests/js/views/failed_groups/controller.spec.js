@@ -317,15 +317,21 @@
                             deferred.resolve({ data: [] });
                         });
                         expect(controller.exceptionGroups.length).toEqual(3);
-                        expect(controller.exceptionGroups[0].id).toEqual(3);
-                        expect(controller.exceptionGroups[0].workflow_state).toBeDefined();
-                        expect(controller.exceptionGroups[0].retry_status).toEqual('pending');
-                        expect(controller.exceptionGroups[1].id).toEqual(1);
-                        expect(controller.exceptionGroups[1].workflow_state).toBeDefined();
-                        expect(controller.exceptionGroups[1].retry_status).toEqual('forwarding');
-                        expect(controller.exceptionGroups[2].id).toEqual(2);
-                        expect(controller.exceptionGroups[2].workflow_state).toBeDefined();
-                        expect(controller.exceptionGroups[2].retry_status).toEqual('completed');
+                        var groupUnderTest = controller.exceptionGroups.find(x => x.id === 3);
+                        
+                        expect(groupUnderTest).toBeDefined();                        
+                        expect(groupUnderTest.workflow_state).toBeDefined();
+                        expect(groupUnderTest.retry_status).toEqual('pending');
+                        
+                        groupUnderTest = controller.exceptionGroups.find(x => x.id === 1);
+                        expect(groupUnderTest).toBeDefined();                        
+                        expect(groupUnderTest.workflow_state).toBeDefined();
+                        expect(groupUnderTest.retry_status).toEqual('forwarding');
+
+                        groupUnderTest = controller.exceptionGroups.find(x => x.id === 2);
+                        expect(groupUnderTest).toBeDefined();                        
+                        expect(groupUnderTest.workflow_state).toBeDefined();
+                        expect(groupUnderTest.retry_status).toEqual('completed');
                     });
             });
     });
