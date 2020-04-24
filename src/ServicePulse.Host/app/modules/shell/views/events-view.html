@@ -1,9 +1,12 @@
-<section class="events" name="eventlog" ng-controller="EventLogItemsCtrl">
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+<div class="events" ng-controller="EventsCtrl">
     <div class="row">
         <div class="col-sm-12">
-            <h6>Last 10 events</h6>
+            <h6>Events</h6>
 
-            <div class="row box box-event-item" ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10">
+            <div class="row box box-event-item" ng-repeat="eventLogItem in eventLog.items | orderBy: '-raised_at' | limitTo: 10">
                 <div class="col-xs-12" ng-click="viewCategory(eventLogItem)">
                     <div class="row">
                         <div class="col-xs-1">
@@ -43,11 +46,13 @@
                     </div>
                 </div>
             </div>
-            <a href="#/events">Show more events</a>
+            <div class="row list-pagination">
+                <ul uib-pagination ng-show="eventLogItem.eventLogTotalItems >  eventLogItem.eventLogItemsPerPage" total-items="endpoint.eventLogPage" ng-model="endpoint.eventLog.items" items-per-page="endpoint.eventLogItemsPerPage" max-size="25" boundary-link-numbers="true" ng-change="updateUrl()"></ul>
+            </div>
         </div>
     </div>
 
     <busy ng-show="loadingData" message="fetching more data"></busy>
 
     <no-data ng-show="!loadingData && model.length == 0" message="No events"></no-data>
-</section>
+</div>

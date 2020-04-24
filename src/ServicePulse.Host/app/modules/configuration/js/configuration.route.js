@@ -12,6 +12,6 @@
     ];
 
     angular.module('configuration.route', [])
-        .config(routeProvider);
+        .config(routeProvider); 
 
 } (window, window.angular));
