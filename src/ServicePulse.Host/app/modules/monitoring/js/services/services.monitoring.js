@@ -64,12 +64,30 @@
             return $http.delete(uri.join(mu, 'monitored-instance', instanceId));
         }
 
+        function isRemovingEndpointEnabled() {
+            return $http({
+                method: 'OPTIONS',
+                url: mu
+            }).then((response) => {
+                const headers = response.headers();
+
+                const allow = headers.allow;
+                const deleteAllowed = allow.indexOf(`DELETE`) >= 0;
+
+                return deleteAllowed;
+            }, function() {
+                debugger;
+                return false;
+            });
+        }
+
         var service = {
             createEndpointsSource,
             createEndpointDetailsSource,
             getMonitoredEndpoints,
             getServiceControlMonitoringVersion,
-            removeEndpointInstance
+            removeEndpointInstance,
+            isRemovingEndpointEnabled
         };
 
         return service;

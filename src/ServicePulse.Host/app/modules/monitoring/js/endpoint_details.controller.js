@@ -35,6 +35,10 @@
             updateUI();
         };
 
+        monitoringService.isRemovingEndpointEnabled().then(enabled => {
+            $scope.isRemovingEndpointEnabled = enabled;
+        });
+
         function mergeIn(destination, source, propertiesToSkip) {
             for (var propName in source) {
                 if (source.hasOwnProperty(propName)) {
