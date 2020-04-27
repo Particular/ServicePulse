@@ -1,28 +1,26 @@
 (function(window, angular, $) {
     'use strict';
 
-    function Service($http, uri, Rx) {
+    function Service($http, uri, Rx, connectionsManager) {
 
-        //var scu = connectionsManager.getServiceControlUrl();
+        var scu = connectionsManager.getServiceControlUrl();
         
-        var scu = 'http://localhost:33333/api';
-        
-        function getEventLogItems(pageNo) {
-            return $http.get(uri.join(mu, 'eventlogitems') + "?page=" + pageNo)
+        function getEventLogItems(pageNo, pageSize) {
+            return $http.get(uri.join(scu, 'eventlogitems') + "?page=" + pageNo + "&per_page=" + pageSize)
                 .then(function (result) {                    
-                    return {data: result.data, total: result.TotalResults};
+                    return {data: result.data, total: result.headers('total-count')};
                 }, function (error) {
                     return { error: error };
                 });
         }        
 
-        function createAuditLogSource(pageNo) {
-            return Rx.Observable.interval(refreshInterval).startWith(0)
+        function createAuditLogSource(pageNo, pageSize) {
+            return Rx.Observable.interval(5000).startWith(0)
                 .flatMap(function (i) {
-                    return Rx.Observable.fromPromise(getEventLogItems(pageNo));
+                    return Rx.Observable.fromPromise(getEventLogItems(pageNo, pageSize));
                 });
-        }
-
+        }       
+        
         var service = {
             createAuditLogSource: createAuditLogSource
         };
@@ -30,7 +28,7 @@
         return service;
     }
 
-    Service.$inject = ['$http', 'uri', 'rx'];
+    Service.$inject = ['$http', 'uri', 'rx', 'connectionsManager'];
 
     angular.module('events.module')
         .service('auditLogService', Service);

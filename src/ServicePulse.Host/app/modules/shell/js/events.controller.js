@@ -41,28 +41,41 @@
 					break;
 				default:
 			}
-		}
+		};		
 
 		$scope.eventLog = {
 			eventLogPage: 1,
-			eventLogTotalItems: 0,
+			eventLogTotalItems: 105,
 			eventLogItemsPerPage: 25,
 			items: []
 		};
-		
-		function updateUI() {
+
+		function mergeIn(destination, source, propertiesToSkip) {
+			for (var propName in source) {
+				if (source.hasOwnProperty(propName)) {
+					if(!propertiesToSkip || !propertiesToSkip.includes(propName)) {
+						destination[propName] = source[propName];
+					}
+				}
+			}
+		}
+
+		$scope.updateUI  = function () {
 			if (subscription) {
 				subscription.dispose();
 			}
 
-			subscription = auditLogService.createAuditLogSource($scope.eventLogPage.eventLogPage).subscribe(function (auditLog) {
+			subscription = auditLogService.createAuditLogSource($scope.eventLog.eventLogPage, $scope.eventLog.eventLogItemsPerPage).subscribe(function (auditLog) {
 
 				$scope.loading = false;			
 					
-				$scope.eventLog.eventLogTotalItems = auditLog.total;
+				$scope.eventLog.eventLogTotalItems = parseInt(auditLog.total);
 				mergeIn($scope.eventLog.items, auditLog.data);
+				$scope.$apply();	
 			});
 		}
+
+		$scope.updateUI();
 	}
 
 	controller.$inject = [
