@@ -20,10 +20,11 @@
             <h5 ng-class="{active: isInactiveEndpoints == true}"><a ng-click="isInactiveEndpoints = true; isActiveEndpoints = false; isEndpointsConfiguration = false;">Inactive Endpoints ({{model.inactive.length | number}})</a></h5>
             <h5 ng-class="{active: isActiveEndpoints == true}"><a ng-click="isActiveEndpoints = true; isInactiveEndpoints = false; isEndpointsConfiguration = false;">Active Endpoints ({{model.active.length | number}})</a></h5>
             <h5 ng-class="{active: isEndpointsConfiguration == true}"><a ng-click="isEndpointsConfiguration = true; isInactiveEndpoints = false; isActiveEndpoints = false;">Configuration</a></h5>
-        </div>
 
-        <div class="row">
-            <div class="col-xs-12 toolbar-menus no-side-padding">
+            <div class="filter-group">
+
+                <input type="text" placeholder="Filter list..." class="form-control-static" ng-model="endpointFilter" />
+
                 <div class="msg-group-menu dropdown">
                     <label class="control-label">Sort by:</label>
                     <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -35,13 +36,7 @@
                         <li ng-repeat-end><a ng-click="changeSort(sort, 'desc')">{{sort}} <span>(Descending)</span></a></li>
                     </ul>
                 </div>
-
-                <div>
-                    <div class="msg-group-menu dropdown">
-                        <label class="control-label">Filter by:</label>
-                        <input type="text" placeholder="Filter" class="form-control-static" ng-model="endpointFilter" />
-                    </div>
-                </div>
+                
             </div>
         </div>
 
