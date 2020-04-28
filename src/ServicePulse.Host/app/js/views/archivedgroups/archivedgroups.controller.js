@@ -1,17 +1,6 @@
 ﻿(function (window, angular) {
     'use strict';
 
-    function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
-        if (optionalTotal && optionalTotal <= 1) {
-            optionalTotal = optionalTotal * 100;
-        }
-        return {
-            status: optionalStatus || 'working',
-            total: optionalTotal || 0,
-            failed: optionalFailed || false
-        };
-    }
-
     function controller(
         $scope,
         $timeout,
@@ -33,13 +22,10 @@
         vm.loadingData = false;
         vm.archiveGroups = [];
         vm.availableClassifiers = [];
-        vm.selectedExceptionGroup = {};
+        vm.selectedClassification = '';
         vm.stats = sharedDataService.getstats();
 
         vm.viewExceptionGroup = function (group) {
-            if (vm.isBeingArchived(group.operation_status) || vm.isBeingRetried(group)) {
-                return;
-            }
             sharedDataService.set(group);
             $location.path('/failed-messages/groups/' + group.id);
         };
@@ -73,42 +59,22 @@
             return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
         };
 
-        vm.isBeingRetried = function(group) {
-            return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group.workflow_state.status);
-        };
-
-        vm.isBeingArchived = function (status) {
-            return status === 'archivestarted' || status === 'archiveprogressing' || status === 'archivefinalizing' || status === 'archivecompleted';
-        };
-
-        var initializeGroupState = function (group) {
-            var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) ||
-                'none';
-            if (operationStatus === 'preparing' && group.operation_progress === 1) {
-                operationStatus = 'queued';
-            }
-
-            group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
-
-            return group;
-        };
-
-        var getExceptionGroups = function () {
+        var getArchivedGroups = function () {
             vm.archiveGroups = [];
             return archivedMessageGroupsService.getArchivedGroups(vm.selectedClassification)
                 .then(function (response) {
-                    if (response.status === 304 && vm.exceptionGroups.length > 0) {
+                    debugger;
+                    if (response.status === 304 && vm.archiveGroups.length > 0) {
                         return true;
                     }
 
                     if (response.data.length > 0) {
 
-                        // need a map in some ui state for controlling animations
-                        vm.exceptionGroups = response.data.map(initializeGroupState);
+                        vm.archiveGroups = response.data;
 
-                        if (vm.exceptionGroups.length !== vm.stats.number_of_exception_groups) {
-                            vm.stats.number_of_exception_groups = vm.exceptionGroups.length;
-                            notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
+                        if (vm.archiveGroups.length !== vm.stats.number_of_archive_groups) {
+                            vm.stats.number_of_archive_groups = vm.archiveGroups.length;
+                            notifier.notify('ArchiveGroupCountUpdated', vm.stats.number_of_archive_groups);
                         }
                     }
                     return true;
@@ -140,7 +106,7 @@
 
             saveSelectedClassification(newClassification);
 
-            return autoGetExceptionGroups().then(function () {
+            return getArchivedGroups().then(function () {
                 vm.loadingData = false;
 
                 return true;
@@ -153,15 +119,15 @@
             archivedMessageGroupsService.getArchivedGroupClassifiers().then(function (classifiers) {
                 vm.availableClassifiers = classifiers;
                 vm.selectedClassification = getDefaultClassification(classifiers);
+            });
 
-                autoGetExceptionGroups().then(function () {
-                    vm.loadingData = false;
-                    vm.initialLoadComplete = true;
-                    
-                    notifier.notify('InitialLoadComplete');
+            getArchivedGroups().then(function () {
+                vm.loadingData = false;
+                vm.initialLoadComplete = true;
+                
+                notifier.notify('InitialLoadComplete');
 
-                    return true;
-                });
+                return true;
             });
         };
 

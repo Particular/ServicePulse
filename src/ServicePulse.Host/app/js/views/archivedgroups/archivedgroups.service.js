@@ -31,6 +31,7 @@
             return defer.promise;
         }
 
+        var previousArchiveGroupEtag;
         return {
             getArchivedGroupClassifiers: function() {
                 var url = uri.join(scu, 'recoverability', 'classifiers');
@@ -40,7 +41,19 @@
             },
 
             getArchivedGroups: function(classifier) {
-
+                var url = uri.join(scu, 'errors', 'groups', classifier);
+                return $http.get(url).then(function (response) {
+                    var status = 200;
+                    if (previousArchiveGroupEtag === response.headers('etag')) {
+                        status = 304;
+                    } else {
+                        previousArchiveGroupEtag = response.headers('etag');
+                    }
+                    return {
+                        data: response.data,
+                        status: status
+                    };
+                });
             },
 
             getArchivedMessages: function (sort, page, direction, start, end) {
