@@ -148,6 +148,8 @@
         notifier.subscribe($scope, function(event, data) {
             $scope.SCVersion = data.sc_version;
             $scope.is_compatible_with_sc = data.is_compatible_with_sc;
+            $rootScope.supportsArchiveGroups = data.supportsArchiveGroups;
+            
             if (!data.is_compatible_with_sc) {
                 var scNeedsUpgradeMessage = 'You are using Service Control version ' + data.sc_version + '. Please, upgrade to version ' + data.minimum_supported_sc_version + ' or higher to unlock new functionality in ServicePulse.';
                 toastService.showError(scNeedsUpgradeMessage);

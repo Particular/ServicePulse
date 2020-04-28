@@ -1,12 +1,12 @@
 ﻿(function (window, angular) {
-    "use strict";
+    'use strict';
 
     function controller(
         $scope,
         $log,
         $timeout,
         moment,
-        $location,
+        $routeParams,
         $cookies,
         sharedDataService,
         notifyService,
@@ -24,6 +24,8 @@
 
         vm.stats = sharedDataService.getstats();
 
+        vm.selectedArchiveGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Archived Messages', 'count': 0, 'initialLoad': true };
+
         vm.sort = {
             sortby: 'modified',
             direction: 'desc',
@@ -31,7 +33,7 @@
             start: undefined,
             end: undefined,
             buttonText: function () {
-                return (vm.sort.sortby === 'message_type' ? "Message Type" : "Time Archived") + " " + (vm.sort.direction === 'asc' ? "ASC" : "DESC");
+                return (vm.sort.sortby === 'message_type' ? 'Message Type' : 'Time Archived') + ' ' + (vm.sort.direction === 'asc' ? 'ASC' : 'DESC');
             }
         };
 
@@ -47,7 +49,7 @@
         vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.archives = [{}];
-        vm.error_retention_period = moment.duration("10.00:00:00").asHours();
+        vm.error_retention_period = moment.duration('10.00:00:00').asHours();
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 };
         
         var processLoadedMessages = function (data) {
@@ -78,8 +80,8 @@
         };
 
         var getSelectedArchiveGroup = function () {
-            var amount = $cookies.get("archive_amount");
-            var unit = $cookies.get("archive_unit");
+            var amount = $cookies.get('archive_amount');
+            var unit = $cookies.get('archive_unit');
 
             return {
                 amount: amount,
@@ -99,6 +101,7 @@
 
             vm.selectTimeGroup(selectedArchiveGroup.amount, selectedArchiveGroup.unit);
             vm.allFailedMessagesGroup.count = vm.stats.number_of_failed_messages;
+            loadGroupDetails();
             vm.loadMoreResults();
         };
 
@@ -129,7 +132,7 @@
                 serviceControlService.getMessageBody(message.message_id).then(function (msg) {
                     message.messageBody = msg.data;
                 }, function () {
-                    message.bodyUnavailable = "message body unavailable";
+                    message.bodyUnavailable = 'message body unavailable';
                 });
             }
 
@@ -137,7 +140,7 @@
                 serviceControlService.getMessageHeaders(message.message_id).then(function (response) {
                     message.messageHeaders = response.headers;
                 }, function () {
-                    message.headersUnavailable = "message headers unavailable";
+                    message.headersUnavailable = 'message headers unavailable';
                 });
             }
             message.panel = panelnum;
@@ -250,6 +253,14 @@
             selectGroupInternal();
         };
 
+        var loadGroupDetails = function() {
+            if (vm.selectedArchiveGroup.initialLoad && vm.selectedArchiveGroup.id) {
+                    serviceControlService.getExceptionGroup(vm.selectedArchiveGroup.id).then(function (result) {
+                        vm.selectedArchiveGroup.title = result.data.title;
+                });
+            }
+        };
+
         vm.loadMoreResults = function () {
             vm.allMessagesLoaded = vm.archives.length >= vm.total;
 
@@ -260,6 +271,7 @@
             vm.loadingData = true;
 
             archivedMessageService.getArchivedMessages(
+                vm.selectedArchiveGroup.id,
                 vm.sort.sortby,
                 vm.sort.page,
                 vm.sort.direction,
@@ -276,20 +288,20 @@
     }
 
     controller.$inject = [
-        "$scope",
-        "$log",
-        "$timeout",
-        "moment",
-        "$location",
-        "$cookies",
-        "sharedDataService",
-        "notifyService",
-        "serviceControlService",
-        "failedMessageGroupsService",
-        "archivedMessageService"
+        '$scope',
+        '$log',
+        '$timeout',
+        'moment',
+        '$routeParams',
+        '$cookies',
+        'sharedDataService',
+        'notifyService',
+        'serviceControlService',
+        'failedMessageGroupsService',
+        'archivedMessageService'
     ];
 
-    angular.module("sc")
-        .controller("archivedMessageController", controller);
+    angular.module('sc')
+        .controller('archivedMessageController', controller);
 
 })(window, window.angular);

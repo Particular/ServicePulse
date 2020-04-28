@@ -25,13 +25,12 @@
         vm.selectedClassification = '';
         vm.stats = sharedDataService.getstats();
 
-        vm.viewExceptionGroup = function (group) {
-            sharedDataService.set(group);
-            $location.path('/failed-messages/groups/' + group.id);
-        };
-
         vm.unarchiveGroup = function (group) {
             debugger;
+        };
+
+        vm.viewArchiveGroup = function (group) {
+            $location.url('/failed-messages/archived?groupId=' + group.id);
         };
 
         var getClasses = function (stepStatus, currentStatus, statusArray) {
@@ -63,7 +62,6 @@
             vm.archiveGroups = [];
             return archivedMessageGroupsService.getArchivedGroups(vm.selectedClassification)
                 .then(function (response) {
-                    debugger;
                     if (response.status === 304 && vm.archiveGroups.length > 0) {
                         return true;
                     }
@@ -119,15 +117,15 @@
             archivedMessageGroupsService.getArchivedGroupClassifiers().then(function (classifiers) {
                 vm.availableClassifiers = classifiers;
                 vm.selectedClassification = getDefaultClassification(classifiers);
-            });
 
-            getArchivedGroups().then(function () {
-                vm.loadingData = false;
-                vm.initialLoadComplete = true;
-                
-                notifier.notify('InitialLoadComplete');
-
-                return true;
+                return getArchivedGroups().then(function () {
+                    vm.loadingData = false;
+                    vm.initialLoadComplete = true;
+                    
+                    notifier.notify('InitialLoadComplete');
+    
+                    return true;
+                });
             });
         };
 

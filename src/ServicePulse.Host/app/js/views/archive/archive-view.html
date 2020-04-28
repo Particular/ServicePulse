@@ -9,7 +9,20 @@
 
     <section name="failed_messages" ng-show="isSCConnected || scConnectedAtLeastOnce">
 
-        <failed-message-tabs></failed-message-tabs>
+        <div>
+            <failed-message-tabs></failed-message-tabs>
+        </div>
+
+        
+        <div class="row" ng-show="vm.selectedArchiveGroup.id && vm.archives.length > 0">
+            <div class="col-sm-12">
+                <div ng-show="!vm.selectedArchiveGroup.id" class="active">All archived messages ({{vm.archives.length}} / {{vm.selectedExceptionGroup.count}} | number)</div>
+                <h1 ng-show="vm.selectedArchiveGroup.id" class="active break group-title">
+                    {{vm.selectedArchiveGroup.title}}
+                </h1>
+                <h3 class="active group-title group-message-count">{{vm.total | number}} messages in group</h3>
+            </div>
+        </div>
 
         <div class="row" ng-show="!vm.loadingData">
             <div class="col-sm-12">

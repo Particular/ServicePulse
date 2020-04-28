@@ -38,10 +38,12 @@
             sp_version: spVersion
         };
 
-        serviceControlService.getVersion()
-        .then(function (scVersion) {
-            environment.sc_version = scVersion;
-            if (!semverService.isSupported(scVersion, environment.minimum_supported_sc_version)) {
+        serviceControlService.getServiceControlMetadata()
+        .then(function (metaData) {
+            environment.sc_version = metaData.version;
+            environment.supportsArchiveGroups = metaData.archivedGroupsUrl && metaData.archivedGroupsUrl.length > 0;
+
+            if (!semverService.isSupported(metaData.version, environment.minimum_supported_sc_version)) {
                 environment.is_compatible_with_sc = false;
             }
             notifier.notify('EnvironmentUpdated', environment);

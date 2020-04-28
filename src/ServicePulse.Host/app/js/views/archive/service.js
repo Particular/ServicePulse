@@ -31,13 +31,17 @@
 
         return {
 
-            getArchivedMessages: function (sort, page, direction, start, end) {
+            getArchivedMessages: function (groupId, sort, page, direction, start, end) {
                 var url = '';
-                if (start && end) {
-                    url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction + '&modified=' + start + '...' + end);
+                if (groupId) {
+                    url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sort + '&status=unresolved');
                 } else {
-                    url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction);
-                } 
+                    if (start && end) {
+                        url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction + '&modified=' + start + '...' + end);
+                    } else {
+                        url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction);
+                    }
+                }
 
                 return $http.get(url).then(function (response) {
                     return {
@@ -45,7 +49,6 @@
                         total: response.headers('Total-Count')
                     };
                 });
-
             },
 
             getArchivedCount: function () {
