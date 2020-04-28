@@ -294,27 +294,11 @@
 
         function getHeartbeatStats() {
             var url = uri.join(scu, 'heartbeats', 'stats');
-            return $http.get(url).then(function(response) {
+            return $http.get(url).then(function (response) {
                 return response.data;
             });
         }
-
-        function getEndpointsWithSla() {
-            return this
-                .getEndpoints()
-                .then(function(endpoints) {
-                    var results = [];
-                    endpoints.forEach(function(item) {
-                        var url = uri.join(scu, 'endpoints', item.name, 'sla');
-                        $http.get(url).then(function(response) {
-                            angular.extend(item, { sla: response.data.current });
-                            results.push(item);
-                        });
-                    });
-
-                    return results;
-                });
-        }
+        
         
         function loadQueueNames() {
             var url = uri.join(scu, 'errors', 'queues', 'addresses');

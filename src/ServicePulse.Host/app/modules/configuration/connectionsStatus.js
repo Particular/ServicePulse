@@ -1,4 +1,4 @@
-import { timingSafeEqual } from "crypto";
+var angular = require('angular');
 
 class ConnectionsStatus {
     constructor(notifyService, $rootScope) {

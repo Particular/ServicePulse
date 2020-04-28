@@ -51,7 +51,7 @@
 
         function mergeIn(destination, source) {
             for (var propName in source) {
-                if (source.hasOwnProperty(propName)) {
+                if (Object.prototype.hasOwnProperty.call(source, propName)) {
                     destination[propName] = source[propName];
                 }
             }

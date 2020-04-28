@@ -1,3 +1,5 @@
+var moment = require('moment');
+
 (function (window, angular) {
     'use strict';
 

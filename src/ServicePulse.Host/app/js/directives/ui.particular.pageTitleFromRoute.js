@@ -13,7 +13,7 @@
                 });
              }
         };
-    };
+    }
     
     directive.$inject = ['$route', '$rootScope', '$window'];
     

@@ -131,7 +131,7 @@
                                 max = Math.max(max, secondSeries.average, d3.max(secondSeries.points));
                             }
 
-                            var max = padToWholeValue(max);
+                            max = padToWholeValue(max);
 
                             var scaleY = d3.scaleLinear()
                                 .domain([0, max])

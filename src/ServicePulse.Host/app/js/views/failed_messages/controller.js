@@ -20,7 +20,7 @@
         
         vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
 
-        if (!vm.selectedExceptionGroup.hasOwnProperty('title')) {
+        if (!Object.prototype.hasOwnProperty.call(vm.selectedExceptionGroup, 'title')) {
             $location.path('/failed-messages/groups');
         }
 
@@ -272,4 +272,4 @@
 
     angular.module('sc')
         .controller('failedMessagesController', controller);
-})(window, window.angular);
+}(window, window.angular));
