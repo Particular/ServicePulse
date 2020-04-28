@@ -69,9 +69,9 @@
             $scope.endpoint.refreshMessageTypes();
         };
 
-        $scope.removeEndpoint = (instance) => {
+        $scope.removeEndpoint = (endpointName, instance) => {
             instance.busy = true;
-            monitoringService.removeEndpointInstance(instance.id).then(() => {
+            monitoringService.removeEndpointInstance(endpointName, instance.id).then(() => {
                 $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
             }, () => {
                 instance.busy = false

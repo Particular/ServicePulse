@@ -54,14 +54,16 @@
             return $http.get(uri.join(mu, 'monitored-endpoints') + '?history=1');
         }
 
+        function removeEndpointInstance(endpointName, instanceId) {
+            return $http.delete(uri.join(mu, 'monitored-instance', endpointName, instanceId));
+        }
+
         function getServiceControlMonitoringVersion() {
             return $http.get(mu).then(function(response) {
                 return response.headers('X-Particular-Version');
             });
         }
 
-        function removeEndpointInstance(instanceId) {
-            return $http.delete(uri.join(mu, 'monitored-instance', instanceId));
         }
 
         function isRemovingEndpointEnabled() {
@@ -76,7 +78,6 @@
 
                 return deleteAllowed;
             }, function() {
-                debugger;
                 return false;
             });
         }
