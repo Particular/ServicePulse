@@ -64,8 +64,6 @@
             });
         }
 
-        }
-
         function isRemovingEndpointEnabled() {
             return $http({
                 method: 'OPTIONS',
