@@ -73,6 +73,10 @@
             instance.busy = true;
             monitoringService.removeEndpointInstance(endpointName, instance.id).then(() => {
                 $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
+
+                if ($scope.endpoint.instances.length === 0) {
+                    $window.location.hash = '#/monitoring';
+                }
             }, () => {
                 instance.busy = false;
             });
