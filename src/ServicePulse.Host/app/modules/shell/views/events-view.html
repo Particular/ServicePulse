@@ -20,6 +20,7 @@
                                 'fa-check': eventLogItem.category === 'CustomChecks',
                                 'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability',
                                 'pa-redirect-source pa-redirect-large': eventLogItem.category === 'MessageRedirects',
+                                'fa-exclamation': eventLogItem.category === 'ExternalIntegrations',
                                     }"></i>
 
                                 <i ng-show="eventLogItem.severity === 'error' || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse" 
