@@ -52,7 +52,7 @@
 
 		function mergeIn(destination, source, propertiesToSkip) {
 			for (var propName in source) {
-				if (source.hasOwnProperty(propName)) {
+				if (Object.prototype.hasOwnProperty.call(source, propName)) {
 					if(!propertiesToSkip || !propertiesToSkip.includes(propName)) {
 						destination[propName] = source[propName];
 					}
