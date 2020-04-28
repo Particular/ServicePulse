@@ -1,4 +1,4 @@
-﻿(function(window, angular) {
+﻿(function(window, angular, $) {
     'use strict';
 
     function createWorkflowState(optionalStatus, optionalMessage) {
@@ -70,7 +70,7 @@
                     var activeIndex = $scope.model.active.map(function(bi) { return bi.id; }).indexOf(item.id);
                     var inactiveIndex = $scope.model.inactive.map(function(bi) { return bi.id; }).indexOf(item.id);
 
-                    if (item.hasOwnProperty('heartbeat_information') && item.heartbeat_information.reported_status === 'beating') {
+                    if (Object.prototype.hasOwnProperty.call(item, 'heartbeat_information') && item.heartbeat_information.reported_status === 'beating') {
                         if (activeIndex === -1) {
                             $scope.model.active.push(item);
                         } else {
@@ -183,4 +183,4 @@
     angular.module('endpoints')
         .controller('EndpointsCtrl', controller);
 
-}(window, window.angular));
+}(window, window.angular, window.jQuery));

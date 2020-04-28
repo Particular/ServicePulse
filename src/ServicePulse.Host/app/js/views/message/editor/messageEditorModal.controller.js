@@ -61,7 +61,7 @@
                     $scope.message.isBodyChanged = false;
                     originalMessageBody = $scope.message.messageBody;
                 }, function () {
-                    message.bodyUnavailable = "message body unavailable";
+                    $scope.message.bodyUnavailable = "message body unavailable";
                 });
         }
 

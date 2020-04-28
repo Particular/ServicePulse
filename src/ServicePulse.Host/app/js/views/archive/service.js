@@ -5,13 +5,11 @@
             $http,
             $log,
             $timeout,
-            $q,
-            notifyService,
+            $q,            
             connectionsManager,
             uri
         ) {
-
-        var notifier = notifyService();
+       
         var scu = connectionsManager.getServiceControlUrl();
 
         function patchPromise(url, success, error, ids) {
@@ -84,8 +82,7 @@
         '$http',
         '$log',
         '$timeout',
-        '$q',
-        'notifyService',
+        '$q',        
         'connectionsManager',
         'uri'
     ];

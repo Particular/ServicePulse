@@ -124,7 +124,7 @@ namespace ServicePulse.Host.Tests.Owin
                 }
             };
             middleware.Invoke(context);
-            const long sizeOfEmbeddedHtmlFile = 8544; // this is the messageEditorModal.controller.js file embedded into ServicePulse.Host.exe
+            const long sizeOfEmbeddedHtmlFile = 8551; // this is the messageEditorModal.controller.js file embedded into ServicePulse.Host.exe
             Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
             Assert.AreEqual(("application/javascript"), context.Response.ContentType);
         }

@@ -13,11 +13,11 @@
                     this(message);
                 });
 
-                if (subscriptions.hasOwnProperty(eventName)) {
+                if (Object.prototype.hasOwnProperty.call(subscriptions, eventName)) {
                     anon.call(subscriptions[eventName], message);
                 }
 
-                if (subscriptions.hasOwnProperty('all')) {
+                if (Object.prototype.hasOwnProperty.call(subscriptions, 'all')) {
                     anon.call(subscriptions['all'], message);
                 }
 

@@ -49,8 +49,6 @@
         vm.archives = [{}];
         vm.error_retention_period = moment.duration("10.00:00:00").asHours();
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 };
-
-        var localtimeout;
         
         var processLoadedMessages = function (data) {
 
@@ -106,7 +104,7 @@
 
         var startTimer = function (time) {
             time = time || 3000;
-            localtimeout = $timeout(function () {
+            $timeout(function () {
 
                 init();
             }, time);
