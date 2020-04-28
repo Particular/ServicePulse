@@ -21,7 +21,8 @@
         licenseService,
         license,
         $route,
-        configurationService
+        configurationService,
+        monitoringService
     ) {
         var notifier = notifyService();
 
@@ -34,6 +35,7 @@
         $scope.isRecoverabilityEnabled = scu !== null && scu !== undefined;
         $scope.serviceControlUrl = scu;
 
+        $scope.SCMonitoringVersion = '';
         $scope.SCVersion = '';
         $scope.is_compatible_with_sc = true;
         $scope.Version = version;
@@ -152,6 +154,14 @@
                 $location.path('/about');
             }
         }, 'EnvironmentUpdated');
+
+        notifier.subscribe($rootScope, (event, data) => {
+            if (!$scope.SCMonitoringVersion && data.isMonitoringConnected) {
+                monitoringService.getServiceControlMonitoringVersion().then((data) => {
+                    $scope.SCMonitoringVersion = data;
+                });
+            }
+        }, 'MonitoringConnectionStatusChanged');
 
         notifier.subscribe($scope, function (event, data) {
             toastService.showError('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>');
@@ -377,7 +387,8 @@
         'licenseService',
         'license',
         '$route',
-        'configurationService'
+        'configurationService',
+        'monitoringService'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

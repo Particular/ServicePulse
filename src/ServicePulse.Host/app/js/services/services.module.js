@@ -15,5 +15,4 @@
         'services.messageTypeParser'
     ]);
 
-
 } (window, window.angular));

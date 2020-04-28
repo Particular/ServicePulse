@@ -1,7 +1,9 @@
 ﻿(function (window, angular) {
     'use strict';
 
-    function Controller($scope, platformUpdateService, semverService) {
+    function Controller($scope,
+        platformUpdateService,
+        semverService) {
         var init = function () {
 
             $scope.newversion = undefined;
@@ -24,6 +26,15 @@
                             $scope.newscversionlink = result.SC[0]['release'];
                             $scope.newscversionnumber = result.SC[0]['tag'];
                         }
+
+                        // monitoring version binds much later than SC version, so we need to respond when it changes
+                        $scope.$watch('scmonitoringversion', () => {
+                            if (semverService.isUpgradeAvailable($scope.scmonitoringversion, result.SC[0]['tag'])) {
+                                $scope.newscmonitoringversion = true;
+                                $scope.newscmonitoringversionlink = result.SC[0]['release'];
+                                $scope.newscmonitoringversionnumber = result.SC[0]['tag'];
+                            }
+                        });
                     }
                 });
         };
@@ -37,7 +48,8 @@
         return {
             scope: {
                 version: '@',
-                scversion: '@'
+                scversion: '@',
+                scmonitoringversion: '@'
             },
             restrict: 'AEM',
             replace: true,
