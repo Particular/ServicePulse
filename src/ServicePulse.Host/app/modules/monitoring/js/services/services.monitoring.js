@@ -74,7 +74,7 @@
                 const headers = response.headers();
 
                 const allow = headers.allow;
-                const deleteAllowed = allow.indexOf(`DELETE`) >= 0;
+                const deleteAllowed = allow.indexOf('DELETE') >= 0;
 
                 return deleteAllowed;
             }, function() {

@@ -74,7 +74,7 @@
             monitoringService.removeEndpointInstance(endpointName, instance.id).then(() => {
                 $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
             }, () => {
-                instance.busy = false
+                instance.busy = false;
             });
         };
 
