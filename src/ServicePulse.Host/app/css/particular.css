@@ -2964,3 +2964,22 @@ a.remove-item:hover i {
 ul.dropdown-menu li a span {
     color: #aaa;
 }
+
+.filter-group {
+    display: inline-block;
+    width: 50%;
+    float: right;
+    position: relative;
+    top: -3px;
+    margin-top: -26px;
+}
+
+.filter-group input {
+    float: right;
+    width: 280px;
+    margin: 21px 15px 0 15px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
