@@ -1,6 +1,6 @@
 ﻿(function(window, angular) {
 
-	"use strict";
+	'use strict';
 
 	function controller(
 		$scope,
@@ -73,18 +73,18 @@
 				mergeIn($scope.eventLog.items, auditLog.data);
 				$scope.$apply();	
 			});
-		}
+		};
 
 		$scope.updateUI();
 	}
 
 	controller.$inject = [
-		"$scope",
-		"$location",
-		"auditLogService"		
+		'$scope',
+		'$location',
+		'auditLogService'
 	];
 
-	angular.module("events.module")
-		.controller("EventsCtrl", controller);
+	angular.module('events.module')
+		.controller('EventsCtrl', controller);
 
 }(window, window.angular));

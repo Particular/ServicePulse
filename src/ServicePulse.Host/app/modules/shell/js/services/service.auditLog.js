@@ -6,7 +6,7 @@
         var scu = connectionsManager.getServiceControlUrl();
         
         function getEventLogItems(pageNo, pageSize) {
-            return $http.get(uri.join(scu, 'eventlogitems') + "?page=" + pageNo + "&per_page=" + pageSize)
+            return $http.get(uri.join(scu, 'eventlogitems') + '?page=' + pageNo + '&per_page=' + pageSize)
                 .then(function (result) {                    
                     return {data: result.data, total: result.headers('total-count')};
                 }, function (error) {

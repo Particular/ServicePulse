@@ -6,7 +6,7 @@
         const template = require('./../views/events-view.html');
         $routeProvider.when('/events', {
             data: {
-                pageTitle: "Events"
+                pageTitle: 'Events'
             },
             template: template,
             controller: 'EventsCtrl',
