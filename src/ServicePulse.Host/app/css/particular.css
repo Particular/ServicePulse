@@ -2961,6 +2961,10 @@ a.remove-item:hover i {
     color: #00729c;
 }
 
+.btn-all-events {
+    width: 180px
+}
+
 ul.dropdown-menu li a span {
     color: #aaa;
 }
