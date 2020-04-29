@@ -86,6 +86,10 @@
                 });
             },
 
+            unArchiveGroup: function (groupId) {
+                return $http.patch(uri.join(scu, 'errors', 'unarchive', 'group', groupId));
+            },
+
             restoreFromArchive: function (startdate, enddate, success, error) {
 
                 var url = uri.join(scu, 'errors', startdate.format('YYYY-MM-DDTHH:mm:ss') + '...' + enddate.format('YYYY-MM-DDTHH:mm:ss'), 'unarchive');
