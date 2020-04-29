@@ -1,12 +1,15 @@
-<section class="events" name="eventlog" ng-controller="EventLogItemsCtrl">
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+<div class="events events-view" ng-controller="EventsCtrl">
     <div class="row">
         <div class="col-sm-12">
-            <h6>Last 10 events</h6>
+            <h1>Events</h1>
 
-            <div class="row box box-event-item" ng-repeat="eventLogItem in model | orderBy: '-raised_at' | limitTo: 10">
+            <div class="row box box-event-item" ng-repeat="eventLogItem in eventLog.items | orderBy: '-raised_at'">
                 <div class="col-xs-12" ng-click="viewCategory(eventLogItem)">
-                    <div class="row">
-                        <div class="col-xs-1">
+                    <div class="row events-list">
+                        <div class="col-icon">
 
                             <span class="fa-stack fa-lg">
                                 <i title="{{eventLogItem.category}}" class="fa fa-stack-2x"
@@ -29,7 +32,7 @@
                                     }"></i>
                             </span>
                         </div>
-                        <div class="col-xs-9">
+                        <div class="col-message">
                             <div class="row box-header">
                                 <div class="col-sm-12">
                                     <p class="lead">
@@ -38,22 +41,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-2">
+                        <div class="col-timestamp">
                             <sp-moment date="{{eventLogItem.raised_at}}"></sp-moment>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="row text-center">
-
-                <a ng-hide="model.length <= 10" class="btn btn-default btn-secondary btn-all-events" href="#/events">View all events</a>
-
+            <div class="row list-pagination">
+                <ul uib-pagination ng-hide="eventLog.eventLogTotalItems <= eventLog.eventLogItemsPerPage" items-per-page="eventLog.eventLogItemsPerPage" total-items="eventLog.eventLogTotalItems" ng-model="eventLog.eventLogPage" max-size="25" boundary-link-numbers="true" ng-change="updateUI()"></ul>                
             </div>
         </div>
     </div>
 
-    <busy ng-show="loadingData" message="fetching more data"></busy>
+    <busy ng-show="loading" message="fetching more data"></busy>
 
-    <no-data ng-show="!loadingData && model.length == 0" message="No events"></no-data>
-</section>
+    <no-data ng-show="!loading && eventLog.items.length == 0" message="No events"></no-data>
+</div>

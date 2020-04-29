@@ -29,6 +29,7 @@
         'licenseNotifierService',
         'platformexpired',
         'configuration.license',
+        'events.module',
     ]);
 
     angular.module('sc')

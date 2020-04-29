@@ -26,3 +26,5 @@ require('./js/directives/ui.particular.reindexingStatus');
 require('./js/services/service.toast');
 require('./js/directives/platformExpired');
 require('./js/licensenotifier/license.notifier');
+
+require('./js/events.module.js');

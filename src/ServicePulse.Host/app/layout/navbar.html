@@ -42,6 +42,12 @@
                         <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks | largeNumber:0}}</span>
                     </a>
                 </li>
+                <li ng-class="{ active: isActive('/events') }">
+                    <a href="#/events">
+                        <i class="fa fa-list-ul icon-white"></i>
+                        <span class="navbar-label">Events</span>                        
+                    </a>
+                </li>
                 <li ng-class="{ active: isActive('/configuration') }">
                     <a href="#/configuration">
                         <i class="fa fa-cog icon-white"></i>
