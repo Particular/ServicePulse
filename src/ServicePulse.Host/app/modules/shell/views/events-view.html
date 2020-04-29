@@ -1,15 +1,15 @@
 <platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
 <platform-expired ng-if="isPlatformExpired"></platform-expired>
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
-<div class="events" ng-controller="EventsCtrl">
+<div class="events events-view" ng-controller="EventsCtrl">
     <div class="row">
         <div class="col-sm-12">
-            <h6>Events</h6>
+            <h1>Events</h1>
 
             <div class="row box box-event-item" ng-repeat="eventLogItem in eventLog.items | orderBy: '-raised_at'">
                 <div class="col-xs-12" ng-click="viewCategory(eventLogItem)">
-                    <div class="row">
-                        <div class="col-xs-1">
+                    <div class="row events-list">
+                        <div class="col-icon">
 
                             <span class="fa-stack fa-lg">
                                 <i title="{{eventLogItem.category}}" class="fa fa-stack-2x"
@@ -32,7 +32,7 @@
                                     }"></i>
                             </span>
                         </div>
-                        <div class="col-xs-9">
+                        <div class="col-message">
                             <div class="row box-header">
                                 <div class="col-sm-12">
                                     <p class="lead">
@@ -41,7 +41,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-xs-2">
+                        <div class="col-timestamp">
                             <sp-moment date="{{eventLogItem.raised_at}}"></sp-moment>
                         </div>
                     </div>
