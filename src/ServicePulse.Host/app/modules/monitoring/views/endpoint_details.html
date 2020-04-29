@@ -329,6 +329,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <a ng-if="isRemovingEndpointEnabled" ng-show="instance.isStale" class="remove-endpoint" ng-click="removeEndpoint(endpointName, instance)"><i class="fa fa-trash" uib-tooltip="Remove endpoint"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -401,9 +402,6 @@
                                             <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
                                                 <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
-                                                </span>
-                                                <span class="warning" ng-if="endpoint.isStale">
-                                                    <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
                                                 </span>
                                             </div>
                                         </div>

@@ -54,17 +54,39 @@
             return $http.get(uri.join(mu, 'monitored-endpoints') + '?history=1');
         }
 
+        function removeEndpointInstance(endpointName, instanceId) {
+            return $http.delete(uri.join(mu, 'monitored-instance', endpointName, instanceId));
+        }
+
         function getServiceControlMonitoringVersion() {
             return $http.get(mu).then(function(response) {
                 return response.headers('X-Particular-Version');
             });
         }
 
+        function isRemovingEndpointEnabled() {
+            return $http({
+                method: 'OPTIONS',
+                url: mu
+            }).then((response) => {
+                const headers = response.headers();
+
+                const allow = headers.allow;
+                const deleteAllowed = allow.indexOf('DELETE') >= 0;
+
+                return deleteAllowed;
+            }, function() {
+                return false;
+            });
+        }
+
         var service = {
-            createEndpointsSource: createEndpointsSource,
-            createEndpointDetailsSource: createEndpointDetailsSource,
-            getMonitoredEndpoints: getMonitoredEndpoints,
-            getServiceControlMonitoringVersion: getServiceControlMonitoringVersion
+            createEndpointsSource,
+            createEndpointDetailsSource,
+            getMonitoredEndpoints,
+            getServiceControlMonitoringVersion,
+            removeEndpointInstance,
+            isRemovingEndpointEnabled
         };
 
         return service;

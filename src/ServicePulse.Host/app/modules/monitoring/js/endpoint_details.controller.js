@@ -35,6 +35,10 @@
             updateUI();
         };
 
+        monitoringService.isRemovingEndpointEnabled().then(enabled => {
+            $scope.isRemovingEndpointEnabled = enabled;
+        });
+
         function mergeIn(destination, source, propertiesToSkip) {
             for (var propName in source) {
                 if (Object.prototype.hasOwnProperty.call(source, propName)) {
@@ -63,6 +67,19 @@
             $scope.showInstancesBreakdown = isVisible;
 
             $scope.endpoint.refreshMessageTypes();
+        };
+
+        $scope.removeEndpoint = (endpointName, instance) => {
+            instance.busy = true;
+            monitoringService.removeEndpointInstance(endpointName, instance.id).then(() => {
+                $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
+
+                if ($scope.endpoint.instances.length === 0) {
+                    $window.location.hash = '#/monitoring';
+                }
+            }, () => {
+                instance.busy = false;
+            });
         };
 
         $scope.endpoint = {
