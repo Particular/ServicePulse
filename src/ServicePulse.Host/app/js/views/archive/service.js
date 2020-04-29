@@ -29,12 +29,13 @@
             return defer.promise;
         }
 
-        return {
+        var previousArchiveGroupEtag;
 
+        return {
             getArchivedMessages: function (groupId, sort, page, direction, start, end) {
                 var url = '';
                 if (groupId) {
-                    url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sort + '&status=unresolved');
+                    url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sort + '&status=archived');
                 } else {
                     if (start && end) {
                         url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction + '&modified=' + start + '...' + end);
@@ -52,7 +53,6 @@
             },
 
             getArchivedCount: function () {
-
                 var url = uri.join(scu, 'errors?status=archived');
 
                 return $http.head(url).then(function (response) {
@@ -62,21 +62,34 @@
             },
 
             restoreFromArchive: function (startdate, enddate, success, error) {
-
                 var url = uri.join(scu, 'errors', startdate.format('YYYY-MM-DDTHH:mm:ss') + '...' + enddate.format('YYYY-MM-DDTHH:mm:ss'), 'unarchive');
                 return patchPromise(url, success, error);
             },
 
             restoreMessageFromArchive: function (id, success, error) {
-
                 var url = uri.join(scu, 'errors', 'unarchive');
                 return patchPromise(url, success, error, [id]);
             },
 
             restoreMessagesFromArchive: function (ids, success, error) {
-
                 var url = uri.join(scu, 'errors', 'unarchive');
                 return patchPromise(url, success, error, ids);
+            },
+
+            getArchiveGroup: function(groupId) {
+                var url = uri.join(scu, 'archive', 'groups', 'id', groupId);
+                return $http.get(url).then(function (response) {
+                    var status = 200;
+                    if (previousArchiveGroupEtag === response.headers('etag')) {
+                        status = 304;
+                    } else {
+                        previousArchiveGroupEtag = response.headers('etag');
+                    }
+                    return {
+                        data: response.data,
+                        status: status
+                    };
+                });
             }
         };
     }

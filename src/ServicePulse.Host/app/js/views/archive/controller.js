@@ -255,7 +255,7 @@
 
         var loadGroupDetails = function() {
             if (vm.selectedArchiveGroup.initialLoad && vm.selectedArchiveGroup.id) {
-                    serviceControlService.getExceptionGroup(vm.selectedArchiveGroup.id).then(function (result) {
+                    archivedMessageService.getArchiveGroup(vm.selectedArchiveGroup.id).then(function (result) {
                         vm.selectedArchiveGroup.title = result.data.title;
                 });
             }
