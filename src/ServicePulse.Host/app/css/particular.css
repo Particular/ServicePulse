@@ -2970,7 +2970,10 @@ ul.dropdown-menu li a span {
 }
 
 .endpoint-row:hover a.remove-endpoint {
-    display: inline;
+    display: block;
+    position: absolute;
+    top: 17px;
+    right: 22px;
 }
 
 a.remove-endpoint {
@@ -2991,7 +2994,6 @@ a.remove-endpoint:hover i {
 .filter-group {
     display: inline-block;
     width: 50%;
-    float: right;
     position: relative;
     top: -3px;
     margin-top: -26px;

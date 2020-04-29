@@ -269,7 +269,6 @@
                                                 </span>
                                                 <span class="warning" ng-if="instance.isStale">
                                                     <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
-                                                    <a ng-if="isRemovingEndpointEnabled" class="remove-endpoint" ng-click="removeEndpoint(endpointName, instance)"><i class="fa fa-trash" uib-tooltip="Remove endpoint"></i></a>
                                                 </span>
                                                 <span class="warning" ng-if="instance.errorCount">
                                                     <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{instance.serviceControlId}}">
@@ -330,6 +329,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <a ng-if="isRemovingEndpointEnabled" ng-show="instance.isStale" class="remove-endpoint" ng-click="removeEndpoint(endpointName, instance)"><i class="fa fa-trash" uib-tooltip="Remove endpoint"></i></a>
                                 </div>
                             </div>
                         </div>
