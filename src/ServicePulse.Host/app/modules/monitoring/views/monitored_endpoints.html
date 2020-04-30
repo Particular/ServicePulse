@@ -81,7 +81,7 @@
                                         <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                             <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.isStale && endpoint.connectedCount">
+                                        <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || endpoint.connectedCount)">
                                             <i class="fa pa-endpoint-lost endpoints-overview" uib-tooltip="Unable to connect to instance"></i>
                                         </span>
                                         <span class="warning" ng-if="endpoint.errorCount">
