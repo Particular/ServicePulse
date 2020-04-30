@@ -1967,6 +1967,10 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     color: #23527c;
 }
 
+.overview-row-badge{
+    margin-left: 5px;
+}
+
 .endpoint-status .badge {
     position: relative;
     top: 8px;
