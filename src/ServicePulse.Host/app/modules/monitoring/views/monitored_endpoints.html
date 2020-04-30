@@ -66,7 +66,7 @@
                 </div>
             </div>
         </div>
-
+a{{supportsEndpointCount}}b
         <div class="row">
             <div class="col-xs-12 no-side-padding">
                 <div class="row box endpoint-row" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
@@ -81,10 +81,10 @@
                                         <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                             <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.isStale && endpoint.connectedCount">
+                                        <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || endpoint.connectedCount)">
                                             <i class="fa pa-endpoint-lost endpoints-overview" uib-tooltip="Unable to connect to instance"></i>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.isStale && (endpoint.connectedCount>0)">
+                                        <span class="warning" ng-if="endpoint.isStale && supportsEndpointCount && (endpoint.connectedCount > 0)">
                                             <a ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown">
                                                 <span class="overview-row-badge badge" uib-tooltip="Currently {{endpoint.disconnectedCount}} out of {{endpoint.endpointInstanceIds.length}} tracked instances not reporting.">{{endpoint.disconnectedCount}} / {{endpoint.endpointInstanceIds.length}}</span>
                                             </a>

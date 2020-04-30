@@ -73,6 +73,7 @@
 
                     $scope.loading = false;
                     $scope.hasData = !endpoint.empty;
+                    $scope.supportsEndpointCount = Object.prototype.hasOwnProperty.call(endpoint, 'connectedCount');
 
                     if (endpoint.empty) {
                         return;
