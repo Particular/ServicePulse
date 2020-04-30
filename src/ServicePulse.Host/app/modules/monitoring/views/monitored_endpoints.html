@@ -74,8 +74,8 @@ a{{supportsEndpointCount}}b
                         <div class="row">
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                                 <div class="row box-header">
-                                    <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link" uib-tooltip="{{endpoint.name}}">
-                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}">{{endpoint.name}}</a>
+                                    <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span uib-tooltip="Endpoint instance(s): {{endpoint.endpointInstanceIds.length}}">({{endpoint.endpointInstanceIds.length}})</span>
                                     </div>
                                     <div class="col-xs-5 no-side-padding endpoint-status">
                                         <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
@@ -83,11 +83,6 @@ a{{supportsEndpointCount}}b
                                         </span>
                                         <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || endpoint.connectedCount)">
                                             <i class="fa pa-endpoint-lost endpoints-overview" uib-tooltip="Unable to connect to instance"></i>
-                                        </span>
-                                        <span class="warning" ng-if="endpoint.isStale && supportsEndpointCount && (endpoint.connectedCount > 0)">
-                                            <a ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown">
-                                                <span class="overview-row-badge badge" uib-tooltip="Currently {{endpoint.disconnectedCount}} out of {{endpoint.endpointInstanceIds.length}} tracked instances not reporting.">{{endpoint.disconnectedCount}} / {{endpoint.endpointInstanceIds.length}}</span>
-                                            </a>
                                         </span>
                                         <span class="warning" ng-if="endpoint.errorCount">
                                             <a ng-if="endpoint.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
