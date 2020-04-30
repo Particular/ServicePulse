@@ -5,10 +5,13 @@
 
         var scu = connectionsManager.getServiceControlUrl();
 
-        function getVersion() {
+        function getServiceControlMetadata() {
             var url = uri.join(scu);
             return $http.get(url).then(function(response) {
-                return response.headers('X-Particular-Version');
+                return {
+                    version: response.headers('X-Particular-Version'),
+                    archivedGroupsUrl: response.data.archived_groups_url
+                };
             });
         }
 
@@ -313,7 +316,7 @@
         }
 
         var service = {
-            getVersion: getVersion,
+            getServiceControlMetadata: getServiceControlMetadata,
             checkLicense: checkLicense,
             getConfiguration: getConfiguration,
             getEventLogItems: getEventLogItems,

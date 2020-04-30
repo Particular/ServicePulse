@@ -1,14 +1,15 @@
 ﻿(function(window, angular, $) {
     'use strict';
 
-
-    function controller($scope, $interval, $location, sharedDataService, notifyService, serviceControlService, showPendingRetry) {
+    function controller($scope, $rootScope, $interval, $location, sharedDataService, notifyService, serviceControlService, showPendingRetry) {
 
         var notifier = notifyService();
 
         $scope.isActive = function(viewLocation) {
             return (viewLocation === $location.path());
         };
+
+        $scope.supportsArchiveGroups = $rootScope.supportsArchiveGroups;
 
         var stats = sharedDataService.getstats();
         var allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': stats.number_of_failed_messages }
@@ -21,7 +22,7 @@
 
         $scope.viewExceptionGroup = function() {
             sharedDataService.set(allFailedMessagesGroup);
-            $location.path('/failed-messages/all');
+            $location.url('/failed-messages/all');
         }
 
         var archiveMessagesUpdatedTimer = $interval(function() {
@@ -72,7 +73,7 @@
         }, 'PendingRetriesTotalUpdated');
     }
 
-    controller.$inject = ['$scope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService', 'showPendingRetry'];
+    controller.$inject = ['$scope', '$rootScope', '$interval', '$location', 'sharedDataService', 'notifyService', 'serviceControlService', 'showPendingRetry'];
 
     function directive() {
         return {

@@ -5,11 +5,13 @@
             $http,
             $log,
             $timeout,
-            $q,            
+            $q,
+            notifyService,
             connectionsManager,
             uri
         ) {
-       
+
+        var notifier = notifyService();
         var scu = connectionsManager.getServiceControlUrl();
 
         function patchPromise(url, success, error, ids) {
@@ -30,12 +32,34 @@
         }
 
         var previousArchiveGroupEtag;
-
         return {
+            getArchivedGroupClassifiers: function() {
+                var url = uri.join(scu, 'recoverability', 'classifiers');
+                return $http.get(url).then(function (response) {
+                    return response.data;
+                });
+            },
+
+            getArchivedGroups: function(classifier) {
+                var url = uri.join(scu, 'errors', 'groups', classifier);
+                return $http.get(url).then(function (response) {
+                    var status = 200;
+                    if (previousArchiveGroupEtag === response.headers('etag')) {
+                        status = 304;
+                    } else {
+                        previousArchiveGroupEtag = response.headers('etag');
+                    }
+                    return {
+                        data: response.data,
+                        status: status
+                    };
+                });
+            },
+
             getArchivedMessages: function (groupId, sort, page, direction, start, end) {
                 var url = '';
                 if (groupId) {
-                    url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sort + '&status=archived');
+                    url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sort + '&status=unresolved');
                 } else {
                     if (start && end) {
                         url = uri.join(scu, 'errors?status=archived&page=' + page + '&sort=' + sort + '&direction=' + direction + '&modified=' + start + '...' + end);
@@ -53,6 +77,7 @@
             },
 
             getArchivedCount: function () {
+
                 var url = uri.join(scu, 'errors?status=archived');
 
                 return $http.head(url).then(function (response) {
@@ -61,35 +86,26 @@
                 });
             },
 
+            unArchiveGroup: function (groupId) {
+                return $http.patch(uri.join(scu, 'errors', 'unarchive', 'group', groupId));
+            },
+
             restoreFromArchive: function (startdate, enddate, success, error) {
+
                 var url = uri.join(scu, 'errors', startdate.format('YYYY-MM-DDTHH:mm:ss') + '...' + enddate.format('YYYY-MM-DDTHH:mm:ss'), 'unarchive');
                 return patchPromise(url, success, error);
             },
 
             restoreMessageFromArchive: function (id, success, error) {
+
                 var url = uri.join(scu, 'errors', 'unarchive');
                 return patchPromise(url, success, error, [id]);
             },
 
             restoreMessagesFromArchive: function (ids, success, error) {
+
                 var url = uri.join(scu, 'errors', 'unarchive');
                 return patchPromise(url, success, error, ids);
-            },
-
-            getArchiveGroup: function(groupId) {
-                var url = uri.join(scu, 'archive', 'groups', 'id', groupId);
-                return $http.get(url).then(function (response) {
-                    var status = 200;
-                    if (previousArchiveGroupEtag === response.headers('etag')) {
-                        status = 304;
-                    } else {
-                        previousArchiveGroupEtag = response.headers('etag');
-                    }
-                    return {
-                        data: response.data,
-                        status: status
-                    };
-                });
             }
         };
     }
@@ -98,12 +114,13 @@
         '$http',
         '$log',
         '$timeout',
-        '$q',        
+        '$q',
+        'notifyService',
         'connectionsManager',
         'uri'
     ];
 
     angular.module('sc')
-        .service('archivedMessageService', service);
+        .service('archivedMessageGroupsService', service);
 
 })(window, window.angular);
