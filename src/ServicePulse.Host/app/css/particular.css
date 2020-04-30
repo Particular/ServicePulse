@@ -3063,3 +3063,8 @@ a.remove-endpoint:hover i {
     padding-top: 0;
     padding-bottom: 4px;
 }
+
+.endpoint-details-link span {
+    color: #777;
+    font-weight: normal;
+}
