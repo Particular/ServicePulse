@@ -2,16 +2,12 @@
     'use strict';
 
     function service(
-            $http,
-            $log,
-            $timeout,
+            $http,            
             $q,
-            notifyService,
             connectionsManager,
             uri
         ) {
 
-        var notifier = notifyService();
         var scu = connectionsManager.getServiceControlUrl();
 
         function patchPromise(url, success, error, ids) {
@@ -111,11 +107,8 @@
     }
 
     service.$inject = [
-        '$http',
-        '$log',
-        '$timeout',
+        '$http',        
         '$q',
-        'notifyService',
         'connectionsManager',
         'uri'
     ];
