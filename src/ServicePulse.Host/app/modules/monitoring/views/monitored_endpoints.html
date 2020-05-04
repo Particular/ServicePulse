@@ -75,7 +75,7 @@
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                                 <div class="row box-header">
                                     <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span uib-tooltip="Endpoint instance(s): {{endpoint.endpointInstanceIds.length}}">({{endpoint.endpointInstanceIds.length}})</span>
+                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span uib-tooltip="Endpoint instance(s): {{endpoint.endpointInstanceIds.length || 0}}">({{endpoint.endpointInstanceIds.length || 0}})</span>
                                     </div>
                                     <div class="col-xs-5 no-side-padding endpoint-status">
                                         <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
