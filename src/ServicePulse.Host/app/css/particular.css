@@ -3069,3 +3069,8 @@ a.remove-endpoint:hover i {
     color: #777;
     font-weight: normal;
 }
+
+.monitoring-lost-link i
+{
+    top: 7px;
+}

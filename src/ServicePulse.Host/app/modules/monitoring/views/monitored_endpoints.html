@@ -75,18 +75,18 @@
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                                 <div class="row box-header">
                                     <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span uib-tooltip="Endpoint instance(s): {{endpoint.endpointInstanceIds.length || 0}}">({{endpoint.endpointInstanceIds.length || 0}})</span>
+                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{endpoint.connectedCount || 0}})</span>
                                     </div>
                                     <div class="col-xs-5 no-side-padding endpoint-status">
                                         <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                             <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || endpoint.connectedCount)">
-                                            <i class="fa pa-endpoint-lost endpoints-overview" uib-tooltip="Unable to connect to instance"></i>
+                                        <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || !endpoint.connectedCount)" uib-tooltip="No data received from any instance">
+                                            <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.errorCount">
+                                        <span class="warning" ng-if="endpoint.errorCount" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list.">
                                             <a ng-if="endpoint.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
-                                                <i class="fa fa-envelope" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list."></i>
+                                                <i class="fa fa-envelope"></i>
                                                 <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                                             </a>
                                         </span>
