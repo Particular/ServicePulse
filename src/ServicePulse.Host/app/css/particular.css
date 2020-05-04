@@ -3006,6 +3006,7 @@ a.remove-endpoint:hover i {
     position: relative;
     top: -3px;
     margin-top: -26px;
+    float:right;
 }
 
 .filter-group input {
