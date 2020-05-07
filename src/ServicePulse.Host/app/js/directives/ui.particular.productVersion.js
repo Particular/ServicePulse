@@ -28,7 +28,7 @@
                         }
 
                         // monitoring version binds much later than SC version, so we need to respond when it changes
-                        $scope.$watch('scmonitoringversion', () => {
+                        $scope.$watch('scmonitoringversion', function () {
                             if (semverService.isUpgradeAvailable($scope.scmonitoringversion, result.SC[0]['tag'])) {
                                 $scope.newscmonitoringversion = true;
                                 $scope.newscmonitoringversionlink = result.SC[0]['release'];
