@@ -157,7 +157,7 @@
             }
         }, 'EnvironmentUpdated');
 
-        notifier.subscribe($rootScope, (event, data) => {
+        notifier.subscribe($rootScope, function (event, data) {
             if (!$scope.SCMonitoringVersion && data.isMonitoringConnected) {
                 monitoringService.getServiceControlMonitoringVersion().then((data) => {
                     $scope.SCMonitoringVersion = data;
