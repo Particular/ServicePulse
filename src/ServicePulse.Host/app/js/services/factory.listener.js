@@ -37,36 +37,46 @@
                     }
                 });
 
-                connection.start()
-                    .done(function () {
-                        notifier.notify('SignalREvent', 'SignalR started');
-
-                        connection.error(function (error) {
-                            notifier.notify('SignalRError', "There was a problem communicating with ServiceControl.");
-                        });
-
-                        connection.reconnected(function () {
-                            notifier.notify('SignalREvent', 'Reconnected');
-                        });
-
-                        connection.stateChanged(function (change) {
-                            if (change.newState === $jquery.signalR.connectionState.disconnected) {
-                                notifier.notify('SignalRError', 'The server is offline');
-                            }
-                        });
-                    })
-                    .fail(function () {
-                        //notification is needed for other part of Pulse that depend on the notifier to get connectivity status.
-                        notifier.notify('SignalRError');
-                        if ($window.location.hash.indexOf('/configuration/connections') < 0) {
-                            // Uses the toastService directly to avoid breaking the notifier class. The previous notifier calls should all be removed at some point too.
-                            toastService.showError('Could not connect to ServiceControl. <a class="btn btn-default" href="#/configuration/connections">View connection settings</a>', true, false);
-                        }
-                    });
-
                 notifier.notify('SignalREvent', 'SignalR starting');
+                connectToSignalR(connection);
             }
 
+            var firstConnect = true;
+            function connectToSignalR (connection) {
+                connection.start()
+                .done(function () {
+                    notifier.notify('SignalREvent', 'SignalR started');
+
+                    connection.error(function (error) {
+                        notifier.notify('SignalRError', "There was a problem communicating with ServiceControl.");
+                    });
+
+                    connection.reconnected(function () {
+                        notifier.notify('SignalREvent', 'Reconnected');
+                    });
+
+                    connection.stateChanged(function (change) {
+                        if (change.newState === $jquery.signalR.connectionState.disconnected) {
+                            notifier.notify('SignalRError', 'The server is offline');
+                        }
+                    });
+                })
+                .fail(function (error) {
+                    console.warn('Could not connect to signalR: ' + error);
+
+                    //notification is needed for other part of Pulse that depend on the notifier to get connectivity status.
+                    notifier.notify('SignalRError');
+                    if (firstConnect && $window.location.hash.indexOf('/configuration/connections') < 0) {
+                        // Uses the toastService directly to avoid breaking the notifier class. The previous notifier calls should all be removed at some point too.
+                        toastService.showError('Could not connect to ServiceControl. <a class="btn btn-default" href="#/configuration/connections">View connection settings</a>', true, false);
+                        firstConnect = false;
+                    }
+
+                    setTimeout(function() {
+                        connectToSignalR(connection);
+                    }, 2000);
+                });
+            };
 
             return {
                 subscribe: function (scope, callback, eventName) {
