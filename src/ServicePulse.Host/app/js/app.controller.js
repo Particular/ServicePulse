@@ -159,7 +159,7 @@
 
         notifier.subscribe($rootScope, function (event, data) {
             if (!$scope.SCMonitoringVersion && data.isMonitoringConnected) {
-                monitoringService.getServiceControlMonitoringVersion().then((data) => {
+                monitoringService.getServiceControlMonitoringVersion().then(function(data) {
                     $scope.SCMonitoringVersion = data;
                 });
             }
