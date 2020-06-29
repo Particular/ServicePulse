@@ -104,7 +104,7 @@
                     .constant('version', '1.3.0')
                     .constant('scConfig', {
                         service_control_url:'http://localhost:33333/api/',
-                        service_pulse_url: 'http://platformupdate.particular.net/servicepulse.txt'
+                        service_pulse_url: 'https://platformupdate.particular.net/servicepulse.txt'
                     });
                 ",
                 // Added whitespace and custom FQDN
@@ -112,7 +112,7 @@
                     .constant('version', '1.3.0')
                     .constant('scConfig', {
                         service_control_url :  'http://host.network.com:33333/api/'  ,
-                        service_pulse_url: 'http://platformupdate.particular.net/servicepulse.txt'
+                        service_pulse_url: 'https://platformupdate.particular.net/servicepulse.txt'
                 });
                 ",
                 // Line breaks and flip urls
@@ -120,7 +120,7 @@
                     .constant('version', '1.3.0')
                     .constant('scConfig', {
                     service_pulse_url: 
-                            'http://platformupdate.particular.net/servicepulse.txt',
+                            'https://platformupdate.particular.net/servicepulse.txt',
                             service_control_url :
                             'http://localhost:33333/api/'
                     });

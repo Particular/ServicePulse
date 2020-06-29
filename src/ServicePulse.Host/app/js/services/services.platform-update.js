@@ -7,8 +7,8 @@
 
 
             var serviceProductUrls = [
-                { product: 'SP', url: '//platformupdate.particular.net/servicepulse.txt' },
-                { product: 'SC', url: '//platformupdate.particular.net/servicecontrol.txt' }
+                { product: 'SP', url: 'https://platformupdate.particular.net/servicepulse.txt' },
+                { product: 'SC', url: 'https://platformupdate.particular.net/servicecontrol.txt' }
             ];
 
             return $q.all(serviceProductUrls.map(function(item) {
