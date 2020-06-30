@@ -34,7 +34,7 @@
 
     angular.module('sc')
         .run(['$rootScope', '$location', '$log', function ($rootScope, $location, $log) {
-            $rootScope.$log = $log; 
+            $rootScope.$log = $log;
         }]);
 
     angular.module('sc')

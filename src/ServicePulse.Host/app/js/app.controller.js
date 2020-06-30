@@ -51,7 +51,7 @@
                 if (routeData && routeData.redirectWhenNotConnected) {
                     $log.debug('not connected, and never connected once. Current route is a configuration route that requires redirect to: ', routeData.redirectWhenNotConnected);
                     event.preventDefault();
-                    $location.path(routeData.redirectWhenNotConnected); 
+                    $location.path(routeData.redirectWhenNotConnected);
                 }
             }
         });
@@ -68,7 +68,7 @@
         $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
         $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
         $scope.isInvalidDueToUpgradeProtectionExpired = licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
-          
+
         if ($scope.isPlatformExpired || $scope.isPlatformTrialExpired || $scope.isInvalidDueToUpgradeProtectionExpired) {
             $scope.licensewarning = "danger";
         }
@@ -81,7 +81,7 @@
             var active = $location.path().startsWith(viewLocation);
             return active;
         };
-       
+
         $($window.document).on('click', function (e) {
             if ($('.navbar-collapse.in').is(':visible')) {
                 $('.navbar-collapse.in').collapse('hide');
@@ -227,12 +227,12 @@
                 isSCConnecting: $scope.isSCConnecting,
                 scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
             });
-       
+
         }, 'SignalREvent');
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            
+
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
 
@@ -314,14 +314,14 @@
         listener.subscribe($scope, function (message) {
             notifier.notify('MessageFailureResolvedByRetry', message);
         }, 'MessageFailureResolvedByRetry');
-        
+
         listener.subscribe($scope, function (message) {
             logit(message);
-       
+
             notifier.notify('MessageFailuresUpdated', message.unresolved_total || message.total);
             notifier.notify('ArchivedMessagesUpdated', message.archived_total || 0);
 
-            
+
         }, 'MessageFailuresUpdated');
 
         listener.subscribe($scope, function(message) {
@@ -358,7 +358,7 @@
         listener.subscribe($scope, function (message) {
             notifier.notify('RetryOperationWaiting', message);
         }, 'RetryOperationWaiting');
-        
+
         listener.subscribe($scope, function (message) {
             notifier.notify('RetryOperationPreparing', message);
         }, 'RetryOperationPreparing');
