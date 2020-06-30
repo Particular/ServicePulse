@@ -120,6 +120,14 @@
             });
         }
 
+        function disconnectedEndpointsUpdated(event, data) {
+            $timeout(function () {
+                data = (data === 0 || data === '0') ? undefined : data;
+                $scope.disconnectedendpoints = data;
+                logit(data);
+            });
+        }
+
         function logit(event, data) {
             $log.debug(data);
         }
@@ -143,6 +151,7 @@
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
+        notifier.subscribe($scope, disconnectedEndpointsUpdated, 'DisconnectedEndpointsUpdated');
         notifier.subscribe($scope, logit, 'ArchiveGroupRequestAccepted');
 
         notifier.subscribe($scope, function(event, data) {
