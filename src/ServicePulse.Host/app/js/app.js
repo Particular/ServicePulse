@@ -30,6 +30,7 @@
         'platformexpired',
         'configuration.license',
         'events.module',
+        'services.disconnectedEndpointMonitor',
     ]);
 
     angular.module('sc')

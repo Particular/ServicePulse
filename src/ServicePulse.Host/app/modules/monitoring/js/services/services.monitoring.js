@@ -91,7 +91,7 @@
             getServiceControlMonitoringVersion,
             removeEndpointInstance,
             isRemovingEndpointEnabled,
-            getDisconnectedCount: getDisconnectedCount
+            getDisconnectedCount
         };
 
         return service;
