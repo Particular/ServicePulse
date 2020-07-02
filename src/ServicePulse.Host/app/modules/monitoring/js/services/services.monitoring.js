@@ -80,13 +80,18 @@
             });
         }
 
+       function getDisconnectedCount() {
+            return $http.get(uri.join(mu, 'monitored-endpoints', 'disconnected'));
+        }
+
         var service = {
             createEndpointsSource,
             createEndpointDetailsSource,
             getMonitoredEndpoints,
             getServiceControlMonitoringVersion,
             removeEndpointInstance,
-            isRemovingEndpointEnabled
+            isRemovingEndpointEnabled,
+            getDisconnectedCount: getDisconnectedCount
         };
 
         return service;
