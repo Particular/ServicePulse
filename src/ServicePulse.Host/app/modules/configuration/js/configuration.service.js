@@ -55,6 +55,10 @@ class ConfigurationService {
             let headers = response.headers();
 
             let allow = headers.allow;
+            if (!headers.allow) {
+                return false;
+            }
+
             let deleteAllowed = allow.indexOf(`DELETE`) >= 0;
 
             return deleteAllowed;
