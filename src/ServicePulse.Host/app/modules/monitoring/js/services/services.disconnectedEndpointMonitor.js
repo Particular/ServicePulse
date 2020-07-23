@@ -6,16 +6,18 @@
 
         var notifier = notifyService();
 
+        var checkInterval;
+
         var checkDisconnectedCount = function ()
         {
             monitoringService.getDisconnectedCount().then(result => {
                 notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
             }, e => {
                 $log.debug('Error while getting disconnected endpoints count from monitoring:' + e);
+                clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
             });
         };
 
-        var checkInterval;
         var isConnected = false;
 
         notifier.subscribe($rootScope, (event, data) => {
