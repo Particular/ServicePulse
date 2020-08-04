@@ -29,6 +29,9 @@
   <ItemGroup>
     <None Remove="app\**\*" />
     <EmbeddedResource Include="app\**\*" LogicalName="%(RelativeDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Remove="app\js\.eslintrc.js" />
+    <None Include="app\js\.eslintrc.js" />
+    <None Include="app\modules\.eslintrc.js" />
   </ItemGroup>
 
   <ItemGroup>
