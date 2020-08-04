@@ -47,7 +47,7 @@
                 .done(function () {
                     notifier.notify('SignalREvent', 'SignalR started');
 
-                    connection.error(error => {
+                    connection.error(function (error) {
                         notifier.notify('SignalRError', "There was a problem communicating with ServiceControl.");
                     });
 
