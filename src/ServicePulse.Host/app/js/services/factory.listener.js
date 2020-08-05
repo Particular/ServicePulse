@@ -76,7 +76,7 @@
                         connectToSignalR(connection);
                     }, 2000);
                 });
-            };
+            }
 
             return {
                 subscribe: function (scope, callback, eventName) {
