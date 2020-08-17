@@ -8,8 +8,7 @@
 
         var checkInterval;
 
-        var checkDisconnectedCount = function ()
-        {
+        var checkDisconnectedCount = function () {
             monitoringService.getDisconnectedCount().then(result => {
                 notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
             }, e => {
@@ -32,7 +31,7 @@
         }, "MonitoringConnectionStatusChanged")
 
         var service = {
-            EventPublished: disconnectedEndpointsUpdatedEvent
+            eventPublished: disconnectedEndpointsUpdatedEvent
         };
 
         return service;
