@@ -98,7 +98,7 @@
         };
 
         function customChecksUpdated(event, data) {
-            $timeout(function() { //http://davidburgosonline.com/dev/2014/correctly-fix-angularjs-error-digest-already-in-progress/
+            $timeout(function() { //https://davidburgos.blog/correctly-fix-angularjs-error-digest-already-in-progress/
                 data = (data === 0 || data === '0') ? undefined : data;
                 $scope.failedcustomchecks = data;
                 logit(data);
