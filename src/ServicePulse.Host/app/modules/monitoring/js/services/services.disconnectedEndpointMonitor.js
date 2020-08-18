@@ -19,19 +19,22 @@
 
         var isConnected = false;
 
-        notifier.subscribe($rootScope, (event, data) => {
-            if (data.isMonitoringConnected && isConnected == false) {
-                checkDisconnectedCount();
-                checkInterval = setInterval(checkDisconnectedCount, 20000);
-                isConnected = true;
-            } else if (!data.isMonitoringConnected && isConnected) {
-                isConnected = false;
-                clearInterval(checkInterval);
-            }
-        }, "MonitoringConnectionStatusChanged")
+        var startService = function () {
+            notifier.subscribe($rootScope, (event, data) => {
+                if (data.isMonitoringConnected && isConnected == false) {
+                    checkDisconnectedCount();
+                    checkInterval = setInterval(checkDisconnectedCount, 20000);
+                    isConnected = true;
+                } else if (!data.isMonitoringConnected && isConnected) {
+                    isConnected = false;
+                    clearInterval(checkInterval);
+                }
+            }, "MonitoringConnectionStatusChanged");
+        };
 
         var service = {
-            eventPublished: disconnectedEndpointsUpdatedEvent
+            updatedEvent: disconnectedEndpointsUpdatedEvent,
+            startService: startService
         };
 
         return service;

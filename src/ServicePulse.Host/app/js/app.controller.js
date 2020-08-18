@@ -23,7 +23,7 @@
         $route,
         configurationService,
         monitoringService,
-        disconnectedEndpointMonitor, //Keep this in so the monitor will run in the background
+        disconnectedEndpointMonitor,
     ) {
         var notifier = notifyService();
 
@@ -152,7 +152,10 @@
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
-        notifier.subscribe($scope, disconnectedEndpointsUpdated, 'DisconnectedEndpointsUpdated');
+
+        notifier.subscribe($scope, disconnectedEndpointsUpdated, disconnectedEndpointMonitor.updatedEvent);
+        disconnectedEndpointMonitor.startService();
+
         notifier.subscribe($scope, logit, 'ArchiveGroupRequestAccepted');
 
         notifier.subscribe($scope, function(event, data) {
