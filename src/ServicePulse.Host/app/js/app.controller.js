@@ -22,7 +22,8 @@
         license,
         $route,
         configurationService,
-        monitoringService
+        monitoringService,
+        disconnectedEndpointMonitor,
     ) {
         var notifier = notifyService();
 
@@ -51,7 +52,7 @@
                 if (routeData && routeData.redirectWhenNotConnected) {
                     $log.debug('not connected, and never connected once. Current route is a configuration route that requires redirect to: ', routeData.redirectWhenNotConnected);
                     event.preventDefault();
-                    $location.path(routeData.redirectWhenNotConnected); 
+                    $location.path(routeData.redirectWhenNotConnected);
                 }
             }
         });
@@ -68,7 +69,7 @@
         $scope.isPlatformExpired = licenseNotifierService.isPlatformExpired(license.license_status);
         $scope.isPlatformTrialExpired = licenseNotifierService.isPlatformTrialExpired(license.license_status);
         $scope.isInvalidDueToUpgradeProtectionExpired = licenseNotifierService.isInvalidDueToUpgradeProtectionExpired(license.license_status);
-          
+
         if ($scope.isPlatformExpired || $scope.isPlatformTrialExpired || $scope.isInvalidDueToUpgradeProtectionExpired) {
             $scope.licensewarning = "danger";
         }
@@ -81,7 +82,7 @@
             var active = $location.path().startsWith(viewLocation);
             return active;
         };
-       
+
         $($window.document).on('click', function (e) {
             if ($('.navbar-collapse.in').is(':visible')) {
                 $('.navbar-collapse.in').collapse('hide');
@@ -97,7 +98,7 @@
         };
 
         function customChecksUpdated(event, data) {
-            $timeout(function() { //http://davidburgosonline.com/dev/2014/correctly-fix-angularjs-error-digest-already-in-progress/
+            $timeout(function() { //https://davidburgos.blog/correctly-fix-angularjs-error-digest-already-in-progress/
                 data = (data === 0 || data === '0') ? undefined : data;
                 $scope.failedcustomchecks = data;
                 logit(data);
@@ -116,6 +117,14 @@
             $timeout(function() {
                 data = (data === 0 || data === '0') ? undefined : data;
                 $scope.failedheartbeats = data.failing;
+                logit(data);
+            });
+        }
+
+        function disconnectedEndpointsUpdated(event, data) {
+            $timeout(function () {
+                data = (data === 0 || data === '0') ? undefined : data;
+                $scope.disconnectedendpoints = data;
                 logit(data);
             });
         }
@@ -143,13 +152,17 @@
         notifier.subscribe($scope, customChecksUpdated, 'CustomChecksUpdated');
         notifier.subscribe($scope, messageFailuresUpdated, 'MessageFailuresUpdated');
         notifier.subscribe($scope, heartbeatsUpdated, 'HeartbeatsUpdated');
+
+        notifier.subscribe($scope, disconnectedEndpointsUpdated, disconnectedEndpointMonitor.updatedEvent);
+        disconnectedEndpointMonitor.startService();
+
         notifier.subscribe($scope, logit, 'ArchiveGroupRequestAccepted');
 
         notifier.subscribe($scope, function(event, data) {
             $scope.SCVersion = data.sc_version;
             $scope.is_compatible_with_sc = data.is_compatible_with_sc;
             $rootScope.supportsArchiveGroups = data.supportsArchiveGroups;
-            
+
             if (!data.is_compatible_with_sc) {
                 var scNeedsUpgradeMessage = 'You are using Service Control version ' + data.sc_version + '. Please, upgrade to version ' + data.minimum_supported_sc_version + ' or higher to unlock new functionality in ServicePulse.';
                 toastService.showError(scNeedsUpgradeMessage);
@@ -218,12 +231,12 @@
                 isSCConnecting: $scope.isSCConnecting,
                 scConnectedAtLeastOnce: $scope.scConnectedAtLeastOnce
             });
-       
+
         }, 'SignalREvent');
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            
+
             $scope.isSCConnected = false;
             $scope.isSCConnecting = false;
 
@@ -305,14 +318,14 @@
         listener.subscribe($scope, function (message) {
             notifier.notify('MessageFailureResolvedByRetry', message);
         }, 'MessageFailureResolvedByRetry');
-        
+
         listener.subscribe($scope, function (message) {
             logit(message);
-       
+
             notifier.notify('MessageFailuresUpdated', message.unresolved_total || message.total);
             notifier.notify('ArchivedMessagesUpdated', message.archived_total || 0);
 
-            
+
         }, 'MessageFailuresUpdated');
 
         listener.subscribe($scope, function(message) {
@@ -349,7 +362,7 @@
         listener.subscribe($scope, function (message) {
             notifier.notify('RetryOperationWaiting', message);
         }, 'RetryOperationWaiting');
-        
+
         listener.subscribe($scope, function (message) {
             notifier.notify('RetryOperationPreparing', message);
         }, 'RetryOperationPreparing');
@@ -390,7 +403,8 @@
         'license',
         '$route',
         'configurationService',
-        'monitoringService'
+        'monitoringService',
+        'disconnectedEndpointMonitor'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

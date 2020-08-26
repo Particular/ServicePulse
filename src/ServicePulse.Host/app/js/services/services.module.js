@@ -12,7 +12,8 @@
         'services.exceptionHandler',
         'services.uri',
         'services.endpoints',
-        'services.messageTypeParser'
+        'services.messageTypeParser',
+        'services.disconnectedEndpointMonitor',
     ]);
 
 } (window, window.angular));
