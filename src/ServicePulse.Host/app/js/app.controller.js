@@ -23,7 +23,7 @@
         $route,
         configurationService,
         monitoringService,
-        disconnectedEndpointMonitor,
+        disconnectedEndpointMonitor
     ) {
         var notifier = notifyService();
 
