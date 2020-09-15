@@ -47,7 +47,7 @@
 		$scope.eventLog = {
 			eventLogPage: 1,
 			eventLogTotalItems: 105,
-			eventLogItemsPerPage: 25,
+			eventLogItemsPerPage: 20,
 			items: []
 		};
 
