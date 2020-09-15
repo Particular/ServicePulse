@@ -5,12 +5,13 @@
 	function controller(
 		$scope,
 		$location,
-		auditLogService) {
-		
+		auditLogService,
+		$routeParams) {
+
 		$scope.loadingData = true;
-		
+
 		var subscription;
-		
+
 		$scope.viewCategory = function (eventLogItem) {
 
 			switch(eventLogItem.category) {
@@ -41,12 +42,12 @@
 					break;
 				default:
 			}
-		};		
+		};
 
 		$scope.eventLog = {
 			eventLogPage: 1,
 			eventLogTotalItems: 105,
-			eventLogItemsPerPage: 20,
+			eventLogItemsPerPage: 25,
 			items: []
 		};
 
@@ -60,18 +61,26 @@
 			}
 		}
 
+		var getPageSize = function() {
+			if ($routeParams.pageSize) {
+				$scope.eventLog.eventLogItemsPerPage = $routeParams.pageSize;
+			}
+		};
+
 		$scope.updateUI  = function () {
 			if (subscription) {
 				subscription.dispose();
 			}
 
+			getPageSize();
+
 			subscription = auditLogService.createAuditLogSource($scope.eventLog.eventLogPage, $scope.eventLog.eventLogItemsPerPage).subscribe(function (auditLog) {
 
-				$scope.loading = false;			
-					
+				$scope.loading = false;
+
 				$scope.eventLog.eventLogTotalItems = parseInt(auditLog.total);
 				mergeIn($scope.eventLog.items, auditLog.data);
-				$scope.$apply();	
+				$scope.$apply();
 			});
 		};
 
@@ -81,7 +90,8 @@
 	controller.$inject = [
 		'$scope',
 		'$location',
-		'auditLogService'
+		'auditLogService',
+		'$routeParams'
 	];
 
 	angular.module('events.module')
