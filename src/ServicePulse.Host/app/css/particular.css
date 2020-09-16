@@ -558,7 +558,7 @@ h6 {
     .tabs h5.disabled > a:hover {
         cursor: not-allowed;
     }
-    
+
 .system-status:hover {
     background-color: #fff;
     border-color: #eee !important;
@@ -1596,7 +1596,7 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
         float: none;
         margin: 15px 0;
     }
-    
+
     .navbar-collapse.collapse.in {
         display: block !important;
         padding: 0 32px 16px 32px;
@@ -2349,7 +2349,7 @@ footer span {
     .container {
         width: 92%;
     }
-    
+
     .col-lg-max-8 {
         max-width: 66%;
         float: left;
@@ -2614,6 +2614,10 @@ span.fa-exclamation-triangle.danger {
 .list-pagination {
     display: flex;
     justify-content: center;
+}
+
+.pagination{
+    margin-bottom:0;
 }
 
 .pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {
