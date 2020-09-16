@@ -10,6 +10,7 @@
         $scope.model = { data: [], total: 0 };
         $scope.loadingData = false;
         $scope.disableLoadingData = false;
+        $scope.reloadCount = 0;
 
         var page = 1;
 
@@ -19,7 +20,7 @@
             }
 
             $scope.loadingData = true;
-            load(page++);
+            load(page++, $scope.reloadCount);
         };
 
         $scope.dismiss = function (row) {
@@ -34,11 +35,18 @@
             $scope.loadingData = true;
             $scope.model = { data: [], total: 0 };
             $scope.disableLoadingData = false;
-            load(page);
+            $scope.reloadCount++;
+
+            load(page, $scope.reloadCount);
         }
 
-        function load(page) {
+        function load(page, reloadCount) {
             serviceControlService.getFailingCustomChecks(page).then(function (response) {
+
+                //If the load was called before last result reload it should be discarded
+                if (reloadCount < $scope.reloadCount) {
+                    return;
+                }
 
                 $scope.loadingData = false;
 
