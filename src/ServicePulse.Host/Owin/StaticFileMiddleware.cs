@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Owin;
-using Owin;
-using ServicePulse.Host.Owin.Microsoft;
-
-namespace ServicePulse.Host.Owin
+﻿namespace ServicePulse.Host.Owin
 {
+    using System;
+    using System.IO;
+    using System.Threading.Tasks;
+    using global::Microsoft.Owin;
+    using global::Owin;
+    using ServicePulse.Host.Owin.Microsoft;
+
     public class StaticFileMiddleware : OwinMiddleware
     {
         public StaticFileMiddleware(OwinMiddleware next) : base(next)
@@ -74,7 +74,7 @@ namespace ServicePulse.Host.Owin
         private static string FindContentType(string path)
         {
             FileExtensionContentTypeProvider.TryGetContentType(Path.GetFileName(path), out var contentType);
-            return contentType ?? ("application/octet-stream");
+            return contentType ?? "application/octet-stream";
         }
     }
 
@@ -86,8 +86,6 @@ namespace ServicePulse.Host.Owin
         /// <summary>
         /// Enables static file serving for the current request path from the current directory
         /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
         public static IAppBuilder UseStaticFiles(this IAppBuilder builder)
         {
             if (builder == null)

@@ -39,9 +39,9 @@
                 serviceProcessInstaller
             };
 
-            var arguments = String.Empty;
+            var arguments = string.Empty;
 
-            if (!String.IsNullOrEmpty(args.Url))
+            if (!string.IsNullOrEmpty(args.Url))
             {
                 arguments += string.Format(" --url=\"{0}\"", args.Url);
             }
@@ -53,7 +53,7 @@
 
                 var assembly = Assembly.GetEntryAssembly();
 
-                var path = String.Format("/assemblypath={0}", assembly.Location);
+                var path = string.Format("/assemblypath={0}", assembly.Location);
                 string[] commandLine = {path};
 
                 var context = new InstallContext(null, commandLine);

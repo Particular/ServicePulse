@@ -1,56 +1,54 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See THIRD-PARTY-NOTICES.txt in the project root for license information.
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Owin;
-
 namespace ServicePulse.Host.Owin.Microsoft
 {
-    using SendFileFunc = Func<string, long, long?, CancellationToken, Task>;
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Threading.Tasks;
+    using global::Microsoft.Owin;
+    using SendFileFunc = System.Func<string, long, long?, System.Threading.CancellationToken, System.Threading.Tasks.Task>;
 
     internal struct StaticFileContext
     {
-        private readonly IOwinContext _context;
-        private readonly IOwinRequest _request;
-        private readonly IOwinResponse _response;
-        private string _method;
-        private bool _isGet;
-        private string _contentType;
-        private IFileInfo _fileInfo;
-        private long _length;
-        private DateTime _lastModified;
-        private string _lastModifiedString;
-        private string _etag;
-        private string _etagQuoted;
+        private readonly IOwinContext context;
+        private readonly IOwinRequest request;
+        private readonly IOwinResponse response;
+        private string method;
+        private bool isGet;
+        private string contentType;
+        private IFileInfo fileInfo;
+        private long length;
+        private DateTime lastModified;
+        private string lastModifiedString;
+        private string etag;
+        private string etagQuoted;
 
-        private PreconditionState _ifMatchState;
-        private PreconditionState _ifNoneMatchState;
-        private PreconditionState _ifModifiedSinceState;
-        private PreconditionState _ifUnmodifiedSinceState;
+        private PreconditionState ifMatchState;
+        private PreconditionState ifNoneMatchState;
+        private PreconditionState ifModifiedSinceState;
+        private PreconditionState ifUnmodifiedSinceState;
         
         public StaticFileContext(IOwinContext context)
         {
-            _context = context;
-            _request = context.Request;
-            _response = context.Response;
+            this.context = context;
+            request = context.Request;
+            response = context.Response;
 
-            _method = null;
-            _isGet = false;
+            method = null;
+            isGet = false;
             IsHeadMethod = false;
-            _contentType = null;
-            _fileInfo = null;
-            _length = 0;
-            _lastModified = new DateTime();
-            _etag = null;
-            _etagQuoted = null;
-            _lastModifiedString = null;
-            _ifMatchState = PreconditionState.Unspecified;
-            _ifNoneMatchState = PreconditionState.Unspecified;
-            _ifModifiedSinceState = PreconditionState.Unspecified;
-            _ifUnmodifiedSinceState = PreconditionState.Unspecified;
+            contentType = null;
+            fileInfo = null;
+            length = 0;
+            lastModified = default(DateTime);
+            etag = null;
+            etagQuoted = null;
+            lastModifiedString = null;
+            ifMatchState = PreconditionState.Unspecified;
+            ifNoneMatchState = PreconditionState.Unspecified;
+            ifModifiedSinceState = PreconditionState.Unspecified;
+            ifUnmodifiedSinceState = PreconditionState.Unspecified;
         }
 
         internal enum PreconditionState
@@ -65,26 +63,26 @@ namespace ServicePulse.Host.Owin.Microsoft
         
         public bool ValidateMethod()
         {
-            _method = _request.Method;
-            _isGet = string.Equals("GET", _method, StringComparison.OrdinalIgnoreCase);
-            IsHeadMethod = string.Equals("HEAD", _method, StringComparison.OrdinalIgnoreCase);
-            return _isGet || IsHeadMethod;
+            method = request.Method;
+            isGet = string.Equals("GET", method, StringComparison.OrdinalIgnoreCase);
+            IsHeadMethod = string.Equals("HEAD", method, StringComparison.OrdinalIgnoreCase);
+            return isGet || IsHeadMethod;
         }
 
         public bool SetPayload(IFileInfo fileInfo, string contentType)
         {
-            _contentType = contentType;
-            _fileInfo = fileInfo;
-            _length = _fileInfo.Length;
+            this.contentType = contentType;
+            this.fileInfo = fileInfo;
+            length = this.fileInfo.Length;
 
-            var last = _fileInfo.LastModified;
+            var last = this.fileInfo.LastModified;
             // Truncate to the second.
-            _lastModified = new DateTime(last.Year, last.Month, last.Day, last.Hour, last.Minute, last.Second, last.Kind);
-            _lastModifiedString = _lastModified.ToString(Constants.HttpDateFormat, CultureInfo.InvariantCulture);
+            lastModified = new DateTime(last.Year, last.Month, last.Day, last.Hour, last.Minute, last.Second, last.Kind);
+            lastModifiedString = lastModified.ToString(Constants.HttpDateFormat, CultureInfo.InvariantCulture);
 
-            long etagHash = _lastModified.ToFileTimeUtc() ^ _length;
-            _etag = Convert.ToString(etagHash, 16);
-            _etagQuoted = '\"' + _etag + '\"';
+            long etagHash = lastModified.ToFileTimeUtc() ^ length;
+            etag = Convert.ToString(etagHash, 16);
+            etagQuoted = '\"' + etag + '\"';
             return true;
         }
         
@@ -98,32 +96,32 @@ namespace ServicePulse.Host.Owin.Microsoft
         private void ComputeIfMatch()
         {
             // 14.24 If-Match
-            IList<string> ifMatch = _request.Headers.GetCommaSeparatedValues(Constants.IfMatch); // Removes quotes
+            IList<string> ifMatch = request.Headers.GetCommaSeparatedValues(Constants.IfMatch); // Removes quotes
             if (ifMatch != null)
             {
-                _ifMatchState = PreconditionState.PreconditionFailed;
+                ifMatchState = PreconditionState.PreconditionFailed;
                 foreach (var segment in ifMatch)
                 {
                     if (segment.Equals("*", StringComparison.Ordinal)
-                        || segment.Equals(_etag, StringComparison.Ordinal))
+                        || segment.Equals(etag, StringComparison.Ordinal))
                     {
-                        _ifMatchState = PreconditionState.ShouldProcess;
+                        ifMatchState = PreconditionState.ShouldProcess;
                         break;
                     }
                 }
             }
 
             // 14.26 If-None-Match
-            var ifNoneMatch = _request.Headers.GetCommaSeparatedValues(Constants.IfNoneMatch);
+            var ifNoneMatch = request.Headers.GetCommaSeparatedValues(Constants.IfNoneMatch);
             if (ifNoneMatch != null)
             {
-                _ifNoneMatchState = PreconditionState.ShouldProcess;
+                ifNoneMatchState = PreconditionState.ShouldProcess;
                 foreach (var segment in ifNoneMatch)
                 {
                     if (segment.Equals("*", StringComparison.Ordinal)
-                        || segment.Equals(_etag, StringComparison.Ordinal))
+                        || segment.Equals(etag, StringComparison.Ordinal))
                     {
-                        _ifNoneMatchState = PreconditionState.NotModified;
+                        ifNoneMatchState = PreconditionState.NotModified;
                         break;
                     }
                 }
@@ -138,49 +136,52 @@ namespace ServicePulse.Host.Owin.Microsoft
         private void ComputeIfModifiedSince()
         {
             // 14.25 If-Modified-Since
-            var ifModifiedSinceString = _request.Headers.Get(Constants.IfModifiedSince);
+            var ifModifiedSinceString = request.Headers.Get(Constants.IfModifiedSince);
             if (TryParseHttpDate(ifModifiedSinceString, out var ifModifiedSince))
             {
-                var modified = ifModifiedSince < _lastModified;
-                _ifModifiedSinceState = modified ? PreconditionState.ShouldProcess : PreconditionState.NotModified;
+                var modified = ifModifiedSince < lastModified;
+                ifModifiedSinceState = modified ? PreconditionState.ShouldProcess : PreconditionState.NotModified;
             }
 
             // 14.28 If-Unmodified-Since
-            var ifUnmodifiedSinceString = _request.Headers.Get(Constants.IfUnmodifiedSince);
+            var ifUnmodifiedSinceString = request.Headers.Get(Constants.IfUnmodifiedSince);
             if (TryParseHttpDate(ifUnmodifiedSinceString, out var ifUnmodifiedSince))
             {
-                var unmodified = ifUnmodifiedSince >= _lastModified;
-                _ifUnmodifiedSinceState = unmodified ? PreconditionState.ShouldProcess : PreconditionState.PreconditionFailed;
+                var unmodified = ifUnmodifiedSince >= lastModified;
+                ifUnmodifiedSinceState = unmodified ? PreconditionState.ShouldProcess : PreconditionState.PreconditionFailed;
             }
         }
 
         public void ApplyResponseHeaders(int statusCode)
         {
-            _response.StatusCode = statusCode;
+            response.StatusCode = statusCode;
             if (statusCode < 400)
             {
                 // these headers are returned for 200, 206, and 304
                 // they are not returned for 412 and 416
-                if (!string.IsNullOrEmpty(_contentType))
+                if (!string.IsNullOrEmpty(contentType))
                 {
-                    _response.ContentType = _contentType;
+                    response.ContentType = contentType;
                 }
-                _response.Headers.Set(Constants.LastModified, _lastModifiedString);
-                _response.ETag = _etagQuoted;
+                response.Headers.Set(Constants.LastModified, lastModifiedString);
+                response.ETag = etagQuoted;
             }
             if (statusCode == Constants.Status200Ok)
             {
                 // this header is only returned here for 200
                 // it already set to the returned range for 206
                 // it is not returned for 304, 412, and 416
-                _response.ContentLength = _length;
+                response.ContentLength = length;
             }
         }
 
         public PreconditionState GetPreconditionState()
         {
-            return GetMaxPreconditionState(_ifMatchState, _ifNoneMatchState,
-                _ifModifiedSinceState, _ifUnmodifiedSinceState);
+            return GetMaxPreconditionState(
+                ifMatchState, 
+                ifNoneMatchState,
+                ifModifiedSinceState, 
+                ifUnmodifiedSinceState);
         }
 
         private static PreconditionState GetMaxPreconditionState(params PreconditionState[] states)
@@ -207,17 +208,17 @@ namespace ServicePulse.Host.Owin.Microsoft
         {
             ApplyResponseHeaders(Constants.Status200Ok);
 
-            var physicalPath = _fileInfo.PhysicalPath;
-            var sendFile = _response.Get<SendFileFunc>(Constants.SendFileAsyncKey);
+            var physicalPath = fileInfo.PhysicalPath;
+            var sendFile = response.Get<SendFileFunc>(Constants.SendFileAsyncKey);
             if (sendFile != null && !string.IsNullOrEmpty(physicalPath))
             {
-                return sendFile(physicalPath, 0, _length, _request.CallCancelled);
+                return sendFile(physicalPath, 0, length, request.CallCancelled);
             }
 
-            var readStream = _fileInfo.CreateReadStream();
-            var copyOperation = new StreamCopyOperation(readStream, _response.Body, _length, _request.CallCancelled);
+            var readStream = fileInfo.CreateReadStream();
+            var copyOperation = new StreamCopyOperation(readStream, response.Body, length, request.CallCancelled);
             var task = copyOperation.Start();
-            task.ContinueWith(resultTask => readStream.Close(), TaskContinuationOptions.ExecuteSynchronously);
+            _ = task.ContinueWith(resultTask => readStream.Close(), TaskContinuationOptions.ExecuteSynchronously);
             return task;
         }
     }

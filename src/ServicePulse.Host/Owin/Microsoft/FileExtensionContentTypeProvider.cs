@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See THIRD-PARTY-NOTICES.txt in the project root for license information.
 
-using System.Collections.Generic;
-using System.IO;
-
 namespace ServicePulse.Host.Owin.Microsoft
 {
+    using System.Collections.Generic;
+    using System.IO;
+
     /// <summary>
     /// Provides a mapping between file extensions and MIME types.
     /// </summary>

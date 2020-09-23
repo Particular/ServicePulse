@@ -66,8 +66,7 @@
         static string GetFileVersion()
         {
             var customAttributes =
-                typeof(AbstractCommand).Assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute),
-                    false);
+                typeof(AbstractCommand).Assembly.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
 
             if (customAttributes.Length >= 1)
             {

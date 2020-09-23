@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using ServicePulse.Host.Owin.Microsoft;
-
-namespace ServicePulse.Host.Owin
+﻿namespace ServicePulse.Host.Owin
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using ServicePulse.Host.Owin.Microsoft;
+
     public static class EmbeddedFileFinder
     {
         private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();

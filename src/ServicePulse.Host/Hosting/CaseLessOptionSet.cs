@@ -31,6 +31,5 @@ namespace ServicePulse.Host.Hosting
             }
             return base.Parse(newOption, c);
         }
-
     }
 }

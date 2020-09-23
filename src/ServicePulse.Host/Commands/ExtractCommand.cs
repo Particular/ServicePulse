@@ -12,7 +12,7 @@
         {
             ExtractResources(args.OutputPath);
 
-            if (String.IsNullOrEmpty(args.ServiceControlUrl))
+            if (string.IsNullOrEmpty(args.ServiceControlUrl))
             {
                 return;
             }
@@ -20,7 +20,7 @@
             ExtractAndUpdateConstantsCommand.UpdateVersion(args.OutputPath);
             ExtractAndUpdateConstantsCommand.UpdateConfig(args.OutputPath, args.ServiceControlUrl);
 
-            if (!String.IsNullOrEmpty(args.ServiceControlMonitoringUrl))
+            if (!string.IsNullOrEmpty(args.ServiceControlMonitoringUrl))
             {
                 ExtractAndUpdateConstantsCommand.UpdateMonitoringConfig(args.OutputPath, args.ServiceControlMonitoringUrl);
             }
@@ -34,7 +34,7 @@
             {
                 using (var resourceStream = assembly.GetManifestResourceStream(resourceName))
                 {
-                    var fileName = resourceName.Replace(@"app\", String.Empty);
+                    var fileName = resourceName.Replace(@"app\", string.Empty);
                     var destinationPath = Path.Combine(directoryPath, fileName);
                     Console.WriteLine("Unpacking '{0}' to '{1}'...", fileName, destinationPath);
 
