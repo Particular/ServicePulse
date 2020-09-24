@@ -1,11 +1,11 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See THIRD-PARTY-NOTICES.txt in the project root for license information.
 
-using System;
-using System.IO;
-using System.Reflection;
-
 namespace ServicePulse.Host.Owin.Microsoft
 {
+    using System;
+    using System.IO;
+    using System.Reflection;
+
     public interface IFileInfo
     {
         /// <summary>
@@ -38,32 +38,32 @@ namespace ServicePulse.Host.Owin.Microsoft
 
     public class EmbeddedResourceFileInfo : IFileInfo
     {
-        private readonly Assembly _assembly;
-        private readonly string _resourcePath;
-        private readonly string _fileName;
+        private readonly Assembly assembly;
+        private readonly string resourcePath;
+        private readonly string fileName;
 
-        private long? _length;
+        private long? length;
 
         public EmbeddedResourceFileInfo(Assembly assembly, string resourcePath, string fileName, DateTime lastModified)
         {
-            _assembly = assembly;
+            this.assembly = assembly;
             LastModified = lastModified;
-            _resourcePath = resourcePath;
-            _fileName = fileName;
+            this.resourcePath = resourcePath;
+            this.fileName = fileName;
         }
 
         public long Length
         {
             get
             {
-                if (!_length.HasValue)
+                if (!length.HasValue)
                 {
-                    using (var stream = _assembly.GetManifestResourceStream(_resourcePath))
+                    using (var stream = assembly.GetManifestResourceStream(resourcePath))
                     {
-                        _length = stream.Length;
+                        length = stream.Length;
                     }
                 }
-                return _length.Value;
+                return length.Value;
             }
         }
 
@@ -78,10 +78,10 @@ namespace ServicePulse.Host.Owin.Microsoft
 
         public Stream CreateReadStream()
         {
-            var stream = _assembly.GetManifestResourceStream(_resourcePath);
-            if (!_length.HasValue)
+            var stream = assembly.GetManifestResourceStream(resourcePath);
+            if (!length.HasValue)
             {
-                _length = stream.Length;
+                length = stream.Length;
             }
             return stream;
         }
@@ -89,27 +89,32 @@ namespace ServicePulse.Host.Owin.Microsoft
 
     public class PhysicalFileInfo : IFileInfo
     {
-        private readonly FileInfo _info;
+        private readonly FileInfo info;
 
         public PhysicalFileInfo(FileInfo info)
         {
-            _info = info;
+            this.info = info;
         }
 
-        public long Length => _info.Length;
+        public long Length => info.Length;
 
-        public string PhysicalPath => _info.FullName;
+        public string PhysicalPath => info.FullName;
 
-        public string Name => _info.Name;
+        public string Name => info.Name;
 
-        public DateTime LastModified => _info.LastWriteTime;
+        public DateTime LastModified => info.LastWriteTime;
 
         public bool IsDirectory => false;
 
         public Stream CreateReadStream()
         {
             // Note: Buffer size must be greater than zero, even if the file size is zero.
-            return new FileStream(PhysicalPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 1024 * 64,
+            return new FileStream(
+                PhysicalPath, 
+                FileMode.Open, 
+                FileAccess.Read, 
+                FileShare.ReadWrite, 
+                1024 * 64,
                 FileOptions.Asynchronous | FileOptions.SequentialScan);
         }
     }

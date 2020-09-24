@@ -1,22 +1,22 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See THIRD-PARTY-NOTICES.txt in the project root for license information.
 
-using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace ServicePulse.Host.Owin.Microsoft
 {
+    using System;
+    using System.IO;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public class StreamCopyOperation
     {
-        private readonly TaskCompletionSource<object> _tcs;
-        private readonly Stream _source;
-        private readonly Stream _destination;
-        private readonly byte[] _buffer;
-        private readonly AsyncCallback _readCallback;
-        private readonly AsyncCallback _writeCallback;
-        private long? _bytesRemaining;
-        private CancellationToken _cancel;
+        private readonly TaskCompletionSource<object> tcs;
+        private readonly Stream source;
+        private readonly Stream destination;
+        private readonly byte[] buffer;
+        private readonly AsyncCallback readCallback;
+        private readonly AsyncCallback writeCallback;
+        private long? bytesRemaining;
+        private CancellationToken cancel;
 
         internal StreamCopyOperation(
           Stream source,
@@ -44,43 +44,43 @@ namespace ServicePulse.Host.Owin.Microsoft
           byte[] buffer,
           CancellationToken cancel)
         {
-            this._source = source;
-            this._destination = destination;
-            this._bytesRemaining = bytesRemaining;
-            this._cancel = cancel;
-            this._buffer = buffer;
-            this._tcs = new TaskCompletionSource<object>();
-            this._readCallback = this.ReadCallback;
-            this._writeCallback = this.WriteCallback;
+            this.source = source;
+            this.destination = destination;
+            this.bytesRemaining = bytesRemaining;
+            this.cancel = cancel;
+            this.buffer = buffer;
+            this.tcs = new TaskCompletionSource<object>();
+            this.readCallback = this.ReadCallback;
+            this.writeCallback = this.WriteCallback;
         }
 
         internal Task Start()
         {
             ReadNextSegment();
-            return (Task)_tcs.Task;
+            return (Task)tcs.Task;
         }
 
         private void Complete()
         {
-            _tcs.TrySetResult(null);
+            tcs.TrySetResult(null);
         }
 
         private bool CheckCancelled()
         {
-            if (!_cancel.IsCancellationRequested)
+            if (!cancel.IsCancellationRequested)
                 return false;
-            _tcs.TrySetCanceled();
+            tcs.TrySetCanceled();
             return true;
         }
 
         private void Fail(Exception ex)
         {
-            _tcs.TrySetException(ex);
+            tcs.TrySetException(ex);
         }
 
         private void ReadNextSegment()
         {
-            if (_bytesRemaining.HasValue && _bytesRemaining.Value <= 0L)
+            if (bytesRemaining.HasValue && bytesRemaining.Value <= 0L)
             {
                 Complete();
             }
@@ -90,13 +90,13 @@ namespace ServicePulse.Host.Owin.Microsoft
                     return;
                 try
                 {
-                    var count = _buffer.Length;
-                    if (_bytesRemaining.HasValue)
-                        count = (int)Math.Min(_bytesRemaining.Value, count);
-                    var asyncResult = _source.BeginRead(_buffer, 0, count, _readCallback, null);
+                    var count = buffer.Length;
+                    if (bytesRemaining.HasValue)
+                        count = (int)Math.Min(bytesRemaining.Value, count);
+                    var asyncResult = source.BeginRead(buffer, 0, count, readCallback, null);
                     if (!asyncResult.CompletedSynchronously)
                         return;
-                    WriteToOutputStream(_source.EndRead(asyncResult));
+                    WriteToOutputStream(source.EndRead(asyncResult));
                 }
                 catch (Exception ex)
                 {
@@ -111,7 +111,7 @@ namespace ServicePulse.Host.Owin.Microsoft
                 return;
             try
             {
-                WriteToOutputStream(_source.EndRead(async));
+                WriteToOutputStream(source.EndRead(async));
             }
             catch (Exception ex)
             {
@@ -122,10 +122,10 @@ namespace ServicePulse.Host.Owin.Microsoft
         private void WriteToOutputStream(int count)
         {
             long num = count;
-            if (_bytesRemaining.HasValue)
+            if (bytesRemaining.HasValue)
             {
-                var bytesRemaining = _bytesRemaining;
-                _bytesRemaining = bytesRemaining.HasValue ? bytesRemaining.GetValueOrDefault() - num : new long?();
+                var bytesRemaining = this.bytesRemaining;
+                this.bytesRemaining = bytesRemaining.HasValue ? bytesRemaining.GetValueOrDefault() - num : default(long?);
             }
             if (count == 0)
             {
@@ -137,10 +137,10 @@ namespace ServicePulse.Host.Owin.Microsoft
                     return;
                 try
                 {
-                    var asyncResult = _destination.BeginWrite(_buffer, 0, count, _writeCallback, null);
+                    var asyncResult = destination.BeginWrite(buffer, 0, count, writeCallback, null);
                     if (!asyncResult.CompletedSynchronously)
                         return;
-                    _destination.EndWrite(asyncResult);
+                    destination.EndWrite(asyncResult);
                     ReadNextSegment();
                 }
                 catch (Exception ex)
@@ -156,7 +156,7 @@ namespace ServicePulse.Host.Owin.Microsoft
                 return;
             try
             {
-                _destination.EndWrite(async);
+                destination.EndWrite(async);
                 ReadNextSegment();
             }
             catch (Exception ex)

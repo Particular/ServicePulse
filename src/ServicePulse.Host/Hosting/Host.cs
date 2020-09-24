@@ -1,10 +1,9 @@
-﻿using Microsoft.Owin.Hosting;
-using ServicePulse.Host.Owin;
-
-namespace ServicePulse.Host.Hosting
+﻿namespace ServicePulse.Host.Hosting
 {
     using System;
     using System.ServiceProcess;
+    using Microsoft.Owin.Hosting;
+    using ServicePulse.Host.Owin;
 
     internal class Host : ServiceBase
     {

@@ -1,7 +1,7 @@
-﻿using Owin;
-
-namespace ServicePulse.Host.Owin
+﻿namespace ServicePulse.Host.Owin
 {
+    using global::Owin;
+
     public class OwinBootstrapper
     {
         public void Configuration(IAppBuilder app)

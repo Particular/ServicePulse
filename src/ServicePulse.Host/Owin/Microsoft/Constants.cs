@@ -1,9 +1,9 @@
 ﻿// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See THIRD-PARTY-NOTICES.txt in the project root for license information.
 
-using System.Threading.Tasks;
-
 namespace ServicePulse.Host.Owin.Microsoft
 {
+    using System.Threading.Tasks;
+
     internal static class Constants
     {
         internal static readonly Task CompletedTask = CreateCompletedTask();

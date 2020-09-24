@@ -1,14 +1,15 @@
-﻿using System;
-
-namespace ServicePulse.Host.Owin
+﻿namespace ServicePulse.Host.Owin
 {
+    using System;
+
     public static class UrlHelper
     {
         public static string RewriteLocalhostUrl(string url)
         {
             var newUrl = new UriBuilder(url);
 
-            if (newUrl.Host.Contains(".")) //not localhost
+            // not localhost
+            if (newUrl.Host.Contains(".")) 
             {
                 return url;
             }

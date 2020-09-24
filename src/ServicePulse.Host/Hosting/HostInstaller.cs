@@ -24,7 +24,7 @@
                     Registry.LocalMachine.OpenSubKey(
                         string.Format(@"System\CurrentControlSet\Services\{0}", settings.ServiceName), true))
             {
-                var imagePath = (string) service.GetValue("ImagePath");
+                var imagePath = (string)service.GetValue("ImagePath");
 
                 imagePath += arguments;
 
