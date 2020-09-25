@@ -50,12 +50,9 @@ class Program
                     Console.WriteLine("Option not valid, Try again.");
                     break;
             }
-        } while (!exit);
+        } 
+        while (!exit);
 
         await enpointInstance.Stop();
     }
 }
-
-
-
-

@@ -66,7 +66,8 @@ internal class Program
                     Console.WriteLine("Option not valid, Try again.");
                     continue;
             }
-        } while (!exit);
+        } 
+        while (!exit);
 
         await enpointInstance.Stop();
     }

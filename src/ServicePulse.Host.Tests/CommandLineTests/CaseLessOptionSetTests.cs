@@ -26,7 +26,7 @@
         public void LowercaseTestShouldSucceed()
         {
             flag = false;
-            testOptions.Parse(new[]{"-test"});
+            testOptions.Parse(new[] {"-test"});
             Assert.IsTrue(flag, "-test did not parse as a valid option");
         }
 

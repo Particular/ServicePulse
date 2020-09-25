@@ -24,7 +24,7 @@ namespace ServicePulse.Host.Tests.Owin
         //    Assert.AreEqual(("application/octet-stream"), context.Response.ContentType);
         //}
         [Test]
-        public void Should_return_correct_mimetype()
+        public async Task Should_return_correct_mimetype()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -35,12 +35,12 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             Assert.AreEqual(("application/javascript"), context.Response.ContentType);
         }
 
         [Test]
-        public void Should_only_handle_get_and_head()
+        public async Task Should_only_handle_get_and_head()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -51,14 +51,14 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "POST"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             Assert.AreEqual(null, context.Response.ContentLength);
             Assert.AreEqual(null, context.Response.ContentType);
         }
 
         [TestCase("HEAD")]
         [TestCase("GET")]
-        public void Should_handle_get_and_head(string method)
+        public async Task Should_handle_get_and_head(string method)
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -69,13 +69,13 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = method
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             Assert.IsNotNull(context.Response.ContentLength);
             Assert.IsNotEmpty(context.Response.ContentType);
         }
 
         [Test]
-        public void Should_find_file_embedded_in_assembly()
+        public async Task Should_find_file_embedded_in_assembly()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -86,14 +86,14 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
             Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
             Assert.AreEqual(("text/html"), context.Response.ContentType);
         }
 
         [Test]
-        public void Should_find_file_embedded_in_assembly_is_case_insensitive()
+        public async Task Should_find_file_embedded_in_assembly_is_case_insensitive()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -104,7 +104,7 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
             Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
             Assert.AreEqual(("text/html"), context.Response.ContentType);
@@ -112,7 +112,7 @@ namespace ServicePulse.Host.Tests.Owin
 
 
         [Test]
-        public void Should_find_deep_linking_file_embedded_in_assembly()
+        public async Task Should_find_deep_linking_file_embedded_in_assembly()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -123,14 +123,14 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 8551; // this is the messageEditorModal.controller.js file embedded into ServicePulse.Host.exe
             Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
             Assert.AreEqual(("application/javascript"), context.Response.ContentType);
         }
 
         [Test]
-        public void Should_find_prefer_constants_file_on_disk_over_embedded_if_both_exist()
+        public async Task Should_find_prefer_constants_file_on_disk_over_embedded_if_both_exist()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -141,14 +141,14 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             const long sizeOfFileOnDisk = 231; // this is the /app/js/app.constants.js file
             Assert.AreEqual(sizeOfFileOnDisk, context.Response.ContentLength);
             Assert.AreEqual(("application/javascript"), context.Response.ContentType);
         }
 
         [Test]
-        public void Should_not_find_other_files_on_disk()
+        public async Task Should_not_find_other_files_on_disk()
         {
             var middleware = new StaticFileMiddleware(new DummyNext());
             var context = new OwinContext
@@ -159,7 +159,7 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             Assert.AreEqual(null, context.Response.ContentLength);
             Assert.AreEqual(null, context.Response.ContentType);
 
@@ -171,7 +171,7 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             Assert.AreEqual(null, context.Response.ContentLength);
             Assert.AreEqual(null, context.Response.ContentType);
         }

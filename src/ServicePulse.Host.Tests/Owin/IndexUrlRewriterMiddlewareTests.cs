@@ -9,7 +9,7 @@ namespace ServicePulse.Host.Tests.Owin
     public class IndexUrlRewriterMiddlewareTests
     {
         [Test]
-        public void Should_rewrite_slash_url()
+        public async Task Should_rewrite_slash_url()
         {
             var middleware = new IndexUrlRewriterMiddleware(new DummyNext());
             var context = new OwinContext
@@ -20,12 +20,12 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             Assert.AreEqual(("/index.html"), context.Request.Path.Value);
         }
 
         [Test]
-        public void Should_not_rewrite_other_urls()
+        public async Task Should_not_rewrite_other_urls()
         {
             var middleware = new IndexUrlRewriterMiddleware(new DummyNext());
             var context = new OwinContext
@@ -36,7 +36,7 @@ namespace ServicePulse.Host.Tests.Owin
                     Method = "GET"
                 }
             };
-            middleware.Invoke(context);
+            await middleware.Invoke(context);
             Assert.AreEqual(("/something"), context.Request.Path.Value);
         }
 
