@@ -16,7 +16,7 @@
     <Content Include="app\modules\shell\js\services\service.auditLog.js" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.7" />
     <PackageReference Include="Microsoft.Owin.SelfHost" Version="4.1.1" />
-    <PackageReference Include="Particular.CodeRules" Version="0.5.0" PrivateAssets="All" />
+    <PackageReference Include="Particular.CodeRules" Version="0.6.0" PrivateAssets="All" />
     <PackageReference Include="Particular.Packaging" Version="0.9.0" PrivateAssets="All" />
     <Content Include="app\js\polyfill\array.prototype.includes.js" />
     <Content Include="app\modules\configuration\connectionsManager.js" />
