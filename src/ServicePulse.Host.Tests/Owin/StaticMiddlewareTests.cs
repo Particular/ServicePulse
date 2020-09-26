@@ -6,7 +6,6 @@ using ServicePulse.Host.Owin;
 namespace ServicePulse.Host.Tests.Owin
 {
     [TestFixture]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Code", "PCR0002:Await or Capture Tasks", Justification = "Temporary. Will fix later")]
     public class StaticMiddlewareTests
     {
         //[Test]
