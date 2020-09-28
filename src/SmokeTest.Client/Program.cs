@@ -65,7 +65,8 @@ class Program
                     continue;
 
             }
-        } while (!exit);
+        } 
+        while (!exit);
 
         await enpointInstance.Stop();
     }

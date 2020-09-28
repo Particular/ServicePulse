@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Particular.CodeRules" Version="0.7.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Scripts\**\*" CopyToOutputDirectory="PreserveNewest" />
     <None Update="index.html" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

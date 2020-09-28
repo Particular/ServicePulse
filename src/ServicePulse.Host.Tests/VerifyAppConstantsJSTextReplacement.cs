@@ -11,7 +11,6 @@
     {
         // app.constants.js holds the URL used to connect to SC
         // this both user configurable and updated during installation
-
         Regex sc_url_regex = new Regex(@"(service_control_url\s*\:\s*['""])(.*?)(['""])");
         Regex version_regex = new Regex(@"(version\s*\:\s*['""])(.*?)(['""])");
 
