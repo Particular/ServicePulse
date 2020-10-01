@@ -21,10 +21,17 @@
         $scope.selectedPeriod = historyPeriodsService.getDefaultPeriod();
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
         $scope.endpoints = [];
+        $scope.filter = { name: $location.search().filter };
         $scope.loading = true;
         $scope.location = $location;
         $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
         $scope.hasData = false; // TODO: UI toggles between 'no connectivity' and 'no data' but unknown how to set this via the monitoringService rx observable. 
+
+        // TODO convert to button click instead of automatically updating the url on every change
+        $scope.$watch("filter.name",
+            function(newVal) {
+                $location.search('filter', newVal);
+            });
 
         $scope.selectPeriod = function (period) {
             $scope.selectedPeriod = period;
