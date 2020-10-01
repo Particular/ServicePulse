@@ -22,6 +22,13 @@
         <div class="sp-loader" ng-if="loading"></div>
         <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading && hasData"></div>
         <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div>
+        
+        <div class="row box box-no-click">
+            <div class="col-xs-12">
+                <input ng-model="filter.name"/>
+            </div>
+        </div>
+
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
             <div class="col-xs-2 col-xl-7">
                 <div class="row box-header">
@@ -69,7 +76,7 @@
 
         <div class="row">
             <div class="col-xs-12 no-side-padding">
-                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
+                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints | filter:filter" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
                     <div class="col-xs-12 no-side-padding">
                         <div class="row">
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
