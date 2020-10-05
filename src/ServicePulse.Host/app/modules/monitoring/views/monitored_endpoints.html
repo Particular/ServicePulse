@@ -7,15 +7,17 @@
         <div class="col-xs-6 no-side-padding list-section">
             <h1>Endpoints overview</h1>
         </div>
-        <div class="col-xs-3 no-side-padding toolbar-menus">
-            <ul class="nav nav-pills period-selector">
-                <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                    <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
-                </li>
-            </ul>
-        </div>
-        <div class="col-xs-3">
-            <input type="text" placeholder="Filter list..." class="form-control-static" ng-model="filter.name" />
+        <div class="col-xs-6 no-side-padding toolbar-menus">
+            <div style="float: right;">
+                <div style="display: inline-block;">
+                    <ul class="nav nav-pills period-selector">
+                        <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
+                            <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
+                        </li>
+                    </ul>
+                </div>
+                <input type="text" placeholder="Filter list..." class="form-control-static filter-input" ng-model="filter.name"/>
+            </div>
         </div>
     </div>
 </div>
