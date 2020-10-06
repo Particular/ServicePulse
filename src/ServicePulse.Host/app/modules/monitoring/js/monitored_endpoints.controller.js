@@ -20,6 +20,7 @@
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
         $scope.endpoints = [];
         $scope.filter = { name: $location.search().filter };
+        $scope.order = { prop: "-name" };
         $scope.loading = true;
         $scope.location = $location;
         $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
@@ -31,7 +32,7 @@
                 $location.search('filter', newVal);
             });
 
-        $scope.selectPeriod = function (period) {
+        $scope.selectPeriod = function(period) {
             $scope.selectedPeriod = period;
             historyPeriodsService.saveSelectedPeriod(period);
             updateUI();
@@ -44,6 +45,16 @@
         $scope.totalThroughput = () => {
             return Math.round($scope.endpoints.reduce((total, currentEndpoint) => total + currentEndpoint.metrics.throughput.average, 0));
         };
+
+        $scope.toggleSort = function(propertyName) {
+            var defaultSortOrder = `-${propertyName}`;
+            if ($scope.order.prop === defaultSortOrder) {
+                //invert sort order
+                $scope.order.prop = `+${propertyName}`;
+            } else {
+                $scope.order.prop = defaultSortOrder;
+            }
+        }
 
         function fillDisplayValuesForEndpoint(endpoint) {
 

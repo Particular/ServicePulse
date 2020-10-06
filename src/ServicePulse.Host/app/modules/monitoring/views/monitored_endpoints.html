@@ -25,14 +25,15 @@
         <div class="sp-loader" ng-if="loading"></div>
         <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading && hasData"></div>
         <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div>
-        
-
 
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
             <div class="col-xs-2 col-xl-7">
                 <div class="row box-header">
                     <div class="col-xs-12">
                         Endpoint name
+                        <button type="button" class="btn btn-link" aria-label="sort" ng-click="toggleSort('name')">
+                            <span class="glyphicon glyphicon-sort"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -40,6 +41,9 @@
                 <div class="row box-header">
                     <div class="col-xs-12 no-side-padding" uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">
                         Queue Length <span class="table-header-unit">(msgs)</span>
+                        <button type="button" class="btn btn-link" aria-label="sort" ng-click="toggleSort('metrics.queueLength.average')">
+                            <span class="glyphicon glyphicon-sort"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -47,6 +51,9 @@
                 <div class="row box-header">
                     <div class="col-xs-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint. ({{totalThroughput()}} msgs/s average throughout for all endpoints this period)">
                         Throughput <span class="table-header-unit">(msgs/s)</span>
+                        <button type="button" class="btn btn-link" aria-label="sort" ng-click="toggleSort('metrics.throughput.average')">
+                            <span class="glyphicon glyphicon-sort"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -54,6 +61,9 @@
                 <div class="row box-header">
                     <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
                         Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
+                        <button type="button" class="btn btn-link" aria-label="sort" ng-click="toggleSort('metrics.retries.average')">
+                            <span class="glyphicon glyphicon-sort"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -61,6 +71,9 @@
                 <div class="row box-header">
                     <div class="col-xs-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
                         Processing Time <span class="table-header-unit">(t)</span>
+                        <button type="button" class="btn btn-link" aria-label="sort" ng-click="toggleSort('metrics.processingTime.average')">
+                            <span class="glyphicon glyphicon-sort"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -68,6 +81,9 @@
                 <div class="row box-header">
                     <div class="col-xs-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
                         Critical Time <span class="table-header-unit">(t)</span>
+                        <button type="button" class="btn btn-link" aria-label="sort" ng-click="toggleSort('metrics.criticalTime.average')">
+                            <span class="glyphicon glyphicon-sort"></span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -75,7 +91,7 @@
 
         <div class="row">
             <div class="col-xs-12 no-side-padding">
-                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints | filter:filter" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
+                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints | filter: filter | orderBy: order.prop" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
                     <div class="col-xs-12 no-side-padding">
                         <div class="row">
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
