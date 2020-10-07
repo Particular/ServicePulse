@@ -9,7 +9,6 @@
 
             if (messageType.typeName.indexOf(';') > 0) {
                 var messageTypeHierarchy = messageType.typeName.split(';');
-                messageTypeHierarchy = messageTypeHierarchy.replace('+', '.');
                 messageTypeHierarchy = messageTypeHierarchy.map((item) => {
                     var obj = {};
                     var segments = item.split(',');
@@ -31,11 +30,10 @@
                     `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : '') + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ''),
                     '');
             } else {
-                //Get the name without the namespace and remove nested types
-                var nestedCleanup = messageType.typeName.replace('+', '.');
-                messageType.shortName = nestedCleanup.split('.').pop();
+                //Get the name without the namespace
+                messageType.shortName = messageType.typeName.split('.').pop();
 
-                var tooltip = `${nestedCleanup} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
+                var tooltip = `${messageType.typeName} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
                 if (messageType.culture && messageType.culture != 'null') {
                     tooltip += ` | Culture=${messageType.culture}`;
                 }
