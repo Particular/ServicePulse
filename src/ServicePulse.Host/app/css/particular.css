@@ -3014,9 +3014,14 @@ a.remove-endpoint:hover i {
 }
 
 .filter-group:before {
-    content: ' ';
     width: 16px;
-    background: url('../img/filter.svg');
+    font-family: 'FontAwesome';
+    width: 20px;
+    content: "\f0b0";
+    color: #919E9E;
+    position: absolute;
+    top: 29px;
+    right: 260px;
 }
 
 .filter-group input {
@@ -3024,17 +3029,24 @@ a.remove-endpoint:hover i {
     width: 280px;
     margin: 21px 0 0 15px;
     padding-right: 10px;
-    padding-left: 10px;
+    padding-left: 30px;
     border: 1px solid #aaa;
     border-radius: 4px;
+    float: right;
 }
 
 .filter-group.filter-monitoring {
     width: 100%;
 }
 
+.filter-group.filter-monitoring:before {
+    position: absolute;
+    top: 38px;
+}
+
 .filter-group.filter-monitoring input {
     margin-top: 31px;
+    float: none;
 }
 
 .events-view {
