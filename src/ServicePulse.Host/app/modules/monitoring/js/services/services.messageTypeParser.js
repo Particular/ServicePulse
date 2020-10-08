@@ -30,6 +30,9 @@
                     `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : '') + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ''),
                     '');
             } else {
+                //Get the name without the namespace
+                messageType.shortName = messageType.typeName.split('.').pop();
+
                 var tooltip = `${messageType.typeName} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
                 if (messageType.culture && messageType.culture != 'null') {
                     tooltip += ` | Culture=${messageType.culture}`;
