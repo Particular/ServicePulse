@@ -2236,6 +2236,10 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
     margin-right: 4px;
 }
 
+i.fa.pa-endpoint-lost.endpoints-overview {
+    top: 8px;
+}
+
 .endpoint-name {
     margin-top: 15px;
 }
