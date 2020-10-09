@@ -20,13 +20,12 @@
         $scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
         $scope.endpoints = [];
         $scope.filter = { name: $location.search().filter };
-        $scope.order = { prop: "-name" };
+        $scope.order = { prop: "name", expression: "-name" };
         $scope.loading = true;
         $scope.location = $location;
         $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
         $scope.hasData = false; // TODO: UI toggles between 'no connectivity' and 'no data' but unknown how to set this via the monitoringService rx observable. 
 
-        // TODO convert to button click instead of automatically updating the url on every change
         $scope.$watch("filter.name",
             function(newVal) {
                 $location.search('filter', newVal);
@@ -45,16 +44,6 @@
         $scope.totalThroughput = () => {
             return Math.round($scope.endpoints.reduce((total, currentEndpoint) => total + currentEndpoint.metrics.throughput.average, 0));
         };
-
-        $scope.toggleSort = function(propertyName) {
-            var defaultSortOrder = `-${propertyName}`;
-            if ($scope.order.prop === defaultSortOrder) {
-                //invert sort order
-                $scope.order.prop = `+${propertyName}`;
-            } else {
-                $scope.order.prop = defaultSortOrder;
-            }
-        }
 
         function fillDisplayValuesForEndpoint(endpoint) {
 
