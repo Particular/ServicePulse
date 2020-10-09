@@ -120,10 +120,10 @@
                                             {{e.name}}<span class="de-emphasize">@</span>{{e.host_display_name}}
                                         </p>
                                         <p class="endpoint-metadata" ng-show="e.heartbeat_information">
-                                            <i class="fa fa-heart"></i> <sp-moment date="{{e.heartbeat_information.last_report_at}}" />
+                                            <i class="fa fa-heartbeat"></i> <sp-moment date="{{e.heartbeat_information.last_report_at}}" />
                                         </p>
                                         <p class="endpoint-metadata" ng-show="!e.heartbeat_information">
-                                            <i class="fa fa-heart"></i> No recent heartbeat information available
+                                            <i class="fa fa-heartbeat"></i> No recent heartbeat information available
                                         </p>
                                         <p class="endpoint-metadata" ng-show="!e.heartbeat_information">
                                             <i class="fa fa-plug"></i> No heartbeat plugin installed

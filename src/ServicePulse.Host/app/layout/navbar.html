@@ -15,7 +15,7 @@
                 </li>
                 <li ng-class="{ active: isActive('/endpoints') }">
                     <a href="#/endpoints">
-                        <i class="fa fa-heart icon-white"></i>
+                        <i class="fa fa-heartbeat icon-white"></i>
                         <span class="navbar-label">Heartbeats</span>
                         <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | largeNumber:0}}</span>
                     </a>
@@ -24,7 +24,7 @@
 
                 <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('/monitoring') || isActive('/monitoring/endpoint') }">
                     <a href="#/monitoring">
-                        <i class="fa fa-heartbeat icon-white"></i>
+                        <i class="fa pa-monitoring icon-white"></i>
                         <span class="navbar-label">Monitoring</span>
                         <span ng-show="disconnectedendpoints > 0" class="badge badge-important ">{{disconnectedendpoints | largeNumber:0}}</span>
                     </a>

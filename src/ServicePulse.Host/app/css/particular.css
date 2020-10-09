@@ -2201,20 +2201,20 @@ i.fa-exclamation-triangle {
     background-repeat: no-repeat;
 }
 
-.pa-monitoring-lost.endpoint-details, .pa-connection-failed {
+.pa-monitoring-lost.endpoint-details {
     background-image: url('../../../img/monitoring-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details, .monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
-    width: 23px;
-    height: 23px;
+    width: 32px;
+    height: 30px;
 }
 
 .endpoint-status .pa-endpoint-lost.endpoint-details, .endpoint-status .pa-monitoring-lost.endpoint-details, .endpoint-status .pa-endpoint-lost.endpoints-overview, .endpoint-status .pa-monitoring-lost.endpoints-overview {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     left: 6px;
     position: relative;
 }
@@ -2321,9 +2321,10 @@ footer span {
     color: #777f7f;
 }
 
-.connectivity-status i, .connectivity-status div.pa-connection-success {
+.connectivity-status i, .connectivity-status div.pa-connection-success, .connectivity-status div.pa-connection-failed {
     width: 10px;
     height: 10px;
+    border-radius: 50%;
 }
 
 
@@ -2340,8 +2341,11 @@ footer span {
     color: #CE4844;
 }
 
-.connectivity-status .pa-connection-success {
-    border-radius: 50%;
+.connectivity-status .pa-connection-failed {    
+    background: #CE4844;
+}
+
+.connectivity-status .pa-connection-success {    
     background: #00C468;
 }
 
@@ -3077,4 +3081,14 @@ a.remove-endpoint:hover i {
 .monitoring-lost-link i
 {
     top: 7px;
+}
+
+.pa-monitoring {
+    background-image: url('../../img/monitoring.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 14px;
+    position: relative;
+    top: 2px;
 }
