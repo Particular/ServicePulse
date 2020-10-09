@@ -1,8 +1,8 @@
 ﻿<div class="row box-header">
-    <div class="col-xs-12" ng-click="toggleSort()">
+    <button ng-click="toggleSort()">
         <span ng-transclude></span>
-        <button type="button" class="btn btn-link" aria-label="sort" ng-show="isColumnActive">
+        <div ng-show="isColumnActive">
             <span class="glyphicon" ng-class="sortIcon"></span>
-        </button>
-    </div>
+        </div>
+    </button>
 </div>

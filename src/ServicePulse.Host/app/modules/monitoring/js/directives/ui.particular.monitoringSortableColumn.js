@@ -12,8 +12,8 @@
             if (isActive) {
                 
                 $scope.sortIcon = $scope.ref.expression.charAt(0) === '-'
-                    ? 'glyphicon-arrow-down'
-                    : 'glyphicon-arrow-up';
+                    ? 'sort-down'
+                    : 'sort-up';
             }
             $scope.isColumnActive = isActive;
         }
