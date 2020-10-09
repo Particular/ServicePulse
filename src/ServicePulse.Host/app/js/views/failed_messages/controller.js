@@ -109,6 +109,22 @@
             $location.path("/failed-messages/message/" + message.id);
         };
 
+        vm.selectAllMessages = function() {
+            var selectAll = true;
+            if(vm.selectedIds.length == vm.failedMessages.length || vm.selectedIds.length > 0) {
+                selectAll = false;
+            }
+            vm.failedMessages.forEach(function(item) {
+                if (selectAll == false) {
+                    vm.selectedIds = vm.selectedIds.filter(i => i === item.id );
+                    item.selected = false;
+                } else {
+                    item.selected = true;
+                    vm.selectedIds.indexOf(item.id) >= 0 ? false : vm.selectedIds.push(item.id);
+                }
+            });
+        };
+
         vm.retryMessage = function(message, $event) {
             toastService.showInfo("Message retry requested");
             serviceControlService.retryFailedMessages([message.id])
