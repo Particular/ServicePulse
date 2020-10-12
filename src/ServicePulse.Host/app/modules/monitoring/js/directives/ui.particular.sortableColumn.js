@@ -42,12 +42,12 @@
             controller: controller,
             //replace: true,
             transclude: true,
-            templateUrl: 'modules/monitoring/js/directives/ui.particular.monitoringSortableColumn.tpl.html'
+            templateUrl: 'modules/monitoring/js/directives/ui.particular.sortableColumn.tpl.html'
         }
     }
 
     angular
-        .module('ui.particular.monitoringSortableColumn', [])
+        .module('ui.particular.sortableColumn', [])
         .directive('sortableColumn', directive)
         .config(function ($logProvider) {
             $logProvider.debugEnabled(true);
