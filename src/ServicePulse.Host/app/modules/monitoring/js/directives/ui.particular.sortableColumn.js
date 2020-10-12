@@ -2,30 +2,34 @@
     "use strict";
 
     function controller($scope) {
-        $scope.toggleSort = toggleSort;
-        $scope.isColumnActive = updateStatus();
-
-        $scope.$watch("ref.expression", updateStatus);
-
+        var vm = this;
+        vm.toggleSort = toggleSort;
+        vm.$onInit = onInit; // attributes set by bindToController are only available during&after onInit
+        
         function updateStatus() {
-            var isActive = $scope.ref.prop === $scope.propertyName;
+            var isActive = vm.ref.prop === vm.propertyName;
             if (isActive) {
                 
-                $scope.sortIcon = $scope.ref.expression.charAt(0) === "-"
+                vm.sortIcon = vm.ref.expression.charAt(0) === "-"
                     ? "sort-down"
                     : "sort-up";
             }
-            $scope.isColumnActive = isActive;
+            vm.isColumnActive = isActive;
+        }
+
+        function onInit() {
+            vm.isColumnActive = updateStatus();
+            $scope.$watch("vm.ref.expression", updateStatus);
         }
 
         function toggleSort() {
-            $scope.ref.prop = $scope.propertyName;
-            var defaultSortOrder = `-${$scope.propertyName}`;
-            if ($scope.ref.expression === defaultSortOrder) {
+            vm.ref.prop = vm.propertyName;
+            var defaultSortOrder = `-${vm.propertyName}`;
+            if (vm.ref.expression === defaultSortOrder) {
                 //invert sort order
-                $scope.ref.expression = `+${$scope.propertyName}`;
+                vm.ref.expression = `+${vm.propertyName}`;
             } else {
-                $scope.ref.expression = defaultSortOrder;
+                vm.ref.expression = defaultSortOrder;
             }
         }
     }
@@ -40,6 +44,8 @@
             },
             restrict: "E",
             controller: controller,
+            controllerAs: "vm",
+            bindToController: true,
             transclude: true,
             templateUrl: "modules/monitoring/js/directives/ui.particular.sortableColumn.tpl.html"
         }

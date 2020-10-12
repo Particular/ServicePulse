@@ -3104,21 +3104,21 @@ a.remove-endpoint:hover i {
     top: 7px;
 }
 
-button[ng-click="toggleSort()"] {
+button[ng-click="vm.toggleSort()"] {
     padding: 0;
     background: none;
     border: none;
 }
 
-button[ng-click="toggleSort()"] span {
+button[ng-click="vm.toggleSort()"] span {
     text-transform: uppercase;
 }
 
-button[ng-click="toggleSort()"]:hover span {
+button[ng-click="vm.toggleSort()"]:hover span {
     text-decoration: underline;
 }
 
-button[ng-click="toggleSort()"] div {
+button[ng-click="vm.toggleSort()"] div {
     display: inline-block;
     margin-top: -1px;
 }
