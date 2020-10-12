@@ -1,5 +1,5 @@
 ﻿(function (angular) {
-    'use strict';
+    "use strict";
 
     function controller($scope) {
         $scope.toggleSort = toggleSort;
@@ -11,9 +11,9 @@
             var isActive = $scope.ref.prop === $scope.propertyName;
             if (isActive) {
                 
-                $scope.sortIcon = $scope.ref.expression.charAt(0) === '-'
-                    ? 'sort-down'
-                    : 'sort-up';
+                $scope.sortIcon = $scope.ref.expression.charAt(0) === "-"
+                    ? "sort-down"
+                    : "sort-up";
             }
             $scope.isColumnActive = isActive;
         }
@@ -30,25 +30,24 @@
         }
     }
 
-    controller.$inject = ['$scope'];
+    controller.$inject = ["$scope"];
 
     function directive() {
         return {
             scope: {
-                propertyName: '=property',
-                ref: '='
+                propertyName: "=property",
+                ref: "="
             },
-            restrict: 'E',
+            restrict: "E",
             controller: controller,
-            //replace: true,
             transclude: true,
-            templateUrl: 'modules/monitoring/js/directives/ui.particular.sortableColumn.tpl.html'
+            templateUrl: "modules/monitoring/js/directives/ui.particular.sortableColumn.tpl.html"
         }
     }
 
     angular
-        .module('ui.particular.sortableColumn', [])
-        .directive('sortableColumn', directive)
+        .module("ui.particular.sortableColumn", [])
+        .directive("sortableColumn", directive)
         .config(function ($logProvider) {
             $logProvider.debugEnabled(true);
         });
