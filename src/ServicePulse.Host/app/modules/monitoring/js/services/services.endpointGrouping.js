@@ -1,12 +1,14 @@
-﻿//(function (angular) {
-//    "use strict";
+﻿(function (angular) {
+    "use strict";
 
-//    angular.module("services.endpointGrouping")
-//        .service("endpointGroupingService", Service);
+    angular.module("services.endpointGrouping", ["sc"])
+        .factory("endpointGrouping", function() {
+            return {
+                group: function(endpoints) {
+                    return endpoints;
+                }
+            }
+        });
 
-//    function Service() {
-//        this.group = function(endpoints) {
-//            return endpoints;
-//        };
-//    }
-//})(window.angular);
+
+})(window.angular);

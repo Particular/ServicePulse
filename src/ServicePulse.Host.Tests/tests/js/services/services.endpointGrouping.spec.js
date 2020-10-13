@@ -1,18 +1,21 @@
-﻿//describe("endpointGroupingService", function() {
-//    beforeEach(module("sc"));
+﻿describe("endpointGroupingService", function() {
+    beforeEach(module("sc"));
 
-//    var service;
+    var service;
 
-//    beforeEach(function() {
-//        service = _endpointGroupingService_;
-//    });
+    beforeEach(inject(function (_endpointGrouping_) {
+        service = _endpointGrouping_;
 
-//    it("returns no groups on empty input", function() {
-//        //var result = service.group([]);
+    }));
 
-//        //expect(result).toBe([]);
+    beforeEach(function() {
+        return;
+    });
 
-
-//    });
-//});
-
+    it("returns no groups on empty input", function () {
+        console.log(service);
+        var result = service.group([]);
+        expect(result).toBe([]);
+    });
+    
+});
