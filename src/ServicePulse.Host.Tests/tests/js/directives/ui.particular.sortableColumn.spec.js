@@ -30,6 +30,7 @@
             expect(parentScope.orderState.prop).toBe("myProperty");
             expect(parentScope.orderState.expression).toBe("-myProperty");
             expect(controller.isColumnActive).toBe(true);
+            expect(controller.sortIcon).toBe("sort-down");
 
             //toggle again
             controller.toggleSort();
@@ -38,6 +39,7 @@
             expect(parentScope.orderState.prop).toBe("myProperty");
             expect(parentScope.orderState.expression).toBe("+myProperty");
             expect(controller.isColumnActive).toBe(true);
+            expect(controller.sortIcon).toBe("sort-up");
         });
     });
 
@@ -62,6 +64,7 @@
             expect(controller.isColumnActive).toBe(true);
             expect(parentScope.orderState.prop).toBe("myProperty");
             expect(parentScope.orderState.expression).toBe("-myProperty");
+            expect(controller.sortIcon).toBe("sort-down");
         });
     });
 
