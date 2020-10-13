@@ -74,4 +74,4 @@
 
     angular.module('services.connectivityNotifier', ['sc'])
         .service('connectivityNotifier', Service);
-}(window, window.angular, window.jQuery, window.Rx));
+})(window, window.angular, window.jQuery, window.Rx);
