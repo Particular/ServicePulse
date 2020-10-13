@@ -34,14 +34,15 @@
             </div>
             <div class="col-xs-2 col-xl-1 no-side-padding">
                 <sortable-column property="'metrics.queueLength.average'" 
-                                 ref="order">
+                                 ref="order"
+                                 uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">
                     Queue Length <span class="table-header-unit">(msgs)</span>
                 </sortable-column>
             </div>
             <div class="col-xs-2 col-xl-1 no-side-padding">
                 <sortable-column property="'metrics.throughput.average'" 
                                  ref="order"
-                                 uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">
+                                 uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
                     Throughput <span class="table-header-unit">(msgs/s)</span>
                 </sortable-column>
             </div>
