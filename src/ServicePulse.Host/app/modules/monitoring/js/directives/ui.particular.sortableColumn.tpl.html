@@ -1,0 +1,8 @@
+﻿<div class="row box-header">
+    <button ng-click="vm.toggleSort()">
+        <span ng-transclude></span>
+        <div ng-show="vm.isColumnActive">
+            <span class="glyphicon" ng-class="vm.sortIcon"></span>
+        </div>
+    </button>
+</div>

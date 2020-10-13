@@ -20,6 +20,7 @@
         'ui.particular.graphdecimal',
         'ui.particular.multicheckboxList',
         'ui.particular.monitoringConnectivityStatus',
+        'ui.particular.sortableColumn',
         'ui.particular.exclamation',
         'ui.particular.messageTypesChangeIndicator',
         'ui.particular.pageTitleFromRoute',

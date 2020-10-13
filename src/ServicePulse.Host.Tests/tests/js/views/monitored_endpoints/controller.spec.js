@@ -39,4 +39,15 @@
             expect($location.search().filter).toBe("NewValue");
         });
     });
+
+    it("should sort by name", function() {
+        var scope = $rootScope.$new();
+        $controller("monitoredEndpointsCtrl",
+            {
+                $scope: scope
+            });
+
+        expect(scope.order.prop).toBe("name");
+        expect(scope.order.expression).toBe("-name");
+    });
 });

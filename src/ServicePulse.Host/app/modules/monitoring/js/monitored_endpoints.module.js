@@ -13,4 +13,5 @@
     require('./directives/ui.particular.graphdecimal.js');
     require('./directives/ui.particular.graphduration.js');
     require('./directives/ui.particular.metricslargenumber.js');
+    require('./directives/ui.particular.sortableColumn.js');
 }(window, window.angular));
