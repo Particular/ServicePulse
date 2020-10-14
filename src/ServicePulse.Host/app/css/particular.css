@@ -511,6 +511,7 @@ h6 {
 .tabs {
     border-bottom: 1px solid #E6E6E6;
     padding: 0;
+    margin-bottom: -1px;
 }
 
     .tabs h5 {
@@ -689,10 +690,6 @@ div.btn-toolbar, div.form-inline {
     font-family: 'FontAwesome';
     width: 20px;
     content: "\f0b0";
-}
-
-.filter-messages {
-    display: inline-block;
 }
 
 .sp-btn-menu {
@@ -2258,7 +2255,9 @@ i.fa.pa-endpoint-lost.endpoints-overview {
 }
 
 .nav.nav-pills.period-selector {
-    float: right;
+    display: inline-block;
+    position: relative;
+    top: 20px;
 }
 
 .nav-pills.period-selector > li.active > a, .nav-pills.period-selector > li.active > a:hover, .nav-pills.period-selector > li.active > a:focus {
@@ -3014,6 +3013,7 @@ a.remove-endpoint:hover i {
 }
 .filter-group {
     display: inline-block;
+    text-align: right;
     width: 50%;
     position: relative;
     top: -3px;
@@ -3021,14 +3021,40 @@ a.remove-endpoint:hover i {
     float:right;
 }
 
+.filter-group:before {
+    width: 16px;
+    font-family: 'FontAwesome';
+    width: 20px;
+    content: "\f0b0";
+    color: #919E9E;
+    position: absolute;
+    top: 29px;
+    right: 260px;
+}
+
 .filter-group input {
-    float: right;
+    display: inline-block;
     width: 280px;
-    margin: 21px 15px 0 15px;
+    margin: 21px 0 0 15px;
     padding-right: 10px;
-    padding-left: 10px;
+    padding-left: 30px;
     border: 1px solid #aaa;
     border-radius: 4px;
+    float: right;
+}
+
+.filter-group.filter-monitoring {
+    width: 100%;
+}
+
+.filter-group.filter-monitoring:before {
+    position: absolute;
+    top: 38px;
+}
+
+.filter-group.filter-monitoring input {
+    margin-top: 31px;
+    float: none;
 }
 
 .events-view {
@@ -3082,8 +3108,7 @@ a.remove-endpoint:hover i {
     font-weight: normal;
 }
 
-.monitoring-lost-link i
-{
+.monitoring-lost-link i {
     top: 7px;
 }
 
@@ -3095,4 +3120,40 @@ a.remove-endpoint:hover i {
     height: 14px;
     position: relative;
     top: 2px;
+
+button[ng-click="vm.toggleSort()"] {
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+button[ng-click="vm.toggleSort()"] span {
+    text-transform: uppercase;
+}
+
+button[ng-click="vm.toggleSort()"]:hover span {
+    text-decoration: underline;
+}
+
+button[ng-click="vm.toggleSort()"] div {
+    display: inline-block;
+    margin-top: -1px;
+}
+
+.sort-up, .sort-down {
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 8px;
+    height: 14px;
+    padding: 0;
+    margin-left: 10px;
+    top: 3px;
+}
+
+.sort-up {
+    background-image: url('../img/sort-up.svg');
+}
+
+.sort-down {
+    background-image: url('../img/sort-down.svg');
 }
