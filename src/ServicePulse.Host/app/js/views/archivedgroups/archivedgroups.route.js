@@ -6,7 +6,7 @@
             redirectTo: '/archivedgroups/groups'
         }).when('/archivedgroups/groups', {
             data: {
-                pageTitle: 'Archived Message Groups'
+                pageTitle: 'Deleted message groups'
             },
             templateUrl: 'js/views/archivedgroups/archivedgroups.html',
             controller: 'archivedMessageGroupsController',

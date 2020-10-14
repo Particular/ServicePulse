@@ -96,7 +96,7 @@
         vm.retryMessage = function () {
             toastService.showInfo("Retrying the message " + vm.message.message_id + " ...");
             serviceControlService.retryFailedMessages([vm.message.id])
-                .then(function() {                        
+                .then(function() {
                         vm.message.retried = true;
                 },
                     function() {
@@ -106,7 +106,7 @@
         };
 
         vm.archiveMessage = function () {
-            toastService.showInfo("Archiving the message " + vm.message.message_id + " ...");
+            toastService.showInfo("Deleting the message " + vm.message.message_id + " ...");
             serviceControlService.archiveFailedMessages([vm.message.id])
                 .then(function() {
                     // below line is a way to not fetch for the whole message from SC. We update date to now and calculate delete fields
@@ -115,7 +115,7 @@
                     vm.message.archived = true;
                 },
                 function () {
-                    toastService.showError("Archiving the message " + vm.message.message_id + " failed.");
+                    toastService.showError("Deleting the message " + vm.message.message_id + " failed.");
                 });
         };
 
@@ -141,12 +141,12 @@
         }
 
         vm.unarchiveMessage = function () {
-            archivedMessageService.restoreMessageFromArchive(vm.message.id, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
+            archivedMessageService.restoreMessageFromArchive(vm.message.id, 'Request to restore message accepted', 'Request to restore message rejected')
                 .then(function () {
                     vm.message.archived = false;
                 },
                 function () {
-                    toastService.showError("Unarchiving the message " + vm.message.message_id + " failed.");
+                    toastService.showError("Restoring the message " + vm.message.message_id + " failed.");
                 });
         };
         

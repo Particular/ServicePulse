@@ -143,7 +143,7 @@
         };
 
         vm.archiveSelected = function () {
-            toastService.showInfo("Archiving " + vm.selectedIds.length + " messages...");
+            toastService.showInfo("Deleting " + vm.selectedIds.length + " messages...");
             serviceControlService.archiveFailedMessages(vm.selectedIds)
                 .then(function () {
                     vm.selectedIds = [];
@@ -157,7 +157,7 @@
         };
 
         vm.archiveExceptionGroup = function (group) {
-            failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+            failedMessageGroupsService.archiveGroup(group.id, 'Delete Group Request Enqueued', 'Delete Group Request Rejected')
                 .then(function (message) {
                     notifier.notify('ArchiveGroupRequestAccepted', group);
                     vm.failedMessages = [];
