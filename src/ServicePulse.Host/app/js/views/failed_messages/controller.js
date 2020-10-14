@@ -111,7 +111,7 @@
 
         vm.selectAllMessages = function() {
             var selectAll = true;
-            if(vm.selectedIds.length == vm.failedMessages.length || vm.selectedIds.length > 0) {
+            if(vm.selectedIds.length > 0) {
                 selectAll = false;
             }
             vm.failedMessages.forEach(function(item) {
