@@ -3120,6 +3120,7 @@ a.remove-endpoint:hover i {
     height: 14px;
     position: relative;
     top: 2px;
+}
 
 button[ng-click="vm.toggleSort()"] {
     padding: 0;
