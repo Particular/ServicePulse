@@ -3104,3 +3104,7 @@ a.remove-endpoint:hover i {
 {
     top: 7px;
 }
+
+.select-all {
+    width: 126px;
+}
