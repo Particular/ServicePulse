@@ -114,13 +114,13 @@
             if(vm.selectedIds.length > 0) {
                 selectAll = false;
             }
+            vm.selectedIds = [];
             vm.failedMessages.forEach(function(item) {
-                if (selectAll == false) {
-                    vm.selectedIds = vm.selectedIds.filter(i => i === item.id );
-                    item.selected = false;
-                } else {
+                if (selectAll) {
                     item.selected = true;
-                    vm.selectedIds.indexOf(item.id) >= 0 ? false : vm.selectedIds.push(item.id);
+                    vm.selectedIds.push(item.id);
+                } else {
+                    item.selected = false;
                 }
             });
         };
