@@ -2254,10 +2254,20 @@ i.fa.pa-endpoint-lost.endpoints-overview {
     text-decoration: none !important;
 }
 
+.toolbar-menus.endpoint-details {
+    display: flex;
+    margin-bottom: 5px;
+    justify-content: end;
+}
+
 .nav.nav-pills.period-selector {
     display: inline-block;
     position: relative;
     top: 20px;
+}
+
+.nav.nav-pills.period-selector.endpoint-details {
+    top: 5px;
 }
 
 .nav-pills.period-selector > li.active > a, .nav-pills.period-selector > li.active > a:hover, .nav-pills.period-selector > li.active > a:focus {
@@ -3120,6 +3130,7 @@ a.remove-endpoint:hover i {
     height: 14px;
     position: relative;
     top: 2px;
+}
 
 button[ng-click="vm.toggleSort()"] {
     padding: 0;
