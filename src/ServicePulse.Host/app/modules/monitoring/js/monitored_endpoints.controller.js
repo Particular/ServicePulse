@@ -26,10 +26,21 @@
         $scope.location = $location;
         $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
         $scope.hasData = false; // TODO: UI toggles between 'no connectivity' and 'no data' but unknown how to set this via the monitoringService rx observable. 
-        $scope.groupedEndpoints = [];
+        $scope.grouping = {
+            groupedEndpoints: [],
+            groupSegments: 0,
+            selectedGrouping: 1,
+            selectGroup: selectGroup
+        }
 
-        $scope.$watchCollection("endpoints", function() {
-            $scope.groupedEndpoints = endpointGrouping.group($scope.endpoints);
+        function selectGroup(groupSize) {
+            $scope.grouping.selectedGrouping = groupSize;
+            $scope.grouping.groupedEndpoints = endpointGrouping.group($scope.endpoints, groupSize);
+        }
+
+        $scope.$watchCollection("endpoints", function () {
+            $scope.grouping.groupSegments = endpointGrouping.findSegments($scope.endpoints);
+            $scope.grouping.groupedEndpoints = endpointGrouping.group($scope.endpoints, $scope.grouping.selectedGrouping);
         });
 
         $scope.$watch("filter.name",
