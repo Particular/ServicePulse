@@ -157,7 +157,7 @@
         };
 
         vm.archiveExceptionGroup = function (group) {
-            failedMessageGroupsService.archiveGroup(group.id, 'Delete Group Request Enqueued', 'Delete Group Request Rejected')
+            failedMessageGroupsService.archiveGroup(group.id, 'Delete group request enqueued', 'Delete group request rejected')
                 .then(function (message) {
                     notifier.notify('ArchiveGroupRequestAccepted', group);
                     vm.failedMessages = [];
