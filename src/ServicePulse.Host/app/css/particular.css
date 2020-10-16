@@ -3055,6 +3055,7 @@ a.remove-endpoint:hover i {
 
 .filter-group.filter-monitoring {
     width: 100%;
+    
 }
 
 .filter-group.filter-monitoring:before {
@@ -3067,9 +3068,14 @@ a.remove-endpoint:hover i {
     float: none;
 }
 
+.monitoring-view .filter-group.filter-monitoring:before {
+    top: 41px;
+}
+
 .monitoring-view .dropdown {
     top: 33px;
     margin-left: 25px;
+    width: 212px;
 }
 
 .monitoring-view .dropdown .dropdown-menu {
@@ -3191,9 +3197,10 @@ button[ng-click="vm.toggleSort()"] div {
     margin-left: 10px;
     top: 3px;
 }
-}
+
 
 .endpoint-group-title {
     font-size: 14px;
     font-weight: bold;
-    margin: 20px 0 10px;
+    margin: 20px 0 10px 15px;
+}
