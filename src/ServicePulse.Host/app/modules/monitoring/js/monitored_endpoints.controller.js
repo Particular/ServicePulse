@@ -29,7 +29,7 @@
         $scope.grouping = {
             groupedEndpoints: [],
             groupSegments: 0,
-            selectedGrouping: 1,
+            selectedGrouping: 0,
             selectGroup: selectGroup
         }
 

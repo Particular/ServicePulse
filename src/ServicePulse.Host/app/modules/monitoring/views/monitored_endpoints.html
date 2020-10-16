@@ -32,7 +32,7 @@
 </div>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-<section ng-show="true">
+<section ng-if="grouping.selectedGrouping == 0">
     <div class="sp-loader" ng-if="loading"></div>
     <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading && hasData"></div>
     <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div>
@@ -170,7 +170,7 @@
     </div>
 </section>
 
-<section ng-show="true">
+<section ng-if="grouping.selectedGrouping > 0">
     <div class="sp-loader" ng-if="loading"></div>
     <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading && hasData"></div>
     <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div>
