@@ -44,8 +44,8 @@
     <div class="row">
         <div class="col-xs-12 no-side-padding">
             <div class="row" ng-repeat="endpointGroup in grouping.groupedEndpoints">
-                <div class="row endpoint-group-title">
-                    <div class="col-xs-12">{{endpointGroup.group}}</div>
+                <div class="endpoint-group-title">
+                    {{endpointGroup.group}}
                 </div>
                 <div class="row box endpoint-row"
                      ng-repeat="endpointDescription in endpointGroup.endpoints | filter: filter.name"
