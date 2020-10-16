@@ -2253,7 +2253,7 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
 .nav.nav-pills.period-selector {
     display: inline-block;
     position: relative;
-    top: 20px;
+    top: 30px;
 }
 
 .nav-pills.period-selector > li.active > a, .nav-pills.period-selector > li.active > a:hover, .nav-pills.period-selector > li.active > a:focus {
@@ -3004,8 +3004,8 @@ a.remove-endpoint:hover i {
     color: #00729c;
 }
 .filter-group {
-    display: inline-block;
-    text-align: right;
+    display: flex;
+    justify-content: right;
     width: 50%;
     position: relative;
     top: -3px;
@@ -3021,7 +3021,7 @@ a.remove-endpoint:hover i {
     color: #919E9E;
     position: absolute;
     top: 29px;
-    right: 260px;
+    right: 250px;
 }
 
 .filter-group input {
@@ -3041,12 +3041,17 @@ a.remove-endpoint:hover i {
 
 .filter-group.filter-monitoring:before {
     position: absolute;
-    top: 38px;
+    top: 41px;
 }
 
 .filter-group.filter-monitoring input {
-    margin-top: 31px;
+    margin-top: 33px;
     float: none;
+}
+
+.monitoring-view .dropdown {
+    top: 33px;
+    margin-left: 25px;
 }
 
 .events-view {

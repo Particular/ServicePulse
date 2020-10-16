@@ -2,7 +2,7 @@
 <platform-expired ng-if="isPlatformExpired"></platform-expired>
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
-<div class="container" ng-show="endpoints.length" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+<div class="container monitoring-view" ng-show="endpoints.length" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="row monitoring-head">
         <div class="col-xs-6 no-side-padding list-section">
             <h1>Endpoints overview</h1>
@@ -15,8 +15,9 @@
                     </li>
                 </ul>
                 <div class="dropdown">
-                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        Group by
+                    <label class="control-label">Group by:</label>
+                    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Applied grouping
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
