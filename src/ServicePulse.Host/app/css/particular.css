@@ -2198,20 +2198,20 @@ i.fa-exclamation-triangle {
     background-repeat: no-repeat;
 }
 
-.pa-monitoring-lost.endpoint-details, .pa-connection-failed {
+.pa-monitoring-lost.endpoint-details {
     background-image: url('../../../img/monitoring-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details, .monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
-    width: 23px;
-    height: 23px;
+    width: 32px;
+    height: 30px;
 }
 
 .endpoint-status .pa-endpoint-lost.endpoint-details, .endpoint-status .pa-monitoring-lost.endpoint-details, .endpoint-status .pa-endpoint-lost.endpoints-overview, .endpoint-status .pa-monitoring-lost.endpoints-overview {
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     left: 6px;
     position: relative;
 }
@@ -2233,6 +2233,10 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
     margin-right: 4px;
 }
 
+i.fa.pa-endpoint-lost.endpoints-overview {
+    top: 8px;
+}
+
 .endpoint-name {
     margin-top: 15px;
 }
@@ -2250,10 +2254,20 @@ i.fa.pa-endpoint-lost.endpoints-overview, i.fa.pa-monitoring-lost.endpoints-over
     text-decoration: none !important;
 }
 
+.toolbar-menus.endpoint-details {
+    display: flex;
+    margin-bottom: 5px;
+    justify-content: end;
+}
+
 .nav.nav-pills.period-selector {
     display: inline-block;
     position: relative;
     top: 30px;
+}
+
+.nav.nav-pills.period-selector.endpoint-details {
+    top: 5px;
 }
 
 .nav-pills.period-selector > li.active > a, .nav-pills.period-selector > li.active > a:hover, .nav-pills.period-selector > li.active > a:focus {
@@ -2320,9 +2334,10 @@ footer span {
     color: #777f7f;
 }
 
-.connectivity-status i, .connectivity-status div.pa-connection-success {
+.connectivity-status i, .connectivity-status div.pa-connection-success, .connectivity-status div.pa-connection-failed {
     width: 10px;
     height: 10px;
+    border-radius: 50%;
 }
 
 
@@ -2339,8 +2354,11 @@ footer span {
     color: #CE4844;
 }
 
-.connectivity-status .pa-connection-success {
-    border-radius: 50%;
+.connectivity-status .pa-connection-failed {    
+    background: #CE4844;
+}
+
+.connectivity-status .pa-connection-success {    
     background: #00C468;
 }
 
@@ -3114,6 +3132,37 @@ a.remove-endpoint:hover i {
     top: 7px;
 }
 
+.select-all {
+    width: 146px;
+}
+
+.pa-check, .pa-uncheck {
+    position: relative;
+    top: 3px;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 16px;
+    width: 16px;
+}
+
+.pa-check {
+    background-image: url('../img/check.svg');
+}
+
+.pa-uncheck {
+    background-image: url('../img/uncheck.svg');
+}
+
+.pa-monitoring {
+    background-image: url('../../img/monitoring.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 14px;
+    position: relative;
+    top: 2px;
+}
+
 button[ng-click="vm.toggleSort()"] {
     padding: 0;
     background: none;
@@ -3142,17 +3191,9 @@ button[ng-click="vm.toggleSort()"] div {
     margin-left: 10px;
     top: 3px;
 }
-
-.sort-up {
-    background-image: url('../img/sort-up.svg');
-}
-
-.sort-down {
-    background-image: url('../img/sort-down.svg');
 }
 
 .endpoint-group-title {
     font-size: 14px;
     font-weight: bold;
     margin: 20px 0 10px;
-}

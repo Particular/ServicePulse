@@ -184,7 +184,7 @@
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
-            toastService.showError('Group' + data.title + ' Archive Request Rejected');
+            toastService.showError('Group' + data.title + ' Delete request rejected');
         }, 'ArchiveGroupRequestRejected');
 
         notifier.subscribe($scope, logit, 'RetryGroupRequestAccepted');

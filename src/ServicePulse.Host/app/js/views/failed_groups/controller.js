@@ -63,16 +63,16 @@
         };
 
         vm.archiveExceptionGroup = function(group) {
-            group.workflow_state = { status: "archivestarted", message: 'Archive request initiated...' };
+            group.workflow_state = { status: "archivestarted", message: 'Delete request initiated...' };
             failedMessageGroupsService.archiveGroup(group.id,
-                    'Archive Group Request Enqueued',
-                    'Archive Group Request Rejected')
+                    'Delete group request enqueued',
+                    'Delete group request rejected')
                 .then(function() {
                         notifier.notify('ArchiveGroupRequestAccepted', group);
                     },
                     function(message) {
                         group.workflow_state = createWorkflowState('error');
-                        toastService.showError("Archive request for" + group.title + " failed: " + message);
+                        toastService.showError("Delete request for" + group.title + " failed: " + message);
                         notifier.notify('ArchiveGroupRequestRejected', group);
                     });
         };
@@ -418,7 +418,7 @@
             archiveOperationEventHandler(data, "archivecompleted");
             getHistoricGroups();
             
-            toastService.showInfo("Group " + data.group_name + " was archived succesfully.", "Archive operation completed", true);
+            toastService.showInfo("Group " + data.group_name + " was deleted succesfully.", "Delete operation completed", true);
             
         }, 'ArchiveOperationCompleted');
 

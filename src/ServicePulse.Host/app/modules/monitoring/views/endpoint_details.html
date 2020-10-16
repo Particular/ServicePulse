@@ -24,8 +24,8 @@
                 </a>
             </div>
         </div>
-        <div class="col-xs-3 no-side-padding toolbar-menus">
-            <ul class="nav nav-pills period-selector">
+        <div class="col-xs-3 no-side-padding toolbar-menus endpoint-details">
+            <ul class="nav nav-pills period-selector endpoint-details">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
                     <a ng-click="selectPeriod(period)" ng-href="{{buildUrl(period.value, showInstancesBreakdown, showInstacesBreakdown ? 1 : endpoint.messageTypesPage)}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
                 </li>
