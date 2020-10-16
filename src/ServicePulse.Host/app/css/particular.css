@@ -3145,3 +3145,9 @@ button[ng-click="vm.toggleSort()"] div {
 .sort-down {
     background-image: url('../img/sort-down.svg');
 }
+
+.endpoint-group-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 20px 0 10px;
+}
