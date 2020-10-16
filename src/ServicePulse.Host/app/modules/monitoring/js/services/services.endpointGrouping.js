@@ -23,7 +23,7 @@
 
                         var groupName = groupSegments.join(".");
                         if (groupName === "") {
-                            groupName = "Others";
+                            groupName = "Ungrouped";
                         }
 
                         var resultGroup = groups.get(groupName);
