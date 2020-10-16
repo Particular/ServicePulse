@@ -121,8 +121,8 @@
                                                 <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
                                                     <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
                                                 </button>
-                                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.archiveExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to archive this group?" confirm-message="Messages that are archived will be cleaned up according to the ServiceControl retention policy, and aren't available for retrying unless they're unarchived.">
-                                                    <i aria-hidden="true" class="fa fa-archive no-link-underline">&nbsp</i>Archive Group
+                                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.archiveExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to delete this group?" confirm-message="Messages that are deleted will be cleaned up according to the ServiceControl retention policy, and aren't available for retrying unless they're restored.">
+                                                    <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp</i>Delete group
                                                 </button>
                                             </div>
                                         </div>
@@ -195,12 +195,12 @@
                                                     <div class="panel-body">
                                                         <ul class="retry-request-progress">
                                                             <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archivestarted', group.workflow_state.status)">
-                                                                <div class="bulk-retry-progress-status">Initialize archive request...</div>
+                                                                <div class="bulk-retry-progress-status">Initialize delete request...</div>
                                                             </li>
                                                             <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archiveprogressing', group.workflow_state.status)">
                                                                 <div class="row">
                                                                     <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
-                                                                        <div class="bulk-retry-progress-status">Archive request in progress...</div>
+                                                                        <div class="bulk-retry-progress-status">Delete request in progress...</div>
                                                                     </div>
 
                                                                     <div class="col-xs-12 col-sm-6">
@@ -220,7 +220,7 @@
                                                                 </div>
                                                             </li>
                                                             <li ng-show="group.workflow_state.status === 'archivecompleted'">
-                                                                <div class="retry-completed bulk-retry-progress-status">Archive request completed</div>
+                                                                <div class="retry-completed bulk-retry-progress-status">Delete request completed</div>
                                                                 <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeArchiveGroup(group, $event)">
                                                                     Dismiss
                                                                 </button>
@@ -228,9 +228,9 @@
                                                         </ul>
 
                                                         <div class="op-metadata">
-                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Archive request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
-                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to archive: {{(group.operation_remaining_count || 0) | number}}</span>
-                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages archived: {{(group.operation_messages_completed_count || 0) | number}}</span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Delete request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to delete: {{(group.operation_remaining_count || 0) | number}}</span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages deleted: {{(group.operation_messages_completed_count || 0) | number}}</span>
                                                         </div>
                                                     </div>
                                                 </div>

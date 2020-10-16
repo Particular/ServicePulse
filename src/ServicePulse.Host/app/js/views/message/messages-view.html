@@ -25,7 +25,7 @@
                     <div class="col-sm-12">
                         <div class="metadata group-title group-message-count message-metadata">
                             <span ng-if="vm.message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
-                            <span ng-if="vm.message.archived" tooltip="Message is being archived" class="label sidebar-label label-warning metadata-label">Archived</span>
+                            <span ng-if="vm.message.archived" tooltip="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
                             <span ng-if="vm.message.resolved" tooltip="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
                             <span ng-if="vm.message.number_of_processing_attempts > 1" tooltip="This message has already failed {{vm.message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{vm.message.number_of_processing_attempts}} Retry Failures</span>
                             <span ng-if="vm.message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
@@ -36,9 +36,9 @@
                             <span class="metadata" ng-show="vm.message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{vm.message.redirect}}</span>
                         </div>
                         <div class="metadata group-title group-message-count message-metadata" ng-show="vm.message.archived">
-                            <span class="metadata"><i class="fa fa-clock-o"></i> Archived: <sp-moment date="{{vm.message.last_modified}}"></sp-moment></span>
-                            <span class="metadata danger" ng-show="message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
-                            <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: <sp-moment class="danger" date="{{vm.message.deleted_in}}"></sp-moment></span>
+                            <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <sp-moment date="{{vm.message.last_modified}}"></sp-moment></span>
+                            <span class="metadata danger" ng-show="message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
+                            <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <sp-moment class="danger" date="{{vm.message.deleted_in}}"></sp-moment></span>
                         </div>
                     </div>
                 </div>
@@ -46,8 +46,8 @@
                 <div class="row" ng-show="vm.message">
                     <div class="col-sm-12">
                         <div class="btn-toolbar message-toolbar">
-                            <button type="button" ng-hide="vm.message.archived" ng-disabled="vm.message.retried || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to archive this message?" confirm-message="If you archive, this message won't be available for retrying unless it is later unarchived." confirm-click="vm.archiveMessage()"><i class="fa fa-archive"></i> Archive message</button>
-                            <button type="button" ng-hide="!vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to un-archive this message?" confirm-message="Unarchived message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Unarchive</button>
+                            <button type="button" ng-hide="vm.message.archived" ng-disabled="vm.message.retried || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
+                            <button type="button" ng-hide="!vm.message.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
                             <button type="button" ng-disabled="vm.message.retried || vm.message.archived || vm.message.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
                             <button type="button" class="btn btn-default" ng-show="vm.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
                             <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" tooltip="Browse this message in ServiceInsight, if installed"><img src="img/si-icon.svg"> View in ServiceInsight</button>

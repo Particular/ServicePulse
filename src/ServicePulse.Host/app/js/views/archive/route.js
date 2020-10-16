@@ -6,7 +6,7 @@
             redirectTo: '/failed-messages/archived'
         }).when('/failed-messages/archived', {
             data: {
-                pageTitle: 'Archived Messages'
+                pageTitle: 'Deleted messages'
             },
             templateUrl: 'js/views/archive/archive-view.html',
             controller: 'archivedMessageController',

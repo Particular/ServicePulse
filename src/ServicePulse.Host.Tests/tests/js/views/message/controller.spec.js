@@ -98,7 +98,7 @@
         });
     });
 
-    describe('when archiving a message', function () {
+    describe('when deleting a message', function () {
         var controller, serviceControlService, root, messageEditorModalService, editAndRetryConfig;
 
         beforeEach(inject(function ($rootScope, $q) {
@@ -137,7 +137,7 @@
             });
         }));
 
-        it('and the archive succeeds, the message is marked as archived', inject(function ($q) {
+        it('and deleting succeeds, the message is marked as deleted', inject(function ($q) {
             var deferred = $q.defer();
             spyOn(serviceControlService, 'archiveFailedMessages').and.callFake(function () {
                 return deferred.promise;
@@ -152,7 +152,7 @@
             expect(serviceControlService.archiveFailedMessages).toHaveBeenCalled();
         }));
 
-        it('and the archive failed, the message is not marked as archived', inject(function ($q) {
+        it('and deleting failed, the message is not marked as deleted', inject(function ($q) {
             var deferred = $q.defer();
             spyOn(serviceControlService, 'archiveFailedMessages').and.callFake(function () {
                 return deferred.promise;
@@ -168,7 +168,7 @@
         }));
     });
 
-    describe('when unarchiving a message', function () {
+    describe('when restoring a message', function () {
         var controller, serviceControlService, root, archivedMessageService, q, messageEditorModalService, editAndRetryConfig;
 
         beforeEach(inject(function ($rootScope, $q) {
@@ -207,7 +207,7 @@
             });
         }));
 
-        it('and the unarchive succeeds, the message is not marked as archived', function () {
+        it('and restoring succeeds, the message is no longer marked as deleted', function () {
             var deferred = q.defer();
             spyOn(archivedMessageService, 'restoreMessageFromArchive').and.callFake(function () {
                 return deferred.promise;
@@ -222,7 +222,7 @@
             expect(archivedMessageService.restoreMessageFromArchive).toHaveBeenCalled();
         });
 
-        it('and the unarchive fails, the message is still marked as archived', function () {
+        it('and restoring fails, the message is remains marked as deleted', function () {
             var deferred = q.defer();
             spyOn(archivedMessageService, 'restoreMessageFromArchive').and.callFake(function () {
                 return deferred.promise;

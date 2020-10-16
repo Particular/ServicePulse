@@ -15,7 +15,7 @@
 
             <div class="row">
                 <div class="col-xs-6 list-section">
-                    <h6>Archived message groups</h6>
+                    <h6>Deleted message groups</h6>
                 </div>
 
                 <div class="col-xs-6 toolbar-menus no-side-padding">
@@ -38,7 +38,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
-                    <no-data ng-show="vm.archiveGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+                    <no-data ng-show="vm.archiveGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no groups of deleted messages"></no-data>
                 </div>
             </div>
 
