@@ -3070,6 +3070,7 @@ a.remove-endpoint:hover i {
 .monitoring-view .dropdown {
     top: 33px;
     margin-left: 25px;
+    width: 212px;
 }
 
 .monitoring-view .dropdown .dropdown-menu {
