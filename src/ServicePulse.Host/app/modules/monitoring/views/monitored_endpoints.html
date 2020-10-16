@@ -20,9 +20,9 @@
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a ng-click="grouping.selectGroup(0)">No grouping</a></li>
+                        <li><a href="#" ng-click="grouping.selectGroup(0); $event.preventDefault();">No grouping</a></li>
                         <li role="separator" class="divider"></li>
-                        <li ng-repeat="x in [].constructor(grouping.groupSegments) track by $index"><a ng-click="grouping.selectGroup($index+1)">{{$index+1}} segments</a></li>
+                        <li ng-repeat="x in [].constructor(grouping.groupSegments) track by $index"><a href="#" ng-click="grouping.selectGroup($index+1); $event.preventDefault();">max. {{$index+1}} segments</a></li>
                     </ul>
                 </div>
                 <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" ng-model="filter.name" />
