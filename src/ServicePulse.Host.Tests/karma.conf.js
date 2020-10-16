@@ -24,7 +24,8 @@ module.exports = function(config) {
             './js/services/**/*.js',
             './js/views/**/*.js',
             './modules/dist/monitoring.dist.js',
-            '../../ServicePulse.Host.Tests/tests/**/*.spec.js'],
+            '../../ServicePulse.Host.Tests/tests/**/*.spec.js'
+        ],
         frameworks: ['jasmine'],
         // you can define custom flags
         customLaunchers: {
@@ -53,5 +54,5 @@ module.exports = function(config) {
             // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
             exitOnResourceError: true
         }
-    })
+    });
 }

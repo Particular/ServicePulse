@@ -10,7 +10,8 @@
         $filter,
         smallGraphsMinimumYAxis,
         connectivityNotifier,
-        connectionsManager
+        connectionsManager,
+        endpointGrouping
         ) {
 
         var subscription, endpointsFromScSubscription;
@@ -25,6 +26,22 @@
         $scope.location = $location;
         $scope.monitoringUrl = connectionsManager.getMonitoringUrl();
         $scope.hasData = false; // TODO: UI toggles between 'no connectivity' and 'no data' but unknown how to set this via the monitoringService rx observable. 
+        $scope.grouping = {
+            groupedEndpoints: [],
+            groupSegments: 0,
+            selectedGrouping: 0,
+            selectGroup: selectGroup
+        }
+
+        function selectGroup(groupSize) {
+            $scope.grouping.selectedGrouping = groupSize;
+            $scope.grouping.groupedEndpoints = endpointGrouping.group($scope.endpoints, groupSize);
+        }
+
+        $scope.$watchCollection("endpoints", function () {
+            $scope.grouping.groupSegments = endpointGrouping.findSegments($scope.endpoints);
+            $scope.grouping.groupedEndpoints = endpointGrouping.group($scope.endpoints, $scope.grouping.selectedGrouping);
+        });
 
         $scope.$watch("filter.name",
             function(newVal) {
@@ -154,7 +171,8 @@
         '$filter',
         'smallGraphsMinimumYAxis',
         'connectivityNotifier',
-        'connectionsManager'
+        'connectionsManager',
+        'endpointGrouping'
     ];
 
     angular.module('monitored_endpoints')

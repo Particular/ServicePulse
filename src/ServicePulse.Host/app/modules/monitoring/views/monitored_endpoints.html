@@ -2,160 +2,37 @@
 <platform-expired ng-if="isPlatformExpired"></platform-expired>
 <upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
 
-<div class="container" ng-show="endpoints.length" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+<div class="container monitoring-view" ng-show="endpoints.length" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="row monitoring-head">
         <div class="col-xs-6 no-side-padding list-section">
             <h1>Endpoints overview</h1>
         </div>
         <div class="col-xs-6 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
-                    <ul class="nav nav-pills period-selector">
-                        <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
-                            <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
-                        </li>
+                <ul class="nav nav-pills period-selector">
+                    <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
+                        <a ng-click="selectPeriod(period)" href="#/monitoring?historyPeriod={{period.value}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
+                    </li>
+                </ul>
+                <div class="dropdown">
+                    <label class="control-label">Group by:</label>
+                    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" uib-tooltip="Endpoint grouping will take '.' in endpoint names to delimit segments. Grouping endpoints will disable list sorting.">
+                        {{ grouping.selectedGrouping == 0 ? 'no grouping' : ('max. ' + grouping.selectedGrouping + ' segments')}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a href="#" ng-click="grouping.selectGroup(0); $event.preventDefault();">no grouping</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li ng-repeat="x in [].constructor(grouping.groupSegments) track by $index"><a href="#" ng-click="grouping.selectGroup($index+1); $event.preventDefault();">max. {{$index+1}} segments</a></li>
                     </ul>
-                <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" ng-model="filter.name"/>
+                </div>
+                <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" ng-model="filter.name" />
             </div>
         </div>
     </div>
 </div>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <section ng-show="true">
-        <div class="sp-loader" ng-if="loading"></div>
-        <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading && hasData"></div>
-        <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div>
-
-        <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
-            <div class="col-xs-2 col-xl-7">
-                <sortable-column property="'name'" ref="order">
-                    Endpoint name
-                </sortable-column>
-            </div>
-            <div class="col-xs-2 col-xl-1 no-side-padding">
-                <sortable-column property="'metrics.queueLength.average'" 
-                                 ref="order"
-                                 uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">
-                    Queue Length <span class="table-header-unit">(msgs)</span>
-                </sortable-column>
-            </div>
-            <div class="col-xs-2 col-xl-1 no-side-padding">
-                <sortable-column property="'metrics.throughput.average'" 
-                                 ref="order"
-                                 uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
-                    Throughput <span class="table-header-unit">(msgs/s)</span>
-                </sortable-column>
-            </div>
-            <div class="col-xs-2 col-xl-1 no-side-padding">
-                <sortable-column property="'metrics.retries.average'"
-                                 ref="order" 
-                                 uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">
-                                 Scheduled retries <span class="table-header-unit">(msgs/s)</span>
-                </sortable-column>
-            </div>
-            <div class="col-xs-2 col-xl-1 no-side-padding">
-                <sortable-column property="'metrics.processingTime.average'"
-                                 ref="order"
-                                 uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
-                    Processing Time <span class="table-header-unit">(t)</span>
-                </sortable-column>
-            </div>
-            <div class="col-xs-2 col-xl-1 no-side-padding">
-                <sortable-column property="'metrics.criticalTime.average'"
-                                 ref="order"
-                                 uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-                    Critical Time <span class="table-header-unit">(t)</span>
-                </sortable-column>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-xs-12 no-side-padding">
-                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints | filter: filter | orderBy: order.expression" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
-                    <div class="col-xs-12 no-side-padding">
-                        <div class="row">
-                            <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
-                                <div class="row box-header">
-                                    <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{endpoint.connectedCount || 0}})</span>
-                                    </div>
-                                    <div class="col-xs-5 no-side-padding endpoint-status">
-                                        <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
-                                            <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
-                                        </span>
-                                        <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || !endpoint.connectedCount)" uib-tooltip="No data received from any instance">
-                                            <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
-                                        </span>
-                                        <span class="warning" ng-if="endpoint.errorCount" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list.">
-                                            <a ng-if="endpoint.errorCount" class="warning btn" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
-                                                <i class="fa fa-envelope"></i>
-                                                <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
-                                            </a>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-2 col-xl-1 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="no-side-padding">
-                                        <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="{{smallGraphsMinimumYAxis.queueLength}}" class="graph queue-length pull-left"></graph>
-                                    </div>
-                                    <div class="no-side-padding sparkline-value">
-                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.queueLength.displayValue}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-2 col-xl-1 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="no-side-padding">
-                                        <graph plot-data="endpoint.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" class="graph throughput pull-left"></graph>
-                                    </div>
-                                    <div class="no-side-padding sparkline-value">
-                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.throughput.displayValue}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-2 col-xl-1 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="no-side-padding">
-                                        <graph plot-data="endpoint.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" class="graph retries pull-left"></graph>
-                                    </div>
-                                    <div class="no-side-padding sparkline-value">
-                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.retries.displayValue}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-2 col-xl-1 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="no-side-padding">
-                                        <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" class="graph processing-time pull-left"></graph>
-                                    </div>
-                                    <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
-                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.processingTime.displayValue.value}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                        <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.processingTime.displayValue.unit}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xs-2 col-xl-1 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="no-side-padding">
-                                        <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
-                                    </div>
-                                    <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.criticalTime.displayValue.unit">
-                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                                        <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <ng-include src="'modules/monitoring/views/monitored_endpoints_list.html'"></ng-include>
+    <ng-include src="'modules/monitoring/views/monitored_endpoints_list_grouped.html'"></ng-include>
 </div>
