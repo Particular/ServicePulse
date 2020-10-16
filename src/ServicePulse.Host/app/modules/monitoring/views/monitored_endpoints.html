@@ -17,11 +17,11 @@
                 <div class="dropdown">
                     <label class="control-label">Group by:</label>
                     <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" uib-tooltip="Endpoint grouping will take '.' in endpoint names to delimit segments. Grouping endpoints will disable list sorting.">
-                        Applied grouping
+                        {{ grouping.selectedGrouping == 0 ? 'no grouping' : ('max. ' + grouping.selectedGrouping + ' segments')}}
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                        <li><a href="#" ng-click="grouping.selectGroup(0); $event.preventDefault();">No grouping</a></li>
+                        <li><a href="#" ng-click="grouping.selectGroup(0); $event.preventDefault();">no grouping</a></li>
                         <li role="separator" class="divider"></li>
                         <li ng-repeat="x in [].constructor(grouping.groupSegments) track by $index"><a href="#" ng-click="grouping.selectGroup($index+1); $event.preventDefault();">max. {{$index+1}} segments</a></li>
                     </ul>
