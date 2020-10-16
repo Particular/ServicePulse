@@ -109,6 +109,22 @@
             $location.path("/failed-messages/message/" + message.id);
         };
 
+        vm.selectAllMessages = function() {
+            var selectAll = true;
+            if(vm.selectedIds.length > 0) {
+                selectAll = false;
+            }
+            vm.selectedIds = [];
+            vm.failedMessages.forEach(function(item) {
+                if (selectAll) {
+                    item.selected = true;
+                    vm.selectedIds.push(item.id);
+                } else {
+                    item.selected = false;
+                }
+            });
+        };
+
         vm.retryMessage = function(message, $event) {
             toastService.showInfo("Message retry requested");
             serviceControlService.retryFailedMessages([message.id])
