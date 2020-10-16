@@ -258,9 +258,9 @@
                     method: 'PATCH'
                 })
                 .then(function() {
-                    notifications.pushForCurrentRoute('Archiving {{num}} messages...', 'info', { num: selectedMessages.length });
+                    notifications.pushForCurrentRoute('Deleting {{num}} messages...', 'info', { num: selectedMessages.length });
                 }, function() {
-                    notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
+                    notifications.pushForCurrentRoute('Messages delete operation failed', 'danger');
                 });
         }
 
@@ -268,14 +268,14 @@
             var url = uri.join(scu, 'recoverability', 'groups', id, 'errors', 'archive');
             return $http.post(url)
                 .then(null, function() {
-                    notifications.pushForCurrentRoute('Archiving messages failed', 'danger');
+                    notifications.pushForCurrentRoute('Messages delete operation failed', 'danger');
                 });
         }
 
         function acknowledgeArchiveGroup(groupId) {
             var url = uri.join(scu, 'recoverability', 'unacknowledgedgroups', groupId);
             return $http.delete(url).then(null, function () {
-                notifications.pushForCurrentRoute('Archive messages failed', 'danger');
+                notifications.pushForCurrentRoute('Messages delete operation failed', 'danger');
             });
         }
 

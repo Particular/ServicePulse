@@ -24,8 +24,8 @@
                 </a>
             </div>
         </div>
-        <div class="col-xs-3 no-side-padding toolbar-menus">
-            <ul class="nav nav-pills period-selector">
+        <div class="col-xs-3 no-side-padding toolbar-menus endpoint-details">
+            <ul class="nav nav-pills period-selector endpoint-details">
                 <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
                     <a ng-click="selectPeriod(period)" ng-href="{{buildUrl(period.value, showInstancesBreakdown, showInstacesBreakdown ? 1 : endpoint.messageTypesPage)}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
                 </li>
@@ -111,8 +111,8 @@
                     </div>
                     <div class="col-xs-6 no-side-padding scheduled-retries-rate-values">
                         <div class="row">
-                            <span class="metric-digest-header" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
-                                Scheduled Retries Rate
+                            <span class="metric-digest-header" uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retries
                             </span>
                         </div>
 
@@ -230,8 +230,8 @@
                     </div>
                     <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
-                                Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retries <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>
@@ -364,8 +364,8 @@
                     </div>
                     <div class="col-xs-2 col-xl-1 no-side-padding">
                         <div class="row box-header">
-                            <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retry rate: The number of messages per second scheduled for retries (immediate or delayed).">
-                                Scheduled retry rate <span class="table-header-unit">(msgs/s)</span>
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retries <span class="table-header-unit">(msgs/s)</span>
                             </div>
                         </div>
                     </div>

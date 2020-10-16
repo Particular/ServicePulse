@@ -24,7 +24,7 @@
 
         vm.stats = sharedDataService.getstats();
 
-        vm.selectedArchiveGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Archived Messages', 'count': 0, 'initialLoad': true };
+        vm.selectedArchiveGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All deleted messages', 'count': 0, 'initialLoad': true };
 
         vm.sort = {
             sortby: 'modified',
@@ -33,14 +33,14 @@
             start: undefined,
             end: undefined,
             buttonText: function () {
-                return (vm.sort.sortby === 'message_type' ? 'Message Type' : 'Time Archived') + ' ' + (vm.sort.direction === 'asc' ? 'ASC' : 'DESC');
+                return (vm.sort.sortby === 'message_type' ? 'Message Type' : 'Time Deleted') + ' ' + (vm.sort.direction === 'asc' ? 'ASC' : 'DESC');
             }
         };
 
         vm.timeGroup = {
             amount: 2,
             unit: 'hours',
-            buttonText: 'Archived in the last 2 Hours',
+            buttonText: 'Deleted in the last 2 hours',
             selected: function () {
                 return moment.duration(vm.timeGroup.amount, vm.timeGroup.unit);
             }
@@ -116,7 +116,7 @@
         vm.restore = function (timeGroup) {
             var rangeEnd = moment.utc();
             var rangeStart = moment.utc().subtract(timeGroup.amount, timeGroup.unit);
-            archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected');
+            archivedMessageService.restoreFromArchive(rangeStart, rangeEnd, 'Request to restore message accepted', 'Request to restore message rejected');
 
             startTimer();
         };
@@ -148,7 +148,7 @@
         };
 
         vm.unarchiveSelected = function () {
-            archivedMessageService.restoreMessagesFromArchive(vm.selectedIds, 'Restore From Archive Request Accepted', 'Restore From Archive Request Rejected')
+            archivedMessageService.restoreMessagesFromArchive(vm.selectedIds, 'Request to restore message accepted', 'Request to restore message rejected')
                 .then(function (message) {
                     vm.archives.reduceRight(function (acc, obj, idx) {
                         if (vm.selectedIds.indexOf(obj.id) > -1)
@@ -170,7 +170,7 @@
 
         vm.archiveExceptionGroup = function (group) {
 
-            failedMessageGroupsService.archiveGroup(group.id, 'Archive Group Request Enqueued', 'Archive Group Request Rejected')
+            failedMessageGroupsService.archiveGroup(group.id, 'Delete group request enqueued', 'Delete group request rejected')
                 .then(function (message) {
                     notifier.notify('ArchiveGroupRequestAccepted', group);
                     markMessage('archived');
@@ -230,13 +230,13 @@
 
                 switch (amount) {
                     case '2':
-                        vm.timeGroup.buttonText = 'Archived in the last 2 Hours';
+                        vm.timeGroup.buttonText = 'Deleted in the last 2 hours';
                         break;
                     case '1':
-                        vm.timeGroup.buttonText = 'Archived in the last 1 Day';
+                        vm.timeGroup.buttonText = 'Deleted in the last 1 day';
                         break;
                     case '7':
-                        vm.timeGroup.buttonText = 'Archived in the last 7 Days';
+                        vm.timeGroup.buttonText = 'Deleted in the last 7 days';
                         break;
                     default:
                         vm.timeGroup.buttonText = amount + ' ' + unit;
@@ -245,7 +245,7 @@
                 vm.sort.start = moment.utc().subtract(amount, unit).format('YYYY-MM-DDTHH:mm:ss');
                 vm.sort.end = moment.utc().format('YYYY-MM-DDTHH:mm:ss');
             } else {
-                vm.timeGroup.buttonText = 'All Archived';
+                vm.timeGroup.buttonText = 'All deleted';
                 vm.sort.start = vm.sort.end = undefined;
             }
 
