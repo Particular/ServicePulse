@@ -80,7 +80,7 @@
                                         <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <sp-moment date="{{message.time_of_failure}}"></sp-moment></span>
                                         <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
                                         <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
-                                        <span class="metadata"><i class="fa fa-clock-o"></i> Archived: <sp-moment date="{{message.last_modified}}"></sp-moment></span>
+                                        <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <sp-moment date="{{message.last_modified}}"></sp-moment></span>
                                         <span class="metadata danger" ng-show="message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
                                         <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: <sp-moment class="danger" date="{{message.deleted_in}}"></sp-moment></span>
                                     </p>
