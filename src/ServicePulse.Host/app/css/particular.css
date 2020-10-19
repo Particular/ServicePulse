@@ -2257,7 +2257,7 @@ i.fa.pa-endpoint-lost.endpoints-overview {
 .toolbar-menus.endpoint-details {
     display: flex;
     margin-bottom: 5px;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .nav.nav-pills.period-selector {
@@ -3023,7 +3023,7 @@ a.remove-endpoint:hover i {
 }
 .filter-group {
     display: flex;
-    justify-content: right;
+    justify-content: flex-end;
     width: 50%;
     position: relative;
     top: -3px;
