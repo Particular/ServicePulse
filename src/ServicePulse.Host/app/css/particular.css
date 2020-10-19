@@ -1991,12 +1991,20 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     text-decoration: none;
 }
 
+.endpoint-status a[ng-if="endpoint.errorCount"] {
+    top: -11px;
+}
+
 .monitoring-head .endpoint-status {
     top: 4px;
 }
 
 .monitoring-head .endpoint-status a {
     top: 0;
+}
+
+.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
+    top: -5px;
 }
 
 .monitoring-head i.fa.fa-envelope {
