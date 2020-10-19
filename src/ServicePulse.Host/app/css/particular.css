@@ -3198,6 +3198,13 @@ button[ng-click="vm.toggleSort()"] div {
     top: 3px;
 }
 
+.sort-up {
+    background-image: url('../../img/sort-up.svg');
+}
+
+.sort-down {
+    background-image: url('../../img/sort-down.svg');
+}
 
 .endpoint-group-title {
     font-size: 14px;
