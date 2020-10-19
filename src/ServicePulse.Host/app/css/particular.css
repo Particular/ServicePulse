@@ -1991,12 +1991,20 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     text-decoration: none;
 }
 
+.endpoint-status a[ng-if="endpoint.errorCount"] {
+    top: -11px;
+}
+
 .monitoring-head .endpoint-status {
     top: 4px;
 }
 
 .monitoring-head .endpoint-status a {
     top: 0;
+}
+
+.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
+    top: -5px;
 }
 
 .monitoring-head i.fa.fa-envelope {
@@ -2257,7 +2265,7 @@ i.fa.pa-endpoint-lost.endpoints-overview {
 .toolbar-menus.endpoint-details {
     display: flex;
     margin-bottom: 5px;
-    justify-content: end;
+    justify-content: flex-end;
 }
 
 .nav.nav-pills.period-selector {
@@ -3023,7 +3031,7 @@ a.remove-endpoint:hover i {
 }
 .filter-group {
     display: flex;
-    justify-content: right;
+    justify-content: flex-end;
     width: 50%;
     position: relative;
     top: -3px;
@@ -3139,7 +3147,7 @@ a.remove-endpoint:hover i {
 }
 
 .select-all {
-    width: 146px;
+    width: 127px;
 }
 
 .pa-check, .pa-uncheck {

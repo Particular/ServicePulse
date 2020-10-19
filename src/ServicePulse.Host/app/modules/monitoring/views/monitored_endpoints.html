@@ -4,10 +4,10 @@
 
 <div class="container monitoring-view" ng-show="endpoints.length" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <div class="row monitoring-head">
-        <div class="col-xs-6 no-side-padding list-section">
+        <div class="col-xs-4 no-side-padding list-section">
             <h1>Endpoints overview</h1>
         </div>
-        <div class="col-xs-6 no-side-padding toolbar-menus">
+        <div class="col-xs-8 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
                 <ul class="nav nav-pills period-selector">
                     <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
