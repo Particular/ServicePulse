@@ -35,12 +35,13 @@ Install the following dependencies if you don't have them installed yet
    - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
    - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
 
-#### Set up node
+#### Set development environment
 
  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
- - run the following command `npm run setup`. This script will use webpack configuration to finish ServicePulse required configuration and will start watching root folder for changes.
+ - run `npm install` to install all the npm dependencies
+ - run the following command `npm run dev`. This script will use webpack configuration to finish ServicePulse's required configuration, start watching root folder for changes, and it will host a dev server on port 8080
  
-In case `npm run setup` fails with an error related to git submodule not properly configured, run the following command `npm install` to ensure all required dependencies are available, and then run `npm run setup`.
+In case `npm run dev` fails with an error related to git submodule not properly configured, run the `npm install` command again to ensure all required dependencies are available, and then run `npm run dev`.
 
 After doing the above steps one can open Visual Studio and continue working on this project. You can also run this project from node using `npm run serve`.
 
