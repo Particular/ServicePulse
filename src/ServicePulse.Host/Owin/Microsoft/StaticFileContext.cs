@@ -204,7 +204,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             return Constants.CompletedTask;
         }
 
-        public Task SendAsync()
+        public async Task SendAsync()
         {
             ApplyResponseHeaders(Constants.Status200Ok);
 
@@ -212,14 +212,15 @@ namespace ServicePulse.Host.Owin.Microsoft
             var sendFile = response.Get<SendFileFunc>(Constants.SendFileAsyncKey);
             if (sendFile != null && !string.IsNullOrEmpty(physicalPath))
             {
-                return sendFile(physicalPath, 0, length, request.CallCancelled);
+                await sendFile(physicalPath, 0, length, request.CallCancelled)
+                    .ConfigureAwait(false);
             }
 
-            var readStream = fileInfo.CreateReadStream();
-            var copyOperation = new StreamCopyOperation(readStream, response.Body, length, request.CallCancelled);
-            var task = copyOperation.Start();
-            _ = task.ContinueWith(resultTask => readStream.Close(), TaskContinuationOptions.ExecuteSynchronously);
-            return task;
+            using (var readStream = fileInfo.CreateReadStream())
+            {
+                await new StreamCopyOperation(readStream, response.Body, length, request.CallCancelled).Start()
+                    .ConfigureAwait(false);
+            }
         }
     }
 }
