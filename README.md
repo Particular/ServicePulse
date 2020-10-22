@@ -43,7 +43,7 @@ Install the following dependencies if you don't have them installed yet
  
 In case `npm run dev` fails with an error related to git submodule not properly configured, run the `npm install` command again to ensure all required dependencies are available, and then run `npm run dev`.
 
-After doing the above steps one can open Visual Studio and continue working on this project. You can also run this project from node using `npm run serve`.
+After doing the above steps one can open Visual Studio or your IDE of choice and continue working on this project. The site will be served for debugging at `http://localhost:8080`.
 
 #### Provided npm scripts
  - `test` - runs js tests in ServicePulse.Host.Test project
