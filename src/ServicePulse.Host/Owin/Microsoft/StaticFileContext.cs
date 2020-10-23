@@ -28,7 +28,7 @@ namespace ServicePulse.Host.Owin.Microsoft
         private PreconditionState ifNoneMatchState;
         private PreconditionState ifModifiedSinceState;
         private PreconditionState ifUnmodifiedSinceState;
-        
+
         public StaticFileContext(IOwinContext context)
         {
             this.context = context;
@@ -59,8 +59,8 @@ namespace ServicePulse.Host.Owin.Microsoft
             PreconditionFailed,
         }
 
-        public bool IsHeadMethod { get; private set; } 
-        
+        public bool IsHeadMethod { get; private set; }
+
         public bool ValidateMethod()
         {
             method = request.Method;
@@ -85,7 +85,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             etagQuoted = '\"' + etag + '\"';
             return true;
         }
-        
+
         public void ComprehendRequestHeaders()
         {
             ComputeIfMatch();
@@ -178,9 +178,9 @@ namespace ServicePulse.Host.Owin.Microsoft
         public PreconditionState GetPreconditionState()
         {
             return GetMaxPreconditionState(
-                ifMatchState, 
+                ifMatchState,
                 ifNoneMatchState,
-                ifModifiedSinceState, 
+                ifModifiedSinceState,
                 ifUnmodifiedSinceState);
         }
 
@@ -204,7 +204,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             return Constants.CompletedTask;
         }
 
-        public Task SendAsync()
+        public async Task SendAsync()
         {
             ApplyResponseHeaders(Constants.Status200Ok);
 
@@ -212,14 +212,15 @@ namespace ServicePulse.Host.Owin.Microsoft
             var sendFile = response.Get<SendFileFunc>(Constants.SendFileAsyncKey);
             if (sendFile != null && !string.IsNullOrEmpty(physicalPath))
             {
-                return sendFile(physicalPath, 0, length, request.CallCancelled);
+                await sendFile(physicalPath, 0, length, request.CallCancelled)
+                    .ConfigureAwait(false);
             }
 
-            var readStream = fileInfo.CreateReadStream();
-            var copyOperation = new StreamCopyOperation(readStream, response.Body, length, request.CallCancelled);
-            var task = copyOperation.Start();
-            _ = task.ContinueWith(resultTask => readStream.Close(), TaskContinuationOptions.ExecuteSynchronously);
-            return task;
+            using (var readStream = fileInfo.CreateReadStream())
+            {
+                await new StreamCopyOperation(readStream, response.Body, length, request.CallCancelled).Start()
+                    .ConfigureAwait(false);
+            }
         }
     }
 }
