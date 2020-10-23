@@ -28,7 +28,7 @@ namespace ServicePulse.Host.Owin.Microsoft
         private PreconditionState ifNoneMatchState;
         private PreconditionState ifModifiedSinceState;
         private PreconditionState ifUnmodifiedSinceState;
-        
+
         public StaticFileContext(IOwinContext context)
         {
             this.context = context;
@@ -59,8 +59,8 @@ namespace ServicePulse.Host.Owin.Microsoft
             PreconditionFailed,
         }
 
-        public bool IsHeadMethod { get; private set; } 
-        
+        public bool IsHeadMethod { get; private set; }
+
         public bool ValidateMethod()
         {
             method = request.Method;
@@ -85,7 +85,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             etagQuoted = '\"' + etag + '\"';
             return true;
         }
-        
+
         public void ComprehendRequestHeaders()
         {
             ComputeIfMatch();
@@ -178,9 +178,9 @@ namespace ServicePulse.Host.Owin.Microsoft
         public PreconditionState GetPreconditionState()
         {
             return GetMaxPreconditionState(
-                ifMatchState, 
+                ifMatchState,
                 ifNoneMatchState,
-                ifModifiedSinceState, 
+                ifModifiedSinceState,
                 ifUnmodifiedSinceState);
         }
 
