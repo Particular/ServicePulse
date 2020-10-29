@@ -70,6 +70,16 @@ describe('messageTypeParser', function () {
         expect(sut.assemblyName).toEqual('Shared');
     });
 
+    it('should parse messageTypes as well as shortNames without an unknown result', function() {
+        var sut = {};
+        Object.assign(sut, twoTypeMessageType);
+
+        messageTypeParser.parseTheMessageTypeData(sut);
+
+        expect(sut.typeName).toEqual('Some.Very.Long.Shared.Namespace.Is.Found.Here.EventMessage, IMyEvent');
+        expect(sut.shortName).toEqual('EventMessage, IMyEvent');
+    });
+
     it('should parse message type if there is more than one class in', function () {
         var sut = {};
         Object.assign(sut, twoTypeMessageType);
