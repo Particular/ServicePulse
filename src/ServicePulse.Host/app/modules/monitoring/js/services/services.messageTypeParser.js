@@ -24,14 +24,15 @@
                 });
                 messageType.messageTypeHierarchy = messageTypeHierarchy;
                 messageType.typeName =
-                    messageTypeHierarchy.reduce((sum, item) => (sum ? `${sum}, ` : '') + item.typeName, '');
+                    messageTypeHierarchy.map(item => item.typeName).join(", ");
+                messageType.shortName = messageTypeHierarchy.map(item => shortenTypeName(item.typeName)).join(", ");
                 messageType.containsTypeHierarchy = true;
                 messageType.tooltipText = messageTypeHierarchy.reduce((sum, item) => (sum ? `${sum}<br> ` : '') +
                     `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : '') + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ''),
                     '');
             } else {
                 //Get the name without the namespace
-                messageType.shortName = messageType.typeName.split('.').pop();
+                messageType.shortName = shortenTypeName(messageType.typeName);
 
                 var tooltip = `${messageType.typeName} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
                 if (messageType.culture && messageType.culture != 'null') {
@@ -44,6 +45,10 @@
 
                 messageType.tooltipText = tooltip;
             }
+        }
+
+        function shortenTypeName(typeName) {
+            return typeName.split('.').pop();
         }
     
         var service = {
