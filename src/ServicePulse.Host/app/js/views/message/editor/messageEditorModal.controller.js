@@ -66,7 +66,7 @@
         }
 
         var loadMessageHeadersAndMessageBody = function() {
-            return serviceControlService.getMessageWithHeaders($scope.message.message_id)
+            return serviceControlService.getMessage($scope.message.message_id)
                 .then(function (response) {
 
                     $scope.message.messageHeaders = response.message.headers;
