@@ -176,7 +176,7 @@
                     vm.message.headers = response.message.headers;
                     vm.message.bodyUrl = response.message.body_url;
                 }, function () {
-                    vm.message.headersUnavailable = "message headers unavailable";
+                    vm.message.headersUnavailable = 'message headers unavailable';
                 });
             },
                 function (response) {
