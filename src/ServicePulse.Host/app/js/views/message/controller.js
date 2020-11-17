@@ -56,7 +56,7 @@
                 return false;
 
             if (!angular.isDefined(message.headers)) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function (response) {
+                serviceControlService.getMessageWithHeaders(message.message_id).then(function (response) {
                     message.headers = response.message.headers;
                 }, function () {
                     message.headersUnavailable = "message headers unavailable";
@@ -172,7 +172,7 @@
                 updateMessageDeleteDate(message, vm.error_retention_period);
                 vm.message = message;
 
-                serviceControlService.getMessageHeaders(vm.message.message_id).then(function (response) {
+                serviceControlService.getMessageWithHeaders(vm.message.message_id).then(function (response) {
                     vm.message.headers = response.message.headers;
                     vm.message.bodyUrl = response.message.body_url;
                 }, function () {
