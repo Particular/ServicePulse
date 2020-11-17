@@ -68,9 +68,9 @@
 
                                     <pre isolate-click ng-show="vm.message.panel === 0">{{ vm.message.exception.message }}</pre>
                                     <pre isolate-click ng-show="vm.message.panel === 1">{{ vm.message.exception.stack_trace }}</pre>
-                                    <table isolate-click class="table" ng-show="vm.message.panel === 2 && vm.message.messageHeaders">
+                                    <table isolate-click class="table" ng-show="vm.message.panel === 2 && vm.message.headers">
                                         <tbody>
-                                            <tr class="interactiveList" ng-repeat="header in vm.message.messageHeaders">
+                                            <tr class="interactiveList" ng-repeat="header in vm.message.headers">
                                                 <td nowrap="nowrap">{{header.key}}</td>
                                                 <td>
                                                     <pre>{{header.value}}</pre>

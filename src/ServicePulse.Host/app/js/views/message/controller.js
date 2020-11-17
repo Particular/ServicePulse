@@ -55,23 +55,23 @@
             if (message.notFound || message.error)
                 return false;
 
-            if (!angular.isDefined(message.messageHeaders)) {
+            if (!angular.isDefined(message.headers)) {
                 serviceControlService.getMessageHeaders(message.message_id).then(function (response) {
-                    message.messageHeaders = response.headers;
+                    message.headers = response.message.headers;
                 }, function () {
                     message.headersUnavailable = "message headers unavailable";
                 });
             }
 
-            if (angular.isDefined(message.messageHeaders) && !angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    var bodyContentType = getContentType(message.messageHeaders);
+            if (angular.isDefined(message.headers) && !angular.isDefined(message.messageBody)) {
+                serviceControlService.getMessageBody(message).then(function (msg) {
+                    var bodyContentType = getContentType(message.headers);
                     message.messageBody = prettifyText(msg.data, bodyContentType);
                 }, function () {
                     message.bodyUnavailable = "message body unavailable";
                 });
             }
-            
+
             message.panel = panelnum;
             return false;
         };
@@ -90,7 +90,7 @@
             var header = headers.find(function (element) { return element.key === 'NServiceBus.ContentType'; });
             return header ? header.value : null;
         }
-        
+
         vm.getContentType = getContentType;
 
         vm.retryMessage = function () {
@@ -149,7 +149,7 @@
                     toastService.showError("Restoring the message " + vm.message.message_id + " failed.");
                 });
         };
-        
+
         vm.debugInServiceInsight = function () {
             var messageId = vm.message.message_id;
             var dnsName = connectionsManager.getServiceControlUrl().toLowerCase();
@@ -171,6 +171,13 @@
                 message.retried = message.status === 'retryIssued';
                 updateMessageDeleteDate(message, vm.error_retention_period);
                 vm.message = message;
+
+                serviceControlService.getMessageHeaders(vm.message.message_id).then(function (response) {
+                    vm.message.headers = response.message.headers;
+                    vm.message.bodyUrl = response.message.body_url;
+                }, function () {
+                    vm.message.headersUnavailable = "message headers unavailable";
+                });
             },
                 function (response) {
                     if (response.status === 404) {
