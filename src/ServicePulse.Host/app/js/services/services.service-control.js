@@ -137,8 +137,7 @@
 
         function getMessageBody(message) {
             var url = uri.join(scu, 'messages', message.message_id, 'body');
-            if(message.bodyUrl)
-            {
+            if(message.bodyUrl) {
                 url = uri.join(scu, message.bodyUrl);
             }
 
