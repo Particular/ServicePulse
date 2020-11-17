@@ -51,7 +51,7 @@
         vm.archives = [{}];
         vm.error_retention_period = moment.duration('10.00:00:00').asHours();
         vm.allFailedMessagesGroup = { 'id': undefined, 'title': 'All Failed Messages', 'count': 0 };
-        
+
         var processLoadedMessages = function (data) {
 
             if (data && data.length > 0) {
@@ -59,7 +59,7 @@
                 var exgroups = data.map(function (obj) {
                     var nObj = obj;
                     nObj.panel = 0;
-                   
+
                     var countdown = moment(nObj.last_modified).add(vm.error_retention_period, 'hours');
                     nObj.delete_soon = countdown < moment();
                     nObj.deleted_in = countdown.format();
@@ -125,26 +125,6 @@
             for (var i = 0; i < vm.failedMessages.length; i++) {
                 vm.failedMessages[i][property] = true;
             }
-        };
-
-        vm.togglePanel = function (message, panelnum) {
-            if (message.messageBody === undefined) {
-                serviceControlService.getMessageBody(message.message_id).then(function (msg) {
-                    message.messageBody = msg.data;
-                }, function () {
-                    message.bodyUnavailable = 'message body unavailable';
-                });
-            }
-
-            if (message.messageHeaders === undefined) {
-                serviceControlService.getMessageHeaders(message.message_id).then(function (response) {
-                    message.messageHeaders = response.headers;
-                }, function () {
-                    message.headersUnavailable = 'message headers unavailable';
-                });
-            }
-            message.panel = panelnum;
-            return false;
         };
 
         vm.unarchiveSelected = function () {

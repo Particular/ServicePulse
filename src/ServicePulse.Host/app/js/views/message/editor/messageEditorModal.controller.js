@@ -51,10 +51,10 @@
         };
 
         var loadMessageBody = function() {
-            return serviceControlService.getMessageBody($scope.message.message_id)
+            return serviceControlService.getMessageBody($scope.message)
                 .then(function (msg) {
                     var bodyContentType = getContentType($scope.message.messageHeaders);
-                    
+
                     $scope.message.bodyContentType = bodyContentType;
                     $scope.message.isContentTypeSupported = isContentTypeSupported(bodyContentType);
                     $scope.message.messageBody = prettifyText(msg.data, bodyContentType);
@@ -66,16 +66,17 @@
         }
 
         var loadMessageHeadersAndMessageBody = function() {
-            return serviceControlService.getMessageHeaders($scope.message.message_id)
+            return serviceControlService.getMessage($scope.message.message_id)
                 .then(function (response) {
 
-                    $scope.message.messageHeaders = response.headers;
+                    $scope.message.messageHeaders = response.message.headers;
+                    $scope.message.bodyUrl = response.message.body_url;
                     var intentHeader = findHeaderByKey($scope.message.messageHeaders, 'NServiceBus.MessageIntent');
                     if (intentHeader) {
                         $scope.isEvent = intentHeader.value === 'Publish';
                     }
                     originalMessageHeaders = angular.merge(originalMessageHeaders, $scope.message.messageHeaders);
-        
+
                     $scope.message.messageHeaders.forEach(function (header) {
                         header.isSensitive = sensitive_headers.includes(header.key);
                         header.isLocked = locked_headers.includes(header.key);

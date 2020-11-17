@@ -135,8 +135,12 @@
             });
         }
 
-        function getMessageBody(messageId) {
-            var url = uri.join(scu, 'messages', messageId, 'body');
+        function getMessageBody(message) {
+            var url = uri.join(scu, 'messages', message.message_id, 'body');
+            if(message.bodyUrl) {
+                url = uri.join(scu, message.bodyUrl);
+            }
+
             return $http.get(url).then(function(response) {
                 return {
                     data: response.data
@@ -144,12 +148,12 @@
             });
         }
 
-        function getMessageHeaders(messageId) {
+        function getMessage(messageId) {
             var url = uri.join(scu, 'messages', 'search', messageId);
             return $http.get(url).then(function(response) {
                 var matchingMessage = response.data.find(function(m) { return m.message_id === messageId; });
                 return {
-                    headers: matchingMessage.headers
+                    message: matchingMessage
                 };
             });
         }
@@ -301,8 +305,8 @@
                 return response.data;
             });
         }
-        
-        
+
+
         function loadQueueNames() {
             var url = uri.join(scu, 'errors', 'queues', 'addresses');
 
@@ -329,7 +333,7 @@
             getHistoricGroups: getHistoricGroups,
             getFailedMessagesForExceptionGroup: getFailedMessagesForExceptionGroup,
             getMessageBody: getMessageBody,
-            getMessageHeaders: getMessageHeaders,
+            getMessage: getMessage,
             getTotalFailedMessages: getTotalFailedMessages,
             getTotalArchivedMessages: getTotalArchivedMessages,
             getTotalFailingCustomChecks: getTotalFailingCustomChecks,
