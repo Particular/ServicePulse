@@ -6,7 +6,7 @@ namespace ServicePulse.Host.Owin.Microsoft
 
     internal static class Constants
     {
-        internal static readonly Task CompletedTask = CreateCompletedTask();
+        internal static readonly Task CompletedTask = Task.FromResult(0);
         internal const string SendFileAsyncKey = "sendfile.SendAsync";
         internal const string Location = "Location";
         internal const string IfMatch = "If-Match";
@@ -21,12 +21,5 @@ namespace ServicePulse.Host.Owin.Microsoft
         internal const int Status200Ok = 200;
         internal const int Status304NotModified = 304;
         internal const int Status412PreconditionFailed = 412;
-
-        private static Task CreateCompletedTask()
-        {
-            var completionSource = new TaskCompletionSource<object>();
-            completionSource.SetResult((object)null);
-            return completionSource.Task;
-        }
     }
 }
