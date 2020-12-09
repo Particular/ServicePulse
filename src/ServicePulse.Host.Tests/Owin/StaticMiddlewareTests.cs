@@ -8,21 +8,6 @@ namespace ServicePulse.Host.Tests.Owin
     [TestFixture]
     public class StaticMiddlewareTests
     {
-        //[Test]
-        //public void Should_default_to_octetstream_mimetype()
-        //{
-        //    var middleware = new StaticFileMiddleware(new DummyNext());
-        //    var context = new OwinContext
-        //    {
-        //        Request =
-        //        {
-        //            Path = new PathString("/js/filename.unknown"),
-        //            Method = "GET"
-        //        }
-        //    };
-        //    middleware.Invoke(context);
-        //    Assert.AreEqual(("application/octet-stream"), context.Response.ContentType);
-        //}
         [Test]
         public async Task Should_return_correct_mimetype()
         {
