@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Microsoft.Owin;
 using NUnit.Framework;
 using ServicePulse.Host.Owin;
@@ -18,6 +19,10 @@ namespace ServicePulse.Host.Tests.Owin
                 {
                     Path = new PathString("/js/app.constants.js"),
                     Method = "GET"
+                },
+                Response =
+                {
+                    Body = new MemoryStream()
                 }
             };
             await middleware.Invoke(context);
@@ -52,6 +57,10 @@ namespace ServicePulse.Host.Tests.Owin
                 {
                     Path = new PathString("/js/app.js"),
                     Method = method
+                },
+                Response =
+                {
+                    Body = new MemoryStream()
                 }
             };
             await middleware.Invoke(context);
@@ -69,6 +78,10 @@ namespace ServicePulse.Host.Tests.Owin
                 {
                     Path = new PathString("/NoIE.html"),
                     Method = "GET"
+                },
+                Response =
+                {
+                    Body = new MemoryStream()
                 }
             };
             await middleware.Invoke(context);
@@ -87,6 +100,10 @@ namespace ServicePulse.Host.Tests.Owin
                 {
                     Path = new PathString("/nOie.html"),
                     Method = "GET"
+                },
+                Response =
+                {
+                    Body = new MemoryStream()
                 }
             };
             await middleware.Invoke(context);
@@ -106,6 +123,10 @@ namespace ServicePulse.Host.Tests.Owin
                 {
                     Path = new PathString("/js/views/message/editor/messageEditorModal.controller.js"),
                     Method = "GET"
+                },
+                Response =
+                {
+                    Body = new MemoryStream()
                 }
             };
             await middleware.Invoke(context);
@@ -124,6 +145,10 @@ namespace ServicePulse.Host.Tests.Owin
                 {
                     Path = new PathString("/js/app.constants.js"), //this exists both BOTH embedded in ServicePulse.Host.exe and on disk
                     Method = "GET"
+                },
+                Response =
+                {
+                    Body = new MemoryStream()
                 }
             };
             await middleware.Invoke(context);
