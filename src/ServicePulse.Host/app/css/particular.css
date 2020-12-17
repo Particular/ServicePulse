@@ -2331,6 +2331,11 @@ footer span {
 
     footer span.connected-status {
         color: #000;
+        padding-right: 0;
+    }
+
+    footer span.newscversion {
+        padding-right: 0;
     }
 
     footer span.monitoring-connected, footer span.monitoring-connected span {
