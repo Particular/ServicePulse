@@ -11,7 +11,7 @@
                     <span uib-tooltip="ServiceControl URL {{serviceControlUrl}}">
                         Service Control:
                         <span class="connected-status" ng-if="isSCConnected && !isSCConnecting">
-                            <div class="fa pa-connection-success"></div> Connected <span ng-show="newscversion" class="newscversion"><i class="fa fa-level-up fake-link"></i> <a href="{{newscversionlink}}" target="_blank">v{{newscversionnumber}} available</a></span>
+                            <div class="fa pa-connection-success"></div> <span ng-show="!SCVersion">Connected</span> <span ng-show="SCVersion" class="versionnumber">v{{SCVersion}}</span> <span ng-show="newscversion" class="newscversion">(<i class="fa fa-level-up fake-link"></i> <a href="{{newscversionlink}}" target="_blank">v{{newscversionnumber}} available</a>)</span>
                         </span>
                         <span ng-if="!isSCConnected && !isSCConnecting" class="connection-failed">
                             <i class="fa pa-connection-failed"></i> Not connected

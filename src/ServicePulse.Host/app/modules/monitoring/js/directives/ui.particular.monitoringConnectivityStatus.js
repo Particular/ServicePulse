@@ -1,4 +1,6 @@
-﻿(function (window, angular, $) {
+﻿const { version } = require("zeroclipboard");
+
+(function (window, angular, $) {
     'use strict';
 
     function controller($scope,
@@ -27,7 +29,6 @@
                     if (lastReport === 'success') {
                         return;
                     }
-
                     connectivityNotifier.reportSuccessfulConnection();
                     lastReport = 'success';
                 }, () => {
@@ -47,6 +48,10 @@
                     scMonitoringConnectionPing = undefined;
                 }
             });
+
+            notifier.subscribe($scope, (event, versionInfo) => {
+                $scope.monitoringVersion = versionInfo.monitoringVersion;
+            }, 'monitoringversionloaded');
 
             notifier.subscribe($scope, (event, versionInfo) => {
                 $scope.newscmonitoringversion = true;

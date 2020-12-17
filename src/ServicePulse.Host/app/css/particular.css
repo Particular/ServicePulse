@@ -2329,20 +2329,23 @@ footer span {
     padding-right: 32px;
 }
 
-    footer span.connected-status {
-        color: #000;
-        padding-right: 0;
-    }
+footer span.connected-status {
+    color: #000;
+    padding-right: 0;
+}
 
-    footer span.newscversion {
-        padding-right: 0;
-    }
+footer span.newscversion {
+    padding-right: 0;
+}
 
-    footer span.monitoring-connected, footer span.monitoring-connected span {
-        padding-right: 0;
-    }
+footer span.monitoring-connected,
+footer span.monitoring-connected span,
+.versionnumber,
+footer span.connection-failed.ng-scope {
+    padding-right: 0;
+}
 
-.connectivity-status div, .connectivity-status span {
+.connectivity-status div, .connectivity-status span, .connectivity-status span span {
     display: inline-block;
     color: #777f7f;
 }

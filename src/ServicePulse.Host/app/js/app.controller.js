@@ -218,6 +218,10 @@
             if (!$scope.SCMonitoringVersion && data.isMonitoringConnected) {
                 monitoringService.getServiceControlMonitoringVersion().then(function(data) {
                     $scope.SCMonitoringVersion = data;
+
+                    notifier.notify('monitoringversionloaded', {
+                        monitoringVersion: data
+                    });
                 });
             }
 
@@ -258,7 +262,6 @@
                     $scope.scConnectedAtLeastOnce = true;
                     break;
                 case 'Reconnected':
-                    debugger;
                     $scope.isSCConnected = true;
                     $scope.isSCConnecting = false;
                     $scope.scConnectedAtLeastOnce = true;
