@@ -1,14 +1,11 @@
 ﻿<footer class="footer">
     <div class="container">
         <div class="row">
-            <span>
-                <product-version version="{{Version}}" scversion="{{SCVersion}}" scmonitoringversion={{SCMonitoringVersion}}></product-version>
-            </span>
-            <div class="connectivity-status">
+            <div class="connectivity-status col-xs-offset-8">
                 <div uib-tooltip="ServiceControl URL {{serviceControlUrl}}">
                     Service Control:
                     <span class="connected-status" ng-if="isSCConnected && !isSCConnecting">
-                        <div class="fa pa-connection-success"></div> Connected
+                        <div class="fa pa-connection-success"></div> Connected <span ng-show="newscversion"><i class="fa fa-level-up fake-link"></i> <a href="{{newscversionlink}}" target="_blank">v{{newscversionnumber}} available</a></span>
                     </span>
                     <span ng-if="!isSCConnected && !isSCConnecting" class="connection-failed">
                         <i class="fa pa-connection-failed"></i> Not connected

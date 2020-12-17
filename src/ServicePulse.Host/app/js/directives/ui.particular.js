@@ -8,7 +8,6 @@
         'ui.particular.failedMessageTabs',
         'ui.particular.eatClick',
         'ui.particular.hud',
-        'ui.particular.productVersion',
         'ui.particular.busy',
         'ui.particular.nodata',
         'ui.particular.graph',
