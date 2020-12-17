@@ -23,7 +23,8 @@
         $route,
         configurationService,
         monitoringService,
-        disconnectedEndpointMonitor
+        disconnectedEndpointMonitor,
+        platformUpdateService,
     ) {
         var notifier = notifyService();
 
@@ -133,6 +134,43 @@
             $log.debug(data);
         }
 
+        function checkVersions() {
+            $scope.newversion = undefined;
+
+            platformUpdateService
+                .getReleases()
+                .then(function (result) {
+
+                    if (Object.prototype.hasOwnProperty.call(result, 'SP')) {
+                        if (semverService.isUpgradeAvailable($scope.Version, result.SP[0]['tag'])) {
+                            $scope.newspversion = true;
+                            $scope.newspversionlink = result.SP[0]['release'];
+                            $scope.newspversionnumber = result.SP[0]['tag'];
+                        }
+                    }
+
+                    if (Object.prototype.hasOwnProperty.call(result, 'SC')) {
+                        if (semverService.isUpgradeAvailable($scope.SCVersion, result.SC[0]['tag'])) {
+                            $scope.newscversion = true;
+                            $scope.newscversionlink = result.SC[0]['release'];
+                            $scope.newscversionnumber = result.SC[0]['tag'];
+                        }
+
+                        // monitoring version binds much later than SC version, so we need to respond when it changes
+                        $scope.$watch('scmonitoringversion', function () {
+                            if (semverService.isUpgradeAvailable($scope.SCMonitoringVersion, result.SC[0]['tag'])) {
+                                notifier.notify('newmonitoringversionavailable', {
+                                    versionLink: result.SC[0]['release'],
+                                    versionNumber: result.SC[0]['tag']
+                                });
+                            }
+                        });
+                    }
+                });
+        };
+
+        checkVersions();
+
         notifier.subscribe($scope, function(event, data) {
             if (connectionsManager.getIsMonitoringEnabled()) {
                 if ((data.status.isSCConnected || data.status.isSCConnecting) && (data.status.isMonitoringConnected || data.status.isMonitoringConnecting || data.status.isMonitoringConnecting === undefined)) {
@@ -146,6 +184,10 @@
                 } else if (!data.status.isSCConnected) {
                     $scope.connectionswarning = 'danger';
                 }
+            }
+
+            if (data.status.isSCConnected || data.status.isMonitoringConnected) {
+                checkVersions();
             }
         }, 'ConnectionsStatusChanged');
 
@@ -168,14 +210,22 @@
                 toastService.showError(scNeedsUpgradeMessage);
                 $location.path('/about');
             }
+
+            checkVersions();
         }, 'EnvironmentUpdated');
 
         notifier.subscribe($rootScope, function (event, data) {
             if (!$scope.SCMonitoringVersion && data.isMonitoringConnected) {
                 monitoringService.getServiceControlMonitoringVersion().then(function(data) {
                     $scope.SCMonitoringVersion = data;
+
+                    notifier.notify('monitoringversionloaded', {
+                        monitoringVersion: data
+                    });
                 });
             }
+
+            checkVersions();
         }, 'MonitoringConnectionStatusChanged');
 
         notifier.subscribe($scope, function (event, data) {
@@ -404,7 +454,8 @@
         '$route',
         'configurationService',
         'monitoringService',
-        'disconnectedEndpointMonitor'
+        'disconnectedEndpointMonitor',
+        'platformUpdateService',
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

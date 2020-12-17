@@ -9,7 +9,7 @@ class ConnectionsStatus {
             if (data.isSCConnected !== this.isSCConnected 
                 || data.isSCConnecting !== this.isSCConnecting 
                 || data.scConnectedAtLeastOnce !== this.scConnectedAtLeastOnce) {
-                
+
                 this.isSCConnected = data.isSCConnected;
                 this.isSCConnecting = data.isSCConnecting;
                 this.scConnectedAtLeastOnce = data.scConnectedAtLeastOnce;
