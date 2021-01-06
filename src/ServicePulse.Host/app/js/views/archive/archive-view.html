@@ -13,7 +13,7 @@
             <failed-message-tabs></failed-message-tabs>
         </div>
 
-        
+
         <div class="row" ng-show="vm.selectedArchiveGroup.id && vm.archives.length > 0">
             <div class="col-sm-12">
                 <div ng-show="!vm.selectedArchiveGroup.id" class="active">All deleted messages ({{vm.archives.length}} / {{vm.selectedExceptionGroup.count}} | number)</div>
@@ -27,6 +27,7 @@
         <div class="row" ng-show="!vm.loadingData">
             <div class="col-sm-12">
                 <div class="btn-toolbar">
+                    <button type="button" class="btn btn-default select-all" ng-click="vm.selectAllMessages()"><span ng-show="vm.selectedIds.length == 0">Select all</span><span ng-hide="vm.selectedIds.length == 0">Clear selection</span></button>
                     <button type="button" class="btn btn-default" confirm-title="Are you sure you want to restore the selected messages?" confirm-message="Restored messages will be moved back to the list of failed messages." confirm-click="vm.unarchiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-undo"></i> Restore {{vm.selectedIds.length | number}} selected</button>
 
                     <div class="msg-group-menu dropdown msg-list-dropdown">
