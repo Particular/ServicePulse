@@ -1,11 +1,10 @@
-﻿using System.Management;
-
-namespace ServicePulse.Install.CustomActions
+﻿namespace ServicePulse.Install.CustomActions
 {
     using System;
     using System.Diagnostics;
     using System.IO;
     using System.Linq;
+    using System.Management;
     using System.Net;
     using System.Text.RegularExpressions;
     using Microsoft.Deployment.WindowsInstaller;
@@ -17,7 +16,7 @@ namespace ServicePulse.Install.CustomActions
         {
             Log(session, "Begin custom action CheckServiceControlUrl");
             var url = session.Get("INST_URI");
-            session.Set("VALID_CONTROL_URL", UrlIsValid(url,session) ? "TRUE" : "FALSE");
+            session.Set("VALID_CONTROL_URL", UrlIsValid(url, session) ? "TRUE" : "FALSE");
             Log(session, "End custom action CheckServiceControlUrl");
             return ActionResult.Success;
         }
@@ -48,6 +47,7 @@ namespace ServicePulse.Install.CustomActions
 
                 var request = WebRequest.Create(url);
                 request.Timeout = 2000;
+#pragma warning disable IDE0019 // Use pattern matching
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
                     if (response == null)
@@ -65,6 +65,7 @@ namespace ServicePulse.Install.CustomActions
                         session.Set("MONITORING_REPORTED_VERSION", version.Split(' ').First());
                     }
                 }
+#pragma warning restore IDE0019 // Use pattern matching
 
                 connectionSuccessful = true;
             }
@@ -93,6 +94,7 @@ namespace ServicePulse.Install.CustomActions
 
                 var request = WebRequest.Create(url);
                 request.Timeout = 2000;
+#pragma warning disable IDE0019 // Use pattern matching
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
                     if (response == null)
@@ -110,6 +112,7 @@ namespace ServicePulse.Install.CustomActions
                         session.Set("REPORTED_VERSION", version.Split(' ').First());
                     }
                 }
+#pragma warning restore IDE0019 // Use pattern matching
 
                 connectionSuccessful = true;
             }
@@ -125,17 +128,17 @@ namespace ServicePulse.Install.CustomActions
         [CustomAction]
         public static ActionResult SetUrlAcl(Session session)
         {
-           Log(session, "Start custom action SetUrlAcl");
-           var port = session.Get("INST_PORT_PULSE");
-           var aclUrl =  string.Format("http://+:{0}/", port);
+            Log(session, "Start custom action SetUrlAcl");
+            var port = session.Get("INST_PORT_PULSE");
+            var aclUrl = string.Format("http://+:{0}/", port);
 
-           RunNetsh(string.Format("http del urlacl url={0}", aclUrl));
-           // sddl=D:(A;;GX;;;WD) maps to the same as setting user=Everyone
-           // user=everyone fails if the OS language is not English,  localised lookup of NTAccount fails as MSI is set to English US
-           var addUrlAclCommand = string.Format("http add urlacl url={0} sddl=D:(A;;GX;;;WD)", aclUrl);
-           var exitCode = RunNetsh(addUrlAclCommand);
-           if (exitCode != 0)
-           {
+            RunNetsh(string.Format("http del urlacl url={0}", aclUrl));
+            // sddl=D:(A;;GX;;;WD) maps to the same as setting user=Everyone
+            // user=everyone fails if the OS language is not English,  localised lookup of NTAccount fails as MSI is set to English US
+            var addUrlAclCommand = string.Format("http add urlacl url={0} sddl=D:(A;;GX;;;WD)", aclUrl);
+            var exitCode = RunNetsh(addUrlAclCommand);
+            if (exitCode != 0)
+            {
                 Log(session, string.Format("Error: 'netsh.exe {0}' returned {1}", addUrlAclCommand, exitCode));
                 Log(session, "End custom action SetUrlAcl");
                 return ActionResult.Failure;
@@ -152,8 +155,7 @@ namespace ServicePulse.Install.CustomActions
             {
                 Log(session, "Start custom action CheckPulsePort");
                 var port = session.Get("INST_PORT_PULSE");
-                UInt16 portNumber;
-                if (UInt16.TryParse(port, out portNumber))
+                if (ushort.TryParse(port, out ushort portNumber))
                 {
                     // Port number 49152 and above should no be used http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml
                     if (portNumber < 49152)
@@ -295,25 +297,24 @@ namespace ServicePulse.Install.CustomActions
 
         static int RunNetsh(string command)
         {
-           var pi = new ProcessStartInfo
-           {
-               Arguments = command,
-               FileName = Path.Combine(Environment.SystemDirectory, "netsh.exe"),
-               WindowStyle = ProcessWindowStyle.Hidden
-           };
+            var pi = new ProcessStartInfo
+            {
+                Arguments = command,
+                FileName = Path.Combine(Environment.SystemDirectory, "netsh.exe"),
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
 
-           using (var p = new Process {StartInfo = pi})
-           {
-               p.Start();
-               p.WaitForExit();
-               return p.ExitCode;
-           }
+            using (var p = new Process { StartInfo = pi })
+            {
+                p.Start();
+                p.WaitForExit();
+                return p.ExitCode;
+            }
         }
 
         static bool UrlIsValid(string url, Session session)
         {
-            Uri uri;
-            if (Uri.TryCreate(url, UriKind.Absolute, out uri))
+            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
             {
                 if ((uri.Scheme == Uri.UriSchemeHttp) || (uri.Scheme == Uri.UriSchemeHttps))
                 {

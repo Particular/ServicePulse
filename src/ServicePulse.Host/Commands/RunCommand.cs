@@ -4,7 +4,7 @@
     using System.Diagnostics;
     using Hosting;
 
-    internal class RunCommand : AbstractCommand
+    class RunCommand : AbstractCommand
     {
         public override void Execute(HostArguments args)
         {

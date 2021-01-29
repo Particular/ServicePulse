@@ -6,8 +6,8 @@ USAGE:
    ServicePulse.Host.exe --extract [options]
    ServicePulse.Host.exe [--url="http://localhost:9090"] [--serviceControlUrl="http://localhost:8080/api"]
 
-Command line arguments are case-insensitive. 
-																
+Command line arguments are case-insensitive.
+
 INSTALL OPTIONS:
 
 {0}
@@ -21,14 +21,14 @@ EXTRACT OPTIONS:
 {2}
 
 EXAMPLES:
-   ServicePulse.Host.exe --install 
-     --serviceName="MyServicePulse" 
+   ServicePulse.Host.exe --install
+     --serviceName="MyServicePulse"
      --displayName="My Pulse"
-     --description="Service for monitoring" 
+     --description="Service for monitoring"
      --username="corp\serviceuser"
      --password="p@ssw0rd!"
-	 --url="http://localhost:9090"
-	 --serviceControlUrl="http://localhost:8080/api"
+     --url="http://localhost:9090"
+     --serviceControlUrl="http://localhost:8080/api"
 
    ServicePulse.Host.exe --uninstall --serviceName="MyServicePulse"
 

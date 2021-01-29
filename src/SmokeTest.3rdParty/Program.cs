@@ -33,7 +33,9 @@ class Program
 
                 ConsoleKeyInfo key = Console.ReadKey();
                 Console.WriteLine();
+#pragma warning disable IDE0010 // Add missing cases
                 switch (key.Key)
+#pragma warning restore IDE0010 // Add missing cases
                 {
                     case ConsoleKey.A:
                         isReturningOk = true;
@@ -49,7 +51,7 @@ class Program
                         Console.WriteLine("Option not valid, Try again.");
                         break;
                 }
-            } 
+            }
             while (!exit);
         }
     }
@@ -77,9 +79,9 @@ class Program
 
     static void WriteResponse(HttpListenerResponse response, HttpStatusCode statusCode)
     {
-        response.StatusCode = (int) statusCode;
+        response.StatusCode = (int)statusCode;
         string text = statusCode.ToString();
-        using (StreamWriter streamWriter = new StreamWriter(response.OutputStream))
+        using (var streamWriter = new StreamWriter(response.OutputStream))
         {
             streamWriter.Write(text);
         }

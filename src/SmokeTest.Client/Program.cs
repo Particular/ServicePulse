@@ -35,7 +35,9 @@ class Program
 
             var text = wordblob.LoremIpsum(5, 5, 1, 1, 1);
 
+#pragma warning disable IDE0010 // Add missing cases
             switch (key.Key)
+#pragma warning restore IDE0010 // Add missing cases
             {
                 case ConsoleKey.A:
                     await SendMessage(enpointInstance, false, text);
@@ -65,7 +67,7 @@ class Program
                     continue;
 
             }
-        } 
+        }
         while (!exit);
 
         await enpointInstance.Stop();

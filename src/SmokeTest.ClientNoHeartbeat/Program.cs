@@ -2,13 +2,13 @@
 using System.Threading.Tasks;
 using NServiceBus;
 
-internal class Program
+class Program
 {
-    private const string wordblob =
+    const string wordblob =
         "Flank filet mignon rump prosciutto kevin Tail pancetta tenderloin tongue prosciutto, short loin pork pastrami flank swine leberkas Pig beef ribs hamburger, ball tip pastrami ham hock flank meatloaf Shoulder boudin meatloaf sirloin porchetta short loin ground round corned beef T-bone ground round pork chop pancetta short ribs, tenderloin brisket frankfurter Pig chuck porchetta meatball tongue capicola swine turducken, beef pastrami prosciutto bresaola bacon alcatra";
 
 
-    private static async Task Main()
+    static async Task Main()
     {
         var endpointConfiguration = new EndpointConfiguration("SmokeTest.ClientNoHeartbeat");
 
@@ -37,7 +37,9 @@ internal class Program
 
             string text = wordblob.LoremIpsum(5, 5, 1, 1, 1);
 
+#pragma warning disable IDE0010 // Add missing cases
             switch (key.Key)
+#pragma warning restore IDE0010 // Add missing cases
             {
                 case ConsoleKey.A:
                     await SendMessage(enpointInstance, false, text);
@@ -66,7 +68,7 @@ internal class Program
                     Console.WriteLine("Option not valid, Try again.");
                     continue;
             }
-        } 
+        }
         while (!exit);
 
         await enpointInstance.Stop();

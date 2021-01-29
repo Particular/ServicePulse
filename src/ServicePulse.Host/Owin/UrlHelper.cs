@@ -9,7 +9,7 @@
             var newUrl = new UriBuilder(url);
 
             // not localhost
-            if (newUrl.Host.Contains(".")) 
+            if (newUrl.Host.Contains("."))
             {
                 return url;
             }

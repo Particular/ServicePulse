@@ -3,7 +3,7 @@
     using System;
     using Hosting;
 
-    internal class UninstallCommand : ServiceCommand
+    class UninstallCommand : ServiceCommand
     {
         public UninstallCommand() : base(installer => installer.Uninstall(null))
         {

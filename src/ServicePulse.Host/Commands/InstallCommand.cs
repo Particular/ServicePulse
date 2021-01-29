@@ -4,7 +4,7 @@
     using System.Collections;
     using Hosting;
 
-    internal class InstallCommand : ServiceCommand
+    class InstallCommand : ServiceCommand
     {
         public InstallCommand() : base(installer => installer.Install(new Hashtable()))
         {
@@ -18,7 +18,7 @@
                 Console.Out.WriteLine("The '{0}' service is already installed.", args.ServiceName);
                 Console.ResetColor();
 
-                return;    
+                return;
             }
 
             ExecuteInternal(args);

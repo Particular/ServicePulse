@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using NServiceBus;
-
-namespace SmokeTest.Server.Particular.Core.Deliberately.Insanely.Long.NamespaceToEmulateTheCrazyNamespaceLengthsPeopleGiveNamespacesInTheirSystems
+﻿namespace SmokeTest.Server.Particular.Core.Deliberately.Insanely.Long.NamespaceToEmulateTheCrazyNamespaceLengthsPeopleGiveNamespacesInTheirSystems
 {
+    using System;
+    using System.Threading.Tasks;
+    using NServiceBus;
+
     public class MyHandler : IHandleMessages<MyMessage>
     {
         public Task Handle(MyMessage message, IMessageHandlerContext context)

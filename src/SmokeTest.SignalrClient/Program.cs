@@ -1,10 +1,10 @@
-﻿using System.Diagnostics;
-
-namespace SmokeTest.SignalrClient
+﻿namespace SmokeTest.SignalrClient
 {
+    using System.Diagnostics;
+
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Process.Start(new ProcessStartInfo("index.html") { UseShellExecute = true });
         }

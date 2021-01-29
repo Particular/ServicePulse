@@ -12,7 +12,7 @@
         public StaticFileMiddleware(OwinMiddleware next) : base(next)
         {
         }
-        
+
         public override Task Invoke(IOwinContext context)
         {
             var path = context.Request.Path.ToString();
@@ -52,7 +52,7 @@
             return Next.Invoke(context);
         }
 
-        private static IFileInfo FindFile(string path)
+        static IFileInfo FindFile(string path)
         {
             var filePath = "app" + path.Replace('/', '\\');
 
@@ -61,7 +61,7 @@
             {
                 return fileOnDisk;
             }
-            
+
             var fileEmbedded = EmbeddedFileFinder.FindEmbeddedFile(filePath);
             if (fileEmbedded != null)
             {
@@ -71,7 +71,7 @@
             return null;
         }
 
-        private static string FindContentType(string path)
+        static string FindContentType(string path)
         {
             FileExtensionContentTypeProvider.TryGetContentType(Path.GetFileName(path), out var contentType);
             return contentType ?? "application/octet-stream";

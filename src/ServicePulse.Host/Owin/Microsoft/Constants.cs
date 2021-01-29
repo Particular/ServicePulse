@@ -4,7 +4,7 @@ namespace ServicePulse.Host.Owin.Microsoft
 {
     using System.Threading.Tasks;
 
-    internal static class Constants
+    static class Constants
     {
         internal static readonly Task CompletedTask = Task.FromResult(0);
         internal const string SendFileAsyncKey = "sendfile.SendAsync";
