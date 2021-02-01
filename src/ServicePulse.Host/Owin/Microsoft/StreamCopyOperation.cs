@@ -9,14 +9,14 @@ namespace ServicePulse.Host.Owin.Microsoft
 
     public class StreamCopyOperation
     {
-        private readonly TaskCompletionSource<object> tcs;
-        private readonly Stream source;
-        private readonly Stream destination;
-        private readonly byte[] buffer;
-        private readonly AsyncCallback readCallback;
-        private readonly AsyncCallback writeCallback;
-        private long? bytesRemaining;
-        private CancellationToken cancel;
+        readonly TaskCompletionSource<object> tcs;
+        readonly Stream source;
+        readonly Stream destination;
+        readonly byte[] buffer;
+        readonly AsyncCallback readCallback;
+        readonly AsyncCallback writeCallback;
+        long? bytesRemaining;
+        CancellationToken cancel;
 
         internal StreamCopyOperation(
           Stream source,
@@ -49,36 +49,39 @@ namespace ServicePulse.Host.Owin.Microsoft
             this.bytesRemaining = bytesRemaining;
             this.cancel = cancel;
             this.buffer = buffer;
-            this.tcs = new TaskCompletionSource<object>();
-            this.readCallback = this.ReadCallback;
-            this.writeCallback = this.WriteCallback;
+            tcs = new TaskCompletionSource<object>();
+            readCallback = ReadCallback;
+            writeCallback = WriteCallback;
         }
 
         internal Task Start()
         {
             ReadNextSegment();
-            return (Task)tcs.Task;
+            return tcs.Task;
         }
 
-        private void Complete()
+        void Complete()
         {
             tcs.TrySetResult(null);
         }
 
-        private bool CheckCancelled()
+        bool CheckCancelled()
         {
             if (!cancel.IsCancellationRequested)
+            {
                 return false;
+            }
+
             tcs.TrySetCanceled();
             return true;
         }
 
-        private void Fail(Exception ex)
+        void Fail(Exception ex)
         {
             tcs.TrySetException(ex);
         }
 
-        private void ReadNextSegment()
+        void ReadNextSegment()
         {
             if (bytesRemaining.HasValue && bytesRemaining.Value <= 0L)
             {
@@ -87,15 +90,24 @@ namespace ServicePulse.Host.Owin.Microsoft
             else
             {
                 if (CheckCancelled())
+                {
                     return;
+                }
+
                 try
                 {
                     var count = buffer.Length;
                     if (bytesRemaining.HasValue)
+                    {
                         count = (int)Math.Min(bytesRemaining.Value, count);
+                    }
+
                     var asyncResult = source.BeginRead(buffer, 0, count, readCallback, null);
                     if (!asyncResult.CompletedSynchronously)
+                    {
                         return;
+                    }
+
                     WriteToOutputStream(source.EndRead(asyncResult));
                 }
                 catch (Exception ex)
@@ -105,10 +117,13 @@ namespace ServicePulse.Host.Owin.Microsoft
             }
         }
 
-        private void ReadCallback(IAsyncResult async)
+        void ReadCallback(IAsyncResult async)
         {
             if (async.CompletedSynchronously)
+            {
                 return;
+            }
+
             try
             {
                 WriteToOutputStream(source.EndRead(async));
@@ -119,7 +134,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             }
         }
 
-        private void WriteToOutputStream(int count)
+        void WriteToOutputStream(int count)
         {
             long num = count;
             if (bytesRemaining.HasValue)
@@ -129,31 +144,40 @@ namespace ServicePulse.Host.Owin.Microsoft
             }
             if (count == 0)
             {
-                this.Complete();
+                Complete();
             }
             else
             {
-                if (this.CheckCancelled())
+                if (CheckCancelled())
+                {
                     return;
+                }
+
                 try
                 {
                     var asyncResult = destination.BeginWrite(buffer, 0, count, writeCallback, null);
                     if (!asyncResult.CompletedSynchronously)
+                    {
                         return;
+                    }
+
                     destination.EndWrite(asyncResult);
                     ReadNextSegment();
                 }
                 catch (Exception ex)
                 {
-                    this.Fail(ex);
+                    Fail(ex);
                 }
             }
         }
 
-        private void WriteCallback(IAsyncResult async)
+        void WriteCallback(IAsyncResult async)
         {
             if (async.CompletedSynchronously)
+            {
                 return;
+            }
+
             try
             {
                 destination.EndWrite(async);

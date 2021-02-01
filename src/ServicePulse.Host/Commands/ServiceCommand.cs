@@ -8,7 +8,7 @@
     using System.ServiceProcess;
     using Hosting;
 
-    internal abstract class ServiceCommand : AbstractCommand
+    abstract class ServiceCommand : AbstractCommand
     {
         readonly Action<TransactedInstaller> action;
 
@@ -54,7 +54,7 @@
                 var assembly = Assembly.GetEntryAssembly();
 
                 var path = string.Format("/assemblypath={0}", assembly.Location);
-                string[] commandLine = {path};
+                string[] commandLine = { path };
 
                 var context = new InstallContext(null, commandLine);
                 transactedInstaller.Context = context;
@@ -90,6 +90,9 @@
                 case StartMode.Delay:
                     installer.StartType = ServiceStartMode.Automatic;
                     installer.DelayedAutoStart = true;
+                    break;
+
+                default:
                     break;
             }
         }

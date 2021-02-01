@@ -1,5 +1,16 @@
 ﻿namespace ServicePulse.Host.Commands
 {
+#if DEBUG
+    using Hosting;
+
+    class RemoveDeprecatedOveridesCommand : AbstractCommand
+    {
+        public override void Execute(HostArguments args)
+        {
+
+        }
+    }
+#else
     using System.IO;
     using Hosting;
 
@@ -7,9 +18,9 @@
     {
         public override void Execute(HostArguments args)
         {
-#if !DEBUG
+
             DeleteAppJsFile(args);
-#endif
+
         }
 
         static void DeleteAppJsFile(HostArguments args)
@@ -34,4 +45,5 @@
             }
         }
     }
+#endif
 }

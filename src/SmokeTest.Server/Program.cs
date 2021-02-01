@@ -32,7 +32,9 @@ class Program
 
             var key = Console.ReadKey();
             Console.WriteLine();
+#pragma warning disable IDE0010 // Add missing cases
             switch (key.Key)
+#pragma warning restore IDE0010 // Add missing cases
             {
                 case ConsoleKey.A:
                     emulateFailures = true;
@@ -50,7 +52,7 @@ class Program
                     Console.WriteLine("Option not valid, Try again.");
                     break;
             }
-        } 
+        }
         while (!exit);
 
         await enpointInstance.Stop();

@@ -18,15 +18,18 @@ namespace ServicePulse.Host.Owin.Microsoft
         {
             var extension = Path.GetExtension(subpath);
             if (extension != null)
+            {
                 return Mappings.TryGetValue(extension, out contentType);
-            contentType = (string)null;
+            }
+
+            contentType = null;
             return false;
         }
 
         /// <summary>
         /// The cross reference table of file extensions and content-types.
         /// </summary>
-        private static readonly Dictionary<string, string> Mappings = new Dictionary<string, string>()
+        static readonly Dictionary<string, string> Mappings = new Dictionary<string, string>()
         {
             {
                 ".323",

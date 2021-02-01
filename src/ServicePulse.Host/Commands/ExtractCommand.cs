@@ -6,7 +6,7 @@
     using System.Reflection;
     using Hosting;
 
-    internal class ExtractCommand : AbstractCommand
+    class ExtractCommand : AbstractCommand
     {
         public override void Execute(HostArguments args)
         {

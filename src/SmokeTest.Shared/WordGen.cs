@@ -8,7 +8,7 @@ public static class WordGen
         var words = wordblob.Split(' ');
 
         var rand = new Random();
-        var numSentences = rand.Next(maxSentences - minSentences)  + minSentences + 1;
+        var numSentences = rand.Next(maxSentences - minSentences) + minSentences + 1;
         var numWords = rand.Next(maxWords - minWords) + minWords + 1;
 
         var result = new StringBuilder();
@@ -19,7 +19,8 @@ public static class WordGen
             {
                 for (var w = 0; w < numWords; w++)
                 {
-                    if (w > 0) { result.Append(" "); }
+                    if (w > 0)
+                    { result.Append(" "); }
                     result.Append(words[rand.Next(words.Length)]);
                 }
             }

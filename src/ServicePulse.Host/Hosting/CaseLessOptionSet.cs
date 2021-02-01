@@ -10,7 +10,10 @@ namespace ServicePulse.Host.Hosting
         protected override void InsertItem(int index, Option item)
         {
             if (item.Prototype.ToLower() != item.Prototype)
+            {
                 throw new ArgumentException("prototypes must be lower-case!");
+            }
+
             base.InsertItem(index, item);
         }
 
@@ -21,8 +24,7 @@ namespace ServicePulse.Host.Hosting
 
         protected override bool Parse(string option, OptionContext c)
         {
-            string flag, name, sep, value;
-            var haveParts = GetOptionParts(option, out flag, out name, out sep, out value);
+            var haveParts = GetOptionParts(option, out string flag, out string name, out string sep, out string value);
             var newOption = option;
 
             if (haveParts)

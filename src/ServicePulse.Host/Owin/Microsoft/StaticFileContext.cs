@@ -9,29 +9,27 @@ namespace ServicePulse.Host.Owin.Microsoft
     using global::Microsoft.Owin;
     using SendFileFunc = System.Func<string, long, long?, System.Threading.CancellationToken, System.Threading.Tasks.Task>;
 
-    internal struct StaticFileContext
+    struct StaticFileContext
     {
-        private readonly IOwinContext context;
-        private readonly IOwinRequest request;
-        private readonly IOwinResponse response;
-        private string method;
-        private bool isGet;
-        private string contentType;
-        private IFileInfo fileInfo;
-        private long length;
-        private DateTime lastModified;
-        private string lastModifiedString;
-        private string etag;
-        private string etagQuoted;
+        readonly IOwinRequest request;
+        readonly IOwinResponse response;
+        string method;
+        bool isGet;
+        string contentType;
+        IFileInfo fileInfo;
+        long length;
+        DateTime lastModified;
+        string lastModifiedString;
+        string etag;
+        string etagQuoted;
 
-        private PreconditionState ifMatchState;
-        private PreconditionState ifNoneMatchState;
-        private PreconditionState ifModifiedSinceState;
-        private PreconditionState ifUnmodifiedSinceState;
+        PreconditionState ifMatchState;
+        PreconditionState ifNoneMatchState;
+        PreconditionState ifModifiedSinceState;
+        PreconditionState ifUnmodifiedSinceState;
 
         public StaticFileContext(IOwinContext context)
         {
-            this.context = context;
             request = context.Request;
             response = context.Response;
 
@@ -41,7 +39,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             contentType = null;
             fileInfo = null;
             length = 0;
-            lastModified = default(DateTime);
+            lastModified = default;
             etag = null;
             etagQuoted = null;
             lastModifiedString = null;
@@ -93,7 +91,7 @@ namespace ServicePulse.Host.Owin.Microsoft
             ComputeIfModifiedSince();
         }
 
-        private void ComputeIfMatch()
+        void ComputeIfMatch()
         {
             // 14.24 If-Match
             IList<string> ifMatch = request.Headers.GetCommaSeparatedValues(Constants.IfMatch); // Removes quotes
@@ -128,12 +126,12 @@ namespace ServicePulse.Host.Owin.Microsoft
             }
         }
 
-        private static bool TryParseHttpDate(string dateString, out DateTime parsedDate)
+        static bool TryParseHttpDate(string dateString, out DateTime parsedDate)
         {
-            return DateTime.TryParseExact(dateString, "r", (IFormatProvider)CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
+            return DateTime.TryParseExact(dateString, "r", CultureInfo.InvariantCulture, DateTimeStyles.None, out parsedDate);
         }
 
-        private void ComputeIfModifiedSince()
+        void ComputeIfModifiedSince()
         {
             // 14.25 If-Modified-Since
             var ifModifiedSinceString = request.Headers.Get(Constants.IfModifiedSince);
@@ -184,7 +182,7 @@ namespace ServicePulse.Host.Owin.Microsoft
                 ifUnmodifiedSinceState);
         }
 
-        private static PreconditionState GetMaxPreconditionState(params PreconditionState[] states)
+        static PreconditionState GetMaxPreconditionState(params PreconditionState[] states)
         {
             var max = PreconditionState.Unspecified;
             foreach (var t in states)

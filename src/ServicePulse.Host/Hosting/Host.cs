@@ -5,7 +5,7 @@
     using Microsoft.Owin.Hosting;
     using ServicePulse.Host.Owin;
 
-    internal class Host : ServiceBase
+    class Host : ServiceBase
     {
         public Host(HostArguments args)
         {

@@ -26,7 +26,7 @@
         public void Run_Args_No_Arguments_Is_Valid()
         {
             // No Arguments
-            args = new string[] {};
+            args = new string[] { };
             var hostArgs = new HostArguments(args);
             Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Run, "With no args execution mode should be run");
             Assert.IsFalse(hostArgs.Help, "With no args help should not be triggered");
@@ -49,7 +49,7 @@
         [Test]
         public void Run_Args_With_Invalid_URL()
         {
-           
+
             args = new[]
             {
                 $"--url={invalidUrl}"
@@ -61,7 +61,7 @@
         [Test]
         public void Run_Args_Extra_Args_Trigger_help()
         {
-            
+
             args = new[]
             {
                 $"--url={validUrl}",
@@ -70,7 +70,7 @@
             var hostArgs = new HostArguments(args);
             Assert.IsTrue(hostArgs.Help, "With extra arguments help should be triggered");
         }
-        
+
         [Test]
         public void Extract_Args_With_Defaults()
         {
@@ -125,7 +125,7 @@
             Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
             Assert.IsTrue(hostArgs.OutputPath.Equals(path, StringComparison.Ordinal), "outpath argument was not parsed correctly");
         }
-        
+
         [Test]
         public void Extract_Args_With_All_Params_Specified()
         {

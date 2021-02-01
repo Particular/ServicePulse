@@ -1,10 +1,8 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Owin;
-using NUnit.Framework;
-using ServicePulse.Host.Owin;
-
-namespace ServicePulse.Host.Tests.Owin
+﻿namespace ServicePulse.Host.Tests.Owin
 {
+    using NUnit.Framework;
+    using ServicePulse.Host.Owin;
+
     [TestFixture]
     public class UrlHelperTests
     {

@@ -38,18 +38,16 @@ namespace ServicePulse.Host.Owin.Microsoft
 
     public class EmbeddedResourceFileInfo : IFileInfo
     {
-        private readonly Assembly assembly;
-        private readonly string resourcePath;
-        private readonly string fileName;
+        readonly Assembly assembly;
+        readonly string resourcePath;
 
-        private long? length;
+        long? length;
 
         public EmbeddedResourceFileInfo(Assembly assembly, string resourcePath, string fileName, DateTime lastModified)
         {
             this.assembly = assembly;
             LastModified = lastModified;
             this.resourcePath = resourcePath;
-            this.fileName = fileName;
         }
 
         public long Length
@@ -89,7 +87,7 @@ namespace ServicePulse.Host.Owin.Microsoft
 
     public class PhysicalFileInfo : IFileInfo
     {
-        private readonly FileInfo info;
+        readonly FileInfo info;
 
         public PhysicalFileInfo(FileInfo info)
         {
@@ -110,10 +108,10 @@ namespace ServicePulse.Host.Owin.Microsoft
         {
             // Note: Buffer size must be greater than zero, even if the file size is zero.
             return new FileStream(
-                PhysicalPath, 
-                FileMode.Open, 
-                FileAccess.Read, 
-                FileShare.ReadWrite, 
+                PhysicalPath,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.ReadWrite,
                 1024 * 64,
                 FileOptions.Asynchronous | FileOptions.SequentialScan);
         }

@@ -5,7 +5,7 @@
     using System.Text.RegularExpressions;
     using Hosting;
 
-    internal class ExtractAndUpdateConstantsCommand : AbstractCommand
+    class ExtractAndUpdateConstantsCommand : AbstractCommand
     {
         public override void Execute(HostArguments args)
         {
@@ -40,7 +40,7 @@
                 }
             }
         }
-        
+
         public static void UpdateConfig(string directoryPath, string serviceControlUrl)
         {
             var appJsPath = Path.Combine(directoryPath, "js/app.constants.js");

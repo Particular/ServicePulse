@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Particular.CodeRules" Version="0.8.0" PrivateAssets="All" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SmokeTest.Shared\SmokeTest.Shared.csproj" />
   </ItemGroup>
 

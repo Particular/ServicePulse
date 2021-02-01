@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using Microsoft.Owin;
-using NUnit.Framework;
-using ServicePulse.Host.Owin;
-
-namespace ServicePulse.Host.Tests.Owin
+﻿namespace ServicePulse.Host.Tests.Owin
 {
+    using System.Threading.Tasks;
+    using Microsoft.Owin;
+    using NUnit.Framework;
+    using ServicePulse.Host.Owin;
+
     [TestFixture]
     public class IndexUrlRewriterMiddlewareTests
     {
@@ -21,7 +21,7 @@ namespace ServicePulse.Host.Tests.Owin
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual(("/index.html"), context.Request.Path.Value);
+            Assert.AreEqual("/index.html", context.Request.Path.Value);
         }
 
         [Test]
@@ -37,7 +37,7 @@ namespace ServicePulse.Host.Tests.Owin
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual(("/something"), context.Request.Path.Value);
+            Assert.AreEqual("/something", context.Request.Path.Value);
         }
 
         public class DummyNext : OwinMiddleware

@@ -11,16 +11,16 @@ namespace ServicePulse.Host.Hosting
     using System.ServiceProcess;
     using System.Text;
     using Commands;
-    
-    internal class HostArguments
+
+    class HostArguments
     {
         public ExecutionMode executionMode = ExecutionMode.Run;
 
         public HostArguments(string[] args)
         {
-            commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand),  typeof(RunCommand) };
-            startMode = StartMode.Automatic;
-            url = "http://localhost:8081";
+            Commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(RunCommand) };
+            StartMode = StartMode.Automatic;
+            Url = "http://localhost:8081";
             ServiceName = "Particular.ServicePulse";
             DisplayName = "Particular ServicePulse";
             Description = "An Operations Manager's Best Friend in Particular.";
@@ -28,12 +28,12 @@ namespace ServicePulse.Host.Hosting
             Username = string.Empty;
             Password = string.Empty;
             OutputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
-            
+
 #if DEBUG
             if (Debugger.IsAttached)
             {
                 OutputPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\app"));
-            }     
+            }
 #endif
             var runOptions = new CaseLessOptionSet
             {
@@ -42,8 +42,8 @@ namespace ServicePulse.Host.Hosting
                 },
                 {
                     "url=",
-                    @"Configures ServicePulse to listen on the specified url.", 
-                    s => { url = s; }
+                    @"Configures ServicePulse to listen on the specified url.",
+                    s => { Url = s; }
                 }
             };
 
@@ -54,26 +54,26 @@ namespace ServicePulse.Host.Hosting
                 },
                 {
                     "e|extract",
-                    @"Extract files to be installed in a Web Server.", 
+                    @"Extract files to be installed in a Web Server.",
                     s =>
                     {
-                        commands = new List<Type> { typeof(ExtractCommand), typeof(ExtractAndUpdateConstantsCommand) };
+                        Commands = new List<Type> { typeof(ExtractCommand), typeof(ExtractAndUpdateConstantsCommand) };
                         executionMode = ExecutionMode.Extract;
                     }
                 },
                 {
                     "servicecontrolurl=",
-                    @"Configures the service control url.", 
-                    s => { serviceControlUrl = s; }
+                    @"Configures the service control url.",
+                    s => { ServiceControlUrl = s; }
                 },
                 {
                     "servicecontrolmonitoringurl=",
-                    @"Configures the service control monitoring url.", 
-                    s => { serviceControlMonitoringUrl = s; }
+                    @"Configures the service control monitoring url.",
+                    s => { ServiceControlMonitoringUrl = s; }
                 },
                 {
                     "outpath=",
-                    @"The output path to extract files to. By default it extracts to the current directory.", 
+                    @"The output path to extract files to. By default it extracts to the current directory.",
                     s => { OutputPath = s; }
                 }
             };
@@ -85,16 +85,16 @@ namespace ServicePulse.Host.Hosting
                 },
                 {
                     "u|uninstall",
-                    @"Uninstall the endpoint as a Windows service.", 
+                    @"Uninstall the endpoint as a Windows service.",
                     s =>
                     {
-                        commands = new List<Type> {typeof(UninstallCommand)};
+                        Commands = new List<Type> {typeof(UninstallCommand)};
                         executionMode = ExecutionMode.Uninstall;
                     }
                 },
                 {
                     "servicename=",
-                    @"Specify the service name for the installed service.", 
+                    @"Specify the service name for the installed service.",
                     s => { ServiceName = s; }
                 }
             };
@@ -108,87 +108,87 @@ namespace ServicePulse.Host.Hosting
                 },
                 {
                     "i|install",
-                    @"Install the endpoint as a Windows service.", 
+                    @"Install the endpoint as a Windows service.",
                     s =>
                     {
-                        commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(ExtractAndUpdateConstantsCommand), typeof(InstallCommand) };
+                        Commands = new List<Type> { typeof(RemoveDeprecatedOveridesCommand), typeof(ExtractAndUpdateConstantsCommand), typeof(InstallCommand) };
                         executionMode = ExecutionMode.Install;
                     }
                 },
                 {
                     "servicename=",
-                    @"Specify the service name for the installed service.", 
+                    @"Specify the service name for the installed service.",
                     s => { ServiceName = s; }
                 },
                 {
                     "displayname=",
-                    @"Friendly name for the installed service.", 
+                    @"Friendly name for the installed service.",
                     s => { DisplayName = s; }
                 },
                 {
                     "description=",
-                    @"Description for the service.", 
+                    @"Description for the service.",
                     s => { Description = s; }
                 },
                 {
                     "username=",
-                    @"Username for the account the service should run under.", 
+                    @"Username for the account the service should run under.",
                     s => { Username = s; }
                 },
                 {
                     "password=",
-                    @"Password for the service account.", 
+                    @"Password for the service account.",
                     s => { Password = s; }
                 },
                 {
                     "localservice",
-                    @"Run the service with the local service account.", 
+                    @"Run the service with the local service account.",
                     s => { ServiceAccount = ServiceAccount.LocalService; }
                 },
                 {
                     "networkservice",
-                    @"Run the service with the network service permission.", 
+                    @"Run the service with the network service permission.",
                     s => { ServiceAccount = ServiceAccount.NetworkService; }
                 },
                 {
                     "user",
-                    @"Run the service with the specified username and password. Alternative the system will prompt for a valid username and password if values for both the username and password are not specified.", 
+                    @"Run the service with the specified username and password. Alternative the system will prompt for a valid username and password if values for both the username and password are not specified.",
                     s => { ServiceAccount = ServiceAccount.User; }
                 },
                 {
                     "delayed",
-                    @"The service should start automatically (delayed).", 
-                    s => { startMode = StartMode.Delay; }
+                    @"The service should start automatically (delayed).",
+                    s => { StartMode = StartMode.Delay; }
                 },
                 {
                     "autostart",
-                    @"The service should start automatically (default).", 
-                    s => { startMode = StartMode.Automatic; }
+                    @"The service should start automatically (default).",
+                    s => { StartMode = StartMode.Automatic; }
                 },
                 {
                     "disabled",
-                    @"The service should be set to disabled.", 
-                    s => { startMode = StartMode.Disabled; }
+                    @"The service should be set to disabled.",
+                    s => { StartMode = StartMode.Disabled; }
                 },
                 {
                     "manual",
-                    @"The service should be started manually.", 
-                    s => { startMode = StartMode.Manual; }
+                    @"The service should be started manually.",
+                    s => { StartMode = StartMode.Manual; }
                 },
                 {
                     "servicecontrolurl=",
-                    @"Configures the service control url.", 
-                    s => { serviceControlUrl = s; }
+                    @"Configures the service control url.",
+                    s => { ServiceControlUrl = s; }
                 },
                 {
                     "servicecontrolmonitoringurl=",
-                    @"Configures the service control monitoring url.", 
-                    s => { serviceControlMonitoringUrl = s; }
+                    @"Configures the service control monitoring url.",
+                    s => { ServiceControlMonitoringUrl = s; }
                 },
                 {
                     "url=",
-                    @"Configures ServicePulse to listen on the specified url.", 
-                    s => { url = s; }
+                    @"Configures ServicePulse to listen on the specified url.",
+                    s => { Url = s; }
                 }
             };
 
@@ -250,21 +250,19 @@ namespace ServicePulse.Host.Hosting
             {
                 case ExecutionMode.Extract:
                 case ExecutionMode.Install:
-                    // param for sc url is optional. 
+                    // param for sc url is optional.
                     if (!string.IsNullOrEmpty(ServiceControlUrl))
                     {
-                        Uri scUri;
-                        if ((!Uri.TryCreate(ServiceControlUrl, UriKind.Absolute, out scUri)) || (!validProtocols.Contains(scUri.Scheme, StringComparer.OrdinalIgnoreCase)))
+                        if ((!Uri.TryCreate(ServiceControlUrl, UriKind.Absolute, out Uri scUri)) || (!validProtocols.Contains(scUri.Scheme, StringComparer.OrdinalIgnoreCase)))
                         {
                             throw new Exception("The value specified for 'serviceControlUrl' is not a valid URL");
                         }
                     }
 
-                    // param for sc url is optional. 
+                    // param for sc url is optional.
                     if (!string.IsNullOrEmpty(ServiceControlMonitoringUrl))
                     {
-                        Uri scUri;
-                        if ((!Uri.TryCreate(ServiceControlMonitoringUrl, UriKind.Absolute, out scUri)) || (!validProtocols.Contains(scUri.Scheme, StringComparer.OrdinalIgnoreCase)))
+                        if ((!Uri.TryCreate(ServiceControlMonitoringUrl, UriKind.Absolute, out Uri scUri)) || (!validProtocols.Contains(scUri.Scheme, StringComparer.OrdinalIgnoreCase)))
                         {
                             throw new Exception("The value specified for 'serviceControlMonitoringUrl' is not a valid URL");
                         }
@@ -279,41 +277,28 @@ namespace ServicePulse.Host.Hosting
                         throw new Exception("The value specified for 'url' is not a valid URL");
                     }
                     break;
+
+                case ExecutionMode.Uninstall:
+                default:
+                    break;
             }
         }
 
-        public List<Type> Commands
-        {
-            get { return commands; }
-        }
+        public List<Type> Commands { get; private set; }
 
         public bool Help { get; set; }
         public string ServiceName { get; set; }
 
-        public string Url
-        {
-            get { return url; }
-        }
+        public string Url { get; private set; }
 
-        public string ServiceControlUrl
-        {
-            get { return serviceControlUrl; }
-            set { serviceControlUrl = value; }
-        }
+        public string ServiceControlUrl { get; set; }
 
-        public string ServiceControlMonitoringUrl
-        {
-            get { return serviceControlMonitoringUrl; }
-            set { serviceControlMonitoringUrl = value; }
-        }
+        public string ServiceControlMonitoringUrl { get; set; }
 
         public string DisplayName { get; set; }
         public string Description { get; set; }
 
-        public StartMode StartMode
-        {
-            get { return startMode; }
-        }
+        public StartMode StartMode { get; private set; }
 
         public string OutputPath { get; set; }
         public string Username { get; set; }
@@ -353,14 +338,9 @@ namespace ServicePulse.Host.Hosting
         readonly OptionSet extractOptions;
         readonly OptionSet installOptions;
         readonly OptionSet uninstallOptions;
-        List<Type> commands;
-        string serviceControlUrl;
-        string serviceControlMonitoringUrl;
-        StartMode startMode;
-        string url;
     }
 
-    internal enum ExecutionMode
+    enum ExecutionMode
     {
         Install,
         Uninstall,
@@ -368,7 +348,7 @@ namespace ServicePulse.Host.Hosting
         Run
     }
 
-    internal enum StartMode
+    enum StartMode
     {
         Manual,
         Automatic,

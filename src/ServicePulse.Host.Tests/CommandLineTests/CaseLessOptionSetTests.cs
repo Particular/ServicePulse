@@ -7,7 +7,7 @@
     public class CaseLessOptionSetTests
     {
         bool flag;
-        private OptionSet testOptions;
+        OptionSet testOptions;
 
         [SetUp]
         public void Setup()
@@ -21,12 +21,12 @@
                 }
             };
         }
-        
+
         [Test]
         public void LowercaseTestShouldSucceed()
         {
             flag = false;
-            testOptions.Parse(new[] {"-test"});
+            testOptions.Parse(new[] { "-test" });
             Assert.IsTrue(flag, "-test did not parse as a valid option");
         }
 
@@ -65,10 +65,10 @@
         [Test]
         public void Ensure_MultiSet_Option_Work()
         {
-            
+
             const string validUrl = @"http://localhost:1010/sp/";
             var executionMode = ExecutionMode.Run;
-            
+
             var installOptions = new CaseLessOptionSet
             {
                 {

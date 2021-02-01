@@ -1,10 +1,10 @@
 ﻿namespace ServicePulse.Host.Tests
 {
-    using NUnit.Framework;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Text.RegularExpressions;
+    using NUnit.Framework;
 
     [TestFixture]
     public class VerifyAppConstantsJSTextReplacement
@@ -15,7 +15,7 @@
         Regex version_regex = new Regex(@"(version\s*\:\s*['""])(.*?)(['""])");
 
         [Test]
-        public void app_constants_js_validation()
+        public void App_constants_js_validation()
         {
             var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app.constants.js");
             Assert.IsTrue(File.Exists(pathToConfig), "app.constants.js does not exist - this will break installation code");
@@ -23,15 +23,14 @@
             var config = File.ReadAllText(pathToConfig);
             var matchUrl = sc_url_regex.Match(config);
             Assert.IsTrue(matchUrl.Success, "regex failed to match app.constant.js for SC URI update");
-            Uri uri;
 
-            Assert.IsTrue(Uri.TryCreate(matchUrl.Groups[2].Value, UriKind.Absolute, out uri), "regex match found in app.constants.js is not a valid URI");
+            Assert.IsTrue(Uri.TryCreate(matchUrl.Groups[2].Value, UriKind.Absolute, out _), "regex match found in app.constants.js is not a valid URI");
             var matchVersion = version_regex.Match(config);
             Assert.IsTrue(matchVersion.Success, "regex failed to match app.constant.js for the version string");
         }
 
         [Test]
-        public void replace_version_regex_tests()
+        public void Replace_version_regex_tests()
         {
             var configSnippets = new Dictionary<string, (string ConfigSnippet, Regex VersionRegex)>()
             {
@@ -86,11 +85,11 @@
         }
 
         [Test]
-        public void test_regex_match_against_config_variants()
+        public void Test_regex_match_against_config_variants()
         {
             var configVariations = new[]
             {
-                // Standard 1.20.0 config            
+                // Standard 1.20.0 config
                 @"window.defaultConfig = {
                     default_route: '/dashboard',
                     version: '1.20.0',
@@ -98,7 +97,7 @@
                     monitoring_urls: ['http://localhost:33633/']
                 };
                 ",
-                // Standard 1.3 config            
+                // Standard 1.3 config
                 @"angular.module('sc')
                     .constant('version', '1.3.0')
                     .constant('scConfig', {
@@ -118,7 +117,7 @@
                 @"angular.module('sc')
                     .constant('version', '1.3.0')
                     .constant('scConfig', {
-                    service_pulse_url: 
+                    service_pulse_url:
                             'https://platformupdate.particular.net/servicepulse.txt',
                             service_control_url :
                             'http://localhost:33333/api/'
@@ -155,8 +154,7 @@
                 var config = configVariations[i];
                 var match = sc_url_regex.Match(config);
                 Assert.IsTrue(match.Success, string.Format("regex failed on config variation {0} ", i));
-                Uri uri;
-                Assert.IsTrue(Uri.TryCreate(match.Groups[2].Value, UriKind.Absolute, out uri), string.Format("regex match in did not return a URI in config variation {0}", i));
+                Assert.IsTrue(Uri.TryCreate(match.Groups[2].Value, UriKind.Absolute, out _), string.Format("regex match in did not return a URI in config variation {0}", i));
             }
         }
     }

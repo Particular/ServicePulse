@@ -19,7 +19,7 @@ abstract class Monitor : CustomCheck
     {
         try
         {
-            using (HttpClient client = new HttpClient
+            using (var client = new HttpClient
             {
                 Timeout = TimeSpan.FromSeconds(3),
             })

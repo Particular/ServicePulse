@@ -4,7 +4,7 @@
     using System.Configuration.Install;
     using Microsoft.Win32;
 
-    internal class HostInstaller : Installer
+    class HostInstaller : Installer
     {
         public HostInstaller(HostArguments settings, string arguments, Installer[] installers)
         {

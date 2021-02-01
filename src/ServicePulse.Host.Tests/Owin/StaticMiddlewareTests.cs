@@ -1,11 +1,11 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Owin;
-using NUnit.Framework;
-using ServicePulse.Host.Owin;
-
-namespace ServicePulse.Host.Tests.Owin
+﻿namespace ServicePulse.Host.Tests.Owin
 {
+    using System.IO;
+    using System.Threading.Tasks;
+    using Microsoft.Owin;
+    using NUnit.Framework;
+    using ServicePulse.Host.Owin;
+
     [TestFixture]
     public class StaticMiddlewareTests
     {
@@ -26,7 +26,7 @@ namespace ServicePulse.Host.Tests.Owin
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual(("application/javascript"), context.Response.ContentType);
+            Assert.AreEqual("application/javascript", context.Response.ContentType);
         }
 
         [Test]
@@ -87,7 +87,7 @@ namespace ServicePulse.Host.Tests.Owin
             await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
             Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
-            Assert.AreEqual(("text/html"), context.Response.ContentType);
+            Assert.AreEqual("text/html", context.Response.ContentType);
         }
 
         [Test]
@@ -109,7 +109,7 @@ namespace ServicePulse.Host.Tests.Owin
             await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
             Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
-            Assert.AreEqual(("text/html"), context.Response.ContentType);
+            Assert.AreEqual("text/html", context.Response.ContentType);
         }
 
 
@@ -132,7 +132,7 @@ namespace ServicePulse.Host.Tests.Owin
             await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 8586; // this is the messageEditorModal.controller.js file embedded into ServicePulse.Host.exe
             Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
-            Assert.AreEqual(("application/javascript"), context.Response.ContentType);
+            Assert.AreEqual("application/javascript", context.Response.ContentType);
         }
 
         [Test]
@@ -154,7 +154,7 @@ namespace ServicePulse.Host.Tests.Owin
             await middleware.Invoke(context);
             const long sizeOfFileOnDisk = 231; // this is the /app/js/app.constants.js file
             Assert.AreEqual(sizeOfFileOnDisk, context.Response.ContentLength);
-            Assert.AreEqual(("application/javascript"), context.Response.ContentType);
+            Assert.AreEqual("application/javascript", context.Response.ContentType);
         }
 
         [Test]
