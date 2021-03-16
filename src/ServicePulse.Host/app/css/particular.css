@@ -1433,6 +1433,7 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     width: 74px;
     top: -2px;
     left: 11px;
+    line-height: 1;
 }
 
 .table-header p {
