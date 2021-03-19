@@ -127,6 +127,22 @@
             }
         };
 
+        vm.selectAllMessages = function() {
+            var selectAll = true;
+            if(vm.selectedIds.length > 0) {
+                selectAll = false;
+            }
+            vm.selectedIds = [];
+            vm.archives.forEach(function(item) {
+                if (selectAll) {
+                    item.selected = true;
+                    vm.selectedIds.push(item.id);
+                } else {
+                    item.selected = false;
+                }
+            });
+        };
+
         vm.unarchiveSelected = function () {
             archivedMessageService.restoreMessagesFromArchive(vm.selectedIds, 'Request to restore message accepted', 'Request to restore message rejected')
                 .then(function (message) {
