@@ -11,7 +11,7 @@
 </div>
 
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-    <section name="connections">
+    <section name="alerting">
 
         <configuration-tabs></configuration-tabs>
 
@@ -21,62 +21,85 @@
                     <div class="col-sm-12">
 
                         <form novalidate>
-                            <div class="row connection">
-                                <h3>ServiceControl</h3>
 
-                                <div class="col-sm-7 form-group">
-                                    <label for="serviceControlUrl">CONNECTION URL<span
-                                            ng-show="vm.unableToConnectToServiceControl" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span></label>
-                                    <input type="text" id="serviceControlUrl" name="serviceControlUrl"
-                                        ng-model="vm.configuredServiceControlUrl" class="form-control" style="color: #000;" required />
+                            <div class="row alerting">
+                                <div class="col-sm-5 form-group">
+
+                                </div>
+                            </div>
+
+                            <div class="row alerting">
+                                <h3>SMTP Server</h3>
+                                <div class="col-sm-5 form-group">
+                                    <label for="smtpServerAddress">Address</label>
+                                    <input type="text" id="smtpServerAddress" name="smtpServerAddress"
+                                           ng-model="vm.smtpServerAddress" class="form-control" style="color: #000;" required/>
                                 </div>
 
-                                <div class="col-sm-5 no-side-padding">
-                                    <button class="btn btn-default btn-secondary btn-connection-test" ng-class="{ disabled: !vm.configuredServiceControlUrl }" type="button"
-                                        ng-click="vm.testServiceControlUrl()">Test</button>
-                                    <span class="connection-test connection-testing"
-                                        ng-show="vm.testingServiceControl"><i
-                                            class="glyphicon glyphicon-refresh rotate"></i> Testing</span>
-                                    <span class="connection-test connection-successful"
-                                        ng-show="vm.serviceControlValid == true && !vm.testingServiceControl"><i
-                                            class="fa fa-check"></i> Connection successful</span>
-                                    <span class="connection-test connection-failed"
-                                        ng-show="vm.serviceControlValid == false && !vm.testingServiceControl"><i
-                                            class="fa fa-exclamation-triangle"></i> Connection failed</span>
+                            </div>
+                            <div class="row alerting">
+                                <div class="col-sm-5 form-group">
+                                    <label for="smtpServerPort">Port</label>
+                                    <input type="text" id="smtpServerPort" name="smtpServerPort"
+                                           ng-model="vm.smtpServerPort" class="form-control" style="color: #000;" required/>
+                                </div>
+
+                            </div>
+                            <div class="row alerting">
+                                <h3>Security</h3>
+                                <div class="col-sm-5 form-group">
+                                    <label for="account">Account</label>
+                                    <input type="text" id="account" name="account"
+                                           ng-model="vm.account" class="form-control" required/>
                                 </div>
 
                             </div>
 
-                            <div class="row connection">
-                                <h3>ServiceControl Monitoring</h3>
-                                <div class="col-sm-7 form-group">
-                                    <label for="monitoringUrl">CONNECTION URL <span class="auxilliary-label">(OPTIONAL)</span><span
-                                        ng-show="vm.unableToConnectToMonitoring" class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect</span>
+                            <div class="row alerting">
+                                <div class="col-sm-5 form-group">
+                                    <label for="account">Password</label>
+                                    <input type="text" id="password" name="password"
+                                           ng-model="vm.password" class="form-control" required/>
+                                </div>
+                            </div>
+
+                            <div class="row alerting">
+                                <div class="col-sm-5 form-group">
+                                    <input type="checkbox" id="enableSSL" name="enableSSL"
+                                           ng-model="vm.enableSSL" class="check-label"/>
+                                    <label for="enableSSL">Enable SSL</label>
+                                </div>
+                            </div>
+
+                            <div class="row alerting">
+                                <div class="col-sm-5 form-group">
+                                    <button class="btn btn-default btn-secondary btn-email-test" type="button" ng-click="vm.sendTestEmail()">Generate test email</button>
+                                </div>
+                            </div>
+
+
+                            <div class="row">
+                                <div class="col-xs-1">
+                                    <button class="btn btn-primary" type="button" ng-click="vm.save()">Save</button>
+                                </div>
+                                <div class="col-xs-1">
+                                    <div class="onoffswitch alerting-toogle">
+                                        <input type="checkbox" id="onoffswitch" name="onoffswitch" class="onoffswitch-checkbox" ng-click="vm.toogleAlerting()" ng-checked="vm.alertingEnabled">
+                                        <label class="onoffswitch-label" for="onoffswitch">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
                                         </label>
-                                    <input type="text" id="monitoringUrl" name="monitoringUrl"
-                                        ng-model="vm.configuredMonitoringUrl" class="form-control" required />
+                                    </div>
                                 </div>
-
-                                <div class="col-sm-5 no-side-padding">
-                                    <button class="btn btn-default btn-secondary btn-connection-test" ng-class="{ disabled: !vm.configuredMonitoringUrl }" type="button"
-                                        ng-click="vm.testMonitoringUrl()">Test</button>
-                                    <span class="connection-test connection-testing" ng-show="vm.testingMonitoring"><i
-                                            class="glyphicon glyphicon-refresh rotate"></i> Testing</span>
-                                    <span class="connection-test connection-successful"
-                                        ng-show="vm.monitoringValid == true && !vm.testingMonitoring"><i
-                                            class="fa fa-check"></i> Connection successful</span>
-                                    <span class="connection-test connection-failed"
-                                        ng-show="vm.monitoringValid == false && !vm.testingMonitoring"><i
-                                            class="fa fa-exclamation-triangle"></i> Connection failed</span>
-                                </div>
-
                             </div>
 
-                            <button class="btn btn-primary" type="button" ng-click="vm.save()">Save</button>
-                            <span class="connection-test connection-successful hide"><i class="fa fa-check"></i>
-                                Connection saved</span>
-                            <span class="connection-test connection-failed hide"><i
-                                    class="fa fa-exclamation-triangle"></i> Unable to save</span>
+                            <span class="connection-test connection-successful hide">
+                                <i class="fa fa-check"></i>
+                                Connection saved
+                            </span>
+                            <span class="connection-test connection-failed hide">
+                                <i class="fa fa-exclamation-triangle"></i> Unable to save
+                            </span>
                         </form>
 
                     </div>

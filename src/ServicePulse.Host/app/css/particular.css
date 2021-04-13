@@ -1252,6 +1252,10 @@ input#immediatelyRetry {
     visibility: visible;
 }
 
+input#enableSSL {
+    visibility: visible;
+}
+
 .checkbox {
     margin-top: 1px;
     margin-left: 1px;
@@ -3227,4 +3231,8 @@ button[ng-click="vm.toggleSort()"] div {
     font-size: 14px;
     font-weight: bold;
     margin: 20px 0 10px 15px;
+}
+
+.alerting-toogle {
+    margin-top: 30px
 }
