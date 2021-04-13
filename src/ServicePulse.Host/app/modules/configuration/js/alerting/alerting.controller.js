@@ -11,29 +11,36 @@
         var vm = this;
         var notifier = notifyService();
 
-        vm.smtpServerAddress = "";
-        vm.smtpServerPort = "";
-        vm.account = "";
-        vm.password = "";
-        vm.enableSSL = false;
-        vm.alertingEnabled = true;
+        notifier.subscribe($scope, (event, response) => {
+            vm.settings = response.alerting;
+        }, 'AlertingConfigurationUpdated');
+
+        function refreshData() {
+            alertingService.getSettings().then((alerting) => {
+                vm.settings = alerting.data;
+            });
+        }
+
+        vm.settings = {};
 
         vm.sendTestEmail = () => {
             alert('send test email');
         };
 
         vm.toogleAlerting = () => {
-            vm.alertingEnabled = !vm.alertingEnabled;
+            vm.settings.alerting_enabled = !vm.settings.alerting_enabled;
         };
 
         vm.save = () => {
-            alert('save');
+            alertingService.updateAlertingSettings('test');
         };
+
+        refreshData();
     }
 
     controller.$inject = [
         '$scope',
-        'connectionsManager',
+        'alertingService',
         '$http',
         'notifyService',
         'connectionsStatus',

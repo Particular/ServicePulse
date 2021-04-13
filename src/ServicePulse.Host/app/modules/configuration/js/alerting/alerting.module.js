@@ -5,5 +5,6 @@
 
     require('./alerting.route');
     require('./alerting.controller');
+    require('./alerting.service');
 
 }(window, window.angular));
