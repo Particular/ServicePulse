@@ -23,7 +23,7 @@
         };
 
         vm.toogleAlerting = () => {
-            alert('toogle');
+            vm.alertingEnabled = !vm.alertingEnabled;
         };
 
         vm.save = () => {
