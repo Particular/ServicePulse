@@ -41,13 +41,15 @@
         getData();
 
         return {
-            updateSettings: function(smtpServerAddress, smtpServerPort, enableAuthentication, authenticationAccount, authenticationPassword, enableSSL, success, error) {
+            updateSettings: function(settings, success, error) {
                 var url = uri.join(scu, 'alerting');
-                var promise = sendPromise(url,
-                    'POST',
-                    { "smtpserveradress": smtpServerAddress},
-                    success,
-                    error);
+                var promise = sendPromise(url, 'POST', settings, success, error);
+
+                return promise;
+            },
+            sendTestEmail: function(success, error) {
+                var url = uri.join(scu, 'alerting/send-test-email');
+                var promise = sendPromise(url, 'POST', {}, success, error);
 
                 return promise;
             },

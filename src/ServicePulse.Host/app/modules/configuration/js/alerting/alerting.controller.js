@@ -23,16 +23,16 @@
 
         vm.settings = {};
 
-        vm.sendTestEmail = () => {
-            alert('send test email');
-        };
-
         vm.toogleAlerting = () => {
             vm.settings.alerting_enabled = !vm.settings.alerting_enabled;
         };
 
         vm.save = () => {
-            alertingService.updateAlertingSettings('test');
+            alertingService.updateSettings(vm.settings);
+        };
+
+        vm.sendTestEmail = () => {
+            alertingService.sendTestEmail();
         };
 
         refreshData();
