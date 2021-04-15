@@ -6,6 +6,7 @@
         alertingService,
         $http,
         notifyService,
+        toastService,
         uri) {
 
         var vm = this;
@@ -29,12 +30,17 @@
 
         vm.save = (alertingForm) => {
             if (alertingForm.$valid) {
-                alertingService.updateSettings(vm.settings);
+                alertingService.updateSettings(vm.settings).then(
+                    () => toastService.showInfo('Alerting settings updated.'),
+                    () => toastService.showError('Could not update settings.'));
             }
         };
 
         vm.sendTestEmail = () => {
-            alertingService.sendTestEmail();
+            alertingService.sendTestEmail().then(
+                () => toastService.showInfo('Test email sent. Check you inbox.'),
+                () => toastService.showError('Could not send test email. Please make sure the configuration is correct.')
+            );
         };
 
         refreshData();
@@ -45,6 +51,7 @@
         'alertingService',
         '$http',
         'notifyService',
+        'toastService',
         'connectionsStatus',
         'uri',
     ];
