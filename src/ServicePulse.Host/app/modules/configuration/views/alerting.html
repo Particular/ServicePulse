@@ -20,11 +20,27 @@
                 <div class="row">
                     <div class="col-sm-12">
 
-                        <form novalidate>
+                        <form name="alertingForm" novalidate>
 
                             <div class="row alerting">
+                                <h3>Notifications</h3>
+                                <div class="col-sm-4 form-group">
+                                    <h4>Enabled</h4>
+                                </div>
+                                <div class="col-xs-1">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" id="onoffswitch" name="onoffswitch" class="onoffswitch-checkbox" ng-click="vm.toogleAlerting()" ng-checked="vm.settings.alerting_enabled">
+                                        <label class="onoffswitch-label" for="onoffswitch">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row alerting">
                                 <div class="col-sm-5 form-group">
-
+                                    <button class="btn btn-secondary" type="button" ng-click="vm.sendTestEmail()">Send a Test Email</button>
                                 </div>
                             </div>
 
@@ -33,7 +49,7 @@
                                 <div class="col-sm-5 form-group">
                                     <label for="smtpServerAddress">Address</label>
                                     <input type="text" id="smtpServerAddress" name="smtpServerAddress" ng-readonly="!vm.settings.alerting_enabled"
-                                           ng-model="vm.settings.smtp_server" class="form-control" style="color: #000;"/>
+                                           ng-model="vm.settings.smtp_server" class="form-control" required/>
                                 </div>
 
                             </div>
@@ -41,7 +57,7 @@
                                 <div class="col-sm-5 form-group">
                                     <label for="smtpServerPort">Port</label>
                                     <input type="text" id="smtpServerPort" name="smtpServerPort" ng-readonly="!vm.settings.alerting_enabled"
-                                           ng-model="vm.settings.smtp_port" class="form-control" style="color: #000;"/>
+                                           ng-model="vm.settings.smtp_port" class="form-control" required/>
                                 </div>
 
                             </div>
@@ -50,7 +66,7 @@
                                 <div class="col-sm-5 form-group">
                                     <label for="account">Account</label>
                                     <input type="text" id="account" name="account" ng-readonly="!vm.settings.alerting_enabled"
-                                           ng-model="vm.settings.authorization_account" class="form-control"/>
+                                           ng-model="vm.settings.authentication_account" class="form-control"/>
                                 </div>
 
                             </div>
@@ -59,7 +75,7 @@
                                 <div class="col-sm-5 form-group">
                                     <label for="account">Password</label>
                                     <input type="password" id="password" name="password" ng-readonly="!vm.settings.alerting_enabled"
-                                           ng-model="vm.settings.authorization_password" class="form-control"/>
+                                           ng-model="vm.settings.authentication_password" class="form-control"/>
                                 </div>
                             </div>
 
@@ -71,25 +87,9 @@
                                 </div>
                             </div>
 
-                            <div class="row alerting">
-                                <div class="col-sm-5 form-group">
-                                    <button class="btn btn-default btn-secondary btn-email-test" type="button" ng-click="vm.sendTestEmail()" ng-disabled="!vm.settings.alerting_enabled">Generate test email</button>
-                                </div>
-                            </div>
-
-
                             <div class="row">
                                 <div class="col-xs-1">
-                                    <button class="btn btn-primary" type="button" ng-click="vm.save()">Save</button>
-                                </div>
-                                <div class="col-xs-1">
-                                    <div class="onoffswitch alerting-toogle">
-                                        <input type="checkbox" id="onoffswitch" name="onoffswitch" class="onoffswitch-checkbox" ng-click="vm.toogleAlerting()" ng-checked="vm.settings.alerting_enabled">
-                                        <label class="onoffswitch-label" for="onoffswitch">
-                                            <span class="onoffswitch-inner"></span>
-                                            <span class="onoffswitch-switch"></span>
-                                        </label>
-                                    </div>
+                                    <button class="btn btn-primary" type="submit" ng-click="vm.save(alertingForm)">Save</button>
                                 </div>
                             </div>
 

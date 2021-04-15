@@ -3232,7 +3232,3 @@ button[ng-click="vm.toggleSort()"] div {
     font-weight: bold;
     margin: 20px 0 10px 15px;
 }
-
-.alerting-toogle {
-    margin-top: 30px
-}

@@ -27,8 +27,10 @@
             vm.settings.alerting_enabled = !vm.settings.alerting_enabled;
         };
 
-        vm.save = () => {
-            alertingService.updateSettings(vm.settings);
+        vm.save = (alertingForm) => {
+            if (alertingForm.$valid) {
+                alertingService.updateSettings(vm.settings);
+            }
         };
 
         vm.sendTestEmail = () => {
