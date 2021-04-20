@@ -33,7 +33,7 @@
                             </div>
 
                             <div class="row alerting">
-                                <h3>Notifications</h3>
+                                <h3>General</h3>
                                 <div class="col-sm-6 form-group">
                                     <h4>Enabled</h4>
                                 </div>
@@ -45,12 +45,6 @@
                                             <span class="onoffswitch-switch"></span>
                                         </label>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="row alerting">
-                                <div class="col-sm-7 form-group">
-                                    <button class="btn btn-secondary" type="button" ng-click="vm.sendTestEmail()">Send a Test Email</button>
                                 </div>
                             </div>
 
@@ -94,6 +88,30 @@
                                     <input type="checkbox" id="enableSSL" name="enableSSL" ng-disabled="!vm.settings.alerting_enabled"
                                            ng-model="vm.settings.enable_ssl" class="check-label"/>
                                     <label for="enableSSL">Enable SSL</label>
+                                </div>
+                            </div>
+
+                            
+                            <div class="row alerting">
+                                <h3>Email</h3>
+                                <div class="col-sm-7 form-group">
+                                    <label for="from">From</label>
+                                    <input type="from" id="from" name="from" ng-readonly="!vm.settings.alerting_enabled"
+                                           ng-model="vm.settings.from" class="form-control"/>
+                                </div>
+                            </div>
+
+                            <div class="row alerting">
+                                <div class="col-sm-7 form-group">
+                                    <label for="to">To</label>
+                                    <input type="to" id="to" name="to" ng-readonly="!vm.settings.alerting_enabled"
+                                           ng-model="vm.settings.to" class="form-control"/>
+                                </div>
+                            </div>
+
+                            <div class="row alerting">
+                                <div class="col-sm-7 form-group">
+                                    <button class="btn btn-secondary" type="button" ng-click="vm.sendTestEmail()">Send a Test Email</button>
                                 </div>
                             </div>
 
