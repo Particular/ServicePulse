@@ -35,7 +35,7 @@
                             <div class="row alerting">
                                 <h3>General</h3>
                                 <div class="col-sm-6 form-group">
-                                    <h4>Enabled</h4>
+                                    <h4>Email notifications</h4>
                                 </div>
                                 <div class="col-xs-1">
                                     <div class="onoffswitch">
@@ -49,9 +49,9 @@
                             </div>
 
                             <div class="row alerting">
-                                <h3>SMTP Server</h3>
+                                <h3>Email configuration</h3>
                                 <div class="col-sm-7 form-group" ng-class="{'has-error': alertingForm.smtpServerAddress.$invalid}">
-                                    <label for="smtpServerAddress">Address</label>
+                                    <label for="smtpServerAddress">SMTP Server Address</label>
                                     <input type="text" id="smtpServerAddress" name="smtpServerAddress" ng-readonly="!vm.settings.alerting_enabled"
                                            ng-model="vm.settings.smtp_server" class="form-control" required/>
                                 </div>
@@ -59,16 +59,15 @@
                             </div>
                             <div class="row alerting">
                                 <div class="col-sm-7 form-group" ng-class="{'has-error': alertingForm.smtpServerPort.$invalid}">
-                                    <label for="smtpServerPort">Port</label>
+                                    <label for="smtpServerPort">SMTP Server Port</label>
                                     <input type="text" id="smtpServerPort" name="smtpServerPort" ng-readonly="!vm.settings.alerting_enabled"
                                            ng-model="vm.settings.smtp_port" class="form-control" required/>
                                 </div>
 
                             </div>
                             <div class="row alerting">
-                                <h3>Security</h3>
                                 <div class="col-sm-7 form-group">
-                                    <label for="account">Account</label>
+                                    <label for="account">Authentication Account</label>
                                     <input type="text" id="account" name="account" ng-readonly="!vm.settings.alerting_enabled"
                                            ng-model="vm.settings.authentication_account" class="form-control"/>
                                 </div>
@@ -77,7 +76,7 @@
 
                             <div class="row alerting">
                                 <div class="col-sm-7 form-group">
-                                    <label for="account">Password</label>
+                                    <label for="account">Authentication Password</label>
                                     <input type="password" id="password" name="password" ng-readonly="!vm.settings.alerting_enabled"
                                            ng-model="vm.settings.authentication_password" class="form-control"/>
                                 </div>
@@ -87,13 +86,12 @@
                                 <div class="col-sm-7 form-group">
                                     <input type="checkbox" id="enableSSL" name="enableSSL" ng-disabled="!vm.settings.alerting_enabled"
                                            ng-model="vm.settings.enable_ssl" class="check-label"/>
-                                    <label for="enableSSL">Enable SSL</label>
+                                    <label for="enableSSL">Use SSL</label>
                                 </div>
                             </div>
 
                             
                             <div class="row alerting">
-                                <h3>Email</h3>
                                 <div class="col-sm-7 form-group">
                                     <label for="from">From</label>
                                     <input type="from" id="from" name="from" ng-readonly="!vm.settings.alerting_enabled"
@@ -109,15 +107,12 @@
                                 </div>
                             </div>
 
-                            <div class="row alerting">
-                                <div class="col-sm-7 form-group">
-                                    <button class="btn btn-secondary" type="button" ng-click="vm.sendTestEmail()">Send a Test Email</button>
-                                </div>
-                            </div>
-
                             <div class="row">
                                 <div class="col-xs-1">
                                     <button class="btn btn-primary" type="submit" ng-click="vm.save(alertingForm)">Save</button>
+                                </div>
+                                <div class="col-xs-1">
+                                    <button class="btn btn-secondary" type="button" ng-click="vm.sendTestEmail()">Send a Test Email</button>
                                 </div>
                             </div>
                         </form>
