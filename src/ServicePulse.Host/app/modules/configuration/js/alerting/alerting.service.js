@@ -43,7 +43,9 @@
         return {
             updateSettings: function(settings, success, error) {
                 var url = uri.join(scu, 'alerting');
-                var promise = sendPromise(url, 'POST', settings, success, error);
+                var promise = sendPromise(url, 'POST', settings, 
+                () => {alerting = settings}, 
+                error);
 
                 return promise;
             },

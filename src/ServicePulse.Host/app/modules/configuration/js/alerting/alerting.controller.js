@@ -18,7 +18,7 @@
 
         function refreshData() {
             alertingService.getSettings().then((alerting) => {
-                vm.settings = alerting.data;
+                vm.settings = alerting;
             });
         }
 
