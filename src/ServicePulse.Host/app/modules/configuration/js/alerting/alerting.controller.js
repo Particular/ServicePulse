@@ -22,6 +22,7 @@
         }
 
         vm.settings = {};
+        vm.testInProgress = false;
 
         vm.toogleAlerting = () => {
             var emailAlertingOn = !vm.settings.alerting_enabled;
@@ -50,9 +51,16 @@
         };
 
         vm.testEmailNotifications = () => {
+            vm.testInProgress = true;
             alertingService.testEmailNotifications().then(
-                () => toastService.showInfo('Test email sent. Check you inbox.'),
-                (error) => toastService.showError(error.data)
+                () => {
+                    toastService.showInfo('Test email sent. Check you inbox.');
+                    vm.testInProgress = false;
+                },
+                (error) => {
+                    toastService.showError(error.data);
+                    vm.testInProgress = false;
+                }
             );
         };
 

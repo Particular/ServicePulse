@@ -8,7 +8,6 @@
             <h5 ng-class="{ active: isActive('/configuration/alerting'), disabled: (!connectionsStatus.isSCConnected && !connectionsStatus.scConnectedAtLeastOnce) }"
                 ng-show="!isExpired">
                 <a href="#/configuration/alerting">Alerting</a>
-                <exclamation type="warn"/>
             </h5>
             <h5 ng-class="{ active: isActive('/configuration/redirects'), disabled: (!connectionsStatus.isSCConnected && !connectionsStatus.scConnectedAtLeastOnce) }"
                 ng-show="!isExpired">
