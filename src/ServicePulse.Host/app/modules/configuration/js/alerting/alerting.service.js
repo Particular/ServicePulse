@@ -55,6 +55,13 @@
 
                 return promise;
             },
+            toogleEmailNotifications: function(enabled, success, error) {
+                var url = uri.join(scu, 'alerting/toggle-email-notifications');
+                
+                var promise = sendPromise(url, 'POST', {'enabled': enabled}, success, error);
+
+                return promise;
+            },
             getSettings: function() {
                 return $q.when(alerting);
             }

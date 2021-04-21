@@ -25,14 +25,22 @@
         vm.settings = {};
 
         vm.toogleAlerting = () => {
-            vm.settings.alerting_enabled = !vm.settings.alerting_enabled;
+            var emailAlertingOn = !vm.settings.alerting_enabled;
+
+            alertingService.toogleEmailNotifications(vm.settings.alerting_enabled).then(
+                () => {
+                    toastService.showInfo('Email notifications are now turned ' + (emailAlertingOn ? 'on.' : 'off.')),
+                    vm.settings.alerting_enabled = emailAlertingOn;
+                },
+                () => toastService.showError('Failed to update settings.')
+            );
         };
 
         vm.save = (alertingForm) => {
             if (alertingForm.$valid) {
                 alertingService.updateSettings(vm.settings).then(
                     () => toastService.showInfo('Alerting settings updated.'),
-                    () => toastService.showError('Could not update settings.'));
+                    () => toastService.showError('Failed not update settings.'));
             }
         };
 
