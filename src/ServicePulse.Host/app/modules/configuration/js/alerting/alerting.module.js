@@ -6,5 +6,6 @@
     require('./alerting.route');
     require('./alerting.controller');
     require('./alerting.service');
+    require('./editemail.controller');
 
 }(window, window.angular));

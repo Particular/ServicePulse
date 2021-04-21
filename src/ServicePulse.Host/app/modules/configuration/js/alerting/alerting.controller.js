@@ -4,10 +4,9 @@
     function controller(
         $scope,
         alertingService,
-        $http,
         notifyService,
         toastService,
-        uri) {
+        $uibModal) {
 
         var vm = this;
         var notifier = notifyService();
@@ -36,12 +35,18 @@
             );
         };
 
-        vm.save = (alertingForm) => {
-            if (alertingForm.$valid) {
-                alertingService.updateSettings(vm.settings).then(
-                    () => toastService.showInfo('Alerting settings updated.'),
-                    () => toastService.showError('Failed not update settings.'));
-            }
+        vm.editEmailNotifications = () => {
+            const template = require('../../views/alertingemailmodal.html');
+
+            $uibModal.open({
+                template: template,
+                controller: 'editEmailController',
+                resolve: {
+                    data: () => {
+                        return {};
+                    }
+                }
+            });
         };
 
         vm.testEmailNotifications = () => {
@@ -57,11 +62,9 @@
     controller.$inject = [
         '$scope',
         'alertingService',
-        '$http',
         'notifyService',
         'toastService',
-        'connectionsStatus',
-        'uri',
+        '$uibModal'
     ];
 
     angular.module('configuration.alerting')
