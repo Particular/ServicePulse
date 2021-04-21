@@ -27,7 +27,7 @@
         vm.toogleAlerting = () => {
             var emailAlertingOn = !vm.settings.alerting_enabled;
 
-            alertingService.toogleEmailNotifications(vm.settings.alerting_enabled).then(
+            alertingService.toogleEmailNotifications(emailAlertingOn).then(
                 () => {
                     toastService.showInfo('Email notifications are now turned ' + (emailAlertingOn ? 'on.' : 'off.')),
                     vm.settings.alerting_enabled = emailAlertingOn;

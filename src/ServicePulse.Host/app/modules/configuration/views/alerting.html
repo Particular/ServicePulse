@@ -15,25 +15,15 @@
 
         <configuration-tabs></configuration-tabs>
 
-        <div class="col-sm-12">
-            <div class="box">
-                <div class="row">
-                    <div class="col-sm-12">
+        <div class="sp-loader" ng-if="isSCConnecting"></div>
+        <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
 
-                        <form name="alertingForm" novalidate>
-                            <div class="row alerting">
-                                <h3>Notifications</h3>
-                                <div class="col-sm-2">
-                                    <h4>Email</h4>
-                                </div>
-                                <div class="col-sm-2">
-                                    <div class="btn-group" role="group">
-                                        <button class="btn btn-primary" type="button" ng-click="vm.editEmailNotifications()">Edit</button>
-                                        <button class="btn btn-secondary" type="button" ng-click="vm.testEmailNotifications()" 
-                                            ng-class="{'pa-connection-establishing': vm.testInProgress}"
-                                            ng-disabled="vm.testInProgress">Test</button>
-                                    </div>
-                                </div>
+        <section ng-show="isSCConnected || scConnectedAtLeastOnce">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="row box box-no-click">
+                        <div class="col-sm-12 no-side-padding">
+                            <div class="row">
                                 <div class="col-xs-1">
                                     <div class="onoffswitch">
                                         <input type="checkbox" id="onoffswitch" name="onoffswitch"
@@ -45,13 +35,26 @@
                                         </label>
                                     </div>
                                 </div>
+                                <div class="col-xs-9 col-sm-10 col-lg-11">
+                                    <div class="row box-header">
+                                        <div class="col-xs-12">
+                                            <p class="lead">
+                                                Email notifications
+                                            </p>
+                                            <p class="endpoint-metadata">
+                                                <i class="fa fa-edit"></i> <button class="btn btn-link btn-sm" type="button" ng-click="vm.editEmailNotifications()">Edit</button>
+                                            </p>
+                                            <p class="endpoint-metadata">
+                                                <i class="fa fa-envelope"></i> <button class="btn btn-link btn-sm" type="button" ng-click="vm.testEmailNotifications()" ng-disabled="vm.testInProgress">Test</button>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
-
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+        </section>
     </section>
 </div>

@@ -5,27 +5,27 @@
     <div class="modal-body">
         <div class="row">
             <div class="form-group" ng-class="{'has-error': alertingForm.smtpServerAddress.$invalid}">
-                <label for="smtpServerAddress">SMTP Server Address</label>
+                <label for="smtpServerAddress">SMTP server address</label>
                 <input type="text" id="smtpServerAddress" name="smtpServerAddress"
                     ng-model="settings.smtp_server"
                     class="form-control" required />
             </div>
             <div class="row"></div>
             <div class="form-group" ng-class="{'has-error': alertingForm.smtpServerPort.$invalid}">
-                <label for="smtpServerPort">SMTP Server Port</label>
+                <label for="smtpServerPort">SMTP server port</label>
                 <input type="text" id="smtpServerPort" name="smtpServerPort"
                     ng-model="settings.smtp_port"
                     class="form-control" required />
             </div>
             <div class="row"></div>
             <div class="form-group">
-                <label for="account">Authentication Account</label>
+                <label for="account">Authentication account</label>
                 <input type="text" id="account" name="account"
                     ng-model="settings.authentication_account" class="form-control" />
             </div>
             <div class="row"></div>
             <div class="form-group">
-                <label for="account">Authentication Password</label>
+                <label for="account">Authentication password</label>
                 <input type="password" id="password" name="password"
                     ng-model="settings.authentication_password" class="form-control" />
             </div>
@@ -37,13 +37,13 @@
             </div>
             <div class="row"></div>
             <div class="form-group">
-                <label for="from">From</label>
+                <label for="from">From address</label>
                 <input type="from" id="from" name="from"
                     ng-model="settings.from" class="form-control" />
             </div>
             <div class="row"></div>
             <div class="form-group">
-                <label for="to">To</label>
+                <label for="to">To address</label>
                 <input type="to" id="to" name="to"
                     ng-model="settings.to" class="form-control" />
             </div>
@@ -54,3 +54,9 @@
         <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
     </div>
 </form>
+
+//TODO:
+* change alerting to Healthcheck Notifications
+* add intro paragraph
+* use the Healthcheck styles
+* provide feedback in a similar fashion to the connection testing
