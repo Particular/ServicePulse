@@ -44,10 +44,10 @@
             }
         };
 
-        vm.sendTestEmail = () => {
-            alertingService.sendTestEmail().then(
+        vm.testEmailNotifications = () => {
+            alertingService.testEmailNotifications().then(
                 () => toastService.showInfo('Test email sent. Check you inbox.'),
-                () => toastService.showError('Could not send test email. Please make sure the configuration is correct.')
+                (error) => toastService.showError(error.data)
             );
         };
 

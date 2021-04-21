@@ -31,7 +31,7 @@
                 .then(function(response) {
                         defer.resolve({ message: success, status: response.status });
                     }, function(response) {
-                        defer.reject({ message: error + ':' + response.statusText, status: response.status, statusText: response.statusText });
+                        defer.reject({ message: error + ':' + response.statusText, status: response.status, statusText: response.statusText, data: response.data });
                     }
                 );
 
@@ -49,8 +49,8 @@
 
                 return promise;
             },
-            sendTestEmail: function(success, error) {
-                var url = uri.join(scu, 'alerting/send-test-email');
+            testEmailNotifications: function(success, error) {
+                var url = uri.join(scu, 'alerting/test-email-notifications');
                 var promise = sendPromise(url, 'POST', {}, success, error);
 
                 return promise;
