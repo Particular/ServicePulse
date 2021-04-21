@@ -19,6 +19,9 @@
         <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
 
         <section ng-show="isSCConnected || scConnectedAtLeastOnce">
+            <div class="alert alert-warning">
+                <i class="fa fa-info-circle"></i> <strong>Information:</strong> Configure notifications for health checks built into ServiceControl (low disk space, stale database indexes, and messages in error queue).
+            </div>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="row box box-no-click">

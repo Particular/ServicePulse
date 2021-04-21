@@ -8,7 +8,7 @@
             redirectTo: "/configuration/alerting"
         }).when('/configuration/alerting', {
             data: {
-                pageTitle: 'Alerting - Configuration'
+                pageTitle: 'Healthcheck Notifications - Configuration'
             },
             template: template,
             controller: 'alertingController',
