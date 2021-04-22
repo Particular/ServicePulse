@@ -2,16 +2,16 @@
     'use strict';
 
     function routeProvider($routeProvider) {
-        const template = require('../../views/alerting.html');
+        const template = require('../../views/notifications.html');
 
-        $routeProvider.when('/alerting', {
-            redirectTo: "/configuration/alerting"
-        }).when('/configuration/alerting', {
+        $routeProvider.when('/notifications', {
+            redirectTo: "/configuration/notifications"
+        }).when('/configuration/notifications', {
             data: {
                 pageTitle: 'Healthcheck Notifications - Configuration'
             },
             template: template,
-            controller: 'alertingController',
+            controller: 'notificationsController',
             controllerAs: 'vm'
         });
     }
@@ -20,7 +20,7 @@
         '$routeProvider'
     ];
 
-    angular.module('configuration.alerting', [])
+    angular.module('configuration.notifications', [])
         .config(routeProvider);
 
 }(window, window.angular));

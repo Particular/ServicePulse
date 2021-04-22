@@ -4,23 +4,23 @@
     function controller(
         $scope,
         $uibModalInstance,
-        alertingService,
+        notificationsService,
         toastService
     ) {
         function refreshData() {
-            alertingService.getSettings().then((alerting) => {
-                $scope.settings = alerting;
+            notificationsService.getSettings().then((notifications) => {
+                $scope.settings = notifications;
             });
         }
 
-        $scope.save = (alertingForm) => {
-            if (alertingForm.$valid) {
-                alertingService.updateSettings($scope.settings).then(
+        $scope.save = (notificationsForm) => {
+            if (notificationsForm.$valid) {
+                notificationsService.updateSettings($scope.settings).then(
                     () => {
-                        toastService.showInfo('Alerting settings updated.');
+                        toastService.showInfo('Eamil settings updated.');
                         $uibModalInstance.dismiss('saved');
                     },
-                    () => toastService.showError('Failed not update settings.'));
+                    () => toastService.showError('Failed not update email settings.'));
             }
         };
  
@@ -34,12 +34,12 @@
     controller.$inject = [
         '$scope',
         '$uibModalInstance',
-        'alertingService',
+        'notificationsService',
         'toastService',
         'notifyService'
     ];
 
-    angular.module('configuration.alerting')
+    angular.module('configuration.notifications')
         .controller('editEmailController', controller);
 
 })(window, window.angular);

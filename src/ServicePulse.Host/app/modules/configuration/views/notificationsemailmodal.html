@@ -1,17 +1,17 @@
 ﻿<div class="modal-header">
     <h3 class="modal-title">Email configuration</h3>
 </div>
-<form name="alertingForm" novalidate>
+<form name="notificationsForm" novalidate>
     <div class="modal-body">
         <div class="row">
-            <div class="form-group" ng-class="{'has-error': alertingForm.smtpServerAddress.$invalid}">
+            <div class="form-group" ng-class="{'has-error': notificationsForm.smtpServerAddress.$invalid}">
                 <label for="smtpServerAddress">SMTP server address</label>
                 <input type="text" id="smtpServerAddress" name="smtpServerAddress"
                     ng-model="settings.smtp_server"
                     class="form-control" required />
             </div>
             <div class="row"></div>
-            <div class="form-group" ng-class="{'has-error': alertingForm.smtpServerPort.$invalid}">
+            <div class="form-group" ng-class="{'has-error': notificationsForm.smtpServerPort.$invalid}">
                 <label for="smtpServerPort">SMTP server port</label>
                 <input type="text" id="smtpServerPort" name="smtpServerPort"
                     ng-model="settings.smtp_port"
@@ -50,7 +50,7 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-primary" type="submit" ng-click="save(alertingForm)">Save</button>
+        <button class="btn btn-primary" type="submit" ng-click="save(notificationsForm)">Save</button>
         <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
     </div>
 </form>

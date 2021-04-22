@@ -3,7 +3,7 @@
 
     function controller(
         $scope,
-        alertingService,
+        notificationsService,
         notifyService,
         toastService,
         $uibModal) {
@@ -12,32 +12,32 @@
         var notifier = notifyService();
 
         notifier.subscribe($scope, (event, response) => {
-            vm.settings = response.alerting;
-        }, 'AlertingConfigurationUpdated');
+            vm.notifications = response.notifications;
+        }, 'EmailNotificationsUpdated');
 
         function refreshData() {
-            alertingService.getSettings().then((alerting) => {
-                vm.settings = alerting;
+            notificationsService.getSettings().then((notifications) => {
+                vm.notifications = notifications;
             });
         }
 
-        vm.settings = {};
+        vm.notifications = {};
         vm.testInProgress = false;
 
-        vm.toogleAlerting = () => {
-            var emailAlertingOn = !vm.settings.alerting_enabled;
+        vm.toogleEmailNotifications = () => {
+            var emailNotificationsOn = !vm.notifications.alerting_enabled;
 
-            alertingService.toogleEmailNotifications(emailAlertingOn).then(
+            notificationsService.toogleEmailNotifications(emailNotificationsOn).then(
                 () => {
-                    toastService.showInfo('Email notifications are now turned ' + (emailAlertingOn ? 'on.' : 'off.')),
-                    vm.settings.alerting_enabled = emailAlertingOn;
+                    toastService.showInfo('Email notifications are now turned ' + (emailNotificationsOn ? 'on.' : 'off.')),
+                    vm.notifications.alerting_enabled = emailNotificationsOn;
                 },
                 () => toastService.showError('Failed to update settings.')
             );
         };
 
         vm.editEmailNotifications = () => {
-            const template = require('../../views/alertingemailmodal.html');
+            const template = require('../../views/notificationsemailmodal.html');
 
             $uibModal.open({
                 template: template,
@@ -52,7 +52,7 @@
 
         vm.testEmailNotifications = () => {
             vm.emailTestInProgress = true;
-            alertingService.testEmailNotifications().then(
+            notificationsService.testEmailNotifications().then(
                 () => {
                     vm.emailTestInProgress = false;
                     vm.emailTestSuccessful = true;
@@ -70,13 +70,13 @@
 
     controller.$inject = [
         '$scope',
-        'alertingService',
+        'notificationsService',
         'notifyService',
         'toastService',
         '$uibModal'
     ];
 
-    angular.module('configuration.alerting')
-        .controller('alertingController', controller);
+    angular.module('configuration.notifications')
+        .controller('notificationsController', controller);
 
 })(window, window.angular);

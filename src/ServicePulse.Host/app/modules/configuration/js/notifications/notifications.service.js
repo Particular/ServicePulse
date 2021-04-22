@@ -5,14 +5,14 @@
         var notifier = notifyService();
         var scu = connectionsManager.getServiceControlUrl();
 
-        var alerting = {};
+        var notifications = {};
 
         function getData() {
             var url = uri.join(scu, 'alerting');
             return $http.get(url).then(function (response) {
-                alerting = response.data;
+                notifications = response.data;
 
-                notifier.notify('AlertingConfigurationUpdated', { alerting });
+                notifier.notify('NotificationsConfigurationUpdated', { notifications });
             });
         }
 
@@ -44,7 +44,7 @@
             updateSettings: function(settings, success, error) {
                 var url = uri.join(scu, 'alerting');
                 var promise = sendPromise(url, 'POST', settings, 
-                () => {alerting = settings}, 
+                () => {notifications = settings}, 
                 error);
 
                 return promise;
@@ -63,14 +63,14 @@
                 return promise;
             },
             getSettings: function() {
-                return $q.when(alerting);
+                return $q.when(notifications);
             }
         };
     }
 
     service.$inject = ['$http', '$timeout', '$q', '$rootScope', '$interval', 'moment', 'connectionsManager', 'uri', 'notifications', 'notifyService'];
 
-    angular.module('configuration.alerting')
-        .service('alertingService', service);
+    angular.module('configuration.notifications')
+        .service('notificationsService', service);
 
 })(window, window.angular);
