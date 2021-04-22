@@ -16,7 +16,10 @@
         $scope.save = (alertingForm) => {
             if (alertingForm.$valid) {
                 alertingService.updateSettings($scope.settings).then(
-                    () => toastService.showInfo('Alerting settings updated.'),
+                    () => {
+                        toastService.showInfo('Alerting settings updated.');
+                        $uibModalInstance.dismiss('saved');
+                    },
                     () => toastService.showError('Failed not update settings.'));
             }
         };

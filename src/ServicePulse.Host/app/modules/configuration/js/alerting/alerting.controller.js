@@ -51,15 +51,16 @@
         };
 
         vm.testEmailNotifications = () => {
-            vm.testInProgress = true;
+            vm.emailTestInProgress = true;
             alertingService.testEmailNotifications().then(
                 () => {
-                    toastService.showInfo('Test email sent. Check you inbox.');
-                    vm.testInProgress = false;
+                    vm.emailTestInProgress = false;
+                    vm.emailTestSuccessful = true;
                 },
                 (error) => {
                     toastService.showError(error.data);
-                    vm.testInProgress = false;
+                    vm.emailTestInProgress = false;
+                    vm.emailTestFailure = true;
                 }
             );
         };

@@ -3232,3 +3232,12 @@ button[ng-click="vm.toggleSort()"] div {
     font-weight: bold;
     margin: 20px 0 10px 15px;
 }
+
+.notifications .btn-sm {
+    padding: 0px;
+}
+
+.notifications .connection-test
+{
+    top: 2px;
+}
