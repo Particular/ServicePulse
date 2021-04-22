@@ -8,7 +8,7 @@
         var notifications = {};
 
         function getData() {
-            var url = uri.join(scu, 'alerting');
+            var url = uri.join(scu, 'notifications/email');
             return $http.get(url).then(function (response) {
                 notifications = response.data;
 
@@ -42,7 +42,7 @@
 
         return {
             updateSettings: function(settings, success, error) {
-                var url = uri.join(scu, 'alerting');
+                var url = uri.join(scu, 'notifications/email');
                 var promise = sendPromise(url, 'POST', settings, 
                 () => {notifications = settings}, 
                 error);
@@ -50,13 +50,13 @@
                 return promise;
             },
             testEmailNotifications: function(success, error) {
-                var url = uri.join(scu, 'alerting/test-email-notifications');
+                var url = uri.join(scu, 'notifications/email/test');
                 var promise = sendPromise(url, 'POST', {}, success, error);
 
                 return promise;
             },
             toogleEmailNotifications: function(enabled, success, error) {
-                var url = uri.join(scu, 'alerting/toggle-email-notifications');
+                var url = uri.join(scu, 'notifications/email/toggle');
                 
                 var promise = sendPromise(url, 'POST', {'enabled': enabled}, success, error);
 

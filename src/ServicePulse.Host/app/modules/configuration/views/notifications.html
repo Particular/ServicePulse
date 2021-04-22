@@ -31,7 +31,7 @@
                                     <div class="onoffswitch">
                                         <input type="checkbox" id="onoffswitch" name="onoffswitch"
                                             class="onoffswitch-checkbox" ng-click="vm.toogleEmailNotifications()"
-                                            ng-checked="vm.notifications.alerting_enabled">
+                                            ng-checked="vm.notifications.enabled">
                                         <label class="onoffswitch-label" for="onoffswitch">
                                             <span class="onoffswitch-inner"></span>
                                             <span class="onoffswitch-switch"></span>
@@ -55,7 +55,7 @@
                                                 <span class="connection-test connection-successful" ng-show="vm.emailTestSuccessful">
                                                     <i class="fa fa-check"></i> Test email sent successfully
                                                 </span>
-                                                <span class="connection-test connection-failed" ng-show="vm.emailTestFailed">
+                                                <span class="connection-test connection-failed" ng-show="vm.emailTestFailure">
                                                     <i class="fa fa-exclamation-triangle"></i> Test failed
                                                 </span>
                                             </p>

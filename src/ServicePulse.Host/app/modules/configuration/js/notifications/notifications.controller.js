@@ -10,10 +10,12 @@
 
         var vm = this;
         var notifier = notifyService();
+        
+        vm.notifications = {};
 
         notifier.subscribe($scope, (event, response) => {
             vm.notifications = response.notifications;
-        }, 'EmailNotificationsUpdated');
+        }, 'NotificationsConfigurationUpdated');
 
         function refreshData() {
             notificationsService.getSettings().then((notifications) => {
@@ -21,17 +23,11 @@
             });
         }
 
-        vm.notifications = {};
-        vm.testInProgress = false;
-
         vm.toogleEmailNotifications = () => {
-            var emailNotificationsOn = !vm.notifications.alerting_enabled;
+            var emailNotificationsOn = !vm.notifications.enabled;
 
             notificationsService.toogleEmailNotifications(emailNotificationsOn).then(
-                () => {
-                    toastService.showInfo('Email notifications are now turned ' + (emailNotificationsOn ? 'on.' : 'off.')),
-                    vm.notifications.alerting_enabled = emailNotificationsOn;
-                },
+                () => vm.notifications.enabled = emailNotificationsOn,
                 () => toastService.showError('Failed to update settings.')
             );
         };
@@ -52,6 +48,9 @@
 
         vm.testEmailNotifications = () => {
             vm.emailTestInProgress = true;
+            vm.emailTestSuccessful = false;
+            vm.emailTestFailure = false;
+
             notificationsService.testEmailNotifications().then(
                 () => {
                     vm.emailTestInProgress = false;
