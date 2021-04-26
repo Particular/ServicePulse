@@ -16,14 +16,14 @@ namespace ServicePulse.Host.Owin.Microsoft
         readonly AsyncCallback readCallback;
         readonly AsyncCallback writeCallback;
         long? bytesRemaining;
-        CancellationToken cancel;
+        CancellationToken cancellationToken;
 
         internal StreamCopyOperation(
           Stream source,
           Stream destination,
           long? bytesRemaining,
-          CancellationToken cancel)
-          : this(source, destination, bytesRemaining, 65536, cancel)
+          CancellationToken cancellationToken)
+          : this(source, destination, bytesRemaining, 65536, cancellationToken)
         {
         }
 
@@ -32,8 +32,8 @@ namespace ServicePulse.Host.Owin.Microsoft
           Stream destination,
           long? bytesRemaining,
           int bufferSize,
-          CancellationToken cancel)
-          : this(source, destination, bytesRemaining, new byte[bufferSize], cancel)
+          CancellationToken cancellationToken)
+          : this(source, destination, bytesRemaining, new byte[bufferSize], cancellationToken)
         {
         }
 
@@ -42,12 +42,12 @@ namespace ServicePulse.Host.Owin.Microsoft
           Stream destination,
           long? bytesRemaining,
           byte[] buffer,
-          CancellationToken cancel)
+          CancellationToken cancellationToken)
         {
             this.source = source;
             this.destination = destination;
             this.bytesRemaining = bytesRemaining;
-            this.cancel = cancel;
+            this.cancellationToken = cancellationToken;
             this.buffer = buffer;
             tcs = new TaskCompletionSource<object>();
             readCallback = ReadCallback;
@@ -67,7 +67,7 @@ namespace ServicePulse.Host.Owin.Microsoft
 
         bool CheckCancelled()
         {
-            if (!cancel.IsCancellationRequested)
+            if (!cancellationToken.IsCancellationRequested)
             {
                 return false;
             }

@@ -6,7 +6,10 @@
 
     public class MyHandler : IHandleMessages<MyMessage>
     {
+        // remove this pragma after upgrading to NServiceBus 8
+#pragma warning disable PS0018 // A task-returning method should have a CancellationToken parameter unless it has a parameter implementing ICancellableContext
         public Task Handle(MyMessage message, IMessageHandlerContext context)
+#pragma warning restore PS0018 // A task-returning method should have a CancellationToken parameter unless it has a parameter implementing ICancellableContext
         {
             Console.WriteLine(@"Message received. Id: {0}", message.Id);
 
