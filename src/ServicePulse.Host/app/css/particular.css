@@ -1257,7 +1257,7 @@ input#immediatelyRetry {
     visibility: visible;
 }
 
-input#enableSSL {
+input#enableTLS {
     visibility: visible;
 }
 
