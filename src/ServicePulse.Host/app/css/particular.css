@@ -870,6 +870,11 @@ p.endpoint-metadata {
     padding-top: 0;
 }
 
+.endpoint-metadata button i {
+    color: #00a3c4;
+    margin-right: 4px;
+}
+
 
 .fa-stack-2x {
     font-size: 24px;
@@ -2759,6 +2764,7 @@ span.connection-test {
     left: 10px;
     text-transform: uppercase;
     font-weight: bold;
+    color: black;
 }
 
 span.failed-validation {
@@ -3240,4 +3246,8 @@ button[ng-click="vm.toggleSort()"] div {
 .notifications .connection-test
 {
     top: 2px;
+}
+
+.screen-intro {
+    margin: 30px 0;
 }

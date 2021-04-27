@@ -17,7 +17,7 @@
             if (notificationsForm.$valid) {
                 notificationsService.updateSettings($scope.settings).then(
                     () => {
-                        toastService.showInfo('Eamil settings updated.');
+                        toastService.showInfo('Email settings updated.');
                         $uibModalInstance.dismiss('saved');
                     },
                     () => toastService.showError('Failed not update email settings.'));

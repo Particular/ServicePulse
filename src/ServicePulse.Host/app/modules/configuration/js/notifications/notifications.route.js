@@ -8,7 +8,7 @@
             redirectTo: "/configuration/notifications"
         }).when('/configuration/notifications', {
             data: {
-                pageTitle: 'Healthcheck Notifications - Configuration'
+                pageTitle: 'Health check Notifications - Configuration'
             },
             template: template,
             controller: 'notificationsController',
