@@ -36,16 +36,16 @@
                 <label for="enableSSL">Use SSL</label>
             </div>
             <div class="row"></div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{'has-error': notificationsForm.from.$invalid}">
                 <label for="from">From address</label>
-                <input type="from" id="from" name="from"
-                    ng-model="settings.from" class="form-control" />
+                <input type="email" id="from" name="from"
+                    ng-model="settings.from" class="form-control" required/>
             </div>
             <div class="row"></div>
-            <div class="form-group">
+            <div class="form-group" ng-class="{'has-error': notificationsForm.to.$invalid}">
                 <label for="to">To address</label>
-                <input type="to" id="to" name="to"
-                    ng-model="settings.to" class="form-control" />
+                <input type="email" id="to" name="to"
+                    ng-model="settings.to" class="form-control" required/>
             </div>
         </div>
     </div>
