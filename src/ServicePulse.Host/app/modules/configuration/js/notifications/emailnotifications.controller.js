@@ -20,7 +20,7 @@
                         toastService.showInfo('Email settings updated.');
                         $uibModalInstance.dismiss('saved');
                     },
-                    () => toastService.showError('Failed not update email settings.'));
+                    () => toastService.showError('Failed to update the email settings.'));
             }
         };
  
