@@ -1,0 +1,86 @@
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Configuration</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <section name="notifications">
+
+        <configuration-tabs></configuration-tabs>
+
+        <div class="sp-loader" ng-if="isSCConnecting"></div>
+        <div ng-include="'js/views/sc_not_available.html'"
+            ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
+
+        <section ng-show="isSCConnected || scConnectedAtLeastOnce">
+            <div class="row">
+                <div class="col-sm-12">
+                    <p class="screen-intro">
+                        Configure notifications for health checks built into ServiceControl (low disk space, stale
+                        database indexes, and messages in error queue).
+                    </p>
+                </div>
+            </div>
+            <div class="notifications row">
+                <div class="col-sm-12">
+                    <div class="row box box-no-click">
+                        <div class="col-sm-12 no-side-padding">
+                            <div class="row">
+                                <div class="col-xs-1">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" id="onoffswitch" name="onoffswitch"
+                                            class="onoffswitch-checkbox" ng-click="vm.toogleEmailNotifications()"
+                                            ng-checked="vm.notifications.enabled">
+                                        <label class="onoffswitch-label" for="onoffswitch">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-9 col-sm-10 col-lg-11">
+                                    <div class="row box-header">
+                                        <div class="col-xs-12">
+                                            <p class="lead">
+                                                Email notifications
+                                            </p>
+                                            <p class="endpoint-metadata">
+                                                <button class="btn btn-link btn-sm" type="button"
+                                                    ng-click="vm.editEmailNotifications()"><i
+                                                        class="fa fa-edit"></i>Configure</button>
+                                            </p>
+                                            <p class="endpoint-metadata">
+                                                <button class="btn btn-link btn-sm" type="button"
+                                                    ng-click="vm.testEmailNotifications()"
+                                                    ng-disabled="vm.emailTestInProgress"><i
+                                                        class="fa fa-envelope"></i>Send test notification</button>
+                                                <span class="connection-test connection-testing"
+                                                    ng-show="vm.emailTestInProgress">
+                                                    <i class="glyphicon glyphicon-refresh rotate"></i> Testing
+                                                </span>
+                                                <span class="connection-test connection-successful"
+                                                    ng-show="vm.emailTestSuccessful">
+                                                    <i class="fa fa-check"></i> Test email sent successfully
+                                                </span>
+                                                <span class="connection-test connection-failed"
+                                                    ng-show="vm.emailTestFailure">
+                                                    <i class="fa fa-exclamation-triangle"></i> Test failed
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</div>

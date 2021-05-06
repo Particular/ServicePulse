@@ -15,6 +15,8 @@
 
     require('./connections/connections.module');
 
+    require('./notifications/notifications.module');
+
     angular.module('configuration', [
         'ui.bootstrap',
         'configuration.route',
@@ -23,6 +25,7 @@
         'configuration.redirect',
         'configuration.license',
         'configuration.connections',
+        'configuration.notifications'
     ]);
 
 } (window, window.angular));
