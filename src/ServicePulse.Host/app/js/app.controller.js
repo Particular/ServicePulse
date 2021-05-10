@@ -16,7 +16,6 @@
         semverService,
         connectionsManager,
         uriService,
-        reindexingChecker,
         licenseNotifierService,
         licenseService,
         license,
@@ -24,7 +23,7 @@
         configurationService,
         monitoringService,
         disconnectedEndpointMonitor,
-        platformUpdateService,
+        platformUpdateService
     ) {
         var notifier = notifyService();
 
@@ -428,8 +427,6 @@
         listener.subscribe($scope, function (message) {
             notifier.notify('RetryOperationCompleted', message);
         }, 'RetryOperationCompleted');
-
-        reindexingChecker.startTrackingStatus();
     }
 
     controller.$inject = [
@@ -447,7 +444,6 @@
         'semverService',
         'connectionsManager',
         'uri',
-        'reindexingChecker',
         'licenseNotifierService',
         'licenseService',
         'license',
@@ -455,7 +451,7 @@
         'configurationService',
         'monitoringService',
         'disconnectedEndpointMonitor',
-        'platformUpdateService',
+        'platformUpdateService'
     ];
 
     angular.module('sc').controller('AppCtrl', controller);

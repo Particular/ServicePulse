@@ -313,12 +313,6 @@
             return $http.get(url);
         }
 
-        function isBusyUpgradingIndexes() {
-            var url = uri.join(scu, 'upgrade');
-
-            return $http.get(url);
-        }
-
         var service = {
             getServiceControlMetadata: getServiceControlMetadata,
             checkLicense: checkLicense,
@@ -353,8 +347,7 @@
             acknowledgeGroup: acknowledgeGroup,
             getFailedMessageById: getFailedMessageById,
             getEditAndRetryConfig: getEditAndRetryConfig,
-            retryEditedMessage : retryEditedMessage,
-            isBusyUpgradingIndexes: isBusyUpgradingIndexes
+            retryEditedMessage : retryEditedMessage
         };
 
         return service;
