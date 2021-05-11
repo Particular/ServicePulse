@@ -32,6 +32,12 @@
     </div>
 </div>
 
+<div class="container">
+    <div class="alert alert-warning my-2">
+       <i class="fa fa-warning"></i> <strong>Warning:</strong> One or more endpoints have negative critical time which may be the result of <a href="https://docs.particular.net/monitoring/metrics/definitions#metrics-captured-critical-time" target="_blank">clock drifiting</a> <i class="fa fa-external-link fake-link"></i>.
+    </div>
+</div>
+
 <div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
     <ng-include src="'modules/monitoring/views/monitored_endpoints_list.html'"></ng-include>
     <ng-include src="'modules/monitoring/views/monitored_endpoints_list_grouped.html'"></ng-include>
