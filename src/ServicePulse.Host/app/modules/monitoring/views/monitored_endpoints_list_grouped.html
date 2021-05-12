@@ -72,7 +72,7 @@
                                                 <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                                             </a>
                                         </span>
-                                        <span class="warning">
+                                        <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
                                             <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time."></i>
                                         </span>
                                     </div>
@@ -128,7 +128,7 @@
                                     <div class="no-side-padding">
                                         <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                     </div>
-                                    <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.criticalTime.displayValue.unit">
+                                    <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                                         {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
                                         <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                         <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>
