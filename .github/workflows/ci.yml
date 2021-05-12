@@ -40,10 +40,10 @@ jobs:
           name: NuGet packages
           path: nugets/
           retention-days: 7
-      - name: Run Windows tests
+      - name: Run .NET tests
         run: dotnet test --configuration Release --no-build --logger "GitHubActions;report-warnings=false"
         working-directory: src/ServicePulse.Host.Tests
-      - name: Install Test npm packages
+      - name: Install test npm packages
         run: npm install
         working-directory: src/ServicePulse.Host.Tests
       - name: Run Javascript tests
