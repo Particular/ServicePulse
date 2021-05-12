@@ -116,6 +116,13 @@
                                                 </p>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <div class="note">
+                                                    <strong>NOTE:</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
                                             <div class="col-sm-12 no-side-padding">
                                                 <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
@@ -123,6 +130,15 @@
                                                 </button>
                                                 <button type="button" class="btn btn-link btn-sm" confirm-click="vm.archiveExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to delete this group?" confirm-message="Messages that are deleted will be cleaned up according to the ServiceControl retention policy, and aren't available for retrying unless they're restored.">
                                                     <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp</i>Delete group
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-sm">
+                                                    <i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp</i>Add note
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-sm">
+                                                    <i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp</i>Edit note
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-sm">
+                                                    <i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp</i>Remove note
                                                 </button>
                                             </div>
                                         </div>
