@@ -29,8 +29,7 @@
                                 <div class="col-sm-12 no-side-padding">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <p class="lead break" ng-if="group.originator != null"> {{group.originator}}</p>
-                                            <p class="lead break" ng-if="group.originator == null"> Selection of individual message(s)</p>
+                                            <p class="lead break"> {{group.originator || 'Selection of individual message(s)'}}</p>
                                         </div>
                                     </div>
 
