@@ -32,7 +32,6 @@
             selectedGrouping: 0,
             selectGroup: selectGroup
         }
-        $scope.negativeCriticalTimeIsPresent = false;
 
         function selectGroup(groupSize) {
             $scope.grouping.selectedGrouping = groupSize;
@@ -129,10 +128,6 @@
 
                                 return 0;
                             });
-                        }
-                        if ($scope.endpoints) {
-                            $scope.negativeCriticalTimeIsPresent = false;
-                            $scope.endpoints.forEach((item) => $scope.negativeCriticalTimeIsPresent |= item.metrics.criticalTime.displayValue.value < 0);
                         }
                     }
 
