@@ -2232,6 +2232,10 @@ i.fa-exclamation-triangle {
     padding-top: 24px;
 }
 
+.message-type-status .pa-warning {
+    margin-top: -3px;
+}
+
 .monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details, .monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
     width: 32px;
     height: 30px;

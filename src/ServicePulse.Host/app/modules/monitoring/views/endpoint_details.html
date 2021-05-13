@@ -12,6 +12,9 @@
                 {{endpointName}}
             </h1>
             <div class="endpoint-status col-xs-2">
+                <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
+                    <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                </span>
                 <span ng-if="endpoint.isStale" class="warning">
                     <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
                 </span>
@@ -253,7 +256,7 @@
 
                 <no-data ng-show="endpoint.instances.length == 0" message="No messages processed in this period of time."></no-data>
 
-                <div class="row">
+                <div class="row endpoint-instances">
                     <div class="col-xs-12 no-side-padding">
                         <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
                             <div class="col-xs-12 no-side-padding">
@@ -264,6 +267,9 @@
                                                 {{instance.name}}
                                             </div>
                                             <div class="col-lg-4 no-side-padding endpoint-status">
+                                                <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                                                </span>
                                                 <span class="warning" ng-if="instance.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                                                 </span>
@@ -400,6 +406,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
+                                                <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                                                </span>
                                                 <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                                                 </span>

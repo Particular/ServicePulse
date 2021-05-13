@@ -57,6 +57,9 @@
                                     <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{endpoint.connectedCount || 0}})</span>
                                 </div>
                                 <div class="col-xs-5 no-side-padding endpoint-status">
+                                    <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
+                                        <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                                    </span>
                                     <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                         <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                     </span>
@@ -68,9 +71,6 @@
                                             <i class="fa fa-envelope"></i>
                                             <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                                         </a>
-                                    </span>
-                                    <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
-                                        <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time."></i>
                                     </span>
                                 </div>
                             </div>
