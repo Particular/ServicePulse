@@ -36,13 +36,18 @@ jobs:
         run: |
           [IO.File]::WriteAllBytes("signing-cert.pfx", [Convert]::FromBase64String("${{ secrets.NUGET_SIGNING_CERT_BASE64 }}"))
         shell: pwsh
+      - name: Install Host npm packages
+        run: npm run load
+        working-directory: src/ServicePulse.Host
       - name: Build
         run: msbuild src -p:Configuration=Release -restore -m
       - name: Publish artifacts
         uses: actions/upload-artifact@v2.2.2
         with:
-          name: assets
-          path: assets/*
+          name: artifacts
+          path: |
+            assets/*
+            nugets/*
           retention-days: 1
       - name: Install Octopus CLI
         uses: OctopusDeploy/install-octopus-cli-action@v1.1.1
@@ -53,6 +58,12 @@ jobs:
           # Creating the expected file layout for the Octopus package, including intermediate directories
           mkdir -p packaging/content
           cp assets\* .\packaging\content
+
+          # Octopus expects NuGet packages to have an extra .nzip extension for NuGet, .czip for Chocolatey
+          $nugets = Get-ChildItem -Path "./nugets/*.nupkg"
+          foreach ($file in $nugets) {
+            cp $file "./packaging/content/$($file.Name).nzip"
+          }
 
           # Octopus Deploy scripts need an executable file to recreate this metadata
           @"
@@ -88,4 +99,21 @@ jobs:
           release_number: ${{env.GitVersion_SemVer}}
           package_version: ${{env.GitVersion_SemVer}}
           package: "GitReleaseManager:0.11.0"
-          
+      - name: Update app.constants.js
+        run: |
+          $filename = "src/ServicePulse.Host/app/js/app.constants.js"
+          (Get-Content $filename).replace("1.2.0, "${{env.GitVersion_SemVer}}") | Set-Content $filename
+        shell: pwsh
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1.9.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push Windows Docker image
+        run: |
+          docker build -t particular/servicepulse-windows:${{env.GitVersion_SemVer}} -f dockerfile.iis .
+          docker push particular/servicepulse-windows:${{env.GitVersion_SemVer}}
+      - name: Build and push Linux Docker image
+        run: |
+          docker build -t particular/servicepulse:${{env.GitVersion_SemVer}} -f dockerfile.nginx .
+          docker push particular/servicepulse:${{env.GitVersion_SemVer}}
