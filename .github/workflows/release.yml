@@ -113,7 +113,9 @@ jobs:
         run: |
           docker build -t particular/servicepulse-windows:${{env.GitVersion_SemVer}} -f dockerfile.iis .
           docker push particular/servicepulse-windows:${{env.GitVersion_SemVer}}
+        working-directory: src
       - name: Build and push Linux Docker image
         run: |
           docker build -t particular/servicepulse:${{env.GitVersion_SemVer}} -f dockerfile.nginx .
           docker push particular/servicepulse:${{env.GitVersion_SemVer}}
+        working-directory: src
