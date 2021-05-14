@@ -26,7 +26,7 @@
                 attrs.$observe('date', function(value) {
                     if (value && attrs.date !== minDate) {
                         m = moment(attrs.date);
-                        element.attr('title', m.format('LLLL'));
+                        element.attr('title', m.format('LLLL') + " (local)\n" + m.utc().format('LLLL') + " (UTC)");
                         updateText();
                         updateLoop();
                     } else {
