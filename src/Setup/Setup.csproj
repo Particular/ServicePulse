@@ -9,29 +9,32 @@
     <PackageReference Include="Particular.Packaging" Version="1.2.1" PrivateAssets="All" />
   </ItemGroup>
 
-  <Target Name="CreateInstaller" AfterTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
-    <ItemGroup>
-      <BuiltFiles Include="$(OutputPath)\*.*" />
-    </ItemGroup>
-    <Delete Files="@(BuiltFiles)" />
+  <Target Name="CreateInstaller" AfterTargets="Build" Condition="'$(CI)' == 'true' AND '$(RELEASE_WORKFLOW)' == 'true'">
     <PropertyGroup>
       <AdvancedInstallerPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Caphyon\Advanced Installer@Advanced Installer Path)</AdvancedInstallerPath>
       <AdvancedInstallerExe>"$(AdvancedInstallerPath)bin\x86\AdvancedInstaller.com"</AdvancedInstallerExe>
       <AIPFile>ServicePulse.aip</AIPFile>
-      <SetupExeName>Particular.ServicePulse-$(GitVersion_MajorMinorPatch).exe</SetupExeName>
     </PropertyGroup>
     <ItemGroup>
       <ResourceFiles Include="res\**\*.*" />
     </ItemGroup>
-    <Copy SourceFiles="$(AIPFile)" DestinationFolder="$(IntermediateOutputPath)" SkipUnchangedFiles="true" />
+    <PropertyGroup>
+      <SetupExeOutputFolder>$(SolutionDir)..\assets\</SetupExeOutputFolder>
+      <SetupExeName>Particular.ServicePulse-$(GitVersion_MajorMinorPatch).exe</SetupExeName>
+    </PropertyGroup>
+    <MakeDir Directories="$(SetupExeOutputFolder)" />
+    <ItemGroup>
+      <ExistingExes Include="$(SetupExeOutputFolder)*.exe" />
+    </ItemGroup>
+    <Delete Files="@(ExistingExes)" />
+    <Copy SourceFiles="$(AIPFile)" DestinationFolder="$(IntermediateOutputPath)" />
     <Copy SourceFiles="@(ResourceFiles)" DestinationFolder="$(IntermediateOutputPath)res\%(RecursiveDir)" SkipUnchangedFiles="true" />
     <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)$(AIPFile) /NewPathVariable -name PROJECT_PATH -value $(SolutionDir)Setup -valuetype Folder" />
     <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)$(AIPFile) /NewPathVariable -name SP_PATH -value $(SolutionDir)ServicePulse.Host\bin\$(Configuration)\net45 -valuetype Folder" />
     <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)$(AIPFile) /NewPathVariable -name CUSTOMACTIONS_PATH -value $(SolutionDir)ServicePulse.Install.CustomActions\bin\$(Configuration)\net40 -valuetype Folder" />
     <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)$(AIPFile) /SetVersion $(GitVersion_MajorMinorPatch)" />
-    <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)$(AIPFile) /SetPackageName $(SetupExeName) -buildname DefaultBuild" />
+    <Exec Command="$(AdvancedInstallerExe) /edit $(IntermediateOutputPath)$(AIPFile) /SetPackageName $(SetupExeOutputFolder)$(SetupExeName) -buildname DefaultBuild" />
     <Exec Command="$(AdvancedInstallerExe) /rebuild $(IntermediateOutputPath)$(AIPFile)" />
-    <Copy SourceFiles="$(IntermediateOutputPath)bin\$(SetupExeName)" DestinationFolder="$(OutputPath)" />
   </Target>
 
 </Project>
