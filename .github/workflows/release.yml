@@ -11,6 +11,8 @@ env:
 jobs:
   release:
     runs-on: windows-2019 # Code signing requirement https://github.com/NuGet/Home/issues/7939
+    outputs:
+      version: ${{ steps.save-version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.3.4
@@ -42,6 +44,9 @@ jobs:
         working-directory: src/ServicePulse.Host
       - name: Build
         run: msbuild src -p:Configuration=Release -restore -m
+      - id: save-version
+        name: Save GitVersion_SemVer version
+        run: echo "::set-output name=version::${{env.GitVersion_SemVer}}"
       - name: Publish artifacts
         uses: actions/upload-artifact@v2.2.2
         with:
@@ -100,23 +105,36 @@ jobs:
           release_number: ${{env.GitVersion_SemVer}}
           package_version: ${{env.GitVersion_SemVer}}
           package: "GitReleaseManager:0.11.0"
+  docker:
+    needs: release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-2019
+            image-name: servicepulse-windows
+            dockerfile: dockerfile.iis
+          - os: ubuntu-20.04
+            image-name: servicepulse
+            dockerfile: dockerfile.nginx
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+      - name: Install Host npm packages
+        run: npm run load
+        working-directory: src/ServicePulse.Host
       - name: Update app.constants.js
         run: |
           $filename = "src/ServicePulse.Host/app/js/app.constants.js"
-          (Get-Content $filename).replace("1.2.0", "${{env.GitVersion_SemVer}}") | Set-Content $filename
+          (Get-Content $filename).replace("1.2.0", "${{needs.release.outputs.version}}") | Set-Content $filename
         shell: pwsh
       - name: Login to Docker Hub
         uses: docker/login-action@v1.9.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push Windows Docker image
-        run: |
-          docker build -t particular/servicepulse-windows:${{env.GitVersion_SemVer}} -f dockerfile.iis .
-          docker push particular/servicepulse-windows:${{env.GitVersion_SemVer}}
+      - name: Build Docker image
+        run: docker build -t particular/${{ matrix.image-name }}:${{needs.release.outputs.version}}} -f ${{ matrix.dockerfile }} .
         working-directory: src
-      - name: Build and push Linux Docker image
-        run: |
-          docker build -t particular/servicepulse:${{env.GitVersion_SemVer}} -f dockerfile.nginx .
-          docker push particular/servicepulse:${{env.GitVersion_SemVer}}
-        working-directory: src
+      - name: Push Docker image
+        run: docker push particular/${{ matrix.image-name }}:${{needs.release.outputs.version}}
