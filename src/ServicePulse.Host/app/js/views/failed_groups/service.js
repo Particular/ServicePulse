@@ -23,13 +23,17 @@
         }
 
         return {
-           
+
             retryGroup: function (id, success, error) {
                 var url = uri.join(connectionsManager.getServiceControlUrl(), 'recoverability', 'groups', id, 'errors', 'retry');
                 return postPromise(url, success, error);
             },
             archiveGroup: function (id, success, error) {
                 var url = uri.join(connectionsManager.getServiceControlUrl(), 'recoverability', 'groups', id, 'errors', 'archive');
+                return postPromise(url, success, error);
+            },
+            restoreGroup: function (id, success, error) {
+                var url = uri.join(connectionsManager.getServiceControlUrl(), 'recoverability', 'groups', id, 'errors', 'unarchive');
                 return postPromise(url, success, error);
             }
         };
