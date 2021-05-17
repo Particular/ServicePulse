@@ -57,7 +57,7 @@
             group.workflow_state = { status: "restorestarted", message: 'Restore request initiated...' };
             failedMessageGroupsService.restoreGroup(group.id,
                 'Restore group request enqueued',
-                'Restore group request rejected')
+                'Restore group request rejected, make sure that you use ServiceControl 4.18+')
                 .then(function() {
                         notifier.notify('RestoreGroupRequestAccepted', group);
                     },
