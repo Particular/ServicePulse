@@ -29,7 +29,7 @@
         var notifier = notifyService();
 
         serviceControlService.performingDataLoadInitially = true;
-       
+
         vm.loadingData = false;
         vm.exceptionGroups = [];
         vm.availableClassifiers = [];
@@ -280,7 +280,7 @@
                 autoGetExceptionGroups().then(function () {
                     vm.loadingData = false;
                     vm.initialLoadComplete = true;
-                    
+
                     notifier.notify('InitialLoadComplete');
 
                     return true;
@@ -381,7 +381,7 @@
 
         var retryOperationEventHandler = function (data, status) {
             var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
-            
+
             group.forEach(function (item) {
                     if (status === 'preparing' && data.progress.percentage === 1) {
                         status = 'queued';
@@ -417,9 +417,9 @@
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archivecompleted");
             getHistoricGroups();
-            
+
             toastService.showInfo("Group " + data.group_name + " was deleted succesfully.", "Delete operation completed", true);
-            
+
         }, 'ArchiveOperationCompleted');
 
 
@@ -434,7 +434,7 @@
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'forwarding');
         }, 'RetryOperationForwarding');
-        
+
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'forwarding');
         }, 'RetryOperationForwarded');
@@ -445,7 +445,7 @@
             if (data.failed) {
                 toastService.showInfo("Group " + data.originator + " was retried however and error have occured and not all messages were retried. Retry the remaining messages afterwards.", "Retry operation completed", true);
             } else {
-                toastService.showInfo("Group " + data.originator + " was retried succesfully.", "Retry operation completed", true);
+                toastService.showInfo("Group " + data.originator + " was retried succesfully.", "Retry operation completed", false);
             }
         }, 'RetryOperationCompleted');
 
