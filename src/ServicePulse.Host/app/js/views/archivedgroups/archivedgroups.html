@@ -66,7 +66,7 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="row" ng-show="!vm.isBeingRestored(group)">
+                                        <div class="row" ng-show="!vm.isBeingRestored(group.workflow_state.status)">
                                             <div class="col-sm-12 no-side-padding">
                                                 <button type="button" class="btn btn-link btn-sm" confirm-click="vm.restoreExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRestored(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to restore this group?" confirm-message="Restored messages will be moved back to the list of failed messages.">
                                                     <i aria-hidden="true" class="fa fa-undo no-link-underline">&nbsp</i>Restore group
