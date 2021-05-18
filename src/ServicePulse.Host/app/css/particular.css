@@ -1002,6 +1002,10 @@ nav {
     width: 100% !important;
 }
 
+.form-control.ui-select-toggle {
+    height: 38px;
+}
+
 .filter-period-menu, .sort-menu, .msg-group-menu {
     float: right;
 }
@@ -2415,9 +2419,16 @@ section[name="message_groups"] .list-section {
 section[name="configuration"] .alert {
     margin: 24px 0 0;
 }
+.alert-info {
+    background-color: #d9f1f7;
+}
 
 div.alert.alert-warning i.fa.fa-warning {
     color: #8a6d3b;
+}
+
+div.alert.alert-info i.fa.fa-info-circle {
+    color: #31708f;
 }
 
 div.alert.alert-warning strong {
