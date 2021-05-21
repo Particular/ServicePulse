@@ -12,6 +12,9 @@
                 {{endpointName}}
             </h1>
             <div class="endpoint-status col-xs-2">
+                <span class="warning" ng-show="negativeCriticalTimeIsPresent">
+                    <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                </span>
                 <span ng-if="endpoint.isStale" class="warning">
                     <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
                 </span>
@@ -179,14 +182,14 @@
                         </div>
                         <div class="row metric-digest-value current">
                             <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                {{endpoint.digest.metrics.criticalTime.latest | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
+                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.latest | durationValue) < 0}">{{endpoint.digest.metrics.criticalTime.latest | durationValue}} </span><span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
                             </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                         </div>
                         <div class="row metric-digest-value average">
                             <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                {{endpoint.digest.metrics.criticalTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} </span>
-                            </div>
+                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.average | durationValue) < 0}">{{endpoint.digest.metrics.criticalTime.average | durationValue}}</span> <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} </span>
+                                </div>
                             <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                             <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                         </div>
@@ -253,7 +256,7 @@
 
                 <no-data ng-show="endpoint.instances.length == 0" message="No messages processed in this period of time."></no-data>
 
-                <div class="row">
+                <div class="row endpoint-instances">
                     <div class="col-xs-12 no-side-padding">
                         <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
                             <div class="col-xs-12 no-side-padding">
@@ -264,6 +267,9 @@
                                                 {{instance.name}}
                                             </div>
                                             <div class="col-lg-4 no-side-padding endpoint-status">
+                                                <span class="warning" ng-show="instance.metrics.criticalTime.displayValue.value < 0">
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: instance currently has negative critical time, possibly because of a clock drift."></i>
+                                                </span>
                                                 <span class="warning" ng-if="instance.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                                                 </span>
@@ -320,7 +326,7 @@
                                             <div class="no-side-padding">
                                                 <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             </div>
-                                            <div class="no-side-padding sparkline-value" ng-class="instance.metrics.criticalTime.displayValue.unit">
+                                            <div class="no-side-padding sparkline-value" ng-class="[instance.metrics.criticalTime.displayValue.unit, {'negative':instance.metrics.criticalTime.displayValue.value < 0}]">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.criticalTime.displayValue.value}}
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
                                                 <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false" class="unit">
@@ -340,10 +346,10 @@
     </section>
 
     <section ng-if="!showInstancesBreakdown" class="endpoint-message-types">
-        
+
         <div class="row">
             <div class="col-xs-12 no-side-padding">
-                
+
                 <message-types-change-indicator refresh="endpoint.refreshMessageTypes" message-types-available="endpoint.messageTypesAvailable"></message-types-change-indicator>
 
                 <!-- Breakdown by message type-->
@@ -400,6 +406,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
+                                                <span class="warning" ng-if="messageType.metrics.criticalTime.displayValue.value < 0">
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: message type currently has negative critical time, possibly because of a clock drift."></i>
+                                                </span>
                                                 <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                                                 </span>
@@ -457,7 +466,7 @@
                                             <div class="no-side-padding">
                                                 <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                             </div>
-                                            <div class="no-side-padding sparkline-value" ng-class="messageType.metrics.criticalTime.displayValue.unit">
+                                            <div class="no-side-padding sparkline-value" ng-class="[messageType.metrics.criticalTime.displayValue.unit, {'negative':messageType.metrics.criticalTime.displayValue.value < 0}]">
                                                 {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.criticalTime.displayValue.value}}
                                                 <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                                 <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">

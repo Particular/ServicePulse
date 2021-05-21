@@ -57,6 +57,9 @@
                                     <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{endpoint.connectedCount || 0}})</span>
                                 </div>
                                 <div class="col-xs-5 no-side-padding endpoint-status">
+                                    <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
+                                        <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                                    </span>
                                     <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                         <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                     </span>
@@ -122,7 +125,7 @@
                                 <div class="no-side-padding">
                                     <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" class="graph critical-time pull-left"></graph>
                                 </div>
-                                <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.criticalTime.displayValue.unit">
+                                <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                                     {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
                                     <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                     <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>

@@ -2222,6 +2222,20 @@ i.fa-exclamation-triangle {
     background-repeat: no-repeat;
 }
 
+.pa-warning {
+    background-image: url('../../../img/warning.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    padding-top: 24px;
+}
+
+.message-type-status .pa-warning {
+    margin-top: -3px;
+}
+
 .monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details, .monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
     width: 32px;
     height: 30px;
@@ -2427,7 +2441,7 @@ div.alert.alert-warning strong {
 .sticky-warning.alert.alert-warning,
 .alert.alert-warning {
     font-size: 16px;
-    margin-bottom: 32px;
+    margin: 20px 0 0;
 }
 
 .lead.endpoint-details-link.righ-side-ellipsis {
@@ -3250,4 +3264,8 @@ button[ng-click="vm.toggleSort()"] div {
 
 .screen-intro {
     margin: 30px 0;
+}
+
+.negative {
+    color: red;
 }
