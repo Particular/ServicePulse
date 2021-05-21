@@ -268,7 +268,7 @@
                                             </div>
                                             <div class="col-lg-4 no-side-padding endpoint-status">
                                                 <span class="warning" ng-show="instance.metrics.criticalTime.displayValue.value < 0">
-                                                    <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: instance currently has negative critical time, possibly because of a clock drift."></i>
                                                 </span>
                                                 <span class="warning" ng-if="instance.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
@@ -406,8 +406,8 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
-                                                <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
-                                                    <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                                                <span class="warning" ng-if="messageType.metrics.criticalTime.displayValue.value < 0">
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: message type currently has negative critical time, possibly because of a clock drift."></i>
                                                 </span>
                                                 <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                                                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
