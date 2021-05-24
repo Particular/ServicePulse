@@ -17,7 +17,7 @@
 
         var vm = this;
         var notifier = notifyService();
-        
+
         vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
 
         if (!Object.prototype.hasOwnProperty.call(vm.selectedExceptionGroup, 'title')) {
@@ -157,6 +157,60 @@
                     });
                 });
         };
+
+        vm.exportSelected = function () {
+            toastService.showInfo("Exporting " + vm.selectedIds.length + " messages...");
+            var messagesForExport = vm.failedMessages.filter(function(item) {
+                return item.selected;
+            });
+
+            var propertiesToSkip = ["hover", "selected", "hover2", "$$hashKey", "panel", "edit_of", "edited"];
+
+            var preparedMessagesForExport = [];
+            for (var i = 0; i < messagesForExport.length; i++) {
+                preparedMessagesForExport[preparedMessagesForExport.length] = parseObject(messagesForExport[i], propertiesToSkip);
+            };
+
+            var csvStr = $.csv.fromObjects(preparedMessagesForExport);
+            downloadString(csvStr, "text/csv", "failedMessages.csv");
+        };
+
+        function downloadString(text, fileType, fileName) {
+            var blob = new Blob([text], { type: fileType });
+
+            var a = document.createElement('a');
+            a.download = fileName;
+            a.href = URL.createObjectURL(blob);
+            a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
+            a.style.display = "none";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 1500);
+        }
+
+        function parseObject(obj, propertiesToSkip, path) {
+            if (path == undefined) path = "";
+
+            var type = $.type(obj);
+            var d = {};
+
+            if (type == "array" || type == "object") {
+                for (var i in obj) {
+                    var newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
+                    $.extend(d, newD);
+                }
+                return d;
+            }else if (type == "number" || type == "string" || type == "boolean" || type == "null") {
+                var endPath = path.substr(0, path.length - 1);
+                if (propertiesToSkip && propertiesToSkip.includes(endPath)) {
+                    return d;
+                }
+                d[endPath] = obj;
+                return d;
+            }
+            return d;
+        }
 
         vm.archiveSelected = function () {
             toastService.showInfo("Deleting " + vm.selectedIds.length + " messages...");
