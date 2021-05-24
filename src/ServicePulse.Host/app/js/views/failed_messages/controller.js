@@ -168,7 +168,7 @@
             var preparedMessagesForExport = [];
             for (var i = 0; i < messagesForExport.length; i++) {
                 preparedMessagesForExport[preparedMessagesForExport.length] = parseObject(messagesForExport[i], propertiesToSkip);
-            };
+            }
 
             var csvStr = $.csv.fromObjects(preparedMessagesForExport);
             downloadString(csvStr, "text/csv", "failedMessages.csv");
