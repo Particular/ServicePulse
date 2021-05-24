@@ -159,7 +159,6 @@
         };
 
         vm.exportSelected = function () {
-            toastService.showInfo("Exporting " + vm.selectedIds.length + " messages...");
             var messagesForExport = vm.failedMessages.filter(function(item) {
                 return item.selected;
             });
@@ -173,6 +172,7 @@
 
             var csvStr = $.csv.fromObjects(preparedMessagesForExport);
             downloadString(csvStr, "text/csv", "failedMessages.csv");
+            toastService.showInfo("Messages export completed.");
         };
 
         function downloadString(text, fileType, fileName) {
