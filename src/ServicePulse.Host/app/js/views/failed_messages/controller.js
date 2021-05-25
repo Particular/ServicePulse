@@ -1,4 +1,4 @@
-﻿(function(window, angular) {
+﻿(function(window, angular, $) {
     "use strict";
 
     function controller(
