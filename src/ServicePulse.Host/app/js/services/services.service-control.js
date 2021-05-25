@@ -283,6 +283,22 @@
             });
         }
 
+        function deleteComment(groupId){
+            var url = uri.join(scu, 'recoverability', 'groups', groupId, 'comment');
+            return $http.delete(url)
+                .then(null, function() {
+                    notifications.pushForCurrentRoute('Deleted comment for a group ' + groupId, 'info');
+                });
+        }
+
+        function editComment(groupId, comment){
+            var url = uri.join(scu, 'recoverability', 'groups', groupId, 'comment?comment=' + comment);
+            return $http.post(url)
+                .then(null, function() {
+                    notifications.pushForCurrentRoute('Editted comment for group ' + groupId, 'info');
+                });
+        }
+
         function acknowledgeGroup(id, successText, failureText) {
             var url = uri.join(scu, 'recoverability', 'unacknowledgedgroups', id);
             return $http.delete(url).then(null, function () {
@@ -341,6 +357,8 @@
             archiveFailedMessages: archiveFailedMessages,
             archiveExceptionGroup: archiveExceptionGroup,
             acknowledgeArchiveGroup: acknowledgeArchiveGroup,
+            editComment: editComment,
+            deleteComment: deleteComment,
             retryExceptionGroup: retryExceptionGroup,
             getHeartbeatStats: getHeartbeatStats,
             loadQueueNames: loadQueueNames,

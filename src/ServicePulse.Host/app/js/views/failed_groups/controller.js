@@ -23,13 +23,14 @@
         serviceControlService,
         failedMessageGroupsService,
         toastService,
-        $routeParams) {
+        $routeParams,
+        commentModalService) {
 
         var vm = this;
         var notifier = notifyService();
 
         serviceControlService.performingDataLoadInitially = true;
-       
+
         vm.loadingData = false;
         vm.exceptionGroups = [];
         vm.availableClassifiers = [];
@@ -76,6 +77,26 @@
                         notifier.notify('ArchiveGroupRequestRejected', group);
                     });
         };
+
+        vm.deleteComment = function(group, $event){
+            serviceControlService.deleteComment(group.id,
+                'Comment deleted succesfully',
+                'Failed to delete a comment').then(function(){
+                group.comment = '';
+                group.isEditingComment = false;
+            });
+            $event.stopPropagation();
+        }
+
+        vm.editComment = function(group, comment, $event){
+            commentModalService.displayEditCommentModal(comment, group);
+            $event.stopPropagation();
+        }
+
+        vm.addComment = function(group, comment, $event){
+            commentModalService.displayCreateCommentModal(comment, group);
+            $event.stopPropagation();
+        }
 
         vm.retryExceptionGroup = function(group) {
             group.workflow_state = { status: 'waiting' };
@@ -280,7 +301,7 @@
                 autoGetExceptionGroups().then(function () {
                     vm.loadingData = false;
                     vm.initialLoadComplete = true;
-                    
+
                     notifier.notify('InitialLoadComplete');
 
                     return true;
@@ -381,7 +402,7 @@
 
         var retryOperationEventHandler = function (data, status) {
             var group = vm.exceptionGroups.filter(function (item) { return item.id === data.request_id });
-            
+
             group.forEach(function (item) {
                     if (status === 'preparing' && data.progress.percentage === 1) {
                         status = 'queued';
@@ -417,9 +438,9 @@
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archivecompleted");
             getHistoricGroups();
-            
+
             toastService.showInfo("Group " + data.group_name + " was deleted succesfully.", "Delete operation completed", true);
-            
+
         }, 'ArchiveOperationCompleted');
 
 
@@ -434,7 +455,7 @@
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'forwarding');
         }, 'RetryOperationForwarding');
-        
+
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'forwarding');
         }, 'RetryOperationForwarded');
@@ -465,7 +486,8 @@
         "serviceControlService",
         "failedMessageGroupsService",
         "toastService",
-        '$routeParams'
+        '$routeParams',
+        'commentModalService'
     ];
 
     angular.module("sc")
