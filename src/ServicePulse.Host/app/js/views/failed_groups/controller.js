@@ -65,6 +65,9 @@
 
         vm.archiveExceptionGroup = function(group) {
             group.workflow_state = { status: "archivestarted", message: 'Delete request initiated...' };
+
+            vm.deleteComment(group);
+
             failedMessageGroupsService.archiveGroup(group.id,
                     'Delete group request enqueued',
                     'Delete group request rejected')
@@ -80,12 +83,13 @@
 
         vm.deleteComment = function(group, $event){
             serviceControlService.deleteComment(group.id,
-                'Comment deleted succesfully',
-                'Failed to delete a comment').then(function(){
+                'Note deleted succesfully',
+                'Failed to delete a Note').then(function(){
                 group.comment = '';
-                group.isEditingComment = false;
             });
-            $event.stopPropagation();
+            if($event) {
+                $event.stopPropagation();
+            }
         }
 
         vm.editComment = function(group, comment, $event){
@@ -101,6 +105,7 @@
         vm.retryExceptionGroup = function(group) {
             group.workflow_state = { status: 'waiting' };
 
+            vm.deleteComment(group);
             failedMessageGroupsService.retryGroup(group.id,
                     'Retry Group Request Enqueued',
                     'Retry Group Request Rejected')
