@@ -116,7 +116,7 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
                                             <div class="col-sm-12 no-side-padding">
                                                 <div class="note">
                                                     <span>
