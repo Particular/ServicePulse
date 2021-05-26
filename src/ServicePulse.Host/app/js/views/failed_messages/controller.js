@@ -318,7 +318,6 @@
                 }
 
                 delete group.initialLoad;
-                $scope.$apply();
             });
         };
 
