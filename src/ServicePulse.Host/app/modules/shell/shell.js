@@ -7,6 +7,7 @@ require('angular-cookies');
 require('angular-ui-bootstrap');
 require('bootstrap');
 require('jquery');
+require('jquery-csv');
 require('zeroclipboard');
 require('moment');
 require('moment-duration-format');
