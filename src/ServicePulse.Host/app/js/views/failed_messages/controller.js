@@ -1,4 +1,4 @@
-﻿(function(window, angular, $) {
+﻿(function(window, angular) {
     "use strict";
 
     function controller(
@@ -11,7 +11,8 @@
         sharedDataService,
         notifyService,
         serviceControlService,
-        failedMessageGroupsService) {
+        failedMessageGroupsService,
+        $jquery) {
 
         serviceControlService.performingDataLoadInitially = true;
 
@@ -170,7 +171,7 @@
                 preparedMessagesForExport[preparedMessagesForExport.length] = parseObject(messagesForExport[i], propertiesToSkip);
             }
 
-            var csvStr = $.csv.fromObjects(preparedMessagesForExport);
+            var csvStr = $jquery.csv.fromObjects(preparedMessagesForExport);
             downloadString(csvStr, "text/csv", "failedMessages.csv");
             toastService.showInfo("Messages export completed.");
         };
@@ -192,13 +193,13 @@
         function parseObject(obj, propertiesToSkip, path) {
             if (path == undefined) path = "";
 
-            var type = $.type(obj);
+            var type = $jquery.type(obj);
             var d = {};
 
             if (type == "array" || type == "object") {
                 for (var i in obj) {
                     var newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
-                    $.extend(d, newD);
+                    $jquery.extend(d, newD);
                 }
                 return d;
             }else if (type == "number" || type == "string" || type == "boolean" || type == "null") {
@@ -337,7 +338,8 @@
         'sharedDataService',
         'notifyService',
         'serviceControlService',
-        'failedMessageGroupsService'
+        'failedMessageGroupsService',
+        '$jquery'
     ];
 
     angular.module('sc')
