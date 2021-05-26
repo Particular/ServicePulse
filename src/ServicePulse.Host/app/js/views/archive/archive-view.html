@@ -59,7 +59,7 @@
 
         <no-data ng-show="vm.archives.length === 0 && !vm.loadingData" title="message failures" message="There are currently no deleted messages"></no-data>
 
-        <div class="row" ng-show="vm.archives.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup)" infinite-scroll-distance="0" infinite-scroll-listen-for-event="list:updated" infinite-scroll-disabled="vm.disableLoadingData" class="clearfix">
+        <div class="row" ng-show="vm.archives.length > 0" class="clearfix">
 
             <div class="col-sm-12 no-mobile-side-padding" ng-repeat="message in vm.archives">
 
@@ -94,6 +94,12 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-md-4"></div>
+            <div class="col-md-6">
+                <ul uib-pagination ng-hide="vm.pager.total <= vm.pager.perPage" items-per-page="vm.pager.perPage" total-items="vm.pager.total" ng-model="vm.pager.page" max-size="10" boundary-link-numbers="true" ng-change="vm.loadMoreResults()"></ul>
             </div>
         </div>
     </section>

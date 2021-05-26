@@ -26,10 +26,15 @@
 
         vm.selectedArchiveGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All deleted messages', 'count': 0, 'initialLoad': true };
 
+        vm.pager = {
+            page: 1,
+            total: 1,
+            perPage: 50
+        };
+
         vm.sort = {
             sortby: 'modified',
             direction: 'desc',
-            page: 1,
             start: undefined,
             end: undefined,
             buttonText: function () {
@@ -66,9 +71,9 @@
                     return nObj;
                 });
 
-                vm.archives = vm.archives.concat(exgroups);
+                vm.selectedIds = [];
+                vm.archives = exgroups;
                 vm.allMessagesLoaded = (vm.archives.length >= vm.total);
-                vm.sort.page++;
             }
 
             vm.loadingData = false;
@@ -93,9 +98,9 @@
 
             vm.configuration = sharedDataService.getConfiguration();
             vm.error_retention_period = moment.duration(vm.configuration.data_retention.error_retention_period).asHours();
-            vm.total = 1;
+            vm.pager.total = 1;
             vm.archives = [];
-            vm.sort.page = 1;
+            vm.pager.page = 1;
 
             var selectedArchiveGroup = getSelectedArchiveGroup();
 
@@ -209,8 +214,8 @@
             vm.selectedIds = [];
             vm.archives = [];
             vm.allMessagesLoaded = false;
-            vm.total = 1;
-            vm.page = 1;
+            vm.pager.total = 1;
+            vm.pager.page = 1;
             vm.loadMoreResults();
         };
 
@@ -258,7 +263,7 @@
         };
 
         vm.loadMoreResults = function () {
-            vm.allMessagesLoaded = vm.archives.length >= vm.total;
+            vm.allMessagesLoaded = vm.archives.length >= vm.pager.total;
 
             if (vm.allMessagesLoaded || vm.loadingData) {
                 return;
@@ -269,13 +274,13 @@
             archivedMessageService.getArchivedMessages(
                 vm.selectedArchiveGroup.id,
                 vm.sort.sortby,
-                vm.sort.page,
+                vm.pager.page,
                 vm.sort.direction,
                 vm.sort.start,
                 vm.sort.end).then(function (response) {
                     notifier.notify('InitialLoadComplete');
 
-                    vm.total = response.total;
+                    vm.pager.total = response.total;
                     processLoadedMessages(response.data);
                 });
         };
