@@ -34,14 +34,13 @@
         vm.selectedIds = [];
         vm.multiselection = {};
         vm.sortButtonText = '';
-        vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.lastAction = selectActions.Selection;
         vm.page = 1;
-        vm.total = vm.stats.number_of_failed_messages;
+        vm.total = parseInt(vm.stats.number_of_failed_messages);
 
         notifier.subscribe($scope, function (event, data) {
-            vm.total = data;
+            vm.total = parseInt(data);
         }, 'MessageFailuresUpdated');
 
         var setSortButtonText = function(sort, direction) {
@@ -62,8 +61,6 @@
                 });
 
                 vm.failedMessages = vm.failedMessages.concat(exgroups);
-                vm.allMessagesLoaded = (vm.failedMessages.length >= vm.selectedExceptionGroup.count);
-                vm.page++;
             }
 
             vm.loadingData = false;
@@ -277,7 +274,6 @@
 
             vm.failedMessages = [];
             vm.selectedExceptionGroup = group;
-            vm.allMessagesLoaded = false;
             vm.page = 1;
 
             vm.loadMoreResults(group, sort, direction);
@@ -287,14 +283,13 @@
             selectGroupInternal(group, sort, direction, true);
         };
 
-        vm.loadMoreResults = function(group, isInfiniteScrolling) {
-            vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
+        vm.loadMoreResults = function(group) {
 
-            if (!group.initialLoad && (vm.allMessagesLoaded || vm.loadingData)) {
+            if (!group.initialLoad && vm.loadingData) {
                 return;
             }
 
-            if (group.initialLoad && isInfiniteScrolling) {
+            if (group.initialLoad) {
                 return;
             }
 
@@ -314,6 +309,7 @@
                     group.count = response.total;
                 }
 
+                vm.total = parseInt(response.total);
                 processLoadedMessages(response.data);
 
                 if (group.initialLoad) {
