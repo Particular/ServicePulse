@@ -101,12 +101,12 @@
                         </div>
                     </div>
 
-                    <div class="row ">
-                        <div class="col-md-5">
-                            <ul uib-pagination ng-hide="total <= 50" items-per-page="50" total-items="total" ng-model="page" max-size="10" boundary-link-numbers="true" ng-change="vm.loadMoreResults(vm.selectedExceptionGroup, true)"></ul>
-                        </div>
-                    </div>
-
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col-md-4"></div>
+                <div class="col-md-6">
+                    <ul uib-pagination ng-hide="vm.pager.total <= vm.pager.perPage" items-per-page="vm.pager.perPage" total-items="vm.pager.total" ng-model="vm.pager.page" max-size="10" boundary-link-numbers="true" ng-change="vm.loadMoreResults(vm.selectedExceptionGroup, true)"></ul>
                 </div>
             </div>
         </section>

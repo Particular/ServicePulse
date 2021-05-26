@@ -36,11 +36,16 @@
         vm.sortButtonText = '';
         vm.loadingData = false;
         vm.lastAction = selectActions.Selection;
-        vm.page = 1;
-        vm.total = parseInt(vm.stats.number_of_failed_messages);
+        vm.pager = {
+            page: 1,
+            total: parseInt(vm.stats.number_of_failed_messages),
+            perPage: 50
+        }
+        // vm.page = 1;
+        // vm.total = parseInt(vm.stats.number_of_failed_messages);
 
         notifier.subscribe($scope, function (event, data) {
-            vm.total = parseInt(data);
+            vm.pager.total = parseInt(data);
         }, 'MessageFailuresUpdated');
 
         var setSortButtonText = function(sort, direction) {
@@ -59,8 +64,8 @@
                     nObj.panel = 0;
                     return nObj;
                 });
-
-                vm.failedMessages = vm.failedMessages.concat(exgroups);
+                vm.selectedIds = [];
+                vm.failedMessages = exgroups;
             }
 
             vm.loadingData = false;
@@ -93,7 +98,7 @@
 
             vm.failedMessages = [];
             vm.selectedIds = [];
-            vm.page = 1;
+            vm.pager.page = 1;
             vm.sort = defaultSort.sort;
             vm.direction = defaultSort.direction;
 
@@ -274,7 +279,7 @@
 
             vm.failedMessages = [];
             vm.selectedExceptionGroup = group;
-            vm.page = 1;
+            vm.pager.page = 1;
 
             vm.loadMoreResults(group, sort, direction);
         };
@@ -285,11 +290,7 @@
 
         vm.loadMoreResults = function(group) {
 
-            if (!group.initialLoad && vm.loadingData) {
-                return;
-            }
-
-            if (group.initialLoad) {
+            if (vm.loadingData) {
                 return;
             }
 
@@ -299,9 +300,9 @@
 
             var loadPromise;
             if (allExceptionsGroupSelected) {
-                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.page, vm.direction);
+                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.pager.page, vm.direction);
             } else {
-                loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.page, vm.direction);
+                loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.pager.page, vm.direction);
             }
 
             loadPromise.then(function (response) {
@@ -309,7 +310,7 @@
                     group.count = response.total;
                 }
 
-                vm.total = parseInt(response.total);
+                vm.pager.total = parseInt(response.total);
                 processLoadedMessages(response.data);
 
                 if (group.initialLoad) {
@@ -317,6 +318,7 @@
                 }
 
                 delete group.initialLoad;
+                $scope.$apply();
             });
         };
 
