@@ -57,6 +57,8 @@
                 $scope.pager.total = response.total;
             });
         }
+
+        reloadData();
     }
 
     controller.$inject = [

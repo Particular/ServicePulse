@@ -1,4 +1,4 @@
-﻿const { version } = require("zeroclipboard");
+﻿require("zeroclipboard");
 
 (function (window, angular, $) {
     'use strict';
@@ -12,7 +12,7 @@
 
             const notifier = notifyService();
             $scope.isSCMonitoringConnecting = connectionsManager.getIsMonitoringEnabled();
-            
+
             if ($scope.isSCMonitoringConnecting) {
                 connectivityNotifier.reportConnecting();
             }

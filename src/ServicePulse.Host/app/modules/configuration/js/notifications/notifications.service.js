@@ -1,11 +1,11 @@
 ﻿(function (window, angular) {
     'use strict';
-    
+
     function service($http, $timeout, $q, $rootScope, $interval, moment, connectionsManager, uri, notifications, notifyService) {
         var notifier = notifyService();
         var scu = connectionsManager.getServiceControlUrl();
 
-        var notifications = {};
+        notifications = {};
 
         function getData() {
             var url = uri.join(scu, 'notifications/email');
@@ -43,8 +43,8 @@
         return {
             updateSettings: function(settings, success, error) {
                 var url = uri.join(scu, 'notifications/email');
-                var promise = sendPromise(url, 'POST', settings, 
-                () => {notifications = settings}, 
+                var promise = sendPromise(url, 'POST', settings,
+                () => {notifications = settings},
                 error);
 
                 return promise;
@@ -57,7 +57,7 @@
             },
             toogleEmailNotifications: function(enabled, success, error) {
                 var url = uri.join(scu, 'notifications/email/toggle');
-                
+
                 var promise = sendPromise(url, 'POST', {'enabled': enabled}, success, error);
 
                 return promise;
