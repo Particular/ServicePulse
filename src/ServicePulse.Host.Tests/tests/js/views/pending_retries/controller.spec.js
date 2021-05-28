@@ -17,7 +17,7 @@
             $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
             $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
 
-            pendingRetryService = { retryPendingRetriedMessages: function () { } };
+            pendingRetryService = { retryPendingRetriedMessages: function () { }, getPendingRetryMessages: function(){ return {then: function(){}}} };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
@@ -40,7 +40,7 @@
             controller.pendingRetryMessages = [{ id: 1, submittedForRetrial: false, selected: true }, { id: 2, submittedForRetrial: false, selected: false }, { id: 3, submittedForRetrial: false, selected: true }];
             controller.selectedIds = [1, 3];
             controller.retrySelected();
-            
+
             root.$apply(function () { deferred.resolve('Remote call result') });
 
             expect(controller.selectedIds.length).toEqual(0);
@@ -58,13 +58,13 @@
         var $scope, controller, pendingRetryService, root, $httpBackend;
 
         beforeEach(inject(function ($rootScope, $injector) {
-            $scope = {};
+            $scope = { };
             root = $rootScope;
             $httpBackend = $injector.get('$httpBackend');
             $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
             $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
 
-            pendingRetryService = { retryAllMessages: function () { } };
+            pendingRetryService = { retryAllMessages: function () { }, getPendingRetryMessages: function(){ return {then: function(){}}} };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
@@ -113,7 +113,7 @@
             $httpBackend = $injector.get('$httpBackend');
             $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
             $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
-            pendingRetryService = { markAsResolvedMessages: function () { } };
+            pendingRetryService = { markAsResolvedMessages: function () { }, getPendingRetryMessages: function(){ return {then: function(){}}} };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
@@ -158,7 +158,7 @@
             $httpBackend = $injector.get('$httpBackend');
             $httpBackend.whenGET('http://localhost:33333/api/errors/queues/addresses').respond(null);
             $httpBackend.whenGET('http://localhost:33333/api/redirects').respond(null);
-            pendingRetryService = { markAsResolvedAllMessages: function () { } };
+            pendingRetryService = { markAsResolvedAllMessages: function () { }, getPendingRetryMessages: function(){ return {then: function(){}}} };
             controller = $controller('pendingRetriesController', {
                 $scope: $scope,
                 $timeout: null,
@@ -218,7 +218,7 @@
             var message = { retried: true, number_of_processing_attempts: 1 };
 
             var result = controller.noStatusPresent(message);
-            
+
             expect(result).toEqual(false);
         }));
 

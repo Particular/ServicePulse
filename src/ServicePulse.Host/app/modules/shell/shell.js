@@ -11,7 +11,6 @@ require('jquery-csv');
 require('zeroclipboard');
 require('moment');
 require('moment-duration-format');
-require('ng-infinite-scroll');
 require('angularjs-toaster');
 require('signalr');
 require('ui-select');
