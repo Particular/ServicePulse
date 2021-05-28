@@ -198,6 +198,7 @@
         disconnectedEndpointMonitor.startService();
 
         notifier.subscribe($scope, logit, 'ArchiveGroupRequestAccepted');
+        notifier.subscribe($scope, logit, 'RestoreGroupRequestAccepted');
 
         notifier.subscribe($scope, function(event, data) {
             $scope.SCVersion = data.sc_version;
@@ -230,6 +231,11 @@
         notifier.subscribe($scope, function (event, data) {
             toastService.showError('Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>');
         }, 'ExpiredLicense');
+
+        notifier.subscribe($scope, function(event, data) {
+            logit(event, data);
+            toastService.showError('Group' + data.title + ' Restore request rejected');
+        }, 'RestoreGroupRequestRejected');
 
         notifier.subscribe($scope, function(event, data) {
             logit(event, data);
@@ -395,6 +401,18 @@
         listener.subscribe($scope, function (message) {
             notifier.notify('FailedMessageGroupArchived', message);
         }, 'FailedMessageGroupArchived');
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify('UnarchiveOperationStarting', message);
+        }, 'UnarchiveOperationStarting');
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify('UnarchiveOperationBatchCompleted', message);
+        }, 'UnarchiveOperationBatchCompleted');
+
+        listener.subscribe($scope, function (message) {
+            notifier.notify('UnarchiveOperationCompleted', message);
+        }, 'UnarchiveOperationCompleted');
 
         listener.subscribe($scope, function (message) {
             notifier.notify('ArchiveOperationStarting', message);

@@ -443,9 +443,6 @@
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archivecompleted");
             getHistoricGroups();
-
-            toastService.showInfo("Group " + data.group_name + " was deleted succesfully.", "Delete operation completed", true);
-
         }, 'ArchiveOperationCompleted');
 
 
@@ -468,11 +465,6 @@
         notifier.subscribe($scope, function (event, data) {
             retryOperationEventHandler(data, 'completed');
             getHistoricGroups();
-            if (data.failed) {
-                toastService.showInfo("Group " + data.originator + " was retried however and error have occured and not all messages were retried. Retry the remaining messages afterwards.", "Retry operation completed", true);
-            } else {
-                toastService.showInfo("Group " + data.originator + " was retried succesfully.", "Retry operation completed", true);
-            }
         }, 'RetryOperationCompleted');
 
         // INIT

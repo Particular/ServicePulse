@@ -11,13 +11,15 @@
         sharedDataService,
         notifyService,
         serviceControlService,
-        failedMessageGroupsService) {
+        failedMessageGroupsService,
+        $jquery,
+        exportToFile) {
 
         serviceControlService.performingDataLoadInitially = true;
 
         var vm = this;
         var notifier = notifyService();
-        
+
         vm.selectedExceptionGroup = { 'id': $routeParams.groupId ? $routeParams.groupId : undefined, 'title': 'All Failed Messages', 'count': 0, 'initialLoad': true };
 
         if (!Object.prototype.hasOwnProperty.call(vm.selectedExceptionGroup, 'title')) {
@@ -34,14 +36,18 @@
         vm.selectedIds = [];
         vm.multiselection = {};
         vm.sortButtonText = '';
-        vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.lastAction = selectActions.Selection;
-        vm.page = 1;
-        vm.total = vm.stats.number_of_failed_messages;
+        vm.pager = {
+            page: 1,
+            total: parseInt(vm.stats.number_of_failed_messages),
+            perPage: 50
+        }
+        // vm.page = 1;
+        // vm.total = parseInt(vm.stats.number_of_failed_messages);
 
         notifier.subscribe($scope, function (event, data) {
-            vm.total = data;
+            vm.pager.total = parseInt(data);
         }, 'MessageFailuresUpdated');
 
         var setSortButtonText = function(sort, direction) {
@@ -60,10 +66,8 @@
                     nObj.panel = 0;
                     return nObj;
                 });
-
-                vm.failedMessages = vm.failedMessages.concat(exgroups);
-                vm.allMessagesLoaded = (vm.failedMessages.length >= vm.selectedExceptionGroup.count);
-                vm.page++;
+                vm.selectedIds = [];
+                vm.failedMessages = exgroups;
             }
 
             vm.loadingData = false;
@@ -96,7 +100,7 @@
 
             vm.failedMessages = [];
             vm.selectedIds = [];
-            vm.page = 1;
+            vm.pager.page = 1;
             vm.sort = defaultSort.sort;
             vm.direction = defaultSort.direction;
 
@@ -157,6 +161,46 @@
                     });
                 });
         };
+
+        vm.exportSelected = function () {
+            var messagesForExport = vm.failedMessages.filter(function(item) {
+                return item.selected;
+            });
+
+            var propertiesToSkip = ["hover", "selected", "hover2", "$$hashKey", "panel", "edit_of", "edited"];
+
+            var preparedMessagesForExport = [];
+            for (var i = 0; i < messagesForExport.length; i++) {
+                preparedMessagesForExport[preparedMessagesForExport.length] = parseObject(messagesForExport[i], propertiesToSkip);
+            }
+
+            var csvStr = $jquery.csv.fromObjects(preparedMessagesForExport);
+            exportToFile.downloadString(csvStr, "text/csv", "failedMessages.csv");
+            toastService.showInfo("Messages export completed.");
+        };
+
+        function parseObject(obj, propertiesToSkip, path) {
+            if (path == undefined) path = "";
+
+            var type = $jquery.type(obj);
+            var d = {};
+
+            if (type == "array" || type == "object") {
+                for (var i in obj) {
+                    var newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
+                    $jquery.extend(d, newD);
+                }
+                return d;
+            }else if (type == "number" || type == "string" || type == "boolean" || type == "null") {
+                var endPath = path.substr(0, path.length - 1);
+                if (propertiesToSkip && propertiesToSkip.includes(endPath)) {
+                    return d;
+                }
+                d[endPath] = obj;
+                return d;
+            }
+            return d;
+        }
 
         vm.archiveSelected = function () {
             toastService.showInfo("Deleting " + vm.selectedIds.length + " messages...");
@@ -223,8 +267,7 @@
 
             vm.failedMessages = [];
             vm.selectedExceptionGroup = group;
-            vm.allMessagesLoaded = false;
-            vm.page = 1;
+            vm.pager.page = 1;
 
             vm.loadMoreResults(group, sort, direction);
         };
@@ -233,14 +276,9 @@
             selectGroupInternal(group, sort, direction, true);
         };
 
-        vm.loadMoreResults = function(group, isInfiniteScrolling) {
-            vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
+        vm.loadMoreResults = function(group) {
 
-            if (!group.initialLoad && (vm.allMessagesLoaded || vm.loadingData)) {
-                return;
-            }
-
-            if (group.initialLoad && isInfiniteScrolling) {
+            if (vm.loadingData) {
                 return;
             }
 
@@ -250,9 +288,9 @@
 
             var loadPromise;
             if (allExceptionsGroupSelected) {
-                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.page, vm.direction);
+                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.pager.page, vm.direction);
             } else {
-                loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.page, vm.direction);
+                loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.pager.page, vm.direction);
             }
 
             loadPromise.then(function (response) {
@@ -260,6 +298,7 @@
                     group.count = response.total;
                 }
 
+                vm.pager.total = parseInt(response.total);
                 processLoadedMessages(response.data);
 
                 if (group.initialLoad) {
@@ -283,7 +322,9 @@
         'sharedDataService',
         'notifyService',
         'serviceControlService',
-        'failedMessageGroupsService'
+        'failedMessageGroupsService',
+        '$jquery',
+        'exportToFile'
     ];
 
     angular.module('sc')
