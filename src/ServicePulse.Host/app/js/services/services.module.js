@@ -14,6 +14,7 @@
         'services.endpoints',
         'services.messageTypeParser',
         'services.disconnectedEndpointMonitor',
+        'services.export'
     ]);
 
 } (window, window.angular));
