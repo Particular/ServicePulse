@@ -8,7 +8,7 @@
                     templateUrl: 'js/views/comments/commentmodal.html',
                     controller: 'commentController',
                     resolve: {
-                        data: () => {
+                        data: function (){
                             return {
                                 comment: comment,
                                 group: group,
