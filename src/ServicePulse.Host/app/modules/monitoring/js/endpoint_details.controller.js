@@ -18,7 +18,7 @@
     ) {
 
         $scope.endpointName = $routeParams.endpointName;
-        $scope.showInstancesBreakdown = $routeParams.tab === 'instancesBreakdown'; 
+        $scope.showInstancesBreakdown = $routeParams.tab === 'instancesBreakdown';
         $scope.loading = true;
         $scope.loadedSuccessfully = false;
         $scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
@@ -161,6 +161,7 @@
 
                     $scope.endpoint.isStale = true;
                     $scope.endpoint.isScMonitoringDisconnected = false;
+                    $scope.negativeCriticalTimeIsPresent = false;
 
                     $scope.endpoint.instances.forEach(function (instance) {
                         fillDisplayValues(instance);
@@ -168,11 +169,13 @@
                             if (result.data.length > 0) {
                                 instance.serviceControlId = result.data[0].id;
                                 instance.errorCount = result.data[0].count;
+                                instance.isScMonitoringDisconnected = false;
                             }
                         }, function (err) {
                             // Warn user?
                     });
                         $scope.endpoint.isStale = $scope.endpoint.isStale && instance.isStale;
+                        $scope.negativeCriticalTimeIsPresent |= instance.metrics.criticalTime.displayValue.value < 0;
                     });
 
                     $scope.loadedSuccessfully = true;

@@ -12,6 +12,11 @@
 
         <div class="row">
             <div class="col-sm-12">
+
+                <div class="alert alert-info">
+                    <i class="fa fa-info-circle"></i> To check if a retried message was also processed successfully, enable <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank">message auditing</a> <i class="fa fa-external-link fake-link"></i>
+                </div>
+
                 <div class="btn-toolbar">
                     <div class="row">
                         <div class="col-md-6 col-xs-12 toolbar-inputs no-side-padding">
@@ -113,7 +118,7 @@
 
         <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
 
-        <div ng-show="vm.pendingRetryMessages.length > 0" infinite-scroll="vm.loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="vm.disableLoadingData" class="clearfix">
+        <div ng-show="vm.pendingRetryMessages.length > 0" class="clearfix">
             <div class="col-sm-12 no-mobile-side-padding">
                 <div class="row box repeat-item failed-message" ng-repeat="message in vm.pendingRetryMessages">
                     <multi-checkboxlist messages="vm.pendingRetryMessages" selected-ids="vm.selectedIds" message="message" multiselection="vm.multiselection"></multi-checkboxlist>
@@ -147,6 +152,13 @@
                         </a>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="row ">
+            <div class="col-md-4"></div>
+            <div class="col-md-6">
+                <ul uib-pagination ng-hide="vm.pager.total <= vm.pager.perPage" items-per-page="vm.pager.perPage" total-items="vm.pager.total" ng-model="vm.pager.page" max-size="10" boundary-link-numbers="true" ng-change="vm.loadMoreResults()"></ul>
             </div>
         </div>
     </section>

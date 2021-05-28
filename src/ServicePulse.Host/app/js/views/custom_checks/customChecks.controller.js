@@ -7,12 +7,15 @@
         serviceControlService,
         notifyService) {
 
-        $scope.model = { data: [], total: 0 };
+        $scope.model = { data: []};
         $scope.loadingData = false;
-        $scope.disableLoadingData = false;
         $scope.reloadCount = 0;
 
-        var page = 1;
+        $scope.pager = {
+            page: 1,
+            total: 1,
+            perPage: 25
+        }
 
         $scope.loadMoreResults = function () {
             if ($scope.loadingData) {
@@ -20,7 +23,7 @@
             }
 
             $scope.loadingData = true;
-            load(page++, $scope.reloadCount);
+            load($scope.pager.page, $scope.reloadCount);
         };
 
         $scope.dismiss = function (row) {
@@ -31,13 +34,13 @@
         notifier.subscribe($scope, reloadData, 'CustomChecksUpdated');
 
         function reloadData() {
-            page = 1;
+            $scope.pager.page = 1;
+            $scope.pager.total = 1;
             $scope.loadingData = true;
-            $scope.model = { data: [], total: 0 };
-            $scope.disableLoadingData = false;
+            $scope.model = { data: [] };
             $scope.reloadCount++;
 
-            load(page, $scope.reloadCount);
+            load($scope.pager.page, $scope.reloadCount);
         }
 
         function load(page, reloadCount) {
@@ -50,12 +53,8 @@
 
                 $scope.loadingData = false;
 
-                $scope.model.data = $scope.model.data.concat(response.data);
-                $scope.model.total = response.total;
-
-                if ($scope.model.data.length >= $scope.model.total) {
-                    $scope.disableLoadingData = true;
-                }
+                $scope.model.data = response.data;
+                $scope.pager.total = response.total;
             });
         }
     }

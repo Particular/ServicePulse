@@ -1002,6 +1002,10 @@ nav {
     width: 100% !important;
 }
 
+.form-control.ui-select-toggle {
+    height: 38px;
+}
+
 .filter-period-menu, .sort-menu, .msg-group-menu {
     float: right;
 }
@@ -2222,6 +2226,20 @@ i.fa-exclamation-triangle {
     background-repeat: no-repeat;
 }
 
+.pa-warning {
+    background-image: url('../../../img/warning.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    padding-top: 24px;
+}
+
+.message-type-status .pa-warning {
+    margin-top: -3px;
+}
+
 .monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details, .monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
     width: 32px;
     height: 30px;
@@ -2415,9 +2433,16 @@ section[name="message_groups"] .list-section {
 section[name="configuration"] .alert {
     margin: 24px 0 0;
 }
+.alert-info {
+    background-color: #d9f1f7;
+}
 
 div.alert.alert-warning i.fa.fa-warning {
     color: #8a6d3b;
+}
+
+div.alert.alert-info i.fa.fa-info-circle {
+    color: #31708f;
 }
 
 div.alert.alert-warning strong {
@@ -2427,7 +2452,7 @@ div.alert.alert-warning strong {
 .sticky-warning.alert.alert-warning,
 .alert.alert-warning {
     font-size: 16px;
-    margin-bottom: 32px;
+    margin: 20px 0 0;
 }
 
 .lead.endpoint-details-link.righ-side-ellipsis {
@@ -3257,4 +3282,8 @@ button[ng-click="vm.toggleSort()"] div {
     background-color: #fcf8e3;
     border: 1px solid #faebcc;
     padding: 10px 15px;
+}
+
+.negative {
+    color: red;
 }
