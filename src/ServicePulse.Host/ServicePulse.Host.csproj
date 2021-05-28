@@ -41,4 +41,10 @@
     <EmbeddedResource Include="Hosting\Help.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="app\js\services\services.export.js">
+      <LogicalName>%(RelativeDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

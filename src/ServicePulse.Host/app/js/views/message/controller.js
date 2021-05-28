@@ -14,7 +14,8 @@
         sharedDataService,
         $filter,
         messageEditorModalService,
-        editAndRetryConfig) {
+        editAndRetryConfig,
+        exportToFile) {
 
         var vm = this;
         var notifier = notifyService();
@@ -55,8 +56,15 @@
             if (message.notFound || message.error)
                 return false;
 
+            downloadHeadersAndBody(message);
+
+            message.panel = panelnum;
+            return false;
+        };
+
+        function downloadHeadersAndBody(message) {
             if (!angular.isDefined(message.headers)) {
-                serviceControlService.getMessage(message.message_id).then(function (response) {
+                return serviceControlService.getMessage(message.message_id).then(function (response) {
                     message.headers = response.message.headers;
                 }, function () {
                     message.headersUnavailable = "message headers unavailable";
@@ -64,17 +72,14 @@
             }
 
             if (angular.isDefined(message.headers) && !angular.isDefined(message.messageBody)) {
-                serviceControlService.getMessageBody(message).then(function (msg) {
+                return serviceControlService.getMessageBody(message).then(function (msg) {
                     var bodyContentType = getContentType(message.headers);
                     message.messageBody = prettifyText(msg.data, bodyContentType);
                 }, function () {
                     message.bodyUnavailable = "message body unavailable";
                 });
             }
-
-            message.panel = panelnum;
-            return false;
-        };
+        }
 
         function prettifyText(text, contentType) {
             if (contentType === 'application/json') {
@@ -133,6 +138,32 @@
                 //dismissed
             });
         };
+
+        vm.exportMessage = function () {
+            if (!angular.isDefined(vm.message.messageBody)) {
+                downloadHeadersAndBody(vm.message).then(function() {
+                    prepareAndSaveExportFile(vm.message);                });
+            } else {
+                prepareAndSaveExportFile(vm.message);
+            }
+        };
+
+        function prepareAndSaveExportFile(message) {
+            var txtStr = "STACKTRACE\n";
+            txtStr += message.exception.stack_trace;
+
+            txtStr += "\n\nHEADERS";
+            for (var i = 0; i < message.headers.length; i++) {
+                txtStr += '\n' + message.headers[i].key + ': ' + message.headers[i].value;
+            }
+
+            txtStr += "\n\nMESSAGE BODY\n";
+            txtStr += message.messageBody;
+
+            exportToFile.downloadString(txtStr, "text/txt", "failedMessage.txt");
+
+            toastService.showInfo("Message export completed.");
+        }
 
         function updateMessageDeleteDate(message, errorRetentionPeriod) {
             var countdown = moment(message.last_modified).add(errorRetentionPeriod, 'hours');
@@ -198,6 +229,7 @@
         '$filter',
         'messageEditorModalService',
         'editAndRetryConfig',
+        'exportToFile'
     ];
 
     angular.module("sc")
