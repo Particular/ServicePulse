@@ -3277,6 +3277,13 @@ button[ng-click="vm.toggleSort()"] div {
     margin: 30px 0;
 }
 
+.note {
+    margin-bottom: 10px;
+    background-color: #fcf8e3;
+    border: 1px solid #faebcc;
+    padding: 10px 15px;
+}
+
 .negative {
     color: red;
 }

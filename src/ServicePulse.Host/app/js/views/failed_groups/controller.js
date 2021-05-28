@@ -23,7 +23,8 @@
         serviceControlService,
         failedMessageGroupsService,
         toastService,
-        $routeParams) {
+        $routeParams,
+        commentModalService) {
 
         var vm = this;
         var notifier = notifyService();
@@ -64,6 +65,9 @@
 
         vm.archiveExceptionGroup = function(group) {
             group.workflow_state = { status: "archivestarted", message: 'Delete request initiated...' };
+
+            vm.deleteComment(group);
+
             failedMessageGroupsService.archiveGroup(group.id,
                     'Delete group request enqueued',
                     'Delete group request rejected')
@@ -77,9 +81,31 @@
                     });
         };
 
+        vm.deleteComment = function(group, $event){
+            serviceControlService.deleteComment(group.id,
+                'Note deleted succesfully',
+                'Failed to delete a Note').then(function(){
+                group.comment = '';
+            });
+            if($event) {
+                $event.stopPropagation();
+            }
+        }
+
+        vm.editComment = function(group, comment, $event){
+            commentModalService.displayEditCommentModal(comment, group);
+            $event.stopPropagation();
+        }
+
+        vm.addComment = function(group, comment, $event){
+            commentModalService.displayCreateCommentModal(comment, group);
+            $event.stopPropagation();
+        }
+
         vm.retryExceptionGroup = function(group) {
             group.workflow_state = { status: 'waiting' };
 
+            vm.deleteComment(group);
             failedMessageGroupsService.retryGroup(group.id,
                     'Retry Group Request Enqueued',
                     'Retry Group Request Rejected')
@@ -417,7 +443,6 @@
         notifier.subscribe($scope, function (event, data) {
             archiveOperationEventHandler(data, "archivecompleted");
             getHistoricGroups();
-
         }, 'ArchiveOperationCompleted');
 
 
@@ -458,7 +483,8 @@
         "serviceControlService",
         "failedMessageGroupsService",
         "toastService",
-        '$routeParams'
+        '$routeParams',
+        'commentModalService'
     ];
 
     angular.module("sc")
