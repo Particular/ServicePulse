@@ -11,7 +11,6 @@
         'toaster',
         'toastService',
         'ui.bootstrap',
-        'infinite-scroll',
         'services',
         'ui.particular',
         'ui.particular.reindexingstatus',

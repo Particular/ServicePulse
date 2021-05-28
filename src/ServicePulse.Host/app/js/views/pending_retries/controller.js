@@ -31,6 +31,13 @@
             buttonText: 'All Pending Retries'
         };
 
+        vm.pager = {
+            page: 1,
+            total: 1,
+            perPage: 50
+
+        };
+
         notifier.subscribe($scope, function (event, updatedTotalMessages) {
             if (vm.total !== updatedTotalMessages) {
                 vm.total = updatedTotalMessages;
@@ -107,9 +114,8 @@
                     return fillRedirect(nObj);
                 });
 
-                vm.pendingRetryMessages = vm.pendingRetryMessages.concat(exgroups);
-                vm.allMessagesLoaded = (vm.pendingRetryMessages.length >= vm.total);
-                vm.page++;
+                vm.selectedIds = [];
+                vm.pendingRetryMessages = exgroups;
             }
             vm.loadingData = false;
         };
@@ -118,13 +124,13 @@
             vm.pendingRetryMessages = [];
             vm.selectedIds = [];
             vm.multiselection = {};
-            vm.page = 1;
+            vm.pager.page = 1;
             vm.filter = {
                 searchPhrase: undefined
             };
             vm.filter.start = vm.filter.end = undefined;
             vm.total = sharedDataService.getstats().number_of_pending_retries;
-            vm.filteredTotal = vm.total;
+            vm.pager.total = vm.total;
             vm.sort = "time_of_failure";
             vm.direction = "asc";
             setSortButtonText(vm.sort, vm.direction);
@@ -212,7 +218,7 @@
 
         vm.retryAllConfirmationMessage = function() {
             if (!vm.isQueueFilterEmpty()) {
-                return "Are you sure you want to retry " + vm.filteredTotal + " out of " + vm.total + " previously retried messages? If the selected messages were processed in the meanwhile, then duplicate messages will be produced.";
+                return "Are you sure you want to retry " + vm.pager.total + " out of " + vm.total + " previously retried messages? If the selected messages were processed in the meanwhile, then duplicate messages will be produced.";
             }
 
             return "Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.";
@@ -239,7 +245,8 @@
 
         vm.searchPhraseChanged = function() {
             vm.pendingRetryMessages = [];
-            vm.page = 1;
+            vm.pager.page = 1;
+            vm.pager.total = 1;
             vm.selectedIds = [];
             vm.multiselection = {};
             vm.pendingRetryMessages.forEach(function (item) {
@@ -257,7 +264,7 @@
 
         vm.onSelect = function() {
             vm.pendingRetryMessages = [];
-            vm.page = 1;
+            vm.pager.page = 1;
             vm.loadMoreResults();
         };
 
@@ -271,8 +278,7 @@
             setSortButtonText(sort, direction);
 
             vm.pendingRetryMessages = [];
-            vm.allMessagesLoaded = false;
-            vm.page = 1;
+            vm.pager.page = 1;
 
             vm.loadTotalBasedOnFilters();
             vm.loadMoreResults(sort, direction);
@@ -313,20 +319,18 @@
 
         vm.loadTotalBasedOnFilters = function() {
             pendingRetryService.getTotalPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.filter.start, vm.filter.end).then(function(response) {
-                vm.filteredTotal = response.total;
+                vm.pager.total = response.total;
             });
         };
 
         vm.loadMoreResults = function() {
-            vm.allMessagesLoaded = vm.pendingRetryMessages.length >= vm.total;
-             
-            if (vm.allMessagesLoaded || vm.loadingData) {
+            if (vm.loadingData) {
                 return;
             }
 
             vm.loadingData = true;
 
-            pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.sort, vm.page, vm.direction, vm.filter.start, vm.filter.end).then(function(response) {
+            pendingRetryService.getPendingRetryMessages(vm.filter.searchPhrase ? vm.filter.searchPhrase.physical_address : '', vm.sort, vm.pager.page, vm.direction, vm.filter.start, vm.filter.end).then(function(response) {
                 processLoadedMessages(response.data);
             });
         };

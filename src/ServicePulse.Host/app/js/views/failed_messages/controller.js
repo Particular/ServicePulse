@@ -34,14 +34,18 @@
         vm.selectedIds = [];
         vm.multiselection = {};
         vm.sortButtonText = '';
-        vm.allMessagesLoaded = false;
         vm.loadingData = false;
         vm.lastAction = selectActions.Selection;
-        vm.page = 1;
-        vm.total = vm.stats.number_of_failed_messages;
+        vm.pager = {
+            page: 1,
+            total: parseInt(vm.stats.number_of_failed_messages),
+            perPage: 50
+        }
+        // vm.page = 1;
+        // vm.total = parseInt(vm.stats.number_of_failed_messages);
 
         notifier.subscribe($scope, function (event, data) {
-            vm.total = data;
+            vm.pager.total = parseInt(data);
         }, 'MessageFailuresUpdated');
 
         var setSortButtonText = function(sort, direction) {
@@ -60,10 +64,8 @@
                     nObj.panel = 0;
                     return nObj;
                 });
-
-                vm.failedMessages = vm.failedMessages.concat(exgroups);
-                vm.allMessagesLoaded = (vm.failedMessages.length >= vm.selectedExceptionGroup.count);
-                vm.page++;
+                vm.selectedIds = [];
+                vm.failedMessages = exgroups;
             }
 
             vm.loadingData = false;
@@ -96,7 +98,7 @@
 
             vm.failedMessages = [];
             vm.selectedIds = [];
-            vm.page = 1;
+            vm.pager.page = 1;
             vm.sort = defaultSort.sort;
             vm.direction = defaultSort.direction;
 
@@ -277,8 +279,7 @@
 
             vm.failedMessages = [];
             vm.selectedExceptionGroup = group;
-            vm.allMessagesLoaded = false;
-            vm.page = 1;
+            vm.pager.page = 1;
 
             vm.loadMoreResults(group, sort, direction);
         };
@@ -287,14 +288,9 @@
             selectGroupInternal(group, sort, direction, true);
         };
 
-        vm.loadMoreResults = function(group, isInfiniteScrolling) {
-            vm.allMessagesLoaded = vm.failedMessages.length >= group.count;
+        vm.loadMoreResults = function(group) {
 
-            if (!group.initialLoad && (vm.allMessagesLoaded || vm.loadingData)) {
-                return;
-            }
-
-            if (group.initialLoad && isInfiniteScrolling) {
+            if (vm.loadingData) {
                 return;
             }
 
@@ -304,9 +300,9 @@
 
             var loadPromise;
             if (allExceptionsGroupSelected) {
-                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.page, vm.direction);
+                loadPromise = serviceControlService.getFailedMessages(vm.sort, vm.pager.page, vm.direction);
             } else {
-                loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.page, vm.direction);
+                loadPromise = serviceControlService.getFailedMessagesForExceptionGroup(group.id, vm.sort, vm.pager.page, vm.direction);
             }
 
             loadPromise.then(function (response) {
@@ -314,6 +310,7 @@
                     group.count = response.total;
                 }
 
+                vm.pager.total = parseInt(response.total);
                 processLoadedMessages(response.data);
 
                 if (group.initialLoad) {

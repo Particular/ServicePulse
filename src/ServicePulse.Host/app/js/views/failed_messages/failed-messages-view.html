@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <div ng-show="vm.failedMessages.length > 0" infinite-scroll="vm.loadMoreResults(vm.selectedExceptionGroup, true)" infinite-scroll-distance="0" infinite-scroll-listen-for-event="list:updated" infinite-scroll-disabled="vm.disableLoadingData" class="clearfix">
+            <div ng-show="vm.failedMessages.length > 0">
                 <div class="col-sm-12 no-mobile-side-padding">
                     <div class="row box repeat-item failed-message" ng-repeat="message in vm.failedMessages">
 
@@ -101,6 +101,12 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col-md-4"></div>
+                <div class="col-md-6">
+                    <ul uib-pagination ng-hide="vm.pager.total <= vm.pager.perPage" items-per-page="vm.pager.perPage" total-items="vm.pager.total" ng-model="vm.pager.page" max-size="10" boundary-link-numbers="true" ng-change="vm.loadMoreResults(vm.selectedExceptionGroup, true)"></ul>
                 </div>
             </div>
         </section>
