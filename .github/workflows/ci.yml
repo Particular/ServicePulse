@@ -26,6 +26,9 @@ jobs:
       - name: Install Host npm packages
         run: npm run load
         working-directory: src/ServicePulse.Host
+      - name: Run lint
+        run: npm run lint
+        working-directory: src/ServicePulse.Host
       - name: Build
         run: msbuild src -p:Configuration=Release -restore -m
       - name: Upload assets
