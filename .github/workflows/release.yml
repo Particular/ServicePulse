@@ -39,6 +39,8 @@ jobs:
         run: |
           [IO.File]::WriteAllBytes("signing-cert.pfx", [Convert]::FromBase64String("${{ secrets.NUGET_SIGNING_CERT_BASE64 }}"))
         shell: pwsh
+      - name: Setup NuGet for signing
+        uses: nuget/setup-nuget@v1.0.5
       - name: Install Host npm packages
         run: npm run load
         working-directory: src/ServicePulse.Host
@@ -47,6 +49,8 @@ jobs:
       - id: save-version
         name: Save GitVersion_SemVer version
         run: echo "::set-output name=version::${{env.GitVersion_SemVer}}"
+      - name: Sign NuGet Packages
+        run: nuget sign nugets\*.nupkg -CertificatePath signing-cert.pfx -Timestamper "http://timestamp.digicert.com/?alg=sha256" -NonInteractive
       - name: Publish artifacts
         uses: actions/upload-artifact@v2.2.2
         with:
