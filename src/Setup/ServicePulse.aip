@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="9.9" version="13.5" Modules="enterprise" RootPath="." Language="en" Id="{EB6913C3-A2D9-484A-9A49-E3D640F2A96C}">
-  <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
-    <ROW Name="HiddenItems" Value="AppXAppDetailsComponent;AppXCapabilitiesComponent;AppXDependenciesComponent;AppXProductDetailsComponent;AppXVisualAssetsComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent"/>
-  </COMPONENT>
+<DOCUMENT Type="Advanced Installer" CreateVersion="9.9" version="18.3" Modules="enterprise" RootPath="." Language="en" Id="{EB6913C3-A2D9-484A-9A49-E3D640F2A96C}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiValidationComponent">
     <ROW Table="File" Column="Sequence" MinValue="1" MaxValue="2147483647" Description="Sequence with respect to the media images; order must track cabinet order." Options="0" ColumnType="3" ColumnIndex="7" ColumnSize="4" MsiKey="File#Sequence"/>
     <ROW Table="Media" Column="LastSequence" MinValue="0" MaxValue="2147483647" Description="File sequence number for the last file for this media." Options="0" ColumnType="3" ColumnIndex="1" ColumnSize="4" MsiKey="Media#LastSequence"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
+    <ROW Property="AI_CURRENT_YEAR" Value="2021" ValueLocId="-"/>
     <ROW Property="AI_EXTERNALUIUNINSTALLERNAME" MultiBuildValue="DefaultBuild:aiui"/>
     <ROW Property="AI_FINDEXE_TITLE" Value="Select the installation package for [|ProductName]" ValueLocId="AI.Property.FindExeTitle"/>
     <ROW Property="AI_MINDOTNETVERSION" MultiBuildValue="DefaultBuild:4.0" ValueLocId="-"/>
@@ -18,7 +16,7 @@
     <ROW Property="ARPCOMMENTS" Value="Particular Software ServicePulse version [|ProductVersion] for NServiceBus" ValueLocId="*"/>
     <ROW Property="ARPHELPLINK" Value="http://particular.net/support"/>
     <ROW Property="ARPNOMODIFY" MultiBuildValue="DefaultBuild:1"/>
-    <ROW Property="ARPNOREPAIR" Value="1"/>
+    <ROW Property="ARPNOREPAIR" Value="1" MultiBuildValue="DefaultBuild:1"/>
     <ROW Property="ARPPRODUCTICON" Value="Operations_1.exe" Type="8"/>
     <ROW Property="ARPSYSTEMCOMPONENT" Value="1"/>
     <ROW Property="ARPURLINFOABOUT" Value="http://particular.net/ServicePulse"/>
@@ -46,8 +44,8 @@
     <ROW Property="WindowsTypeNT40Display" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT50" MultiBuildValue="DefaultBuild:Windows 2000" ValueLocId="-"/>
     <ROW Property="WindowsTypeNT50Display" MultiBuildValue="DefaultBuild:Windows 2000" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT5X" MultiBuildValue="DefaultBuild:Windows XP/2003 RTM, Windows XP/2003 SP1, Windows XP SP2 x86" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT5XDisplay" MultiBuildValue="DefaultBuild:Windows XP/2003 RTM, Windows XP/2003 SP1, Windows XP SP2 x86" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT5X" MultiBuildValue="DefaultBuild:Windows XP/2003" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT5XDisplay" MultiBuildValue="DefaultBuild:Windows XP/2003" ValueLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1" DirectoryOptions="12"/>
@@ -58,6 +56,7 @@
     <ROW Component="AI_CustomARPName" ComponentId="{0F1C90D1-A696-4DB2-9737-BB96B63E50DF}" Directory_="APPDIR" Attributes="4" KeyPath="DisplayName" Options="1"/>
     <ROW Component="AI_DisableModify" ComponentId="{DF00D24A-7668-4F3D-9629-2A1537091C3F}" Directory_="APPDIR" Attributes="4" KeyPath="NoModify" Options="1"/>
     <ROW Component="AI_ExePath" ComponentId="{72AA4BC4-A6EC-4E71-89D3-5FF4A798C6F6}" Directory_="APPDIR" Attributes="4" KeyPath="AI_ExePath"/>
+    <ROW Component="APPDIR" ComponentId="{452970A7-D331-40A3-9E0F-5001470C57C9}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="Nancy.Hosting.Self.dll" ComponentId="{C2DFBFD8-7865-49DB-87B0-F72E44F72B77}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.dll"/>
     <ROW Component="Nancy.Hosting.Self.xml" ComponentId="{41498FA4-2B44-4BD2-8799-6D47E4DBF940}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.Hosting.Self.xml" Type="0"/>
     <ROW Component="Nancy.dll" ComponentId="{4ABB345E-B929-4F10-ADC5-8C26618D7D41}" Directory_="APPDIR" Attributes="0" KeyPath="Nancy.dll"/>
@@ -68,15 +67,15 @@
     <ROW Component="ServicePulse.Host.exe" ComponentId="{AE9BCD73-377B-49A1-812D-AEBB7013AA5F}" Directory_="APPDIR" Attributes="0" KeyPath="ServicePulse.Host.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="AI_CustomARPName AI_DisableModify AI_ExePath Nancy.Hosting.Self.dll Nancy.Hosting.Self.xml Nancy.dll ParticularSoftware ProductInformation SHORTCUTDIR ServicePulse ServicePulse.Host.exe"/>
+    <ROW Feature="ServicePulse" Title="NServiceBus ServicePulse" Description="Management Pack provides auditing and analysis features for NServiceBus." Display="1" Level="1" Directory_="APPDIR" Attributes="0"/>
     <ATTRIBUTE name="CurrentFeature" value="ServicePulse"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="Nancy.Hosting.Self.dll" Component_="Nancy.Hosting.Self.dll" FileName="NancyH~1.dll|Nancy.Hosting.Self.dll" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.Hosting.Self.dll" SelfReg="false" NextFile="Nancy.Hosting.Self.xml"/>
-    <ROW File="Nancy.Hosting.Self.xml" Component_="Nancy.Hosting.Self.xml" FileName="NancyH~1.xml|Nancy.Hosting.Self.xml" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.Hosting.Self.xml" SelfReg="false" NextFile="Nancy.xml"/>
-    <ROW File="Nancy.dll" Component_="Nancy.dll" FileName="Nancy.dll" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.dll" SelfReg="false" NextFile="Nancy.Hosting.Self.dll"/>
-    <ROW File="Nancy.xml" Component_="Nancy.Hosting.Self.xml" FileName="Nancy.xml" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.xml" SelfReg="false" NextFile="ServicePulse.Host.pdb"/>
-    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="&lt;SP_PATH&gt;\ServicePulse.Host.exe" SelfReg="false" NextFile="Nancy.dll" DigSign="true"/>
+    <ROW File="ServicePulse.Host.exe" Component_="ServicePulse.Host.exe" FileName="Servic~1.exe|ServicePulse.Host.exe" Attributes="0" SourcePath="&lt;SP_PATH&gt;\ServicePulse.Host.exe" SelfReg="false" DigSign="true"/>
+    <ROW File="Nancy.dll" Component_="Nancy.dll" FileName="Nancy.dll" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.dll" SelfReg="false"/>
+    <ROW File="Nancy.Hosting.Self.dll" Component_="Nancy.Hosting.Self.dll" FileName="NancyH~1.dll|Nancy.Hosting.Self.dll" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.Hosting.Self.dll" SelfReg="false"/>
+    <ROW File="Nancy.Hosting.Self.xml" Component_="Nancy.Hosting.Self.xml" FileName="NancyH~1.xml|Nancy.Hosting.Self.xml" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.Hosting.Self.xml" SelfReg="false"/>
+    <ROW File="Nancy.xml" Component_="Nancy.Hosting.Self.xml" FileName="Nancy.xml" Attributes="0" SourcePath="&lt;SP_PATH&gt;Nancy.xml" SelfReg="false"/>
     <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~1.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="&lt;SP_PATH&gt;ServicePulse.Host.pdb" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
@@ -88,14 +87,14 @@
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="qh" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="1" PackageFolder="bin" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\ServicePulse.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" UseLargeSchema="true" ExeName="ServicePulse" UACExecutionLevel="2"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="bin" PackageFileName="ServicePulse " Languages="en" InstallationType="4" CabsLocation="1" PackageType="1" FilesInsideExe="true" ExeIconPath="res\ServicePulse.ico" ExtractionFolder="[AppDataFolder][|Manufacturer]\[|ProductName] [|ProductVersion]\install" MsiCmdLine="/L*V [TempFolder]Particular.ServicePulse.Installer.log" ExtUI="true" UseLargeSchema="true" ExeName="ServicePulse" UACExecutionLevel="2"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
     <ROW Path="&lt;AI_DICTS&gt;ui.ail"/>
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DigCertStoreComponent">
-    <ROW DigitalCertificate="..\..\..\..\..\signing-cert.pfx" TimeStampUrl="http://timestamp.digicert.com/?alg=sha256" SignerDescription="NServiceBus installer" DescriptionUrl="http://www.nservicebus.com/" SignOptions="7" SignTool="0" UseSha256="1" Thumbprint="11b319724eaacd57d9df429926f77fc47e544e2b Subject: NServiceBus Ltd&#10;Issuer: DigiCert SHA2 Assured ID Code Signing CA&#10;Valid from 11/05/2020 to 01/30/2024"/>
+    <ROW TimeStampUrl="http://timestamp.digicert.com/?alg=sha256" SignerDescription="NServiceBus installer" DescriptionUrl="http://www.nservicebus.com/" SignOptions="7" SignTool="5" UseSha256="1" KVTenantId="replace-tenant-id" KVAppId="replace-app-id" KVName="particularcodesigning" KVCertName="replace-cert-name"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
@@ -386,10 +385,11 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
+    <ROW Directory_="APPDIR" Component_="APPDIR" ManualDelete="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_DATA_SETTER" Type="51" Source="AI_ExtractFiles" Target="[AI_SETUPEXEPATH]"/>
+    <ROW Action="AI_DATA_SETTER" Type="51" Source="CustomActionData" Target="[AI_SETUPEXEPATH]"/>
     <ROW Action="AI_DATA_SETTER_1" Type="51" Source="CustomActionData" Target="Could not connect to ServiceControl using the specified URI.&#13;\n |ServicePulse [ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1||[CLIENTPROCESSID]"/>
     <ROW Action="AI_DATA_SETTER_2" Type="51" Source="CustomActionData" Target="Particular.ServicePulse"/>
     <ROW Action="AI_DATA_SETTER_3" Type="51" Source="CustomActionData" Target="The specified port  for ServicePulse is invalid. Please choose port between 1 and 49151 |ServicePulse[ProductVersion] |MB_OK,MB_ICONWARNING,MB_DEFBUTTON1|BTN_PRESSED|[CLIENTPROCESSID]"/>
@@ -406,9 +406,8 @@
     <ROW Action="AI_DoRemoveExternalUIStub" Type="3585" Source="ExternalUICleaner.dll" Target="DoRemoveExternalUIStub" WithoutSeq="true"/>
     <ROW Action="AI_DpiContentScale" Type="1" Source="aicustact.dll" Target="DpiContentScale"/>
     <ROW Action="AI_EnableDebugLog" Type="321" Source="aicustact.dll" Target="EnableDebugLog"/>
-    <ROW Action="AI_EstimateExtractFiles" Type="1" Source="Prereq.dll" Target="EstimateExtractFiles"/>
     <ROW Action="AI_ExtractCadLzma" Type="51" Source="AI_ExtractLzma" Target="[AI_SETUPEXEPATH]"/>
-    <ROW Action="AI_ExtractFiles" Type="1025" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER"/>
+    <ROW Action="AI_ExtractFiles" Type="1" Source="Prereq.dll" Target="ExtractSourceFiles" AdditionalSeq="AI_DATA_SETTER"/>
     <ROW Action="AI_ExtractLzma" Type="1025" Source="lzmaextractor.dll" Target="ExtractLZMAFiles"/>
     <ROW Action="AI_FindExeLzma" Type="1" Source="lzmaextractor.dll" Target="FindEXE"/>
     <ROW Action="AI_GetArpIconPath" Type="1" Source="aicustact.dll" Target="GetArpIconPath"/>
@@ -440,7 +439,7 @@
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
     <ROW Action="SetUrlAcl" Type="1" Source="ServicePulse.Install.CustomActions.CA.dll_1" Target="SetUrlAcl"/>
     <ROW Action="Start_Service" Type="3138" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; start Particular.ServicePulse"/>
-    <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
+    <ROW Action="Stop_Service" Type="66" Source="viewer.exe" Target="/RunAsAdmin /HideWindow &quot;[SystemFolder]net.exe&quot; stop Particular.ServicePulse"/>
     <ROW Action="Success_ServiceControlMonitoring_Avail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_8"/>
     <ROW Action="Success_ServiceControl_Avail_msg" Type="1" Source="aicustact.dll" Target="MsgBox" WithoutSeq="true" Options="1" AdditionalSeq="AI_DATA_SETTER_7"/>
     <ROW Action="Uninstall_Service" Type="3074" Source="viewer.exe" Target="/HideWindow &quot;[#ServicePulse.Host.exe]&quot; --uninstall --serviceName=&quot;Particular.ServicePulse&quot;"/>
@@ -450,6 +449,20 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
     <ROW Dialog="Configuration" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="2" Title="[ProductName] [Setup]" Control_Default="Next" Control_Cancel="Cancel"/>
     <ROW Dialog="FeatureConfiguration" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="2" Title="[ProductName] [Setup]" Control_Default="Next" Control_Cancel="Cancel"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatCompsComponent">
+    <ROW Feature_="ServicePulse" Component_="AI_CustomARPName"/>
+    <ROW Feature_="ServicePulse" Component_="AI_DisableModify"/>
+    <ROW Feature_="ServicePulse" Component_="AI_ExePath"/>
+    <ROW Feature_="ServicePulse" Component_="Nancy.Hosting.Self.dll"/>
+    <ROW Feature_="ServicePulse" Component_="Nancy.Hosting.Self.xml"/>
+    <ROW Feature_="ServicePulse" Component_="Nancy.dll"/>
+    <ROW Feature_="ServicePulse" Component_="ParticularSoftware"/>
+    <ROW Feature_="ServicePulse" Component_="ProductInformation"/>
+    <ROW Feature_="ServicePulse" Component_="SHORTCUTDIR"/>
+    <ROW Feature_="ServicePulse" Component_="ServicePulse"/>
+    <ROW Feature_="ServicePulse" Component_="ServicePulse.Host.exe"/>
+    <ROW Feature_="ServicePulse" Component_="APPDIR"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiIconsComponent">
     <ROW Name="Operations_1.exe" SourcePath="&lt;PROJECT_PATH&gt;res\ServicePulse.ico" Index="0"/>
@@ -462,7 +475,7 @@
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
     <ROW Action="AI_STORE_LOCATION" Condition="(Not Installed) OR REINSTALL" Sequence="1502"/>
-    <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1399"/>
+    <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1397"/>
     <ROW Action="AI_ResolveKnownFolders" Sequence="55"/>
     <ROW Action="AI_ResolveLocalizedCredentials" Sequence="54"/>
     <ROW Action="AI_GetArpIconPath" Sequence="52"/>
@@ -485,10 +498,9 @@
     <ROW Action="AI_ExtractLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1549" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteRLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="1548" Builds="DefaultBuild"/>
     <ROW Action="AI_DeleteLzma" Condition="SETUPEXEDIR=&quot;&quot; AND Installed AND (REMOVE&lt;&gt;&quot;ALL&quot;) AND (AI_INSTALL_MODE&lt;&gt;&quot;Remove&quot;) AND (NOT PATCH)" Sequence="6599" Builds="DefaultBuild"/>
-    <ROW Action="AI_ExtractFiles" Sequence="3998" Builds="DefaultBuild"/>
-    <ROW Action="AI_DATA_SETTER" Sequence="3997"/>
-    <ROW Action="AI_EstimateExtractFiles" Sequence="3999" Builds="DefaultBuild"/>
     <ROW Action="AI_EnableDebugLog" Sequence="51"/>
+    <ROW Action="AI_ExtractFiles" Sequence="1399" Builds="DefaultBuild"/>
+    <ROW Action="AI_DATA_SETTER" Sequence="1398"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="749"/>
@@ -500,10 +512,10 @@
     <ROW Action="AI_EnableDebugLog" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
+    <ROW Condition="((VersionNT &lt;&gt; 501) AND (VersionNT &lt;&gt; 502))" Description="[ProductName] cannot be installed on [WindowsTypeNT5XDisplay]." DescriptionLocId="AI.LaunchCondition.NoNT5X" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="(AI_DOTNET40_SEARCH = &quot;#1&quot;) OR (AI_DOTNET45_SEARCH &gt;= &quot;4.5&quot;)" Description="[ProductName] cannot be installed on systems with .NET Framework version lower than [AI_MINDOTNETVERSION]" DescriptionLocId="AI.LaunchCondition.DotNET" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="(VersionNT &lt;&gt; 400)" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT40Display]" DescriptionLocId="AI.LaunchCondition.NoNT40" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="(VersionNT &lt;&gt; 500)" Description="[ProductName] cannot be installed on [WindowsTypeNT50Display]." DescriptionLocId="AI.LaunchCondition.NoNT50" IsPredefined="true" Builds="DefaultBuild"/>
-    <ROW Condition="(VersionNT64 OR ((VersionNT &lt;&gt; 501) OR (ServicePackLevel = 3))) AND ((VersionNT &lt;&gt; 502) OR (ServicePackLevel = 2))" Description="[ProductName] cannot be installed on [WindowsTypeNT5XDisplay]." DescriptionLocId="AI.LaunchCondition.NoNT5X" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]." DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRegLocatorComponent">
@@ -522,8 +534,8 @@
     <ROW Registry="HelpTelephone" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="HelpTelephone" Value="[ARPHELPTELEPHONE]" Component_="AI_CustomARPName"/>
     <ROW Registry="InstallLocation" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="InstallLocation" Value="[APPDIR]" Component_="AI_CustomARPName"/>
     <ROW Registry="ModifyPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="ModifyPath" Value="[AI_UNINSTALLER] /I [ProductCode]" Component_="AI_CustomARPName"/>
-    <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoModify" Value="#1" Component_="AI_DisableModify"/>
-    <ROW Registry="NoRepair" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoRepair" Value="#1" Component_="AI_CustomARPName"/>
+    <ROW Registry="NoModify" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoModify" Value="#1" Component_="AI_DisableModify" VirtualValue="#"/>
+    <ROW Registry="NoRepair" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="NoRepair" Value="#1" Component_="AI_CustomARPName" VirtualValue="#"/>
     <ROW Registry="ParticularSoftware" Root="2" Key="Software\ParticularSoftware" Name="+" Component_="ParticularSoftware"/>
     <ROW Registry="Path" Root="2" Key="Software\ParticularSoftware\ServicePulse" Name="Path" Value="[APPDIR]" Component_="ProductInformation"/>
     <ROW Registry="Publisher" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="Publisher" Value="[Manufacturer]" Component_="AI_CustomARPName"/>
@@ -533,8 +545,8 @@
     <ROW Registry="UninstallPath" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallPath" Value="[AI_UNINSTALLER] /x [ProductCode] AI_UNINSTALLER_CTP=1" Component_="AI_CustomARPName"/>
     <ROW Registry="UninstallString" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="UninstallString" Value="[AI_UNINSTALLER] /x [ProductCode] AI_UNINSTALLER_CTP=1" Component_="AI_CustomARPName"/>
     <ROW Registry="Version" Root="2" Key="Software\ParticularSoftware\ServicePulse" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
-    <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#4" Component_="AI_CustomARPName"/>
-    <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#0" Component_="AI_CustomARPName"/>
+    <ROW Registry="VersionMajor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMajor" Value="#4" Component_="AI_CustomARPName" VirtualValue="#"/>
+    <ROW Registry="VersionMinor" Root="-1" Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\[ProductName] [ProductVersion]" Name="VersionMinor" Value="#0" Component_="AI_CustomARPName" VirtualValue="#"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiRemoveFileComponent">
     <ROW FileKey="_" Component_="Nancy.Hosting.Self.xml" DirProperty="APPDIR" InstallMode="2"/>
@@ -547,6 +559,7 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="[|ProductVersion]" Attributes="2" ActionProperty="AI_NEWERPRODUCTFOUND"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
-    <ROW Directory_="APPDIR" SourcePath="&lt;SP_PATH&gt;" Feature="ServicePulse" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
+    <ROW Directory_="APPDIR" SourcePath="&lt;SP_PATH&gt;" Feature="ServicePulse" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6" FileAddOptions="4"/>
   </COMPONENT>
 </DOCUMENT>
+

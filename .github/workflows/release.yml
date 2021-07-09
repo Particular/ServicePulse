@@ -32,25 +32,37 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
       - name: Setup Advanced Installer
         run: |
-          $version = 17.7
+          $version = 18.4
           choco install advanced-installer --version=$version
           & "C:\Program Files (x86)\Caphyon\Advanced Installer $version\bin\x86\AdvancedInstaller.com" /register ${{ secrets.ADVANCED_INSTALLER_LICENSE_KEY }}
-      - name: Get signing cert
-        run: |
-          [IO.File]::WriteAllBytes("signing-cert.pfx", [Convert]::FromBase64String("${{ secrets.NUGET_SIGNING_CERT_BASE64 }}"))
-        shell: pwsh
-      - name: Setup NuGet for signing
-        uses: nuget/setup-nuget@v1.0.5
+      - name: Install NuGetKeyVaultSignTool
+        run: dotnet tool install --global NuGetKeyVaultSignTool
       - name: Install Host npm packages
         run: npm run load
         working-directory: src/ServicePulse.Host
+      - name: Prepare AIP file
+        run: |
+          $content = Get-Content -Raw -Path src/Setup/ServicePulse.aip
+          $content = $content -replace "replace-tenant-id", "${{ secrets.AZURE_KEY_VAULT_TENANT_ID }}" -replace "replace-app-id", "${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }}" -replace "replace-cert-name", "${{ secrets.AZURE_KEY_VAULT_CERTIFICATE_NAME }}"
+          Set-Content src/Setup/ServicePulse.aip $content
       - name: Build
+        env:
+          AZURE_KEY_VAULT_CLIENT_SECRET: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
         run: msbuild src -p:Configuration=Release -restore -m
       - id: save-version
         name: Save GitVersion_SemVer version
         run: echo "::set-output name=version::${{env.GitVersion_SemVer}}"
       - name: Sign NuGet Packages
-        run: nuget sign nugets\*.nupkg -CertificatePath signing-cert.pfx -Timestamper "http://timestamp.digicert.com/?alg=sha256" -NonInteractive
+        run: |
+          NuGetKeyVaultSignTool sign nugets\*.nupkg `
+          --file-digest sha256 `
+          --timestamp-rfc3161 http://timestamp.digicert.com `
+          --timestamp-digest sha256 `
+          --azure-key-vault-url https://particularcodesigning.vault.azure.net `
+          --azure-key-vault-client-id ${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }} `
+          --azure-key-vault-tenant-id ${{ secrets.AZURE_KEY_VAULT_TENANT_ID }} `
+          --azure-key-vault-client-secret ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }} `
+          --azure-key-vault-certificate ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE_NAME }}
       - name: Publish artifacts
         uses: actions/upload-artifact@v2.2.2
         with:
