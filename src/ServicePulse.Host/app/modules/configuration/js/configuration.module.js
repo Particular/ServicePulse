@@ -17,6 +17,8 @@
 
     require('./notifications/notifications.module');
 
+    require('./platformconnection/platformconnection.module')
+
     angular.module('configuration', [
         'ui.bootstrap',
         'configuration.route',
@@ -25,7 +27,8 @@
         'configuration.redirect',
         'configuration.license',
         'configuration.connections',
-        'configuration.notifications'
+        'configuration.notifications',
+        'configuration.platformconnection'
     ]);
 
 } (window, window.angular));
