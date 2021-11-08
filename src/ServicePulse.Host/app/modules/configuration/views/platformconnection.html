@@ -19,8 +19,55 @@
             <div class="box">
                 <div class="row">
                     <div class="col-sm-12">
+                        <h3>Connect an endpoint to the platform</h3>
+                        <p>An endpoint can be connected to the platform using these 3 step. Please refer to the <a
+                                href="todo">documentation</a> for other possible options.</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="process">
+                        <div class="process-row nav nav-tabs">
+                            <div class="process-step">
+                                <button type="button" class="btn btn-info btn-circle" data-toggle="tab" href="#install-package">
+                                    <i class="fa fa-info fa-3x"></i></button>
+                                <p><medium>1. Install nuget</medium></p>
+                            </div>
+                            <div class="process-step">
+                                <button type="button" class="btn btn-default btn-circle" data-toggle="tab" href="#get-configuration"><i class="fa fa-file-text-o fa-3x"></i></button>
+                                <p><medium>2. Get configuration</medium></p>
+                            </div>
+                            <div class="process-step">
+                                <button type="button" class="btn btn-default btn-circle" data-toggle="tab" href="#configure-connection"><i class="fa fa-image fa-3x"></i></button>
+                                <p><medium>3. Configure connection</medium></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-content">
+                        <div id="install-package" class="tab-pane fade active in">
+                            <div>
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#packagereference"
+                                            aria-controls="packagereference" role="tab" data-toggle="tab">Package
+                                            Reference</a></li>
+                                    <li role="presentation"><a href="#packagemanager" aria-controls="packagemanager"
+                                            role="tab" data-toggle="tab">Package Manager</a></li>
+                                </ul>
 
-                        Hello there!!!
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane active" id="packagereference">...</div>
+                                    <div role="tabpanel" class="tab-pane" id="packagemanager">...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="get-configuration" class="tab-pane fade">
+                            <p>Space for the json settings</p>
+                            <p></p>
+                        </div>
+                        <div id="configure-connection" class="tab-pane fade">
+                            <p>Space for the connection snippet</p>
+                        </div>
                     </div>
                 </div>
             </div>
