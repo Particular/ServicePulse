@@ -5,8 +5,7 @@
         return {
             restrict: 'E',
             scope: {
-                text: '=',
-                lang: '='
+                text: '='
             },
             template: '<pre><code></code></pre>',
             link: function(scope, element, attrs) {
@@ -14,8 +13,10 @@
                 scope.$watch('text',
                     function() {
                         var codeTag = element.find('code')[0];
-                        codeTag.innerText = scope.text;
-                        codeTag.addClass('language-' + scope.lang);
+                        var languageCode = codeTag.parentNode.parentNode.getAttribute("lang");
+                        codeTag.textContent = scope.text;
+                        codeTag.className += ' language-' + languageCode;
+
                         hljs.highlightElement(codeTag);
                     }
                 );

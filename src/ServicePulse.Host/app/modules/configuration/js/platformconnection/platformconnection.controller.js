@@ -4,11 +4,21 @@
     function controller($scope, notifyService, platfromConnectionService) {
         var notifier = notifyService();
         var vm = this;
-        
+        var snippetTemplate = 
+`var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
+
+
+endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
+`;
+
         vm.connectionSnippet = '';
 
         notifier.subscribe($scope, (event, response) => {
-            vm.connectionSnippet = JSON.stringify(response.connectionSettings, null, "\t");
+            var jsonText = JSON.stringify(response.connectionSettings, null, 4)
+            .replaceAll('"', '""');
+
+            vm.connectionSnippet = snippetTemplate.replace('<json>', jsonText);
+
         }, 'PlatformConnectionSeetingsUpdated');
 
     }

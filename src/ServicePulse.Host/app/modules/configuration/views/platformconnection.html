@@ -19,14 +19,21 @@
             <div class="box">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h3>Connect an endpoint to the platform</h3>
-                        <p>An endpoint can be connected to the platform using these 3 step. Please refer to the <a
-                                href="todo">documentation</a> for other possible options.</p>
+                        <h3>Connect your endpoint to the Service Platform</h3>
+                        <div class="alert alert-info" role="alert"><p>Please refer to <a
+                            href="todo">documentation</a> for learn about other ways to connect to the Service Platform.</p></div>
+                        
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <highlight text="vm.connectionSnippet" lang="json"></highlight>
+                        <h4>1. Install the <a href="https://nuget.com/NServiceBus.ServicePlatfrom.Connector">NServiceBus.ServicePlatfrom.Connector</a> nuget package</h4>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4>2. Use the code below in your enpdoint configuration</h4>
+                        <highlight text="vm.connectionSnippet" lang="csharp"></highlight>
                     </div>
                 </div>
             </div>
