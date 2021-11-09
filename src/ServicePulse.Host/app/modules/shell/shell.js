@@ -16,6 +16,7 @@ require('signalr');
 require('ui-select');
 require('expose-loader?d3!d3');
 require('rx');
+require('expose-loader?hljs!highlight.js')
 require('bootstrap/dist/css/bootstrap.css');
 require('angularjs-toaster/toaster.css');
 require('animate.css/animate.css');
@@ -26,5 +27,4 @@ require('./js/directives/ui.particular.reindexingStatus');
 require('./js/services/service.toast');
 require('./js/directives/platformExpired');
 require('./js/licensenotifier/license.notifier');
-
 require('./js/events.module.js');

@@ -5,10 +5,10 @@
         var notifier = notifyService();
         var vm = this;
         
-        vm.connectionSettings = "some text to be added ble ble ble";
+        vm.connectionSnippet = '';
 
         notifier.subscribe($scope, (event, response) => {
-            vm.connectionSettings = response.connectionSettings;
+            vm.connectionSnippet = JSON.stringify(response.connectionSettings, null, "\t");
         }, 'PlatformConnectionSeetingsUpdated');
 
     }
@@ -16,7 +16,7 @@
     controller.$inject = [
         '$scope',
         'notifyService',
-        'platformConnectionService',
+        'platformConnectionService'
     ];
 
     angular.module('configuration.platformconnection')
