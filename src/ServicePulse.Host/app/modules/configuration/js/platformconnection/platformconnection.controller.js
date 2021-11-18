@@ -7,7 +7,6 @@
         var snippetTemplate = 
 `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
 
-
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
 
@@ -43,6 +42,8 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
             monitoringInstanceSettings = response.connectionSettings;
             updateConnectionSnippet();
         }, 'MonitoringInstanceConnectionSeetingsUpdated');
+
+        platfromConnectionService.refreshConnectionSettings();
     }
 
     controller.$inject = [

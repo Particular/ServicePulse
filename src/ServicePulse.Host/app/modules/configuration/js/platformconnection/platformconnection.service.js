@@ -24,12 +24,13 @@
             });
         }
 
-        refreshMainInstanceConnectionSettings();
-        refreshMonitoringInstanceConnectionSettings();
+        function refreshConnectionSettings(){
+            refreshMainInstanceConnectionSettings();
+            refreshMonitoringInstanceConnectionSettings();
+        }
 
         return {
-            refreshMainInstanceConnectionSettings,
-            refreshMonitoringInstanceConnectionSettings
+            refreshConnectionSettings
         };
     }
 
