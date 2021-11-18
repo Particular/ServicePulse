@@ -3,21 +3,33 @@
 
     function service($http, uri, connectionsManager, notifyService) {
         var notifier = notifyService();
-        var scu = connectionsManager.getServiceControlUrl();
+        var mainInstanceUrl = connectionsManager.getServiceControlUrl();
+        var monitoringInstanceUrl = connectionsManager.getMonitoringUrl();
 
-        function refreshPlatformConnectionSettings() {
-            var url = uri.join(scu, 'connection');
+        function refreshMainInstanceConnectionSettings() {
+            var url = uri.join(mainInstanceUrl, 'connection');
             return $http.get(url).then(function (response) {
                 var connectionSettings = response.data;
 
-                notifier.notify('PlatformConnectionSeetingsUpdated', { connectionSettings });
+                notifier.notify('MainInstanceConnectionSeetingsUpdated', { connectionSettings });
             });
         }
 
-        refreshPlatformConnectionSettings();
+        function refreshMonitoringInstanceConnectionSettings() {
+            var url = uri.join(monitoringInstanceUrl, 'connection');
+            return $http.get(url).then(function (response) {
+                var connectionSettings = response.data;
+
+                notifier.notify('MonitoringInstanceConnectionSeetingsUpdated', { connectionSettings });
+            });
+        }
+
+        refreshMainInstanceConnectionSettings();
+        refreshMonitoringInstanceConnectionSettings();
 
         return {
-            refreshPlatformConnectionSettings
+            refreshMainInstanceConnectionSettings,
+            refreshMonitoringInstanceConnectionSettings
         };
     }
 

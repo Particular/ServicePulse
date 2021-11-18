@@ -11,16 +11,38 @@
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
 
+        var mainInstanceSettings = null;
+        var monitoringInstanceSettings = null;
+
         vm.connectionSnippet = '';
 
-        notifier.subscribe($scope, (event, response) => {
-            var jsonText = JSON.stringify(response.connectionSettings, null, 4)
-            .replaceAll('"', '""');
+        var updateConnectionSnippet = function()
+        {
+            var configuration = mainInstanceSettings;
+            for(var property in monitoringInstanceSettings)
+            {
+                if(monitoringInstanceSettings.hasOwnProperty(property))
+                {
+                    configuration[property] = monitoringInstanceSettings[property];
+                }
+            }
+
+            var jsonText = JSON
+                .stringify(configuration, null, 4)
+                .replaceAll('"', '""');
 
             vm.connectionSnippet = snippetTemplate.replace('<json>', jsonText);
+        };
 
-        }, 'PlatformConnectionSeetingsUpdated');
+        notifier.subscribe($scope, (event, response) => {
+            mainInstanceSettings = response.connectionSettings;
+            updateConnectionSnippet();
+        }, 'MainInstanceConnectionSeetingsUpdated');
 
+        notifier.subscribe($scope, (event, response) => {
+            monitoringInstanceSettings = response.connectionSettings;
+            updateConnectionSnippet();
+        }, 'MonitoringInstanceConnectionSeetingsUpdated');
     }
 
     controller.$inject = [
