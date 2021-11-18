@@ -10,14 +10,18 @@
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
 
-        var mainInstanceSettings = null;
-        var monitoringInstanceSettings = null;
+        var mainInstanceSettings = {};
+        var monitoringInstanceSettings = {};
+        
+        var mainInstanceQueryErrors = [];
+        var monitoringInstanceQueryErrors = [];
 
         vm.connectionSnippet = '';
+        vm.queryErrors = [];
 
         var updateConnectionSnippet = function()
         {
-            var configuration = mainInstanceSettings;
+            var configuration = mainInstanceSettings || {};
             for(var property in monitoringInstanceSettings)
             {
                 if(monitoringInstanceSettings.hasOwnProperty(property))
@@ -31,15 +35,21 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
                 .replaceAll('"', '""');
 
             vm.connectionSnippet = snippetTemplate.replace('<json>', jsonText);
+
+            vm.queryErrors = [];
+            vm.queryErrors = vm.queryErrors.concat(mainInstanceQueryErrors || []);
+            vm.queryErrors = vm.queryErrors.concat(monitoringInstanceQueryErrors || []);
         };
 
-        notifier.subscribe($scope, (event, response) => {
-            mainInstanceSettings = response.connectionSettings;
+        notifier.subscribe($scope, (event, connectionSettings) => {
+            mainInstanceSettings = connectionSettings.settings;
+            mainInstanceQueryErrors = connectionSettings.errors;
+
             updateConnectionSnippet();
         }, 'MainInstanceConnectionSeetingsUpdated');
 
-        notifier.subscribe($scope, (event, response) => {
-            monitoringInstanceSettings = response.connectionSettings;
+        notifier.subscribe($scope, (event, connectionSettings) => {
+            monitoringInstanceSettings = connectionSettings;
             updateConnectionSnippet();
         }, 'MonitoringInstanceConnectionSeetingsUpdated');
 

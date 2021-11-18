@@ -11,7 +11,7 @@
             return $http.get(url).then(function (response) {
                 var connectionSettings = response.data;
 
-                notifier.notify('MainInstanceConnectionSeetingsUpdated', { connectionSettings });
+                notifier.notify('MainInstanceConnectionSeetingsUpdated', connectionSettings );
             });
         }
 
@@ -20,7 +20,7 @@
             return $http.get(url).then(function (response) {
                 var connectionSettings = response.data;
 
-                notifier.notify('MonitoringInstanceConnectionSeetingsUpdated', { connectionSettings });
+                notifier.notify('MonitoringInstanceConnectionSeetingsUpdated', connectionSettings);
             });
         }
 
