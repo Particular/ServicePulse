@@ -56,7 +56,7 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 
             $http.get(monitoringInstanceUrl).then(
                 (response) => {
-                    monitoringInstanceSettings = response;
+                    monitoringInstanceSettings = response.data;
                 }, 
                 () => {
                     monitoringInstanceSettings = {};

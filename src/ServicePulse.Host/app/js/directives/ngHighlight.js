@@ -24,6 +24,7 @@
                         var nextSnippetId = 'hljs' + (counter++);
                         var parentElement = element.find('pre')[0];
 
+                        //This prevents double-initialization of highlightJsBadge
                         if(parentElement.id == '') {
                             parentElement.id = nextSnippetId;
 
