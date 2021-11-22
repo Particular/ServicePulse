@@ -3287,3 +3287,8 @@ button[ng-click="vm.toggleSort()"] div {
 .negative {
     color: red;
 }
+
+.code-badge {
+    margin: 15px !important;
+    font-size: 1.2em !important;
+}
