@@ -30,14 +30,6 @@
 
                             highlightJsBadge({
                                 contentSelector: '#' + nextSnippetId,
-                                loadDelay:0,                
-                                copyIconClass: 'fa fa-copy',
-                                checkIconClass: 'fa fa-check text-success',
-                            
-                                // hook to allow modifying the text before it's pasted
-                                onBeforeTextCopied: function(text, codeElement) {
-                                return text;   //  you can fix up the text here
-                                }
                             });
                         }
                     }
