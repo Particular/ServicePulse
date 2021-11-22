@@ -1,8 +1,10 @@
 ﻿(function (window, angular) {
     'use strict';
 
-    function controller($scope, notifyService, platfromConnectionService) {
-        var notifier = notifyService();
+    function controller($scope, $http, uri, connectionsManager) {
+        var mainInstanceUrl = uri.join(connectionsManager.getServiceControlUrl(), 'connection');
+        var monitoringInstanceUrl = uri.join(connectionsManager.getMonitoringUrl(), 'connection');
+
         var vm = this;
         var snippetTemplate = 
 `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
@@ -19,7 +21,7 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
         vm.connectionSnippet = '';
         vm.queryErrors = [];
 
-        var updateConnectionSnippet = function()
+        var updateConnectionSnippet = () =>
         {
             var configuration = mainInstanceSettings || {};
             for(var property in monitoringInstanceSettings)
@@ -41,25 +43,35 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
             vm.queryErrors = vm.queryErrors.concat(monitoringInstanceQueryErrors || []);
         };
 
-        notifier.subscribe($scope, (event, connectionSettings) => {
-            mainInstanceSettings = connectionSettings.settings;
-            mainInstanceQueryErrors = connectionSettings.errors;
+        var refreshConnectionSettings = () => {
+            $http.get(mainInstanceUrl).then(
+                (response) => {
+                    mainInstanceSettings = response.data.settings;
+                    mainInstanceQueryErrors = response.data.errors;
+                }, 
+                () => {
+                    mainInstanceSettings = {};
+                    mainInstanceQueryErrors = ["Error reaching ServiceControl at " + mainInstanceUrl];
+                }).then(() => updateConnectionSnippet());
 
-            updateConnectionSnippet();
-        }, 'MainInstanceConnectionSeetingsUpdated');
+            $http.get(monitoringInstanceUrl).then(
+                (response) => {
+                    monitoringInstanceSettings = response;
+                }, 
+                () => {
+                    monitoringInstanceSettings = {};
+                    monitoringInstanceQueryErrors = ["Error reaching SC Monitoring instance at " + monitoringInstanceUrl];
+                }).then(() => updateConnectionSnippet());;
+        }
 
-        notifier.subscribe($scope, (event, connectionSettings) => {
-            monitoringInstanceSettings = connectionSettings;
-            updateConnectionSnippet();
-        }, 'MonitoringInstanceConnectionSeetingsUpdated');
-
-        platfromConnectionService.refreshConnectionSettings();
+        refreshConnectionSettings();
     }
 
     controller.$inject = [
         '$scope',
-        'notifyService',
-        'platformConnectionService'
+        '$http',
+        'uri',
+        'connectionsManager'
     ];
 
     angular.module('configuration.platformconnection')
