@@ -20,9 +20,15 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h3>Connect your endpoint to the Service Platform</h3>
-                        <div class="alert alert-info" role="alert"><p>Please refer to <a
-                            href="todo">documentation</a> for learn about other ways to connect to the Service Platform.</p></div>
                         
+                        <div ng-show="vm.queryErrors.length > 0" class="alert alert-warning" role="alert">
+                            There were problems reaching some of the services, and the configuration does not contain all connectivity information:
+                            <ul>
+                                <li ng-repeat="error in vm.queryErrors">
+                                    {{error}}
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
