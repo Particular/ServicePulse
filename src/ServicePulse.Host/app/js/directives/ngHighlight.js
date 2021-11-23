@@ -37,6 +37,12 @@
                         codeTag.className += ' language-' + languageCode;
                         hljs.highlightElement(codeTag);
 
+                        //No ids are assigend so the view has just been re-created
+                        if($('highlight > pre[id]').length == 0)
+                        {
+                            hljsBgInitialized = false;
+                        }
+
                         element.find('pre')[0].id = 'hljs' + (counter++);
 
                         //This prevents double-initialization of highlightJsBadge
