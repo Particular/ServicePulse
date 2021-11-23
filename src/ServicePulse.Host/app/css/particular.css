@@ -3288,6 +3288,10 @@ button[ng-click="vm.toggleSort()"] div {
     color: red;
 }
 
+.sp-blue {
+    color: #00a3c4;
+}
+
 @media print {
     .code-badge { display: none; }
 }
@@ -3332,6 +3336,6 @@ button[ng-click="vm.toggleSort()"] div {
     padding: 0 7px;
     margin-top:2;
 }
-.fa.text-success { 
+.code-badge .fa.text-success { 
     color: limegreen !important
 }    
