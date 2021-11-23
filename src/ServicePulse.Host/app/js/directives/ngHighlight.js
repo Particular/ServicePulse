@@ -5,15 +5,15 @@
     var hljsBgInitialized = false;
 
     function AddHljsBadgeTemplate(){
-        var template = 
-        `<div id="CodeBadgeTemplate" style="display:none">
-            <div class="code-badge">
-                <div class="code-badge-language">Copy</div>
-                <div title="Copy to clipboard">
-                    <i class="{{copyIconClass}} code-badge-copy-icon"></i>
-                </div>
-            </div>
-        </div>`;
+        var template =
+        '<div id="CodeBadgeTemplate" style="display:none">' +
+        '   <div class="code-badge">' +
+        '       <div class="code-badge-language">Copy</div>' +
+        '       <div title="Copy to clipboard">' +
+        '           <i class="{{copyIconClass}} code-badge-copy-icon"></i>' +
+        '       </div>' +
+        '   </div> /' +
+        '/div>`'
         
         var div = document.createElement('div');
         div.innerHTML = template;
@@ -42,7 +42,7 @@
                         //This prevents double-initialization of highlightJsBadge
                         if($('highlight > pre:not([id])').length == 0 && hljsBgInitialized == false) {
                             AddHljsBadgeTemplate();
-                            highlightJsBadge({});
+                            window.highlightJsBadge({});
                             hljsBgInitialized = true;
                         }
                     }

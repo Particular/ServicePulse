@@ -32,7 +32,7 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
             var configuration = mainInstanceSettings || {};
             for(var property in monitoringInstanceSettings)
             {
-                if(monitoringInstanceSettings.hasOwnProperty(property))
+                if(Object.prototype.hasOwnProperty.call(monitoringInstanceSettings, property))
                 {
                     configuration[property] = monitoringInstanceSettings[property];
                 }
@@ -67,7 +67,7 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
                 () => {
                     monitoringInstanceSettings = {};
                     monitoringInstanceQueryErrors = ["Error reaching SC Monitoring instance at " + monitoringInstanceUrl];
-                }).then(() => updateConnectionSnippet());;
+                }).then(() => updateConnectionSnippet());
         }
 
         refreshConnectionSettings();
