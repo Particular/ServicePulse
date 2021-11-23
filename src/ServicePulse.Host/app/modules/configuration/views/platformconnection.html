@@ -38,8 +38,25 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
-                        <h4>2. Use the code below in your enpdoint configuration</h4>
-                        <highlight text="vm.connectionSnippet" lang="csharp"></highlight>
+                        <h4>2. Paste the configuration code into you endpoint configuration or load configuration from JSON file. For other options refer to the <a href="TODO">documentaiton</h4>
+
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#inline" aria-controls="inline" role="tab" data-toggle="tab">Code based</a></li>
+                            <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab">JSON file</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="inline">
+                                <highlight text="vm.inlineSnippet" lang="csharp"></highlight>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="json">
+                                <highlight text="vm.jsonSnippet" lang="csharp"></highlight>
+                                <highlight text="vm.json" lang="json"></highlight>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

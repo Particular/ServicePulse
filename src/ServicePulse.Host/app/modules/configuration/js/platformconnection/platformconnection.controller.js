@@ -11,6 +11,11 @@
 
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
+        vm.jsonSnippet = 
+`var json = File.ReadAllText("<path-to-json-file>.json");
+var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
+endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
+`;
 
         var mainInstanceSettings = {};
         var monitoringInstanceSettings = {};
@@ -18,7 +23,8 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
         var mainInstanceQueryErrors = [];
         var monitoringInstanceQueryErrors = [];
 
-        vm.connectionSnippet = '';
+        vm.inlineSnippet = '';
+        vm.json = '';
         vm.queryErrors = [];
 
         var updateConnectionSnippet = () =>
@@ -32,11 +38,11 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
                 }
             }
 
-            var jsonText = JSON
-                .stringify(configuration, null, 4)
-                .replaceAll('"', '""');
+            var jsonText = JSON.stringify(configuration, null, 4);
+            vm.json = jsonText;
 
-            vm.connectionSnippet = snippetTemplate.replace('<json>', jsonText);
+            jsonText = jsonText.replaceAll('"', '""');
+            vm.inlineSnippet = snippetTemplate.replace('<json>', jsonText);
 
             vm.queryErrors = [];
             vm.queryErrors = vm.queryErrors.concat(mainInstanceQueryErrors || []);
