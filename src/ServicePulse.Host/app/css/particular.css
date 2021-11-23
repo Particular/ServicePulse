@@ -3288,7 +3288,50 @@ button[ng-click="vm.toggleSort()"] div {
     color: red;
 }
 
+@media print {
+    .code-badge { display: none; }
+}
+.code-badge-pre {
+    position: relative; 
+}
 .code-badge {
+    display: flex;
+    flex-direction: row;
+    white-space: normal;
+    background: transparent;
+    background: #333;
+    color: white;
     margin: 15px !important;
     font-size: 1.2em !important;
+    opacity: 0.5;
+    border-radius: 0 0 0 7px;
+    padding: 5px 8px 5px 8px;
+    position: absolute;
+    right: 0;
+    top: 0;
 }
+.code-badge.active {
+    opacity: 0.8;
+}
+.code-badge:hover {
+    opacity: .95;
+}
+.code-badge a,
+.code-badge a:hover {
+    text-decoration: none;
+}
+
+.code-badge-language {
+    margin-right: 10px;
+    font-weight: 600;
+    color: goldenrod;
+}
+.code-badge-copy-icon {
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0 7px;
+    margin-top:2;
+}
+.fa.text-success { 
+    color: limegreen !important
+}    

@@ -2,7 +2,23 @@
     'use strict';
 
     var counter = 0; //used to generate unique identifiers for code samples
+    var hljsBgInitialized = false;
 
+    function AddHljsBadgeTemplate(){
+        var template = 
+        `<div id="CodeBadgeTemplate" style="display:none">
+            <div class="code-badge">
+                <div class="code-badge-language">Copy</div>
+                <div title="Copy to clipboard">
+                    <i class="{{copyIconClass}} code-badge-copy-icon"></i>
+                </div>
+            </div>
+        </div>`;
+        
+        var div = document.createElement('div');
+        div.innerHTML = template;
+        window.document.body.appendChild(div.firstChild);
+    }
     function Directive() {
         return {
             restrict: 'E',
@@ -21,16 +37,13 @@
                         codeTag.className += ' language-' + languageCode;
                         hljs.highlightElement(codeTag);
 
-                        var nextSnippetId = 'hljs' + (counter++);
-                        var parentElement = element.find('pre')[0];
+                        element.find('pre')[0].id = 'hljs' + (counter++);
 
                         //This prevents double-initialization of highlightJsBadge
-                        if(parentElement.id == '') {
-                            parentElement.id = nextSnippetId;
-
-                            highlightJsBadge({
-                                contentSelector: '#' + nextSnippetId,
-                            });
+                        if($('highlight > pre:not([id])').length == 0 && hljsBgInitialized == false) {
+                            AddHljsBadgeTemplate();
+                            highlightJsBadge({});
+                            hljsBgInitialized = true;
                         }
                     }
                 );
