@@ -21,7 +21,7 @@
                     <div class="col-sm-12">
                         <h3>Connect your endpoint to the Service Platform</h3>
                         
-                        <div ng-show="vm.queryErrors.length > 0" class="alert alert-warning" role="alert">
+                        <div ng-show="vm.queryErrors.length > 0 && !vm.loading" class="alert alert-warning" role="alert">
                             There were problems reaching some of the services, and the configuration does not contain all connectivity information:
                             <ul>
                                 <li ng-repeat="error in vm.queryErrors">
@@ -39,15 +39,17 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <h4>2. Paste the configuration code into you endpoint configuration or load configuration from JSON file. For other options refer to the <a href="TODO">documentaiton</h4>
+                        
+                        <busy ng-show="vm.loading" message="Loading platform connection settings"></busy>
 
                         <!-- Nav tabs -->
-                        <ul class="nav nav-tabs" role="tablist">
+                        <ul ng-show="!vm.loading" class="nav nav-tabs" role="tablist">
                             <li role="presentation" class="active"><a href="#inline" aria-controls="inline" role="tab" data-toggle="tab">Code based</a></li>
                             <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab">JSON file</a></li>
                         </ul>
 
                         <!-- Tab panes -->
-                        <div class="tab-content">
+                        <div ng-show="!vm.loading" class="tab-content">
                             <div role="tabpanel" class="tab-pane active" id="inline">
                                 <highlight text="vm.inlineSnippet" lang="csharp"></highlight>
                             </div>

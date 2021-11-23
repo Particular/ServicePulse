@@ -22,12 +22,15 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
         
         var mainInstanceQueryErrors = [];
         var monitoringInstanceQueryErrors = [];
+        var loadingFromMainInstance = false;
+        var loadingFromMonitoringInstance = false;
 
+        vm.loading = false;
         vm.inlineSnippet = '';
         vm.json = '';
         vm.queryErrors = [];
 
-        var updateConnectionSnippet = () =>
+        var updateSnippets = () =>
         {
             var configuration = mainInstanceSettings || {};
             for(var property in monitoringInstanceSettings)
@@ -47,9 +50,15 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
             vm.queryErrors = [];
             vm.queryErrors = vm.queryErrors.concat(mainInstanceQueryErrors || []);
             vm.queryErrors = vm.queryErrors.concat(monitoringInstanceQueryErrors || []);
+
+            vm.loading = loadingFromMonitoringInstance || loadingFromMainInstance;
         };
 
         var refreshConnectionSettings = () => {
+            vm.loading = true;
+            loadingFromMainInstance = true;
+            loadingFromMonitoringInstance = true;
+
             $http.get(mainInstanceUrl).then(
                 (response) => {
                     mainInstanceSettings = response.data.settings;
@@ -58,8 +67,12 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
                 () => {
                     mainInstanceSettings = {};
                     mainInstanceQueryErrors = ["Error reaching ServiceControl at " + mainInstanceUrl];
-                }).then(() => updateConnectionSnippet());
-
+                }).then(() => {
+                    loadingFromMainInstance = false;
+                    updateSnippets();
+                });
+            
+            loadingFromMonitoringInstance = true;
             $http.get(monitoringInstanceUrl).then(
                 (response) => {
                     monitoringInstanceSettings = response.data;
@@ -67,7 +80,10 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
                 () => {
                     monitoringInstanceSettings = {};
                     monitoringInstanceQueryErrors = ["Error reaching SC Monitoring instance at " + monitoringInstanceUrl];
-                }).then(() => updateConnectionSnippet());
+                }).then(() => {
+                    loadingFromMonitoringInstance = false;
+                    updateSnippets();
+                });
         }
 
         refreshConnectionSettings();
