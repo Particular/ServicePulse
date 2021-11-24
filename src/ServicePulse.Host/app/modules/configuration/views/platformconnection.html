@@ -19,14 +19,14 @@
             <div class="box">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h3>Connect your endpoint to ServiceControl</h3>
+                        <h3>Connect an endpoint to ServiceControl</h3>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <ol>
-                            <li>Install the <a href="https://nuget.org/NServiceBus.ServicePlatform.Connector">NServiceBus.ServicePlatform.Connector</a> nuget package</li>
-                            <li>Paste the configuration code into you endpoint configuration or load configuration from JSON file. For other options refer to the <a href="TODO">documentaiton</li>
+                            <li>Add the <a href="https://nuget.org/NServiceBus.ServicePlatform.Connector">NServiceBus.ServicePlatform.Connector</a> NuGet package to the endpoint project.</li>
+                            <li>Copy-paste the code from one of the options below. For additional options, refer to the <a href="TODO">documentation</li>.
                         </ol>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                         </div>
 
                         <div ng-show="vm.queryErrors.length > 0 && !vm.loading" class="alert alert-warning" role="alert">
-                            There were problems reaching some of the services, and the configuration does not contain all connectivity information:
+                            There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
                             <ul>
                                 <li ng-repeat="error in vm.queryErrors">
                                     {{error}}
