@@ -19,8 +19,33 @@
             <div class="box">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h3>Connect your endpoint to the Service Platform</h3>
+                        <h3>Connect your endpoint to ServiceControl</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ol>
+                            <li>Install the <a href="https://nuget.org/NServiceBus.ServicePlatform.Connector">NServiceBus.ServicePlatform.Connector</a> nuget package</li>
+                            <li>Paste the configuration code into you endpoint configuration or load configuration from JSON file. For other options refer to the <a href="TODO">documentaiton</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="row tabs-config-snippets">
+                    <div class="col-sm-12">
                         
+                        
+                        <busy ng-show="vm.loading" message="Loading platform connection settings"></busy>
+
+                        <!-- Nav tabs -->
+                        <div ng-show="!vm.loading" class="tabs" role="tablist">
+                            <h5 ng-class="{active: vm.showCodeOnlyTab}">
+                                <a ng-click="vm.switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
+                            </h5>
+                            <h5 ng-class="{active: vm.showJsonTab}">
+                                <a ng-click="vm.switchJsonTab()" class="ng-binding">JSON file</a>
+                            </h5>
+                        </div>
+
                         <div ng-show="vm.queryErrors.length > 0 && !vm.loading" class="alert alert-warning" role="alert">
                             There were problems reaching some of the services, and the configuration does not contain all connectivity information:
                             <ul>
@@ -29,36 +54,27 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h4>1. Install the <a href="https://nuget.org/NServiceBus.ServicePlatform.Connector">NServiceBus.ServicePlatform.Connector</a> nuget package</h4>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <h4>2. Paste the configuration code into you endpoint configuration or load configuration from JSON file. For other options refer to the <a href="TODO">documentaiton</h4>
                         
-                        <busy ng-show="vm.loading" message="Loading platform connection settings"></busy>
-
-                        <!-- Nav tabs -->
-                        <ul ng-show="!vm.loading" class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#inline" aria-controls="inline" role="tab" data-toggle="tab">Code based</a></li>
-                            <li role="presentation"><a href="#json" aria-controls="json" role="tab" data-toggle="tab">JSON file</a></li>
-                        </ul>
-
-                        <!-- Tab panes -->
-                        <div ng-show="!vm.loading" class="tab-content">
-                            <div role="tabpanel" class="tab-pane active" id="inline">
-                                <highlight text="vm.inlineSnippet" lang="csharp"></highlight>
+                        <section ng-show="vm.showCodeOnlyTab && !vm.loading">
+                            <div class="row">
+                                <div class="col-xs-12 no-side-padding">
+                                    <highlight text="vm.inlineSnippet" lang="csharp"></highlight>
+                                </div>
                             </div>
-                            <div role="tabpanel" class="tab-pane" id="json">
-                                <highlight text="vm.jsonSnippet" lang="csharp"></highlight>
-                                <highlight text="vm.json" lang="json"></highlight>
+                        </section>
+                    
+                        <section ng-show="vm.showJsonTab && !vm.loading">
+                            <div class="row">
+                                <div class="col-xs-12 no-side-padding">
+                                    <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
+                                    <p><strong>Endpoint configuration:</strong></p>
+                                    <highlight text="vm.jsonSnippet" lang="csharp"></highlight>
+                                    <p><strong>JSON configuration file:</strong></p>
+                                    <highlight text="vm.json" lang="json"></highlight>
+                                </div>
                             </div>
-                        </div>
-                        
+                        </section>
+
                     </div>
                 </div>
             </div>

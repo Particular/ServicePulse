@@ -25,6 +25,8 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
         var loadingFromMainInstance = false;
         var loadingFromMonitoringInstance = false;
 
+        vm.showCodeOnlyTab = true;
+        vm.showJsonTab = false;
         vm.loading = false;
         vm.inlineSnippet = '';
         vm.json = '';
@@ -87,6 +89,16 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
         }
 
         refreshConnectionSettings();
+
+        vm.switchCodeOnlyTab = () => {
+            vm.showCodeOnlyTab = true;
+            vm.showJsonTab = false;
+        }
+
+        vm.switchJsonTab = () => {
+            vm.showJsonTab = true;
+            vm.showCodeOnlyTab = false;
+        }
     }
 
     controller.$inject = [

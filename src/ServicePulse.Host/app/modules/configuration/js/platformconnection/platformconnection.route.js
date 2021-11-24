@@ -6,7 +6,7 @@
 
         $routeProvider.when('/configuration/platformconnection', {
             data: {
-                pageTitle: 'Platform connection'
+                pageTitle: 'Endpoint connection'
             },
             template: template,
             controller: 'platformConnectionController',
