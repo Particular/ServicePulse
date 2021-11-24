@@ -8,6 +8,7 @@
         'ngClipboard',
         'ngStorage',
         'ngCookies',
+        'ngHighlight',
         'toaster',
         'toastService',
         'ui.bootstrap',
