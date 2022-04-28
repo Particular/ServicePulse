@@ -141,11 +141,14 @@
                 url = uri.join(scu, message.bodyUrl);
             }
 
-            return $http.get(url).then(function(response) {
-                return {
-                    data: response.data
-                };
-            });
+            return $http({
+                url: url,
+                method: 'GET',
+                transformResponse: function(defaults, transform) {
+                    // Remove any comments from the body before deserializing
+                    return defaults.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, function (m, g) { return g ? "" : m });
+                }
+              });
         }
 
         function getMessage(messageId) {
