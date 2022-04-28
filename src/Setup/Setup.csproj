@@ -21,7 +21,7 @@
     </ItemGroup>
     <PropertyGroup>
       <SetupExeOutputFolder>$(SolutionDir)..\assets\</SetupExeOutputFolder>
-      <SetupExeName>Particular.ServicePulse-$(MinVerMajor).$(MinVerMinor).$(MinVerPatch.exe</SetupExeName>
+      <SetupExeName>Particular.ServicePulse-$(MinVerMajor).$(MinVerMinor).$(MinVerPatch).exe</SetupExeName>
     </PropertyGroup>
     <MakeDir Directories="$(SetupExeOutputFolder)" />
     <ItemGroup>
