@@ -183,6 +183,7 @@
 
         vm.debugInServiceInsight = function () {
             var messageId = vm.message.message_id;
+            var endpointName = vm.message.receiving_endpoint.name;
             var dnsName = connectionsManager.getServiceControlUrl().toLowerCase();
 
             if (dnsName.indexOf("https") === 0) {
@@ -191,7 +192,7 @@
                 dnsName = dnsName.replace("http://", "");
             }
 
-            $window.open("si://" + dnsName + "?search=" + messageId);
+            $window.open("si://" + dnsName + "?search=" + messageId + "&endpointname=" + endpointName);
         };
 
         vm.loadMessage = function (messageId) {
