@@ -1,5 +1,44 @@
 /// <reference path="../_references.js" />
 
+//System Under Test (TODO:To be extracted)
+var ServiceControlTestUrl = {
+    parse: ({ browserCurrentUrl, urlToParse: urlToParse, monitoring = false }) => {
+        return undefined;
+    }
+};
+
+describe("ServiceControl Test URL generator", function() {
+    it('Parses URL and returns the URL that should be used to test the SC instance or SC Monitoring instance', function(){
+        var {browserCurrentUrl="http://localhost:9090/#/configuration/connections";
+        //INVALID URIs
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse: "http:localhost"})).toEqual(undefined); 
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"https:/localhost"})).toEqual(undefined); 
+        
+        //SAMPLES FOR non-MONITORING:
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse: "http://localhost/api"})).toEqual("http://localhost/api");
+        //without passing protocol defaults to http
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"localhost"})).toEqual("http://localhost");
+        //with protocol, preserves protocol
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"https://localhost/api"})).toEqual("https://localhost/api");
+        //works with trailing /
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"https://localhost/api/"})).toEqual("https://localhost/api");
+        //without host, uses current url host preserving protocol and port
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"/api/"})).toEqual("https://localhost:9090/api");
+        
+        //SAMPLES FOR MONITORING:
+        //Valid URI for monitoring instance returns passed URL plus CORS path
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"http://localhost",monitoring: true})).toEqual("http://localhost/monitored-endpoints");
+        //without passing protocol defaults to http
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"localhost", monitoring: true})).toEqual("http://localhost/monitored-endpoints");
+        //with protocol, preserves protocol
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"https://localhost", monitoring: true})).toEqual("https://localhost/monitored-endpoints");
+        //works with trailing /
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"https://localhost/", monitoring: true})).toEqual("https://localhost/monitored-endpoint");
+        //without host, uses current url host as base path preserving protocol and port
+        expect(ServiceControlTestUrl.parse({browserCurrentUrl, urlToParse:"/", monitoring: true})).toEqual("https://localhost:9090/monitored-endpoint");
+    })
+});
+
 describe("Unit: Connection Controller -  ", function () {
     beforeEach(module('sc'));
 
