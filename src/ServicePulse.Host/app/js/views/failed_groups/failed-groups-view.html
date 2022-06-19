@@ -118,7 +118,7 @@
                                         </div>
                                         <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
                                             <div class="col-sm-12 no-side-padding">
-                                                <div class="note">
+                                                <div class="note" ng-show="group.comment">
                                                     <span>
                                                         <strong>NOTE:</strong> {{group.comment}}
                                                     </span>
