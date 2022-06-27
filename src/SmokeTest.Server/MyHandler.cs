@@ -8,14 +8,16 @@
     {
         // remove this pragma after upgrading to NServiceBus 8
 #pragma warning disable PS0018 // A task-returning method should have a CancellationToken parameter unless it has a parameter implementing ICancellableContext
-        public Task Handle(MyMessage message, IMessageHandlerContext context)
+        public async Task Handle(MyMessage message, IMessageHandlerContext context)
 #pragma warning restore PS0018 // A task-returning method should have a CancellationToken parameter unless it has a parameter implementing ICancellableContext
         {
             Console.WriteLine(@"Message received. Id: {0}", message.Id);
 
+            await context.Reply(new Response() { Id = Guid.NewGuid() }).ConfigureAwait(false);
+            await context.Publish(new MyEvent() { Id = Guid.NewGuid() }).ConfigureAwait(false);
             if (Program.goodretries || !message.KillMe)
             {
-                return Task.FromResult(0);
+                return;
             }
 
             if (!Program.emulateFailures)
@@ -26,8 +28,6 @@
             {
                 throw new InvalidOperationException(message + "Uh oh...Nulls are bad MK");
             }
-
-            return Task.FromResult(0);
         }
 
         static void RandomException(string message)
@@ -49,5 +49,4 @@
 
         }
     }
-
 }
