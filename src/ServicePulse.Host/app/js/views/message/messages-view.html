@@ -83,7 +83,7 @@
                                     <div isolate-click class="alert alert-info" ng-show="vm.message.panel === 2 && vm.message.headersUnavailable">{{vm.message.headersUnavailable}}</div>
                                     <pre isolate-click ng-show="vm.message.panel === 3 && vm.message.messageBody">{{vm.message.messageBody}}</pre>
                                     <div isolate-click class="alert alert-info" ng-show="vm.message.panel === 3 && vm.message.bodyUnavailable">{{vm.message.bodyUnavailable}}</div>
-                                    <flow-diagram conversation-id="vm.message.conversationId" ng-show="vm.message.panel === 4""></flow-diagram>
+                                    <flow-diagram ng-if="vm.message.conversationId" conversation-id="{{vm.message.conversationId}}" ng-show="vm.message.panel === 4""></flow-diagram>
                                 </div>
                             </div>
                         </div>
