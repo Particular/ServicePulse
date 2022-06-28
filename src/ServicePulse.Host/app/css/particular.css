@@ -3386,6 +3386,10 @@ section[name="platformconnection"] li {
     font: 12px sans-serif;
 }
 
+.node .time-sent {
+    color: #777f7f;
+}
+
 .link {
     fill: none;
     stroke: #ccc;

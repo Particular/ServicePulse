@@ -4,6 +4,7 @@
 
     function controller($scope, serviceControlService) {        
         serviceControlService.getConversation($scope.conversationId).then(messages => {
+        //serviceControlService.getConversation('1dc69cf1-1511-4c85-bd1f-aec200948225').then(messages =>{
             var tree = createTreeStructure(messages.map(x => mapMessage(x)));
             drawTree(tree[0]);
         });
@@ -44,14 +45,15 @@
                 "link" : {
                     "name" : "Link "+message.id,
                     "nodeName" : message.id                    
-                }
+                },
+                "timeSent": new Date(message.time_sent)
             };
         }
 
         // Set the dimensions and margins of the diagram
         var margin = {top: 20, right: 90, bottom: 30, left: 90},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
+            width = 1860 - margin.left - margin.right,
+            height = 1500 - margin.top - margin.bottom;
         var rectNode = { width : 120, height : 90, textMargin : 5 }
 // append the svg object to the body of the page
 // appends a 'group' element to 'svg'
@@ -90,9 +92,6 @@
             root.x0 = height / 2;
             root.y0 = 0;
 
-// Collapse after the second level
-            //root.children.forEach(collapse);
-
             update(root);
         }
 
@@ -115,8 +114,8 @@
                 links = treeData.descendants().slice(1);
 
             // Normalize for fixed-depth.
-            nodes.forEach(function(d){ d.y = d.depth * 180});
-
+            nodes.forEach(function(d){ d.y = d.depth * 180 });
+            
             // ****************** Nodes section ***************************
 
             // Update the nodes...
@@ -157,8 +156,8 @@
                 return '<div style="width: '
                     + (rectNode.width - rectNode.textMargin * 2) + 'px; height: '
                     + (rectNode.height - rectNode.textMargin * 2) + 'px;" class="node-text wordwrap">'
-                    + `<i class="fa ${d.data.type === 'Delay' ? 'fa-clock-o' : d.data.type === 'Event' ? 'fa-arrows' : 'fa-arrow-right'}"></i><b>${d.data.nodeName}</b><br>
-<b>Id: </b> ${(d.data.isError ? `<a href=#/failed-messages/message/${d.data.id}>${d.data.id}</a>` : d.data.id)} <br>
+                    + `<i class="fa ${d.data.type === 'Delay' ? 'fa-clock-o' : d.data.type === 'Event' ? 'fa-arrows' : 'fa-arrow-right'}"></i><b>${(d.data.isError ? `<a href=#/failed-messages/message/${d.data.id}>${d.data.nodeName}</a>` : d.data.nodeName)}</b><br>
+<span class="time-sent">${d.data.timeSent.toLocaleString()}</span> <br>
 </div>`;
             })
 
