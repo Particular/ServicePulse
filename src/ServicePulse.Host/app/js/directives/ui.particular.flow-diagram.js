@@ -126,7 +126,7 @@
             var nodeEnter = node.enter().append('g')
                 .attr('class', 'node')
                 .attr("transform", function(d) {
-                    return "translate(" + source.y0 + "," + source.x0 + ")";
+                    return "translate(" + source.x0 + "," + source.y0 + ")";
                 })
                 .on('click', click);
 
@@ -168,7 +168,7 @@
             nodeUpdate.transition()
                 .duration(duration)
                 .attr("transform", function(d) {
-                    return "translate(" + d.y + "," + d.x + ")";
+                    return "translate(" + d.x + "," + d.y + ")";
                 });
 
             // Update the node attributes and style
@@ -184,7 +184,7 @@
             var nodeExit = node.exit().transition()
                 .duration(duration)
                 .attr("transform", function(d) {
-                    return "translate(" + source.y + "," + source.x + ")";
+                    return "translate(" + source.x + "," + source.y + ")";
                 })
                 .remove();
 
@@ -238,10 +238,10 @@
             // Creates a curved (diagonal) path from parent to the child nodes
             function diagonal(s, d) {
 
-                var path = `M ${s.y} ${s.x + rectNode.height / 2}
-            C ${(s.y + d.y) / 2} ${s.x + rectNode.height / 2},
-              ${(s.y + d.y) / 2} ${d.x + rectNode.height / 2},
-              ${d.y} ${d.x + rectNode.height / 2}`
+                var path = "M" + (s.x + rectNode.width / 2) + "," + s.y
+                    + "C" + (s.x + rectNode.width / 2) + "," + (s.y + d.y) / 2
+                    + " " + (d.x  + rectNode.width / 2) + "," + (s.y + d.y) / 2
+                    + " " + (d.x  + rectNode.width / 2) + "," + (d.y + rectNode.height);
 
                 return path
             }
