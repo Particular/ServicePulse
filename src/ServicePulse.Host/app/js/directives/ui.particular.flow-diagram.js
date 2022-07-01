@@ -29,10 +29,14 @@
         }
 
         function mapMessage(message) {
-            var parentid;
+            var parentid, saga = '';
             var header = message.headers.find(x => x.key === 'NServiceBus.RelatedTo');
             if(header){
                 parentid = header.value;   
+            }
+            var sagaHeader = message.headers.find(x => x.key === 'NServiceBus.OriginatingSagaType');
+            if(sagaHeader){
+                saga = sagaHeader.value.split(', ')[0];
             }
             
             return {
@@ -42,6 +46,7 @@
                 "parentId": parentid,
                 "type": message.headers.findIndex(x => x.key === 'NServiceBus.DeliverAt') > -1 ? 'Delay' : message.headers.find(x => x.key === 'NServiceBus.MessageIntent').value === 'Publish' ? 'Event' : 'Command',
                 "isError": message.headers.findIndex(x => x.key === 'NServiceBus.ExceptionInfo.ExceptionType') > -1,
+                "sagaName": saga,
                 "link" : {
                     "name" : "Link "+message.id,
                     "nodeName" : message.id                    
@@ -55,41 +60,45 @@
             width = 1860 - margin.left - margin.right,
             height = 1500 - margin.top - margin.bottom;
         var rectNode = { width : 120, height : 90, textMargin : 5 }
-// append the svg object to the body of the page
-// appends a 'group' element to 'svg'
-// moves the 'group' element to the top left margin
-        var svg = d3.select("#tree-container").append("svg")
-            .attr("width", width + margin.right + margin.left)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate("
-                + margin.left + "," + margin.top + ")");
 
-        svg.append('defs').append('marker')
-            .attr('id', 'end-arrow')
-            .attr('viewBox', '0 -5 10 10')
-            .attr('refX', 0)
-            .attr('refY', 0)
-            .attr('markerWidth', 6)
-            .attr('markerHeight', 6)
-            .attr('orient', 'auto')
-            .attr('class', 'arrow')
-            .append('path')
-            .attr('d', 'M10,-5L0,0L10,5');
         
         var i = 0,
             duration = 750,
-            root;
-
-// declares a tree layout and assigns the size
-        var treemap = d3.tree().size([height, width]);
+            root, treemap, svg;
 
         function drawTree(treeData) {
-// Assigns parent, children, height, depth
+            // Assigns parent, children, height, depth
             root = d3.hierarchy(treeData, function (d) {
                 return d.children;
             });
-            root.x0 = height / 2;
+            
+            height = 200 * (root.height + 1);
+            // append the svg object to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+            svg = d3.select("#tree-container").append("svg")
+                .attr("width", width + margin.right + margin.left)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate("
+                    + margin.left + "," + margin.top + ")");
+
+            svg.append('defs').append('marker')
+                .attr('id', 'end-arrow')
+                .attr('viewBox', '0 -5 10 10')
+                .attr('refX', 0)
+                .attr('refY', 0)
+                .attr('markerWidth', 6)
+                .attr('markerHeight', 6)
+                .attr('orient', 'auto')
+                .attr('class', 'arrow')
+                .append('path')
+                .attr('d', 'M10,-5L0,0L10,5');
+
+            // declares a tree layout and assigns the size
+            treemap = d3.tree().size([height, width]);
+            
+            root.x0 = width / 2;
             root.y0 = 0;
 
             update(root);
@@ -158,6 +167,7 @@
                     + (rectNode.height - rectNode.textMargin * 2) + 'px;" class="node-text wordwrap">'
                     + `<i class="fa ${d.data.type === 'Delay' ? 'fa-clock-o' : d.data.type === 'Event' ? 'fa-arrows' : 'fa-arrow-right'}"></i><b>${(d.data.isError ? `<a href=#/failed-messages/message/${d.data.id}>${d.data.nodeName}</a>` : d.data.nodeName)}</b><br>
 <span class="time-sent">${d.data.timeSent.toLocaleString()}</span> <br>
+<span class="saga">${d.data.sagaName}</span>
 </div>`;
             })
 
