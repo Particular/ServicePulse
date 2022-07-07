@@ -1,5 +1,8 @@
 ﻿(function(window, angular, d3) {
     'use strict';
+    
+    var averageLabelToTheRight = ArrowLabel({pointToTheLeft: false, caption: 'AVG'});
+    var averageLabelToTheLeft = ArrowLabel({pointToTheLeft: true, caption: 'AVG'});
 
     function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 
@@ -40,13 +43,15 @@
 
         var group = chart.append('g').attr('class', 'dataAverage');
 
-        group.append('path')
+        var avgLine =  group.append('path')
             .datum(Array(data.points.length).fill(data.average))
             .attr('d', line)
             .attr('stroke', color)
             .attr('stroke-width', 1.5)
             .attr('opacity', 0.5)
             .attr('stroke-dasharray', '10,10');
+            
+        return avgLine;
     }
 
     function padToWholeValue(value) {
@@ -163,23 +168,103 @@
                             }
 
                             var drawAverage = function(data, lineColor, fillColor) {
-                                drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
+                                return drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
                             }
+                            
+                            var displayAverageLabel = function(averageLine, label, value) {
+                                var {x , y, width} = averageLine.node().getBoundingClientRect();
+                                label.value(`${value.toFixed(2)}`);
 
+                                if(label.pointingToTheLeft){
+                                    label.displayAt(x + width, y);
+                                } else {
+                                    label.displayAt(x, y);
+                                }
+                                
+                            }
+                            
                             drawSeries(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor);
 
                             if (secondSeries) {
                                 drawSeries(secondSeries, attrs.secondSeriesColor,attrs.secondSeriesFillColor);
                             }
 
-                            drawAverage(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor );
+                            var firstAverageLine = drawAverage(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor );
+
+                            var secondAverageLine = null;
 
                             if (secondSeries) {
-                                drawAverage(secondSeries, attrs.secondSeriesColor, attrs.secondSeriesFillColor);
+                                secondAverageLine = drawAverage(secondSeries, attrs.secondSeriesColor, attrs.secondSeriesFillColor);
                             }
+
+                            chart.on("mouseover", function() {                                
+                                displayAverageLabel(firstAverageLine, averageLabelToTheRight, firstSeries.average);
+
+                                if(secondAverageLine && secondSeries.points.length > 0){
+                                    displayAverageLabel(secondAverageLine, averageLabelToTheLeft, secondSeries.average);
+                                }                                
+                            })
+                            .on("mouseout", function(){
+                                averageLabelToTheRight.hide();
+                                averageLabelToTheLeft.hide();
+                            });
                         });
                     }
                 };
             });
+
+            function ArrowLabel({pointToTheLeft=false, caption=''}){
+
+                var div = document.createElement('div');
+                div.style.position = 'absolute';
+                div.style.zIndex = 10;
+                div.style.visibility = 'hidden';    
+                div.classList = `avg-tooltip${pointToTheLeft && ' left' || ''}`;
+                div.innerHTML = `<div>
+                                    ${caption}
+                                </div>
+                                <div class="ms">
+                                    0 ms
+                                </div>`;
+                document.body.appendChild(div);
+            
+                if(pointToTheLeft){
+                    div.style.right = 'inherit';
+                } else {
+                    div.style.left = 'inherit';
+                }
+            
+                return {
+                    displayAt: function(x, y) {
+                        var lableDimensions = getComputedStyle(div);
+                        //align the label vertically.
+                        div.style.top = `${Math.trunc(y - lableDimensions.height.replace('px', '') / 2)}px`;
+                        
+                        //align the label horizontally.
+                        //get the label tip dimensions. The label tip is composed by a roated square the the ::before meta-element.
+                        var labelTipWidth = getComputedStyle(div,':before').width.replace('px','');
+                        var labelTipHeight = getComputedStyle(div,':before').height.replace('px','');
+                        var lalbeTipHypotenuce = Math.trunc(Math.hypot(labelTipWidth,labelTipHeight));
+            
+                        if(pointToTheLeft == false) {                
+                            div.style.right = `calc(100% - ${x}px + ${lalbeTipHypotenuce / 2}px)`;
+                        } else {
+                            div.style.left = `${x + (lalbeTipHypotenuce / 2)}px`;
+                        }
+            
+                        div.style.visibility = 'visible';
+                    },
+                    
+                    hide: function() { 
+                        div.style.visibility = 'hidden';
+                    },
+            
+                    value: function(value){
+                        div.querySelector('.ms').innerHTML = `${value} ms`
+                    },
+            
+                    pointingToTheLeft: pointToTheLeft
+                }    
+            }
 
 }(window, window.angular, window.d3));

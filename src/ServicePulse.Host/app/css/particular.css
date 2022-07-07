@@ -3526,4 +3526,48 @@ g.error .node-text .lead.saga {
 
 g.error .node-text a:hover {
     text-decoration: underline;
+div.avg-tooltip {
+    position: absolute;
+    text-align: right;
+    padding: .5rem;
+    line-height: 1;
+    background: #2800ca;
+    color: #ffffff;
+    border: 1px solid #313639;
+    border-radius: 8px;
+    pointer-events: none;
+    font-size: 1.3rem;    
+    white-space: nowrap;
+} 
+
+div.avg-tooltip.left {
+    text-align: left;
+}
+
+div.avg-tooltip:before {
+    content: '';
+    display: block;
+    z-index: -1;
+    background-color: #2800ca;
+    right: 0;
+    position: absolute;
+    top: 50%;
+
+    width: 30px;
+    height: 30px;
+    margin-top: -15px;
+    margin-right: -13px;
+
+    transform: rotate(45deg);
+}
+
+div.avg-tooltip.left:before {
+    right: inherit;
+    margin-right: inherit;
+    margin-left: -13px;
+    left:0;
+}
+
+div.avg-tooltip .ms {
+    font-size: 2rem;
 }
