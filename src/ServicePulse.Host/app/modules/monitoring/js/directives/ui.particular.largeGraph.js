@@ -50,7 +50,7 @@
             .attr('stroke-width', 1.5)
             .attr('opacity', 0.5)
             .attr('stroke-dasharray', '10,10');
-            
+
         return avgLine;
     }
 
@@ -171,16 +171,15 @@
                                 return drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
                             }
                             
-                            var displayAverageLabel = function(averageLine, label, value) {
+                            var displayAverageLabel = function(averageLine, label, value, color, unit) {
                                 var {x , y, width} = averageLine.node().getBoundingClientRect();
-                                label.value(`${value.toFixed(2)}`);
+                                label.value(`${value.toFixed(0)}`);
 
                                 if(label.pointingToTheLeft){
-                                    label.displayAt(x + width, y);
+                                    label.displayAt({x:x + width + window.pageXOffset, y:y + window.pageYOffset, color, unit});
                                 } else {
-                                    label.displayAt(x, y);
+                                    label.displayAt({x:x + window.pageXOffset, y:y + window.pageYOffset, color, unit});
                                 }
-                                
                             }
                             
                             drawSeries(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor);
@@ -198,10 +197,10 @@
                             }
 
                             chart.on("mouseover", function() {                                
-                                displayAverageLabel(firstAverageLine, averageLabelToTheRight, firstSeries.average);
+                                displayAverageLabel(firstAverageLine, averageLabelToTheRight, firstSeries.average, attrs.firstSeriesColor,'');
 
                                 if(secondAverageLine && secondSeries.points.length > 0){
-                                    displayAverageLabel(secondAverageLine, averageLabelToTheLeft, secondSeries.average);
+                                    displayAverageLabel(secondAverageLine, averageLabelToTheLeft, secondSeries.average, attrs.secondSeriesColor);
                                 }                                
                             })
                             .on("mouseout", function(){
@@ -218,13 +217,13 @@
                 var div = document.createElement('div');
                 div.style.position = 'absolute';
                 div.style.zIndex = 10;
-                div.style.visibility = 'hidden';    
+                div.style.visibility = 'hidden';
                 div.classList = `avg-tooltip${pointToTheLeft && ' left' || ''}`;
                 div.innerHTML = `<div>
                                     ${caption}
                                 </div>
-                                <div class="ms">
-                                    0 ms
+                                <div class="unit">
+                                    0
                                 </div>`;
                 document.body.appendChild(div);
             
@@ -235,7 +234,7 @@
                 }
             
                 return {
-                    displayAt: function(x, y) {
+                    displayAt: function({x, y, color, unit}) {
                         var lableDimensions = getComputedStyle(div);
                         //align the label vertically.
                         div.style.top = `${Math.trunc(y - lableDimensions.height.replace('px', '') / 2)}px`;
@@ -253,6 +252,7 @@
                         }
             
                         div.style.visibility = 'visible';
+                        div.style.setProperty('--avg-tooltip-background-color', color);
                     },
                     
                     hide: function() { 
@@ -260,7 +260,7 @@
                     },
             
                     value: function(value){
-                        div.querySelector('.ms').innerHTML = `${value} ms`
+                        div.querySelector('.unit').innerHTML = `${value}`
                     },
             
                     pointingToTheLeft: pointToTheLeft
