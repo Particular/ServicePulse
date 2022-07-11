@@ -131,15 +131,14 @@
 
             // Enter any new modes at the parent's previous position.
             var nodeEnter = node.enter().append('g')
-                .attr('class', 'node')
+                .attr('class', function(d){return `node ${d.data.type.toLowerCase()} ${d.data.isError ? 'error' : ''} ${d.data.id === currentMessageId ? 'current-message' : ''}`;})
                 .attr("transform", function(d) {
                     return "translate(" + source.x0 + "," + source.y0 + ")";
                 })
                 .on('click', click);
 
             // Add rectangle for the nodes
-            nodeEnter.append('rect')                
-                .attr('class', function(d){return `node ${d.data.type.toLowerCase()} ${d.data.isError ? 'error' : ''} ${d.data.id === currentMessageId ? 'current-message' : ''}`;})
+            nodeEnter.append('rect')
                 .attr('rx', 6)
                 .attr('ry', 6)
                 .attr('width', rectNode.width)
