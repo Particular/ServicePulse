@@ -75,11 +75,10 @@
 // appends a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
             parentSvg = d3.select("#tree-container").append("svg")
-                .attr("width", 'auto')
-                .attr("height", height + margin.top + margin.bottom);
+                .attr('viewBox', '-1000 -10 2000 2000');
+                
             svg = parentSvg.append("g")
-                .attr("transform", "translate("
-                    + margin.left + "," + margin.top + ")");
+                .attr("transform", "scale(.7,.7)");
 
             var zoom = d3.zoom()
                 .scaleExtent([1 / 2, 8])
