@@ -97,7 +97,7 @@
                 .attr('d', 'M10,-5L0,0L10,5');
 
             // declares a tree layout and assigns the size
-            treemap = d3.tree().nodeSize([rectNode.width, rectNode.height]);
+            treemap = d3.tree().nodeSize([rectNode.width + 20, rectNode.height]);
             
             root.x0 = width / 2;
             root.y0 = 0;
