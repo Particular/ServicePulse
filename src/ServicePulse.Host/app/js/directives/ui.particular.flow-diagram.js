@@ -217,7 +217,7 @@
                 .attr('marker-start', 'url(#end-arrow)')
                 .attr('d', function(d){
                     var o = {x: source.x0, y: source.y0}
-                    return diagonal(o, o);
+                    return straight(o, o);
                 });
 
             // UPDATE
@@ -226,14 +226,14 @@
             // Transition back to the parent element position
             linkUpdate.transition()
                 .duration(duration)
-                .attr('d', function(d){ return diagonal(d, d.parent) });
+                .attr('d', function(d){ return straight(d, d.parent) });
 
             // Remove any exiting links
             var linkExit = link.exit().transition()
                 .duration(duration)
                 .attr('d', function(d) {
                     var o = {x: source.x, y: source.y};
-                    return diagonal(o, o);
+                    return straight(o, o);
                 })
                 .remove();
 
@@ -242,21 +242,12 @@
                 d.x0 = d.x;
                 d.y0 = d.y;
             });
-
-            // Creates a curved (diagonal) path from parent to the child nodes
-            function diagonal(s, d) {
-
-                var path = "M" + (s.x + rectNode.width / 2) + "," + s.y
-                    + "C" + (s.x + rectNode.width / 2) + "," + (s.y + d.y) / 2
-                    + " " + (d.x  + rectNode.width / 2) + "," + (s.y + d.y) / 2
-                    + " " + (d.x  + rectNode.width / 2) + "," + (d.y + rectNode.height);
-
-                return path
-            }
             
             function straight(s, d){
-                return "M" + (s.x + rectNode.width / 2) + "," + s.y
-                    + "H" + (d.x  + rectNode.width / 2) + "V" + (d.y + rectNode.height);
+                return `M ${s.x + rectNode.width / 2} ${s.y}
+                            C ${s.x + rectNode.width / 2} ${s.y} ,
+                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height} ,
+                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height}`;
             }
 
             // Toggle children on click.
