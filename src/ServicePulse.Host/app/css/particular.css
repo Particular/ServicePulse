@@ -3398,3 +3398,35 @@ section[name="platformconnection"] li {
 .link.event{
     stroke-dasharray: 5,3;
 }
+
+.pa-flow-saga {
+    background-image: url('../img/saga.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
+.pa-flow-timeout {
+    background-image: url('../img/timeout.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
+.pa-flow-event {
+    background-image: url('../img/event.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
+.pa-flow-command {
+    background-image: url('../img/command.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
