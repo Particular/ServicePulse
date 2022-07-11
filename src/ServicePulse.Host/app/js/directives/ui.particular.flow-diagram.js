@@ -160,10 +160,10 @@
                         : (rectNode.height - rectNode.textMargin * 2)
                 })
                 .append('xhtml').html(function(d) {
-                return '<div style="width: '
-                    + (rectNode.width - rectNode.textMargin * 2) + 'px; height: '
-                    + (rectNode.height - rectNode.textMargin * 2) + 'px;" class="node-text wordwrap" uib-tooltip="' + d.data.nodeName + '">'
-                    + `<i class="fa ${d.data.type === 'Delay' ? 'fa-clock-o' : d.data.type === 'Event' ? 'fa-arrows' : 'fa-arrow-right'}"></i><div class="lead righ-side-ellipsis"><b>${(d.data.isError ? `<a href=#/failed-messages/message/${d.data.id}>${d.data.nodeName}</a>` : d.data.nodeName)}</b></div>
+                return `<div style="width: 
+                    ${(rectNode.width - rectNode.textMargin * 2)} px; height: 
+                    ${(rectNode.height - rectNode.textMargin * 2)} px;" class="node-text wordwrap" uib-tooltip="${d.data.nodeName}">
+                    <i class="fa ${d.data.type === 'Delay' ? 'fa-clock-o' : d.data.type === 'Event' ? 'fa-arrows' : 'fa-arrow-right'}"></i><div class="lead righ-side-ellipsis"><b>${(d.data.isError ? `<a href=#/failed-messages/message/${d.data.id}>${d.data.nodeName}</a>` : d.data.nodeName)}</b></div>
 <span class="time-sent">${d.data.timeSent.toLocaleString()}</span> <br>
 <span class="saga">${d.data.sagaName}</span>
 </div>`;
