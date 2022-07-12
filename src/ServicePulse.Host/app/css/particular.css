@@ -3532,7 +3532,7 @@ g.error .node-text a:hover {
 
 div.avg-tooltip {
     position: absolute;
-    text-align: right;
+    text-align: left;
     padding: .5rem;
     line-height: 1;
     background: var(--avg-tooltip-background-color);
@@ -3543,8 +3543,7 @@ div.avg-tooltip {
     white-space: nowrap;
 } 
 
-div.avg-tooltip.left {
-    text-align: left;
+div.avg-tooltip.left {    
     border-radius: 1px 8px 8px 1px;
 }
 
@@ -3573,5 +3572,9 @@ div.avg-tooltip.left:before {
 
 div.avg-tooltip .unit {
     font-size: 14px;
+}
+
+div.avg-tooltip .unit span {
+    font-size: 11px;
 }
 }

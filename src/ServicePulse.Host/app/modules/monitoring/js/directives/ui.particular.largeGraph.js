@@ -1,6 +1,11 @@
-﻿(function(window, angular, d3) {
+﻿import ArrowLabel from './ui.particular.arrowLabel';
+
+(function(window, angular, d3) {
     'use strict';
-    
+
+    const averageDecimalsDefault = 2;
+    const avgLabelSuffixDefault = '';
+
     var averageLabelToTheRight = ArrowLabel({pointToTheLeft: false, caption: 'AVG'});
     var averageLabelToTheLeft = ArrowLabel({pointToTheLeft: true, caption: 'AVG'});
 
@@ -43,14 +48,14 @@
 
         var group = chart.append('g').attr('class', 'dataAverage');
 
-        var avgLine =  group.append('path')
+        var avgLine = group.append('path')
             .datum(Array(data.points.length).fill(data.average))
             .attr('d', line)
             .attr('stroke', color)
             .attr('stroke-width', 1.5)
             .attr('opacity', 0.5)
             .attr('stroke-dasharray', '10,10');
-
+            
         return avgLine;
     }
 
@@ -83,10 +88,14 @@
                         isDurationGraph: '=isDurationGraph',
                         minimumYaxis: '@',
                         width: '=plotWidth',
-                        height: '=plotHeight'
+                        height: '=plotHeight',
+                        avgDecimals: '@'
                     },
                     template: '<svg></svg>',
-                    link: function link(scope, element, attrs) {
+                    link: function link(scope, element, attrs) {                       
+                        scope.avgDecimals = scope.avgDecimals || averageDecimalsDefault;
+                        attrs.metricSuffix = attrs.metricSuffix || avgLabelSuffixDefault;
+
                         scope.$watch('firstDataSeries', function () {
 
                             var svg = element.find('svg')[0];
@@ -170,26 +179,26 @@
                             var drawAverage = function(data, lineColor, fillColor) {
                                 return drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
                             }
-                            
-                            var displayAverageLabel = function(averageLine, label, value, color) {
-                                var {x , y, width} = averageLine.node().getBoundingClientRect();
-                                label.value(`${value}`);
 
-                                if(label.pointingToTheLeft){
+                            var displayAverageLabel = function(averageLine, label, value, color, unit) {
+                                var {x, y, width} = averageLine.node().getBoundingClientRect();
+                                label.value(value, unit);
+
+                                if (label.pointingToTheLeft) {
                                     label.displayAt({x:x + width + window.pageXOffset, y:y + window.pageYOffset, color});
                                 } else {
                                     label.displayAt({x:x + window.pageXOffset, y:y + window.pageYOffset, color});
                                 }
                             }
-                            
+
                             drawSeries(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor);
 
                             if (secondSeries) {
                                 drawSeries(secondSeries, attrs.secondSeriesColor,attrs.secondSeriesFillColor);
                             }
 
-                            var firstAverageLine = drawAverage(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor );
-
+                            var firstAverageLine = drawAverage(firstSeries, attrs.firstSeriesColor, attrs.firstSeriesFillColor );                            
+                            
                             var secondAverageLine = null;
 
                             if (secondSeries) {
@@ -197,22 +206,28 @@
                             }
 
                             chart.on("mouseover", function() {    
-                                var value = `${firstSeries.average.toFixed(2)} ${attrs.metricSuffix}`;
-                                if(scope.isDurationGraph){
-                                    value = `${formatter.formatTime(firstSeries.average).value} ${formatter.formatTime(firstSeries.average).unit}`;
+                                var value = `${formatter.formatLargeNumber(firstSeries.average, scope.avgDecimals)}`;
+                                var suffix = attrs.metricSuffix;
+
+                                if (scope.isDurationGraph) {
+                                    value = `${formatter.formatTime(firstSeries.average).value}`;
+                                    suffix = formatter.formatTime(firstSeries.average).unit.toUpperCase();
                                 } 
                                 
-                                displayAverageLabel(firstAverageLine, averageLabelToTheRight, value, attrs.firstSeriesColor,'');
+                                displayAverageLabel(firstAverageLine, averageLabelToTheRight, value, attrs.firstSeriesColor, suffix);
 
-                                if(secondAverageLine && secondSeries.points.length > 0){
-                                    value = `${secondSeries.average.toFixed(2)} ${attrs.metricSuffix}`;
-                                    if(scope.isDurationGraph){
-                                        value = `${formatter.formatTime(secondSeries.average).value} ${formatter.formatTime(secondSeries.average).unit}`;
+                                if (secondAverageLine && secondSeries.points.length > 0) {
+                                    value = `${formatter.formatLargeNumber(secondSeries.average, scope.avgDecimals)}`;
+
+                                    if (scope.isDurationGraph) {
+                                        value = `${formatter.formatTime(secondSeries.average).value}`;
+                                        suffix = formatter.formatTime(secondSeries.average).unit.toUpperCase();
                                     } 
-                                    displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, attrs.secondSeriesColor);
+
+                                    displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, attrs.secondSeriesColor, suffix);
                                 }                                
                             })
-                            .on("mouseout", function(){
+                            .on("mouseout", function() {
                                 averageLabelToTheRight.hide();
                                 averageLabelToTheLeft.hide();
                             });
@@ -220,60 +235,5 @@
                     }
                 };
             });
-
-            function ArrowLabel({pointToTheLeft=false, caption=''}){
-
-                var div = document.createElement('div');
-                div.style.position = 'absolute';
-                div.style.zIndex = 10;
-                div.style.visibility = 'hidden';
-                div.classList = `avg-tooltip${pointToTheLeft && ' left' || ''}`;
-                div.innerHTML = `<div>
-                                    ${caption}
-                                </div>
-                                <div class="unit">
-                                    0
-                                </div>`;
-                document.body.appendChild(div);
-            
-                if(pointToTheLeft){
-                    div.style.right = 'inherit';
-                } else {
-                    div.style.left = 'inherit';
-                }
-            
-                return {
-                    displayAt: function({x, y, color}) {
-                        var lableDimensions = getComputedStyle(div);
-                        //align the label vertically.
-                        div.style.top = `${Math.trunc(y - lableDimensions.height.replace('px', '') / 2)}px`;
-                        
-                        //align the label horizontally.
-                        //get the label tip dimensions. The label tip is composed by a roated square the the ::before meta-element.
-                        var labelTipWidth = getComputedStyle(div,':before').width.replace('px','');
-                        var labelTipHeight = getComputedStyle(div,':before').height.replace('px','');
-                        var lalbeTipHypotenuce = Math.trunc(Math.hypot(labelTipWidth,labelTipHeight));
-            
-                        if(pointToTheLeft == false) {                
-                            div.style.right = `calc(100% - ${x}px + ${lalbeTipHypotenuce / 2}px)`;
-                        } else {
-                            div.style.left = `${x + (lalbeTipHypotenuce / 2)}px`;
-                        }
-            
-                        div.style.visibility = 'visible';
-                        div.style.setProperty('--avg-tooltip-background-color', color);
-                    },
-                    
-                    hide: function() { 
-                        div.style.visibility = 'hidden';
-                    },
-            
-                    value: function(value){
-                        div.querySelector('.unit').innerHTML = `${value}`
-                    },
-            
-                    pointingToTheLeft: pointToTheLeft
-                }   
-            }
 
 }(window, window.angular, window.d3));
