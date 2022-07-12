@@ -3428,27 +3428,30 @@ section[name="platformconnection"] li {
 }
 
 .node .time-sent {
+    display: block;
     color: #777f7f;
+    margin-left: 19px;
 }
 
 .node-text {
-    padding: 8px;
+    padding: 3px 8px 1px;
 }
 
 .node-text i {
     display: inline-block;
-    position: relative;
-    top: 3px;
     margin-right: 3px;
     filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(346deg) brightness(104%) contrast(104%);
 }
 
 .node-text .lead {
-    display: inline;
+    display: inline-block;
+    width: 206px;
+    position: relative;
+    top: 4px;
 }
 
-.node-text .time-sent {
-display: block;
+.node-text .saga {
+    font-weight: normal;
 }
 
 g.current-message rect {
@@ -3456,8 +3459,8 @@ g.current-message rect {
     fill: #be514a !important;
 }
 
-g.current-message .node-text {
-    color: #fff;
+g.current-message .node-text, g.current-message .node-text .lead {
+    color: #fff !important;
 }
 
 g.current-message .node-text i {
@@ -3465,9 +3468,8 @@ g.current-message .node-text i {
     filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7475%) hue-rotate(21deg) brightness(100%) contrast(106%);
 }
 
-g.current-message .node-text b {
+g.current-message .node-text strong {
     color: #fff;
-    text-decoration: underline
 }
 
 g.current-message .node-text .time-sent {
@@ -3481,4 +3483,10 @@ g.error rect {
 g.error .node-text a {
     color: #000;
     border-bottom: 1px solid #000;
+    padding-bottom: 1px;
+}
+
+g.error .node-text a:hover {
+    text-decoration: none;
+    border-bottom: 2px solid #000;
 }
