@@ -3414,6 +3414,14 @@ section[name="platformconnection"] li {
     width: 15px;
 }
 
+.pa-flow-failed {
+    background-image: url('../img/failed-msg.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
 .node rect {
     fill: #fff;
     stroke: #cccbcc;

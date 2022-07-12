@@ -167,8 +167,8 @@
                 return '<div style="width:' + 
                     (rectNode.width - rectNode.textMargin * 2) + ' px; height:' + 
                     (rectNode.height - rectNode.textMargin * 2) + ' px;" class="node-text wordwrap">' +
-                    '<i class="fa '+ (d.data.type === 'Timeout message' ? 'pa-flow-timeout' : d.data.type === 'Event message' ? 'pa-flow-event' : 'pa-flow-command') + '" title="' + d.data.type + '"></i><div class="lead righ-side-ellipsis" title="' + d.data.nodeName + '"><strong>' + (d.data.isError ? '<a href=#/failed-messages/message/' + d.data.id + '>' + d.data.nodeName + '</a>' : d.data.nodeName) + '</strong></div>' + 
-                    '<span class="time-sent"><sp-moment date="' + d.data.timeSent + '"></sp-moment></span>' +
+                    '<i class="fa '+ (d.data.type === 'Timeout message' ? 'pa-flow-timeout' : d.data.type === 'Event message' ? 'pa-flow-event' : 'pa-flow-command') + '" title="' + d.data.type + '"></i><div class="lead righ-side-ellipsis" title="' + d.data.nodeName + '"><strong>' + (d.data.isError ? '<a href=#/failed-messages/message/' + d.data.id + '>' + d.data.nodeName + '</a>' : d.data.nodeName) + '</strong></div>' +
+                    (d.data.isError ? '<i class="fa pa-flow-failed"></i>' : '') + '<span class="time-sent"><sp-moment date="' + d.data.timeSent + '"></sp-moment></span>' +
                     (d.data.sagaName ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' + d.data.sagaName + '">' + d.data.sagaName + '</div>' : '') + 
 '</div>';
             }).each(function(){
