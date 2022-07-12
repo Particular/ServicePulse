@@ -2,7 +2,7 @@
     'use strict';
 
 
-    function controller($scope, serviceControlService, $routeParams) {
+    function controller($scope, serviceControlService, $routeParams, $compile) {
         
         function createTreeStructure(messages) {
             var map = {}, node, roots = [], i;
@@ -142,7 +142,9 @@
                 .attr('rx', 6)
                 .attr('ry', 6)
                 .attr('width', rectNode.width)
-                .attr('height', rectNode.height)
+                .attr('height', function(d) {
+                    return !d.data.sagaName ? rectNode.height - 10 : rectNode.height;
+                })
                 .style("fill", function(d) {
                     return d._children ? "lightsteelblue" : "#fff";
                 });
@@ -154,19 +156,25 @@
                     return (rectNode.width - rectNode.textMargin * 2) < 0 ? 0
                         : (rectNode.width - rectNode.textMargin * 2)
                 })
-                .attr('height', function() {
-                    return (rectNode.height - rectNode.textMargin * 2) < 0 ? 0
-                        : (rectNode.height - rectNode.textMargin * 2)
+                .attr('height', function(d) {
+                    var height = rectNode.height;
+                    if(!d.data.sagaName){
+                        height -= 10; 
+                    }
+                    return (height - rectNode.textMargin * 2) < 0 ? 0
+                        : (height - rectNode.textMargin * 2)
                 })
                 .append('xhtml').html(function(d) {
                 return `<div style="width: 
                     ${(rectNode.width - rectNode.textMargin * 2)} px; height: 
-                    ${(rectNode.height - rectNode.textMargin * 2)} px;" class="node-text wordwrap" uib-tooltip="${d.data.nodeName}">
-                    <i class="fa ${d.data.type === 'Delay' ? 'pa-flow-timeout' : d.data.type === 'Event' ? 'pa-flow-event' : 'pa-flow-command'}"></i><div class="lead righ-side-ellipsis"><strong>${(d.data.isError ? `<a href=#/failed-messages/message/${d.data.id}>${d.data.nodeName}</a>` : d.data.nodeName)}</strong></div>
-<span class="time-sent">${d.data.timeSent.toLocaleString()}</span>
-${!!d.data.sagaName ? `<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis">${d.data.sagaName}</div>` : ''}
+                    ${(rectNode.height - rectNode.textMargin * 2)} px;" class="node-text wordwrap">
+                    <i class="fa ${d.data.type === 'Delay' ? 'pa-flow-timeout' : d.data.type === 'Event' ? 'pa-flow-event' : 'pa-flow-command'}" title="${d.data.type}"></i><div class="lead righ-side-ellipsis" title="${d.data.nodeName}"><strong>${(d.data.isError ? `<a href=#/failed-messages/message/${d.data.id}>${d.data.nodeName}</a>` : d.data.nodeName)}</strong></div>
+                    <span class="time-sent"><sp-moment date="${d.data.timeSent}"></sp-moment></span>
+${!!d.data.sagaName ? `<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="${d.data.sagaName}">${d.data.sagaName}</div>` : ''}
 </div>`;
-            })
+            }).each(function(){
+                    $compile(this)($scope);
+                });
 
             // UPDATE
             var nodeUpdate = nodeEnter.merge(node);
@@ -245,8 +253,8 @@ ${!!d.data.sagaName ? `<i class="fa pa-flow-saga"></i><div class="saga lead righ
             function straight(s, d){
                 return `M ${s.x + rectNode.width / 2} ${s.y}
                             C ${s.x + rectNode.width / 2} ${s.y} ,
-                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height} ,
-                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height}`;
+                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height - 10} ,
+                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height - 10  }`;
             }
 
             // Toggle children on click.
@@ -275,7 +283,7 @@ ${!!d.data.sagaName ? `<i class="fa pa-flow-saga"></i><div class="saga lead righ
         }
     }
     
-    controller.$inject = ['$scope', 'serviceControlService', '$routeParams'];
+    controller.$inject = ['$scope', 'serviceControlService', '$routeParams', '$compile'];
 
     function directive() {
         return {
