@@ -40,7 +40,7 @@
                 "id": message.id,
                 "messageId": message.message_id,
                 "parentId": parentid,
-                "type": message.headers.findIndex(x => x.key === 'NServiceBus.DeliverAt') > -1 ? 'Delay' : message.headers.find(x => x.key === 'NServiceBus.MessageIntent').value === 'Publish' ? 'Event' : 'Command',
+                "type": message.headers.findIndex(x => x.key === 'NServiceBus.DeliverAt') > -1 ? 'Timeout message' : message.headers.find(x => x.key === 'NServiceBus.MessageIntent').value === 'Publish' ? 'Event message' : 'Command message',
                 "isError": message.headers.findIndex(x => x.key === 'NServiceBus.ExceptionInfo.ExceptionType') > -1,
                 "sagaName": saga,
                 "link" : {
@@ -143,7 +143,7 @@
                 .attr('ry', 6)
                 .attr('width', rectNode.width)
                 .attr('height', function(d) {
-                    return !d.data.sagaName ? rectNode.height - 10 : rectNode.height;
+                    return !d.data.sagaName ? rectNode.height - 22 : rectNode.height;
                 })
                 .style("fill", function(d) {
                     return d._children ? "lightsteelblue" : "#fff";
@@ -253,8 +253,8 @@ ${!!d.data.sagaName ? `<i class="fa pa-flow-saga"></i><div class="saga lead righ
             function straight(s, d){
                 return `M ${s.x + rectNode.width / 2} ${s.y}
                             C ${s.x + rectNode.width / 2} ${s.y} ,
-                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height - 10} ,
-                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height - 10  }`;
+                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height - 22} ,
+                              ${d.x + rectNode.width / 2} ${d.y + rectNode.height - 22  }`;
             }
 
             // Toggle children on click.

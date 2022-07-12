@@ -3387,6 +3387,7 @@ section[name="platformconnection"] li {
     background-repeat: no-repeat;
     height: 15px;
     width: 15px;
+    margin-left: 20px;
 }
 
 .pa-flow-timeout {
@@ -3427,10 +3428,12 @@ section[name="platformconnection"] li {
     font: 12px sans-serif;
 }
 
-.node .time-sent {
+.node .time-sent sp-moment {
     display: block;
+    margin-left: 20px;
+    padding-top: 0;
     color: #777f7f;
-    margin-left: 19px;
+    text-transform: capitalize;
 }
 
 .node-text {
@@ -3439,19 +3442,22 @@ section[name="platformconnection"] li {
 
 .node-text i {
     display: inline-block;
-    margin-right: 3px;
+    position: relative;
+    top: -1px;
+    margin-right: 5px;
     filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(346deg) brightness(104%) contrast(104%);
 }
 
 .node-text .lead {
     display: inline-block;
-    width: 206px;
+    width: 204px;
     position: relative;
     top: 4px;
 }
 
-.node-text .saga {
+.node-text .lead.saga {
     font-weight: normal;
+    width: 182px;
 }
 
 g.current-message rect {
@@ -3472,8 +3478,8 @@ g.current-message .node-text strong {
     color: #fff;
 }
 
-g.current-message .node-text .time-sent {
-    color: #ffcecb;
+g.current-message .node-text .time-sent sp-moment {
+    color: #ffcecb !important;
 }
 
 g.error rect {
