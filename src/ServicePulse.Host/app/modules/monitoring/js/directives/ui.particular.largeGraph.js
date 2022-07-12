@@ -171,14 +171,14 @@
                                 return drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
                             }
                             
-                            var displayAverageLabel = function(averageLine, label, value, color, unit) {
+                            var displayAverageLabel = function(averageLine, label, value, color) {
                                 var {x , y, width} = averageLine.node().getBoundingClientRect();
-                                label.value(`${value.toFixed(0)}`);
+                                label.value(`${value}`);
 
                                 if(label.pointingToTheLeft){
-                                    label.displayAt({x:x + width + window.pageXOffset, y:y + window.pageYOffset, color, unit});
+                                    label.displayAt({x:x + width + window.pageXOffset, y:y + window.pageYOffset, color});
                                 } else {
-                                    label.displayAt({x:x + window.pageXOffset, y:y + window.pageYOffset, color, unit});
+                                    label.displayAt({x:x + window.pageXOffset, y:y + window.pageYOffset, color});
                                 }
                             }
                             
@@ -196,11 +196,20 @@
                                 secondAverageLine = drawAverage(secondSeries, attrs.secondSeriesColor, attrs.secondSeriesFillColor);
                             }
 
-                            chart.on("mouseover", function() {                                
-                                displayAverageLabel(firstAverageLine, averageLabelToTheRight, firstSeries.average, attrs.firstSeriesColor,'');
+                            chart.on("mouseover", function() {    
+                                var value = `${firstSeries.average.toFixed(2)} ${attrs.metricSuffix}`;
+                                if(scope.isDurationGraph){
+                                    value = `${formatter.formatTime(firstSeries.average).value} ${formatter.formatTime(firstSeries.average).unit}`;
+                                } 
+                                
+                                displayAverageLabel(firstAverageLine, averageLabelToTheRight, value, attrs.firstSeriesColor,'');
 
                                 if(secondAverageLine && secondSeries.points.length > 0){
-                                    displayAverageLabel(secondAverageLine, averageLabelToTheLeft, secondSeries.average, attrs.secondSeriesColor);
+                                    value = `${secondSeries.average.toFixed(2)} ${attrs.metricSuffix}`;
+                                    if(scope.isDurationGraph){
+                                        value = `${formatter.formatTime(secondSeries.average).value} ${formatter.formatTime(secondSeries.average).unit}`;
+                                    } 
+                                    displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, attrs.secondSeriesColor);
                                 }                                
                             })
                             .on("mouseout", function(){
@@ -234,7 +243,7 @@
                 }
             
                 return {
-                    displayAt: function({x, y, color, unit}) {
+                    displayAt: function({x, y, color}) {
                         var lableDimensions = getComputedStyle(div);
                         //align the label vertically.
                         div.style.top = `${Math.trunc(y - lableDimensions.height.replace('px', '') / 2)}px`;
@@ -264,7 +273,7 @@
                     },
             
                     pointingToTheLeft: pointToTheLeft
-                }    
+                }   
             }
 
 }(window, window.angular, window.d3));
