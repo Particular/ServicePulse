@@ -3463,30 +3463,38 @@ section[name="platformconnection"] li {
     top: 4px;
 }
 
+g.error .node-text .lead, g.current-message.error .node-text .lead {
+    width: 184px;
+}
+
 .node-text .lead.saga {
     font-weight: normal;
     width: 182px;
 }
 
-g.current-message rect {
+g.current-message.error rect {
     stroke: #be514a;
     fill: #be514a !important;
 }
 
-g.current-message .node-text, g.current-message .node-text .lead {
+g.current-message.error .node-text, g.current-message .node-text .lead {
     color: #fff !important;
 }
 
-g.current-message .node-text i {
+g.error .node-text i:not(.pa-flow-saga) {
+    filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(4493%) hue-rotate(317deg) brightness(81%) contrast(82%);
+}
+
+g.current-message.error .node-text i {
     color: #fff;    
     filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7475%) hue-rotate(21deg) brightness(100%) contrast(106%);
 }
 
-g.current-message .node-text strong {
+g.current-message.error .node-text strong {
     color: #fff;
 }
 
-g.current-message .node-text .time-sent sp-moment {
+g.current-message.error .node-text .time-sent sp-moment {
     color: #ffcecb !important;
 }
 
@@ -3494,13 +3502,27 @@ g.error rect {
     stroke: #be514a;
 }
 
+g.current-message.error .node-text a {
+    color: #fff;
+}
+
+g.current-message.error .node-text a:hover {
+    cursor: text;
+    text-decoration: none;
+}
+
 g.error .node-text a {
-    color: #000;
-    border-bottom: 1px solid #000;
-    padding-bottom: 1px;
+    color: #be514a;
+}
+
+g.error .node-text .time-sent sp-moment {
+    color: #be514a;
+}
+
+g.error .node-text .lead.saga {
+    color: #be514a;
 }
 
 g.error .node-text a:hover {
-    text-decoration: none;
-    border-bottom: 2px solid #000;
+    text-decoration: underline;
 }
