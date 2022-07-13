@@ -3181,9 +3181,10 @@ a.remove-endpoint:hover i {
     padding-bottom: 4px;
 }
 
-.endpoint-details-link span {
+.endpoint-count {
     color: #777;
     font-weight: normal;
+    margin-left: 3px;
 }
 
 .monitoring-lost-link i {

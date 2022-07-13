@@ -54,8 +54,9 @@
                         <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                             <div class="row box-header">
                                 <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                                    <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a> <span ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{endpoint.connectedCount || 0}})</span>
+                                    <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a>
                                 </div>
+                                <span class="endpoint-count" ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{endpoint.connectedCount || 0}})</span>
                                 <div class="col-xs-5 no-side-padding endpoint-status">
                                     <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
                                         <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
