@@ -315,7 +315,7 @@
                                             <div class="no-side-padding sparkline-value" ng-class="instance.metrics.processingTime.displayValue.unit">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.processingTime.displayValue.value}}
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
-                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false" class="unit">
+                                                <span ng-if="instance.isStale == false && !!instance.isScMonitoringDisconnected == false" class="unit">
                                                     {{instance.metrics.processingTime.displayValue.unit}}
                                                 </span>
                                             </div>
@@ -329,7 +329,7 @@
                                             <div class="no-side-padding sparkline-value" ng-class="[instance.metrics.criticalTime.displayValue.unit, {'negative':instance.metrics.criticalTime.displayValue.value < 0}]">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.criticalTime.displayValue.value}}
                                                 <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
-                                                <span ng-if="instance.isStale == false && instance.isScMonitoringDisconnected == false" class="unit">
+                                                <span ng-if="instance.isStale == false && !!instance.isScMonitoringDisconnected == false" class="unit">
                                                     {{instance.metrics.criticalTime.displayValue.unit}}
                                                 </span>
                                             </div>
