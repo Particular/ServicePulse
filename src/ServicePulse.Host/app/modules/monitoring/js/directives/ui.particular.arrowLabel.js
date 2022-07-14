@@ -8,7 +8,7 @@ export default function ArrowLabel({ pointToTheLeft = false, caption = '' }) {
     div.innerHTML = `<div>
                         ${caption}
                     </div>
-                    <div class="unit">
+                    <div class="value">
                         0 <span></span>
                     </div>`;
     document.body.appendChild(div);
@@ -42,7 +42,7 @@ export default function ArrowLabel({ pointToTheLeft = false, caption = '' }) {
         },
 
         value: function (value, unit) {
-            div.querySelector('.unit').innerHTML = `${value} <span>${unit}</span>`;
+            div.querySelector('.value').innerHTML = `${value} <span>${unit}</span>`;
         },
 
         pointingToTheLeft: pointToTheLeft

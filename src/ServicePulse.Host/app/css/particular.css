@@ -3526,6 +3526,8 @@ g.error .node-text .lead.saga {
 
 g.error .node-text a:hover {
     text-decoration: underline;
+}
+
 :root {
     --avg-tooltip-background-color: #000;
   }
@@ -3570,11 +3572,12 @@ div.avg-tooltip.left:before {
     left:0;
 }
 
-div.avg-tooltip .unit {
+div.avg-tooltip .value {
     font-size: 14px;
+    font-weight: bold;
 }
 
-div.avg-tooltip .unit span {
+div.avg-tooltip .value span {
     font-size: 11px;
-}
+    font-weight: normal;
 }
