@@ -8,3 +8,13 @@ public class MyMessage : IMessage
     public bool KillMe { get; set; }
     public string SomeText { get; set; }
 }
+
+public class Response : IMessage
+{
+    public Guid Id { get; set; }
+}
+
+public class MyEvent : IEvent
+{
+    public Guid Id { get; set; }
+}

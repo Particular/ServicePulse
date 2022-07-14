@@ -331,6 +331,14 @@
 
             return $http.get(url);
         }
+        
+        function getConversation(conversationId) {
+            var url = uri.join(scu, 'conversations', conversationId);
+            return $http.get(url).then(function (response) {
+                return response.data;
+            });
+        }
+        
 
         var service = {
             getServiceControlMetadata: getServiceControlMetadata,
@@ -368,7 +376,8 @@
             acknowledgeGroup: acknowledgeGroup,
             getFailedMessageById: getFailedMessageById,
             getEditAndRetryConfig: getEditAndRetryConfig,
-            retryEditedMessage : retryEditedMessage
+            retryEditedMessage : retryEditedMessage,
+            getConversation: getConversation
         };
 
         return service;

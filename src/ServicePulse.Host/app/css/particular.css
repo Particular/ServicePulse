@@ -3372,3 +3372,158 @@ section[name="platformconnection"] ol {
 section[name="platformconnection"] li {
     margin-bottom: 15px;
 }
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 2px;
+}
+.link.event{
+    stroke-dasharray: 5,3;
+}
+
+.pa-flow-saga {
+    background-image: url('../img/saga.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+    margin-left: 20px;
+}
+
+.pa-flow-timeout {
+    background-image: url('../img/timeout.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
+.pa-flow-event {
+    background-image: url('../img/event.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
+.pa-flow-command {
+    background-image: url('../img/command.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
+.pa-flow-failed {
+    background-image: url('../img/failed-msg.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
+}
+
+.node rect {
+    fill: #fff;
+    stroke: #cccbcc;
+    stroke-width: 3px;
+}
+
+.node rect.error {
+    stroke: red;
+}
+
+.node text {
+    font: 12px sans-serif;
+}
+
+.node .time-sent sp-moment {
+    display: block;
+    margin-left: 20px;
+    padding-top: 0;
+    color: #777f7f;
+    text-transform: capitalize;
+}
+
+.node-text {
+    padding: 3px 8px 1px;
+}
+
+.node-text i {
+    display: inline-block;
+    position: relative;
+    top: -1px;
+    margin-right: 5px;
+    filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(346deg) brightness(104%) contrast(104%);
+}
+
+.node-text .lead {
+    display: inline-block;
+    width: 204px;
+    position: relative;
+    top: 4px;
+}
+
+g.error .node-text .lead, g.current-message.error .node-text .lead {
+    width: 184px;
+}
+
+.node-text .lead.saga {
+    font-weight: normal;
+    width: 182px;
+}
+
+g.current-message.error rect {
+    stroke: #be514a;
+    fill: #be514a !important;
+}
+
+g.current-message.error .node-text, g.current-message .node-text .lead {
+    color: #fff !important;
+}
+
+g.error .node-text i:not(.pa-flow-saga) {
+    filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(4493%) hue-rotate(317deg) brightness(81%) contrast(82%);
+}
+
+g.current-message.error .node-text i {
+    color: #fff;    
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7475%) hue-rotate(21deg) brightness(100%) contrast(106%);
+}
+
+g.current-message.error .node-text strong {
+    color: #fff;
+}
+
+g.current-message.error .node-text .time-sent sp-moment {
+    color: #ffcecb !important;
+}
+
+g.error rect {
+    stroke: #be514a;
+}
+
+g.current-message.error .node-text a {
+    color: #fff;
+}
+
+g.current-message.error .node-text a:hover {
+    cursor: text;
+    text-decoration: none;
+}
+
+g.error .node-text a {
+    color: #be514a;
+}
+
+g.error .node-text .time-sent sp-moment {
+    color: #be514a;
+}
+
+g.error .node-text .lead.saga {
+    color: #be514a;
+}
+
+g.error .node-text a:hover {
+    text-decoration: underline;
+}

@@ -12,6 +12,7 @@ class Program
 
         endpointConfiguration.UseTransport<LearningTransport>();
 
+        endpointConfiguration.Recoverability().Immediate(c => c.NumberOfRetries(0)).Delayed(c => c.NumberOfRetries(0));
         var enpointInstance = await Endpoint.Start(endpointConfiguration);
 
         var exit = false;

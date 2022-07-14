@@ -66,6 +66,7 @@
             if (!angular.isDefined(message.headers)) {
                 return serviceControlService.getMessage(message.message_id).then(function (response) {
                     message.headers = response.message.headers;
+                    message.conversationId = message.headers.find(function(x){return x.key === 'NServiceBus.ConversationId';}).value;
                 }, function () {
                     message.headersUnavailable = "message headers unavailable";
                 });
