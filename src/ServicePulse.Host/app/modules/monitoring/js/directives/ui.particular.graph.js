@@ -1,18 +1,33 @@
-﻿(function(window, angular, d3) {
+﻿import ArrowLabel from './ui.particular.arrowLabel';
+
+(function(window, angular, d3) {
     'use strict';
+
+    const averageDecimalsDefault = 2;
+    const avgLabelColorDefault = '#2700CB';
+    const avgLabelSuffixDefault = '';
+
+    var averageLabelToTheRight = ArrowLabel({pointToTheLeft: false, caption: 'AVG'});
+    
 
     angular.module('ui.particular.graph', [])
         .directive('graph',
-            function() {
+            function(formatter) {
                 return {
                     restrict: 'E',
                     scope: {
                         plotData: '=',
                         formatter: '&',
-                        minimumYaxis: '@'
+                        minimumYaxis: '@',
+                        isDurationGraph: '=isDurationGraph',
+                        avgDecimals: '@'
                     },
                     template: '<svg></svg>',
                     link: function link(scope, element, attrs) {
+                        attrs.avgLabelColor = attrs.avgLabelColor || avgLabelColorDefault;
+                        attrs.metricSuffix = attrs.metricSuffix || avgLabelSuffixDefault;
+                        scope.avgDecimals = scope.avgDecimals || averageDecimalsDefault;
+                        
                         scope.plotData = scope.plotData || { points: [], average: 0 };
 
                         scope.$watch('plotData',
@@ -92,13 +107,39 @@
                                         .attr('class', 'graph-data-line');
                                 }
 
-                                chart.append('path')
+                                var averageLine = chart.append('path')
                                     .datum(Array(numberOfPoints).fill(average))
                                     .attr('d', line)
                                     .attr('class', 'graph-avg-line');
+
+                                var displayAverageLabel = function(averageLine, label, value, color, unit) {
+                                    var {x, y, width} = averageLine.node().getBoundingClientRect();
+                                    label.value(value, unit);
+    
+                                    if (label.pointingToTheLeft) {
+                                        label.displayAt({x:x + width + window.pageXOffset, y:y + window.pageYOffset, color});
+                                    } else {
+                                        label.displayAt({x:x + window.pageXOffset, y:y + window.pageYOffset, color});
+                                    }
+                                }
+
+                                chart.on("mouseover", function() {    
+                                    var value = `${formatter.formatLargeNumber(average,scope.avgDecimals)}`;
+                                    var suffix = attrs.metricSuffix;
+
+                                    if (scope.isDurationGraph) {
+                                        value = `${formatter.formatTime(average).value}`;
+                                        suffix = formatter.formatTime(average).unit.toUpperCase();
+                                    } 
+                                    
+                                    displayAverageLabel(averageLine, averageLabelToTheRight, value, attrs.avgLabelColor, suffix);
+                                })
+                                .on("mouseout", function(){
+                                    averageLabelToTheRight.hide();
+                                });
                             });
                     }
                 };
-            });
+            });            
 
 }(window, window.angular, window.d3));
