@@ -1,0 +1,492 @@
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="sp-loader" ng-if="loading"></div>
+    <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-if="!loading && !loadedSuccessfully"></div>
+
+    <div class="row monitoring-head" ng-if="loadedSuccessfully">
+        <div class="col-xs-9 no-side-padding list-section ">
+            <h1 class="righ-side-ellipsis col-lg-max-10" uib-tooltip="{{endpointName}}">
+                {{endpointName}}
+            </h1>
+            <div class="endpoint-status col-xs-2">
+                <span class="warning" ng-show="negativeCriticalTimeIsPresent">
+                    <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                </span>
+                <span ng-if="endpoint.isStale" class="warning">
+                    <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to endpoint"></i>
+                </span>
+                <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                    <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                </span>
+                <a ng-if="endpoint.errorCount" class="warning" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
+                    <i class="fa fa-envelope" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list."></i>
+                    <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-xs-3 no-side-padding toolbar-menus endpoint-details">
+            <ul class="nav nav-pills period-selector endpoint-details">
+                <li role="presentation" ng-repeat="period in periods" ng-class="(period.value == selectedPeriod.value ? 'active' : 'notselected')">
+                    <a ng-click="selectPeriod(period)" ng-href="{{buildUrl(period.value, showInstancesBreakdown, showInstacesBreakdown ? 1 : endpoint.messageTypesPage)}}" uib-tooltip="{{period.refreshIntervalText}}.">{{period.text}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container large-graphs" ng-if="loadedSuccessfully && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
+                <!-- here goes diagram -->
+                <large-graph ng-if="endpoint.metricDetails.metrics.queueLength"
+                             first-data-series="endpoint.metricDetails.metrics.queueLength"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#EA7E00"
+                             first-series-fill-color="#EADDCE"
+                             avg-decimals="0"
+                             metric-suffix="MSGS"
+                             class="large-graph pull-left">
+                </large-graph>
+
+                <div class="col-xs-12 no-side-padding graph-values">
+                    <div class="queue-length-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">
+                                Queue Length
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row metric-digest-value current">
+                        <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                            {{endpoint.digest.metrics.queueLength.latest | metricslargenumber:0}} <span ng-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span>
+                        </div>
+                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                    </div>
+                    <div class="row metric-digest-value average">
+                        <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                            {{endpoint.digest.metrics.queueLength.average | metricslargenumber:0}} <span class="metric-digest-value-suffix">MSGS</span>
+                        </div>
+                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                        <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
+                <!-- here goes diagram -->
+                <large-graph ng-if="endpoint.metricDetails.metrics.throughput"
+                             first-data-series="endpoint.metricDetails.metrics.throughput"
+                             second-data-series="endpoint.metricDetails.metrics.retries"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#176397"
+                             first-series-fill-color="#CADCE8"
+                             second-series-color="#CC1252"
+                             second-series-fill-color="#E9C4D1"                             
+                             metric-suffix="MSGS/S"
+                             class="large-graph pull-left">
+                </large-graph>
+
+                <div class="col-xs-12 no-side-padding graph-values">
+                    <div class="col-xs-6 no-side-padding throughput-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value current">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.throughput.latest | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                        </div>
+                        <div class="row metric-digest-value average">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.throughput.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 no-side-padding scheduled-retries-rate-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retries
+                            </span>
+                        </div>
+
+                        <div class="row metric-digest-value current">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.retries.latest | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                        </div>
+                        <div class="row metric-digest-value average">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.retries.average | metricslargenumber:2}} <span class="metric-digest-value-suffix">MSGS/S</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-4 no-side-padding list-section graph-area graph-critical-processing-times">
+                <!-- here goes diagram -->
+                <large-graph ng-if="endpoint.metricDetails.metrics.processingTime"
+                             first-data-series="endpoint.metricDetails.metrics.criticalTime"
+                             second-data-series="endpoint.metricDetails.metrics.processingTime"
+                             minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}"
+                             plot-width="750"
+                             plot-height="200"
+                             first-series-color="#2700CB"
+                             first-series-fill-color="#C4BCE5"
+                             second-series-color="#258135"
+                             second-series-fill-color="#BEE6C5"                             
+                             is-duration-graph="true"
+                             class="large-graph pull-left">
+                </large-graph>
+
+                <div class="col-xs-12 no-side-padding graph-values">
+                    <div class="col-xs-6 no-side-padding processing-time-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value current">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.processingTime.latest | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.latest | durationUnit}}</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                        </div>
+                        <div class="row metric-digest-value average">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                {{endpoint.digest.metrics.processingTime.average | durationValue}} <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.processingTime.average | durationUnit}}</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 no-side-padding critical-time-values">
+                        <div class="row">
+                            <span class="metric-digest-header" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time
+                            </span>
+                        </div>
+                        <div class="row metric-digest-value current">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.latest | durationValue) < 0}">{{endpoint.digest.metrics.criticalTime.latest | durationValue}} </span><span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.latest | durationUnit}}</span>
+                            </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                        </div>
+                        <div class="row metric-digest-value average">
+                            <div ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.average | durationValue) < 0}">{{endpoint.digest.metrics.criticalTime.average | durationValue}}</span> <span class="metric-digest-value-suffix">{{endpoint.digest.metrics.criticalTime.average | durationUnit}} </span>
+                                </div>
+                            <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                            <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="container" ng-if="loadedSuccessfully && !isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="tabs">
+        <h5 ng-class="{active: !showInstancesBreakdown}">
+            <a ng-click="showInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, endpoint.messageTypesPage)}}" class="ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
+        </h5>
+        <h5 ng-class="{active: showInstancesBreakdown}">
+            <a ng-click="showInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, 1)}}" class="ng-binding">Instances ({{endpoint.instances.length}})</a>
+        </h5>
+    </div>
+
+    <section ng-if="showInstancesBreakdown" class="endpoint-instances">
+        <div class="row">
+            <div class="col-xs-12 no-side-padding">
+
+                <!-- Breakdown by instance-->
+                <div ng-show="loadedSuccessfully" class="row box box-no-click table-head-row">
+                    <div class="col-xs-4 col-xl-8">
+                        <div class="row box-header">
+                            <div class="col-xs-12">
+                                Instance Name
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput <span class="table-header-unit">(msgs/s)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retries <span class="table-header-unit">(msgs/s)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time <span class="table-header-unit">(t)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time <span class="table-header-unit">(t)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <no-data ng-show="endpoint.instances.length == 0" message="No messages processed in this period of time."></no-data>
+
+                <div class="row endpoint-instances">
+                    <div class="col-xs-12 no-side-padding">
+                        <div class="row box endpoint-row" ng-repeat="instance in endpoint.instances">
+                            <div class="col-xs-12 no-side-padding">
+                                <div class="row">
+                                    <div class="col-xs-4 col-xl-8 endpoint-name">
+                                        <div class="row box-header">
+                                            <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis" uib-tooltip="{{instance.name}}">
+                                                {{instance.name}}
+                                            </div>
+                                            <div class="col-lg-4 no-side-padding endpoint-status">
+                                                <span class="warning" ng-show="instance.metrics.criticalTime.displayValue.value < 0">
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: instance currently has negative critical time, possibly because of a clock drift."></i>
+                                                </span>
+                                                <span class="warning" ng-if="instance.isScMonitoringDisconnected">
+                                                    <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                                                </span>
+                                                <span class="warning" ng-if="instance.isStale">
+                                                    <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
+                                                </span>
+                                                <span class="warning" ng-if="instance.errorCount">
+                                                    <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{instance.serviceControlId}}">
+                                                        <i class="fa fa-envelope" uib-tooltip="{{instance.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list."></i>
+                                                        <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.throughput.displayValue}}
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.retries.displayValue}}
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value" ng-class="instance.metrics.processingTime.displayValue.unit">
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.processingTime.displayValue.value}}
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="instance.isStale == false && !!instance.isScMonitoringDisconnected == false" class="unit">
+                                                    {{instance.metrics.processingTime.displayValue.unit}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value" ng-class="[instance.metrics.criticalTime.displayValue.unit, {'negative':instance.metrics.criticalTime.displayValue.value < 0}]">
+                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.criticalTime.displayValue.value}}
+                                                <strong ng-if="instance.isStale || instance.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="instance.isStale == false && !!instance.isScMonitoringDisconnected == false" class="unit">
+                                                    {{instance.metrics.criticalTime.displayValue.unit}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a ng-if="isRemovingEndpointEnabled" ng-show="instance.isStale" class="remove-endpoint" ng-click="removeEndpoint(endpointName, instance)"><i class="fa fa-trash" uib-tooltip="Remove endpoint"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section ng-if="!showInstancesBreakdown" class="endpoint-message-types">
+
+        <div class="row">
+            <div class="col-xs-12 no-side-padding">
+
+                <message-types-change-indicator refresh="endpoint.refreshMessageTypes" message-types-available="endpoint.messageTypesAvailable"></message-types-change-indicator>
+
+                <!-- Breakdown by message type-->
+                <div ng-show="loadedSuccessfully" class="row box box-no-click table-head-row">
+                    <div class="col-xs-4 col-xl-8">
+                        <div class="row box-header">
+                            <div class="col-xs-12">
+                                Message type name
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">
+                                Throughput <span class="table-header-unit">(msgs/s)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">
+                                Scheduled retries <span class="table-header-unit">(msgs/s)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">
+                                Processing Time <span class="table-header-unit">(t)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                        <div class="row box-header">
+                            <div class="col-xs-12 no-side-padding" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+                                Critical Time <span class="table-header-unit">(t)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <no-data ng-show="endpoint.messageTypes.length == 0" message="No messages processed in this period of time."></no-data>
+
+                <div class="row">
+                    <div class="col-xs-12 no-side-padding">
+                        <div class="row box endpoint-row" ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage">
+                            <div class="col-xs-12 no-side-padding">
+                                <div class="row">
+                                    <div class="col-xs-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
+                                        <div class="row box-header">
+                                            <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
+                                                <div class="lead">
+                                                    {{messageType.shortName ? messageType.shortName : 'Unknown'}}
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
+                                                <span class="warning" ng-if="messageType.metrics.criticalTime.displayValue.value < 0">
+                                                    <i class="fa pa-warning" uib-tooltip="Warning: message type currently has negative critical time, possibly because of a clock drift."></i>
+                                                </span>
+                                                <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                                                    <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row message-type-properties">
+                                            <div ng-show="{{messageType.typeName && messageType.typeName != 'null' && !messageType.containsTypeHierarchy}}" class="message-type-part">
+                                                {{messageType.assemblyName + '-' + messageType.assemblyVersion}}
+                                            </div>
+                                            <div ng-show="{{messageType.typeName && messageType.typeName != 'null' && messageType.containsTypeHierarchy}}" class="message-type-part" ng-repeat="type in messageType.messageTypeHierarchy">
+                                                {{type.assemblyName + '-' + type.assemblyVersion}}
+                                            </div>
+                                            <div ng-show="{{messageType.culture && messageType.culture != 'null'}}" class="message-type-part">{{'Culture=' + messageType.culture}}</div>
+                                            <div ng-show="{{messageType.publicKeyToken && messageType.publicKeyToken != 'null'}}" class="message-type-part">{{'PublicKeyToken=' + messageType.publicKeyToken}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.throughput.displayValue}}
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value">
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.retries.displayValue}}
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value" ng-class="messageType.metrics.processingTime.displayValue.unit">
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.processingTime.displayValue.value}}
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">
+                                                    {{messageType.metrics.processingTime.displayValue.unit}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-2 col-xl-1 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="no-side-padding">
+                                                <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>
+                                            </div>
+                                            <div class="no-side-padding sparkline-value" ng-class="[messageType.metrics.criticalTime.displayValue.unit, {'negative':messageType.metrics.criticalTime.displayValue.value < 0}]">
+                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : messageType.metrics.criticalTime.displayValue.value}}
+                                                <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                                <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">
+                                                    {{messageType.metrics.criticalTime.displayValue.unit}}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row list-pagination">
+                    <ul uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10" boundary-link-numbers="true" ng-change="updateUrl()"></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

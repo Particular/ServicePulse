@@ -1,0 +1,77 @@
+<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+<div class="events events-view" ng-controller="EventsCtrl">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Events</h1>
+
+            <div class="row box box-event-item" ng-repeat="eventLogItem in eventLog.items | orderBy: '-raised_at'">
+                <div class="col-xs-12" ng-click="viewCategory(eventLogItem)">
+                    <div class="row events-list">
+                        <div class="col-icon">
+
+                            <span class="fa-stack fa-lg">
+                                <i title="{{eventLogItem.category}}" class="fa fa-stack-2x"
+                                    ng-class="{
+                                'normal': eventLogItem.severity === 'info',
+                                'danger': eventLogItem.severity === 'error',
+                                'fa-heartbeat': eventLogItem.category === 'Endpoints' || eventLogItem.category === 'EndpointControl' || eventLogItem.category === 'HeartbeatMonitoring',
+                                'fa-check': eventLogItem.category === 'CustomChecks',
+                                'fa-envelope': eventLogItem.category === 'MessageFailures' || eventLogItem.category === 'Recoverability',
+                                'pa-redirect-source pa-redirect-large': eventLogItem.category === 'MessageRedirects',
+                                'fa-exclamation': eventLogItem.category === 'ExternalIntegrations',
+                                    }"></i>
+
+                                <i ng-show="eventLogItem.severity === 'error' || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse"
+                                    ng-class="{
+                                    'fa-times fa-error': eventLogItem.severity === 'error',
+                                    'fa-pencil': eventLogItem.category === 'MessageRedirects' && eventLogItem.event_type === 'MessageRedirectChanged',
+                                    'fa-plus': eventLogItem.category === 'MessageRedirects' && eventLogItem.event_type === 'MessageRedirectCreated',
+                                    'fa-trash': eventLogItem.category === 'MessageRedirects' && eventLogItem.event_type === 'MessageRedirectRemoved',
+                                    }"></i>
+                            </span>
+                        </div>
+                        <div class="col-message">
+                            <div class="row box-header">
+                                <div class="col-sm-12">
+                                    <p class="lead">
+                                        {{eventLogItem.description}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-timestamp">
+                            <sp-moment date="{{eventLogItem.raised_at}}"></sp-moment>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="pagination col-md-2">
+                    <label class="control-label">Items Per Page:</label>
+                    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{eventLog.eventLogItemsPerPage}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#/events?pageSize=20">20</a></li>
+                        <li><a href="#/events?pageSize=35">35</a></li>
+                        <li><a href="#/events?pageSize=50">50</a></li>
+                        <li><a href="#/events?pageSize=75">75</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-md-3">
+                </div>
+                <div class="col-md-5">
+                    <ul uib-pagination ng-hide="eventLog.eventLogTotalItems <= eventLog.eventLogItemsPerPage" items-per-page="eventLog.eventLogItemsPerPage" total-items="eventLog.eventLogTotalItems" ng-model="eventLog.eventLogPage" max-size="10" boundary-link-numbers="true" ng-change="updateUI()"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <busy ng-show="loading" message="fetching more data"></busy>
+
+    <no-data ng-show="!loading && eventLog.items.length == 0" message="No events"></no-data>
+</div>

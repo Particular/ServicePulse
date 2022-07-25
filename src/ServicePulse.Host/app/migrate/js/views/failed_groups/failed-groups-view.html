@@ -1,0 +1,267 @@
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="sp-loader" ng-if="isSCConnecting"></div>
+    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
+
+    <section ng-show="isSCConnected || scConnectedAtLeastOnce">
+        <reindexingstatus></reindexingstatus>
+
+        <section name="message_groups">
+
+            <failed-message-tabs></failed-message-tabs>
+
+            <div class="row">
+                <div class="col-sm-12 list-section">
+                    <h6>
+                        <span class="no-link-underline" aria-hidden="true" ng-show="vm.showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
+                        <span class="fake-link" aria-hidden="true" ng-show="!vm.showHistoricRetries"><i class="fa fa-angle-right" aria-hidden="true"></i> </span>
+                        <a ng-click="vm.showHistoricRetries = !vm.showHistoricRetries">Last 10 completed retry requests</a>
+                    </h6>
+                </div>
+                <div class="col-sm-12 no-mobile-side-padding" ng-show="vm.showHistoricRetries">
+                    <no-data ng-show="vm.historicGroups.length === 0" title="message group retries" message="No group retry requests have ever been completed"></no-data>
+                    <div class="row box extra-box-padding repeat-modify" ng-repeat="group in vm.historicGroups" ng-show="vm.historicGroups.length">
+                        <div class="col-sm-12 no-mobile-side-padding">
+                            <div class="row">
+                                <div class="col-sm-12 no-side-padding">
+                                    <div class="row box-header">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <p class="lead break"> {{group.originator || 'Selection of individual message(s)'}}</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12 no-side-padding">
+                                            <p class="metadata">
+                                                <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages sent: {{group.number_of_messages_processed}}</span>
+                                                <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.start_time}}"></sp-moment></span>
+                                                <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="short-group-history" ng-show="vm.historicGroups.length === 1">There is only 1 completed group retry</span>
+                    <span class="short-group-history" ng-show="vm.historicGroups.length < 10 && vm.historicGroups.length > 1">There are only {{vm.historicGroups.length}} completed group retries</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-6 list-section">
+                    <h6>Failed message groups</h6>
+                </div>
+
+                <div class="col-xs-6 toolbar-menus no-side-padding">
+                    <div class="msg-group-menu dropdown">
+                        <label class="control-label">Group by:</label>
+                        <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{vm.selectedClassification}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="classifier in vm.availableClassifiers">
+                                <a href="#/failed-messages/groups?groupBy={{classifier}}">{{classifier}}</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="msg-group-menu dropdown">
+                        <label class="control-label">Sort by:</label>
+                        <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{vm.selectedSort}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat-start="sort in vm.sortSelectors"><a href="#/failed-messages/groups?sortBy={{sort.description}}">{{sort.description}}</a></li>
+                            <li ng-repeat-end><a href="#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">{{sort.description}} <span>(Descending)</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+                    <no-data ng-show="vm.exceptionGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-12 no-mobile-side-padding">
+
+                    <div ng-show="vm.exceptionGroups.length > 0">
+
+                        <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.exceptionGroups" ng-click="vm.viewExceptionGroup(group)" ng-disabled="group.count == 0" ng-mouseenter="group.hover2 = true" ng-mouseleave="group.hover2 = false">
+                            <div class="col-sm-12 no-mobile-side-padding">
+                                <div class="row">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <p class="lead break" ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}"> {{group.title}}</p>
+                                                <p class="metadata" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.count | number}} message<span ng-show="group.count >1">s</span><span ng-show="group.operation_remaining_count > 0">(currently retrying {{group.operation_remaining_count | number}})</span></span>
+
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> First failed: <sp-moment date="{{group.first}}"></sp-moment></span>
+
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
+
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-repeat"></i> Last retried: <sp-moment empty-message="never" date="{{group.last_operation_completion_time}}"></sp-moment></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <div class="note" ng-show="group.comment">
+                                                    <span>
+                                                        <strong>NOTE:</strong> {{group.comment}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.retryExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to retry this group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
+                                                    <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.archiveExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRetried(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to delete this group?" confirm-message="Messages that are deleted will be cleaned up according to the ServiceControl retention policy, and aren't available for retrying unless they're restored.">
+                                                    <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp</i>Delete group
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-sm" ng-if="!group.comment" ng-click="vm.addComment(group, group.comment, $event)">
+                                                    <i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp</i>Add note
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-sm" ng-if="group.comment" ng-click="vm.editComment(group, group.comment, $event)">
+                                                    <i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp</i>Edit note
+                                                </button>
+                                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.deleteComment(group, $event)" confirm-title="Are you sure you want to delete this note?" confirm-message="Deleted note will not be available.">
+                                                    <i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp</i>Remove note
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="vm.isBeingRetried(group)">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <div class="panel panel-default panel-retry">
+                                                    <div class="panel-body">
+                                                        <ul class="retry-request-progress">
+                                                            <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClassesForRetryOperation('waiting', group.workflow_state.status)">
+                                                                <div class="bulk-retry-progress-status">Initialize retry request...</div>
+                                                            </li>
+                                                            <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClassesForRetryOperation('preparing', group.workflow_state.status)">
+
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                        <div class="bulk-retry-progress-status">Prepare messages...</div>
+                                                                    </div>
+
+                                                                    <div class="col-xs-12 col-sm-6">
+                                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'preparing'">
+                                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                                                {{group.workflow_state.total | number : 0}}%
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li ng-hide="group.workflow_state.status === 'completed'" ng-class="vm.getClassesForRetryOperation('forwarding', group.workflow_state.status)">
+
+                                                                <div class="row">
+                                                                    <div class="col-xs-9 col-sm-4 col-md-3 no-side-padding">
+                                                                        <div class="bulk-retry-progress-status">Send messages to retry...</div>
+                                                                    </div>
+                                                                    <div class="col-xs-3 col-sm-3 retry-op-queued" ng-show="group.workflow_state.status === 'queued'">
+                                                                        (Queued)
+                                                                    </div>
+                                                                    <div class="col-xs-12 col-sm-6">
+
+                                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'forwarding'">
+                                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                                                {{group.workflow_state.total | number : 0}}%
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li ng-show="group.workflow_state.status === 'completed'">
+                                                                <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
+                                                                <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeGroup(group, $event)">
+                                                                    Dismiss
+                                                                </button>
+                                                                <div class="danger sc-restart-warning" ng-show="{{group.workflow_state.failed}}">
+                                                                    <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining messages.
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+
+                                                        <div class="op-metadata">
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.operation_remaining_count || group.count) | number}}</span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
+                                                            <span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.operation_completion_time}}"></sp-moment></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="vm.isBeingArchived(group.workflow_state.status)">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <div class="panel panel-default panel-retry">
+                                                    <div class="panel-body">
+                                                        <ul class="retry-request-progress">
+                                                            <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archivestarted', group.workflow_state.status)">
+                                                                <div class="bulk-retry-progress-status">Initialize delete request...</div>
+                                                            </li>
+                                                            <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archiveprogressing', group.workflow_state.status)">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                        <div class="bulk-retry-progress-status">Delete request in progress...</div>
+                                                                    </div>
+
+                                                                    <div class="col-xs-12 col-sm-6">
+                                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'archiveprogressing'">
+                                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                                                {{group.workflow_state.total | number : 0}}%
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li ng-hide="group.workflow_state.status === 'archivecompleted'" ng-class="vm.getClassesForArchiveOperation('archivefinalizing', group.workflow_state.status)">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                        <div class="bulk-retry-progress-status">Cleaning up...</div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li ng-show="group.workflow_state.status === 'archivecompleted'">
+                                                                <div class="retry-completed bulk-retry-progress-status">Delete request completed</div>
+                                                                <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeArchiveGroup(group, $event)">
+                                                                    Dismiss
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+
+                                                        <div class="op-metadata">
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Delete request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to delete: {{(group.operation_remaining_count || 0) | number}}</span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages deleted: {{(group.operation_messages_completed_count || 0) | number}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</div>

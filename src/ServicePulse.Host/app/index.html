@@ -1,41 +1,23 @@
 ﻿<!doctype html>
 <html lang="en">
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <style>
-        /* This helps the ng-show/ng-hide animations start at the right place. */
-        /* Since Angular has this but needs to load, this gives us the class early. */
-        .ng-hide {
-            display: none !important;
-        }
-    </style>
-
-    <title>ServicePulse</title>
-    <page-title-from-route></page-title-from-route>
+    <title>Dashboard • ServicePulse</title>
+</head>
+    <body class="ng-scope"><page-title-from-route class="ng-isolate-scope"></page-title-from-route>
 
     <meta charset="utf-8">
     <meta name="description" content="ServicePulse Monitoring">
     <meta name="author" content="Particular Software">
     <meta name="viewport" content="width=1440, initial-scale=1">
 
-    <link rel="shortcut icon" href="img/ServicePulse.ico">
+    <link rel="shortcut icon" href="migrate/img/ServicePulse.ico">
 
     <!-- 3rd Party Library Styles -->
-    <link rel="stylesheet" href="modules/dist/vendor.css">
+    <link rel="stylesheet" href="migrate/modules/dist/vendor.css">
 
     <!-- Particular Styles -->
-    <link rel="stylesheet" href="css/particular.css">
-    <!--[if lt IE 9 ]>
-        <script type="text/javascript">
-            window.location = 'NoIE.html';
-        </script>
-    <![endif]-->
-    <!--[if IE]>
-        <link rel="stylesheet" href="css/particular.ie.css">
-    <![endif]-->
+    <link rel="stylesheet" href="migrate/css/particular.css">
 
-</head>
-<body ng-controller="AppCtrl">
     <noscript>
         <div class="container-fluid">
             <div class="row">
@@ -49,22 +31,322 @@
         </div>
     </noscript>
 
-    <ng-include src="'layout/navbar.html'"></ng-include>
+    <nav class="navbar navbar-inverse navbar-fixed-top ng-scope">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#/">
+                    <img alt="Service Pulse" src="img/logo.svg">
+                </a>
+            </div>
+
+            <div id="navbar" class="collapse navbar-collapse navbar-right navbar-inverse">
+                <ul class="nav navbar-nav navbar-inverse">
+                    <li class="active">
+                        <a href="/">
+                            <i class="fa fa-dashboard icon-white"></i>
+                            <span class="navbar-label">Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="migrate/#/endpoints">
+                            <i class="fa fa-heartbeat icon-white"></i>
+                            <span class="navbar-label">Heartbeats</span>
+                            <span ng-show="failedheartbeats > 0" class="badge badge-important  ng-binding ng-hide">0</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="migrate/#/monitoring">
+                            <i class="fa pa-monitoring icon-white"></i>
+                            <span class="navbar-label">Monitoring</span>
+                            <span ng-show="disconnectedendpoints > 0" class="badge badge-important  ng-binding ng-hide"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="migrate/#/failed-messages/groups">
+                            <i class="fa fa-envelope icon-white"></i>
+                            <span class="navbar-label">Failed Messages</span>
+                            <span ng-show="failedmessages > 0" class="badge badge-important  ng-binding ng-hide"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="migrate/#/custom-checks">
+                            <i class="fa fa-check icon-white"></i>
+                            <span class="navbar-label">Custom Checks</span>
+                            <span class="badge badge-important ng-binding ng-hide"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="migrate/#/events">
+                            <i class="fa fa-list-ul icon-white"></i>
+                            <span class="navbar-label">Events</span>                        
+                        </a>
+                    </li>
+                    <li>
+                        <a href="migrate/#/configuration">
+                            <i class="fa fa-cog icon-white"></i>
+                            <span class="navbar-label">Configuration</span>
+                            <span class="no-margin fa fa-exclamation-triangle  ng-hide" exclamation="" type=""></span>
+                            <span class="no-margin fa fa-exclamation-triangle  danger" exclamation="" type="danger"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
+                            <i class="fa fa-comment"></i>
+                            <span class="navbar-label">Feedback</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <div class="container-fluid">
         <a id="pagetop"></a>
-        <div id="connectingToServiceControl" ng-if="loadingInitialData">
-            <div class="row">
-                <div class="sp-loader"></div>
-            </div>
+        <div class="container ng-scope">
+            <section>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h1>Dashboard</h1>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h6>System status</h6>
+                        <div class="row box system-status">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <a class="summary-item summary-info" href="migrate/#/endpoints">
+                                            <i class="fa fa-heartbeat fa-3x"></i>
+                                            <span class="badge badge-important ng-binding ng-hide">0</span>
+                                            <h4>Heartbeats</h4>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-xs-4">
+                                        <a class="summary-item summary-info" href="migrate/#/failed-messages/groups">
+                                            <i class="fa fa-envelope fa-3x "></i>
+                                            <span class="badge badge-important ng-binding ng-hide"></span>
+                                            <h4>Failed Messages</h4>
+                                        </a>
+                                    </div>
+
+                                    <div class="col-xs-4">
+                                        <a class="summary-item summary-info" href="migrate/#/custom-checks">
+                                            <i class="fa fa-check fa-3x "></i>
+                                            <span ng-show="failedcustomchecks > 0" class="badge badge-important ng-binding ng-hide"></span>
+                                            <h4>Custom Checks</h4>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ng-scope">
+                    <section class="events ng-scope" name="eventlog" ng-controller="EventLogItemsCtrl">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h6>Last 10 events</h6>
+                                
+                                <div class="row box box-event-item ng-scope">
+                                    <div class="col-xs-12">
+                                        <div class="row">
+                                            <div class="col-xs-1">
+                                                <span class="fa-stack fa-lg">
+                                                    <i title="CustomChecks" class="fa fa-stack-2x normal fa-check"></i>
+                                                    <i class="fa fa-o fa-stack-1x fa-inverse ng-hide"></i>
+                                                </span>
+                                            </div>
+
+                                            <div class="col-xs-9">
+                                                <div class="row box-header">
+                                                    <div class="col-sm-12">
+                                                        <p class="lead ng-binding">ServiceControl Remotes: Working as expected.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <sp-moment>7 days ago</sp-moment>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row box box-event-item ng-scope">
+                                    <div class="col-xs-12">
+                                        <div class="row">
+                                            <div class="col-xs-1">
+                                                <span class="fa-stack fa-lg">
+                                                    <i title="CustomChecks" class="fa fa-stack-2x normal fa-check"></i>
+                                                    <i class="fa fa-o fa-stack-1x fa-inverse ng-hide"></i>
+                                                </span>
+                                            </div>
+
+                                            <div class="col-xs-9">
+                                                <div class="row box-header">
+                                                    <div class="col-sm-12">
+                                                        <p class="lead ng-binding">ServiceControl Remotes: Working as expected.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <sp-moment>7 days ago</sp-moment>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row box box-event-item ng-scope">
+                                    <div class="col-xs-12">
+                                        <div class="row">
+                                            <div class="col-xs-1">
+                                                <span class="fa-stack fa-lg">
+                                                    <i title="CustomChecks" class="fa fa-stack-2x normal fa-check"></i>
+                                                    <i class="fa fa-o fa-stack-1x fa-inverse ng-hide"></i>
+                                                </span>
+                                            </div>
+
+                                            <div class="col-xs-9">
+                                                <div class="row box-header">
+                                                    <div class="col-sm-12">
+                                                        <p class="lead ng-binding">ServiceControl Remotes: Working as expected.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <sp-moment>7 days ago</sp-moment>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row box box-event-item ng-scope">
+                                    <div class="col-xs-12">
+                                        <div class="row">
+                                            <div class="col-xs-1">
+                                                <span class="fa-stack fa-lg">
+                                                    <i title="CustomChecks" class="fa fa-stack-2x normal fa-check"></i>
+                                                    <i class="fa fa-o fa-stack-1x fa-inverse ng-hide"></i>
+                                                </span>
+                                            </div>
+
+                                            <div class="col-xs-9">
+                                                <div class="row box-header">
+                                                    <div class="col-sm-12">
+                                                        <p class="lead ng-binding">ServiceControl Remotes: Working as expected.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <sp-moment>7 days ago</sp-moment>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row box box-event-item ng-scope">
+                                    <div class="col-xs-12">
+                                        <div class="row">
+                                            <div class="col-xs-1">
+                                                <span class="fa-stack fa-lg">
+                                                    <i title="CustomChecks" class="fa fa-stack-2x normal fa-check"></i>
+                                                    <i class="fa fa-o fa-stack-1x fa-inverse ng-hide"></i>
+                                                </span>
+                                            </div>
+
+                                            <div class="col-xs-9">
+                                                <div class="row box-header">
+                                                    <div class="col-sm-12">
+                                                        <p class="lead ng-binding">ServiceControl Remotes: Working as expected.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <sp-moment>7 days ago</sp-moment>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row box box-event-item ng-scope">
+                                    <div class="col-xs-12">
+                                        <div class="row">
+                                            <div class="col-xs-1">
+                                                <span class="fa-stack fa-lg">
+                                                    <i title="CustomChecks" class="fa fa-stack-2x danger fa-check"></i>
+                                                    <i class="fa fa-o fa-stack-1x fa-inverse fa-times fa-error"></i>
+                                                </span>
+                                            </div>
+
+                                            <div class="col-xs-9">
+                                                <div class="row box-header">
+                                                    <div class="col-sm-12">
+                                                        <p class="lead ng-binding">ServiceControl Remotes: Remote at 'http://localhost:44444/api/' doesn't seem to be available. Reason: An error occurred while sending the request.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-xs-2">
+                                                <sp-moment date="2022-07-18T17:36:21.0336599Z" class="ng-isolate-scope" title="Monday, July 18, 2022 7:36 PM (local) Monday, July 18, 2022 5:36 PM (UTC)">7 days ago</sp-moment>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row text-center">
+                                    <a class="btn btn-default btn-secondary btn-all-events" href="migrate/#/events">View all events</a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </section>
         </div>
-        <div id="view" ng-view=""></div>
     </div>
 
-    <ng-include src="'layout/footer.html'"></ng-include>
+    <footer class="footer ng-scope">
+        <div class="container">
+            <div class="row">
+                <div class="connectivity-status">
+                    <span>
+                        <i class="fa fa-plus sp-blue"></i>
+                        <a href="migrate/#/configuration/platformconnection">Connect new endpoint</a>
+                    </span>
+                    <span class="ng-binding ng-hide">
+                        ServicePulse v1.2.0
+                    </span>
+                    <span class="ng-binding">
+                        ServicePulse v1.2.0 (<i class="fa fa-level-up fake-link"></i> <a href="https://github.com/Particular/ServicePulse/releases/tag/1.32.1" target="_blank" class="ng-binding">v1.32.1 available</a>)
+                    </span>
+                    <span uib-tooltip="ServiceControl URL http://localhost:33333/api/">
+                        Service Control:
+                        <span class="connected-status ng-scope">
+                            <div class="fa pa-connection-success"></div>
+                            <span class="ng-hide">Connected</span>
+                            <span class="versionnumber ng-binding">v4.21.5</span>
+                            <span class="newscversion">(<i class="fa fa-level-up fake-link"></i> <a target="_blank" class="ng-binding" href="https://github.com/Particular/ServiceControl/releases/tag/4.22.0">v4.22.0 available</a>)</span>
+                        </span>
+                    </span>
 
-    <toaster-container toaster-options="{'position-class': 'toast-bottom-right'}">
-    </toaster-container>
+                    <span class="monitoring-connected ng-scope ng-isolate-scope" uib-tooltip="Monitoring URL http://localhost:33633/">
+                        SC Monitoring:
+                        <span class="connection-failed ng-scope">
+                            <i class="fa pa-connection-failed"></i> Not connected
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- Polyfills -->
     <script type="text/javascript">
         if (!String.prototype.startsWith) {
@@ -142,120 +424,5 @@
     </script>
 
     <script src="js/app.constants.js?v=1621602441174"></script>
-
-    <script src="modules/dist/shell.dist.js?v=1621602441174"></script>
-    <script src="modules/dist/monitoring.dist.js?v=1621602441174"></script>
-    <script src="modules/dist/configuration.dist.js?v=1621602441174"></script>
-
-    <script src="lib/page-width-functions.js?v=1621602441174"></script>
-
-    <!-- App -->
-    <script src="js/app.js?v=1621602441174"></script>
-    <script src="js/app.route.js?v=1621602441174"></script>
-    <script src="js/app.controller.js?v=1621602441174"></script>
-    <script src="js/app.logging.js?v=1621602441174"></script>
-    <script src="js/app.http.js?v=1621602441174"></script>
-    <script src="js/app.bootstrap.js?v=1621602441174"></script>
-
-    <!-- Services -->
-    <script src="js/services/services.module.js?v=1588195944426"></script>
-    <script src="js/services/services.exception-handler.js?v=1588195944426"></script>
-    <script src="js/services/services.notifications.js?v=1588195944426"></script>
-    <script src="js/services/services.platform-update.js?v=1588195944426"></script>
-    <script src="js/services/services.semver.js?v=1588195944426"></script>
-    <script src="js/services/services.service-control.js?v=1588195944426"></script>
-    <script src="js/services/services.stream.js?v=1588195944426"></script>
-    <script src="js/services/services.uri.js?v=1588195944426"></script>
-    <script src="js/services/services.export.js?v=1588195944426"></script>
-    <script src="js/services/services.historyperiods.js?v=1588195944426"></script>
-    <script src="js/services/factory.listener.js?v=1588195944426"></script>
-    <script src="js/services/factory.notifier.js?v=1588195944426"></script>
-    <script src="js/services/factory.shareddata.js?v=1588195944426"></script>
-    <script src="js/services/services.endpoints.js?v=1588195944426"></script>
-    <script src="js/services/constant.rxjs.js?v=1588195944426"></script>
-    <script src="js/services/service.formatter.js?v=1588195944426"></script>
-
-    <!-- Directives -->
-    <script src="js/directives/ngClip.js?v=1621602441174"></script>
-    <script src="js/directives/ngHighlight.js?v=1621602441174"></script>
-    <script src="js/directives/moment.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.hud.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.busy.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.nodata.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.exclamation.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.confirmclick.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.tabset.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.tab.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.eatclick.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.failedMessageTabs.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.largenumber.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.multi-checkboxlist.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.pageTitleFromRoute.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.flow-diagram.js?v=1621602441174"></script>
-    <script src="js/directives/ui.particular.js?v=1621602441174"></script>
-
-    <!-- Mystery -->
-    <script src="js/views/event_log_items/eventLogItems.js?v=1621602441174"></script>
-
-    <!-- Archive -->
-    <script src="js/views/about/route.js?v=1621602441174"></script>
-    <script src="js/views/about/controller.js?v=1621602441174"></script>
-
-
-    <!-- Dashboard -->
-    <script src="js/views/dashboard/dashboard.module.js?v=1621602441174"></script>
-    <script src="js/views/dashboard/dashboard.route.js?v=1621602441174"></script>
-    <script src="js/views/dashboard/dashboard.controller.js?v=1621602441174"></script>
-
-    <!-- Failed Groups -->
-    <script src="js/views/failed_groups/route.js?v=1621602441174"></script>
-    <script src="js/views/failed_groups/controller.js?v=1621602441174"></script>
-    <script src="js/views/failed_groups/service.js?v=1621602441174"></script>
-
-    <!-- Failed Messages -->
-    <script src="js/views/failed_messages/route.js?v=1621602441174"></script>
-    <script src="js/views/failed_messages/controller.js?v=1621602441174"></script>
-    <script src="js/views/failed_messages/service.js?v=1621602441174"></script>
-
-    <!-- Failed Message -->
-    <script src="js/views/message/route.js?v=1621602441174"></script>
-    <script src="js/views/message/controller.js?v=1621602441174"></script>
-    <!-- Failed Message Editor -->
-    <script src="js/views/message/editor/messageEditorModal.service.js?v=1621602441174"></script>
-    <script src="js/views/message/editor/messageEditorModal.controller.js?v=1621602441174"></script>
-
-    <!-- Archive -->
-    <script src="js/views/archive/route.js?v=1621602441174"></script>
-    <script src="js/views/archive/controller.js?v=1621602441174"></script>
-    <script src="js/views/archive/service.js?v=1621602441174"></script>
-
-    <!-- Archive Groups -->
-    <script src="js/views/archivedgroups/archivedgroups.route.js?v=1621602441174"></script>
-    <script src="js/views/archivedgroups/archivedgroups.controller.js?v=1621602441174"></script>
-    <script src="js/views/archivedgroups/archivedgroups.service.js?v=1621602441174"></script>
-
-    <!-- Pending Retries -->
-    <script src="js/views/pending_retries/route.js?v=1621602441174"></script>
-    <script src="js/views/pending_retries/controller.js?v=1621602441174"></script>
-    <script src="js/views/pending_retries/service.js?v=1621602441174"></script>
-
-    <!-- Custom Checks -->
-    <script src="js/views/custom_checks/customChecks.module.js?v=1621602441174"></script>
-    <script src="js/views/custom_checks/customChecks.route.js?v=1621602441174"></script>
-    <script src="js/views/custom_checks/customChecks.controller.js?v=1621602441174"></script>
-
-    <!-- Endpoints -->
-    <script src="js/views/endpoints/endpoints.module.js?v=1621602441174"></script>
-    <script src="js/views/endpoints/endpoints.route.js?v=1621602441174"></script>
-    <script src="js/views/endpoints/endpoints.controller.js?v=1621602441174"></script>
-
-    <!-- Comments -->
-    <script src="js/views/comments/commentmodal.service.js?v=1621602441174"></script>
-    <script src="js/views/comments/comment.controller.js?v=1621602441174"></script>
-
-    <!--Polyfills-->
-    <script src="js/polyfill/array.prototype.find.js?v=1621602441174"></script>
-    <script src="js/polyfill/array.prototype.includes.js?v=1621602441174"></script>
-    <script src="js/polyfill/string.prototype.endsWith.js?v=1621602441174"></script>
 </body>
 </html>
