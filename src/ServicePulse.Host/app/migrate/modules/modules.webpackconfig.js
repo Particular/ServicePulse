@@ -5,13 +5,13 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: {
+        dashboard: './app/js/dashboard/dashboard.ts',
         shell: './app/migrate/modules/shell/shell.js',
         monitoring: './app/migrate/modules/monitoring/monitoring.js',
         configuration: './app/migrate/modules/configuration/configuration.js',
     },
     output: {
         filename: '[name].dist.js',
-        //filename: 'monitoring.[chunkhash].js',
         path: path.resolve(__dirname, 'dist')
     },
     plugins: [
@@ -47,15 +47,25 @@ module.exports = {
                     collapseWhitespace: true
                 }
             }]
-            }, {
-                test: /\.css$/,
-                use: [MiniCssExtractPlugin.loader, 'css-loader'],
-            }, {
+        }, {
+            test: /.ts?$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'ts-loader',
+            },
+            
+        }, {
+            test: /\.css$/,
+            use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        }, {
             test: require.resolve('jquery'), loader: 'expose-loader?$!expose-loader?jQuery'
         },
         { test: /\.(png|woff|woff2|eot|ttf)$/, use: [{ loader: 'url-loader?limit=100000' }] },
         { test: /\.svg$/, use: [{ loader: 'file-loader' }] },
         ]
+    },
+    resolve: {
+        extensions: ['.ts', '.js', '.json']
     },
     devtool: 'eval-source-map',
     watch: true,
