@@ -32,41 +32,6 @@
     </noscript>
     <div id="root"></div>
 
-    <footer class="footer ng-scope">
-        <div class="container">
-            <div class="row">
-                <div class="connectivity-status">
-                    <span>
-                        <i class="fa fa-plus sp-blue"></i>
-                        <a href="migrate/#/configuration/platformconnection">Connect new endpoint</a>
-                    </span>
-                    <span class="ng-binding ng-hide">
-                        ServicePulse v1.2.0
-                    </span>
-                    <span class="ng-binding">
-                        ServicePulse v1.2.0 (<i class="fa fa-level-up fake-link"></i> <a href="https://github.com/Particular/ServicePulse/releases/tag/1.32.1" target="_blank" class="ng-binding">v1.32.1 available</a>)
-                    </span>
-                    <span uib-tooltip="ServiceControl URL http://localhost:33333/api/">
-                        Service Control:
-                        <span class="connected-status ng-scope">
-                            <div class="fa pa-connection-success"></div>
-                            <span class="ng-hide">Connected</span>
-                            <span class="versionnumber ng-binding">v4.21.5</span>
-                            <span class="newscversion">(<i class="fa fa-level-up fake-link"></i> <a target="_blank" class="ng-binding" href="https://github.com/Particular/ServiceControl/releases/tag/4.22.0">v4.22.0 available</a>)</span>
-                        </span>
-                    </span>
-
-                    <span class="monitoring-connected ng-scope ng-isolate-scope" uib-tooltip="Monitoring URL http://localhost:33633/">
-                        SC Monitoring:
-                        <span class="connection-failed ng-scope">
-                            <i class="fa pa-connection-failed"></i> Not connected
-                        </span>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <!-- Polyfills -->
     <script type="text/javascript">
         if (!String.prototype.startsWith) {
