@@ -1,4 +1,3 @@
-import { getAllByPlaceholderText } from '@testing-library/react';
 import React from 'react';
 
 function Last10Events() {
@@ -12,10 +11,6 @@ function Last10Events() {
         .then(data => setEvents(data));
     }
   }, [events]);
-
-  const getDate = (date) => {
-    return "71 days ago";
-  }
 
   const getIcon = (severity) => {
     switch (severity) {

@@ -1,5 +1,3 @@
-import React from 'react';
-
 function NavBar() {
   return (
     <nav className="navbar navbar-inverse navbar-fixed-top ng-scope">
