@@ -4,8 +4,9 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
+    mode: 'none',
     entry: {
-        dashboard: './app/js/dashboard/dashboard.ts',
+        dashboard: './app/js/dashboard/dashboard.js',
         shell: './app/migrate/modules/shell/shell.js',
         monitoring: './app/migrate/modules/monitoring/monitoring.js',
         configuration: './app/migrate/modules/configuration/configuration.js',

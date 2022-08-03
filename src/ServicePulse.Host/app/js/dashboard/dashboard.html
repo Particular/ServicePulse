@@ -1,0 +1,21 @@
+<div class="row box box-event-item ng-scope" v-for="eventLogItem in eventLogItems" @vue:mounted="loadEvents">
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-1">
+                <slot name="event-icon"></slot>
+            </div>
+
+            <div class="col-xs-9">
+                <div class="row box-header">
+                    <div class="col-sm-12">
+                        <p class="lead ng-binding">{{eventLogItem.description}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-2">
+                <div>{{eventLogItem.raised_at.fromNow()}}</div>
+            </div>
+        </div>
+    </div>
+</div>
