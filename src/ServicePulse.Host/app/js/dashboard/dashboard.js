@@ -7,17 +7,7 @@ let eventData = {
     eventLogItems : []
 };
 
-function StepsIndicatorComponent(props) {
-    return {
-    stepsCount: props.stepsCount,
-    get stepsCountWithSuccessPage() {
-        return this.stepsCount + 1;
-    }
-  }
-};
-
 let app = createApp({
-    StepsIndicatorComponent,
     data() {
       return eventData;
     },
