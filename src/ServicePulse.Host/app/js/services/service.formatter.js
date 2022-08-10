@@ -15,7 +15,7 @@
                 time.value = duration.format('D [d] h [hr]');
                 return time;
             } else if (duration >= hourDuration) {
-                time.value = moment(duration._data).format('HH:mm');
+                time.value = duration.format('HH:mm');
                 time.unit = 'hr';
                 return time;
             } else if (duration >= minuteDuration) {
