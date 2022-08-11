@@ -146,7 +146,7 @@
                 method: 'GET',
                 transformResponse: function(defaults, transform) {
                     // Remove any comments from the body before deserializing
-                    return transform()['content-type'] === 'text/json' ? JSON.parse(defaults.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, function (m, g) { return g ? "" : m })) : defaults;
+                    return transform()['content-type'] === 'application/json' ? JSON.parse(defaults.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, function (m, g) { return g ? "" : m })) : defaults;
                 }
               });
         }
