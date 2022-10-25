@@ -55,7 +55,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/js/app.js"),
+                    Path = new PathString("/js/angular/app.js"),
                     Method = method
                 },
                 Response =
