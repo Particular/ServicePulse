@@ -7,7 +7,7 @@
 
     beforeEach(inject(function ($compile, $rootScope, $httpBackend, $templateCache) {
     // this line make sure that template is loaded, I am replacing the real one with fake, as it is not important for the test
-        $templateCache.put('js/directives/ui.particular.multi-checkboxlist.tpl.html', '<div class="check col-xs-1"></div>');
+        $templateCache.put('js/angular/directives/ui.particular.multi-checkboxlist.tpl.html', '<div class="check col-xs-1"></div>');
         el = angular.element("<multi-checkboxlist></multi-checkboxlist>");
         $compile(el)($rootScope.$new());
         $rootScope.$digest();

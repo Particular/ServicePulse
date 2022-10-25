@@ -121,7 +121,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/js/views/message/editor/messageEditorModal.controller.js"),
+                    Path = new PathString("/js/angular/views/message/editor/messageEditorModal.controller.js"),
                     Method = "GET"
                 },
                 Response =

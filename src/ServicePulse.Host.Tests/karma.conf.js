@@ -15,14 +15,14 @@ module.exports = function(config) {
             './js/**/*.html',
             './js/app.constants.js',
             './modules/dist/configuration.dist.js',
-            './js/app.js',
-            './js/app.bootstrap.js',
+            './js/angular/app.js',
+            './js/angular/app.bootstrap.js',
             './js/**/*.module.js',
             './js/**/*.tabset.js',
-            './js/directives/**/*.js',
+            './js/angular/directives/**/*.js',
             './js/polyfill/**/*.js',
-            './js/services/**/*.js',
-            './js/views/**/*.js',
+            './js/angular/services/**/*.js',
+            './js/angular/views/**/*.js',
             './modules/dist/monitoring.dist.js',
             '../../ServicePulse.Host.Tests/tests/**/*.spec.js'
         ],
@@ -47,7 +47,7 @@ module.exports = function(config) {
         },
 
         proxies: {
-            '/js/views/dashboard/dashboard.html': '/base/js/views/dashboard/dashboard.html'
+            '/js/views/dashboard/dashboard.html': '/base/js/angular/views/dashboard/dashboard.html'
         },
 
         phantomjsLauncher: {
