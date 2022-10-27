@@ -55,7 +55,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/js/angular/app.js"),
+                    Path = new PathString("/angular/app.js"),
                     Method = method
                 },
                 Response =
@@ -121,7 +121,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/js/angular/views/message/editor/messageEditorModal.controller.js"),
+                    Path = new PathString("/angular/views/message/editor/messageEditorModal.controller.js"),
                     Method = "GET"
                 },
                 Response =

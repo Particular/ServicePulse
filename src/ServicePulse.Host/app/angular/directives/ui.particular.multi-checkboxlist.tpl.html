@@ -1,0 +1,9 @@
+﻿<div class="check col-xs-1" ng-click="toggleRowSelect(message, $event, $parent.$index)" ng-mouseenter="message.hover = true" ng-mouseleave="message.hover = false" style="cursor: default;">
+    <div class="checkbox" ng-class="{'check-hover': message.hover}">
+        <input type="checkbox" id="onoffswitch{{$message.id}}" name="onoffswitch{{$message.id}}" ng-disabled="message.retried || message.archived" ng-model="message.selected" ng-change="updateSelectedIdsWithMessage(message)">
+        <label for="onoffswitch{{$message.id}}"></label>
+    </div>
+
+</div>
+
+            

@@ -10,20 +10,20 @@ module.exports = function(config) {
             showWarnings: false
         },
         files: [
-            './modules/dist/shell.dist.js',
+            '.angular/modules/dist/shell.dist.js',
             '../../ServicePulse.Host.Tests/tests/js/angular-mocks.js',
-            './js/**/*.html',
+            './angular/**/*.html',
             './js/app.constants.js',
-            './modules/dist/configuration.dist.js',
-            './js/angular/app.js',
-            './js/angular/app.bootstrap.js',
+            './angular/modules/dist/configuration.dist.js',
+            './angular/app.js',
+            './angular/app.bootstrap.js',
             './js/**/*.module.js',
             './js/**/*.tabset.js',
-            './js/angular/directives/**/*.js',
+            './angular/directives/**/*.js',
             './js/polyfill/**/*.js',
-            './js/angular/services/**/*.js',
-            './js/angular/views/**/*.js',
-            './modules/dist/monitoring.dist.js',
+            './angular/services/**/*.js',
+            './angular/views/**/*.js',
+            './angular/modules/dist/monitoring.dist.js',
             '../../ServicePulse.Host.Tests/tests/**/*.spec.js'
         ],
         frameworks: ['jasmine'],
@@ -47,7 +47,7 @@ module.exports = function(config) {
         },
 
         proxies: {
-            '/js/views/dashboard/dashboard.html': '/base/js/angular/views/dashboard/dashboard.html'
+            '/js/views/dashboard/dashboard.html': '/base/angular/views/dashboard/dashboard.html'
         },
 
         phantomjsLauncher: {

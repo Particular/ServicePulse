@@ -19,14 +19,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="app\modules\shell\js\services\service.auditLog.js" />
+    <Content Include="app\angular\modules\shell\js\services\service.auditLog.js" />
     <Content Include="app\js\polyfill\array.prototype.includes.js" />
-    <Content Include="app\modules\configuration\connectionsManager.js" />
+    <Content Include="app\angular\modules\configuration\connectionsManager.js" />
     <Content Include="app\js\views\sc_not_available.html" />
-    <Content Include="app\modules\configuration\js\connections\connections.controller.js" />
-    <Content Include="app\modules\configuration\js\connections\connections.module.js" />
-    <Content Include="app\modules\configuration\js\connections\connections.route.js" />
-    <Content Include="app\modules\configuration\views\connections.html" />
+    <Content Include="app\angular\modules\configuration\js\connections\connections.controller.js" />
+    <Content Include="app\angular\modules\configuration\js\connections\connections.module.js" />
+    <Content Include="app\angular\modules\configuration\js\connections\connections.route.js" />
+    <Content Include="app\angular\modules\configuration\views\connections.html" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,6 +39,10 @@
   <ItemGroup>
     <None Remove="Hosting\Help.txt" />
     <EmbeddedResource Include="Hosting\Help.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="app\vue\" />
   </ItemGroup>
 
 </Project>

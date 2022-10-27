@@ -3,7 +3,7 @@
 
     var $controller, $rootScope, $compile;
     beforeEach(inject(function (_$controller_, _$rootScope_, _$compile_, $templateCache) {
-        $templateCache.put("modules/monitoring/js/directives/ui.particular.sortableColumn.tpl.html", "<test></test>");
+        $templateCache.put("angular/modules/monitoring/js/directives/ui.particular.sortableColumn.tpl.html", "<test></test>");
         $controller = _$controller_;
         $rootScope = _$rootScope_;
         $compile = _$compile_;

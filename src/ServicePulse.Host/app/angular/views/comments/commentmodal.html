@@ -1,0 +1,17 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">{{title}}</h3>
+</div>
+<form name="redirectForm" novalidate>
+    <div class="modal-body">
+        <div class="row">
+            <div class="form-group">
+                <label for="groupComment">Note</label>
+                <textarea type="text" id="groupComment" name="groupComment" ng-model="comment" placeholder="Comment" class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" ng-click="createComment()">{{saveButtonText}}</button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">Cancel</button>
+    </div>
+</form>
