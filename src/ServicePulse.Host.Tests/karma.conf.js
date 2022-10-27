@@ -10,23 +10,23 @@ module.exports = function(config) {
             showWarnings: false
         },
         files: [
-            './modules/dist/shell.dist.js',
+            './angular/modules/dist/shell.dist.js',
             '../../ServicePulse.Host.Tests/tests/js/angular-mocks.js',
             './angular/**/*.html',
             './js/app.constants.js',
-            './modules/dist/configuration.dist.js',
+            './angular/modules/dist/configuration.dist.js',
             './angular/app.js',
             './angular/app.bootstrap.js',
-            './angular/**/*.module.js',
+            './angular/views/**/*.module.js',
             './angular/**/*.tabset.js',
             './angular/directives/**/*.js',
             './js/polyfill/**/*.js',
             './angular/services/**/*.js',
             './angular/views/**/*.js',
-            './modules/dist/monitoring.dist.js',
+            './angular/modules/dist/monitoring.dist.js',
             '../../ServicePulse.Host.Tests/tests/**/*.spec.js'
         ],
-        frameworks: ['jasmine', 'requirejs'],
+        frameworks: ['jasmine'],
         // you can define custom flags
         customLaunchers: {
             'chrome_without_security': {
