@@ -1,3 +1,4 @@
+/* eslint-env jquery */
 (function (window, angular, hljs) {
     'use strict';
 
