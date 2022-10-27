@@ -10,15 +10,15 @@ module.exports = function(config) {
             showWarnings: false
         },
         files: [
-            '.angular/modules/dist/shell.dist.js',
+            './angular/modules/dist/shell.dist.js',
             '../../ServicePulse.Host.Tests/tests/js/angular-mocks.js',
             './angular/**/*.html',
             './js/app.constants.js',
             './angular/modules/dist/configuration.dist.js',
             './angular/app.js',
             './angular/app.bootstrap.js',
-            './js/**/*.module.js',
-            './js/**/*.tabset.js',
+            './angular/**/*.module.js',
+            './angular/**/*.tabset.js',
             './angular/directives/**/*.js',
             './js/polyfill/**/*.js',
             './angular/services/**/*.js',
