@@ -72,7 +72,7 @@
             scope: {},
             restrict: 'E',
             replace: true,
-            templateUrl: 'angular/modules/monitoring/js/directives/ui.particular.monitoringConnectivityStatus.tpl.html',
+            templateUrl: 'modules/monitoring/js/directives/ui.particular.monitoringConnectivityStatus.tpl.html',
             controller: controller,
             link: function (scope, element) { }
         };

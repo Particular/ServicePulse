@@ -5,9 +5,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     entry: {
-        shell: './app/angular/modules/shell/shell.js',
-        monitoring: './app/angular/modules/monitoring/monitoring.js',
-        configuration: './app/angular/modules/configuration/configuration.js',
+        shell: './modules/shell/shell.js',
+        monitoring: './modules/monitoring/monitoring.js',
+        configuration: './modules/configuration/configuration.js',
     },
     output: {
         filename: '[name].dist.js',

@@ -12,7 +12,7 @@
             },
             restrict: 'E',
             replace: true,
-            templateUrl: 'angular/directives/ui.particular.hud.tpl.html',
+            templateUrl: 'directives/ui.particular.hud.tpl.html',
         };
     }
 

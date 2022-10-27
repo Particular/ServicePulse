@@ -48,12 +48,12 @@
   },
   "scripts": {
     "test": "cd ../ServicePulse.Host.Tests && npm test",
-    "load": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/angular/modules/modules.webpackconfig.builder.js",
-    "setup": "npm install && node ./node_modules/webpack/bin/webpack.js --config app/angular/modules/modules.webpackconfig.js",
-    "serve": "http-server ./app",
-    "webpack": "node ./node_modules/webpack/bin/webpack.js --config app/angular/modules/modules.webpackconfig.js",
+    "load": "npm install && node ./node_modules/webpack/bin/webpack.js --config modules/modules.webpackconfig.builder.js",
+    "setup": "npm install && node ./node_modules/webpack/bin/webpack.js --config modules/modules.webpackconfig.js",
+    "serve": "http-server ../",
+    "webpack": "node ./node_modules/webpack/bin/webpack.js --config modules/modules.webpackconfig.js",
     "dev": "npm-run-all -p serve webpack",
-    "lint": "eslint ./app"
+    "lint": "eslint ./"
   },
   "author": "Particular Software",
   "license": "RPL-1.5"

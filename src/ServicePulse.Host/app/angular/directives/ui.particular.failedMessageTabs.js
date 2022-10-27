@@ -80,7 +80,7 @@
             scope: {},
             restrict: 'E',
             replace: true,
-            templateUrl: 'angular/directives/ui.particular.failedMessageTabs.tpl.html',
+            templateUrl: 'directives/ui.particular.failedMessageTabs.tpl.html',
             controller: controller,
             link: function(scope, element) {}
         };

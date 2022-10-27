@@ -8,7 +8,7 @@
             },
             restrict: 'E',
             replace: true,
-            templateUrl: 'angular/directives/ui.particular.busy.tpl.html',
+            templateUrl: 'directives/ui.particular.busy.tpl.html',
             link: function (scope, element) { }
         };
     }

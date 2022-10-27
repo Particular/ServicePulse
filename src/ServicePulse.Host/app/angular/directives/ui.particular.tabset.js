@@ -40,7 +40,7 @@
             scope: {
 
             },
-            templateUrl: 'angular/directives/ui.particular.tabset.tpl.html',
+            templateUrl: 'directives/ui.particular.tabset.tpl.html',
             bindToController: true,
             controllerAs: 'tabset',
             controller: Controller,

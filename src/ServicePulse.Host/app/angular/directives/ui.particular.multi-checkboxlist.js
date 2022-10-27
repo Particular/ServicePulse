@@ -87,7 +87,7 @@
         return {
             scope: { messages: '=messages', selectedIds: '=selectedIds', message: '=message', multiselection: '=multiselection' },
             restrict: 'E',
-            templateUrl: 'angular/directives/ui.particular.multi-checkboxlist.tpl.html',
+            templateUrl: 'directives/ui.particular.multi-checkboxlist.tpl.html',
             controller: controller
             
         };

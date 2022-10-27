@@ -8,7 +8,7 @@
             },
             restrict: 'E',
             replace: true,
-            templateUrl: 'angular/directives/ui.particular.nodata.tpl.html',
+            templateUrl: 'directives/ui.particular.nodata.tpl.html',
             link: function (scope, element) { }
         };
     }

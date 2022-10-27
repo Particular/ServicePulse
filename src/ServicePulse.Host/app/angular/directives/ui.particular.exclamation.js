@@ -8,7 +8,7 @@
             },
             restrict: 'EA',
             replace: true,
-            templateUrl: 'angular/directives/ui.particular.exclamation.tpl.html',
+            templateUrl: 'directives/ui.particular.exclamation.tpl.html',
             link: function (scope, element) { }
         };
     }
