@@ -1,0 +1,133 @@
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="sp-loader" ng-if="isSCConnecting"></div>
+    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
+
+    <section ng-show="isSCConnected || scConnectedAtLeastOnce">
+        <reindexingstatus></reindexingstatus>
+
+        <section name="message_groups">
+
+            <failed-message-tabs></failed-message-tabs>
+
+            <div class="row">
+                <div class="col-xs-6 list-section">
+                    <h6>Deleted message groups</h6>
+                </div>
+
+                <div class="col-xs-6 toolbar-menus no-side-padding">
+
+                    <div class="msg-group-menu dropdown">
+                        <label class="control-label">Group by:</label>
+                        <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{vm.selectedClassification}}
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="classifier in vm.availableClassifiers">
+                                <a href="#/archivedgroups/groups?groupBy={{classifier}}">{{classifier}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <busy ng-show="vm.loadingData" message="fetching more messages"></busy>
+                    <no-data ng-show="vm.archiveGroups.length === 0 && !vm.loadingData" title="message groups" message="There are currently no groups of deleted messages"></no-data>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-12 no-mobile-side-padding">
+
+                    <div ng-show="vm.archiveGroups.length > 0">
+
+                        <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" ng-repeat="group in vm.archiveGroups" ng-click="vm.viewArchiveGroup(group)" ng-disabled="group.count == 0" ng-mouseenter="group.hover2 = true" ng-mouseleave="group.hover2 = false">
+                            <div class="col-sm-12 no-mobile-side-padding">
+                                <div class="row">
+                                    <div class="col-sm-12 no-side-padding">
+                                        <div class="row box-header">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <p class="lead break" ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}"> {{group.title}}</p>
+                                                <p class="metadata" ng-show="!vm.isBeingRestored(group.workflow_state.status)">
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.count | number}} message<span ng-show="group.count >1">s</span><span ng-show="group.operation_remaining_count > 0">(currently retrying {{group.operation_remaining_count | number}})</span></span>
+
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> First failed: <sp-moment date="{{group.first}}"></sp-moment></span>
+
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last failed: <sp-moment date="{{group.last}}"></sp-moment></span>
+
+                                                    <span class="metadata"><i aria-hidden="true" class="fa fa-repeat"></i> Last retried: <sp-moment empty-message="never" date="{{group.last_operation_completion_time}}"></sp-moment></span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="!vm.isBeingRestored(group.workflow_state.status)">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <button type="button" class="btn btn-link btn-sm" confirm-click="vm.restoreExceptionGroup(group, $event)" ng-disabled="group.count == 0 || vm.isBeingRestored(group)" ng-mouseenter="group.hover3 = true" ng-mouseleave="group.hover3 = false" confirm-title="Are you sure you want to restore this group?" confirm-message="Restored messages will be moved back to the list of failed messages.">
+                                                    <i aria-hidden="true" class="fa fa-undo no-link-underline">&nbsp</i>Restore group
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row" ng-show="vm.isBeingRestored(group.workflow_state.status)">
+                                            <div class="col-sm-12 no-side-padding">
+                                                <div class="panel panel-default panel-retry">
+                                                    <div class="panel-body">
+                                                        <ul class="retry-request-progress">
+                                                            <li ng-hide="group.workflow_state.status === 'restorecompleted'" ng-class="vm.getClassesForRestoreOperation('restorestarted', group.workflow_state.status)">
+                                                                <div class="bulk-retry-progress-status">Initialize restore request...</div>
+                                                            </li>
+                                                            <li ng-hide="group.workflow_state.status === 'restorecompleted'" ng-class="vm.getClassesForRestoreOperation('restoreprogressing', group.workflow_state.status)">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                        <div class="bulk-retry-progress-status">Restore request in progress...</div>
+                                                                    </div>
+
+                                                                    <div class="col-xs-12 col-sm-6">
+                                                                        <div class="progress bulk-retry-progress" ng-show="group.workflow_state.status === 'restoreprogressing'">
+                                                                            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                                                {{group.workflow_state.total | number : 0}}%
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li ng-hide="group.workflow_state.status === 'restorecompleted'" ng-class="vm.getClassesForRestoreOperation('restorefinalizing', group.workflow_state.status)">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                                        <div class="bulk-retry-progress-status">Cleaning up...</div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li ng-show="group.workflow_state.status === 'restorecompleted'">
+                                                                <div class="retry-completed bulk-retry-progress-status">Restore request completed</div>
+                                                                <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" ng-show="group.need_user_acknowledgement == true" ng-click="vm.acknowledgeArchiveGroup(group, $event)">
+                                                                    Dismiss
+                                                                </button>
+                                                            </li>
+                                                        </ul>
+
+                                                        <div class="op-metadata">
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Restore request started: <sp-moment date="{{group.operation_start_time}}"></sp-moment></span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to restore: {{(group.operation_remaining_count || 0) | number}}</span>
+                                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages restored: {{(group.operation_messages_completed_count || 0) | number}}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+</div>

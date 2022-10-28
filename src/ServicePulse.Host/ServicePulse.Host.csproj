@@ -19,21 +19,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="app\modules\shell\js\services\service.auditLog.js" />
-    <Content Include="app\js\polyfill\array.prototype.includes.js" />
-    <Content Include="app\modules\configuration\connectionsManager.js" />
-    <Content Include="app\js\views\sc_not_available.html" />
-    <Content Include="app\modules\configuration\js\connections\connections.controller.js" />
-    <Content Include="app\modules\configuration\js\connections\connections.module.js" />
-    <Content Include="app\modules\configuration\js\connections\connections.route.js" />
-    <Content Include="app\modules\configuration\views\connections.html" />
+    <Content Include="angular\app\modules\shell\js\services\service.auditLog.js" />
+    <Content Include="angular\app\js\polyfill\array.prototype.includes.js" />
+    <Content Include="angular\app\modules\configuration\connectionsManager.js" />
+    <Content Include="angular\app\js\views\sc_not_available.html" />
+    <Content Include="angular\app\modules\configuration\js\connections\connections.controller.js" />
+    <Content Include="angular\app\modules\configuration\js\connections\connections.module.js" />
+    <Content Include="angular\app\modules\configuration\js\connections\connections.route.js" />
+    <Content Include="angular\app\modules\configuration\views\connections.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="app\**\*" />
-    <EmbeddedResource Include="app\**\*" LogicalName="%(RelativeDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Remove="app\js\.eslintrc.js" />
-    <None Include="app\js\.eslintrc.js" />
+    <None Remove="angular\app\**\*" />
+    <EmbeddedResource Include="angular\app\**\*" LogicalName="%(RelativeDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Remove="angular\app\js\.eslintrc.js" />
+    <None Include="angular\app\js\.eslintrc.js" />
   </ItemGroup>
 
   <ItemGroup>

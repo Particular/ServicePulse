@@ -1,0 +1,84 @@
+﻿<platform-trial-expired ng-if="isPlatformTrialExpired"></platform-trial-expired>
+<platform-expired ng-if="isPlatformExpired"></platform-expired>
+<upgrade-protection-expired ng-if="isInvalidDueToUpgradeProtectionExpired"></upgrade-protection-expired>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>Configuration</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container" ng-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    <section name="platformconnection">
+
+        <configuration-tabs></configuration-tabs>
+
+        <div class="col-sm-12">
+            <div class="box">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3>Connect an endpoint to ServiceControl</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ol>
+                            <li>Add the <a href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/">NServiceBus.ServicePlatform.Connector</a> NuGet package to the endpoint project.</li>
+                            <li>Copy-paste the code from one of the options below. For additional options, refer to the <a href="https://docs.particular.net/platform/connecting">documentation</li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="row tabs-config-snippets">
+                    <div class="col-sm-12">
+                        
+                        
+                        <busy ng-show="vm.loading" message="Loading platform connection settings"></busy>
+
+                        <!-- Nav tabs -->
+                        <div ng-show="!vm.loading" class="tabs" role="tablist">
+                            <h5 ng-class="{active: vm.showCodeOnlyTab}">
+                                <a ng-click="vm.switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
+                            </h5>
+                            <h5 ng-class="{active: vm.showJsonTab}">
+                                <a ng-click="vm.switchJsonTab()" class="ng-binding">JSON file</a>
+                            </h5>
+                        </div>
+
+                        <div ng-show="vm.queryErrors.length > 0 && !vm.loading" class="alert alert-warning" role="alert">
+                            There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
+                            <ul>
+                                <li ng-repeat="error in vm.queryErrors">
+                                    {{error}}
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <section ng-show="vm.showCodeOnlyTab && !vm.loading">
+                            <div class="row">
+                                <div class="col-xs-12 no-side-padding">
+                                    <highlight text="vm.inlineSnippet" lang="csharp"></highlight>
+                                </div>
+                            </div>
+                        </section>
+                    
+                        <section ng-show="vm.showJsonTab && !vm.loading">
+                            <div class="row">
+                                <div class="col-xs-12 no-side-padding">
+                                    <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
+                                    <p><strong>Endpoint configuration:</strong></p>
+                                    <highlight text="vm.jsonSnippet" lang="csharp"></highlight>
+                                    <p><strong>JSON configuration file:</strong></p>
+                                    <highlight text="vm.json" lang="json"></highlight>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
