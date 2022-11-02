@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 
 export function useServiceControlUrls(urlParams) {
-  const serviceControlUrl =ref('http://localhost:33333/api/') //TODO load these defaults from somewhere?
+  const serviceControlUrl = ref('http://localhost:33333/api/') //TODO load these defaults from somewhere?
   const monitoringUrl = ref('http://localhost:33633/api/')
  
   if (urlParams.scu) {
