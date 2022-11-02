@@ -1,14 +1,18 @@
 <script setup>
+import { inject } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 
+const failedheartbeats = inject("failedheartbeats")
+const failedmessages = inject("failedmessages")
+const failedcustomchecks = inject("failedcustomchecks")
 
-  function subIsActive(input, exact) {
-        const paths = Array.isArray(input) ? input : [input];
-        const route = useRoute()       
-        return paths.some(path => {         
-          return exact ? route.path.endsWith(path) : route.path.indexOf(path) === 0 // current path starts with this path string
-        });
-      };
+function subIsActive(input, exact) {
+  const paths = Array.isArray(input) ? input : [input];
+  const route = useRoute()
+  return paths.some( path => {
+    return exact ? route.path.endsWith(path) : route.path.indexOf(path) === 0; // current path starts with this path string
+  })
+}
 </script>
 
 <template>
@@ -22,16 +26,17 @@ import { RouterLink, useRoute } from "vue-router";
         
         <div id="navbar" class="collapse navbar-collapse navbar-right navbar-inverse">
           <ul class="nav navbar-nav navbar-inverse">
-            <li :class="{ active: subIsActive('/', true) }">            
+            <li :class="{ active: subIsActive('/', true) }">
               <RouterLink to="/">
                 <i class="fa fa-dashboard icon-white"></i>
                   <span class="navbar-label">Dashboard</span>
                 </RouterLink>
             </li>
-            <li :class="{ active: subIsActive('/endpoints') }">            
+            <li :class="{ active: subIsActive('/endpoints') }">
               <a href="/endpoints">
                 <i class="fa fa-heartbeat icon-white"></i>
                 <span class="navbar-label">Heartbeats</span>
+                <span v-if="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats}}</span>
               </a>
             </li>
             <li :class="{ active: (subIsActive('/monitoring') || subIsActive('/monitoring/endpoint')) }">
@@ -44,15 +49,17 @@ import { RouterLink, useRoute } from "vue-router";
               <a href="/failed-messages/groups">
                 <i class="fa fa-envelope icon-white"></i>
                 <span class="navbar-label">Failed Messages</span>
+                <span v-if="failedmessages > 0" class="badge badge-important ">{{failedmessages}}</span>
               </a>
             </li>
-            <li :class="{ active: subIsActive('/custom-checks') }">            
+            <li :class="{ active: subIsActive('/custom-checks') }">
               <a href="/custom-checks">
                 <i class="fa fa-check icon-white"></i>
                 <span class="navbar-label">Custom Checks</span>
+                <span v-if="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks}}</span>
               </a>
             </li>
-            <li :class="{ active: subIsActive('/events') }">            
+            <li :class="{ active: subIsActive('/events') }">
               <a href="/events">
                 <i class="fa fa-list-ul icon-white"></i>
                 <span class="navbar-label">Events</span>
