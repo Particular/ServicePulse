@@ -37,6 +37,11 @@ Install the following dependencies if you don't have them installed yet
 
 #### Set development environment
 
+ - run `nginx` that stiches together `angular` and `vue` spas using
+ ```cmd
+ >docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
+ ```
+
  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
  - run `npm install` to install all the npm dependencies
  - run the following command `npm run dev`. This script will use webpack configuration to finish ServicePulse's required configuration, start watching root folder for changes, and it will host a dev server on port 8080

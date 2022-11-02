@@ -98,3 +98,5 @@ src/scaffolding.config
 
 # Visual Studio Code
 .vscode
+
+src/ServicePulse.Host/vue/dist/
