@@ -1,6 +1,10 @@
 <script setup>
 import DashboardItem from "../components/DashboardItem.vue";
+import {inject} from "vue";
 
+const failedheartbeats = inject("failedheartbeats")
+const failedmessages = inject("failedmessages")
+const failedcustomchecks = inject("failedcustomchecks")
 </script>
 <template>
   <div class="row">
@@ -16,13 +20,13 @@ import DashboardItem from "../components/DashboardItem.vue";
         <div class="col-sm-12">
           <div class="row">
             <div class="col-xs-4">
-              <DashboardItem :counter="10" :url="'/endpoints'" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
+              <DashboardItem :counter="failedheartbeats" :url="'/endpoints'" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
             </div>
             <div class="col-xs-4">
-              <DashboardItem :counter="20" :url="'/failed-messages/groups'" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
+              <DashboardItem :counter="failedmessages" :url="'/failed-messages/groups'" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
             </div>
             <div class="col-xs-4">
-              <DashboardItem :counter="30" :url="'/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
+              <DashboardItem :counter="failedcustomchecks" :url="'/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
             </div>
           </div>
 
