@@ -1,6 +1,7 @@
 <script setup>
 import DashboardItem from "../components/DashboardItem.vue";
 import {inject} from "vue";
+import EventItemShort from "../components/EventItemShort.vue"
 
 const failedheartbeats = inject("failedheartbeats")
 const failedmessages = inject("failedmessages")
@@ -29,11 +30,10 @@ const failedcustomchecks = inject("failedcustomchecks")
               <DashboardItem :counter="failedcustomchecks" :url="'/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
             </div>
           </div>
-
         </div>
       </div>
 
-
+      <EventItemShort></EventItemShort>
     </div>
   </div>
   
