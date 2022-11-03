@@ -1,8 +1,10 @@
 ﻿<script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted} from "vue";
+import { useRouter } from 'vue-router'
 import { getEventLogItems } from "../composables/eventLogItems.js";
 import moment from 'moment';
 
+const router = useRouter();
 const eventLogItems = ref([]);
 const eventCount = ref(0);
 onMounted(() => {
@@ -37,6 +39,37 @@ function iconSubClasses(eventItem) {
   }
 }
 
+function navigateToEvent(eventLogItem){
+  switch(eventLogItem.category) {
+    case 'Endpoints':
+      router.push('/configuration/endpoints');
+      break;
+    case 'HeartbeatMonitoring':
+      router.push('/endpoints');
+      break;
+    case 'CustomChecks':
+      router.push('/custom-checks');
+      break;
+    case 'EndpointControl':
+      router.push('/endpoints');
+      break;
+    case 'MessageFailures':
+      var newlocation = '/failed-messages/groups';
+      if (eventLogItem.related_to && eventLogItem.related_to[0].search('message') > 0) {
+        newlocation = '/failed-messages' + eventLogItem.related_to[0];
+      }
+      router.push(newlocation);
+      break;
+    case 'Recoverability':
+      router.push('/failed-messages/groups');
+      break;
+    case 'MessageRedirects':
+      router.push('/configuration/redirects');
+      break;
+    default:
+  }
+}
+
 </script>
 
 <template>
@@ -45,7 +78,7 @@ function iconSubClasses(eventItem) {
       <h6>Last 10 events</h6>
   
       <div class="row box box-event-item" v-for="eventLogItem in eventLogItems" >
-        <div class="col-xs-12">
+        <div class="col-xs-12" @click="navigateToEvent(eventLogItem)">
           <div class="row">
             <div class="col-xs-1">
                     <span class="fa-stack fa-lg">
