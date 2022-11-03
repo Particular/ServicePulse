@@ -1,0 +1,15 @@
+﻿<script setup>
+defineProps({
+  isPlatformExpired: Boolean
+})
+</script>
+
+<template v-if="isPlatformExpired">
+  <div class="text-center monitoring-no-data" style="max-width: 620px;">
+    <h1>Platform license expired</h1>
+    <p>Please update your license to continue using the Particular Service Platform</p>
+    <div class="action-toolbar">
+        <a class="btn btn-default btn-primary" href="/configuration#/license">View license details</a>
+    </div>
+</div>
+</template>

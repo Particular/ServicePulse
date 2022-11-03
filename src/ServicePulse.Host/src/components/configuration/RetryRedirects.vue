@@ -1,28 +1,36 @@
 <script setup>
-import { isSCConnected, scConnectedAtLeastOnce } from "./../../composables/serviceControl.js";
+import { inject } from "vue";
+import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+
+const isSCConnected = inject("isSCConnected")
+const scConnectedAtLeastOnce = inject("scConnectedAtLeastOnce")
+const isSCConnecting = inject("isSCConnecting")
+
 </script>
 
 <template>
     <h2>RetryRedirects</h2>
+        
+    <div class="sp-loader" v-if="isSCConnecting"></div>
+    <ServiceControlNotAvailable :isSCConnected="isSCConnected" :isSCConnecting="isSCConnecting" :scConnectedAtLeastOnce="scConnectedAtLeastOnce" />
 
-    <div class="sp-loader" ng-if="isSCConnecting"></div>
-    <div ng-include="'js/views/sc_not_available.html'" ng-show="!isSCConnected && !isSCConnecting && !scConnectedAtLeastOnce"></div>
+    <template v-if="isSCConnected || scConnectedAtLeastOnce">
+        <section>
+            <span>connected!</span>
+            <!-- <busy v-show="vm.loadingData" message="fetching more redirects"></busy>
 
-    <section v-if="isSCConnected || scConnectedAtLeastOnce">
-
-        <busy ng-show="vm.loadingData" message="fetching more redirects"></busy>
-
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="btn-toolbar">
-                    <button type="button" class="btn btn-default" ng-click="vm.createRedirect()"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</button>
-                    <span></span>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="btn-toolbar">
+                        <button type="button" class="btn btn-default" @click="vm.createRedirect()"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</button>
+                        <span></span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <no-data ng-show="vm.redirects.length === 0 && !vm.loadingData" title="redirects" message="There are currently no redirects"></no-data>
-    </section>
+            <no-data v-show="vm.redirects.length === 0 && !vm.loadingData" title="redirects" message="There are currently no redirects"></no-data>  -->
+            </section>
+    </template>    
 </template>
 
 
