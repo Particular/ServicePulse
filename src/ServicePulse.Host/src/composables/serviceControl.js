@@ -1,59 +1,77 @@
 import { ref } from "vue";
-import { useFetch } from "./fetch.js";
+//import { useFetch } from "./fetch.js";
+
+export const isServiceControlConnecting = ref(true)
+export const isServiceControlConnected = ref(false)
+export const serviceControlConnectedAtLeastOnce = ref(false)
+export const failedHeartBeatsCount = ref(0)
+export const failedMessagesCount = ref(0)
+export const failedCustomChecksCount = ref(0)
 
 export function useServiceControl(serviceControlUrl, monitoringUrl) {
-  const failedHeartBeatsCount = ref(0)
-  const failedMessagesCount = ref(0)
-  const failedCustomChecksCount = ref(0)
+  const failedHeartBeatsResult = getFailedHeartBeatsCount(serviceControlUrl)
+  const failedMessagesResult = getFailedMessagesCount(serviceControlUrl)
+  const failedCustomChecksResult = getFailedCustomChecksCount(serviceControlUrl)
 
-  const isServiceControlConnecting = ref(true)
-  const isServiceControlConnected = ref(false)
-  const serviceControlConnectedAtLeastOnce = ref(false)
- 
-  failedHeartBeatsCount.value = getFailedHeartBeatsCount(serviceControlUrl, isServiceControlConnected, serviceControlConnectedAtLeastOnce)
-  failedMessagesCount.value = getFailedMessagesCount(serviceControlUrl, isServiceControlConnected, serviceControlConnectedAtLeastOnce)
-  failedCustomChecksCount.value = getFailedCustomChecksCount(serviceControlUrl, isServiceControlConnected, serviceControlConnectedAtLeastOnce)
+  Promise
+  .all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult])
+  .then(([failedHB, failedM, failedCC]) => {
+    failedHeartBeatsCount.value = failedHB
+    failedMessagesCount.value = failedM
+    failedCustomChecksCount.value = failedCC
 
-  isServiceControlConnecting.value = false
-
-  return { failedHeartBeatsCount, failedMessagesCount, failedCustomChecksCount, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce}
+    isServiceControlConnecting.value = false   
+  });
 }
 
-function getFailedHeartBeatsCount(serviceControlUrl, isServiceControlConnected, serviceControlConnectedAtLeastOnce) {
-    const { data, error } = useFetch(serviceControlUrl + 'heartbeats/stats')
-    
-    if (error) {
+function getFailedHeartBeatsCount(serviceControlUrl) {
+    //const { data, error, retry } = useFetch(serviceControlUrl + 'heartbeats/stats')
+
+    return fetch(serviceControlUrl + 'heartbeats/stats')
+    .then(response => {
+        return response.json()
+    })
+    .then(json => {
+        isServiceControlConnected.value = true
+        serviceControlConnectedAtLeastOnce.value = true
+        return json.failing
+    })
+    .catch(err => {
         isServiceControlConnected.value = false
-        console.log(error)
+        console.log(err)
         return Math.floor(Math.random()*(10-0+1)+0) //NOTE when done with testing change to return 0
-    }
-    isServiceControlConnected.value = true
-    serviceControlConnectedAtLeastOnce.value = true
-    return data.data.stat.failing
+    });
 }
 
-function getFailedMessagesCount(serviceControlUrl, isServiceControlConnected, serviceControlConnectedAtLeastOnce) {
-    const { data, error } = useFetch(serviceControlUrl + 'errors?status=unresolved')
+function getFailedMessagesCount(serviceControlUrl) {
+    //const { data, error, retry } = useFetch(serviceControlUrl + 'errors?status=unresolved')
 
-    if (error) {
+    return fetch(serviceControlUrl + 'errors?status=unresolved')
+    .then(response => {
+        isServiceControlConnected.value = true
+        serviceControlConnectedAtLeastOnce.value = true
+        return response.headers.get('Total-Count')
+    })
+    .catch(err => {
         isServiceControlConnected.value = false
-        console.log(error)
+        console.log(err)
         return Math.floor(Math.random()*(10-0+1)+0) //NOTE when done with testing change to return 0
-    }
-    isServiceControlConnected.value = true
-    serviceControlConnectedAtLeastOnce.value = true
-    return data.headers('Total-Count')
+    });
+
 }
 
-function getFailedCustomChecksCount(serviceControlUrl, isServiceControlConnected, serviceControlConnectedAtLeastOnce) {
-    const { data, error } = useFetch(serviceControlUrl + 'customchecks?status=fail')
+function getFailedCustomChecksCount(serviceControlUrl) {
+    //const { data, error, retry } = useFetch(serviceControlUrl + 'customchecks?status=fail')
 
-    if (error) {
+    return fetch(serviceControlUrl + 'customchecks?status=fail')
+    .then(response => {
+        isServiceControlConnected.value = true
+        serviceControlConnectedAtLeastOnce.value = true
+        return response.headers.get('Total-Count')
+    }) 
+    .catch(err => {
         isServiceControlConnected.value = false
-        console.log(error)
+        console.log(err)
         return Math.floor(Math.random()*(10-0+1)+0) //NOTE when done with testing change to return 0
-    }
-    isServiceControlConnected.value = true
-    serviceControlConnectedAtLeastOnce.value = true
-    return data.headers('Total-Count')
+    });
 }

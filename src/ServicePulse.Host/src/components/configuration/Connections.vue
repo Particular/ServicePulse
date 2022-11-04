@@ -1,8 +1,8 @@
 <script setup>
 import { ref, inject } from "vue";
-import PlatformLicenseExpired from "./../PlatformLicenseExpired.vue";
-import PlatformTrialExpired from "./../PlatformTrialExpired.vue";
-import PlatformProtectionExpired from "./../PlatformProtectionExpired.vue";
+import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
+import PlatformTrialExpired from "../PlatformTrialExpired.vue";
+import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 
 const configuredServiceControlUrl = inject("serviceControlUrl")
 
@@ -13,7 +13,7 @@ const isInvalidDueToUpgradeProtectionExpired = inject("isInvalidDueToUpgradeProt
 const testingServiceControl = ref(false)
 const serviceControlValid = ref(false)
 
-//const connectionSaved = ref(null)
+const connectionSaved = ref(null)
 
 function testServiceControlUrl(event) {
     alert(`testServiceControlUrl!`)   
@@ -23,22 +23,21 @@ function testServiceControlUrl(event) {
     }
 }
 
-/* function saveConnections(event) {
+function saveConnections(event) {
     alert(`saveConnections!`)  
     if (event) {
         alert(event.target.tagName)  
     }  
-} */
+}
 
 </script>
 
-<template> 
-<h2>Connections</h2>   
-   <!--  <PlatformLicenseExpired :is-platform-trial-expired="isPlatformTrialExpired" />
-    <PlatformTrialExpired :is-platform-expired="isPlatformExpired" />
-    <PlatformProtectionExpired :is-invalid-due-to-upgrade-protection-expired="isInvalidDueToUpgradeProtectionExpired" /> 
-    
-    <template v-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+<template>   
+    <PlatformLicenseExpired :isPlatformExpired="isPlatformExpired" />
+    <PlatformTrialExpired :isPlatformTrialExpired="isPlatformTrialExpired" />
+    <PlatformProtectionExpired :isInvalidDueToUpgradeProtectionExpired="isInvalidDueToUpgradeProtectionExpired" />
+   
+    <!-- <template v-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -46,9 +45,9 @@ function testServiceControlUrl(event) {
                 </div>
             </div>
         </div>
-    </template>
--->
-    <!-- <template v-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+    </template> -->
+
+    <template v-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
         <div class="container">
             <section name="connections">
 
@@ -75,7 +74,7 @@ function testServiceControlUrl(event) {
 
                                     </div>
 
-                                    <div class="row connection">
+                                    <!-- <div class="row connection">
                                         <h3>ServiceControl Monitoring</h3>
                                         <div class="col-sm-7 form-group">
                                             <label for="monitoringUrl">CONNECTION URL <span class="auxilliary-label">(OPTIONAL)</span><span
@@ -98,7 +97,7 @@ function testServiceControlUrl(event) {
                                                     class="fa fa-exclamation-triangle"></i> Connection failed</span>
                                         </div>
 
-                                    </div>
+                                    </div> -->
 
                                     <button class="btn btn-primary" type="button" @click="saveConnections">Save</button>
                                     <span class="connection-test connection-successful hide" v-show="connectionSaved"><i class="fa fa-check"></i>Connection saved</span>
@@ -112,8 +111,5 @@ function testServiceControlUrl(event) {
 
             </section>
         </div>
-    </template> -->
+    </template>
 </template>
-
-<style>
-</style>

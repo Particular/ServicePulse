@@ -1,11 +1,12 @@
 import { ref } from "vue";
-import { useFetch } from "./fetch.js";
+//import { useFetch } from "./fetch.js";
 
+export const currentLicense = ref(null)
 
 export function useLicense(serviceControlUrl) {
-  const license = ref(getLicense(serviceControlUrl))
-
-  return license
+  getLicense(serviceControlUrl).then(lic => {
+    currentLicense.value = lic
+  })
 }
 
 export function useIsValidWithWarning(licenseStatus) {
@@ -27,12 +28,22 @@ export function useIsInvalidDueToUpgradeProtectionExpired(licenseStatus) {
     return licenseStatus === 'InvalidDueToExpiredUpgradeProtection';
 }
 
+export function useLicenseWarningLevel(licenseStatus) {
+    if (licenseStatus === 'InvalidDueToExpiredTrial' || licenseStatus === 'InvalidDueToExpiredSubscription' ||  licenseStatus === 'InvalidDueToExpiredUpgradeProtection')
+        return "danger"
+    else if (useIsValidWithWarning(licenseStatus))
+        return "warning"
+    return ''
+}
 
 function getLicense(serviceControlUrl) {
-    const { data, error } = useFetch(serviceControlUrl + 'license')
-    
-    if (error) {     
-        console.log(error)    
+    //const { data, error, retry } = useFetch(serviceControlUrl + 'license')            
+
+    return fetch(serviceControlUrl + 'license').then(response => {
+        return response.json();
+    })
+    .catch(err => {
+        console.log(err)    
         var undefinedLicense = {
             edition: "",
             expiration_date: undefined,
@@ -43,6 +54,5 @@ function getLicense(serviceControlUrl) {
             license_status:"Unavailable"
         }    
         return undefinedLicense
-    }    
-    return data.data
+    });
 }

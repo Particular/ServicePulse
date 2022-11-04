@@ -1,10 +1,11 @@
 ﻿<script setup>
 defineProps({
-    isPlatformTrialExpired: Boolean  
+    isPlatformTrialExpired: Boolean 
 })
 </script>
 
 <template v-if="isPlatformTrialExpired">
+<span>isPlatformTrialExpired = {{isPlatformTrialExpired}}</span>
 <div class="text-center monitoring-no-data" style="max-width: 720px;">
     <h1>License expired</h1>
     <p>To continue using the Particular Service Platform, please extend your license</p>
