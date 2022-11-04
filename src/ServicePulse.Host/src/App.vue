@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, computed } from "vue";
+import { ref, provide, computed, onMounted  } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
@@ -28,6 +28,10 @@ const isPlatformTrialExpired = computed(useIsPlatformTrialExpired(license.value.
 const isInvalidDueToUpgradeProtectionExpired = computed(useIsInvalidDueToUpgradeProtectionExpired(license.value.license_status))
 
 setInterval( ()=> getServiceControl(), 5000) //NOTE is 5 seconds too often?
+
+onMounted(() => {
+  getServiceControl()
+})
 
 provide("failedheartbeats", failedHeartBeats)
 provide("failedmessages", failedMessages)
