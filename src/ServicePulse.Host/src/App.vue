@@ -40,6 +40,10 @@ const isExpired = computed(() => {
 
 setInterval( ()=> getServiceControl(), 5000) //NOTE is 5 seconds too often?
 
+onMounted(() => {
+  getServiceControl()
+})
+
 provide("failedheartbeats", failedHeartBeats)
 provide("failedmessages", failedMessages)
 provide("failedcustomchecks", failedCustomChecks)
