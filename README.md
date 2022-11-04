@@ -7,11 +7,36 @@ Keep track of the health of your system's endpoints, monitor for any processing 
 
 ## Setting up the project for development
 
-### Connecting to ServiceControl and ServiceControl Monitoring
+ServicePulse is in the proces of migrating from AngularJS to Vue.js, during both frameworks are used to server parts of the application. In development environment process AngularJS and Vue.js http servers are run side-by-side behind reverse proxy. This enalbes acessing both applications from the same domain i.e. `localhost:1331` where uri prefixed with `/angular/` are served by AngularJS and rest is handled by Vue.js. This mimics the production deployment where Vue.js application is deployed in the main folder and AngularJS in `/angular/` subfolders. 
 
-ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl). Endpoint metrics data is provided by [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring).
+```mermaid
+graph LR
+  subgraph ServiceControl
+    ScMonitoring
+    ScError
+  end
 
-The URLs for both services can be set in `ServicePulse.Host/app/js/app.constants.js` under the constant `scConfig`.
+  subgraph ServicePulse
+    AngularJs
+    VueJs
+  end
+
+  Browser --> Nginx[Nginx<br>Reverse Proxy]
+  Nginx -- http://host.docker.internal:8080/angular/ --> AngularJs[AngularJS<br> Development Server]
+  Nginx -- http://host.docker.internal:5173 --> VueJs[Vue.js<br> Development Server]
+
+  AngularJs --> ScMonitoring[Monitoring Instance]
+  AngularJs --> ScError[Error Instance]
+
+  VueJs --> ScMonitoring
+  VueJs --> ScError
+```
+### Setting up ServiceControl Error and ServiceControl Monitoring instances
+
+ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl) and [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring) instances.
+
+
+~The URLs for both services can be set in `ServicePulse.Host/app/js/app.constants.js` under the constant `scConfig`.~ <-- TODO: this needs to be updated
 
 #### URL ACL Reservation
 
@@ -31,11 +56,13 @@ Install the following dependencies if you don't have them installed yet
 
  - [Node.js](https://nodejs.org/en/download/)
  - [Git for Windows](https://git-for-windows.github.io/)
+ - [Docker](https://docs.docker.com/get-docker/)
  - Chutzpah
    - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
    - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
 
 #### Set development environment
+
 
  - run `nginx` that stiches together `angular` and `vue` spas using
  ```cmd
