@@ -1,9 +1,11 @@
 ﻿<script setup>
-defineProps({
+const props = defineProps({
   type:String
 })
 </script>
 
-<template v-if="type != ''">
-  <span class="fa fa-exclamation-triangle {{type}}"></span>
+<template>
+  <template v-if="props.type">
+    <span class="fa fa-exclamation-triangle {{type}}"></span>
+  </template>
 </template>

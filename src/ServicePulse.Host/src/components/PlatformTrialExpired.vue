@@ -1,17 +1,20 @@
 ﻿<script setup>
-defineProps({
+const props = defineProps({
     isPlatformTrialExpired: Boolean 
 })
+
+
 </script>
 
-<template v-if="isPlatformTrialExpired">
-<span>isPlatformTrialExpired = {{isPlatformTrialExpired}}</span>
-<div class="text-center monitoring-no-data" style="max-width: 720px;">
-    <h1>License expired</h1>
-    <p>To continue using the Particular Service Platform, please extend your license</p>
-    <div class="action-toolbar">
-        <a class="btn btn-default btn-primary" href="https://particular.net/extend-your-trial?p=servicepulse" target="_blank">Extend your license <i class="fa fa-external-link"></i></a>
-        <a class="btn btn-default btn-secondary" href="/configuration#/license">View license details</a>
+<template>
+    <template v-if="props.isPlatformTrialExpired">    
+    <div class="text-center monitoring-no-data" style="max-width: 720px;">
+        <h1>License expired</h1>
+        <p>To continue using the Particular Service Platform, please extend your license</p>
+        <div class="action-toolbar">
+            <a class="btn btn-default btn-primary" href="https://particular.net/extend-your-trial?p=servicepulse" target="_blank">Extend your license <i class="fa fa-external-link"></i></a>
+            <a class="btn btn-default btn-secondary" href="/configuration#/license">View license details</a>
+        </div>
     </div>
-</div>
+    </template>
 </template>
