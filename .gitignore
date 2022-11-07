@@ -100,3 +100,5 @@ src/scaffolding.config
 .vscode
 
 src/ServicePulse.Host/vue/dist/
+
+src/ServicePulse.Host/dist/

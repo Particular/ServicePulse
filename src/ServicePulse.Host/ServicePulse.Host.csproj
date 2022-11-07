@@ -41,4 +41,8 @@
     <EmbeddedResource Include="Hosting\Help.txt" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="PowerShell -File .\build.ps1" />
+  </Target>
+
 </Project>
