@@ -1,6 +1,7 @@
 ﻿<script setup>
 import { inject } from "vue";
-const serviceControlUrl = inject("serviceControlUrl")
+import { key_ServiceControlUrl } from "./../composables/keys.js"
+const serviceControlUrl = inject(key_ServiceControlUrl)
 
 const props = defineProps({
     isSCConnected: Boolean,

@@ -2,10 +2,12 @@
 import DashboardItem from "../components/DashboardItem.vue";
 import {inject} from "vue";
 import EventItemShort from "../components/EventItemShort.vue"
+import { key_Failedheartbeats,  key_Failedmessages, key_Failedcustomchecks } from "./../composables/keys.js"
 
-const failedheartbeats = inject("failedheartbeats")
-const failedmessages = inject("failedmessages")
-const failedcustomchecks = inject("failedcustomchecks")
+const failedheartbeats = inject(key_Failedheartbeats)
+const failedmessages = inject(key_Failedmessages)
+const failedcustomchecks = inject(key_Failedcustomchecks)
+
 </script>
 <template>
   <div class="row">

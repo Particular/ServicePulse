@@ -1,16 +1,54 @@
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
+import { key_ServiceControlUrl,  key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
+import Busy from "../Busy.vue"
+import { HighCode } from 'vue-highlight-code';
+import 'vue-highlight-code/dist/style.css';
 
-const configuredServiceControlUrl = inject("serviceControlUrl")
+const configuredServiceControlUrl = inject(key_ServiceControlUrl)
 
-const isPlatformExpired = inject("isPlatformExpired")
-const isPlatformTrialExpired = inject("isPlatformTrialExpired")
-const isInvalidDueToUpgradeProtectionExpired = inject("isInvalidDueToUpgradeProtectionExpired")
+const isPlatformExpired = inject(key_IsPlatformExpired)
+const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
+const isInvalidDueToUpgradeProtectionExpired = inject(key_IsInvalidDueToUpgradeProtectionExpired)
 
-const loading = ref(false)
+const loading = ref(true)
+const showCodeOnlyTab = ref(true)
+const jsonSnippet = ref('')
+const inlineSnippet = ref('')
+const jsonConfig = ref('')
+const queryErrors = ref('')
+
+function getCode() {
+    var snippetTemplate = 
+    `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
+
+    endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
+    `;
+
+    inlineSnippet.value = snippetTemplate;
+
+     jsonSnippet.value = 
+`var json = File.ReadAllText("<path-to-json-file>.json");
+var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
+endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
+`;
+}
+
+onMounted(() => {
+  getCode()
+  loading.value = false
+})
+
+function switchCodeOnlyTab() {
+    showCodeOnlyTab.value = true
+}
+
+function switchJsonTab() {
+    showCodeOnlyTab.value = false
+}
 
 </script>
 
@@ -40,46 +78,46 @@ const loading = ref(false)
                         <div class="col-sm-12">
                             
                             
-                            <busy v-show="loading" message="Loading platform connection settings"></busy>
+                            <Busy v-show="loading"></busy>
 
                             <!-- Nav tabs -->
-                            <!-- <div ng-show="!vm.loading" class="tabs" role="tablist">
-                                <h5 ng-class="{active: vm.showCodeOnlyTab}">
-                                    <a ng-click="vm.switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
+                            <div v-if="!loading" class="tabs" role="tablist">
+                                <h5 :class="{active: showCodeOnlyTab}">
+                                    <a @click="switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
                                 </h5>
-                                <h5 ng-class="{active: vm.showJsonTab}">
-                                    <a ng-click="vm.switchJsonTab()" class="ng-binding">JSON file</a>
+                                <h5 :class="{active: !showCodeOnlyTab}">
+                                    <a @click="switchJsonTab()" class="ng-binding">JSON file</a>
                                 </h5>
                             </div>
 
-                            <div ng-show="vm.queryErrors.length > 0 && !vm.loading" class="alert alert-warning" role="alert">
+                            <div v-if="queryErrors.length > 0 && !loading" class="alert alert-warning" role="alert">
                                 There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
-                                <ul>
+                                <!-- <ul>
                                     <li ng-repeat="error in vm.queryErrors">
                                         {{error}}
                                     </li>
-                                </ul>
+                                </ul> -->
                             </div>
                             
-                            <section ng-show="vm.showCodeOnlyTab && !vm.loading">
+                            <section v-if="showCodeOnlyTab && !loading">
                                 <div class="row">
                                     <div class="col-xs-12 no-side-padding">
-                                        <highlight text="vm.inlineSnippet" lang="csharp"></highlight>
+                                        <HighCode :codeValue="inlineSnippet" lang="csharp" :copy="true"></HighCode>
                                     </div>
                                 </div>
                             </section>
                         
-                            <section ng-show="vm.showJsonTab && !vm.loading">
+                            <section v-if="!showCodeOnlyTab && !loading">
                                 <div class="row">
                                     <div class="col-xs-12 no-side-padding">
                                         <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                                         <p><strong>Endpoint configuration:</strong></p>
-                                        <highlight text="vm.jsonSnippet" lang="csharp"></highlight>
+                                        <HighCode :codeValue="jsonSnippet" lang="csharp" :copy="true"></HighCode>
                                         <p><strong>JSON configuration file:</strong></p>
-                                        <highlight text="vm.json" lang="json"></highlight>
+                                        <HighCode :codeValue="jsonConfig" lang="json" :copy="true"></HighCode>
                                     </div>
                                 </div>
-                            </section> -->
+                            </section>
 
                         </div>
                     </div>

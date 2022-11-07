@@ -3,12 +3,14 @@ import { ref, provide, computed, onMounted } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
-import { useServiceControlUrls } from "./composables/serviceControlUrls.js";
+import { key_ServiceControlUrl, key_MonitoringUrl, key_UnableToConnectToServiceControl, key_UnableToConnectToMonitoring, key_IsSCConnecting, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_UpdateConnections, key_Failedheartbeats, key_Failedmessages, key_Failedcustomchecks, key_License, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired, key_IsExpired } from "./composables/keys.js"
+import { useServiceControlUrls, updateServiceControlUrls } from "./composables/serviceControlUrls.js";
 import { useServiceControl, failedCustomChecksCount, failedHeartBeatsCount, failedMessagesCount, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce } from "./composables/serviceControl.js";
 import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired, currentLicense } from "./composables/license.js";
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls(useRoute())
-provide("serviceControlUrl", serviceControlUrl)
+provide(key_ServiceControlUrl, serviceControlUrl)
+provide(key_MonitoringUrl, monitoringUrl)
 
 let isSCConnecting = ref(true)
 let isSCConnected = ref(false)
@@ -37,6 +39,10 @@ const isExpired = computed(() => {
   return isPlatformExpired.value || isPlatformTrialExpired.value || isInvalidDueToUpgradeProtectionExpired.value
 })
 
+function updateConnections(serviceControlUrl, monitoringUrl) {
+  updateServiceControlUrls(useRoute(), serviceControlUrl, monitoringUrl)
+}
+provide(key_UpdateConnections, updateConnections)
 
 setInterval( ()=> getServiceControl(), 5000) //NOTE is 5 seconds too often?
 
@@ -44,20 +50,20 @@ onMounted(() => {
   getServiceControl()
 })
 
-provide("failedheartbeats", failedHeartBeats)
-provide("failedmessages", failedMessages)
-provide("failedcustomchecks", failedCustomChecks)
-provide("unableToConnectToServiceControl", unableToConnectToServiceControl)
-provide("unableToConnectToMonitoring", unableToConnectToMonitoring)
-provide("isSCConnecting", isSCConnecting)
-provide("isSCConnected", isSCConnected)
-provide("scConnectedAtLeastOnce", scConnectedAtLeastOnce)
+provide(key_Failedheartbeats, failedHeartBeats)
+provide(key_Failedmessages, failedMessages)
+provide(key_Failedcustomchecks, failedCustomChecks)
+provide(key_UnableToConnectToServiceControl, unableToConnectToServiceControl)
+provide(key_UnableToConnectToMonitoring, unableToConnectToMonitoring)
+provide(key_IsSCConnecting, isSCConnecting)
+provide(key_IsSCConnected, isSCConnected)
+provide(key_ScConnectedAtLeastOnce, scConnectedAtLeastOnce)
 
-provide("license", license)
-provide("isPlatformExpired", isPlatformExpired)
-provide("isPlatformTrialExpired", isPlatformTrialExpired)
-provide("isInvalidDueToUpgradeProtectionExpired", isInvalidDueToUpgradeProtectionExpired)
-provide("isExpired", isExpired)
+provide(key_License, license)
+provide(key_IsPlatformExpired, isPlatformExpired)
+provide(key_IsPlatformTrialExpired, isPlatformTrialExpired)
+provide(key_IsInvalidDueToUpgradeProtectionExpired, isInvalidDueToUpgradeProtectionExpired)
+provide(key_IsExpired, isExpired)
 
 function getServiceControl() { 
   useServiceControl(serviceControlUrl.value, monitoringUrl.value)

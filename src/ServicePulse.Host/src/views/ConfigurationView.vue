@@ -7,13 +7,14 @@ import HealthCheckNotifications from '../components/configuration/HealthCheckNot
 import RetryRedirects from '../components/configuration/RetryRedirects.vue';
 import { useLicenseWarningLevel } from '../composables/license.js'
 import Exclamation from '../components/Exclamation.vue'
+import { key_UnableToConnectToServiceControl, key_UnableToConnectToMonitoring, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_License, key_IsExpired } from "./../composables/keys.js"
 
-const unableToConnectToServiceControl = inject("unableToConnectToServiceControl")
-const unableToConnectToMonitoring = inject("unableToConnectToMonitoring")
-const isSCConnected = inject("isSCConnected")
-const scConnectedAtLeastOnce = inject("scConnectedAtLeastOnce")
-const isExpired = inject("isExpired")
-const license = inject("license")
+const unableToConnectToServiceControl = inject(key_UnableToConnectToServiceControl)
+const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring)
+const isSCConnected = inject(key_IsSCConnected)
+const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce)
+const isExpired = inject(key_IsExpired)
+const license = inject(key_License)
 
 const routes = {
   '/license': License,
@@ -45,7 +46,7 @@ const currentView = computed(() => {
         <div class="tabs">
           <h5 :class="{active: subIsActive('#/license'), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}">
             <a href="#/license">License</a>
-            <Exclamation type="{{useLicenseWarningLevel}}" />
+            <Exclamation type="{{useLicenseWarningLevel(license.value.license_status)}}" />
           </h5>
           <h5 v-if="!isExpired" :class="{active: subIsActive('#/health-check-notifications'), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#/health-check-notifications">Health Check Notifications</a></h5>
           <h5 v-if="!isExpired" :class="{active: subIsActive('#/retry-redirects'), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#/retry-redirects">Retry Redirects</a></h5>

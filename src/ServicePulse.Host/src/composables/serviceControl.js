@@ -24,6 +24,7 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
   });
 }
 
+    
 function getFailedHeartBeatsCount(serviceControlUrl) {
     //const { data, error, retry } = useFetch(serviceControlUrl + 'heartbeats/stats')
 

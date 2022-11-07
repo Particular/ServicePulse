@@ -2,7 +2,7 @@ import { ref } from 'vue'
 
 export function useServiceControlUrls(urlParams) {
   const serviceControlUrl = ref('http://localhost:33333/api/') //TODO load these defaults from somewhere?
-  const monitoringUrl = ref('http://localhost:33633/api/')
+  const monitoringUrl = ref('http://localhost:33633/api/') //TODO load these defaults from somewhere?
  
   if (urlParams.scu) {
       serviceControlUrl.value = urlParams.scu;
@@ -33,4 +33,26 @@ export function useServiceControlUrls(urlParams) {
   }
 
   return { serviceControlUrl, monitoringUrl }
+}
+
+export function updateServiceControlUrls(urlParams, serviceControlUrl, monitoringUrl) {
+    if (!serviceControlUrl) {
+        throw 'ServiceControl URL is mandatory';
+    }
+
+    urlParams.scu = serviceControlUrl;
+
+    if (!monitoringUrl) {
+        monitoringUrl = '!'; //disabled
+    } 
+    
+    urlParams.mu = monitoringUrl;
+
+    //values have changed. They'll be reset after page reloads
+    window.localStorage.removeItem('scu');
+    window.localStorage.removeItem('mu');
+
+    let newSearch = urlParams.toString();
+    console.debug('updateConnections - new query string: ', newSearch);
+    window.location.search = newSearch;
 }

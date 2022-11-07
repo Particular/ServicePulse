@@ -1,10 +1,11 @@
 <script setup>
 import { inject } from "vue";
 import { RouterLink, useRoute } from "vue-router";
+import { key_Failedheartbeats,  key_Failedmessages, key_Failedcustomchecks } from "./../composables/keys.js"
 
-const failedheartbeats = inject("failedheartbeats")
-const failedmessages = inject("failedmessages")
-const failedcustomchecks = inject("failedcustomchecks")
+const failedheartbeats = inject(key_Failedheartbeats)
+const failedmessages = inject(key_Failedmessages)
+const failedcustomchecks = inject(key_Failedcustomchecks)
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];

@@ -1,10 +1,11 @@
 <script setup>
 import { inject } from "vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import { key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting } from "./../../composables/keys.js"
 
-const isSCConnected = inject("isSCConnected")
-const scConnectedAtLeastOnce = inject("scConnectedAtLeastOnce")
-const isSCConnecting = inject("isSCConnecting")
+const isSCConnected = inject(key_IsSCConnected)
+const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce)
+const isSCConnecting = inject(key_IsSCConnecting)
 
 </script>
 
