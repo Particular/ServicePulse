@@ -39,8 +39,8 @@ const isExpired = computed(() => {
   return isPlatformExpired.value || isPlatformTrialExpired.value || isInvalidDueToUpgradeProtectionExpired.value
 })
 
-function updateConnections(serviceControlUrl, monitoringUrl) {
-  updateServiceControlUrls(useRoute(), serviceControlUrl, monitoringUrl)
+function updateConnections(urlParams, serviceControlUrl, monitoringUrl) {
+  updateServiceControlUrls(urlParams, serviceControlUrl, monitoringUrl)
 }
 provide(key_UpdateConnections, updateConnections)
 

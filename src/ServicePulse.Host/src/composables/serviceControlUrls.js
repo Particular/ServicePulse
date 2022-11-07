@@ -35,24 +35,25 @@ export function useServiceControlUrls(urlParams) {
   return { serviceControlUrl, monitoringUrl }
 }
 
-export function updateServiceControlUrls(urlParams, serviceControlUrl, monitoringUrl) {
-    if (!serviceControlUrl) {
+export function updateServiceControlUrls(urlParams, newServiceControlUrl, newMonitoringUrl) {
+   //TODO
+    if (!newServiceControlUrl) {
         throw 'ServiceControl URL is mandatory';
     }
 
-    urlParams.scu = serviceControlUrl;
+    //urlParams.scu = newServiceControlUrl;
 
-    if (!monitoringUrl) {
-        monitoringUrl = '!'; //disabled
+    if (!newMonitoringUrl) {
+        newMonitoringUrl = '!'; //disabled
     } 
     
-    urlParams.mu = monitoringUrl;
+    //urlParams.mu = newMonitoringUrl;
 
     //values have changed. They'll be reset after page reloads
     window.localStorage.removeItem('scu');
     window.localStorage.removeItem('mu');
 
-    let newSearch = urlParams.toString();
-    console.debug('updateConnections - new query string: ', newSearch);
-    window.location.search = newSearch;
+    //let newSearch = urlParams.toString();
+    //console.debug('updateConnections - new query string: ', newSearch);
+    //window.location.search = newSearch;
 }

@@ -1,12 +1,14 @@
 <script setup>
 import { ref, inject } from "vue";
+import { useRoute } from "vue-router";
 import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
-import { key_ServiceControlUrl, key_MonitoringUrl, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
+import { key_ServiceControlUrl, key_MonitoringUrl, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired, key_UpdateConnections } from "./../../composables/keys.js"
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl)
 const configuredMonitoringUrl = inject(key_MonitoringUrl)
+const updateConnections = inject(key_UpdateConnections)
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -19,12 +21,11 @@ const testingMonitoring = ref(false)
 const monitoringValid = ref(false)
 
 const connectionSaved = ref(null)
-
+const urlParams = ref(useRoute())
 const serviceControlUrl = ref(configuredServiceControlUrl.value)
 const monitoringUrl = ref(configuredMonitoringUrl.value)
 
 function testServiceControlUrl(event) {
-    alert(`testServiceControlUrl!`)   
     if (event) {
         testingServiceControl.value = true
         return fetch(serviceControlUrl)
@@ -41,7 +42,6 @@ function testServiceControlUrl(event) {
 }
 
 function testMonitoringUrl(event) {
-    alert(`testMonitoringUrl!`)   
     if (event) {
         testingMonitoring.value = true
         return fetch(monitoringUrl.value + 'monitored-endpoints')
@@ -58,9 +58,9 @@ function testMonitoringUrl(event) {
 }
 
 function saveConnections(event) {
-    alert(`saveConnections!`)  
-    if (event) {
-        alert(event.target.tagName)  
+    if (event) {       
+        updateConnections(urlParams, serviceControlUrl, monitoringUrl)
+        connectionSaved.value = true
     }  
 }
 
