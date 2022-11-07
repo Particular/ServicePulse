@@ -54,7 +54,7 @@
 
         static IFileInfo FindFile(string path)
         {
-            var filePath = "app" + path.Replace('/', '\\');
+            var filePath = "dist" + path.Replace('/', '\\');
 
             var fileOnDisk = FileOnDiskFinder.FindFile(filePath);
             if (fileOnDisk != null)

@@ -18,6 +18,11 @@
                 context.Request.Path = new PathString("/index.html");
             }
 
+            if (context.Request.Path.ToString().Equals("/angular/"))
+            {
+                context.Request.Path = new PathString("/angular/index.html");
+            }
+
             return Next.Invoke(context);
         }
     }
