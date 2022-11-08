@@ -173,13 +173,12 @@ function getMonitoredEndpoints(monitoringUrl) {
 
     return fetch(monitoringUrl + 'monitored-endpoints?history=1')
     .then(response => {
-        //return response.json()
-        isServiceControlMonitoringConnected.value = true
+        return response.json()
     })
-    /* .then(json => {
+    .then(json => {
         isServiceControlMonitoringConnected.value = true
         return json
-    }) */
+    })
     .catch(err => {
         isServiceControlMonitoringConnected.value = false
         console.log(err)
