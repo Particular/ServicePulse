@@ -6,6 +6,8 @@ import { useServiceProductUrls } from "./serviceProductUrls.js"
 export const isServiceControlConnecting = ref(true)
 export const isServiceControlConnected = ref(false)
 export const serviceControlConnectedAtLeastOnce = ref(false)
+export const isServiceControlMonitoringConnecting = ref(true)
+export const isServiceControlMonitoringConnected = ref(false)
 export const stats = reactive({
     active_endpoints: 0,
     failing_endpoints: 0,
@@ -44,10 +46,10 @@ export const newVersions = reactive({
     }
 })
 
-export function useServiceControlStats(serviceControlUrl, monitoringUrl) {
+export function useServiceControlStats(serviceControlUrl) {
   const failedHeartBeatsResult = getFailedHeartBeatsCount(serviceControlUrl)
   const failedMessagesResult = getFailedMessagesCount(serviceControlUrl)
-  const failedCustomChecksResult = getFailedCustomChecksCount(serviceControlUrl)  
+  const failedCustomChecksResult = getFailedCustomChecksCount(serviceControlUrl)
 
   Promise
   .all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult])
@@ -60,7 +62,18 @@ export function useServiceControlStats(serviceControlUrl, monitoringUrl) {
   });
 }
 
-export function useServiceControlVersion(serviceControlUrl) {
+export function useServiceControlMonitoringStats(monitoringUrl) {
+    const monitoredEndpointsResult = getMonitoredEndpoints(monitoringUrl)
+  
+    Promise
+    .all([monitoredEndpointsResult])
+    .then((monitoredEP) => {
+      //Do something here with the monitoredEP in the future if we are using them
+      isServiceControlMonitoringConnecting.value = false
+    });
+  }
+
+export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
     return fetch(serviceControlUrl)
     .then(response => {
         environment.sc_version = response.headers.get('X-Particular-Version')
@@ -69,7 +82,7 @@ export function useServiceControlVersion(serviceControlUrl) {
     .then(json => {
         environment.supportsArchiveGroups = json.archived_groups_url &&  json.archived_groups_url.length > 0
         environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version)
-
+        
         useServiceProductUrls()
         .then(result => {
             if(result.latestSP && useIsUpgradeAvailable(environment.sp_version, result.latestSP.tag)) {
@@ -84,7 +97,15 @@ export function useServiceControlVersion(serviceControlUrl) {
                 newVersions.newSCVersion.newscversionnumber = result.latestSC.tag
             }
 
-            //TODO monitoring version!
+            return fetch(monitoringUrl)
+            .then(response => {
+                environment.monitoring_version = response.headers.get('X-Particular-Version')
+                if(result.latestSC && useIsUpgradeAvailable(environment.monitoring_version, result.latestSC.tag)) {
+                    newVersions.newMVersion.newmversion = true
+                    newVersions.newMVersion.newmversionlink = result.latestSC.release
+                    newVersions.newMVersion.newmversionnumber = result.latestSC.tag
+                }
+            })
         })
 
     })
@@ -93,7 +114,8 @@ export function useServiceControlVersion(serviceControlUrl) {
         console.log(err)
     });
 }
-    
+   
+
 function getFailedHeartBeatsCount(serviceControlUrl) {
     //const { data, error, retry } = useFetch(serviceControlUrl + 'heartbeats/stats')
 
@@ -143,5 +165,23 @@ function getFailedCustomChecksCount(serviceControlUrl) {
         isServiceControlConnected.value = false
         console.log(err)
         return Math.floor(Math.random()*(10-0+1)+0) //NOTE when done with testing change to return 0
+    });
+}
+
+function getMonitoredEndpoints(monitoringUrl) {
+    //const { data, error, retry } = useFetch(serviceControlUrl + 'heartbeats/stats')
+
+    return fetch(monitoringUrl + 'monitored-endpoints?history=1')
+    .then(response => {
+        //return response.json()
+        isServiceControlMonitoringConnected.value = true
+    })
+    /* .then(json => {
+        isServiceControlMonitoringConnected.value = true
+        return json
+    }) */
+    .catch(err => {
+        isServiceControlMonitoringConnected.value = false
+        console.log(err)
     });
 }

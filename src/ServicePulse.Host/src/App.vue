@@ -10,7 +10,9 @@ import { key_ServiceControlUrl, key_UnableToConnectToServiceControl, key_UnableT
   key_SPVersion, key_NewSPVersion, key_NewSPVersionLink, key_NewSPVersionNumber, 
   key_SCVersion, key_NewSCVersion, key_NewSCVersionLink, key_NewSCVersionNumber } from "./composables/keys.js"
 import { useServiceControlUrls, updateServiceControlUrls } from "./composables/serviceControlUrls.js";
-import { useServiceControlStats, useServiceControlVersion, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce, stats, environment, newVersions } from "./composables/serviceControl.js";
+import { useServiceControlStats, useServiceControlVersion, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce, 
+  useServiceControlMonitoringStats, isServiceControlMonitoringConnecting, isServiceControlMonitoringConnected, 
+  stats, environment, newVersions } from "./composables/serviceControl.js";
 import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired, currentLicense } from "./composables/license.js";
 
 //import { useServiceProductUrls } from "./composables/serviceProductUrls.js";
@@ -51,22 +53,31 @@ let failedCustomChecks = ref(null)
 let isSCConnecting = ref(true)
 let isSCConnected = ref(false)
 let scConnectedAtLeastOnce = ref(false)
-let isMonitoringEnabled = ref(false)
+
+let isSCMonitoringConnecting = ref(true)
 let isSCMonitoringConnected = ref(false)
-let isSCMonitoringConnecting = ref(false)
+let isMonitoringEnabled = computed(() => {
+  return monitoringUrl.value !== '!' 
+            && monitoringUrl.value !== ''
+            && monitoringUrl.value !== null
+            && monitoringUrl.value !== undefined; 
+})  
 const unableToConnectToServiceControl = computed(() => {
   return isSCConnecting.value ? false : !isSCConnected.value
 })  
-const unableToConnectToMonitoring = ref(false)
+const unableToConnectToMonitoring = computed(() => {
+  return isSCMonitoringConnecting.value ? false : !isSCMonitoringConnected.value
+})  
 
 function updateConnections(urlParams, serviceControlUrl, monitoringUrl) {
   updateServiceControlUrls(urlParams, serviceControlUrl, monitoringUrl)
 }
 
 setInterval( ()=> getServiceControlStats(), 5000) //NOTE is 5 seconds too often?
+setInterval( ()=> getServiceControlMonitoringStats(), 5000) //NOTE is 5 seconds too often?
 
 function getServiceControlStats() { 
-  useServiceControlStats(serviceControlUrl.value, monitoringUrl.value)
+  useServiceControlStats(serviceControlUrl.value)
   failedHeartBeats.value = stats.failing_endpoints
   failedMessages.value = stats.number_of_failed_messages
   failedCustomChecks.value = stats.number_of_failed_checks
@@ -74,6 +85,12 @@ function getServiceControlStats() {
   isSCConnected.value = isServiceControlConnected.value
   scConnectedAtLeastOnce.value = serviceControlConnectedAtLeastOnce.value  
 }
+function getServiceControlMonitoringStats() { 
+  useServiceControlMonitoringStats(monitoringUrl.value)  
+  isSCMonitoringConnecting.value = isServiceControlMonitoringConnecting.value
+  isSCMonitoringConnected.value = isServiceControlMonitoringConnected.value
+}
+
 provide(key_Failedheartbeats, failedHeartBeats)
 provide(key_Failedmessages, failedMessages)
 provide(key_Failedcustomchecks, failedCustomChecks)
@@ -104,7 +121,7 @@ let newmonitoringVersionNumber = ref(null)
 setInterval( ()=> getServiceControlVersions(), 5000)
 
 function getServiceControlVersions() {
-  useServiceControlVersion(serviceControlUrl.value)
+  useServiceControlVersion(serviceControlUrl.value, monitoringUrl.value)
   scVersion.value = environment.sc_version
   newSCVersion.value = newVersions.newSCVersion.newscversion
   newSCVersionLink.value = newVersions.newSCVersion.newscversionlink
@@ -132,8 +149,6 @@ provide(key_MonitoringVersion, monitoringVersion)
 provide(key_NewMonitoringVersion, newmonitoringVersion)
 provide(key_NewMonitoringVersionLink, newmonitoringVersionLink)
 provide(key_NewMonitoringVersionNumber, newmonitoringVersionNumber)
-
-
 
 </script>
 
