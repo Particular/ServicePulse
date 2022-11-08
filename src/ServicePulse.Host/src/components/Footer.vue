@@ -89,11 +89,3 @@ const scMonitoringAddressTooltip = computed(() => {
         </div>
     </footer>
 </template>
-
-<style>
-    footer { 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-    }  
-</style>
