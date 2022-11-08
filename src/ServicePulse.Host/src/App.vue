@@ -3,26 +3,22 @@ import { ref, provide, computed, onMounted } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
-import { key_ServiceControlUrl, key_MonitoringUrl, key_UnableToConnectToServiceControl, key_UnableToConnectToMonitoring, key_IsSCConnecting, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_UpdateConnections, key_Failedheartbeats, key_Failedmessages, key_Failedcustomchecks, key_License, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired, key_IsExpired } from "./composables/keys.js"
+import { key_ServiceControlUrl, key_UnableToConnectToServiceControl, key_UnableToConnectToMonitoring, key_IsSCConnecting, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_UpdateConnections, 
+  key_MonitoringUrl, key_IsMonitoringEnabled, key_IsSCMonitoringConnected, key_IsSCMonitoringConnecting, key_MonitoringVersion, key_NewMonitoringVersion, key_NewMonitoringVersionLink, key_NewMonitoringVersionNumber, 
+  key_Failedheartbeats, key_Failedmessages, key_Failedcustomchecks, 
+  key_License, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired, key_IsExpired,
+  key_SPVersion, key_NewSPVersion, key_NewSPVersionLink, key_NewSPVersionNumber, 
+  key_SCVersion, key_NewSCVersion, key_NewSCVersionLink, key_NewSCVersionNumber } from "./composables/keys.js"
 import { useServiceControlUrls, updateServiceControlUrls } from "./composables/serviceControlUrls.js";
-import { useServiceControl, failedCustomChecksCount, failedHeartBeatsCount, failedMessagesCount, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce } from "./composables/serviceControl.js";
+import { useServiceControlStats, useServiceControlVersion, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce, stats, environment, newVersions } from "./composables/serviceControl.js";
 import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired, currentLicense } from "./composables/license.js";
+
+//import { useServiceProductUrls } from "./composables/serviceProductUrls.js";
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls(useRoute())
 provide(key_ServiceControlUrl, serviceControlUrl)
 provide(key_MonitoringUrl, monitoringUrl)
 
-let isSCConnecting = ref(true)
-let isSCConnected = ref(false)
-let scConnectedAtLeastOnce = ref(false)
-const unableToConnectToServiceControl = computed(() => {
-  return isSCConnecting.value ? false : !isSCConnected.value
-})  
-
-const unableToConnectToMonitoring = ref(false)
-let failedHeartBeats = ref(null)
-let failedMessages = ref(null)
-let failedCustomChecks = ref(null)
 
 useLicense(serviceControlUrl.value)
 const license = ref(currentLicense)
@@ -38,18 +34,46 @@ const isInvalidDueToUpgradeProtectionExpired = computed(() => {
 const isExpired = computed(() => {
   return isPlatformExpired.value || isPlatformTrialExpired.value || isInvalidDueToUpgradeProtectionExpired.value
 })
+provide(key_License, license)
+provide(key_IsPlatformExpired, isPlatformExpired)
+provide(key_IsPlatformTrialExpired, isPlatformTrialExpired)
+provide(key_IsInvalidDueToUpgradeProtectionExpired, isInvalidDueToUpgradeProtectionExpired)
+provide(key_IsExpired, isExpired)
+
+
+onMounted(() => {
+  getServiceControlStats()
+})
+
+let failedHeartBeats = ref(null)
+let failedMessages = ref(null)
+let failedCustomChecks = ref(null)
+let isSCConnecting = ref(true)
+let isSCConnected = ref(false)
+let scConnectedAtLeastOnce = ref(false)
+let isMonitoringEnabled = ref(false)
+let isSCMonitoringConnected = ref(false)
+let isSCMonitoringConnecting = ref(false)
+const unableToConnectToServiceControl = computed(() => {
+  return isSCConnecting.value ? false : !isSCConnected.value
+})  
+const unableToConnectToMonitoring = ref(false)
 
 function updateConnections(urlParams, serviceControlUrl, monitoringUrl) {
   updateServiceControlUrls(urlParams, serviceControlUrl, monitoringUrl)
 }
-provide(key_UpdateConnections, updateConnections)
 
-setInterval( ()=> getServiceControl(), 5000) //NOTE is 5 seconds too often?
+setInterval( ()=> getServiceControlStats(), 5000) //NOTE is 5 seconds too often?
 
-onMounted(() => {
-  getServiceControl()
-})
-
+function getServiceControlStats() { 
+  useServiceControlStats(serviceControlUrl.value, monitoringUrl.value)
+  failedHeartBeats.value = stats.failing_endpoints
+  failedMessages.value = stats.number_of_failed_messages
+  failedCustomChecks.value = stats.number_of_failed_checks
+  isSCConnecting.value = isServiceControlConnecting.value
+  isSCConnected.value = isServiceControlConnected.value
+  scConnectedAtLeastOnce.value = serviceControlConnectedAtLeastOnce.value  
+}
 provide(key_Failedheartbeats, failedHeartBeats)
 provide(key_Failedmessages, failedMessages)
 provide(key_Failedcustomchecks, failedCustomChecks)
@@ -58,22 +82,58 @@ provide(key_UnableToConnectToMonitoring, unableToConnectToMonitoring)
 provide(key_IsSCConnecting, isSCConnecting)
 provide(key_IsSCConnected, isSCConnected)
 provide(key_ScConnectedAtLeastOnce, scConnectedAtLeastOnce)
+provide(key_UpdateConnections, updateConnections)
 
-provide(key_License, license)
-provide(key_IsPlatformExpired, isPlatformExpired)
-provide(key_IsPlatformTrialExpired, isPlatformTrialExpired)
-provide(key_IsInvalidDueToUpgradeProtectionExpired, isInvalidDueToUpgradeProtectionExpired)
-provide(key_IsExpired, isExpired)
+provide(key_IsMonitoringEnabled, isMonitoringEnabled)
+provide(key_IsSCMonitoringConnected, isSCMonitoringConnected)
+provide(key_IsSCMonitoringConnecting, isSCMonitoringConnecting)
 
-function getServiceControl() { 
-  useServiceControl(serviceControlUrl.value, monitoringUrl.value)
-  failedHeartBeats.value = failedHeartBeatsCount.value
-  failedMessages.value = failedMessagesCount.value
-  failedCustomChecks.value = failedCustomChecksCount.value
-  isSCConnecting.value = isServiceControlConnecting.value
-  isSCConnected.value = isServiceControlConnected.value
-  scConnectedAtLeastOnce.value = serviceControlConnectedAtLeastOnce.value  
+
+let scVersion = ref(null)
+let newSCVersion = ref(null)
+let newSCVersionLink = ref(null)
+let newSCVersionNumber = ref(null)
+let spVersion = ref(null)
+let newSPVersion = ref(null)
+let newSPVersionLink = ref(null)
+let newSPVersionNumber = ref(null)
+let monitoringVersion = ref(null)
+let newmonitoringVersion = ref(null)
+let newmonitoringVersionLink = ref(null)
+let newmonitoringVersionNumber = ref(null)
+setInterval( ()=> getServiceControlVersions(), 5000)
+
+function getServiceControlVersions() {
+  useServiceControlVersion(serviceControlUrl.value)
+  scVersion.value = environment.sc_version
+  newSCVersion.value = newVersions.newSCVersion.newscversion
+  newSCVersionLink.value = newVersions.newSCVersion.newscversionlink
+  newSCVersionNumber.value = newVersions.newSCVersion.newscversionnumber
+  
+  spVersion.value = environment.sp_version
+  newSPVersion.value = newVersions.newSPVersion.newspversion
+  newSPVersionLink.value = newVersions.newSPVersion.newspversionlink
+  newSPVersionNumber.value = newVersions.newSPVersion.newspversionnumber  
+
+  monitoringVersion.value = environment.monitoring_version
+  newmonitoringVersion.value = newVersions.newMVersion.newmversion
+  newmonitoringVersionLink.value = newVersions.newMVersion.newmversionlink
+  newmonitoringVersionNumber.value = newVersions.newMVersion.newmversionnumber  
 }
+provide(key_SCVersion, scVersion)
+provide(key_NewSCVersion, newSCVersion)
+provide(key_NewSCVersionLink, newSCVersionLink)
+provide(key_NewSCVersionNumber, newSCVersionNumber)
+provide(key_SPVersion, spVersion)
+provide(key_NewSPVersion, newSPVersion)
+provide(key_NewSPVersionLink, newSPVersionLink)
+provide(key_NewSPVersionNumber, newSPVersionNumber)
+provide(key_MonitoringVersion, monitoringVersion)
+provide(key_NewMonitoringVersion, newmonitoringVersion)
+provide(key_NewMonitoringVersionLink, newmonitoringVersionLink)
+provide(key_NewMonitoringVersionNumber, newmonitoringVersionNumber)
+
+
 
 </script>
 

@@ -19,7 +19,7 @@ const showCodeOnlyTab = ref(true)
 const jsonSnippet = ref('')
 const inlineSnippet = ref('')
 const jsonConfig = ref('')
-const queryErrors = ref('')
+const queryErrors = ref([])
 
 function getCode() {
     var snippetTemplate = 
@@ -92,17 +92,17 @@ function switchJsonTab() {
 
                             <div v-if="queryErrors.length > 0 && !loading" class="alert alert-warning" role="alert">
                                 There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
-                                <!-- <ul>
-                                    <li ng-repeat="error in vm.queryErrors">
+                                <ul>
+                                    <li v-for="error in queryErrors" :key="error">
                                         {{error}}
                                     </li>
-                                </ul> -->
+                                </ul>
                             </div>
                             
                             <section v-if="showCodeOnlyTab && !loading">
                                 <div class="row">
-                                    <div class="col-xs-12 no-side-padding">
-                                        <HighCode :codeValue="inlineSnippet" lang="csharp" :copy="true"></HighCode>
+                                    <div class="col-xs-12 no-side-padding">                                                                               
+                                        <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'50%'" :borderRadius="'0px'" :copy="true"></HighCode>                                        
                                     </div>
                                 </div>
                             </section>
@@ -112,9 +112,9 @@ function switchJsonTab() {
                                     <div class="col-xs-12 no-side-padding">
                                         <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                                         <p><strong>Endpoint configuration:</strong></p>
-                                        <HighCode :codeValue="jsonSnippet" lang="csharp" :copy="true"></HighCode>
+                                        <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
                                         <p><strong>JSON configuration file:</strong></p>
-                                        <HighCode :codeValue="jsonConfig" lang="json" :copy="true"></HighCode>
+                                        <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
                                     </div>
                                 </div>
                             </section>

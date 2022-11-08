@@ -3213,7 +3213,7 @@ a.remove-endpoint:hover i {
 }
 
 .pa-monitoring {
-    background-image: url('../../img/monitoring.svg');
+    background-image: url('../img/monitoring.svg');
     background-position: center;
     background-repeat: no-repeat;
     width: 16px;
