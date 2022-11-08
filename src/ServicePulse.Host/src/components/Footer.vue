@@ -72,7 +72,7 @@ const scMonitoringAddressTooltip = computed(() => {
                             <span class="monitoring-connected" :title="scMonitoringAddressTooltip">
                                 SC Monitoring:
                                 <span class="connected-status" v-if="isSCMonitoringConnected && !isSCMonitoringConnecting">
-                                    <div class="fa pa-connection-success"></div> <span v-show="monitoringVersion"> v{{monitoringVersion}}</span> <span v-show="monitoringNewVersion">(<i class="fa fa-level-up fake-link"></i> <a :href="monitoringNewVersionLink" target="_blank">v{{monitoringNewVersionNumber}} available</a>)</span>
+                                    <div class="fa pa-connection-success"></div> <span v-if="monitoringVersion"> v{{monitoringVersion}}</span> <span v-if="monitoringNewVersion">(<i class="fa fa-level-up fake-link"></i> <a :href="monitoringNewVersionLink" target="_blank">v{{monitoringNewVersionNumber}} available</a>)</span>
                                 </span>
                                 <span v-if="!isSCMonitoringConnected && !isSCMonitoringConnecting" class="connection-failed">
                                     <i class="fa pa-connection-failed"></i> Not connected
