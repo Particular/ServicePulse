@@ -1,14 +1,16 @@
 ﻿<script setup>
-import { ref, onMounted} from "vue";
+import {ref, onMounted, inject} from "vue";
 import { useRouter } from 'vue-router'
 import { getEventLogItems } from "../composables/eventLogItems.js";
 import moment from 'moment';
+import {key_ServiceControlUrl} from "@/composables/keys";
 
 const router = useRouter();
 const eventLogItems = ref([]);
 const eventCount = ref(0);
 onMounted(() => {
-  getEventLogItems().then(data => {
+  const serviceControlUrl = inject(key_ServiceControlUrl);
+  getEventLogItems(serviceControlUrl).then(data => {
     data.forEach(event => {
       // set date to moment date
       event.raised_at = moment(event.raised_at);
