@@ -13,17 +13,16 @@ import { useServiceControlUrls, updateServiceControlUrls } from "./composables/s
 import { useServiceControlStats, useServiceControlVersion, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce, 
   useServiceControlMonitoringStats, isServiceControlMonitoringConnecting, isServiceControlMonitoringConnected, 
   stats, environment, newVersions } from "./composables/serviceControl.js";
-import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired, currentLicense } from "./composables/license.js";
-
-//import { useServiceProductUrls } from "./composables/serviceProductUrls.js";
+import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired } from "./composables/license.js";
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls(useRoute())
 provide(key_ServiceControlUrl, serviceControlUrl)
 provide(key_MonitoringUrl, monitoringUrl)
 
-
-useLicense(serviceControlUrl.value)
-const license = ref(currentLicense)
+let license = ref(null)
+useLicense(serviceControlUrl.value).then( lic => {
+  license.value = lic.value
+})
 const isPlatformExpired = computed(() => {
   return license.value? useIsPlatformExpired(license.value.license_status) : false
 })

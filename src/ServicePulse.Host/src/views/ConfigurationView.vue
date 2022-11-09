@@ -44,7 +44,7 @@ const currentView = computed(() => {
   <div class="row">
     <div class="col-sm-12">
         <div class="tabs">
-          <h5 :class="{active: subIsActive('#/license'), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}">
+          <h5 :class="{active: subIsActive('#/license') || subIsActive(''), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}">
             <a href="#/license">License</a>
             <Exclamation :type="useLicenseWarningLevel(license.license_status)" />
           </h5>
