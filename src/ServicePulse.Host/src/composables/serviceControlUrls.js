@@ -1,9 +1,10 @@
 import { ref } from 'vue'
+import { } from "../../angular/app/js/app.constants.js"
 
-export function useServiceControlUrls(urlParams) {
-  const serviceControlUrl = ref('http://localhost:33333/api/') //TODO load these defaults from somewhere?
-  const monitoringUrl = ref('http://localhost:33633/') //TODO load these defaults from somewhere?
- 
+const serviceControlUrl = ref(null)
+const monitoringUrl = ref(null)
+
+export function useServiceControlUrls(urlParams) {   
   if (urlParams.scu) {
       serviceControlUrl.value = urlParams.scu;
       window.localStorage.setItem('scu', this.serviceControlUrl);
