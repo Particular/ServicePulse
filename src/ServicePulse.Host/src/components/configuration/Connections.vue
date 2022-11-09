@@ -61,8 +61,8 @@ function testMonitoringUrl(event) {
 }
 
 function saveConnections(event) {
-    if (event) {       
-        updateConnections(urlParams, serviceControlUrl, monitoringUrl)
+    if (event) {
+        updateConnections(urlParams.value, serviceControlUrl.value, monitoringUrl.value)
         connectionSaved.value = true
     }  
 }

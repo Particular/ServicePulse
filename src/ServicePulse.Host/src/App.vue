@@ -70,6 +70,8 @@ const unableToConnectToMonitoring = computed(() => {
 
 function updateConnections(urlParams, serviceControlUrl, monitoringUrl) {
   updateServiceControlUrls(urlParams, serviceControlUrl, monitoringUrl)
+  serviceControlUrl.value = serviceControlUrl
+  monitoringUrl.value = monitoringUrl
 }
 
 setInterval( ()=> getServiceControlStats(), 5000) //NOTE is 5 seconds too often?

@@ -4,9 +4,9 @@ import { } from "../../angular/app/js/app.constants.js"
 const serviceControlUrl = ref(null)
 const monitoringUrl = ref(null)
 
-export function useServiceControlUrls(urlParams) {   
-  if (urlParams.scu) {
-      serviceControlUrl.value = urlParams.scu;
+export function useServiceControlUrls(route) {   
+  if (route.query.scu) {
+      serviceControlUrl.value = route.query.scu;
       window.localStorage.setItem('scu', this.serviceControlUrl);
       console.debug(`ServiceControl Url found in QS and stored in local storage: ${serviceControlUrl.value}`);
   } else if (window.localStorage.getItem('scu')) {
@@ -19,8 +19,8 @@ export function useServiceControlUrls(urlParams) {
       console.warn('ServiceControl Url is not defined.');
   }
 
-  if (urlParams.mu) {
-      monitoringUrl.value = urlParams.mu;
+  if (route.query.mu) {
+      monitoringUrl.value = route.query.mu;
       window.localStorage.setItem('mu', this.monitoringUrl);
       console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
   } else if (window.localStorage.getItem('mu')) {
@@ -36,25 +36,25 @@ export function useServiceControlUrls(urlParams) {
   return { serviceControlUrl, monitoringUrl }
 }
 
-export function updateServiceControlUrls(urlParams, newServiceControlUrl, newMonitoringUrl) {
+export function updateServiceControlUrls(route, newServiceControlUrl, newMonitoringUrl) {
    //TODO
     if (!newServiceControlUrl) {
         throw 'ServiceControl URL is mandatory';
     }
 
-    //urlParams.scu = newServiceControlUrl;
+    route.query['scu'] = newServiceControlUrl;
 
     if (!newMonitoringUrl) {
         newMonitoringUrl = '!'; //disabled
     } 
     
-    //urlParams.mu = newMonitoringUrl;
+    route.query['mu'] = newServiceControlUrl;
 
     //values have changed. They'll be reset after page reloads
     window.localStorage.removeItem('scu');
     window.localStorage.removeItem('mu');
 
-    //let newSearch = urlParams.toString();
-    //console.debug('updateConnections - new query string: ', newSearch);
-    //window.location.search = newSearch;
+    let newSearch = route.query.fullPath
+    console.debug('updateConnections - new query string: ', newSearch);
+    window.location.search = newSearch;
 }
