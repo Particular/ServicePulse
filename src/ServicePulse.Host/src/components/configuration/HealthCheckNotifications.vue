@@ -2,7 +2,11 @@
 </script>
 
 <template>
-    <h2>HealthCheckNotifications</h2>
+    <div class="box">
+        <div class="row">
+            <h2>HealthCheckNotifications</h2>
+        </div>
+    </div>    
 </template>
 
 <style>

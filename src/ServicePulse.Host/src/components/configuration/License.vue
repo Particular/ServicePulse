@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, computed } from "vue";
 import { key_IsSCConnected, key_IsSCConnecting, key_ScConnectedAtLeastOnce, key_License } from "./../../composables/keys.js"
 import { useIsSubscriptionLicense, useIsExpired, useIsExpiring, useIsValid, useIsUpgradeProtectionLicense, useLicenseWarningLevel, useUpgradeDaysLeft, useExpirationDaysLeft } from "./../../composables/license.js"
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -25,83 +25,79 @@ const expirationDaysLeft = ref(useExpirationDaysLeft(license.value.expiration_da
 const formattedExpirationDate = ref(license.value.formattedExpirationDate)
 const formattedUpgradeProtectionExpiration = ref(license.value.formattedUpgradeProtectionExpiration)
 
-const loading=ref(false)
+const loading = computed( () => { return !license } )
 </script>
 
 <template>
-    <div class="container">
-        <section name="license">
+    <section name="license">
 
-            <div class="sp-loader" v-if="isSCConnecting"></div>
-            <ServiceControlNotAvailable :isSCConnected="isSCConnected" :isSCConnecting="isSCConnecting" :scConnectedAtLeastOnce="scConnectedAtLeastOnce" />
+        <div class="sp-loader" v-if="isSCConnecting"></div>
+        <ServiceControlNotAvailable :isSCConnected="isSCConnected" :isSCConnecting="isSCConnecting" :scConnectedAtLeastOnce="scConnectedAtLeastOnce" />
 
-            <template v-if="isSCConnected || scConnectedAtLeastOnce">
-                <section>
-                    <Busy v-show="loading"></busy>
+        <template v-if="isSCConnected || scConnectedAtLeastOnce">
+            <section>
+                <Busy v-if="loading"></busy>
 
-                    <template v-if="!loading">
-                        <div class="col-sm-12">
-                            <div class="box">
-                                <div class="row">
-                                    <div class="license-info">
+                <template v-if="!loading">
+                    <div class="box">
+                        <div class="row">
+                            <div class="license-info">
 
-                                        <div><b>Platform license type:</b> {{license.license_type}}{{licenseEdition}}</div>
+                                <div><b>Platform license type:</b> {{license.license_type}}{{licenseEdition}}</div>
 
-                                        <template v-if="isSubscriptionLicense || isTrialLicense">
-                                            <div>
-                                                <b>License expiry date: </b>
-                                                <span :class="{ 'license-expired': isExpired}">
-                                                    {{formattedExpirationDate}} {{expirationDaysLeft}}
-                                                    <Exclamation :type="expiredWarningType" />
-                                                </span>
-                                                <div class="license-expired-text" v-if="isExpired && isSubscriptionLicense">
-                                                    Your license expired. Please update the license to continue using the Particular Service Platform.
-                                                </div>
-                                                <div class="license-expired-text" v-if="isExpired && isTrialLicense">
-                                                    Your license expired. To continue using the Particular Service Platform you'll need to extend your license.
-                                                </div>
-                                                <div class="license-page-extend-trial" v-if="isTrialLicense && (isExpiring || isExpired)">
-                                                    <a class="btn btn-default btn-primary" href="https://particular.net/extend-your-trial?p=servicepulse" target="_blank">Extend your license&nbsp;&nbsp;<i class="fa fa-external-link"></i></a>
-                                                </div>
-                                            </div>
-                                        </template>
-                                        <template v-if="isUpgradeProtectionLicense">
-                                            <div>
-                                                <span>
-                                                    <b>Upgrade protection expiry date:</b>
-                                                    <span :class="{ 'license-expired' : !isValid }">
-                                                        {{formattedUpgradeProtectionExpiration}} {{upgradeDaysLeft}}
-                                                        <Exclamation :type="expiredWarningType" />
-                                                    </span>
-                                                </span>
-                                                <div class="license-expired-text"
-                                                    v-if="isValid && (isExpiring || isExpired)">
-                                                    <b>Warning:</b> Once upgrade protection expires, you'll no longer have access to support or new product versions.
-                                                </div>
-                                                <div class="license-expired-text" v-if="!isValid">
-                                                    Your license upgrade protection expired before this version of ServicePulse was released.
-                                                </div>
-                                            </div>
-                                        </template>
-                                        <div><b>ServiceControl instance:</b> {{instanceName}}</div>
-                                        <ul class="license-install-info">
-                                            <li><a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a></li>
-                                        </ul>
-
-                                        <div class="need-help">
-                                            Need help? <a href="https://particular.net/contactus">Contact us</a> <i class="fa fa-external-link fake-link"></i>
+                                <template v-if="isSubscriptionLicense || isTrialLicense">
+                                    <div>
+                                        <b>License expiry date: </b>
+                                        <span :class="{ 'license-expired': isExpired}">
+                                            {{formattedExpirationDate}} {{expirationDaysLeft}}
+                                            <Exclamation :type="expiredWarningType" />
+                                        </span>
+                                        <div class="license-expired-text" v-if="isExpired && isSubscriptionLicense">
+                                            Your license expired. Please update the license to continue using the Particular Service Platform.
                                         </div>
-                                        
+                                        <div class="license-expired-text" v-if="isExpired && isTrialLicense">
+                                            Your license expired. To continue using the Particular Service Platform you'll need to extend your license.
+                                        </div>
+                                        <div class="license-page-extend-trial" v-if="isTrialLicense && (isExpiring || isExpired)">
+                                            <a class="btn btn-default btn-primary" href="https://particular.net/extend-your-trial?p=servicepulse" target="_blank">Extend your license&nbsp;&nbsp;<i class="fa fa-external-link"></i></a>
+                                        </div>
                                     </div>
+                                </template>
+                                <template v-if="isUpgradeProtectionLicense">
+                                    <div>
+                                        <span>
+                                            <b>Upgrade protection expiry date:</b>
+                                            <span :class="{ 'license-expired' : !isValid }">
+                                                {{formattedUpgradeProtectionExpiration}} {{upgradeDaysLeft}}
+                                                <Exclamation :type="expiredWarningType" />
+                                            </span>
+                                        </span>
+                                        <div class="license-expired-text"
+                                            v-if="isValid && (isExpiring || isExpired)">
+                                            <b>Warning:</b> Once upgrade protection expires, you'll no longer have access to support or new product versions.
+                                        </div>
+                                        <div class="license-expired-text" v-if="!isValid">
+                                            Your license upgrade protection expired before this version of ServicePulse was released.
+                                        </div>
+                                    </div>
+                                </template>
+                                <div><b>ServiceControl instance:</b> {{instanceName}}</div>
+                                <ul class="license-install-info">
+                                    <li><a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a></li>
+                                </ul>
+
+                                <div class="need-help">
+                                    Need help? <a href="https://particular.net/contactus">Contact us</a> <i class="fa fa-external-link fake-link"></i>
                                 </div>
+                                
                             </div>
                         </div>
-                    </template>
-                </section>
-            </template>
-            
-        </section>
-    </div>
+                    </div>                  
+                </template>
+            </section>
+        </template>
+        
+    </section>
 </template>
 
 <style>

@@ -57,74 +57,72 @@ function switchJsonTab() {
     <PlatformTrialExpired :isPlatformTrialExpired="isPlatformTrialExpired" />
     <PlatformProtectionExpired :isInvalidDueToUpgradeProtectionExpired="isInvalidDueToUpgradeProtectionExpired" />
 
-    <div class="container" v-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
-        <section name="platformconnection">
-            <div class="col-sm-12">
-                <div class="box">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <h3>Connect an endpoint to ServiceControl</h3>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <ol>
-                                <li>Add the <a href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/">NServiceBus.ServicePlatform.Connector</a> NuGet package to the endpoint project.</li>
-                                <li>Copy-paste the code from one of the options below. For additional options, refer to the <a href="https://docs.particular.net/platform/connecting">documentation></a></li>
-                            </ol>
-                        </div>
-                    </div>
-                    <div class="row tabs-config-snippets">
-                        <div class="col-sm-12">
-                            
-                            
-                            <Busy v-show="loading"></busy>
-
-                            <!-- Nav tabs -->
-                            <div v-if="!loading" class="tabs" role="tablist">
-                                <h5 :class="{active: showCodeOnlyTab}">
-                                    <a @click="switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
-                                </h5>
-                                <h5 :class="{active: !showCodeOnlyTab}">
-                                    <a @click="switchJsonTab()" class="ng-binding">JSON file</a>
-                                </h5>
-                            </div>
-
-                            <div v-if="queryErrors.length > 0 && !loading" class="alert alert-warning" role="alert">
-                                There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
-                                <ul>
-                                    <li v-for="error in queryErrors" :key="error">
-                                        {{error}}
-                                    </li>
-                                </ul>
-                            </div>
-                            
-                            <section v-if="showCodeOnlyTab && !loading">
-                                <div class="row">
-                                    <div class="col-xs-12 no-side-padding">                                                                               
-                                        <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'50%'" :borderRadius="'0px'" :copy="true"></HighCode>                                        
-                                    </div>
-                                </div>
-                            </section>
-                        
-                            <section v-if="!showCodeOnlyTab && !loading">
-                                <div class="row">
-                                    <div class="col-xs-12 no-side-padding">
-                                        <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
-                                        <p><strong>Endpoint configuration:</strong></p>
-                                        <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
-                                        <p><strong>JSON configuration file:</strong></p>
-                                        <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
-                                    </div>
-                                </div>
-                            </section>
-
-                        </div>
+    <template v-if="!isPlatformTrialExpired && !isPlatformExpired && !isInvalidDueToUpgradeProtectionExpired">
+        <section name="platformconnection">            
+            <div class="box">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3>Connect an endpoint to ServiceControl</h3>
                     </div>
                 </div>
-            </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ol>
+                            <li>Add the <a href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/">NServiceBus.ServicePlatform.Connector</a> NuGet package to the endpoint project.</li>
+                            <li>Copy-paste the code from one of the options below. For additional options, refer to the <a href="https://docs.particular.net/platform/connecting">documentation></a></li>
+                        </ol>
+                    </div>
+                </div>
+                <div class="row tabs-config-snippets">
+                    <div class="col-sm-12">
+                        
+                        
+                        <Busy v-show="loading"></busy>
+
+                        <!-- Nav tabs -->
+                        <div v-if="!loading" class="tabs" role="tablist">
+                            <h5 :class="{active: showCodeOnlyTab}">
+                                <a @click="switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
+                            </h5>
+                            <h5 :class="{active: !showCodeOnlyTab}">
+                                <a @click="switchJsonTab()" class="ng-binding">JSON file</a>
+                            </h5>
+                        </div>
+
+                        <div v-if="queryErrors.length > 0 && !loading" class="alert alert-warning" role="alert">
+                            There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
+                            <ul>
+                                <li v-for="error in queryErrors" :key="error">
+                                    {{error}}
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <section v-if="showCodeOnlyTab && !loading">
+                            <div class="row">
+                                <div class="col-xs-12 no-side-padding">                                                                               
+                                    <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'50%'" :borderRadius="'0px'" :copy="true"></HighCode>                                        
+                                </div>
+                            </div>
+                        </section>
+                    
+                        <section v-if="!showCodeOnlyTab && !loading">
+                            <div class="row">
+                                <div class="col-xs-12 no-side-padding">
+                                    <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
+                                    <p><strong>Endpoint configuration:</strong></p>
+                                    <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
+                                    <p><strong>JSON configuration file:</strong></p>
+                                    <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+            </div>            
         </section>
-    </div>
+    </template>
 </template>
 
 <style>

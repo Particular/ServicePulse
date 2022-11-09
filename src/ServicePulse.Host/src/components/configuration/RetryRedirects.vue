@@ -10,14 +10,16 @@ const isSCConnecting = inject(key_IsSCConnecting)
 </script>
 
 <template>
-    <h2>RetryRedirects</h2>
-        
     <div class="sp-loader" v-if="isSCConnecting"></div>
     <ServiceControlNotAvailable :isSCConnected="isSCConnected" :isSCConnecting="isSCConnecting" :scConnectedAtLeastOnce="scConnectedAtLeastOnce" />
 
     <template v-if="isSCConnected || scConnectedAtLeastOnce">
         <section>
-            <span>connected!</span>
+            <div class="box">
+                <div class="row">
+                    <h2>RetryRedirects</h2>
+                </div>
+            </div>
             <!-- <busy v-show="vm.loadingData" message="fetching more redirects"></busy>
 
             <div class="row">
