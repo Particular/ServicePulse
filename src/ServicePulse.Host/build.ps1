@@ -2,6 +2,7 @@
 New-Item -ItemType Directory -Force -Path dist
 
 cd vue
+npm install
 npm run build
 
 cd ..\angular
