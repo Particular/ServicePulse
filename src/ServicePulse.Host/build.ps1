@@ -6,4 +6,6 @@ npm run build
 
 cd ..\angular
 npm run load
-Copy-Item -Path "app\*" -Destination "..\dist\angular" -recurse -Force
+Get-Location
+New-Item -ItemType Directory -Force -Path "..\dist\angular"
+Copy-Item -Path ".\app\*" -Destination "..\dist\angular" -Recurse -Force
