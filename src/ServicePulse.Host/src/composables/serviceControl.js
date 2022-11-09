@@ -1,6 +1,7 @@
 import { ref, reactive } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js"
 import { useServiceProductUrls } from "./serviceProductUrls.js"
+import { } from "../../angular/app/js/app.constants.js"
 //import { useFetch } from "./fetch.js";
 
 export const isServiceControlConnecting = ref(true)
@@ -24,7 +25,7 @@ export const environment = reactive({
     sc_version: "",
     minimum_supported_sc_version: "1.39.0",
     is_compatible_with_sc: true,
-    sp_version: "1.32.4", //TODO where do we get this from?
+    sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "1.1.0",
     supportsArchiveGroups: false
 });
 
