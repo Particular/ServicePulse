@@ -41,50 +41,48 @@ const scMonitoringAddressTooltip = computed(() => {
 <template>
     <footer class="footer">
         <div class="container">
-            <div class="row">
-                <!-- <template v-if="spVersion"> -->
-                    <div class="connectivity-status">
-                        <span>
-                            <i class="fa fa-plus sp-blue"></i>
-                            <a href="configuration#/endpoint-connection">Connect new endpoint</a>
-                        </span>
+            <div class="row">                
+                <div class="connectivity-status">
+                    <span>
+                        <i class="fa fa-plus sp-blue"></i>
+                        <a href="configuration#/endpoint-connection">Connect new endpoint</a>
+                    </span>
 
-                        <span v-if="!spNewVersion && spVersion">
-                            ServicePulse v{{spVersion}}
+                    <span v-if="!spNewVersion && spVersion">
+                        ServicePulse v{{spVersion}}
+                    </span>
+                    <span v-if="spNewVersion && spVersion">
+                        ServicePulse v{{spVersion}} (<i v-if="spNewVersionNumber" class="fa fa-level-up fake-link"></i> <a :href="spNewVersionLink" target="_blank">v{{spNewVersionNumber}} available</a>)
+                    </span>
+                    <span :title="scAddressTooltip">
+                        Service Control:
+                        <span class="connected-status" v-if="isSCConnected && !isSCConnecting">
+                            <div class="fa pa-connection-success"></div> <span v-if="!scVersion">Connected</span> <span v-if="scVersion" class="versionnumber">v{{scVersion}}</span> <span v-if="scNewVersion" class="newscversion">(<i class="fa fa-level-up fake-link"></i> <a :href="scNewVersionLink" target="_blank">v{{scNewVersionNumber}} available</a>)</span>
                         </span>
-                        <span v-if="spNewVersion && spVersion">
-                            ServicePulse v{{spVersion}} (<i v-if="spNewVersionNumber" class="fa fa-level-up fake-link"></i> <a :href="spNewVersionLink" target="_blank">v{{spNewVersionNumber}} available</a>)
+                        <span v-if="!isSCConnected && !isSCConnecting" class="connection-failed">
+                            <i class="fa pa-connection-failed"></i> Not connected
                         </span>
-                        <span :title="scAddressTooltip">
-                            Service Control:
-                            <span class="connected-status" v-if="isSCConnected && !isSCConnecting">
-                                <div class="fa pa-connection-success"></div> <span v-if="!scVersion">Connected</span> <span v-if="scVersion" class="versionnumber">v{{scVersion}}</span> <span v-if="scNewVersion" class="newscversion">(<i class="fa fa-level-up fake-link"></i> <a :href="scNewVersionLink" target="_blank">v{{scNewVersionNumber}} available</a>)</span>
+                        <span v-if="isSCConnecting" class="connection-establishing">
+                            <i class="fa pa-connection-establishing"></i> Connecting
+                        </span>
+                    </span>
+
+                    <template v-if="isMonitoringEnabled">
+                        <span class="monitoring-connected" :title="scMonitoringAddressTooltip">
+                            SC Monitoring:
+                            <span class="connected-status" v-if="isSCMonitoringConnected && !isSCMonitoringConnecting">
+                                <div class="fa pa-connection-success"></div> <span v-if="monitoringVersion"> v{{monitoringVersion}}</span> <span v-if="monitoringNewVersion">(<i class="fa fa-level-up fake-link"></i> <a :href="monitoringNewVersionLink" target="_blank">v{{monitoringNewVersionNumber}} available</a>)</span>
                             </span>
-                            <span v-if="!isSCConnected && !isSCConnecting" class="connection-failed">
+                            <span v-if="!isSCMonitoringConnected && !isSCMonitoringConnecting" class="connection-failed">
                                 <i class="fa pa-connection-failed"></i> Not connected
                             </span>
-                            <span v-if="isSCConnecting" class="connection-establishing">
+                            <span v-if="isSCMonitoringConnecting" class="connection-establishing">
                                 <i class="fa pa-connection-establishing"></i> Connecting
                             </span>
                         </span>
-
-                        <template v-if="isMonitoringEnabled">
-                            <span class="monitoring-connected" :title="scMonitoringAddressTooltip">
-                                SC Monitoring:
-                                <span class="connected-status" v-if="isSCMonitoringConnected && !isSCMonitoringConnecting">
-                                    <div class="fa pa-connection-success"></div> <span v-if="monitoringVersion"> v{{monitoringVersion}}</span> <span v-if="monitoringNewVersion">(<i class="fa fa-level-up fake-link"></i> <a :href="monitoringNewVersionLink" target="_blank">v{{monitoringNewVersionNumber}} available</a>)</span>
-                                </span>
-                                <span v-if="!isSCMonitoringConnected && !isSCMonitoringConnecting" class="connection-failed">
-                                    <i class="fa pa-connection-failed"></i> Not connected
-                                </span>
-                                <span v-if="isSCMonitoringConnecting" class="connection-establishing">
-                                    <i class="fa pa-connection-establishing"></i> Connecting
-                                </span>
-                            </span>
-                        </template>
-                       
-                    </div>
-                <!-- </template> -->
+                    </template>
+                    
+                </div>
             </div>
         </div>
     </footer>
