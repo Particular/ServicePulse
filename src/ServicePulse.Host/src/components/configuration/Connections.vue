@@ -10,6 +10,9 @@ const configuredServiceControlUrl = inject(key_ServiceControlUrl)
 const configuredMonitoringUrl = inject(key_MonitoringUrl)
 const updateConnections = inject(key_UpdateConnections)
 
+const serviceControlUrl = ref(configuredServiceControlUrl.value)
+const monitoringUrl = ref(configuredMonitoringUrl.value)
+
 const unableToConnectToServiceControl = inject(key_UnableToConnectToServiceControl)
 const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring)
 
@@ -25,8 +28,6 @@ const monitoringValid = ref(null)
 
 const connectionSaved = ref(null)
 const urlParams = ref(useRoute())
-const serviceControlUrl = ref(configuredServiceControlUrl.value)
-const monitoringUrl = ref(configuredMonitoringUrl.value)
 
 function testServiceControlUrl(event) {
     if (event) {

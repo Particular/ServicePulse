@@ -4,10 +4,14 @@ import { } from "../../angular/app/js/app.constants.js"
 const serviceControlUrl = ref(null)
 const monitoringUrl = ref(null)
 
-export function useServiceControlUrls(route) {   
-  if (route.query.scu) {
-      serviceControlUrl.value = route.query.scu;
-      window.localStorage.setItem('scu', this.serviceControlUrl);
+export function useServiceControlUrls() {
+  const params = getParams() 
+  const scu = getParameter(params, 'scu')
+  const mu = getParameter(params, 'mu')
+
+  if (scu) {
+      serviceControlUrl.value = scu.value;
+      window.localStorage.setItem('scu', serviceControlUrl.value);
       console.debug(`ServiceControl Url found in QS and stored in local storage: ${serviceControlUrl.value}`);
   } else if (window.localStorage.getItem('scu')) {
       serviceControlUrl.value = window.localStorage.getItem('scu');
@@ -19,9 +23,9 @@ export function useServiceControlUrls(route) {
       console.warn('ServiceControl Url is not defined.');
   }
 
-  if (route.query.mu) {
-      monitoringUrl.value = route.query.mu;
-      window.localStorage.setItem('mu', this.monitoringUrl);
+  if (mu) {
+      monitoringUrl.value = mu.value;
+      window.localStorage.setItem('mu', monitoringUrl.value);
       console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
   } else if (window.localStorage.getItem('mu')) {
       monitoringUrl.value = window.localStorage.getItem('mu');
@@ -37,24 +41,42 @@ export function useServiceControlUrls(route) {
 }
 
 export function updateServiceControlUrls(route, newServiceControlUrl, newMonitoringUrl) {
-   //TODO
     if (!newServiceControlUrl) {
         throw 'ServiceControl URL is mandatory';
     }
 
-    route.query['scu'] = newServiceControlUrl;
-
     if (!newMonitoringUrl) {
         newMonitoringUrl = '!'; //disabled
-    } 
-    
-    route.query['mu'] = newServiceControlUrl;
+    }    
 
     //values have changed. They'll be reset after page reloads
     window.localStorage.removeItem('scu');
     window.localStorage.removeItem('mu');
 
-    let newSearch = route.query.fullPath
+    let newSearch = '?scu=' +  newServiceControlUrl + '&mu=' + newMonitoringUrl
     console.debug('updateConnections - new query string: ', newSearch);
     window.location.search = newSearch;
+}
+
+function getParams() {
+    if(!window.location.search) return params
+
+    var searchParams = window.location.search.split('&')
+    var params = []
+    searchParams.forEach( p=> {
+        p = p.startsWith('?') ? p.substring(1, p.length) : p;
+        const singleParam = p.split('=')
+        params.push( { name:singleParam[0], value:singleParam[1] })
+    })
+    return params
+}
+
+function getParameter(params, key) {
+    if(params) {
+        return params.find(param => {
+            return param.name === key
+        })
+    }
+
+    return undefined
 }

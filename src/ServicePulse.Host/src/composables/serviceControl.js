@@ -60,6 +60,10 @@ export function useServiceControlStats(serviceControlUrl) {
     stats.number_of_failed_checks = failedCC
 
     isServiceControlConnecting.value = false
+  })
+  .catch(err => {
+    console.log(err)(err)
+    isServiceControlConnecting.value = false
   });
 }
 

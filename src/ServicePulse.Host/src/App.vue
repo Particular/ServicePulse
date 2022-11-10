@@ -1,6 +1,6 @@
 <script setup>
 import { ref, provide, computed, onMounted } from "vue";
-import { RouterView, useRoute } from "vue-router";
+import { RouterView } from "vue-router";
 import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
 import { key_ServiceControlUrl, key_UnableToConnectToServiceControl, key_UnableToConnectToMonitoring, key_IsSCConnecting, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_UpdateConnections, 
@@ -15,7 +15,7 @@ import { useServiceControlStats, useServiceControlVersion, isServiceControlConne
   stats, environment, newVersions } from "./composables/serviceControl.js";
 import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired } from "./composables/license.js";
 
-const { serviceControlUrl, monitoringUrl } = useServiceControlUrls(useRoute())
+const { serviceControlUrl, monitoringUrl } = useServiceControlUrls()
 provide(key_ServiceControlUrl, serviceControlUrl)
 provide(key_MonitoringUrl, monitoringUrl)
 
@@ -68,10 +68,10 @@ const unableToConnectToMonitoring = computed(() => {
   return isSCMonitoringConnecting.value ? false : !isSCMonitoringConnected.value
 })  
 
-function updateConnections(urlParams, serviceControlUrl, monitoringUrl) {
-  updateServiceControlUrls(urlParams, serviceControlUrl, monitoringUrl)
-  serviceControlUrl.value = serviceControlUrl
-  monitoringUrl.value = monitoringUrl
+function updateConnections(urlParams, newServiceControlUrl, newMonitoringUrl) {
+  updateServiceControlUrls(urlParams, newServiceControlUrl, newMonitoringUrl)
+  //serviceControlUrl.value = newServiceControlUrl
+  //monitoringUrl.value = newMonitoringUrl
 }
 
 setInterval( ()=> getServiceControlStats(), 5000) //NOTE is 5 seconds too often?

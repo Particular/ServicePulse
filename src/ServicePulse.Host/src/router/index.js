@@ -5,9 +5,13 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
+      path: "/dashboard",
       name: "dashboard",
       component: DashboardView,
+    },
+    {
+      path: "/",
+      redirect: "/dashboard",
     },
     {
       path: "/configuration",
@@ -18,6 +22,7 @@ const router = createRouter({
       component: () => import("../views/ConfigurationView.vue"),
     },
   ],
+  strict: false
 });
 
 export default router;
