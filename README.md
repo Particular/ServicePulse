@@ -7,7 +7,7 @@ Keep track of the health of your system's endpoints, monitor for any processing 
 
 ## Setting up the project for development
 
-ServicePulse is in the proces of migrating from AngularJS to Vue.js, during both frameworks are used to server parts of the application. In development environment process AngularJS and Vue.js http servers are run side-by-side behind reverse proxy. This enalbes acessing both applications from the same domain i.e. `localhost:1331` where uri prefixed with `/angular/` are served by AngularJS and rest is handled by Vue.js. This mimics the production deployment where Vue.js application is deployed in the main folder and AngularJS in `/angular/` subfolders. 
+ServicePulse is in the proces of migrating from AngularJS to Vue.js, during both frameworks are used to server parts of the application. In development environment process AngularJS and Vue.js http servers are run side-by-side behind reverse proxy. This enalbes acessing both applications from the same domain i.e. `localhost:1331` where uri prefixed with `/a/` are served by AngularJS and rest is handled by Vue.js. This mimics the production deployment where Vue.js application is deployed in the main folder and AngularJS in `/a/` subfolders. 
 
 ```mermaid
 graph LR
@@ -22,7 +22,7 @@ graph LR
   end
 
   Browser --> Nginx[Nginx<br>Reverse Proxy]
-  Nginx -- http://host.docker.internal:5174/angular/ --> AngularJs[AngularJS<br> Development Server]
+  Nginx -- http://host.docker.internal:5174/a/ --> AngularJs[AngularJS<br> Development Server]
   Nginx -- http://host.docker.internal:5173 --> VueJs[Vue.js<br> Development Server]
 
   AngularJs --> ScMonitoring[Monitoring Instance]
