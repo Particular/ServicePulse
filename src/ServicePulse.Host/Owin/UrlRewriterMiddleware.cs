@@ -5,17 +5,29 @@
     using global::Microsoft.Owin;
     using global::Owin;
 
-    public class IndexUrlRewriterMiddleware : OwinMiddleware
+    public class UrlRewriterMiddleware : OwinMiddleware
     {
-        public IndexUrlRewriterMiddleware(OwinMiddleware next) : base(next)
+        public UrlRewriterMiddleware(OwinMiddleware next) : base(next)
         {
         }
 
         public override Task Invoke(IOwinContext context)
         {
-            if (context.Request.Path.ToString().Equals("/"))
+            var requestPath = context.Request.Path.ToString();
+
+            if (requestPath.Equals("/"))
             {
                 context.Request.Path = new PathString("/index.html");
+            }
+
+            if (requestPath.Equals("/a/"))
+            {
+                context.Request.Path = new PathString("/a/index.html");
+            }
+
+            if (requestPath.StartsWith("/a/js/app.constants.js"))
+            {
+                context.Request.Path = new PathString("/js/app.constants.js");
             }
 
             return Next.Invoke(context);
@@ -36,7 +48,7 @@
             {
                 throw new ArgumentNullException(nameof(builder));
             }
-            return builder.Use<IndexUrlRewriterMiddleware>();
+            return builder.Use<UrlRewriterMiddleware>();
         }
     }
 }

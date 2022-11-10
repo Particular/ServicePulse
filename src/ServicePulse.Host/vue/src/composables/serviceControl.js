@@ -1,7 +1,8 @@
 import { ref, reactive } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js"
 import { useServiceProductUrls } from "./serviceProductUrls.js"
-import { } from "../../angular/app/js/app.constants.js"
+import { } from "../../public/js/app.constants.js"
+//import { useFetch } from "./fetch.js";
 
 export const isServiceControlConnecting = ref(true)
 export const isServiceControlConnected = ref(false)
