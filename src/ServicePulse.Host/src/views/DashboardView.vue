@@ -1,12 +1,8 @@
 <script setup>
 import DashboardItem from "../components/DashboardItem.vue";
-import {inject} from "vue";
 import EventItemShort from "../components/EventItemShort.vue"
-import { key_Failedheartbeats,  key_Failedmessages, key_Failedcustomchecks } from "./../composables/keys.js"
+import { stats } from "./../composables/serviceControl.js"
 
-const failedheartbeats = inject(key_Failedheartbeats)
-const failedmessages = inject(key_Failedmessages)
-const failedcustomchecks = inject(key_Failedcustomchecks)
 
 </script>
 <template>
@@ -24,13 +20,13 @@ const failedcustomchecks = inject(key_Failedcustomchecks)
           <div class="col-sm-12">
             <div class="row">
               <div class="col-xs-4">
-                <DashboardItem :counter="failedheartbeats" :url="'/endpoints'" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
+                <DashboardItem :counter="stats.number_of_failed_heartbeats" :url="'/endpoints'" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
               </div>
               <div class="col-xs-4">
-                <DashboardItem :counter="failedmessages" :url="'/failed-messages/groups'" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
+                <DashboardItem :counter="stats.number_of_failed_messages" :url="'/failed-messages/groups'" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
               </div>
               <div class="col-xs-4">
-                <DashboardItem :counter="failedcustomchecks" :url="'/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
+                <DashboardItem :counter="stats.number_of_failed_checks" :url="'/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
               </div>
             </div>
           </div>
