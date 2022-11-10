@@ -5,7 +5,6 @@ import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
 import { key_ServiceControlUrl, key_UnableToConnectToServiceControl, key_UnableToConnectToMonitoring, key_IsSCConnecting, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_UpdateConnections, 
   key_MonitoringUrl, key_IsMonitoringEnabled, key_IsSCMonitoringConnected, key_IsSCMonitoringConnecting, key_MonitoringVersion, key_NewMonitoringVersion, key_NewMonitoringVersionLink, key_NewMonitoringVersionNumber, 
-  key_Failedheartbeats, key_Failedmessages, key_Failedcustomchecks, 
   key_License, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired, key_IsExpired,
   key_SPVersion, key_NewSPVersion, key_NewSPVersionLink, key_NewSPVersionNumber, 
   key_SCVersion, key_NewSCVersion, key_NewSCVersionLink, key_NewSCVersionNumber } from "./composables/keys.js"
@@ -47,9 +46,6 @@ onMounted(() => {
   getServiceControlMonitoringStats()
 })
 
-let failedHeartBeats = ref(null)
-let failedMessages = ref(null)
-let failedCustomChecks = ref(null)
 let isSCConnecting = ref(true)
 let isSCConnected = ref(false)
 let scConnectedAtLeastOnce = ref(false)
@@ -78,9 +74,6 @@ setInterval( ()=> getServiceControlMonitoringStats(), 5000) //NOTE is 5 seconds 
 
 function getServiceControlStats() { 
   useServiceControlStats(serviceControlUrl.value).then(()=> {
-    failedHeartBeats.value = stats.failing_endpoints
-    failedMessages.value = stats.number_of_failed_messages
-    failedCustomChecks.value = stats.number_of_failed_checks
     isSCConnecting.value = isServiceControlConnecting.value
     isSCConnected.value = isServiceControlConnected.value
     scConnectedAtLeastOnce.value = serviceControlConnectedAtLeastOnce.value  
@@ -94,9 +87,6 @@ function getServiceControlMonitoringStats() {
   })    
 }
 
-provide(key_Failedheartbeats, failedHeartBeats)
-provide(key_Failedmessages, failedMessages)
-provide(key_Failedcustomchecks, failedCustomChecks)
 provide(key_UnableToConnectToServiceControl, unableToConnectToServiceControl)
 provide(key_UnableToConnectToMonitoring, unableToConnectToMonitoring)
 provide(key_IsSCConnecting, isSCConnecting)
