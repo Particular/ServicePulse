@@ -20,12 +20,12 @@
                 context.Request.Path = new PathString("/index.html");
             }
 
-            if (requestPath.Equals("/angular/"))
+            if (requestPath.Equals("/a/"))
             {
-                context.Request.Path = new PathString("/angular/index.html");
+                context.Request.Path = new PathString("/a/index.html");
             }
 
-            if (requestPath.StartsWith("/angular/js/app.constants.js"))
+            if (requestPath.StartsWith("/a/js/app.constants.js"))
             {
                 context.Request.Path = new PathString("/js/app.constants.js");
             }
