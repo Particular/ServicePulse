@@ -14,6 +14,7 @@ export const stats = reactive({
     number_of_exception_groups: 0,
     number_of_failed_messages: 0,
     number_of_failed_checks: 0,
+    number_of_failed_heartbeats: 0,
     number_of_archived_messages: 0,
     number_of_pending_retries: 0,
     number_of_endpoints: 0
@@ -57,6 +58,7 @@ export function useServiceControlStats(serviceControlUrl) {
     stats.failing_endpoints = failedHB
     stats.number_of_failed_messages = failedM
     stats.number_of_failed_checks = failedCC
+    stats.number_of_failed_heartbeats = failedHB
 
     isServiceControlConnecting.value = false
   })

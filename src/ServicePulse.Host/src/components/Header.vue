@@ -1,11 +1,6 @@
 <script setup>
-import { inject } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { key_Failedheartbeats,  key_Failedmessages, key_Failedcustomchecks } from "./../composables/keys.js"
-
-const failedheartbeats = inject(key_Failedheartbeats)
-const failedmessages = inject(key_Failedmessages)
-const failedcustomchecks = inject(key_Failedcustomchecks)
+import { stats } from "./../composables/serviceControl.js";
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];
@@ -37,7 +32,7 @@ function subIsActive(input, exact) {
               <a href="/a/endpoints">
                 <i class="fa fa-heartbeat icon-white"></i>
                 <span class="navbar-label">Heartbeats</span>
-                <span v-if="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats}}</span>
+                <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important ">{{stats.number_of_failed_heartbeats}}</span>
               </a>
             </li>
             <li :class="{ active: (subIsActive('/a/monitoring') || subIsActive('/a/monitoring/endpoint')) }">
@@ -50,14 +45,14 @@ function subIsActive(input, exact) {
               <a href="/a/failed-messages/groups">
                 <i class="fa fa-envelope icon-white"></i>
                 <span class="navbar-label">Failed Messages</span>
-                <span v-if="failedmessages > 0" class="badge badge-important ">{{failedmessages}}</span>
+                <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important ">{{stats.number_of_failed_messages}}</span>
               </a>
             </li>
             <li :class="{ active: subIsActive('/a/custom-checks') }">
               <a href="/a/custom-checks">
                 <i class="fa fa-check icon-white"></i>
                 <span class="navbar-label">Custom Checks</span>
-                <span v-if="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks}}</span>
+                <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important ">{{stats.number_of_failed_checks}}</span>
               </a>
             </li>
             <li :class="{ active: subIsActive('/a/events') }">
