@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { } from "../../public/app/js/app.constants.js"
+import { } from "../../public/js/app.constants.js"
 
 const serviceControlUrl = ref(null)
 const monitoringUrl = ref(null)

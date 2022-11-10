@@ -1,4 +1,4 @@
-﻿namespace ServicePulse.Host.Owin
+namespace ServicePulse.Host.Owin
 {
     using System;
     using System.IO;
@@ -54,7 +54,7 @@
 
         static IFileInfo FindFile(string path)
         {
-            var filePath = "dist" + path.Replace('/', '\\');
+            var filePath = "app" + path.Replace('/', '\\');
 
             var fileOnDisk = FileOnDiskFinder.FindFile(filePath);
             if (fileOnDisk != null)

@@ -23,7 +23,7 @@ export default defineConfig({
         }
     },
     build: {
-        outDir: "../dist",
+        outDir: "../app",
         emptyOutDir: true,
         rollupOptions: {
             external: []

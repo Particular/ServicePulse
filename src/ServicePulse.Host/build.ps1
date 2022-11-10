@@ -1,5 +1,5 @@
-﻿Get-ChildItem -Path dist -Include *.* -File -Recurse | foreach { $_.Delete()}
-New-Item -ItemType Directory -Force -Path dist
+﻿Get-ChildItem -Path "app" -Include *.* -File -Recurse | foreach { $_.Delete()}
+New-Item -ItemType Directory -Force -Path "app"
 
 cd vue
 npm install
@@ -8,5 +8,5 @@ npm run build
 cd ..\angular
 npm run load
 Get-Location
-New-Item -ItemType Directory -Force -Path "..\dist\angular"
-Copy-Item -Path ".\app\*" -Destination "..\dist\angular" -Recurse -Force
+New-Item -ItemType Directory -Force -Path "..\app\angular"
+Copy-Item -Path ".\app\*" -Destination "..\app\angular" -Recurse -Force

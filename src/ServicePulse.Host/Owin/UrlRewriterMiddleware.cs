@@ -27,7 +27,7 @@
 
             if (requestPath.StartsWith("/angular/js/app.constants.js"))
             {
-                context.Request.Path = new PathString("/app/js/app.constants.js");
+                context.Request.Path = new PathString("/js/app.constants.js");
             }
 
             return Next.Invoke(context);
