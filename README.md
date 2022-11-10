@@ -56,18 +56,25 @@ Install the following dependencies if you don't have them installed yet
 #### Set development environment
 
 
- - run `nginx` that stiches together `angular` and `vue` spas using
+- Run Nginx reverse proxy
+  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
+  - run `nginx` that stiches together `angular` and `vue` spas using
  ```cmd
  > docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
  ```
-
- - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
- - run `npm install` to install all the npm dependencies
- - run the following command `npm run dev`. This script will use webpack configuration to finish ServicePulse's required configuration, start watching root folder for changes, and it will host a dev server on port 8080
+- Run AngularJS development server 
+  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host\angular` path
+  - run `npm install` to install all the npm dependencies
+  - run the following command `npm run dev`. This will host a dev server on port 5174 and start watching for changes in `/angular` directory
  
+- Run AngularJS development server 
+  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host\vue` path
+  - run `npm install` to install all the npm dependencies
+  - run the following command `npm run dev`. This will host a dev server on port 5173 and start watching for changes in `/vue` directory
+
 In case `npm run dev` fails with an error related to git submodule not properly configured, run the `npm install` command again to ensure all required dependencies are available, and then run `npm run dev`.
 
-After doing the above steps one can open Visual Studio or your IDE of choice and continue working on this project. The site will be served for debugging at `http://localhost:8080`.
+After doing the above steps one can open `http://localhost:1331` to see ServicePulse application.
 
 #### Provided npm scripts
  - `test` - runs js tests in ServicePulse.Host.Test project
