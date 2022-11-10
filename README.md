@@ -93,7 +93,6 @@ After doing the above steps one can open `http://localhost:1331` to see ServiceP
 NOTE:
 Webpack observes files and updates the artifacts whenever they are changed, however at the moment not every bit of code is processed by webpack. Only monitoring and configuration is.
 
-
 ### Configuring automated tests
 
 For information how to run automated tests please follow [ServicePulse.Host.Tests/Readme](https://github.com/Particular/ServicePulse/blob/master/src/ServicePulse.Host.Tests/README.md).
@@ -102,6 +101,13 @@ For information how to run automated tests please follow [ServicePulse.Host.Test
 
 It is possible to run ServicePulse directly via ServicePulse.Host.exe. As part of the ServicePulse.Host.csproj build process both angular and vue applications and bundled in to the exe file as embedded resources.
 
+### Powershell Execution Policy
+
+ServicePulse.Host uses Powershell to run Angular and Vue build scripts. In order to make this work make sure to enable Powershell script execution by executing:
+
+```cmd
+Set-ExecutionPoicy Unrestricted
+```
 ### URL ACL Reservation
 
 ServicePulse.Host.exe depends on a self-hosted webserver. In order to start the project a URL ACL reservation needs to be setup. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
