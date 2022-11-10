@@ -57,7 +57,7 @@ Install the following dependencies if you don't have them installed yet
 
 
 - Run Nginx reverse proxy
-  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
+  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path (make sure you are using cmd, not PowerShell)
   - run `nginx` that stiches together `angular` and `vue` spas using
  ```cmd
  > docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
@@ -67,7 +67,7 @@ Install the following dependencies if you don't have them installed yet
   - run `npm install` to install all the npm dependencies
   - run the following command `npm run dev`. This will host a dev server on port 5174 and start watching for changes in `/angular` directory
  
-- Run AngularJS development server 
+- Run Vue development server 
   - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host\vue` path
   - run `npm install` to install all the npm dependencies
   - run the following command `npm run dev`. This will host a dev server on port 5173 and start watching for changes in `/vue` directory
