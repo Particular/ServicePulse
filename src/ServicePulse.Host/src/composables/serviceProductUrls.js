@@ -1,6 +1,3 @@
-//import { ref } from 'vue'
-//import { useIsUpgradeAvailable } from "./serviceSemVer.js"
-
 export function useServiceProductUrls() {
     const spURL = 'https://platformupdate.particular.net/servicepulse.txt'
     const scURL = 'https://platformupdate.particular.net/servicecontrol.txt'

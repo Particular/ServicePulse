@@ -41,9 +41,10 @@ provide(key_IsPlatformTrialExpired, isPlatformTrialExpired)
 provide(key_IsInvalidDueToUpgradeProtectionExpired, isInvalidDueToUpgradeProtectionExpired)
 provide(key_IsExpired, isExpired)
 
-
 onMounted(() => {
+  getServiceControlVersions()
   getServiceControlStats()
+  getServiceControlMonitoringStats()
 })
 
 let failedHeartBeats = ref(null)
@@ -70,26 +71,27 @@ const unableToConnectToMonitoring = computed(() => {
 
 function updateConnections(urlParams, newServiceControlUrl, newMonitoringUrl) {
   updateServiceControlUrls(urlParams, newServiceControlUrl, newMonitoringUrl)
-  //serviceControlUrl.value = newServiceControlUrl
-  //monitoringUrl.value = newMonitoringUrl
 }
 
 setInterval( ()=> getServiceControlStats(), 5000) //NOTE is 5 seconds too often?
 setInterval( ()=> getServiceControlMonitoringStats(), 5000) //NOTE is 5 seconds too often?
 
 function getServiceControlStats() { 
-  useServiceControlStats(serviceControlUrl.value)
-  failedHeartBeats.value = stats.failing_endpoints
-  failedMessages.value = stats.number_of_failed_messages
-  failedCustomChecks.value = stats.number_of_failed_checks
-  isSCConnecting.value = isServiceControlConnecting.value
-  isSCConnected.value = isServiceControlConnected.value
-  scConnectedAtLeastOnce.value = serviceControlConnectedAtLeastOnce.value  
+  useServiceControlStats(serviceControlUrl.value).then(()=> {
+    failedHeartBeats.value = stats.failing_endpoints
+    failedMessages.value = stats.number_of_failed_messages
+    failedCustomChecks.value = stats.number_of_failed_checks
+    isSCConnecting.value = isServiceControlConnecting.value
+    isSCConnected.value = isServiceControlConnected.value
+    scConnectedAtLeastOnce.value = serviceControlConnectedAtLeastOnce.value  
+  })
+
 }
 function getServiceControlMonitoringStats() { 
-  useServiceControlMonitoringStats(monitoringUrl.value)  
-  isSCMonitoringConnecting.value = isServiceControlMonitoringConnecting.value
-  isSCMonitoringConnected.value = isServiceControlMonitoringConnected.value
+  useServiceControlMonitoringStats(monitoringUrl.value).then( ()=> {
+    isSCMonitoringConnecting.value = isServiceControlMonitoringConnecting.value
+    isSCMonitoringConnected.value = isServiceControlMonitoringConnected.value
+  })    
 }
 
 provide(key_Failedheartbeats, failedHeartBeats)
@@ -119,24 +121,26 @@ let monitoringVersion = ref(null)
 let newmonitoringVersion = ref(null)
 let newmonitoringVersionLink = ref(null)
 let newmonitoringVersionNumber = ref(null)
-setInterval( ()=> getServiceControlVersions(), 5000)
+
+setInterval( ()=> getServiceControlVersions(), 60000)//NOTE is this often enough or too often?
 
 function getServiceControlVersions() {
-  useServiceControlVersion(serviceControlUrl.value, monitoringUrl.value)
-  scVersion.value = environment.sc_version
-  newSCVersion.value = newVersions.newSCVersion.newscversion
-  newSCVersionLink.value = newVersions.newSCVersion.newscversionlink
-  newSCVersionNumber.value = newVersions.newSCVersion.newscversionnumber
-  
-  spVersion.value = environment.sp_version
-  newSPVersion.value = newVersions.newSPVersion.newspversion
-  newSPVersionLink.value = newVersions.newSPVersion.newspversionlink
-  newSPVersionNumber.value = newVersions.newSPVersion.newspversionnumber  
+  useServiceControlVersion(serviceControlUrl.value, monitoringUrl.value).then( () => {
+    scVersion.value = environment.sc_version
+    newSCVersion.value = newVersions.newSCVersion.newscversion
+    newSCVersionLink.value = newVersions.newSCVersion.newscversionlink
+    newSCVersionNumber.value = newVersions.newSCVersion.newscversionnumber
+    
+    spVersion.value = environment.sp_version
+    newSPVersion.value = newVersions.newSPVersion.newspversion
+    newSPVersionLink.value = newVersions.newSPVersion.newspversionlink
+    newSPVersionNumber.value = newVersions.newSPVersion.newspversionnumber  
 
-  monitoringVersion.value = environment.monitoring_version
-  newmonitoringVersion.value = newVersions.newMVersion.newmversion
-  newmonitoringVersionLink.value = newVersions.newMVersion.newmversionlink
-  newmonitoringVersionNumber.value = newVersions.newMVersion.newmversionnumber  
+    monitoringVersion.value = environment.monitoring_version
+    newmonitoringVersion.value = newVersions.newMVersion.newmversion
+    newmonitoringVersionLink.value = newVersions.newMVersion.newmversionlink
+    newmonitoringVersionNumber.value = newVersions.newMVersion.newmversionnumber  
+  })
 }
 provide(key_SCVersion, scVersion)
 provide(key_NewSCVersion, newSCVersion)
