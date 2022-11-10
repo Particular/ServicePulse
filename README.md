@@ -22,29 +22,21 @@ graph LR
   end
 
   Browser --> Nginx[Nginx<br>Reverse Proxy]
-  Nginx -- http://host.docker.internal:8080/angular/ --> AngularJs[AngularJS<br> Development Server]
+  Nginx -- http://host.docker.internal:5174/angular/ --> AngularJs[AngularJS<br> Development Server]
   Nginx -- http://host.docker.internal:5173 --> VueJs[Vue.js<br> Development Server]
 
   AngularJs --> ScMonitoring[Monitoring Instance]
-  AngularJs --> ScError[Error Instance]
+  AngularJs --> ScError[Main Instance]
 
   VueJs --> ScMonitoring
   VueJs --> ScError
 ```
-### Setting up ServiceControl Error and ServiceControl Monitoring instances
+### Setting up ServiceControl Main and ServiceControl Monitoring instances
 
 ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl) and [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring) instances.
 
+The URLs for both services can be set in `ServicePulse.Host/vue/public/app/js/app.constants.js` under the constant `scConfig`.
 
-~The URLs for both services can be set in `ServicePulse.Host/app/js/app.constants.js` under the constant `scConfig`.~ <-- TODO: this needs to be updated
-
-#### URL ACL Reservation
-
-ServicePulse depends on a self-hosted webserver. In order to start the project a URL ACL reservation needs to be setup. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
-
-```
-netsh http add urlacl url=http://+:8081/ user=Everyone
-```
 
 ### Setting up package manager
 
@@ -66,7 +58,7 @@ Install the following dependencies if you don't have them installed yet
 
  - run `nginx` that stiches together `angular` and `vue` spas using
  ```cmd
- >docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
+ > docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
  ```
 
  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
@@ -99,6 +91,17 @@ Webpack observes files and updates the artifacts whenever they are changed, howe
 
 For information how to run automated tests please follow [ServicePulse.Host.Tests/Readme](https://github.com/Particular/ServicePulse/blob/master/src/ServicePulse.Host.Tests/README.md).
 
+## Running from ServicePulse.Host.exe
+
+It is possible to run ServicePulse directly via ServicePulse.Host.exe. As part of the ServicePulse.Host.csproj build process both angular and vue applications and bundled in to the exe file as embedded resources.
+
+### URL ACL Reservation
+
+ServicePulse.Host.exe depends on a self-hosted webserver. In order to start the project a URL ACL reservation needs to be setup. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
+
+```
+netsh http add urlacl url=http://+:8081/ user=Everyone
+```
 ## Supported browser versions
 
 ServicePulse is supported on the following desktop browser versions:
