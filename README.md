@@ -106,7 +106,7 @@ It is possible to run ServicePulse directly via ServicePulse.Host.exe. As part o
 ServicePulse.Host uses Powershell to run Angular and Vue build scripts. In order to make this work make sure to enable Powershell script execution by executing:
 
 ```cmd
-Set-ExecutionPoicy Unrestricted
+Set-ExecutionPolicy Unrestricted
 ```
 ### URL ACL Reservation
 
