@@ -3,12 +3,14 @@ import { ref, inject, onMounted } from "vue";
 import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
-import { key_ServiceControlUrl,  key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
+import { key_ServiceControlUrl, key_MonitoringUrl, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
+import { useServiceControlConnections } from "./../../composables/serviceControl.js"
 import Busy from "../Busy.vue"
 import { HighCode } from 'vue-highlight-code';
 import 'vue-highlight-code/dist/style.css';
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl)
+const configuredMonitoringUrl = inject(key_MonitoringUrl)
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -22,24 +24,42 @@ const jsonConfig = ref('')
 const queryErrors = ref([])
 
 function getCode() {
+    loading.value = true
+
     var snippetTemplate = 
     `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
 
     endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
-    `;
-
-    inlineSnippet.value = snippetTemplate;
+    `;    
 
      jsonSnippet.value = 
 `var json = File.ReadAllText("<path-to-json-file>.json");
 var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
+    useServiceControlConnections(configuredServiceControlUrl.value, configuredMonitoringUrl.value).then( connections => {
+        const config = {
+            heartbeats: connections.serviceControl.settings.Heartbeats,
+            customChecks: connections.serviceControl.settings.CustomChecks,
+            errorQueue: connections.serviceControl.settings.ErrorQueue,
+            metrics: connections.monitoring.settings
+        }
+        var jsonText = JSON.stringify(config, null, 4);
+        jsonConfig.value = jsonText;
+
+        jsonText = jsonText.replaceAll('"', '""');
+        inlineSnippet.value = snippetTemplate.replace('<json>', jsonText);
+
+        queryErrors.value = []
+        queryErrors.value = queryErrors.value.concat(connections.serviceControl.errors || []);
+        queryErrors.value = queryErrors.value.concat(connections.monitoring.errors || []);
+        
+        loading.value = false
+    })
 }
 
 onMounted(() => {
-  getCode()
-  loading.value = false
+  getCode()  
 })
 
 function switchCodeOnlyTab() {
@@ -101,7 +121,7 @@ function switchJsonTab() {
                         <section v-if="showCodeOnlyTab && !loading">
                             <div class="row">
                                 <div class="col-xs-12 no-side-padding">                                                                               
-                                    <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'50%'" :borderRadius="'0px'" :copy="true"></HighCode>                                        
+                                    <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'440px'" :borderRadius="'0px'" :copy="true"></HighCode>                                        
                                 </div>
                             </div>
                         </section>
@@ -111,9 +131,9 @@ function switchJsonTab() {
                                 <div class="col-xs-12 no-side-padding">
                                     <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                                     <p><strong>Endpoint configuration:</strong></p>
-                                    <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
+                                    <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'130px'" :borderRadius="'0px'" :copy="true"></HighCode>
                                     <p><strong>JSON configuration file:</strong></p>
-                                    <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :borderRadius="'0px'" :copy="true"></HighCode>
+                                    <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :height="'390px'" :borderRadius="'0px'" :copy="true"></HighCode>
                                 </div>
                             </div>
                         </section>

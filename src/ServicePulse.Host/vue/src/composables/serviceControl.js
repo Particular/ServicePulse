@@ -27,7 +27,16 @@ export const environment = reactive({
     minimum_supported_sc_version: "1.39.0",
     is_compatible_with_sc: true,
     sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "1.1.0",
-    supportsArchiveGroups: false
+    supportsArchiveGroups: false,
+    endpoints_error_url: "",
+    known_endpoints_url: "",
+    endpoints_message_search_url: "",
+    endpoints_messages_url: "",
+    endpoints_url: "",
+    errors_url: "",
+    configuration: "",
+    message_search_url: "",
+    sagas_url: ""
 });
 
 export const newVersions = reactive({
@@ -45,6 +54,17 @@ export const newVersions = reactive({
         newmversion:false,
         newmversionlink: "",
         newmversionnumber:""
+    }
+})
+
+export const connections = reactive({
+    serviceControl: {
+        settings:{},
+        errors: []        
+    },
+    monitoring: {
+        settings:{},
+        errors: []
     }
 })
 
@@ -80,6 +100,26 @@ export function useServiceControlMonitoringStats(monitoringUrl) {
     });
   }
 
+export function useServiceControlConnections(serviceControlUrl, monitoringUrl) {
+    const scConnectionResult = getSCConnection(serviceControlUrl)
+    const monitoringConnectionResult = getMonitoringConnection(monitoringUrl)
+
+    return Promise
+    .all([scConnectionResult, monitoringConnectionResult])
+    .then(([scConnection, mConnection]) => {
+        if(scConnection) {
+            connections.serviceControl.settings = scConnection.settings
+            connections.serviceControl.errors = scConnection.errors
+        }
+
+        if(mConnection) {
+            connections.monitoring.settings = mConnection.Metrics
+        }
+
+        return connections
+    })
+}
+
 export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
     const productsResult = useServiceProductUrls()
     const scResult = getSCVersion(serviceControlUrl)
@@ -90,6 +130,15 @@ export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
     .then(([products, scVer, mVer]) => {
         environment.supportsArchiveGroups = scVer.archived_groups_url &&  scVer.archived_groups_url.length > 0
         environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version)
+        environment.endpoints_error_url = scVer.endpoints_error_url
+        environment.known_endpoints_url = scVer.known_endpoints_url
+        environment.endpoints_message_search_url = scVer.endpoints_message_search_url
+        environment.endpoints_messages_url = scVer.endpoints_messages_url
+        environment.endpoints_url = scVer.endpoints_url
+        environment.errors_url = scVer.errors_url
+        environment.configuration = scVer.configuration
+        environment.message_search_url = scVer.message_search_url
+        environment.sagas_url = scVer.sagas_url
 
         if(products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
             newVersions.newSPVersion.newspversion = true
@@ -109,6 +158,28 @@ export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
             newVersions.newMVersion.newmversionnumber = products.latestSC.tag
         }
     });   
+}
+
+function getSCConnection(serviceControlUrl) {
+    return fetch(serviceControlUrl + 'connection')
+    .then(response => {
+        return response.json()
+    }) 
+    .catch(err => {
+        connections.serviceControl.errors = ["Error reaching ServiceControl at " + serviceControlUrl + "connection"]
+        return {}
+    });
+}
+
+function getMonitoringConnection(monitoringUrl) {
+    return fetch(monitoringUrl + 'connection')
+    .then(response => {
+        return response.json()
+    }) 
+    .catch(err => {
+        connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl + "connection"]
+        return {}
+    });
 }
 
 function getSCVersion(serviceControlUrl) {
