@@ -119,9 +119,9 @@ function switchJsonTab() {
                         </div>
                         
                         <section v-if="showCodeOnlyTab && !loading">
-                            <div class="row">
-                                <div class="col-xs-12 no-side-padding">                                                                               
-                                    <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'440px'" :borderRadius="'0px'" :copy="true"></HighCode>                                        
+                            <div class="row">    
+                                <div class="col-xs-12 no-side-padding">                                                                                                        
+                                    <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'440px'" :borderRadius="'0px'" :copy="true"></HighCode>                            
                                 </div>
                             </div>
                         </section>
@@ -132,7 +132,7 @@ function switchJsonTab() {
                                     <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                                     <p><strong>Endpoint configuration:</strong></p>
                                     <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'130px'" :borderRadius="'0px'" :copy="true"></HighCode>
-                                    <p><strong>JSON configuration file:</strong></p>
+                                    <p style="margin-top:15px"><strong>JSON configuration file:</strong></p>
                                     <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :height="'390px'" :borderRadius="'0px'" :copy="true"></HighCode>
                                 </div>
                             </div>
