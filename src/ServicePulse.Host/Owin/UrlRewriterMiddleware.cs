@@ -15,19 +15,28 @@
         {
             var requestPath = context.Request.Path.ToString();
 
-            if (requestPath.Equals("/"))
-            {
-                context.Request.Path = new PathString("/index.html");
-            }
-
-            if (requestPath.Equals("/a/"))
-            {
-                context.Request.Path = new PathString("/a/index.html");
-            }
-
+            //HINT: This is needed to handle app.constants.js requests from AngularJS application
+            //      and allow users to keep their backed url configurations in the same place
             if (requestPath.StartsWith("/a/js/app.constants.js"))
             {
                 context.Request.Path = new PathString("/js/app.constants.js");
+            }
+            //HINT: This is needed to handle default route for AngularJS
+            //      Can be removed when AngularJS is out
+            else if (requestPath.Equals("/a/"))
+            {
+                context.Request.Path = new PathString("/a/index.html");
+            }
+            //HINT: This is needed to handle assets for AngularJS
+            //      Can be removed when AngularJS is out
+            else if (requestPath.StartsWith("/a/"))
+            {
+                //NOP
+            }
+            //HINT: All urls that do not map to files on the disk should be mapped to /index.html for Vue.js
+            else if (!requestPath.StartsWith("/assets/") && !requestPath.Equals("favicon.ico"))
+            {
+                context.Request.Path = new PathString("/index.html");
             }
 
             return Next.Invoke(context);
