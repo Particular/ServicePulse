@@ -4,6 +4,7 @@ import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
 import {useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications} from "../../composables/serviceNotifications.js"
 
@@ -20,10 +21,17 @@ const configuredServiceControlUrl = inject(key_ServiceControlUrl)
 const emailTestSuccessful=ref(null)
 const emailTestInProgress=ref(null)
 const emailUpdateSucessful=ref(null)
+const showEmailConfiguration=ref(false)
 
 const emailNotifications=ref({
     enabled:null,
-    enable_tls:null
+    enable_tls:null,
+    smtp_server:"",
+    smtp_port:null,
+    authorization_account:"",
+    authorization_password:"",    
+    from:"",
+    to:"",
 })
 
 function toggleEmailNotifications() {
@@ -43,7 +51,7 @@ function toggleEmailNotifications() {
 function editEmailNotifications() {
     emailUpdateSucessful.value = null
     emailTestSuccessful.value = null 
-    alert('editEmailNotifications')
+    showEmailConfiguration.value = true    
 }
 
 function testEmailNotifications() {
@@ -61,10 +69,22 @@ function testEmailNotifications() {
     
 }
 
-onMounted(() => {
+function getEmailNotifications() {
+    showEmailConfiguration.value = false
     useEmailNotifications(configuredServiceControlUrl.value).then(result => {
-        emailNotifications.value = result
-    })
+        emailNotifications.value.enabled = result.enabled
+        emailNotifications.value.enable_tls = result.enable_tls
+        emailNotifications.value.smtp_server = result.smtp_server? result.smtp_server: ""
+        emailNotifications.value.smtp_port = result.smtp_port? result.smtp_port : undefined
+        emailNotifications.value.authentication_account = result.authentication_account? result.authentication_account : ""
+        emailNotifications.value.authentication_password = result.authentication_password? result.authentication_password : ""
+        emailNotifications.value.from = result.from? result.from : ""
+        emailNotifications.value.to = result.to? result.to : ""
+    })   
+}
+
+onMounted(() => {
+    getEmailNotifications()
 })
 </script>
 
@@ -153,6 +173,13 @@ onMounted(() => {
                     </div>
                 </section> 
             </template>
+        
+            <Teleport to="body">
+                <!-- use the modal component, pass in the prop -->
+                <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @close="showEmailConfiguration = false" @save="getEmailNotifications()">                
+                </HealthCheckNotifications_EmailConfiguration>
+            </Teleport>
+        
         </section>
     </template>
 </template>
