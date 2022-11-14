@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, useRoute } from "vue-router";
-import { stats } from "./../composables/serviceControl.js";
+import { stats } from "../composables/serviceServiceControl.js";
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];

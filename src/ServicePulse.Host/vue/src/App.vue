@@ -8,11 +8,11 @@ import { key_ServiceControlUrl, key_UnableToConnectToServiceControl, key_UnableT
   key_License, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired, key_IsExpired,
   key_SPVersion, key_NewSPVersion, key_NewSPVersionLink, key_NewSPVersionNumber, 
   key_SCVersion, key_NewSCVersion, key_NewSCVersionLink, key_NewSCVersionNumber } from "./composables/keys.js"
-import { useServiceControlUrls, updateServiceControlUrls } from "./composables/serviceControlUrls.js";
+import { useServiceControlUrls, updateServiceControlUrls } from "./composables/serviceServiceControlUrls.js";
 import { useServiceControlStats, useServiceControlVersion, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce, 
   useServiceControlMonitoringStats, isServiceControlMonitoringConnecting, isServiceControlMonitoringConnected, 
-  stats, environment, newVersions } from "./composables/serviceControl.js";
-import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired } from "./composables/license.js";
+  stats, environment, newVersions } from "./composables/serviceServiceControl.js";
+import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired } from "./composables/serviceLicense.js";
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls()
 provide(key_ServiceControlUrl, serviceControlUrl)

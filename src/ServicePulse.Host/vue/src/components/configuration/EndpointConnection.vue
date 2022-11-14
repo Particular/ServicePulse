@@ -4,7 +4,7 @@ import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import { key_ServiceControlUrl, key_MonitoringUrl, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
-import { useServiceControlConnections } from "./../../composables/serviceControl.js"
+import { useServiceControlConnections } from "../../composables/serviceServiceControl.js"
 import Busy from "../Busy.vue"
 import { HighCode } from 'vue-highlight-code';
 import 'vue-highlight-code/dist/style.css';

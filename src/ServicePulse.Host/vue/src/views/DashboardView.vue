@@ -1,7 +1,7 @@
 <script setup>
 import DashboardItem from "../components/DashboardItem.vue";
 import EventItemShort from "../components/EventItemShort.vue"
-import { stats } from "./../composables/serviceControl.js"
+import { stats } from "./../composables/serviceServiceControl.js"
 
 
 </script>

@@ -1,7 +1,7 @@
 <script setup>
 import { inject, ref, computed } from "vue";
 import { key_IsSCConnected, key_IsSCConnecting, key_ScConnectedAtLeastOnce, key_License } from "./../../composables/keys.js"
-import { useIsSubscriptionLicense, useIsExpired, useIsExpiring, useIsValid, useIsUpgradeProtectionLicense, useLicenseWarningLevel, useUpgradeDaysLeft, useExpirationDaysLeft } from "./../../composables/license.js"
+import { useIsSubscriptionLicense, useIsExpired, useIsExpiring, useIsValid, useIsUpgradeProtectionLicense, useLicenseWarningLevel, useUpgradeDaysLeft, useExpirationDaysLeft } from "./../../composables/serviceLicense.js"
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import Busy from "../Busy.vue"
 import Exclamation from './../../components/Exclamation.vue'

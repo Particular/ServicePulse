@@ -5,7 +5,7 @@ import License from '../components/configuration/License.vue';
 import EndpointConnection from '../components/configuration/EndpointConnection.vue';
 import HealthCheckNotifications from '../components/configuration/HealthCheckNotifications.vue';
 import RetryRedirects from '../components/configuration/RetryRedirects.vue';
-import { useLicenseWarningLevel } from '../composables/license.js'
+import { useLicenseWarningLevel } from '../composables/serviceLicense.js'
 import Exclamation from '../components/Exclamation.vue'
 import { key_UnableToConnectToServiceControl, key_UnableToConnectToMonitoring, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_License, key_IsExpired } from "./../composables/keys.js"
 
