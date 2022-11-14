@@ -1,10 +1,11 @@
 <script setup>
-import { inject, ref } from "vue";
+import { inject, ref, onMounted } from "vue";
 import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
+import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
+import {useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications} from "../../composables/serviceNotifications.js"
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -14,22 +15,57 @@ const isSCConnected = inject(key_IsSCConnected)
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce)
 const isSCConnecting = inject(key_IsSCConnecting)
 
+const configuredServiceControlUrl = inject(key_ServiceControlUrl)
+
 const emailTestSuccessful=ref(null)
 const emailTestInProgress=ref(null)
-const emailTestFailure=ref(null)
-const notificationEnabled=ref(null)
+const emailUpdateSucessful=ref(null)
+
+const emailNotifications=ref({
+    enabled:null,
+    enable_tls:null
+})
 
 function toggleEmailNotifications() {
-    alert('toggleEmailNotifications')
+    emailTestSuccessful.value = null 
+    useToggleEmailNotifications(configuredServiceControlUrl.value, emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled).then(result => {
+        if(result.message === 'success') {
+            emailUpdateSucessful.value = true            
+        }
+        else {
+            emailUpdateSucessful.value = false
+            //set it back to what it was
+            emailNotifications.value.enabled = !emailNotifications.value.enabled
+        }        
+    })
 }
 
 function editEmailNotifications() {
+    emailUpdateSucessful.value = null
+    emailTestSuccessful.value = null 
     alert('editEmailNotifications')
 }
 
 function testEmailNotifications() {
-    alert('testEmailNotifications')
+    emailTestInProgress.value = true
+    emailUpdateSucessful.value = null
+    useTestEmailNotifications(configuredServiceControlUrl.value).then(result => {
+        if(result.message === 'success') {
+            emailTestSuccessful.value = true          
+        }
+        else {
+            emailTestSuccessful.value = false            
+        }
+        emailTestInProgress.value = false
+    })
+    
 }
+
+onMounted(() => {
+    useEmailNotifications(configuredServiceControlUrl.value).then(result => {
+        emailNotifications.value = result
+    })
+})
 </script>
 
 <template>
@@ -61,11 +97,18 @@ function testEmailNotifications() {
                                             <div class="onoffswitch">
                                                 <input type="checkbox" id="onoffswitch" name="onoffswitch"
                                                     class="onoffswitch-checkbox" @click="toggleEmailNotifications"
-                                                    v-model="notificationEnabled">
+                                                    v-model="emailNotifications.enabled">
                                                 <label class="onoffswitch-label" for="onoffswitch">
                                                     <span class="onoffswitch-inner"></span>
                                                     <span class="onoffswitch-switch"></span>
-                                                </label>
+                                                </label>                                                
+                                            </div>
+                                            <div>
+                                                <span class="connection-test connection-failed">
+                                                    <template v-if="emailUpdateSucessful===false">                                                                                                                        
+                                                        <i class="fa fa-exclamation-triangle"></i> Update failed
+                                                    </template>                                                            
+                                                </span>
                                             </div>
                                         </div>
                                         <div class="col-xs-9 col-sm-10 col-lg-11">
@@ -95,7 +138,7 @@ function testEmailNotifications() {
                                                             </template>
                                                         </span>
                                                         <span class="connection-test connection-failed">
-                                                            <template v-if="emailTestFailure">                                                                                                                        
+                                                            <template v-if="emailTestSuccessful===false">                                                                                                                        
                                                                 <i class="fa fa-exclamation-triangle"></i> Test failed
                                                             </template>                                                            
                                                         </span>
