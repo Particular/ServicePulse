@@ -27,7 +27,7 @@ namespace ServicePulse.Host.Hosting
             ServiceAccount = ServiceAccount.LocalService;
             Username = string.Empty;
             Password = string.Empty;
-            OutputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dist");
+            OutputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
 
             var runOptions = new CaseLessOptionSet
             {

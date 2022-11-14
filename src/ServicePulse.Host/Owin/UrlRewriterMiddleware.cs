@@ -34,7 +34,7 @@
                 //NOP
             }
             //HINT: All urls that do not map to files on the disk should be mapped to /index.html for Vue.js
-            else if (!requestPath.StartsWith("/assets/") && !requestPath.Equals("favicon.ico"))
+            else if (!requestPath.StartsWith("/assets/") && !requestPath.Equals("favicon.ico") && !requestPath.StartsWith("/js/"))
             {
                 context.Request.Path = new PathString("/index.html");
             }
