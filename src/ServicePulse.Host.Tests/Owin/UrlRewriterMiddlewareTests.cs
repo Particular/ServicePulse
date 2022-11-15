@@ -32,16 +32,16 @@
             {
                 Request =
                 {
-                    Path = new PathString("/angular/js/app.constants.js"),
+                    Path = new PathString("/a/js/app.constants.js"),
                     Method = "GET"
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual("/app/js/app.constants.js", context.Request.Path.Value);
+            Assert.AreEqual("/js/app.constants.js", context.Request.Path.Value);
         }
 
         [Test]
-        public async Task Should_not_rewrite_other_urls()
+        public async Task Should_rewrite_other_urls_to_vue_index()
         {
             var middleware = new UrlRewriterMiddleware(new DummyNext());
             var context = new OwinContext
@@ -53,7 +53,7 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual("/something", context.Request.Path.Value);
+            Assert.AreEqual("/index.html", context.Request.Path.Value);
         }
 
         public class DummyNext : OwinMiddleware
