@@ -28,35 +28,35 @@ function subIsActive(input, exact) {
                   <span class="navbar-label">Dashboard</span>
                 </RouterLink>
             </li>
-            <li :class="{ active: subIsActive('/a/endpoints') }">
-              <a href="/a/endpoints">
+            <li :class="{ active: subIsActive('/a/#/endpoints') }">
+              <a href="/a/#/endpoints">
                 <i class="fa fa-heartbeat icon-white"></i>
                 <span class="navbar-label">Heartbeats</span>
                 <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important ">{{stats.number_of_failed_heartbeats}}</span>
               </a>
             </li>
-            <li :class="{ active: (subIsActive('/a/monitoring') || subIsActive('/a/monitoring/endpoint')) }">
-              <a href="/a/monitoring">
+            <li :class="{ active: (subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint')) }">
+              <a href="/a/#/monitoring">
                 <i class="fa pa-monitoring icon-white"></i>
                 <span class="navbar-label">Monitoring</span>
               </a>
             </li>
-            <li :class="{ active: subIsActive('/a/failed-messages/groups') || subIsActive('/a/failed-messages/all') || subIsActive('/a/failed-messages/archived') || subIsActive('/a/failed-messages/pending-retries') }">            
-              <a href="/a/failed-messages/groups">
+            <li :class="{ active: subIsActive('/a/#/failed-messages/groups') || subIsActive('/a/#/failed-messages/all') || subIsActive('/a/#/failed-messages/archived') || subIsActive('/a/#/failed-messages/pending-retries') }">            
+              <a href="/a/#/failed-messages/groups">
                 <i class="fa fa-envelope icon-white"></i>
                 <span class="navbar-label">Failed Messages</span>
                 <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important ">{{stats.number_of_failed_messages}}</span>
               </a>
             </li>
-            <li :class="{ active: subIsActive('/a/custom-checks') }">
-              <a href="/a/custom-checks">
+            <li :class="{ active: subIsActive('/a/#/custom-checks') }">
+              <a href="/a/#/custom-checks">
                 <i class="fa fa-check icon-white"></i>
                 <span class="navbar-label">Custom Checks</span>
                 <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important ">{{stats.number_of_failed_checks}}</span>
               </a>
             </li>
-            <li :class="{ active: subIsActive('/a/events') }">
-              <a href="/a/events">
+            <li :class="{ active: subIsActive('/a/#/events') }">
+              <a href="/a/#/events">
                 <i class="fa fa-list-ul icon-white"></i>
                 <span class="navbar-label">Events</span>
               </a>

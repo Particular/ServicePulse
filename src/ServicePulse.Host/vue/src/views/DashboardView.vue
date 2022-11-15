@@ -20,13 +20,13 @@ import { stats } from "./../composables/serviceServiceControl.js"
           <div class="col-sm-12">
             <div class="row">
               <div class="col-xs-4">
-                <DashboardItem :counter="stats.number_of_failed_heartbeats" :url="'/endpoints'" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
+                <DashboardItem :counter="stats.number_of_failed_heartbeats" :url="'/a/#/endpoints'" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
               </div>
               <div class="col-xs-4">
-                <DashboardItem :counter="stats.number_of_failed_messages" :url="'/failed-messages/groups'" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
+                <DashboardItem :counter="stats.number_of_failed_messages" :url="'/a/#/failed-messages/groups'" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
               </div>
               <div class="col-xs-4">
-                <DashboardItem :counter="stats.number_of_failed_checks" :url="'/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
+                <DashboardItem :counter="stats.number_of_failed_checks" :url="'/a/#/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
               </div>
             </div>
           </div>

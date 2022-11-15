@@ -47,23 +47,23 @@ function navigateToEvent(eventLogItem){
       router.push('/configuration/endpoints');
       break;
     case 'HeartbeatMonitoring':
-      router.push('/endpoints');
+      router.push('/a/#/endpoints');
       break;
     case 'CustomChecks':
-      router.push('/custom-checks');
+      router.push('/a/#/custom-checks');
       break;
     case 'EndpointControl':
-      router.push('/endpoints');
+      router.push('/a/#/endpoints');
       break;
     case 'MessageFailures':
-      var newlocation = '/failed-messages/groups';
+      var newlocation = '/a/#/failed-messages/groups';
       if (eventLogItem.related_to && eventLogItem.related_to[0].search('message') > 0) {
-        newlocation = '/failed-messages' + eventLogItem.related_to[0];
+        newlocation = '/a/#/failed-messages' + eventLogItem.related_to[0];
       }
       router.push(newlocation);
       break;
     case 'Recoverability':
-      router.push('/failed-messages/groups');
+      router.push('/a/#/failed-messages/groups');
       break;
     case 'MessageRedirects':
       router.push('/configuration/redirects');
