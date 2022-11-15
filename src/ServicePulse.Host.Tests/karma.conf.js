@@ -2,7 +2,7 @@
 module.exports = function(config) {
     config.set({
         browsers: ['PhantomJS', 'PhantomJS_custom', 'Chrome'],
-        basePath: '../ServicePulse.Host/app',
+        basePath: '../ServicePulse.Host/app/a',
         preprocessors: {
             '**/*.js': ['eslint']
         },
