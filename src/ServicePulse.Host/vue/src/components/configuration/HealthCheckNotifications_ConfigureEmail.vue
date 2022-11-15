@@ -1,7 +1,7 @@
 <script setup>
-import { ref} from "vue";
+import { ref, reactive} from "vue";
 
-const emit = defineEmits(['save', 'çlose'])
+const emit = defineEmits(['save', 'cancel'])
 const settings = defineProps({ 
     smtp_server:String,
     smtp_port:Number,
@@ -12,80 +12,101 @@ const settings = defineProps({
     to:String,
 })
 
+const smtp_server = ref(settings.smtp_server)
+const smtp_port = ref(settings.smtp_port)
+const authentication_account = ref(settings.authentication_account)
+const authentication_password = ref(settings.authentication_password)
+const enable_tls = ref(settings.enable_tls)
+const from = ref(settings.from)
+const to = ref(settings.to)
+
+
+
 function save() {  
-    //TODO perform the save
-    emit('save')
+    var updatedSettings = {
+        smtp_server:smtp_server.value,
+        smtp_port:smtp_port.value,
+        authorization_account:authentication_account.value,
+        authorization_password:authentication_password.value,
+        enable_tls:enable_tls.value,
+        from:from.value,
+        to:to.value,
+    }
+    emit('save', updatedSettings)
+}
+
+function close() {
+    emit('cancel')
 }
 
 </script>
 
 <template>
-    <Transition name="modal">
+    <!-- <Transition name="modal"> -->
         <div class="modal-mask">
             <div class="modal-wrapper">
                 <div class="modal-container">
                     <div class="modal-header">
-                        <h3 class="modal-title">Email configuration</h3>
-                        <span>settings = {{settings.enable_tls}}</span>
+                        <h3 class="modal-title">Email configuration</h3>                       
                     </div>
 
-                    <form name="notificationsForm" novalidate>
+                    <form name="notificationsForm" novalidate @submit.prevent>
                         <div class="modal-body">
                             <div class="row">
                                 <div class="form-group" :class="{'has-error': notificationsForm && notificationsForm.smtpServerAddress.$invalid}">
                                     <label for="smtpServerAddress">SMTP server address</label>
                                     <input type="text" id="smtpServerAddress" name="smtpServerAddress"
-                                        v-model="settings.smtp_server"
+                                        v-model="smtp_server"
                                         class="form-control" required />
                                 </div>
                                 <div class="row"></div>
                                 <div class="form-group" :class="{'has-error': notificationsForm && notificationsForm.smtpServerPort.$invalid}">
                                     <label for="smtpServerPort">SMTP server port</label>
                                     <input type="number" id="smtpServerPort" name="smtpServerPort"
-                                        v-model="settings.smtp_port"
+                                        v-model="smtp_port"
                                         class="form-control" required />
                                 </div>
                                 <div class="row"></div>
                                 <div class="form-group">
                                     <label for="account">Authentication account</label>
                                     <input type="text" id="account" name="account"
-                                        v-model="settings.authentication_account" class="form-control" />
+                                        v-model="authentication_account" class="form-control" />
                                 </div>
                                 <div class="row"></div>
                                 <div class="form-group">
-                                    <label for="account">Authentication password</label>
+                                    <label for="password">Authentication password</label>
                                     <input type="password" id="password" name="password"
-                                        v-model="settings.authentication_password" class="form-control" />
+                                        v-model="authentication_password" class="form-control" />
                                 </div>
                                 <div class="row"></div>
                                 <div class="form-group">
                                     <input type="checkbox" id="enableTLS" name="enableTLS"
-                                        v-model="settings.enable_tls" class="check-label" />
+                                        v-model="enable_tls" class="check-label" />
                                     <label for="enableTLS">Use TLS</label>
                                 </div>
                                 <div class="row"></div>
                                 <div class="form-group" :class="{'has-error': notificationsForm && notificationsForm.from.$invalid}">
                                     <label for="from">From address</label>
                                     <input type="email" id="from" name="from"
-                                        v-model="settings.from" class="form-control" required/>
+                                        v-model="from" class="form-control" required/>
                                 </div>
                                 <div class="row"></div>
                                 <div class="form-group" :class="{'has-error': notificationsForm && notificationsForm.to.$invalid}">
                                     <label for="to">To address</label>
                                     <input type="email" id="to" name="to"
-                                        v-model="settings.to" class="form-control" required/>
+                                        v-model="to" class="form-control" required/>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-primary" type="submit" @click="save(notificationsForm)">Save</button>
-                            <button type="button" class="btn btn-default" @click="$emit('close')">Cancel</button>
+                            <button class="btn btn-primary" type="submit" @click="save">Save</button>
+                            <button type="button" class="btn btn-default" @click="close">Cancel</button>
                         </div>
                     </form>                   
                 </div>
             </div>
         </div>
-    </Transition>
+    <!-- </Transition> -->
   
     <!-- <div class="modal-header">
         <h3 class="modal-title">Email configuration</h3>

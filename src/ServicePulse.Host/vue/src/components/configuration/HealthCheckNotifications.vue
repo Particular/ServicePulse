@@ -20,7 +20,8 @@ const configuredServiceControlUrl = inject(key_ServiceControlUrl)
 
 const emailTestSuccessful=ref(null)
 const emailTestInProgress=ref(null)
-const emailUpdateSucessful=ref(null)
+const emailToggleSucessful=ref(null)
+const emailUpdateSuccessful=ref(null)
 const showEmailConfiguration=ref(false)
 
 const emailNotifications=ref({
@@ -28,20 +29,21 @@ const emailNotifications=ref({
     enable_tls:null,
     smtp_server:"",
     smtp_port:null,
-    authorization_account:"",
-    authorization_password:"",    
+    authentication_account:"",
+    authentication_password:"",    
     from:"",
     to:"",
 })
 
 function toggleEmailNotifications() {
     emailTestSuccessful.value = null 
+    emailUpdateSuccessful.value = null
     useToggleEmailNotifications(configuredServiceControlUrl.value, emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled).then(result => {
         if(result.message === 'success') {
-            emailUpdateSucessful.value = true            
+            emailToggleSucessful.value = true            
         }
         else {
-            emailUpdateSucessful.value = false
+            emailToggleSucessful.value = false
             //set it back to what it was
             emailNotifications.value.enabled = !emailNotifications.value.enabled
         }        
@@ -49,14 +51,36 @@ function toggleEmailNotifications() {
 }
 
 function editEmailNotifications() {
-    emailUpdateSucessful.value = null
+    emailToggleSucessful.value = null
     emailTestSuccessful.value = null 
+    emailUpdateSuccessful.value = null
     showEmailConfiguration.value = true    
+}
+
+function saveEditedEmailNotifications(newSettings) {
+    emailUpdateSuccessful.value = null    
+    showEmailConfiguration.value = false    
+    useUpdateEmailNotifications(configuredServiceControlUrl.value, newSettings).then(result => {
+        if(result.message === 'success') {
+            emailUpdateSuccessful.value = true 
+            emailNotifications.value.enable_tls =  newSettings.enable_tls          
+            emailNotifications.value.smtp_server =  newSettings.smtp_server          
+            emailNotifications.value.smtp_port =  newSettings.smtp_port          
+            emailNotifications.value.authentication_account =  newSettings.authorization_account          
+            emailNotifications.value.authentication_password =  newSettings.authorization_password          
+            emailNotifications.value.from =  newSettings.from          
+            emailNotifications.value.to =  newSettings.to
+        }
+        else {
+            emailUpdateSuccessful.value = false            
+        }
+    })
 }
 
 function testEmailNotifications() {
     emailTestInProgress.value = true
-    emailUpdateSucessful.value = null
+    emailToggleSucessful.value = null
+    emailUpdateSuccessful.value = null
     useTestEmailNotifications(configuredServiceControlUrl.value).then(result => {
         if(result.message === 'success') {
             emailTestSuccessful.value = true          
@@ -125,7 +149,7 @@ onMounted(() => {
                                             </div>
                                             <div>
                                                 <span class="connection-test connection-failed">
-                                                    <template v-if="emailUpdateSucessful===false">                                                                                                                        
+                                                    <template v-if="emailToggleSucessful===false">                                                                                                                        
                                                         <i class="fa fa-exclamation-triangle"></i> Update failed
                                                     </template>                                                            
                                                 </span>
@@ -153,13 +177,23 @@ onMounted(() => {
                                                             </template>
                                                         </span>
                                                         <span class="connection-test connection-successful">
-                                                            <template v-if="emailTestSuccessful">                                                            
+                                                            <template v-if="emailTestSuccessful===true">                                                            
                                                                 <i class="fa fa-check"></i> Test email sent successfully
                                                             </template>
                                                         </span>
                                                         <span class="connection-test connection-failed">
                                                             <template v-if="emailTestSuccessful===false">                                                                                                                        
                                                                 <i class="fa fa-exclamation-triangle"></i> Test failed
+                                                            </template>                                                            
+                                                        </span>
+                                                        <span class="connection-test connection-successful">
+                                                            <template v-if="emailUpdateSuccessful===true">                                                            
+                                                                <i class="fa fa-check"></i> Update successful
+                                                            </template>
+                                                        </span>
+                                                        <span class="connection-test connection-failed">
+                                                            <template v-if="emailUpdateSuccessful===false">                                                                                                                        
+                                                                <i class="fa fa-exclamation-triangle"></i> Update failed
                                                             </template>                                                            
                                                         </span>
                                                     </p>
@@ -176,7 +210,7 @@ onMounted(() => {
         
             <Teleport to="body">
                 <!-- use the modal component, pass in the prop -->
-                <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @close="showEmailConfiguration = false" @save="getEmailNotifications()">                
+                <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications">                
                 </HealthCheckNotifications_EmailConfiguration>
             </Teleport>
         
