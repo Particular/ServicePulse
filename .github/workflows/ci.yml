@@ -25,10 +25,10 @@ jobs:
         uses: microsoft/setup-msbuild@v1.0.2
       - name: Install Host npm packages
         run: npm run load
-        working-directory: src/ServicePulse.Host
+        working-directory: src/ServicePulse.Host/a
       - name: Run lint
         run: npm run lint
-        working-directory: src/ServicePulse.Host
+        working-directory: src/ServicePulse.Host/a
       - name: Build
         run: msbuild src -p:Configuration=Release -restore -m
       - name: Upload assets
