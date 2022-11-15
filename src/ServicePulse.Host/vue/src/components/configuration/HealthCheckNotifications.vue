@@ -86,7 +86,7 @@ function testEmailNotifications() {
             emailTestSuccessful.value = true          
         }
         else {
-            emailTestSuccessful.value = false            
+            emailTestSuccessful.value = false          
         }
         emailTestInProgress.value = false
     })

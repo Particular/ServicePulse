@@ -56,7 +56,7 @@ export function useUpdateEmailNotifications(serviceControlUrl, settings) {
         .catch(err => {        
             console.log(err)
             var result = {
-                message: "error:" + err.message               
+                message: "error"        
             }
             return result        
         });
@@ -82,7 +82,7 @@ export function useTestEmailNotifications(serviceControlUrl) {
         .catch(err => {        
             console.log(err)
             var result = {
-                message: "error:" + err.message               
+                message: "error"
             }
             return result        
         });
@@ -108,7 +108,7 @@ export function useToggleEmailNotifications(serviceControlUrl, enabled) {
         .catch(err => {        
             console.log(err)
             var result = {
-                message: "error:" + err.message               
+                message: "error"
             }
             return result
         });
