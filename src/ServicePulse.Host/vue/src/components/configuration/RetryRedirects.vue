@@ -4,7 +4,6 @@ import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import Modal from './Modal.vue'
 import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
@@ -112,14 +111,26 @@ onMounted(() => {
                                                     </button>
                                                     <Teleport to="body">
                                                         <!-- use the modal component, pass in the prop -->
-                                                        <modal :show="showModal" @yes="showModal = false" @no="showModal = false">
-                                                        <template #header>
-                                                            <h3>Are you sure you want to end the redirect?</h3>
-                                                        </template>
-                                                        <template #body>
-                                                            Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.
-                                                        </template>
-                                                        </modal>
+                                                        <Transition name="modal">
+                                                            <div v-if="showModal" class="modal-mask">
+                                                            <div class="modal-dialog">
+                                                                <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <div class="modal-title">
+                                                                        <h3>Are you sure you want to end the redirect?</h3>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.</p>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button class="btn btn-primary" @click="showModal = false">Yes</button>
+                                                                    <button class="btn btn-default" @click="showModal = false">No</button>
+                                                                </div>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                        </Transition>
                                                     </Teleport>
 
                                                     <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">
@@ -142,5 +153,15 @@ onMounted(() => {
 
 
 <style scoped>
-
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+  transition: opacity 0.3s ease;
+}
 </style>
