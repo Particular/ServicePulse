@@ -4,6 +4,7 @@ import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import Modal from './Modal.vue'
 import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
@@ -24,6 +25,8 @@ const redirects = reactive({
     total: 0,
     data: []
 })
+
+const showModal = ref(false)
 
 function getRedirect() {
     loadingData.value = true
@@ -82,7 +85,7 @@ onMounted(() => {
                     <div class="row">
                         <template v-if="redirects.total > 0">
                             <div class="col-sm-12">
-                                <template v-for="redirect in redirects.data.sort(from_physical_address)" :key="redirect.redirectId">
+                                <template v-for="redirect in redirects.data" :key="redirect.redirectId">
                                     <div class="row box repeat-modify">
                                         <div class="row" id="{{redirect.from_physical_address}}">
                                             <div class="col-sm-12">
@@ -104,10 +107,21 @@ onMounted(() => {
                                         <div class="row">
                                             <div isolate-click class="col-sm-12">
                                                 <p class="small">
-                                                    <button type="button" class="btn btn-link btn-sm" confirm-title="Are you sure you want to end the redirect?" @confirm-click="deleteRedirect(redirect, 'Redirect was deleted', 'Failed to delete redirect')"
-                                                            confirm-message="Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.">
+                                                    <button type="button" class="btn btn-link btn-sm" @click="showModal = true">
                                                         End Redirect
                                                     </button>
+                                                    <Teleport to="body">
+                                                        <!-- use the modal component, pass in the prop -->
+                                                        <modal :show="showModal" @yes="showModal = false" @no="showModal = false">
+                                                        <template #header>
+                                                            <h3>Are you sure you want to end the redirect?</h3>
+                                                        </template>
+                                                        <template #body>
+                                                            Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.
+                                                        </template>
+                                                        </modal>
+                                                    </Teleport>
+
                                                     <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">
                                                         Modify Redirect
                                                     </button>
@@ -127,5 +141,6 @@ onMounted(() => {
 </template>
 
 
-<style>
+<style scoped>
+
 </style>
