@@ -82,7 +82,7 @@ onMounted(() => {
                     <div class="row">
                         <template v-if="redirects.total > 0">
                             <div class="col-sm-12">
-                                <template v-for="redirect in redirects.sort(sourceEndpoint)" :key="redirect.redirectId">
+                                <template v-for="redirect in redirects.data.sort(from_physical_address)" :key="redirect.redirectId">
                                     <div class="row box repeat-modify">
                                         <div class="row" id="{{redirect.from_physical_address}}">
                                             <div class="col-sm-12">
