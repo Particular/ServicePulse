@@ -130,7 +130,7 @@ function switchJsonTab() {
                             <section v-if="showCodeOnlyTab && !loading">
                                 <div class="row">    
                                     <div class="col-xs-12 no-side-padding">                                                                                                        
-                                        <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'440px'" :borderRadius="'0px'" :copy="true"></HighCode>                            
+                                        <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'100%'" :borderRadius="'0px'" :nameShow="false" :copy="true"></HighCode>                            
                                     </div>
                                 </div>
                             </section>
@@ -140,9 +140,9 @@ function switchJsonTab() {
                                     <div class="col-xs-12 no-side-padding">
                                         <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                                         <p><strong>Endpoint configuration:</strong></p>
-                                        <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'130px'" :borderRadius="'0px'" :copy="true"></HighCode>
+                                        <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'10'" :width="'100%'" :height="'100%'" :nameShow="false" :borderRadius="'0px'" :copy="true"></HighCode>
                                         <p style="margin-top:15px"><strong>JSON configuration file:</strong></p>
-                                        <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :height="'390px'" :borderRadius="'0px'" :copy="true"></HighCode>
+                                        <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'10'" :width="'100%'" :height="'100%'" :nameShow="false" :borderRadius="'0px'" :copy="true"></HighCode>
                                     </div>
                                 </div>
                             </section>
@@ -156,4 +156,8 @@ function switchJsonTab() {
 </template>
 
 <style>
+pre {
+  border:none;
+  background-color: #282c34;
+}
 </style>
