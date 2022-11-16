@@ -4,6 +4,7 @@ import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import Modal from './RetryRedirectModal.vue'
 import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
@@ -26,6 +27,8 @@ const redirects = reactive({
 })
 
 const showModal = ref(false)
+const showEdit = ref(false)
+const selectedRedirect = ref()
 
 function getRedirect() {
     loadingData.value = true
@@ -38,11 +41,13 @@ function getRedirect() {
 }
 
 function createRedirect() {
-    alert('create')
+    selectedRedirect.value = {}
+    showEdit.value = true;
 }
 
 function editRedirect(redirect) {
-    alert('edit')
+    selectedRedirect.value = redirect
+    showEdit.value = true;
 }
 
 function deleteRedirect(redirect) {
@@ -87,7 +92,7 @@ onMounted(() => {
                     <div class="row">
                         <template v-if="redirects.total > 0">
                             <div class="col-sm-12">
-                                <template v-for="redirect in redirects.data" :key="redirect.redirectId">
+                                <template v-for="redirect in redirects.data" :key="redirect.message_redirect_id">
                                     <div class="row box repeat-modify">
                                         <div class="row" id="{{redirect.from_physical_address}}">
                                             <div class="col-sm-12">
@@ -116,22 +121,22 @@ onMounted(() => {
                                                         <!-- use the modal component, pass in the prop -->
                                                         <Transition name="modal">
                                                             <div v-if="showModal" class="modal-mask">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <div class="modal-title">
-                                                                        <h3>Are you sure you want to end the redirect?</h3>
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <div class="modal-title">
+                                                                                <h3>Are you sure you want to end the redirect?</h3>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p>Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.</p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button class="btn btn-primary" @click="deleteRedirect(redirect)">Yes</button>
+                                                                            <button class="btn btn-default" @click="showModal = false">No</button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <p>Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.</p>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button class="btn btn-primary" @click="deleteRedirect(redirect)">Yes</button>
-                                                                    <button class="btn btn-default" @click="showModal = false">No</button>
-                                                                </div>
-                                                                </div>
-                                                            </div>
                                                             </div>
                                                         </Transition>
                                                     </Teleport>
@@ -139,6 +144,12 @@ onMounted(() => {
                                                     <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">
                                                         Modify Redirect
                                                     </button>
+
+                                                    <Teleport to="body">
+                                                        <!-- use the modal component, pass in the prop -->
+                                                        <modal :show="showEdit" :model="selectedRedirect" @cancel="showEdit = false">
+                                                        </modal>
+                                                    </Teleport>
                                                 </p>
                                             </div>
 
