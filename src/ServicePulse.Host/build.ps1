@@ -1,12 +1,25 @@
-﻿Get-ChildItem -Path "app" -Include *.* -File -Recurse | foreach { $_.Delete()}
-New-Item -ItemType Directory -Force -Path "app"
+﻿$AppOutputFolder = "app"
+$AngularSourceFolder = "angular"
+$AngularOutputFolder = "app\a"
+$VueSourceFolder = "vue"
 
-cd vue
+if (Test-Path $AppOutputFolder)
+{
+	Get-ChildItem -Path $AppOutputFolder -Include *.* -File -Recurse | foreach { $_.Delete()}
+}
+
+New-Item -ItemType Directory -Force -Path $AppOutputFolder
+
+cd $VueSourceFolder
 npm install
 npm run build
 
-cd ..\angular
+cd ..
+
+cd $AngularSourceFolder
 npm run load
-Get-Location
-New-Item -ItemType Directory -Force -Path "..\app\a"
-Copy-Item -Path ".\app\*" -Destination "..\app\a" -Recurse -Force
+
+cd.. 
+
+New-Item -ItemType Directory -Force -Path $AngularOutputFolder
+Copy-Item -Path "$($AngularSourceFolder)\app\*" -Destination $AngularOutputFolder -Recurse -Force
