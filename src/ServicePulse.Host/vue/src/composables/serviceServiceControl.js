@@ -128,34 +128,36 @@ export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
     return Promise
     .all([productsResult, scResult, mResult])
     .then(([products, scVer, mVer]) => {
-        environment.supportsArchiveGroups = scVer.archived_groups_url &&  scVer.archived_groups_url.length > 0
-        environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version)
-        environment.endpoints_error_url = scVer.endpoints_error_url
-        environment.known_endpoints_url = scVer.known_endpoints_url
-        environment.endpoints_message_search_url = scVer.endpoints_message_search_url
-        environment.endpoints_messages_url = scVer.endpoints_messages_url
-        environment.endpoints_url = scVer.endpoints_url
-        environment.errors_url = scVer.errors_url
-        environment.configuration = scVer.configuration
-        environment.message_search_url = scVer.message_search_url
-        environment.sagas_url = scVer.sagas_url
+        if(scVer) {
+            environment.supportsArchiveGroups = scVer.archived_groups_url &&  scVer.archived_groups_url.length > 0
+            environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version)
+            environment.endpoints_error_url = scVer && scVer.endpoints_error_url
+            environment.known_endpoints_url = scVer && scVer.known_endpoints_url
+            environment.endpoints_message_search_url = scVer.endpoints_message_search_url
+            environment.endpoints_messages_url = scVer.endpoints_messages_url
+            environment.endpoints_url = scVer.endpoints_url
+            environment.errors_url = scVer.errors_url
+            environment.configuration = scVer.configuration
+            environment.message_search_url = scVer.message_search_url
+            environment.sagas_url = scVer.sagas_url
 
-        if(products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
-            newVersions.newSPVersion.newspversion = true
-            newVersions.newSPVersion.newspversionlink = products.latestSP.release
-            newVersions.newSPVersion.newspversionnumber = products.latestSP.tag
-        }
+            if(products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
+                newVersions.newSPVersion.newspversion = true
+                newVersions.newSPVersion.newspversionlink = products.latestSP.release
+                newVersions.newSPVersion.newspversionnumber = products.latestSP.tag
+            }
 
-        if(products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
-            newVersions.newSCVersion.newscversion = true
-            newVersions.newSCVersion.newscversionlink = products.latestSC.release
-            newVersions.newSCVersion.newscversionnumber = products.latestSC.tag
-        }
+            if(products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
+                newVersions.newSCVersion.newscversion = true
+                newVersions.newSCVersion.newscversionlink = products.latestSC.release
+                newVersions.newSCVersion.newscversionnumber = products.latestSC.tag
+            }
 
-        if(products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
-            newVersions.newMVersion.newmversion = true
-            newVersions.newMVersion.newmversionlink = products.latestSC.release
-            newVersions.newMVersion.newmversionnumber = products.latestSC.tag
+            if(products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
+                newVersions.newMVersion.newmversion = true
+                newVersions.newMVersion.newmversionlink = products.latestSC.release
+                newVersions.newMVersion.newmversionnumber = products.latestSC.tag
+            }
         }
     });   
 }

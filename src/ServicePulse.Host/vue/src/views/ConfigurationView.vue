@@ -49,12 +49,12 @@ const currentView = computed(() => {
     <div class="row">
       <div class="col-sm-12">
           <div class="tabs">
-            <h5 :class="{active: subIsActive('#license') || subIsActive(''), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}">
+            <h5 :class="{active: subIsActive('#license') || subIsActive(''), disabled:(!isSCConnected && !scConnectedAtLeastOnce)}">
               <a href="#license">License</a>
               <Exclamation :type="useLicenseWarningLevel(license.license_status)" />
             </h5>
-            <h5 v-if="!isExpired" :class="{active: subIsActive('#health-check-notifications'), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#health-check-notifications">Health Check Notifications</a></h5>
-            <h5 v-if="!isExpired" :class="{active: subIsActive('#retry-redirects'), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#retry-redirects">Retry Redirects</a></h5>
+            <h5 v-if="!isExpired" :class="{active: subIsActive('#health-check-notifications'), disabled:(!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#health-check-notifications">Health Check Notifications</a></h5>
+            <h5 v-if="!isExpired" :class="{active: subIsActive('#retry-redirects'), disabled:(!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#retry-redirects">Retry Redirects</a></h5>
             <h5 v-if="!isExpired" :class="{active: subIsActive('#connections')}">
               <a href="#connections">
                 Connections
@@ -63,11 +63,11 @@ const currentView = computed(() => {
               </template>
               </a>
             </h5>
-            <h5 v-if="!isExpired" :class="{active: subIsActive('#endpoint-connection'), disabled:  (!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#endpoint-connection">Endpoint Connection</a></h5>
-            <component :is="currentView" />
+            <h5 v-if="!isExpired" :class="{active: subIsActive('#endpoint-connection'), disabled:(!isSCConnected && !scConnectedAtLeastOnce)}"><a href="#endpoint-connection">Endpoint Connection</a></h5>            
           </div>
       </div>
     </div>  
+    <component :is="currentView" />
   </div>
 </template>
 
