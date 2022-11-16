@@ -45,8 +45,11 @@ function editRedirect(redirect) {
     alert('edit')
 }
 
-function deleteRedirect(redirect, successMsg, errorMsg) {
-    alert('delete')
+function deleteRedirect(redirect) {
+    showModal.value = false;
+    useDeleteRedirects(configuredServiceControlUrl.value, redirect.message_redirect_id).then(result => {
+        getRedirect()
+    })
 }
 
 onMounted(() => {
@@ -124,7 +127,7 @@ onMounted(() => {
                                                                     <p>Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.</p>
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <button class="btn btn-primary" @click="showModal = false">Yes</button>
+                                                                    <button class="btn btn-primary" @click="deleteRedirect(redirect)">Yes</button>
                                                                     <button class="btn btn-default" @click="showModal = false">No</button>
                                                                 </div>
                                                                 </div>
