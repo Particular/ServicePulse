@@ -10,7 +10,7 @@ const props = defineProps({
       <h1>Platform license expired</h1>
       <p>Please update your license to continue using the Particular Service Platform</p>
       <div class="action-toolbar">
-          <a class="btn btn-default btn-primary" href="/configuration#/license">View license details</a>
+          <a class="btn btn-default btn-primary" href="/configuration#license">View license details</a>
       </div>
   </div>
   </template>

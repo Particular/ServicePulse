@@ -13,7 +13,7 @@ const props = defineProps({
         <p>To continue using the Particular Service Platform, please extend your license</p>
         <div class="action-toolbar">
             <a class="btn btn-default btn-primary" href="https://particular.net/extend-your-trial?p=servicepulse" target="_blank">Extend your license <i class="fa fa-external-link"></i></a>
-            <a class="btn btn-default btn-secondary" href="/configuration#/license">View license details</a>
+            <a class="btn btn-default btn-secondary" href="/configuration#license">View license details</a>
         </div>
     </div>
     </template>
