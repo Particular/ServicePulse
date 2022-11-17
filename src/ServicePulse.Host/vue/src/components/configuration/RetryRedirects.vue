@@ -8,7 +8,7 @@ import RetryRedirectEdit from './RetryRedirectEdit.vue'
 import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
-import {useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects} from "../../composables/serviceRedirects.js"
+import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, retryPendingMessagesForQueue } from "../../composables/serviceRedirects.js"
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -66,15 +66,25 @@ function editRedirect(redirect) {
 function saveEditedRedirect(redirect) {
     redirectSaveSuccessful.value = null    
     showEdit.value = false    
-    useUpdateRedirects(configuredServiceControlUrl.value, redirect.redirectId, redirect.sourceQueue, redirect.targetQueue).then(result => {
-        if(result.message === 'success') {
-            redirectSaveSuccessful.value = true 
-            getRedirect()
-        }
-        else {
-            redirectSaveSuccessful.value = false            
-        }
-    })
+    useUpdateRedirects(configuredServiceControlUrl.value, redirect.redirectId, redirect.sourceQueue, redirect.targetQueue)
+        .then(result => {
+            if(result.message === 'success') {            
+                redirectSaveSuccessful.value = true 
+                getRedirect()
+            }
+            else {
+                redirectSaveSuccessful.value = false            
+            }
+            return result;
+        })
+        .then(result => {
+            if (result.message === 'success' && redirect.immediatelyRetry) {
+                return retryPendingMessagesForQueue(configuredServiceControlUrl.value, redirect.sourceQueue)
+            }
+            else {
+                return result;
+            }
+        })
 }
 
 function saveCreatedRedirect(redirect) {
@@ -185,6 +195,10 @@ onMounted(() => {
                                                     <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">
                                                         Modify Redirect
                                                     </button>
+                                                    <Teleport to="body">
+                                                        <!-- use the modal component, pass in the prop -->
+                                                        <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
+                                                    </Teleport>
                                                 </p>
                                             </div>
                                         </div>
@@ -193,10 +207,7 @@ onMounted(() => {
                             </div>
                         </template>
                     </div>
-                    <Teleport to="body">
-                        <!-- use the modal component, pass in the prop -->
-                        <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
-                    </Teleport>
+                    
                 </section>
             </template>   
         </section>
