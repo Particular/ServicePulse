@@ -34,7 +34,7 @@ export function useUpdateRedirects(serviceControlUrl, redirectId, sourceEndpoint
     const requestOptions = {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ "id": redirectId, "fromphysicaladdress": sourceEndpoint, "tophysicaladdress": targetEndpoint },)
+        body: JSON.stringify({ "id": redirectId, "sourcequeue": sourceEndpoint, "tophysicaladdress": targetEndpoint },)
       };
       
       return fetch(serviceControlUrl + 'redirects/' + redirectId, requestOptions)

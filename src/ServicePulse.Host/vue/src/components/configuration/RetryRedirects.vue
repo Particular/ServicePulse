@@ -4,7 +4,7 @@ import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import Modal from './RetryRedirectModal.vue'
+import RetryRedirectEdit from './RetryRedirectEdit.vue'
 import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
@@ -28,7 +28,14 @@ const redirects = reactive({
 
 const showModal = ref(false)
 const showEdit = ref(false)
-const selectedRedirect = ref()
+const selectedRedirect = ref({
+    message_redirect_id:"",
+    from_physical_address:"",
+    to_physical_address:"",
+    date_last_modified:null
+})
+
+const redirectSaveSuccessful=ref(null)
 
 function getRedirect() {
     loadingData.value = true
@@ -41,13 +48,47 @@ function getRedirect() {
 }
 
 function createRedirect() {
-    selectedRedirect.value = {}
+    redirectSaveSuccessful.value = null
+    selectedRedirect.value.message_redirect_id=0,
+    selectedRedirect.value.from_physical_address=""
+    selectedRedirect.value.to_physical_address=""
     showEdit.value = true;
 }
 
 function editRedirect(redirect) {
-    selectedRedirect.value = redirect
+    redirectSaveSuccessful.value = null
+    selectedRedirect.value.message_redirect_id = redirect.message_redirect_id
+    selectedRedirect.value.from_physical_address = redirect.from_physical_address
+    selectedRedirect.value.to_physical_address = redirect.to_physical_address    
     showEdit.value = true;
+}
+
+function saveEditedRedirect(redirect) {
+    redirectSaveSuccessful.value = null    
+    showEdit.value = false    
+    useUpdateRedirects(configuredServiceControlUrl.value, redirect.redirectId, redirect.sourceQueue, redirect.targetQueue).then(result => {
+        if(result.message === 'success') {
+            redirectSaveSuccessful.value = true 
+            getRedirect()
+        }
+        else {
+            redirectSaveSuccessful.value = false            
+        }
+    })
+}
+
+function saveCreatedRedirect(redirect) {
+    redirectSaveSuccessful.value = null    
+    showEdit.value = false    
+    useCreateRedirects(configuredServiceControlUrl.value, redirect.sourceQueue, redirect.targetQueue).then(result => {
+        if(result.message === 'success') {
+            redirectSaveSuccessful.value = true 
+            getRedirect()
+        }
+        else {
+            redirectSaveSuccessful.value = false            
+        }
+    })
 }
 
 function deleteRedirect(redirect) {
@@ -144,21 +185,18 @@ onMounted(() => {
                                                     <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">
                                                         Modify Redirect
                                                     </button>
-
-                                                    <Teleport to="body">
-                                                        <!-- use the modal component, pass in the prop -->
-                                                        <modal :show="showEdit" :model="selectedRedirect" @cancel="showEdit = false">
-                                                        </modal>
-                                                    </Teleport>
                                                 </p>
                                             </div>
-
                                         </div>
                                     </div>
                                 </template>
                             </div>
                         </template>
                     </div>
+                    <Teleport to="body">
+                        <!-- use the modal component, pass in the prop -->
+                        <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
+                    </Teleport>
                 </section>
             </template>   
         </section>
