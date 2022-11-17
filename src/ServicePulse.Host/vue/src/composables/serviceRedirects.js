@@ -30,7 +30,29 @@ function getRedirects(serviceControlUrl) {
     });
 }
 
-export function useUpdateRedirects(serviceControlUrl, redirectId, sourceEndpoint, targetEndpoint) {
+export function retryPendingMessagesForQueue(serviceControlUrl, queueName) {
+    const requestOptions = {
+        method: "POST"
+      };
+      return fetch(serviceControlUrl + 'errors/queues/' + queueName + '/retry', requestOptions)
+        .then(response => {
+            var result = {
+                message: response.ok? "success" :  "error:" + response.statusText,
+                status: response.status,
+                statusText: response.statusText,
+            }    
+            return result
+        })
+        .catch(err => {        
+            console.log(err)
+            var result = {
+                message: "error"        
+            }
+            return result        
+        });
+}
+
+export function useUpdateRedirects(serviceControlUrl, redirectId, sourceEndpoint, targetEndpoint, retryImmediately) {
     const requestOptions = {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -46,7 +68,7 @@ export function useUpdateRedirects(serviceControlUrl, redirectId, sourceEndpoint
                 data: response                
             }    
             return result
-        })       
+        })     
         .catch(err => {        
             console.log(err)
             var result = {

@@ -140,25 +140,25 @@ export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
             environment.configuration = scVer.configuration
             environment.message_search_url = scVer.message_search_url
             environment.sagas_url = scVer.sagas_url
-
-            if(products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
-                newVersions.newSPVersion.newspversion = true
-                newVersions.newSPVersion.newspversionlink = products.latestSP.release
-                newVersions.newSPVersion.newspversionnumber = products.latestSP.tag
-            }
-
-            if(products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
-                newVersions.newSCVersion.newscversion = true
-                newVersions.newSCVersion.newscversionlink = products.latestSC.release
-                newVersions.newSCVersion.newscversionnumber = products.latestSC.tag
-            }
-
-            if(products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
-                newVersions.newMVersion.newmversion = true
-                newVersions.newMVersion.newmversionlink = products.latestSC.release
-                newVersions.newMVersion.newmversionnumber = products.latestSC.tag
-            }
         }
+
+        if(products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
+            newVersions.newSPVersion.newspversion = true
+            newVersions.newSPVersion.newspversionlink = products.latestSP.release
+            newVersions.newSPVersion.newspversionnumber = products.latestSP.tag
+        }
+
+        if(products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
+            newVersions.newSCVersion.newscversion = true
+            newVersions.newSCVersion.newscversionlink = products.latestSC.release
+            newVersions.newSCVersion.newscversionnumber = products.latestSC.tag
+        }
+
+        if(products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
+            newVersions.newMVersion.newmversion = true
+            newVersions.newMVersion.newmversionlink = products.latestSC.release
+            newVersions.newMVersion.newmversionnumber = products.latestSC.tag
+        }        
     });   
 }
 
