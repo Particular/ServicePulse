@@ -1,8 +1,8 @@
 // karma.conf.js
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
         browsers: ['PhantomJS', 'PhantomJS_custom', 'Chrome'],
-        basePath: '../ServicePulse.Host/app/a',
+        basePath: '../ServicePulse.Host/angular/app',
         preprocessors: {
             '**/*.js': ['eslint']
         },
