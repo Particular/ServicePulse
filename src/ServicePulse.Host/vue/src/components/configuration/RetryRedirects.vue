@@ -9,6 +9,7 @@ import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
 import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, retryPendingMessagesForQueue } from "../../composables/serviceRedirects.js"
+import { useToast } from "vue-toastification";
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -25,6 +26,10 @@ const redirects = reactive({
     total: 0,
     data: []
 })
+
+const toast = useToast();
+
+      
 
 const showModal = ref(false)
 const showEdit = ref(false)
@@ -70,6 +75,7 @@ function saveEditedRedirect(redirect) {
         .then(result => {
             if(result.message === 'success') {            
                 redirectSaveSuccessful.value = true 
+                toast("I'm a toast!");
                 getRedirect()
             }
             else {
