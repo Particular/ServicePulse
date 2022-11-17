@@ -65,7 +65,7 @@ function close() {
                         <label for="sourceQueue">From physical address</label>
                         <span :title="sourceQueueTooltip"><i class="fa fa-info-circle"></i></span>
                         <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
-                            <input type="text" id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required />
+                            <input type="text" id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id"/>
                             <!-- <ui-select name="sourceQueue" id="sourceQueue" v-model="physicalAddress.selected" theme="bootstrap" :disabled="model.message_redirect_id != undefined">
                                 <ui-select-match uib-tooltip="{{$select.selected.physical_address}}">
                                     <span v-bind="$select.selected.physical_address"></span>
