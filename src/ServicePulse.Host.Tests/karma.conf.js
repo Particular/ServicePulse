@@ -1,8 +1,8 @@
 // karma.conf.js
-module.exports = function(config) {
+module.exports = function (config) {
     config.set({
         browsers: ['PhantomJS', 'PhantomJS_custom', 'Chrome'],
-        basePath: '../ServicePulse.Host/app/a',
+        basePath: '../ServicePulse.Host/angular/app',
         preprocessors: {
             '**/*.js': ['eslint']
         },
@@ -11,9 +11,9 @@ module.exports = function(config) {
         },
         files: [
             './modules/dist/shell.dist.js',
-            '../../ServicePulse.Host.Tests/tests/js/angular-mocks.js',
+            '../../../ServicePulse.Host.Tests/tests/js/angular-mocks.js',
             './js/**/*.html',
-            './js/app.constants.js',
+            '../../vue/public/js/app.constants.js',
             './modules/dist/configuration.dist.js',
             './js/app.js',
             './js/app.bootstrap.js',
@@ -24,7 +24,7 @@ module.exports = function(config) {
             './js/services/**/*.js',
             './js/views/**/*.js',
             './modules/dist/monitoring.dist.js',
-            '../../ServicePulse.Host.Tests/tests/**/*.spec.js'
+            '../../../ServicePulse.Host.Tests/tests/**/*.spec.js'
         ],
         frameworks: ['jasmine'],
         // you can define custom flags

@@ -53,30 +53,43 @@ Install the following dependencies if you don't have them installed yet
    - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
    - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
 
-#### Set development environment
+### Set development environment
 
+#### Step 1 - run Nginx reverse proxy
+  
+Open a command window and navigate into `ServicePulse\src\ServicePulse.Host` path (NOTE: ensure using cmd, not PowerShell). Run `nginx` that is a reverse proxy for AngularJS and Vue.js applications:
+```cmd
+> docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
+```
+#### Step 2 - run AngularJS development server 
 
-- Run Nginx reverse proxy
-  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path (make sure you are using cmd, not PowerShell)
-  - run `nginx` that stiches together `angular` and `vue` spas using
- ```cmd
- > docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
- ```
-- Run AngularJS development server 
-  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host\angular` path
+Navigate to `ServicePulse\src\ServicePulse.Host\angular` and:
   - run `npm install` to install all the npm dependencies
   - run the following command `npm run dev`. This will host a dev server on port 5174 and start watching for changes in `/angular` directory
  
-- Run Vue development server 
-  - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host\vue` path
+#### Step 3 - run Vue.js development server 
+
+Navigate to `ServicePulse\src\ServicePulse.Host\vue` and:
   - run `npm install` to install all the npm dependencies
   - run the following command `npm run dev`. This will host a dev server on port 5173 and start watching for changes in `/vue` directory
 
 In case `npm run dev` fails with an error related to git submodule not properly configured, run the `npm install` command again to ensure all required dependencies are available, and then run `npm run dev`.
 
+#### Step 4 - open the browser
+
 After doing the above steps one can open `http://localhost:1331` to see ServicePulse application.
 
-#### Provided npm scripts
+### Provided npm scripts 
+
+#### Vue.js
+
+ - `dev` - runs `vite` that starts development server doing hot reload over source files
+ - `build` - runs build script that outputs files to `..\app` folder
+ - `lint` - checks with eslint all js files
+ - `preview` - runs `build` and starts static http server that enables smoketesting production build
+
+#### AngularJS
+
  - `test` - runs js tests in ServicePulse.Host.Test project
  - `setup` - this command runs few commands
  	- installs the npm packages
@@ -99,22 +112,27 @@ For information how to run automated tests please follow [ServicePulse.Host.Test
 
 ## Running from ServicePulse.Host.exe
 
-It is possible to run ServicePulse directly via ServicePulse.Host.exe. As part of the ServicePulse.Host.csproj build process both angular and vue applications and bundled in to the exe file as embedded resources.
+It is possible to run ServicePulse directly via `ServicePulse.Host.exe`.
 
-### Powershell Execution Policy
-
-ServicePulse.Host uses Powershell to run Angular and Vue build scripts. In order to make this work make sure to enable Powershell script execution by executing:
-
-```cmd
-Set-ExecutionPolicy Unrestricted
-```
-### URL ACL Reservation
+### Step 1 - reserve URL ACL
 
 ServicePulse.Host.exe depends on a self-hosted webserver. In order to start the project a URL ACL reservation needs to be setup. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
 
+### Step 2 - build ServicePulse site 
+
+Execute build script from commandline:
+
+```cmd
+> PowerShell -File .\build.ps1
 ```
-netsh http add urlacl url=http://+:8081/ user=Everyone
-```
+
+NOTE: It might be necessary to change PowerShell execution policy using `Set-ExecutionPolicy Unrestricted`
+
+### Step 3 - run `ServicePulse.Host.exe`
+
+In the Ide, Build and run `ServicePulse.Host` project.
+
+
 ## Supported browser versions
 
 ServicePulse is supported on the following desktop browser versions:
