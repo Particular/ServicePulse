@@ -12,7 +12,6 @@ import { useShowToast } from "../../composables/toast.js"
 
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
 import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, retryPendingMessagesForQueue } from "../../composables/serviceRedirects.js"
-//import { useToast } from "vue-toastification";
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -29,10 +28,6 @@ const redirects = reactive({
     total: 0,
     data: []
 })
-
-//const toast = useToast();
-
-      
 
 const showDelete = ref(false)
 const showEdit = ref(false)

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, computed, onMounted } from "vue";
+import { ref, provide, computed, onMounted, watch } from "vue";
 import { RouterView } from "vue-router";
 import Footer from "./components/Footer.vue";
 import Header from "./components/Header.vue";
@@ -13,6 +13,7 @@ import { useServiceControlStats, useServiceControlVersion, isServiceControlConne
   useServiceControlMonitoringStats, isServiceControlMonitoringConnecting, isServiceControlMonitoringConnected, 
   stats, environment, newVersions } from "./composables/serviceServiceControl.js";
 import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired } from "./composables/serviceLicense.js";
+import { useShowToast } from "./composables/toast.js"
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls()
 provide(key_ServiceControlUrl, serviceControlUrl)
@@ -40,6 +41,14 @@ provide(key_IsPlatformTrialExpired, isPlatformTrialExpired)
 provide(key_IsInvalidDueToUpgradeProtectionExpired, isInvalidDueToUpgradeProtectionExpired)
 provide(key_IsExpired, isExpired)
 
+watch(isExpired, async (newValue, oldValue) => {
+  if(newValue != oldValue) {
+    if (!newValue) {
+      useShowToast('error', 'Error', 'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>')
+    }
+  }
+})
+
 onMounted(() => {
   getServiceControlVersions()
   getServiceControlStats()
@@ -47,11 +56,11 @@ onMounted(() => {
 })
 
 let isSCConnecting = ref(true)
-let isSCConnected = ref(false)
+let isSCConnected = ref(null)
 let scConnectedAtLeastOnce = ref(false)
 
 let isSCMonitoringConnecting = ref(true)
-let isSCMonitoringConnected = ref(false)
+let isSCMonitoringConnected = ref(null)
 let isMonitoringEnabled = computed(() => {
   return monitoringUrl.value !== '!' 
             && monitoringUrl.value !== ''
@@ -98,6 +107,28 @@ provide(key_IsMonitoringEnabled, isMonitoringEnabled)
 provide(key_IsSCMonitoringConnected, isSCMonitoringConnected)
 provide(key_IsSCMonitoringConnecting, isSCMonitoringConnecting)
 
+watch(isSCConnected, async (newValue, oldValue) => {
+  if(newValue != oldValue) {
+    if (!newValue) {
+      useShowToast('error', 'Error', 'Could not connect to ServiceControl at ' + serviceControlUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>')
+    }
+    else {
+      useShowToast('success', 'Success', 'Connection to ServiceControl was successful at ' + serviceControlUrl.value + '.')
+    } 
+  }
+  
+})
+
+watch(isSCMonitoringConnected, async (newValue, oldValue) => {
+  if(newValue != oldValue) {
+    if (!newValue) {
+      useShowToast('error', 'Error', 'Could not connect to the ServiceControl Monitoring service at ' + monitoringUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>')
+    }
+    else {
+      useShowToast('success', 'Success', 'Connection to ServiceControl Monitoring service was successful at ' + monitoringUrl.value + '.')
+    }    
+  }  
+})
 
 let scVersion = ref(null)
 let newSCVersion = ref(null)

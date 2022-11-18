@@ -14,25 +14,25 @@ const props = defineProps({
         <template v-if="props.type === 'success'">
             <div class="toast-success">
                 <h4>{{props.title}}</h4>
-                <p class="toast-message">{{props.message}}</p>
+                <span v-html="props.message"></span>
             </div>
         </template>
         <template v-if="props.type === 'info'">
             <div class="toast-info">
                 <h4>{{props.title}}</h4>
-                <p class="toast-message">{{props.message}}</p>
+                <span v-html="props.message"></span>
             </div>
         </template>
         <template v-if="props.type === 'error'">
             <div class="toast-error">
                 <h4>{{props.title}}</h4>
-                <p class="toast-message">{{props.message}}</p>
+                <span v-html="props.message"></span>
             </div>
         </template>
         <template v-if="props.type === 'warning'">
             <div class="toast-warning">
                 <h4>{{props.title}}</h4>
-                <p class="toast-message">{{props.message}}</p>
+                <span v-html="props.message"></span>
             </div>
         </template>
     </div>
