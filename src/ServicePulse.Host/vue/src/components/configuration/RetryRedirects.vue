@@ -75,11 +75,12 @@ function saveEditedRedirect(redirect) {
     useUpdateRedirects(configuredServiceControlUrl.value, redirect.redirectId, redirect.sourceQueue, redirect.targetQueue)
         .then(result => {
             if(result.message === 'success') {            
-                redirectSaveSuccessful.value = true 
-                toast("I'm a toast!");
+                toast.success(result.message);
+                redirectSaveSuccessful.value = true                 
                 getRedirect()
             }
             else {
+                toast.error(result.message);
                 redirectSaveSuccessful.value = false            
             }
             return result;
