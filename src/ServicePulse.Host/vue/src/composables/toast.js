@@ -15,5 +15,5 @@ export function useShowToast(type, title, message) {
     },        
   };
 
-  toast(content)
+  toast(content, {type: type})
 }
