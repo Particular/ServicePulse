@@ -11,11 +11,15 @@ const app = createApp(App);
 app.use(router);
 const toastOptions = {
     position: POSITION.BOTTOM_RIGHT,
-    timeout: 3000,
+    timeout: 5000,
     transition: "Vue-Toastification__fade",
-    //containerClassName: "toast-container"
+    hideProgressBar:true,
+    containerClassName: "toast-container"
     //container : "toast-container",
-    //toastClassName : "toast"
+    //toastClassName : "toast",
+    //bodyClassName: "",
+    //closeButtonClassName: ""
+
 };
 app.use(Toast, toastOptions);
 

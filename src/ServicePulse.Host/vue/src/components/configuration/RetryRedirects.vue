@@ -8,9 +8,11 @@ import RetryRedirectEdit from './RetryRedirectEdit.vue'
 import RetryRedirectDelete from './RetryRedirectDelete.vue'
 import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
+import { useShowToast } from "../../composables/toast.js"
+
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
 import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, retryPendingMessagesForQueue } from "../../composables/serviceRedirects.js"
-import { useToast } from "vue-toastification";
+//import { useToast } from "vue-toastification";
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -28,7 +30,7 @@ const redirects = reactive({
     data: []
 })
 
-const toast = useToast();
+//const toast = useToast();
 
       
 
@@ -74,14 +76,14 @@ function saveEditedRedirect(redirect) {
     showEdit.value = false    
     useUpdateRedirects(configuredServiceControlUrl.value, redirect.redirectId, redirect.sourceQueue, redirect.targetQueue)
         .then(result => {
-            if(result.message === 'success') {            
-                toast.success(result.message);
+            if(result.message === 'success') {              
+                useShowToast("info", "Info", result.message)
                 redirectSaveSuccessful.value = true                 
                 getRedirect()
             }
             else {
-                toast.error(result.message);
-                redirectSaveSuccessful.value = false            
+                useShowToast("error", "Error", result.statusMessage)
+                redirectSaveSuccessful.value = false
             }
             return result;
         })
@@ -104,6 +106,7 @@ function saveCreatedRedirect(redirect) {
             getRedirect()
         }
         else {
+            useShowToast("error", "Error", result.statusMessage)
             redirectSaveSuccessful.value = false            
         }
     })
@@ -123,6 +126,7 @@ function saveDeleteRedirect(redirectId) {
             getRedirect()
         }
         else {
+            useShowToast("error", "Error", result.statusMessage)
             redirectSaveSuccessful.value = false            
         }
     })
@@ -213,30 +217,4 @@ onMounted(() => {
 
 
 <style scoped>
-.modal-mask {
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: table;
-  transition: opacity 0.3s ease;
-}
-
-.modal-wrapper {
-  display: table-cell;
-  vertical-align: middle;
-}
-
-.modal-container {
-  width: 400px;
-  margin: 0px auto;
-  padding: 20px 30px;
-  background-color: #fff;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-  transition: all 0.3s ease;
-}
 </style>
