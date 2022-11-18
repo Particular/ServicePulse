@@ -71,14 +71,18 @@ function saveEditedRedirect(redirect) {
     showEdit.value = false    
     useUpdateRedirects(configuredServiceControlUrl.value, redirect.redirectId, redirect.sourceQueue, redirect.targetQueue)
         .then(result => {
-            if(result.message === 'success') {              
-                useShowToast("info", "Info", result.message)
-                redirectSaveSuccessful.value = true                 
+            if(result.message === 'success') {                              
+                redirectSaveSuccessful.value = true         
+                useShowToast("info", "Info", 'Redirect updated')        
                 getRedirect()
             }
             else {
-                useShowToast("error", "Error", result.statusMessage)
                 redirectSaveSuccessful.value = false
+                if (result.status === '409' || result.status === 409) {
+                        useShowToast("error", "Error", 'Failed to update a redirect, can not create redirect to a queue' + redirect.targetQueue + ' as it already has a redirect. Provide a different queue or end the redirect.')                        
+                    } else {
+                        useShowToast("error", "Error", result.message)                        
+                    }
             }
             return result;
         })
@@ -98,11 +102,18 @@ function saveCreatedRedirect(redirect) {
     useCreateRedirects(configuredServiceControlUrl.value, redirect.sourceQueue, redirect.targetQueue).then(result => {
         if(result.message === 'success') {
             redirectSaveSuccessful.value = true 
+            useShowToast("info", "Info", 'Redirect created')
             getRedirect()
         }
-        else {
-            useShowToast("error", "Error", result.statusMessage)
+        else {            
             redirectSaveSuccessful.value = false            
+            if ((result.status === '409' || result.status === 409) && result.statusText === 'Duplicate') {
+                useShowToast("error", "Error", 'Failed to create a redirect, can not create more than one redirect for queue: ' + redirect.sourceQueue)
+            } else if ((result.status === '409' || result.status === 409) && result.statusText === 'Dependents') {
+                useShowToast("error", "Error", 'Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.')
+            } else {
+                useShowToast("error", "Error", result.message)
+            }
         }
     })
 }
@@ -118,11 +129,12 @@ function saveDeleteRedirect(redirectId) {
     useDeleteRedirects(configuredServiceControlUrl.value, redirectId).then(result => {
         if(result.message === 'success') {
             redirectSaveSuccessful.value = true 
+            useShowToast("info", "Info", 'Redirect deleted')
             getRedirect()
         }
         else {
-            useShowToast("error", "Error", result.statusMessage)
-            redirectSaveSuccessful.value = false            
+            redirectSaveSuccessful.value = false         
+            useShowToast("error", "Error", result.message)               
         }
     })
 }
