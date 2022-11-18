@@ -7,14 +7,13 @@ const model = defineProps({
     message_redirect_id:String,
     from_physical_address:String,
     to_physical_address:String,
-    immediately_Retry:Boolean
+    immediately_Retry:Boolean,
+    queues:Array
 })
 
 const sourceQueue = ref(model.from_physical_address)
 const targetQueue = ref(model.to_physical_address)
 const immediatelyRetry = ref(model.immediately_Retry)
-
-const loadingTargetQueues = ref(false)
 
 //TODO these need to look at endpoints
 const sourceQueueIsValid = computed(()=> { return sourceQueue.value? true: false })
@@ -24,6 +23,10 @@ const formIsValid = computed(()=> { return sourceQueueIsValid.value &&  targetQu
 
 const sourceQueueTooltip="Choose a queue that is known to Service Control"
 const targetQueueTooltip="Choose a queue that is known to Service Control or provide a custom queue"
+
+function selectToAddress(item) {
+    targetQueue.value = item
+}
 
 function create() {  
     var redirect = {
@@ -83,7 +86,22 @@ function close() {
                                 <label for="targetQueue">To physical address</label>
                                 <span :title="targetQueueTooltip"><i class="fa fa-info-circle"></i></span>
                                 <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
-                                    <input type="text" id="targetQueue" name="targetQueue" v-model="targetQueue" class="form-control" required />
+                                    <!-- <input type="text" id="targetQueue" name="targetQueue" v-model="targetQueue" class="form-control" required /> -->
+
+                                    <vue3-simple-typeahead
+                                        id="targetQueue"
+                                        name="targetQueue"
+                                        :defaultItem="model.to_physical_address"
+                                        v-model="targetQueue" 
+                                        @selectItem="selectToAddress"
+                                        class="form-control"
+                                        required
+                                        placeholder="Start writing..."
+                                        :items="model.queues"
+                                        :minInputLength="1"
+                                    >
+                                    </vue3-simple-typeahead>
+
                                     <!-- <input type="text" id="targetQueue" name="targetQueue" placeholder="Target Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue"
                                         typeahead-loading="loadingTargetQueues" typeahead-no-results="noTargetQueues" class="form-control" autocomplete="off" required>
                                     <i v-if="loadingTargetQueues" class="glyphicon glyphicon-refresh"></i>

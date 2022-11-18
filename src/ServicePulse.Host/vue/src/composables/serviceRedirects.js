@@ -3,17 +3,35 @@ import moment from 'moment';
 
 const redirects = {
     data: [],
+    queues: [],
     total:0
 }
 export function useRedirects(serviceControlUrl) {
-    return getRedirects(serviceControlUrl).then( ()=> {
-        if(redirects.data) (
-            redirects.data.forEach(function(item) {
-                item.last_modified = moment.utc(item.last_modified).local().format('YYYY-MM-DDTHH:mm:ss');
-            })            
-        )     
+    return getRedirects(serviceControlUrl)
+        .then(() => getKnownQueues(serviceControlUrl))
+        .then(()=> {
+            if(redirects.data) (
+                redirects.data.forEach(function(item) {
+                    item.last_modified = moment.utc(item.last_modified).local().format('YYYY-MM-DDTHH:mm:ss');
+                })            
+            )
         return redirects   
     })
+}
+
+function getKnownQueues(serviceControlUrl) {
+    return fetch(serviceControlUrl + `errors/queues/addresses`)
+        .then(response => {
+            return response.json()
+        })
+        .then(data => { 
+            if (data) {
+                redirects.queues = data.map(x => x.physical_address)
+            }      
+        })
+        .catch(err => {        
+            console.log(err)
+        });
 }
 
 function getRedirects(serviceControlUrl) {

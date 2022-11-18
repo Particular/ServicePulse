@@ -35,7 +35,8 @@ const selectedRedirect = ref({
     message_redirect_id:"",
     from_physical_address:"",
     to_physical_address:"",
-    date_last_modified:null
+    date_last_modified:null,
+    queues: []
 })
 
 const redirectSaveSuccessful=ref(null)
@@ -44,10 +45,10 @@ function getRedirect() {
     loadingData.value = true
     useRedirects(configuredServiceControlUrl.value).then(result => {
         redirects.total = result.total
-        redirects.data = result.data        
-
+        redirects.data = result.data
+        selectedRedirect.value.queues = result.queues       
         loadingData.value = false
-    }) 
+    })
 }
 
 function createRedirect() {
