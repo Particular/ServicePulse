@@ -15,7 +15,6 @@ const sourceQueue = ref(model.from_physical_address)
 const targetQueue = ref(model.to_physical_address)
 const immediatelyRetry = ref(model.immediately_Retry)
 
-//TODO these need to look at endpoints
 const sourceQueueIsValid = computed(()=> { return sourceQueue.value? true: false })
 const targetQueueIsValid = computed(()=> { 
     return targetQueue.value && targetQueue.value != sourceQueue.value 
@@ -82,20 +81,11 @@ function close() {
                                 <label for="sourceQueue">From physical address</label>
                                 <span :title="sourceQueueTooltip"><i class="fa fa-info-circle"></i></span>
                                 <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
-                                    <!-- <input type="text" id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id"/> -->
                                     <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id">
                                         <option v-for="option in model.queues" :value="option">
                                             {{ option }}
                                         </option>
                                     </select>
-                                    <!-- <ui-select name="sourceQueue" id="sourceQueue" v-model="physicalAddress.selected" theme="bootstrap" :disabled="model.message_redirect_id != undefined">
-                                        <ui-select-match uib-tooltip="{{$select.selected.physical_address}}">
-                                            <span v-bind="$select.selected.physical_address"></span>
-                                        </ui-select-match>
-                                        <ui-select-choices repeat="item in endpoints | filter: $select.search">
-                                            <span v-bind-html="item.physical_address | highlight: $select.search"></span>
-                                        </ui-select-choices>
-                                    </ui-select> -->
                                 </div>
                             </div>
                             <div class="row"></div>
@@ -103,8 +93,6 @@ function close() {
                                 <label for="targetQueue">To physical address</label>
                                 <span :title="targetQueueTooltip"><i class="fa fa-info-circle"></i></span>
                                 <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
-                                    <!-- <input type="text" id="targetQueue" name="targetQueue" v-model="targetQueue" class="form-control" required /> -->
-
                                     <vue3-simple-typeahead
                                         id="targetQueue"
                                         name="targetQueue"
