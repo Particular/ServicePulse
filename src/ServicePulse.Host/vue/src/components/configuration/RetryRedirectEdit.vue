@@ -17,9 +17,21 @@ const immediatelyRetry = ref(model.immediately_Retry)
 
 //TODO these need to look at endpoints
 const sourceQueueIsValid = computed(()=> { return sourceQueue.value? true: false })
-const targetQueueIsValid = computed(()=> { return targetQueue.value? true: false })
+const targetQueueIsValid = computed(()=> { 
+    return targetQueue.value && targetQueue.value != sourceQueue.value 
+})
 
-const formIsValid = computed(()=> { return sourceQueueIsValid.value &&  targetQueueIsValid.value})
+const formIsValid = computed(()=> { 
+    return sourceQueueIsValid.value && targetQueueIsValid.value
+})
+
+const notKnownQueue = computed(() => {
+    return !model.queues.includes(targetQueue.value)
+})
+
+const noKnownQueues = computed(() => {
+    return model.queues.length == 0
+})
 
 const sourceQueueTooltip="Choose a queue that is known to Service Control"
 const targetQueueTooltip="Choose a queue that is known to Service Control or provide a custom queue"
@@ -70,7 +82,12 @@ function close() {
                                 <label for="sourceQueue">From physical address</label>
                                 <span :title="sourceQueueTooltip"><i class="fa fa-info-circle"></i></span>
                                 <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
-                                    <input type="text" id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id"/>
+                                    <!-- <input type="text" id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id"/> -->
+                                    <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id">
+                                        <option v-for="option in model.queues" :value="option">
+                                            {{ option }}
+                                        </option>
+                                    </select>
                                     <!-- <ui-select name="sourceQueue" id="sourceQueue" v-model="physicalAddress.selected" theme="bootstrap" :disabled="model.message_redirect_id != undefined">
                                         <ui-select-match uib-tooltip="{{$select.selected.physical_address}}">
                                             <span v-bind="$select.selected.physical_address"></span>
@@ -102,16 +119,20 @@ function close() {
                                     >
                                     </vue3-simple-typeahead>
 
-                                    <!-- <input type="text" id="targetQueue" name="targetQueue" placeholder="Target Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue"
-                                        typeahead-loading="loadingTargetQueues" typeahead-no-results="noTargetQueues" class="form-control" autocomplete="off" required>
-                                    <i v-if="loadingTargetQueues" class="glyphicon glyphicon-refresh"></i>
-                                    <template v-if="noTargetQueues">
-                                        <div :class="{ 'has-error': noTargetQueues }">
+                                    <template v-if="noKnownQueues">
+                                        <div :class="{ 'has-error': noKnownQueues }">
                                             <p class="control-label">
                                                 No known queues found. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.
                                             </p>
                                         </div>
-                                    </template> -->
+                                    </template>
+                                    <template v-if="notKnownQueue">
+                                        <div :class="{ 'has-error': notKnownQueue }">
+                                            <p class="control-label">
+                                                Target queue does not match any known queue. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.
+                                            </p>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                             <div class="form-group">
