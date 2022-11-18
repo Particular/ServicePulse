@@ -5,6 +5,7 @@ import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import RetryRedirectEdit from './RetryRedirectEdit.vue'
+import RetryRedirectDelete from './RetryRedirectDelete.vue'
 import NoData from "../NoData.vue"
 import Busy from "../Busy.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
@@ -31,7 +32,7 @@ const toast = useToast();
 
       
 
-const showModal = ref(false)
+const showDelete = ref(false)
 const showEdit = ref(false)
 const selectedRedirect = ref({
     message_redirect_id:"",
@@ -54,7 +55,7 @@ function getRedirect() {
 
 function createRedirect() {
     redirectSaveSuccessful.value = null
-    selectedRedirect.value.message_redirect_id=0,
+    selectedRedirect.value.message_redirect_id=null,
     selectedRedirect.value.from_physical_address=""
     selectedRedirect.value.to_physical_address=""
     showEdit.value = true;
@@ -108,9 +109,21 @@ function saveCreatedRedirect(redirect) {
 }
 
 function deleteRedirect(redirect) {
-    showModal.value = false;
-    useDeleteRedirects(configuredServiceControlUrl.value, redirect.message_redirect_id).then(result => {
-        getRedirect()
+    redirectSaveSuccessful.value = null
+    selectedRedirect.value.message_redirect_id=redirect.message_redirect_id,
+    showDelete.value = true;
+}
+
+function saveDeleteRedirect(redirectId) {
+    showDelete.value = false
+    useDeleteRedirects(configuredServiceControlUrl.value, redirectId).then(result => {
+        if(result.message === 'success') {
+            redirectSaveSuccessful.value = true 
+            getRedirect()
+        }
+        else {
+            redirectSaveSuccessful.value = false            
+        }
     })
 }
 
@@ -171,40 +184,12 @@ onMounted(() => {
                                         <div class="row">
                                             <div isolate-click class="col-sm-12">
                                                 <p class="small">
-                                                    <button type="button" class="btn btn-link btn-sm" @click="showModal = true">
+                                                    <button type="button" class="btn btn-link btn-sm" @click="deleteRedirect(redirect)">
                                                         End Redirect
                                                     </button>
-                                                    <Teleport to="body">
-                                                        <!-- use the modal component, pass in the prop -->
-                                                        <Transition name="modal">
-                                                            <div v-if="showModal" class="modal-mask">
-                                                                <div class="modal-dialog">
-                                                                    <div class="modal-content">
-                                                                        <div class="modal-header">
-                                                                            <div class="modal-title">
-                                                                                <h3>Are you sure you want to end the redirect?</h3>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="modal-body">
-                                                                            <p>Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.</p>
-                                                                        </div>
-                                                                        <div class="modal-footer">
-                                                                            <button class="btn btn-primary" @click="deleteRedirect(redirect)">Yes</button>
-                                                                            <button class="btn btn-default" @click="showModal = false">No</button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </Transition>
-                                                    </Teleport>
-
                                                     <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">
                                                         Modify Redirect
                                                     </button>
-                                                    <Teleport to="body">
-                                                        <!-- use the modal component, pass in the prop -->
-                                                        <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
-                                                    </Teleport>
                                                 </p>
                                             </div>
                                         </div>
@@ -213,7 +198,12 @@ onMounted(() => {
                             </div>
                         </template>
                     </div>
-                    
+                    <Teleport to="#modalDisplay">
+                        <RetryRedirectDelete v-if="showDelete === true" :message_redirect_id="selectedRedirect.message_redirect_id" @cancel="showDelete = false" @delete="saveDeleteRedirect"></RetryRedirectDelete>
+                    </Teleport>
+                    <Teleport to="#modalDisplay">
+                        <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
+                    </Teleport>
                 </section>
             </template>   
         </section>
@@ -232,5 +222,20 @@ onMounted(() => {
   background-color: rgba(0, 0, 0, 0.5);
   display: table;
   transition: opacity 0.3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 400px;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
 }
 </style>

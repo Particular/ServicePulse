@@ -51,64 +51,86 @@ function close() {
 
 </script>
 
-<template>  
-    <div class="modal-container">
-        <div class="modal-header">            
-            <h3 class="modal-title" v-if="model.message_redirect_id">Modify redirect</h3>
-            <h3 class="modal-title" v-if="!model.message_redirect_id">Create redirect</h3>
-        </div>    
+<template>
+    <div class="modal-mask">
+        <div class="modal-wrapper">
+            <div class="modal-container">
+                <div class="modal-header">            
+                    <h3 class="modal-title" v-if="model.message_redirect_id">Modify redirect</h3>
+                    <h3 class="modal-title" v-if="!model.message_redirect_id">Create redirect</h3>
+                </div>    
 
-        <form name="redirectForm" novalidate @submit.prevent="save">
-            <div class="modal-body">
-                <div class="row">   
-                    <div class="form-group">
-                        <label for="sourceQueue">From physical address</label>
-                        <span :title="sourceQueueTooltip"><i class="fa fa-info-circle"></i></span>
-                        <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
-                            <input type="text" id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id"/>
-                            <!-- <ui-select name="sourceQueue" id="sourceQueue" v-model="physicalAddress.selected" theme="bootstrap" :disabled="model.message_redirect_id != undefined">
-                                <ui-select-match uib-tooltip="{{$select.selected.physical_address}}">
-                                    <span v-bind="$select.selected.physical_address"></span>
-                                </ui-select-match>
-                                <ui-select-choices repeat="item in endpoints | filter: $select.search">
-                                    <span v-bind-html="item.physical_address | highlight: $select.search"></span>
-                                </ui-select-choices>
-                            </ui-select> -->
-                        </div>
-                    </div>
-                    <div class="row"></div>
-                    <div class="form-group">
-                        <label for="targetQueue">To physical address</label>
-                        <span :title="targetQueueTooltip"><i class="fa fa-info-circle"></i></span>
-                        <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
-                            <input type="text" id="targetQueue" name="targetQueue" v-model="targetQueue" class="form-control" required />
-                            <!-- <input type="text" id="targetQueue" name="targetQueue" placeholder="Target Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue"
-                                typeahead-loading="loadingTargetQueues" typeahead-no-results="noTargetQueues" class="form-control" autocomplete="off" required>
-                            <i v-if="loadingTargetQueues" class="glyphicon glyphicon-refresh"></i>
-                            <template v-if="noTargetQueues">
-                                <div :class="{ 'has-error': noTargetQueues }">
-                                    <p class="control-label">
-                                        No known queues found. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.
-                                    </p>
+                <form name="redirectForm" novalidate @submit.prevent="save">
+                    <div class="modal-body">
+                        <div class="row">   
+                            <div class="form-group">
+                                <label for="sourceQueue">From physical address</label>
+                                <span :title="sourceQueueTooltip"><i class="fa fa-info-circle"></i></span>
+                                <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
+                                    <input type="text" id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id"/>
+                                    <!-- <ui-select name="sourceQueue" id="sourceQueue" v-model="physicalAddress.selected" theme="bootstrap" :disabled="model.message_redirect_id != undefined">
+                                        <ui-select-match uib-tooltip="{{$select.selected.physical_address}}">
+                                            <span v-bind="$select.selected.physical_address"></span>
+                                        </ui-select-match>
+                                        <ui-select-choices repeat="item in endpoints | filter: $select.search">
+                                            <span v-bind-html="item.physical_address | highlight: $select.search"></span>
+                                        </ui-select-choices>
+                                    </ui-select> -->
                                 </div>
-                            </template> -->
+                            </div>
+                            <div class="row"></div>
+                            <div class="form-group">
+                                <label for="targetQueue">To physical address</label>
+                                <span :title="targetQueueTooltip"><i class="fa fa-info-circle"></i></span>
+                                <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
+                                    <input type="text" id="targetQueue" name="targetQueue" v-model="targetQueue" class="form-control" required />
+                                    <!-- <input type="text" id="targetQueue" name="targetQueue" placeholder="Target Queue Name" uib-typeahead="endpoint.physical_address as endpoint.physical_address for endpoint in endpoints | filter:$viewValue"
+                                        typeahead-loading="loadingTargetQueues" typeahead-no-results="noTargetQueues" class="form-control" autocomplete="off" required>
+                                    <i v-if="loadingTargetQueues" class="glyphicon glyphicon-refresh"></i>
+                                    <template v-if="noTargetQueues">
+                                        <div :class="{ 'has-error': noTargetQueues }">
+                                            <p class="control-label">
+                                                No known queues found. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.
+                                            </p>
+                                        </div>
+                                    </template> -->
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="checkbox" v-model="immediatelyRetry" class="check-label" id="immediatelyRetry" /><label for="immediatelyRetry">Immediately retry any matching failed messages</label>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="checkbox" v-model="immediatelyRetry" class="check-label" id="immediatelyRetry" /><label for="immediatelyRetry">Immediately retry any matching failed messages</label>
-                    </div>
-                </div>
-            </div>  
-            <div class="modal-footer">
-                <button v-if="model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="edit">Modify</button>
-                <button v-if="!model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="create">Create</button>
-                <button class="btn btn-default" @click="close">Cancel</button>
-            </div>      
-        </form>
+                    </div>  
+                    <div class="modal-footer">
+                        <button v-if="model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="edit">Modify</button>
+                        <button v-if="!model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="create">Create</button>
+                        <button class="btn btn-default" @click="close">Cancel</button>
+                    </div>      
+                </form>
+            </div>
+        </div>
     </div>
 </template>
 
 <style>
+
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+  transition: opacity 0.3s ease;
+}
+
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
 .modal-container {
   width: 400px;
   margin: 0px auto;

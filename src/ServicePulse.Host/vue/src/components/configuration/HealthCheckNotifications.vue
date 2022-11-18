@@ -208,7 +208,7 @@ onMounted(() => {
                 </section> 
             </template>
         
-            <Teleport to="body">
+            <Teleport to="#modalDisplay">
                 <!-- use the modal component, pass in the prop -->
                 <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications">                
                 </HealthCheckNotifications_EmailConfiguration>
