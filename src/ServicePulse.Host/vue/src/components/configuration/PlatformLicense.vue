@@ -5,7 +5,7 @@ import {
   key_IsSCConnecting,
   key_ScConnectedAtLeastOnce,
   key_License,
-} from "../../composables/keys.js
+} from "./../../composables/keys.js";
 import {
   useIsSubscriptionLicense,
   useIsExpired,
@@ -15,10 +15,10 @@ import {
   useLicenseWarningLevel,
   useUpgradeDaysLeft,
   useExpirationDaysLeft,
-} from "../../composables/serviceLicense.js
+} from "./../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import BusyIndicator from "../BusyIndicator.vue";
-import ExclamationMark from "../ExclamationMark.vue";
+import ExclamationMark from "./../../components/ExclamationMark.vue";
 
 const isSCConnected = inject(key_IsSCConnected);
 const isSCConnecting = inject(key_IsSCConnecting);
