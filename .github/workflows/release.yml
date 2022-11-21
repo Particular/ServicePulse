@@ -52,37 +52,3 @@ jobs:
           tenant-id: ${{ secrets.AZURE_KEY_VAULT_TENANT_ID }}
           client-secret: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
           certificate-name: ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE_NAME }}
-  docker:
-    needs: release
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: windows-2019
-            image-name: servicepulse-windows
-            dockerfile: dockerfile.iis
-          - os: ubuntu-20.04
-            image-name: servicepulse
-            dockerfile: dockerfile.nginx
-      fail-fast: false
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3.1.0
-      - name: Install Host npm packages
-        run: npm run load
-        working-directory: src/ServicePulse.Host
-      - name: Update app.constants.js
-        run: |
-          $filename = "src/ServicePulse.Host/app/js/app.constants.js"
-          (Get-Content $filename).replace("1.2.0", "${{ needs.release.outputs.version }}") | Set-Content $filename
-        shell: pwsh
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2.1.0
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build Docker image
-        run: docker build -t particular/${{ matrix.image-name }}:${{ needs.release.outputs.version }} -f ${{ matrix.dockerfile }} .
-        working-directory: src
-      - name: Push Docker image
-        run: docker push particular/${{ matrix.image-name }}:${{ needs.release.outputs.version }}
