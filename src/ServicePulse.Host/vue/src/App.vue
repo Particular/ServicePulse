@@ -10,9 +10,8 @@ import { key_ServiceControlUrl, key_UnableToConnectToServiceControl, key_UnableT
   key_SCVersion, key_NewSCVersion, key_NewSCVersionLink, key_NewSCVersionNumber } from "./composables/keys.js"
 import { useServiceControlUrls, updateServiceControlUrls } from "./composables/serviceServiceControlUrls.js";
 import { useServiceControlStats, useServiceControlVersion, isServiceControlConnecting, isServiceControlConnected, serviceControlConnectedAtLeastOnce, 
-  useServiceControlMonitoringStats, isServiceControlMonitoringConnecting, isServiceControlMonitoringConnected, 
-  stats, environment, newVersions } from "./composables/serviceServiceControl.js";
-import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired } from "./composables/serviceLicense.js";
+  useServiceControlMonitoringStats, isServiceControlMonitoringConnecting, isServiceControlMonitoringConnected, environment, newVersions } from "./composables/serviceServiceControl.js";
+import { useLicense, useIsPlatformExpired, useIsPlatformTrialExpired, useIsInvalidDueToUpgradeProtectionExpired, useGetWarningMessage } from "./composables/serviceLicense.js";
 import { useShowToast } from "./composables/toast.js"
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls()
@@ -47,6 +46,13 @@ watch(isExpired, async (newValue, oldValue) => {
       useShowToast('error', 'Error', 'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>')
     }
   }
+})
+
+watch(license, async (newValue, oldValue) => {
+  const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null
+  if(checkForWarnings) {
+      useGetWarningMessage(newValue.license_status, useShowToast)
+    }
 })
 
 onMounted(() => {
@@ -108,7 +114,7 @@ provide(key_IsSCMonitoringConnected, isSCMonitoringConnected)
 provide(key_IsSCMonitoringConnecting, isSCMonitoringConnecting)
 
 watch(isSCConnected, async (newValue, oldValue) => {
-  if(newValue != oldValue) {
+  if(newValue != oldValue && !(oldValue === null && newValue === true)) { //NOTE to eliminate success msg showing everytime the screen is refreshed
     if (!newValue) {
       useShowToast('error', 'Error', 'Could not connect to ServiceControl at ' + serviceControlUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>')
     }
@@ -120,7 +126,7 @@ watch(isSCConnected, async (newValue, oldValue) => {
 })
 
 watch(isSCMonitoringConnected, async (newValue, oldValue) => {
-  if(newValue != oldValue) {
+  if(newValue != oldValue && !(oldValue === null && newValue === true)) { //NOTE to eliminate success msg showing everytime the screen is refreshed
     if (!newValue) {
       useShowToast('error', 'Error', 'Could not connect to the ServiceControl Monitoring service at ' + monitoringUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>')
     }
@@ -142,6 +148,16 @@ let monitoringVersion = ref(null)
 let newmonitoringVersion = ref(null)
 let newmonitoringVersionLink = ref(null)
 let newmonitoringVersionNumber = ref(null)
+let isCompatibleWithSC = ref(true)
+let minimumSupportedSCVersion = ref(null)
+
+watch(isCompatibleWithSC, async (newValue, oldValue) => {
+  if(newValue != oldValue) {
+    if (!newValue) {
+      useShowToast('error', 'Error', 'You are using Service Control version ' + scVersion.value + '. Please, upgrade to version ' + minimumSupportedSCVersion.value+ ' or higher to unlock new functionality in ServicePulse.')
+    }
+  }  
+})
 
 setInterval( ()=> getServiceControlVersions(), 60000)//NOTE is this often enough or too often?
 
@@ -161,6 +177,9 @@ function getServiceControlVersions() {
     newmonitoringVersion.value = newVersions.newMVersion.newmversion
     newmonitoringVersionLink.value = newVersions.newMVersion.newmversionlink
     newmonitoringVersionNumber.value = newVersions.newMVersion.newmversionnumber  
+
+    isCompatibleWithSC.value = environment.is_compatible_with_sc
+    minimumSupportedSCVersion.value = environment.minimum_supported_sc_version
   })
 }
 provide(key_SCVersion, scVersion)

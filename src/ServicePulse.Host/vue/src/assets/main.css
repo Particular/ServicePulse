@@ -1,6 +1,10 @@
 @import 'bootstrap/dist/css/bootstrap.css';
 @import '../../../angular/app/css/particular.css';
 
+.Vue-Toastification__container.toast-container{
+    width: 400px;
+}
+
 .Vue-Toastification__toast--default.vue-toast {
     background-color: #030303;
 }

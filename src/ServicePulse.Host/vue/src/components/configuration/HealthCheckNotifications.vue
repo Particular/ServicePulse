@@ -7,6 +7,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue"
 import { key_ServiceControlUrl, key_IsSCConnected, key_ScConnectedAtLeastOnce, key_IsSCConnecting, key_IsPlatformExpired, key_IsPlatformTrialExpired, key_IsInvalidDueToUpgradeProtectionExpired } from "./../../composables/keys.js"
 import {useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications} from "../../composables/serviceNotifications.js"
+import { useShowToast } from "../../composables/toast.js"
 
 const isPlatformExpired = inject(key_IsPlatformExpired)
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired)
@@ -63,16 +64,18 @@ function saveEditedEmailNotifications(newSettings) {
     useUpdateEmailNotifications(configuredServiceControlUrl.value, newSettings).then(result => {
         if(result.message === 'success') {
             emailUpdateSuccessful.value = true 
-            emailNotifications.value.enable_tls =  newSettings.enable_tls          
-            emailNotifications.value.smtp_server =  newSettings.smtp_server          
-            emailNotifications.value.smtp_port =  newSettings.smtp_port          
-            emailNotifications.value.authentication_account =  newSettings.authorization_account          
-            emailNotifications.value.authentication_password =  newSettings.authorization_password          
-            emailNotifications.value.from =  newSettings.from          
+            useShowToast("info", "Info", 'Email settings updated.')
+            emailNotifications.value.enable_tls =  newSettings.enable_tls
+            emailNotifications.value.smtp_server =  newSettings.smtp_server
+            emailNotifications.value.smtp_port =  newSettings.smtp_port
+            emailNotifications.value.authentication_account =  newSettings.authorization_account
+            emailNotifications.value.authentication_password =  newSettings.authorization_password
+            emailNotifications.value.from =  newSettings.from
             emailNotifications.value.to =  newSettings.to
         }
         else {
-            emailUpdateSuccessful.value = false            
+            emailUpdateSuccessful.value = false
+            useShowToast("Error", "Error", 'Failed to update the email settings.')
         }
     })
 }

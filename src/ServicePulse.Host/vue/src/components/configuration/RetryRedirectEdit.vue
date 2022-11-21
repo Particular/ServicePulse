@@ -82,7 +82,7 @@ function close() {
                                 <span :title="sourceQueueTooltip"><i class="fa fa-info-circle"></i></span>
                                 <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
                                     <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-control" required :disabled="model.message_redirect_id">
-                                        <option v-for="option in model.queues" :value="option">
+                                        <option v-for="option in model.queues" :value="option" :key="option">
                                             {{ option }}
                                         </option>
                                     </select>

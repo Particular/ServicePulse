@@ -35,5 +35,11 @@ const props = defineProps({
                 <span v-html="props.message"></span>
             </div>
         </template>
+        <template v-if="props.type === 'default'">
+            <div class="toast-default">
+                <h4>{{props.title}}</h4>
+                <span v-html="props.message"></span>
+            </div>
+        </template>
     </div>
 </template>

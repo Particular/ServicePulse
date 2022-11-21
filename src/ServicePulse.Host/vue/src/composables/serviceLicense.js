@@ -1,6 +1,10 @@
-//import { useFetch } from "./fetch.js";
 import { ref, computed } from "vue";
 import { useGetDayDiffFromToday } from "./formatter"
+
+const subscriptionExpiring = '<div class="license-warning"><strong>Platform license expires soon</strong><div>Once the license expires you\'ll no longer be able to continue using the Particular Service Platform.</div><a href="/configuration#license" class="btn btn-license-warning">View license details</a></div>'
+const upgradeProtectionExpiring = '<div class="license-warning"><strong>Upgrade protection expires soon</strong><div>Once upgrade protection expires, you\'ll no longer have access to support or new product versions</div><a href="/configuration#license" class="btn btn-license-warning">View license details</a></div>'
+const upgradeProtectionExpired = '<div class="license-warning"><strong>Upgrade protection expired</strong><div>Once upgrade protection expires, you\'ll no longer have access to support or new product versions</div><a href="/configuration#license" class="btn btn-license-warning">View license details</a></div>'
+const trialExpiring = '<div class="license-warning"><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you\'ll need to extend your license.</div><a href="http://particular.net/extend-your-trial?p=servicepulse" class="btn btn-license-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="/configuration#license" class="btn btn-license-warning-light">View license details</a></div>'
 
 const license = ref({
     edition: "",
@@ -90,6 +94,25 @@ export function useExpirationDaysLeft(expirationDate, isValid, isExpiring) {
     return getExpirationDaysLeft(expirationDate, isValid, isExpiring);
 }
 
+export function useGetWarningMessage(licenseStatus, useShowToast) {
+    switch (licenseStatus) {
+        case 'ValidWithExpiredUpgradeProtection':
+            useShowToast("warning", "", upgradeProtectionExpired)
+            break;
+
+        case 'ValidWithExpiringTrial':
+            useShowToast("warning", "", trialExpiring)
+            break;
+
+        case 'ValidWithExpiringSubscription':
+            useShowToast("warning", "", subscriptionExpiring)
+            break;
+
+        case 'ValidWithExpiringUpgradeProtection':
+            useShowToast("warning", "", upgradeProtectionExpiring)
+            break;
+    }
+}
 
 function getExpirationDaysLeft(expirationDate, isValid, isExpiring) {
     if (!isValid) return ' - expired';
@@ -113,9 +136,7 @@ function getUpgradeDaysLeft(expirationDate, isValid)
 }
 
 function getLicense(serviceControlUrl, emptyLicense) {
-    //const { data, error, retry } = useFetch(serviceControlUrl + 'license')
-
-    return fetch(serviceControlUrl + 'license').then(response => {
+    return fetch(serviceControlUrl + 'license?refresh=true').then(response => {
         return response.json();
     })
     .catch(err => {
