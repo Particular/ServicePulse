@@ -1,5 +1,6 @@
 name: Release
 on:
+  workflow_dispatch:
   push:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
@@ -51,22 +52,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_KEY_VAULT_TENANT_ID }}
           client-secret: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
           certificate-name: ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE_NAME }}
-      - name: Publish artifacts
-        uses: actions/upload-artifact@v3.1.1
-        with:
-          name: artifacts
-          path: |
-            assets/*
-            nugets/*
-          retention-days: 1
-      - name: Install Octopus CLI
-        uses: OctopusDeploy/install-octopus-cli-action@v1.2.0
-        with:
-          version: latest
-      - name: Deploy
-        uses: Particular/push-octopus-package-action@v1.0.0
-        with:
-          octopus-deploy-api-key: ${{ secrets.OCTOPUS_DEPLOY_API_KEY }}	
   docker:
     needs: release
     runs-on: ${{ matrix.os }}
