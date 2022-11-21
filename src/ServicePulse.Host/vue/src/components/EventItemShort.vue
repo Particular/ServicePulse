@@ -107,11 +107,7 @@ function navigateToEvent(eventLogItem) {
     <div class="col-sm-12">
       <h6>Last 10 events</h6>
 
-      <div
-        class="row box box-event-item"
-        v-for="eventLogItem in eventLogItems"
-        :key="eventLogItem.id"
-      >
+      <div class="row box box-event-item" v-for="eventLogItem in eventLogItems">
         <div class="col-xs-12" @click="navigateToEvent(eventLogItem)">
           <div class="row">
             <div class="col-xs-1">
