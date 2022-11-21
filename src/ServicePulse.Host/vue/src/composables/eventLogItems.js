@@ -1,9 +1,7 @@
-﻿
+﻿export function getEventLogItems(serviceControlUrl) {
+  var url = serviceControlUrl.value + "eventlogitems";
 
-export function getEventLogItems(serviceControlUrl) {
-    var url = serviceControlUrl.value + 'eventlogitems';
-
-    return fetch(url).then(response => {
-        return response.json();
-    });
-};
+  return fetch(url).then((response) => {
+    return response.json();
+  });
+}

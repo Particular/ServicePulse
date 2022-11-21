@@ -1,45 +1,43 @@
 ﻿<script setup>
 const props = defineProps({
-    type:String,
-    title:String,
-    message:String,
-    //sticky:Boolean
-})
-
-
+  type: String,
+  title: String,
+  message: String,
+  //sticky:Boolean
+});
 </script>
 
-<template>  
-    <div class="toast-container">
-        <template v-if="props.type === 'success'">
-            <div class="toast-success">
-                <h4>{{props.title}}</h4>
-                <span v-html="props.message"></span>
-            </div>
-        </template>
-        <template v-if="props.type === 'info'">
-            <div class="toast-info">
-                <h4>{{props.title}}</h4>
-                <span v-html="props.message"></span>
-            </div>
-        </template>
-        <template v-if="props.type === 'error'">
-            <div class="toast-error">
-                <h4>{{props.title}}</h4>
-                <span v-html="props.message"></span>
-            </div>
-        </template>
-        <template v-if="props.type === 'warning'">
-            <div class="toast-warning">
-                <h4>{{props.title}}</h4>
-                <span v-html="props.message"></span>
-            </div>
-        </template>
-        <template v-if="props.type === 'default'">
-            <div class="toast-default">
-                <h4>{{props.title}}</h4>
-                <span v-html="props.message"></span>
-            </div>
-        </template>
-    </div>
+<template>
+  <div class="toast-container">
+    <template v-if="props.type === 'success'">
+      <div class="toast-success">
+        <h4>{{ props.title }}</h4>
+        <span v-html="props.message"></span>
+      </div>
+    </template>
+    <template v-if="props.type === 'info'">
+      <div class="toast-info">
+        <h4>{{ props.title }}</h4>
+        <span v-html="props.message"></span>
+      </div>
+    </template>
+    <template v-if="props.type === 'error'">
+      <div class="toast-error">
+        <h4>{{ props.title }}</h4>
+        <span v-html="props.message"></span>
+      </div>
+    </template>
+    <template v-if="props.type === 'warning'">
+      <div class="toast-warning">
+        <h4>{{ props.title }}</h4>
+        <span v-html="props.message"></span>
+      </div>
+    </template>
+    <template v-if="props.type === 'default'">
+      <div class="toast-default">
+        <h4>{{ props.title }}</h4>
+        <span v-html="props.message"></span>
+      </div>
+    </template>
+  </div>
 </template>

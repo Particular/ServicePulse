@@ -22,7 +22,7 @@ const router = createRouter({
       component: () => import("../views/ConfigurationView.vue"),
     },
   ],
-  strict: false
+  strict: false,
 });
 
 export default router;

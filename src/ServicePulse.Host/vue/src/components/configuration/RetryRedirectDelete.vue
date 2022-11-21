@@ -1,43 +1,45 @@
 <script setup>
-const emit = defineEmits(['delete', 'cancel'])
+const emit = defineEmits(["delete", "cancel"]);
 
 const model = defineProps({
-    message_redirect_id:String,
-})
+  message_redirect_id: String,
+});
 
 function deleteRedirect() {
-    emit('delete', model.message_redirect_id)
+  emit("delete", model.message_redirect_id);
 }
 
 function close() {
-    emit('cancel')
+  emit("cancel");
 }
-
 </script>
 
 <template>
-    <div class="modal-mask">
-        <div class="modal-wrapper">
-            <div class="modal-container">
-                <div class="modal-header">
-                    <div class="modal-title">
-                        <h3>Are you sure you want to end the redirect?</h3>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <p>Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-primary" @click="deleteRedirect">Yes</button>
-                    <button class="btn btn-default" @click="close">No</button>
-                </div>
-            </div>
+  <div class="modal-mask">
+    <div class="modal-wrapper">
+      <div class="modal-container">
+        <div class="modal-header">
+          <div class="modal-title">
+            <h3>Are you sure you want to end the redirect?</h3>
+          </div>
         </div>
-    </div>    
+        <div class="modal-body">
+          <p>
+            Once the redirect is ended, any affected messages will be sent to
+            the original destination queue. Ensure this queue is ready to accept
+            messages again.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" @click="deleteRedirect">Yes</button>
+          <button class="btn btn-default" @click="close">No</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>
-
 .modal-mask {
   position: fixed;
   z-index: 9998;

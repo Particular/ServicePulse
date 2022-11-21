@@ -1,25 +1,23 @@
 ﻿<script setup>
 const props = defineProps({
-    title:String,
-    message:String
-})
+  title: String,
+  message: String,
+});
 </script>
 
-<template>  
-    <div class="row">
-      <div class="col-sm-12">
-          <div class="row box box-no-click">
-
-              <div class="col-sm-12">
-                  <div class="row box-header">
-                      <div class="col-sm-12">
-                          <p class="lead hard-wrap">{{props.message}}</p>
-                          <p>&nbsp;</p>
-                      </div>
-                  </div>
-              </div>
-
+<template>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="row box box-no-click">
+        <div class="col-sm-12">
+          <div class="row box-header">
+            <div class="col-sm-12">
+              <p class="lead hard-wrap">{{ props.message }}</p>
+              <p>&nbsp;</p>
+            </div>
           </div>
+        </div>
       </div>
-  </div>  
+    </div>
+  </div>
 </template>

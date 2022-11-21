@@ -1,7 +1,7 @@
 ﻿<script setup>
 const props = defineProps({
-  type:String
-})
+  type: String,
+});
 </script>
 
 <template>
