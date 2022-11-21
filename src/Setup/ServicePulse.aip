@@ -79,9 +79,9 @@
     <ROW File="ServicePulse.Host.pdb" Component_="ServicePulse.Host.exe" FileName="Servic~1.pdb|ServicePulse.Host.pdb" Attributes="0" SourcePath="&lt;SP_PATH&gt;ServicePulse.Host.pdb" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
-    <ROW Name="CUSTOMACTIONS_PATH" Path="..\ServicePulse.Install.CustomActions\bin\Release\net40" Type="2" Content="0"/>
+    <ROW Name="CUSTOMACTIONS_PATH" Path="..\ServicePulse.Install.CustomActions\bin\Release\net48" Type="2" Content="0"/>
     <ROW Name="PROJECT_PATH" Path="." Type="2" Content="0"/>
-    <ROW Name="SP_PATH" Path="..\ServicePulse.Host\bin\Release\net45" Type="2" Content="0"/>
+    <ROW Name="SP_PATH" Path="..\ServicePulse.Host\bin\Release\net48" Type="2" Content="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
     <ROW BootstrOptKey="GlobalOptions" GeneralOptions="qh" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites"/>
