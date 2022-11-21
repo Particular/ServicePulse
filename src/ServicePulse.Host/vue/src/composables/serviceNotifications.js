@@ -1,5 +1,3 @@
-import { ref } from "vue";
-
 export function useEmailNotifications(serviceControlUrl) {
   const emailNotificationResults = getEmailNotifications(serviceControlUrl);
 

@@ -15,7 +15,7 @@ import {
   key_IsInvalidDueToUpgradeProtectionExpired,
 } from "./../../composables/keys.js";
 import { useServiceControlConnections } from "../../composables/serviceServiceControl.js";
-import Busy from "../Busy.vue";
+import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
@@ -146,7 +146,7 @@ function switchJsonTab() {
           </div>
           <div class="row tabs-config-snippets">
             <div class="col-sm-12">
-              <Busy v-show="loading"></Busy>
+              <busy-indicator v-show="loading"></busy-indicator>
 
               <!-- Nav tabs -->
               <div v-if="!loading" class="tabs" role="tablist">

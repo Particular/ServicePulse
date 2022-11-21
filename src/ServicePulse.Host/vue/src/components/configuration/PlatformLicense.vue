@@ -5,7 +5,7 @@ import {
   key_IsSCConnecting,
   key_ScConnectedAtLeastOnce,
   key_License,
-} from "./../../composables/keys.js";
+} from "../../composables/keys.js
 import {
   useIsSubscriptionLicense,
   useIsExpired,
@@ -15,10 +15,10 @@ import {
   useLicenseWarningLevel,
   useUpgradeDaysLeft,
   useExpirationDaysLeft,
-} from "./../../composables/serviceLicense.js";
+} from "../../composables/serviceLicense.js
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import BusyIndicator from "../BusyIndicator.vue";
-import Exclamation from "./../../components/Exclamation.vue";
+import ExclamationMark from "../ExclamationMark.vue";
 
 const isSCConnected = inject(key_IsSCConnected);
 const isSCConnecting = inject(key_IsSCConnecting);
@@ -81,7 +81,7 @@ const loading = computed(() => {
                     <b>License expiry date: </b>
                     <span :class="{ 'license-expired': isExpired }">
                       {{ formattedExpirationDate }} {{ expirationDaysLeft }}
-                      <Exclamation :type="expiredWarningType" />
+                      <exclamation-mark :type="expiredWarningType" />
                     </span>
                     <div
                       class="license-expired-text"
@@ -119,7 +119,7 @@ const loading = computed(() => {
                       <span :class="{ 'license-expired': !isValid }">
                         {{ formattedUpgradeProtectionExpiration }}
                         {{ upgradeDaysLeft }}
-                        <Exclamation :type="expiredWarningType" />
+                        <exclamation-mark :type="expiredWarningType" />
                       </span>
                     </span>
                     <div

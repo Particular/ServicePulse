@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed, inject } from "vue";
-import Connections from "../components/configuration/Connections.vue";
-import License from "../components/configuration/License.vue";
+import PlatformConnections from "../components/configuration/PlatformConnections.vue";
+import PlatformLicense from "../components/configuration/PlatformLicense.vue";
 import EndpointConnection from "../components/configuration/EndpointConnection.vue";
 import HealthCheckNotifications from "../components/configuration/HealthCheckNotifications.vue";
 import RetryRedirects from "../components/configuration/RetryRedirects.vue";
 import { useLicenseWarningLevel } from "../composables/serviceLicense.js";
-import Exclamation from "../components/Exclamation.vue";
+import ExclamationMark from "../components/ExclamationMark.vue";
 import {
   key_UnableToConnectToServiceControl,
   key_UnableToConnectToMonitoring,
@@ -26,10 +26,10 @@ const isExpired = inject(key_IsExpired);
 const license = inject(key_License);
 
 const routes = {
-  license: License,
+  license: PlatformLicense,
   "health-check-notifications": HealthCheckNotifications,
   "retry-redirects": RetryRedirects,
-  connections: Connections,
+  connections: PlatformConnections,
   "endpoint-connection": EndpointConnection,
 };
 
@@ -44,7 +44,7 @@ function subIsActive(subPath) {
 }
 
 const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || "/"] || License;
+  return routes[currentPath.value.slice(1) || "/"] || PlatformLicense;
 });
 </script>
 
@@ -65,7 +65,7 @@ const currentView = computed(() => {
             }"
           >
             <a href="#license">License</a>
-            <Exclamation
+            <exclamation-mark
               :type="useLicenseWarningLevel(license.license_status)"
             />
           </h5>

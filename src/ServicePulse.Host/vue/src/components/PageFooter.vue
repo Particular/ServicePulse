@@ -20,7 +20,7 @@ import {
   key_NewMonitoringVersion,
   key_NewMonitoringVersionLink,
   key_NewMonitoringVersionNumber,
-} from "./../composables/keys.js";
+} from "../composables/keys.js";
 
 const serviceControlUrl = inject(key_ServiceControlUrl);
 const isSCConnected = inject(key_IsSCConnected);

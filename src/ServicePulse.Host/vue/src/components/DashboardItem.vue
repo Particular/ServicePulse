@@ -15,7 +15,7 @@ const props = defineProps({
     }"
     :href="url"
   >
-    <i class="fa fa-3x" :class="iconClass"> </i>
+    <i class="fa fa-3x" :class="props.iconClass"> </i>
     <span v-if="counter > 0" class="badge badge-important">{{ counter }}</span>
     <h4>
       <slot></slot>

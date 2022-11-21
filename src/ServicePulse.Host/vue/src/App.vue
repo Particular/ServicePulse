@@ -1,8 +1,8 @@
 <script setup>
 import { ref, provide, computed, onMounted, watch } from "vue";
 import { RouterView } from "vue-router";
-import Footer from "./components/Footer.vue";
-import Header from "./components/Header.vue";
+import PageFooter from "./components/PageFooter.vue";
+import PageHeader from "./components/PageHeader.vue";
 import {
   key_ServiceControlUrl,
   key_UnableToConnectToServiceControl,
@@ -299,7 +299,7 @@ provide(key_NewMonitoringVersionNumber, newmonitoringVersionNumber);
 </script>
 
 <template>
-  <Header />
+  <page-header />
   <RouterView />
-  <Footer />
+  <page-footer />
 </template>

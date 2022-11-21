@@ -13,7 +13,7 @@ import {
   key_UpdateConnections,
   key_UnableToConnectToServiceControl,
   key_UnableToConnectToMonitoring,
-} from "./../../composables/keys.js";
+} from "../../composables/keys.js";
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);
