@@ -29,15 +29,6 @@ onMounted(() => {
   }
 });
 
-watch(props.date, async (value) => {
-  if (value && value !== minDate) {
-    m = moment(value);
-    updateText();
-  } else {
-    text.value = "unknown";
-  }
-});
-
 onUnmounted(() => clearInterval(interval));
 </script>
 
