@@ -2,8 +2,8 @@
 import { ref, onMounted, inject } from "vue";
 import { useRouter } from "vue-router";
 import { getEventLogItems } from "../composables/eventLogItems.js";
-import moment from "moment";
 import { key_ServiceControlUrl } from "@/composables/keys";
+import TimeSince from "./TimeSince.vue";
 
 const router = useRouter();
 const eventLogItems = ref([]);
@@ -11,10 +11,6 @@ const eventCount = ref(0);
 onMounted(() => {
   const serviceControlUrl = inject(key_ServiceControlUrl);
   getEventLogItems(serviceControlUrl).then((data) => {
-    data.forEach((event) => {
-      // set date to moment date
-      event.raised_at = moment(event.raised_at);
-    });
     eventCount.value = data.length;
     eventLogItems.value = data.slice(0, 10);
   });
@@ -65,7 +61,7 @@ function iconSubClasses(eventItem) {
 function navigateToEvent(eventLogItem) {
   switch (eventLogItem.category) {
     case "Endpoints":
-      router.push("/configuration/endpoints");
+      router.push("/configuration#endpoints");
       break;
     case "HeartbeatMonitoring":
       //router.push('/a/#/endpoints');
@@ -95,7 +91,7 @@ function navigateToEvent(eventLogItem) {
       window.location = "/a/#/failed-messages/groups";
       break;
     case "MessageRedirects":
-      router.push("/configuration/redirects");
+      router.push("/configuration#redirects");
       break;
     default:
   }
@@ -140,7 +136,9 @@ function navigateToEvent(eventLogItem) {
             </div>
 
             <div class="col-xs-2">
-              <div>{{ eventLogItem.raised_at.fromNow() }}</div>
+              <div>
+                <time-since :date="eventLogItem.raised_at"></time-since>
+              </div>
             </div>
           </div>
         </div>

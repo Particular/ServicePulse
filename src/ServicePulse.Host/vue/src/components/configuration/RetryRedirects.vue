@@ -9,6 +9,7 @@ import RetryRedirectDelete from "./RetryRedirectDelete.vue";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "../../composables/toast.js";
+import TimeSince from "../TimeSince.vue";
 
 import {
   key_ServiceControlUrl,
@@ -274,8 +275,10 @@ onMounted(() => {
                         </p>
                         <p class="metadata">
                           <i class="fa fa-clock-o"></i>
-                          Last modified: {{ redirect.last_modified }}
-                          <!-- Last modified: <sp-moment date="{{redirect.last_modified}}"></sp-moment> -->
+                          Last modified:
+                          <time-since
+                            :date="redirect.last_modified"
+                          ></time-since>
                         </p>
                       </div>
                     </div>

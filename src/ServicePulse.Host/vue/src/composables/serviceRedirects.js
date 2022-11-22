@@ -1,6 +1,3 @@
-//import { ref } from "vue";
-import moment from "moment";
-
 const redirects = {
   data: [],
   queues: [],
@@ -10,13 +7,6 @@ export function useRedirects(serviceControlUrl) {
   return getRedirects(serviceControlUrl)
     .then(() => getKnownQueues(serviceControlUrl))
     .then(() => {
-      if (redirects.data)
-        redirects.data.forEach(function (item) {
-          item.last_modified = moment
-            .utc(item.last_modified)
-            .local()
-            .format("YYYY-MM-DDTHH:mm:ss");
-        });
       return redirects;
     });
 }
