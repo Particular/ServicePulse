@@ -26,8 +26,8 @@ const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
 const license = inject(key_License);
 const isSubscriptionLicense = ref(useIsSubscriptionLicense(license.value));
 const isTrialLicense = ref(license.value.trial_license);
-const isExpired = ref(useIsExpired(license.value));
-const isExpiring = ref(useIsExpiring(license.value));
+const isExpired = ref(useIsExpired(license.value.license_status));
+const isExpiring = ref(useIsExpiring(license.value.license_status));
 const isValid = ref(useIsValid(license.value.license_status));
 const isUpgradeProtectionLicense = ref(
   useIsUpgradeProtectionLicense(license.value)
@@ -39,10 +39,14 @@ const licenseEdition = ref(license.value.licenseEdition);
 const instanceName = ref(license.value.formattedInstanceName);
 
 const upgradeDaysLeft = ref(
-  useUpgradeDaysLeft(license.value.upgrade_protection_expiration, isValid)
+  useUpgradeDaysLeft(license.value.upgrade_protection_expiration, isValid.value)
 );
 const expirationDaysLeft = ref(
-  useExpirationDaysLeft(license.value.expiration_date, isValid, isExpiring)
+  useExpirationDaysLeft(
+    license.value.expiration_date,
+    isValid.value,
+    isExpiring.value
+  )
 );
 const formattedExpirationDate = ref(license.value.formattedExpirationDate);
 const formattedUpgradeProtectionExpiration = ref(

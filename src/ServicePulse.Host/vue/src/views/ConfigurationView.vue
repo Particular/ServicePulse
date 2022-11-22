@@ -138,8 +138,8 @@ onMounted(() => {
           </h5>
         </div>
       </div>
-    </div>    
-    <component :is="currentView" v-on="currentEvents" />    
+    </div>
+    <component :is="currentView" v-on="currentEvents" />
   </div>
 </template>
 

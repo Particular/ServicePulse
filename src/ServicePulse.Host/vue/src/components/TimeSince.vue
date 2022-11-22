@@ -16,7 +16,8 @@ const title = ref(),
 function updateText() {
   const m = moment.utc(props.dateUtc);
   text.value = m.fromNow();
-  title.value = m.local().format("LLLL") + " (local)\n" + m.utc().format("LLLL") + " (UTC)";
+  title.value =
+    m.local().format("LLLL") + " (local)\n" + m.utc().format("LLLL") + " (UTC)";
 }
 
 onMounted(() => {

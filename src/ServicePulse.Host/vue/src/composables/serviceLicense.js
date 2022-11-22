@@ -139,19 +139,19 @@ export function useExpirationDaysLeft(expirationDate, isValid, isExpiring) {
 export function useGetWarningMessage(licenseStatus, useShowToast) {
   switch (licenseStatus) {
     case "ValidWithExpiredUpgradeProtection":
-      useShowToast("warning", "", upgradeProtectionExpired);
+      useShowToast("warning", "", upgradeProtectionExpired, true);
       break;
 
     case "ValidWithExpiringTrial":
-      useShowToast("warning", "", trialExpiring);
+      useShowToast("warning", "", trialExpiring, true);
       break;
 
     case "ValidWithExpiringSubscription":
-      useShowToast("warning", "", subscriptionExpiring);
+      useShowToast("warning", "", subscriptionExpiring, true);
       break;
 
     case "ValidWithExpiringUpgradeProtection":
-      useShowToast("warning", "", upgradeProtectionExpiring);
+      useShowToast("warning", "", upgradeProtectionExpiring, true);
       break;
   }
 }
