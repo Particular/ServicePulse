@@ -99,11 +99,12 @@ provide(key_IsExpired, isExpired);
 
 watch(isExpired, async (newValue, oldValue) => {
   if (newValue != oldValue) {
-    if (!newValue) {
+    if (newValue) {
       useShowToast(
         "error",
         "Error",
-        'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>'
+        'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>',
+        true
       );
     }
   }
