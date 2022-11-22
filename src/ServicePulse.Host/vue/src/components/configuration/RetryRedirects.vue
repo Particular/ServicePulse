@@ -1,8 +1,7 @@
 <script setup>
 import { inject, ref, reactive, onMounted } from "vue";
-import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
-import PlatformTrialExpired from "../PlatformTrialExpired.vue";
-import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
+import LicenseExpired from "../LicenseExpired.vue";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
 import RetryRedirectDelete from "./RetryRedirectDelete.vue";
@@ -16,9 +15,6 @@ import {
   key_IsSCConnected,
   key_ScConnectedAtLeastOnce,
   key_IsSCConnecting,
-  key_IsPlatformExpired,
-  key_IsPlatformTrialExpired,
-  key_IsInvalidDueToUpgradeProtectionExpired,
 } from "./../../composables/keys.js";
 import {
   useRedirects,
@@ -28,13 +24,9 @@ import {
   retryPendingMessagesForQueue,
 } from "../../composables/serviceRedirects.js";
 
-const emit = defineEmits(["redirectCountUpdated"]);
+const isExpired = licenseStatus.isExpired;
 
-const isPlatformExpired = inject(key_IsPlatformExpired);
-const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired);
-const isInvalidDueToUpgradeProtectionExpired = inject(
-  key_IsInvalidDueToUpgradeProtectionExpired
-);
+const emit = defineEmits(["redirectCountUpdated"]);
 
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
@@ -199,21 +191,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <PlatformLicenseExpired :isPlatformExpired="isPlatformExpired" />
-  <PlatformTrialExpired :isPlatformTrialExpired="isPlatformTrialExpired" />
-  <PlatformProtectionExpired
-    :isInvalidDueToUpgradeProtectionExpired="
-      isInvalidDueToUpgradeProtectionExpired
-    "
-  />
-
-  <template
-    v-if="
-      !isPlatformTrialExpired &&
-      !isPlatformExpired &&
-      !isInvalidDueToUpgradeProtectionExpired
-    "
-  >
+  <LicenseExpired />
+  <template v-if="!isExpired">
     <section name="redirects">
       <div class="sp-loader" v-if="isSCConnecting"></div>
       <ServiceControlNotAvailable

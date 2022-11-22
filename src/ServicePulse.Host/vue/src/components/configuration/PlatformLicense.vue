@@ -42,7 +42,11 @@ const upgradeDaysLeft = ref(
   useUpgradeDaysLeft(license.value.upgrade_protection_expiration, isValid.value)
 );
 const expirationDaysLeft = ref(
-  useExpirationDaysLeft(license.value.expiration_date, isValid.value, isExpiring.value)
+  useExpirationDaysLeft(
+    license.value.expiration_date,
+    isValid.value,
+    isExpiring.value
+  )
 );
 const formattedExpirationDate = ref(license.value.formattedExpirationDate);
 const formattedUpgradeProtectionExpiration = ref(

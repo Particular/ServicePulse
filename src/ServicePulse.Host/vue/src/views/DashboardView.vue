@@ -2,47 +2,25 @@
 import { inject } from "vue";
 import DashboardItem from "../components/DashboardItem.vue";
 import EventItemShort from "../components/EventItemShort.vue";
-import PlatformLicenseExpired from "../components/PlatformLicenseExpired.vue";
-import PlatformTrialExpired from "../components/PlatformTrialExpired.vue";
-import PlatformProtectionExpired from "../components/PlatformProtectionExpired.vue";
+import LicenseExpired from "../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
 import {
   key_IsSCConnected,
   key_ScConnectedAtLeastOnce,
   key_IsSCConnecting,
-  key_IsPlatformExpired,
-  key_IsPlatformTrialExpired,
-  key_IsInvalidDueToUpgradeProtectionExpired,
 } from "../composables/keys.js";
 import { stats } from "./../composables/serviceServiceControl.js";
+import { licenseStatus } from "./../composables/serviceLicense.js";
 
-const isPlatformExpired = inject(key_IsPlatformExpired);
-const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired);
-const isInvalidDueToUpgradeProtectionExpired = inject(
-  key_IsInvalidDueToUpgradeProtectionExpired
-);
-
+const isExpired = licenseStatus.isExpired;
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
 const isSCConnecting = inject(key_IsSCConnecting);
 </script>
 
 <template>
-  <PlatformLicenseExpired :isPlatformExpired="isPlatformExpired" />
-  <PlatformTrialExpired :isPlatformTrialExpired="isPlatformTrialExpired" />
-  <PlatformProtectionExpired
-    :isInvalidDueToUpgradeProtectionExpired="
-      isInvalidDueToUpgradeProtectionExpired
-    "
-  />
-
-  <template
-    v-if="
-      !isPlatformTrialExpired &&
-      !isPlatformExpired &&
-      !isInvalidDueToUpgradeProtectionExpired
-    "
-  >
+  <LicenseExpired/>
+  <template v-if="!isExpired">
     <div class="container">
       <div class="sp-loader" v-if="isSCConnecting"></div>
       <ServiceControlNotAvailable

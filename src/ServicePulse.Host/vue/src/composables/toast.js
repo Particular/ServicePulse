@@ -16,11 +16,11 @@ export function useShowToast(type, title, message, doNotUseTimeout) {
   };
 
   const options = {
-    type: type
-  }
+    type: type,
+  };
 
   if (doNotUseTimeout) {
-    options.timeout = false
+    options.timeout = false;
   }
 
   toast(content, options);

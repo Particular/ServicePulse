@@ -28,7 +28,7 @@ const isPlatformExpired = computed(() => {
   return license.value
     ? license.value.license_status == "InvalidDueToExpiredSubscription"
     : false;
-})
+});
 
 const isPlatformTrialExpired = computed(() => {
   return license.value
@@ -47,14 +47,15 @@ const isExpired = computed(() => {
     isPlatformTrialExpired.value ||
     isInvalidDueToUpgradeProtectionExpired.value
   );
-})
+});
 
 export const licenseStatus = {
-  isPlatformExpired : isPlatformExpired,
-  isPlatformTrialExpired : isPlatformTrialExpired,
-  isInvalidDueToUpgradeProtectionExpired : isInvalidDueToUpgradeProtectionExpired,
-  isExpired : isExpired
-}
+  isPlatformExpired: isPlatformExpired,
+  isPlatformTrialExpired: isPlatformTrialExpired,
+  isInvalidDueToUpgradeProtectionExpired:
+    isInvalidDueToUpgradeProtectionExpired,
+  isExpired: isExpired,
+};
 
 export function useLicense(serviceControlUrl) {
   return getLicense(serviceControlUrl, license).then((lic) => {

@@ -1,18 +1,14 @@
 <script setup>
 import { inject, ref, onMounted } from "vue";
-import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
-import PlatformTrialExpired from "../PlatformTrialExpired.vue";
-import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
+import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import {
   key_ServiceControlUrl,
   key_IsSCConnected,
   key_ScConnectedAtLeastOnce,
   key_IsSCConnecting,
-  key_IsPlatformExpired,
-  key_IsPlatformTrialExpired,
-  key_IsInvalidDueToUpgradeProtectionExpired,
 } from "./../../composables/keys.js";
 import {
   useEmailNotifications,
@@ -22,11 +18,7 @@ import {
 } from "../../composables/serviceNotifications.js";
 import { useShowToast } from "../../composables/toast.js";
 
-const isPlatformExpired = inject(key_IsPlatformExpired);
-const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired);
-const isInvalidDueToUpgradeProtectionExpired = inject(
-  key_IsInvalidDueToUpgradeProtectionExpired
-);
+const isExpired = licenseStatus.isExpired;
 
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
@@ -145,21 +137,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <PlatformLicenseExpired :isPlatformExpired="isPlatformExpired" />
-  <PlatformTrialExpired :isPlatformTrialExpired="isPlatformTrialExpired" />
-  <PlatformProtectionExpired
-    :isInvalidDueToUpgradeProtectionExpired="
-      isInvalidDueToUpgradeProtectionExpired
-    "
-  />
-
-  <template
-    v-if="
-      !isPlatformTrialExpired &&
-      !isPlatformExpired &&
-      !isInvalidDueToUpgradeProtectionExpired
-    "
-  >
+  <LicenseExpired />
+  <template v-if="!isExpired">
     <section name="notifications">
       <div class="sp-loader" v-if="isSCConnecting"></div>
       <ServiceControlNotAvailable
