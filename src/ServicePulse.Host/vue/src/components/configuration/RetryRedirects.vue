@@ -28,6 +28,8 @@ import {
   retryPendingMessagesForQueue,
 } from "../../composables/serviceRedirects.js";
 
+const emit = defineEmits(["redirectCountUpdated"]);
+
 const isPlatformExpired = inject(key_IsPlatformExpired);
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired);
 const isInvalidDueToUpgradeProtectionExpired = inject(
@@ -61,6 +63,9 @@ const redirectSaveSuccessful = ref(null);
 function getRedirect() {
   loadingData.value = true;
   useRedirects(configuredServiceControlUrl.value).then((result) => {
+    if (redirects.total != result.total) {
+      emit("redirectCountUpdated", result.total);
+    }
     redirects.total = result.total;
     redirects.data = result.data;
     selectedRedirect.value.queues = result.queues;

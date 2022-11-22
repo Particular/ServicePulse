@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, inject } from "vue";
+import { ref, computed, inject, watch, onMounted } from "vue";
 import PlatformConnections from "../components/configuration/PlatformConnections.vue";
 import PlatformLicense from "../components/configuration/PlatformLicense.vue";
 import EndpointConnection from "../components/configuration/EndpointConnection.vue";
@@ -35,6 +35,12 @@ const routes = {
 
 const currentPath = ref(window.location.hash);
 
+const redirectCount = ref(0);
+
+function updateRedirectCount(newCount) {
+  redirectCount.value = newCount;
+}
+
 window.addEventListener("hashchange", () => {
   currentPath.value = window.location.hash;
 });
@@ -45,6 +51,23 @@ function subIsActive(subPath) {
 
 const currentView = computed(() => {
   return routes[currentPath.value.slice(1) || "/"] || PlatformLicense;
+});
+
+const currentEvents = ref({});
+watch(currentPath, async (newValue) => {
+  setupEvents(newValue);
+});
+
+function setupEvents(newPath) {
+  if (newPath === "#retry-redirects") {
+    currentEvents.value = { redirectCountUpdated: updateRedirectCount };
+  } else {
+    currentEvents.value = {};
+  }
+}
+
+onMounted(() => {
+  setupEvents(currentPath.value);
 });
 </script>
 
@@ -85,7 +108,9 @@ const currentView = computed(() => {
               disabled: !isSCConnected && !scConnectedAtLeastOnce,
             }"
           >
-            <a href="#retry-redirects">Retry Redirects</a>
+            <a href="#retry-redirects"
+              >Retry Redirects ({{ redirectCount }})
+            </a>
           </h5>
           <h5
             v-if="!isExpired"
@@ -113,8 +138,8 @@ const currentView = computed(() => {
           </h5>
         </div>
       </div>
-    </div>
-    <component :is="currentView" />
+    </div>    
+    <component :is="currentView" v-on="currentEvents" />    
   </div>
 </template>
 
