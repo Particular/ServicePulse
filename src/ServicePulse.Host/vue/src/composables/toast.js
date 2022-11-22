@@ -1,7 +1,7 @@
 import ToastPopup from "../components/ToastPopup.vue";
 import { useToast } from "vue-toastification";
 
-export function useShowToast(type, title, message) {
+export function useShowToast(type, title, message, doNotUseTimeout) {
   const toast = useToast();
   const content = {
     // Your component or JSX template
@@ -15,5 +15,13 @@ export function useShowToast(type, title, message) {
     },
   };
 
-  toast(content, { type: type });
+  const options = {
+    type: type
+  }
+
+  if (doNotUseTimeout) {
+    options.timeout = false
+  }
+
+  toast(content, options);
 }
