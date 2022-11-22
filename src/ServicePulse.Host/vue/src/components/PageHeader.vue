@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, useRoute } from "vue-router";
-import { inject, ref, computed } from "vue";
+import { inject, computed } from "vue";
 import {
   key_License,
   key_UnableToConnectToServiceControl,
@@ -25,16 +25,21 @@ const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
 const license = inject(key_License);
 
 const displayWarn = computed(() => {
-    const expiredWarningType = useLicenseWarningLevel(license.value ? license.value.license_status : "")
-    expiredWarningType === "warning"
-  });
-const displayDanger = computed(
-  () => {
-    const expiredWarningType = useLicenseWarningLevel(license.value ? license.value.license_status : "")
-    return unableToConnectToServiceControl.value ||
+  const expiredWarningType = useLicenseWarningLevel(
+    license.value ? license.value.license_status : ""
+  );
+  return expiredWarningType === "warning";
+});
+const displayDanger = computed(() => {
+  const expiredWarningType = useLicenseWarningLevel(
+    license.value ? license.value.license_status : ""
+  );
+  return (
+    unableToConnectToServiceControl.value ||
     unableToConnectToMonitoring.value ||
     expiredWarningType === "danger"
-  });
+  );
+});
 </script>
 
 <template>
