@@ -9,14 +9,20 @@
     background-color: #030303;
 }
 .Vue-Toastification__toast--success.vue-toast {
-    background-color: #51a351;
+    background-color: #00C468;
 }
 .Vue-Toastification__toast--error.vue-toast {
-    background-color: #bd362f;
+    /* background-image: url('../../../angular/app/img/toast-danger.svg') !important;
+    background-position-y: 30px;
+    background-size: 28px 28px; */
+    background-color: #BE0202;
 }
 .Vue-Toastification__toast--info.vue-toast {
-    background-color: #2f96b4;
+    background-color: #1b809e;
 }
 .Vue-Toastification__toast--warning.vue-toast {
-    background-color: #f89406;
+    /* background-image: url('../../../angular/app/img/toast-warning.svg') !important;
+    background-position-y: 30px;
+    background-size: 28px 28px; */
+    background-color: #F3BC52;
 }

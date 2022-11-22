@@ -101,7 +101,7 @@ function saveEditedRedirect(redirect) {
     .then((result) => {
       if (result.message === "success") {
         redirectSaveSuccessful.value = true;
-        useShowToast("info", "Info", "Redirect updated");
+        useShowToast("info", "Info", "Redirect updated successfully");
         getRedirect();
       } else {
         redirectSaveSuccessful.value = false;
@@ -141,7 +141,7 @@ function saveCreatedRedirect(redirect) {
   ).then((result) => {
     if (result.message === "success") {
       redirectSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Redirect created");
+      useShowToast("info", "Info", "Redirect created successfully");
       getRedirect();
     } else {
       redirectSaveSuccessful.value = false;
