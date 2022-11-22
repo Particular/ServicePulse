@@ -137,7 +137,7 @@ function navigateToEvent(eventLogItem) {
 
             <div class="col-xs-2">
               <div>
-                <time-since :date="eventLogItem.raised_at"></time-since>
+                <time-since :dateUtc="eventLogItem.raised_at"></time-since>
               </div>
             </div>
           </div>

@@ -277,7 +277,7 @@ onMounted(() => {
                           <i class="fa fa-clock-o"></i>
                           Last modified:
                           <time-since
-                            :date="redirect.last_modified"
+                            :dateUtc="redirect.last_modified"
                           ></time-since>
                         </p>
                       </div>
