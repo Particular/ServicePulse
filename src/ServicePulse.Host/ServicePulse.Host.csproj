@@ -21,7 +21,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Hosting\Help.txt" />
     <EmbeddedResource Include="app\**\*" LogicalName="%(RelativeDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Remove="app\js\app.constants.js" />
   </ItemGroup>
 
   <ItemGroup>

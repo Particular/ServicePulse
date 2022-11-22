@@ -27,7 +27,7 @@ export default defineConfig({
     outDir: "../app",
     emptyOutDir: true,
     rollupOptions: {
-      external: [],
+      external: ["/js/app.constants.js"],
     },
   },
   server: {
