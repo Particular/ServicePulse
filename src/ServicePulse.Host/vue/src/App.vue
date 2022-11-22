@@ -51,9 +51,7 @@ import {
 } from "./composables/serviceServiceControl.js";
 import {
   useLicense,
-  useIsPlatformExpired,
-  useIsPlatformTrialExpired,
-  useIsInvalidDueToUpgradeProtectionExpired,
+  licenseStatus,
   useGetWarningMessage,
 } from "./composables/serviceLicense.js";
 import { useShowToast } from "./composables/toast.js";
@@ -66,38 +64,17 @@ let license = ref(null);
 useLicense(serviceControlUrl.value).then((lic) => {
   license.value = lic.value;
 });
-const isPlatformExpired = computed(() => {
-  return license.value
-    ? useIsPlatformExpired(license.value.license_status)
-    : false;
-});
-const isPlatformTrialExpired = computed(() => {
-  return license.value
-    ? useIsPlatformTrialExpired(license.value.license_status)
-    : false;
-});
-const isInvalidDueToUpgradeProtectionExpired = computed(() => {
-  return license.value
-    ? useIsInvalidDueToUpgradeProtectionExpired(license.value.license_status)
-    : false;
-});
-const isExpired = computed(() => {
-  return (
-    isPlatformExpired.value ||
-    isPlatformTrialExpired.value ||
-    isInvalidDueToUpgradeProtectionExpired.value
-  );
-});
+
 provide(key_License, license);
-provide(key_IsPlatformExpired, isPlatformExpired);
-provide(key_IsPlatformTrialExpired, isPlatformTrialExpired);
+provide(key_IsPlatformExpired, licenseStatus.isPlatformExpired);
+provide(key_IsPlatformTrialExpired, licenseStatus.isPlatformTrialExpired);
 provide(
   key_IsInvalidDueToUpgradeProtectionExpired,
-  isInvalidDueToUpgradeProtectionExpired
+  licenseStatus.isInvalidDueToUpgradeProtectionExpired
 );
-provide(key_IsExpired, isExpired);
+provide(key_IsExpired, licenseStatus.isExpired);
 
-watch(isExpired, async (newValue, oldValue) => {
+watch(licenseStatus.isExpired, async (newValue, oldValue) => {
   if (newValue != oldValue) {
     if (newValue) {
       useShowToast(

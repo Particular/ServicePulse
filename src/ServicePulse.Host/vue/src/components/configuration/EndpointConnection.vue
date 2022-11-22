@@ -4,13 +4,13 @@ import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
 import PlatformTrialExpired from "../PlatformTrialExpired.vue";
 import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import {
   key_ServiceControlUrl,
   key_MonitoringUrl,
   key_IsSCConnected,
   key_ScConnectedAtLeastOnce,
   key_IsSCConnecting,
-  key_IsPlatformExpired,
   key_IsPlatformTrialExpired,
   key_IsInvalidDueToUpgradeProtectionExpired,
 } from "./../../composables/keys.js";
@@ -22,7 +22,7 @@ import "vue-highlight-code/dist/style.css";
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);
 
-const isPlatformExpired = inject(key_IsPlatformExpired);
+const isPlatformExpired = licenseStatus.isPlatformExpired;
 const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired);
 const isInvalidDueToUpgradeProtectionExpired = inject(
   key_IsInvalidDueToUpgradeProtectionExpired
