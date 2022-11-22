@@ -77,6 +77,11 @@ const displayDanger = computed(
             <a href="/a/#/monitoring">
               <i class="fa pa-monitoring icon-white"></i>
               <span class="navbar-label">Monitoring</span>
+              <span
+                v-if="stats.number_of_disconnected_endpoints > 0"
+                class="badge badge-important"
+                >{{ stats.number_of_disconnected_endpoints }}</span
+              >
             </a>
           </li>
           <li

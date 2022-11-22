@@ -18,6 +18,7 @@ export const stats = reactive({
   number_of_archived_messages: 0,
   number_of_pending_retries: 0,
   number_of_endpoints: 0,
+  number_of_disconnected_endpoints: 0,
 });
 
 export const environment = reactive({
@@ -97,9 +98,16 @@ export function useServiceControlStats(serviceControlUrl) {
 
 export function useServiceControlMonitoringStats(monitoringUrl) {
   const monitoredEndpointsResult = getMonitoredEndpoints(monitoringUrl);
+  const disconnectedEndpointsCountResult =
+    getDisconnectedEndpointsCount(monitoringUrl);
 
-  return Promise.all([monitoredEndpointsResult]).then(() => {
+  return Promise.all([
+    monitoredEndpointsResult,
+    disconnectedEndpointsCountResult,
+  ]).then(([, disconnectedEndpoints]) => {
     //Do something here with the argument to the callback in the future if we are using them
+    stats.number_of_disconnected_endpoints = disconnectedEndpoints;
+
     isServiceControlMonitoringConnecting.value = false;
   });
 }
@@ -286,9 +294,24 @@ function getMonitoredEndpoints(monitoringUrl) {
     .then((response) => {
       return response.json();
     })
-    .then((json) => {
+    .then((data) => {
       isServiceControlMonitoringConnected.value = true;
-      return json;
+      return data;
+    })
+    .catch((err) => {
+      isServiceControlMonitoringConnected.value = false;
+      console.log(err);
+    });
+}
+
+function getDisconnectedEndpointsCount(monitoringUrl) {
+  return fetch(monitoringUrl + "monitored-endpoints/disconnected")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      isServiceControlMonitoringConnected.value = true;
+      return data;
     })
     .catch((err) => {
       isServiceControlMonitoringConnected.value = false;
