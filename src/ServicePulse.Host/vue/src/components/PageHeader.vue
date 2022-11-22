@@ -23,17 +23,18 @@ const unableToConnectToServiceControl = inject(
 );
 const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
 const license = inject(key_License);
-const expiredWarningType = ref(
-  useLicenseWarningLevel(license.value ? license.value.license_status : "")
-);
 
-const displayWarn = computed(() => expiredWarningType.value === "warning");
+const displayWarn = computed(() => {
+    const expiredWarningType = useLicenseWarningLevel(license.value ? license.value.license_status : "")
+    expiredWarningType === "warning"
+  });
 const displayDanger = computed(
-  () =>
-    unableToConnectToServiceControl.value ||
+  () => {
+    const expiredWarningType = useLicenseWarningLevel(license.value ? license.value.license_status : "")
+    return unableToConnectToServiceControl.value ||
     unableToConnectToMonitoring.value ||
-    expiredWarningType.value === "danger"
-);
+    expiredWarningType === "danger"
+  });
 </script>
 
 <template>
