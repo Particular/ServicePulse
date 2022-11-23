@@ -33,9 +33,6 @@
     background-color: #00C468;
 }
 .Vue-Toastification__toast--error.vue-toast {
-    /* background-image: url('../../../angular/app/img/toast-danger.svg') !important;
-    background-position-y: 30px;
-    background-size: 28px 28px; */
     background-color: #CE4844;   
 }
 .Vue-Toastification__toast--info.vue-toast {
