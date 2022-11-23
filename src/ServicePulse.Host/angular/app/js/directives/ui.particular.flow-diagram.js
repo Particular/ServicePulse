@@ -106,8 +106,8 @@
             update(root);
         }
 
-        function zoomed() {
-            svg.attr("transform", d3.event.transform);
+        function zoomed(event) {
+            svg.attr("transform", event.transform);
         }
 
         function update(source) {
