@@ -89,11 +89,10 @@ const isSCConnecting = inject(key_IsSCConnecting);
                     >
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <EventItemShort></EventItemShort>
+              </div>              
+            </div>            
           </div>
+          <EventItemShort></EventItemShort>
         </div>
       </template>
     </div>
