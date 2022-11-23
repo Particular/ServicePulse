@@ -14,5 +14,4 @@ export const key_IsSCMonitoringConnected = Symbol("isSCMonitoringConnected");
 export const key_IsSCMonitoringConnecting = Symbol("isSCMonitoringConnecting");
 export const key_UpdateConnections = Symbol("updateConnections");
 export const key_Stats = Symbol("stats");
-export const key_License = Symbol("license");
 export const key_IsCompatibleWithSC = Symbol("IsCompatibleWithSC");

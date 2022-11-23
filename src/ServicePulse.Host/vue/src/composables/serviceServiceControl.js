@@ -135,7 +135,10 @@ export function useServiceControlConnections(serviceControlUrl, monitoringUrl) {
 export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
   onMounted(() => {
     getServiceControlVersion(serviceControlUrl, monitoringUrl);
-    setInterval(() => getServiceControlVersion(serviceControlUrl, monitoringUrl), 60000);
+    setInterval(
+      () => getServiceControlVersion(serviceControlUrl, monitoringUrl),
+      60000
+    );
   });
 
   watch(environment, async (newValue, oldValue) => {

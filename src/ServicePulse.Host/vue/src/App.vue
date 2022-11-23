@@ -15,7 +15,6 @@ import {
   key_IsMonitoringEnabled,
   key_IsSCMonitoringConnected,
   key_IsSCMonitoringConnecting,
-  key_License,
 } from "./composables/keys.js";
 import {
   useServiceControlUrls,
@@ -31,15 +30,10 @@ import {
   isServiceControlMonitoringConnecting,
   isServiceControlMonitoringConnected,
 } from "./composables/serviceServiceControl.js";
-import {
-  useLicense,
-  useLicenseStatus,
-  useGetWarningMessage,
-} from "./composables/serviceLicense.js";
+import { useLicense } from "./composables/serviceLicense.js";
 import { useShowToast } from "./composables/toast.js";
 
 onMounted(() => {
-  getLicense();
   getServiceControlStats();
   getServiceControlMonitoringStats();
 });
@@ -50,38 +44,7 @@ provide(key_ServiceControlUrl, serviceControlUrl);
 provide(key_MonitoringUrl, monitoringUrl);
 
 useServiceControlVersion(serviceControlUrl.value, monitoringUrl.value);
-
-let license = ref(null);
-function getLicense() {
-  useLicense(serviceControlUrl.value).then((lic) => {
-    license.value = lic.value;
-  });
-}
-
-provide(key_License, license);
-
-watch(useLicenseStatus.isExpired, async (newValue, oldValue) => {
-  if (newValue != oldValue) {
-    if (newValue) {
-      useShowToast(
-        "error",
-        "Error",
-        'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>',
-        true
-      );
-    }
-  }
-});
-
-watch(license, async (newValue, oldValue) => {
-  const checkForWarnings =
-    oldValue !== null
-      ? newValue && newValue.license_status != oldValue.license_status
-      : newValue !== null;
-  if (checkForWarnings) {
-    useGetWarningMessage(newValue.license_status, useShowToast);
-  }
-});
+useLicense(serviceControlUrl.value);
 
 let isSCConnecting = ref(true);
 let isSCConnected = ref(null);

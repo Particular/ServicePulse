@@ -5,17 +5,13 @@ import PlatformLicense from "../components/configuration/PlatformLicense.vue";
 import EndpointConnection from "../components/configuration/EndpointConnection.vue";
 import HealthCheckNotifications from "../components/configuration/HealthCheckNotifications.vue";
 import RetryRedirects from "../components/configuration/RetryRedirects.vue";
-import {
-  useLicenseWarningLevel,
-  useLicenseStatus,
-} from "../composables/serviceLicense.js";
+import { useLicenseStatus } from "../composables/serviceLicense.js";
 import ExclamationMark from "../components/ExclamationMark.vue";
 import {
   key_UnableToConnectToServiceControl,
   key_UnableToConnectToMonitoring,
   key_IsSCConnected,
   key_ScConnectedAtLeastOnce,
-  key_License,
 } from "./../composables/keys.js";
 
 const unableToConnectToServiceControl = inject(
@@ -24,8 +20,6 @@ const unableToConnectToServiceControl = inject(
 const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
-const pLicense = inject(key_License);
-const isExpired = ref(useLicenseStatus.isExpired);
 
 const routes = {
   license: PlatformLicense,
@@ -90,12 +84,10 @@ onMounted(() => {
             }"
           >
             <a href="#license">License</a>
-            <exclamation-mark
-              :type="useLicenseWarningLevel(pLicense.license_status)"
-            />
+            <exclamation-mark :type="useLicenseStatus.warningLevel" />
           </h5>
           <h5
-            v-if="!isExpired"
+            v-if="!useLicenseStatus.isExpired"
             :class="{
               active: subIsActive('#health-check-notifications'),
               disabled: !isSCConnected && !scConnectedAtLeastOnce,
@@ -104,7 +96,7 @@ onMounted(() => {
             <a href="#health-check-notifications">Health Check Notifications</a>
           </h5>
           <h5
-            v-if="!isExpired"
+            v-if="!useLicenseStatus.isExpired"
             :class="{
               active: subIsActive('#retry-redirects'),
               disabled: !isSCConnected && !scConnectedAtLeastOnce,
@@ -115,7 +107,7 @@ onMounted(() => {
             </a>
           </h5>
           <h5
-            v-if="!isExpired"
+            v-if="!useLicenseStatus.isExpired"
             :class="{ active: subIsActive('#connections') }"
           >
             <a href="#connections">
@@ -130,7 +122,7 @@ onMounted(() => {
             </a>
           </h5>
           <h5
-            v-if="!isExpired"
+            v-if="!useLicenseStatus.isExpired"
             :class="{
               active: subIsActive('#endpoint-connection'),
               disabled: !isSCConnected && !scConnectedAtLeastOnce,

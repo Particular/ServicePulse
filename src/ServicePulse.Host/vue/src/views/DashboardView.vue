@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref } from "vue";
+import { inject } from "vue";
 import DashboardItem from "../components/DashboardItem.vue";
 import EventItemShort from "../components/EventItemShort.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
@@ -12,7 +12,6 @@ import {
 import { stats } from "./../composables/serviceServiceControl.js";
 import { useLicenseStatus } from "./../composables/serviceLicense.js";
 
-const isExpired = ref(useLicenseStatus.isExpired);
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
 const isSCConnecting = inject(key_IsSCConnecting);
@@ -20,7 +19,7 @@ const isSCConnecting = inject(key_IsSCConnecting);
 
 <template>
   <LicenseExpired />
-  <template v-if="!isExpired">
+  <template v-if="!useLicenseStatus.isExpired">
     <div class="container">
       <div class="sp-loader" v-if="isSCConnecting"></div>
       <ServiceControlNotAvailable

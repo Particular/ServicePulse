@@ -2,13 +2,12 @@
 import { RouterLink, useRoute } from "vue-router";
 import { inject, computed } from "vue";
 import {
-  key_License,
   key_UnableToConnectToServiceControl,
   key_UnableToConnectToMonitoring,
 } from "./../composables/keys.js";
 import ExclamationMark from "./ExclamationMark.vue";
 import { stats } from "../composables/serviceServiceControl.js";
-import { useLicenseWarningLevel } from "./../composables/serviceLicense.js";
+import { useLicenseStatus } from "./../composables/serviceLicense.js";
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];
@@ -22,22 +21,15 @@ const unableToConnectToServiceControl = inject(
   key_UnableToConnectToServiceControl
 );
 const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
-const license = inject(key_License);
 
 const displayWarn = computed(() => {
-  const expiredWarningType = useLicenseWarningLevel(
-    license.value ? license.value.license_status : ""
-  );
-  return expiredWarningType === "warning";
+  return useLicenseStatus.warningLevel === "warning";
 });
 const displayDanger = computed(() => {
-  const expiredWarningType = useLicenseWarningLevel(
-    license.value ? license.value.license_status : ""
-  );
   return (
     unableToConnectToServiceControl.value ||
     unableToConnectToMonitoring.value ||
-    expiredWarningType === "danger"
+    useLicenseStatus.warningLevel === "danger"
   );
 });
 </script>
