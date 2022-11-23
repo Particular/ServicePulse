@@ -154,7 +154,7 @@ export function useServiceControlStats(serviceControlUrl) {
       stats.number_of_failed_heartbeats = failedHB;
     })
     .catch((err) => {
-      console.log(err)(err);
+      console.log(err);
     });
 }
 
@@ -327,7 +327,7 @@ function getMonitoringVersion(monitoringUrl) {
     });
 }
 
-function fetchWithErrorHandling(url, connectionState) {
+function fetchWithErrorHandling(url, connectionState, action) {
   connectionState.connecting = true;
   connectionState.connected = false;
   return fetch(url)
@@ -338,59 +338,46 @@ function fetchWithErrorHandling(url, connectionState) {
       connectionState.connected = true;
       return response;
     })
+    .then(response => action(response))
     .catch((err) => {
       connectionState.connected = false;
       connectionState.unableToConnect = true;
       console.log(err);
-      return 0;
     });
 }
 
 function getFailedHeartBeatsCount(serviceControlUrl) {
   return fetchWithErrorHandling(
     serviceControlUrl + "heartbeats/stats",
-    connectionState
-  )
-    .then((response) => {
-      return response.json();
-    })
-    .then((json) => {
-      return parseInt(json.failing);
-    });
+    connectionState,
+    response => parseInt(response.json().failing)
+  );
 }
 
 function getFailedMessagesCount(serviceControlUrl) {
   return fetchWithErrorHandling(
     serviceControlUrl + "errors?status=unresolved",
-    connectionState
-  ).then((response) => {
-    return parseInt(response.headers.get("Total-Count"));
-  });
+    connectionState,
+    response => parseInt(response.headers.get("Total-Count")));
 }
 
 function getFailedCustomChecksCount(serviceControlUrl) {
   return fetchWithErrorHandling(
     serviceControlUrl + "customchecks?status=fail",
-    connectionState
-  ).then((response) => {
-    return parseInt(response.headers.get("Total-Count"));
-  });
+    connectionState,
+    response => parseInt(response.headers.get("Total-Count")));
 }
 
 function getMonitoredEndpoints(monitoringUrl) {
   return fetchWithErrorHandling(
     monitoringUrl + "monitored-endpoints?history=1",
-    monitoringConnectionState
-  ).then((response) => {
-    return response.json();
-  });
+    monitoringConnectionState,
+    response => response.json());
 }
 
 function getDisconnectedEndpointsCount(monitoringUrl) {
   return fetchWithErrorHandling(
     monitoringUrl + "monitored-endpoints/disconnected",
-    monitoringConnectionState
-  ).then((response) => {
-    return response.json();
-  });
+    monitoringConnectionState,
+    response => response.json());
 }
