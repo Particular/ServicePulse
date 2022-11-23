@@ -1,21 +1,14 @@
 <script setup>
-import { inject, ref, computed } from "vue";
-import {
-  key_IsSCConnected,
-  key_IsSCConnecting,
-  key_ScConnectedAtLeastOnce,
-} from "./../../composables/keys.js";
+import { ref, computed } from "vue";
 import {
   license,
   useLicenseStatus,
 } from "./../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import { connectionState } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 
-const isSCConnected = inject(key_IsSCConnected);
-const isSCConnecting = inject(key_IsSCConnecting);
-const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
 const licenseEdition = ref(license.value.licenseEdition);
 const instanceName = ref(license.value.formattedInstanceName);
 
@@ -31,14 +24,8 @@ const loading = computed(() => {
 
 <template>
   <section name="license">
-    <div class="sp-loader" v-if="isSCConnecting"></div>
-    <ServiceControlNotAvailable
-      :isSCConnected="isSCConnected"
-      :isSCConnecting="isSCConnecting"
-      :scConnectedAtLeastOnce="scConnectedAtLeastOnce"
-    />
-
-    <template v-if="isSCConnected || scConnectedAtLeastOnce">
+    <ServiceControlNotAvailable />
+    <template v-if="connectionState.connected">
       <section>
         <busy-indicator v-if="loading"></busy-indicator>
 

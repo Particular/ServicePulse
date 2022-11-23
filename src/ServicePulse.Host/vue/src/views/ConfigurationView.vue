@@ -1,25 +1,16 @@
 <script setup>
-import { ref, computed, inject, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import PlatformConnections from "../components/configuration/PlatformConnections.vue";
 import PlatformLicense from "../components/configuration/PlatformLicense.vue";
 import EndpointConnection from "../components/configuration/EndpointConnection.vue";
 import HealthCheckNotifications from "../components/configuration/HealthCheckNotifications.vue";
 import RetryRedirects from "../components/configuration/RetryRedirects.vue";
 import { useLicenseStatus } from "../composables/serviceLicense.js";
-import ExclamationMark from "../components/ExclamationMark.vue";
 import {
-  key_UnableToConnectToServiceControl,
-  key_UnableToConnectToMonitoring,
-  key_IsSCConnected,
-  key_ScConnectedAtLeastOnce,
-} from "./../composables/keys.js";
-
-const unableToConnectToServiceControl = inject(
-  key_UnableToConnectToServiceControl
-);
-const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
-const isSCConnected = inject(key_IsSCConnected);
-const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
+  connectionState,
+  monitoringConnectionState,
+} from "../composables/serviceServiceControl";
+import ExclamationMark from "../components/ExclamationMark.vue";
 
 const routes = {
   license: PlatformLicense,
@@ -80,7 +71,9 @@ onMounted(() => {
           <h5
             :class="{
               active: subIsActive('#license') || subIsActive(''),
-              disabled: !isSCConnected && !scConnectedAtLeastOnce,
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedAtLeastOnce,
             }"
           >
             <a href="#license">License</a>
@@ -90,7 +83,9 @@ onMounted(() => {
             v-if="!useLicenseStatus.isExpired"
             :class="{
               active: subIsActive('#health-check-notifications'),
-              disabled: !isSCConnected && !scConnectedAtLeastOnce,
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedAtLeastOnce,
             }"
           >
             <a href="#health-check-notifications">Health Check Notifications</a>
@@ -99,7 +94,9 @@ onMounted(() => {
             v-if="!useLicenseStatus.isExpired"
             :class="{
               active: subIsActive('#retry-redirects'),
-              disabled: !isSCConnected && !scConnectedAtLeastOnce,
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedAtLeastOnce,
             }"
           >
             <a href="#retry-redirects"
@@ -114,7 +111,8 @@ onMounted(() => {
               Connections
               <template
                 v-if="
-                  unableToConnectToServiceControl || unableToConnectToMonitoring
+                  connectionState.unableToConnect ||
+                  monitoringConnectionState.unableToConnect
                 "
               >
                 <span><i class="fa fa-exclamation-triangle"></i></span>
@@ -125,7 +123,9 @@ onMounted(() => {
             v-if="!useLicenseStatus.isExpired"
             :class="{
               active: subIsActive('#endpoint-connection'),
-              disabled: !isSCConnected && !scConnectedAtLeastOnce,
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedAtLeastOnce,
             }"
           >
             <a href="#endpoint-connection">Endpoint Connection</a>

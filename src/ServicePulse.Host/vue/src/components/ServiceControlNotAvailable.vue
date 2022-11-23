@@ -1,21 +1,17 @@
 ﻿<script setup>
 import { inject } from "vue";
 import { key_ServiceControlUrl } from "./../composables/keys.js";
+import { connectionState } from "./../composables/serviceServiceControl";
 const serviceControlUrl = inject(key_ServiceControlUrl);
-
-const props = defineProps({
-  isSCConnected: Boolean,
-  isSCConnecting: Boolean,
-  scConnectedAtLeastOnce: Boolean,
-});
 </script>
 
 <template>
+  <div class="sp-loader" v-if="connectionState.connecting"></div>
   <template
     v-if="
-      !props.isSCConnected &&
-      !props.isSCConnecting &&
-      !props.scConnectedAtLeastOnce
+      !connectionState.connected &&
+      !connectionState.connecting &&
+      !connectionState.connectedAtLeastOnce
     "
   >
     <div class="text-center monitoring-no-data">

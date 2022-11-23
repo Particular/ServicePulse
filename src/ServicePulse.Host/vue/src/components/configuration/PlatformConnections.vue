@@ -4,11 +4,13 @@ import { useRoute } from "vue-router";
 import LicenseExpired from "../LicenseExpired.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import {
+  connectionState,
+  monitoringConnectionState,
+} from "../../composables/serviceServiceControl";
+import {
   key_ServiceControlUrl,
   key_MonitoringUrl,
   key_UpdateConnections,
-  key_UnableToConnectToServiceControl,
-  key_UnableToConnectToMonitoring,
 } from "../../composables/keys.js";
 
 const isExpired = useLicenseStatus.isExpired;
@@ -19,11 +21,6 @@ const updateConnections = inject(key_UpdateConnections);
 
 const serviceControlUrl = ref(configuredServiceControlUrl.value);
 const monitoringUrl = ref(configuredMonitoringUrl.value);
-
-const unableToConnectToServiceControl = inject(
-  key_UnableToConnectToServiceControl
-);
-const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
 
 const testingServiceControl = ref(false);
 const serviceControlValid = ref(null);
@@ -91,7 +88,7 @@ function saveConnections(event) {
                 <div class="col-sm-7 form-group">
                   <label for="serviceControlUrl"
                     >CONNECTION URL
-                    <template v-if="unableToConnectToServiceControl">
+                    <template v-if="connectionState.unableToConnect">
                       <span class="failed-validation">
                         <i class="fa fa-exclamation-triangle"></i> Unable to
                         connect</span
@@ -148,7 +145,7 @@ function saveConnections(event) {
                   <label for="monitoringUrl"
                     >CONNECTION URL
                     <span class="auxilliary-label">(OPTIONAL)</span>
-                    <template v-if="unableToConnectToMonitoring">
+                    <template v-if="monitoringConnectionState.unableToConnect">
                       <span class="failed-validation">
                         <i class="fa fa-exclamation-triangle"></i> Unable to
                         connect

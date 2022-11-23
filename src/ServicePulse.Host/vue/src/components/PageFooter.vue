@@ -3,25 +3,19 @@ import { inject, computed } from "vue";
 import {
   environment,
   newVersions,
+  connectionState,
+  monitoringConnectionState,
 } from "../composables/serviceServiceControl.js";
 import {
   key_ServiceControlUrl,
-  key_IsSCConnected,
-  key_IsSCConnecting,
   key_MonitoringUrl,
   key_IsMonitoringEnabled,
-  key_IsSCMonitoringConnected,
-  key_IsSCMonitoringConnecting,
 } from "../composables/keys.js";
 
 const serviceControlUrl = inject(key_ServiceControlUrl);
-const isSCConnected = inject(key_IsSCConnected);
-const isSCConnecting = inject(key_IsSCConnecting);
 
 const monitoringUrl = inject(key_MonitoringUrl);
 const isMonitoringEnabled = inject(key_IsMonitoringEnabled);
-const isSCMonitoringConnected = inject(key_IsSCMonitoringConnected);
-const isSCMonitoringConnecting = inject(key_IsSCMonitoringConnecting);
 
 const scAddressTooltip = computed(() => {
   return "ServiceControl URL " + serviceControlUrl.value;
@@ -68,7 +62,7 @@ const scMonitoringAddressTooltip = computed(() => {
             Service Control:
             <span
               class="connected-status"
-              v-if="isSCConnected && !isSCConnecting"
+              v-if="connectionState.connected && !connectionState.connecting"
             >
               <div class="fa pa-connection-success"></div>
               <span v-if="!environment.sc_version">Connected</span>
@@ -90,12 +84,15 @@ const scMonitoringAddressTooltip = computed(() => {
               >
             </span>
             <span
-              v-if="!isSCConnected && !isSCConnecting"
+              v-if="!connectionState.connected && !connectionState.connecting"
               class="connection-failed"
             >
               <i class="fa pa-connection-failed"></i> Not connected
             </span>
-            <span v-if="isSCConnecting" class="connection-establishing">
+            <span
+              v-if="connectionState.connecting"
+              class="connection-establishing"
+            >
               <i class="fa pa-connection-establishing"></i> Connecting
             </span>
           </span>
@@ -108,7 +105,10 @@ const scMonitoringAddressTooltip = computed(() => {
               SC Monitoring:
               <span
                 class="connected-status"
-                v-if="isSCMonitoringConnected && !isSCMonitoringConnecting"
+                v-if="
+                  monitoringConnectionState.connected &&
+                  !monitoringConnectionState.connecting
+                "
               >
                 <div class="fa pa-connection-success"></div>
                 <span v-if="environment.monitoring_version">
@@ -127,13 +127,16 @@ const scMonitoringAddressTooltip = computed(() => {
                 >
               </span>
               <span
-                v-if="!isSCMonitoringConnected && !isSCMonitoringConnecting"
+                v-if="
+                  !monitoringConnectionState.connected &&
+                  !monitoringConnectionState.connecting
+                "
                 class="connection-failed"
               >
                 <i class="fa pa-connection-failed"></i> Not connected
               </span>
               <span
-                v-if="isSCMonitoringConnecting"
+                v-if="monitoringConnectionState.connecting"
                 class="connection-establishing"
               >
                 <i class="fa pa-connection-establishing"></i> Connecting

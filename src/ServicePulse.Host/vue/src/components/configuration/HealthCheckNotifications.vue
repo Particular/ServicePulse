@@ -3,13 +3,9 @@ import { inject, ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
+import { connectionState } from "../../composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import {
-  key_ServiceControlUrl,
-  key_IsSCConnected,
-  key_ScConnectedAtLeastOnce,
-  key_IsSCConnecting,
-} from "./../../composables/keys.js";
+import { key_ServiceControlUrl } from "./../../composables/keys.js";
 import {
   useEmailNotifications,
   useUpdateEmailNotifications,
@@ -19,10 +15,6 @@ import {
 import { useShowToast } from "../../composables/toast.js";
 
 const isExpired = useLicenseStatus.isExpired;
-
-const isSCConnected = inject(key_IsSCConnected);
-const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
-const isSCConnecting = inject(key_IsSCConnecting);
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 
@@ -140,14 +132,8 @@ onMounted(() => {
   <LicenseExpired />
   <template v-if="!isExpired">
     <section name="notifications">
-      <div class="sp-loader" v-if="isSCConnecting"></div>
-      <ServiceControlNotAvailable
-        :isSCConnected="isSCConnected"
-        :isSCConnecting="isSCConnecting"
-        :scConnectedAtLeastOnce="scConnectedAtLeastOnce"
-      />
-
-      <template v-if="isSCConnected || scConnectedAtLeastOnce">
+      <ServiceControlNotAvailable />
+      <template v-if="connectionState.connected">
         <section>
           <div class="row">
             <div class="col-sm-12">

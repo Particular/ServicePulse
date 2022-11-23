@@ -1,12 +1,12 @@
 <script setup>
 import { RouterLink, useRoute } from "vue-router";
-import { inject, computed } from "vue";
-import {
-  key_UnableToConnectToServiceControl,
-  key_UnableToConnectToMonitoring,
-} from "./../composables/keys.js";
+import { computed } from "vue";
 import ExclamationMark from "./ExclamationMark.vue";
-import { stats } from "../composables/serviceServiceControl.js";
+import {
+  stats,
+  connectionState,
+  monitoringConnectionState,
+} from "../composables/serviceServiceControl.js";
 import { useLicenseStatus } from "./../composables/serviceLicense.js";
 
 function subIsActive(input, exact) {
@@ -17,18 +17,13 @@ function subIsActive(input, exact) {
   });
 }
 
-const unableToConnectToServiceControl = inject(
-  key_UnableToConnectToServiceControl
-);
-const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
-
 const displayWarn = computed(() => {
   return useLicenseStatus.warningLevel === "warning";
 });
 const displayDanger = computed(() => {
   return (
-    unableToConnectToServiceControl.value ||
-    unableToConnectToMonitoring.value ||
+    connectionState.unableToConnect ||
+    monitoringConnectionState.unableToConnect ||
     useLicenseStatus.warningLevel === "danger"
   );
 });

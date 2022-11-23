@@ -3,6 +3,7 @@ import { inject, ref, reactive, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import { connectionState } from "../../composables/serviceServiceControl";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
 import RetryRedirectDelete from "./RetryRedirectDelete.vue";
 import NoData from "../NoData.vue";
@@ -10,12 +11,7 @@ import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "../../composables/toast.js";
 import TimeSince from "../TimeSince.vue";
 
-import {
-  key_ServiceControlUrl,
-  key_IsSCConnected,
-  key_ScConnectedAtLeastOnce,
-  key_IsSCConnecting,
-} from "./../../composables/keys.js";
+import { key_ServiceControlUrl } from "./../../composables/keys.js";
 import {
   useRedirects,
   useUpdateRedirects,
@@ -27,10 +23,6 @@ import {
 const isExpired = useLicenseStatus.isExpired;
 
 const emit = defineEmits(["redirectCountUpdated"]);
-
-const isSCConnected = inject(key_IsSCConnected);
-const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
-const isSCConnecting = inject(key_IsSCConnecting);
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 
@@ -194,14 +186,8 @@ onMounted(() => {
   <LicenseExpired />
   <template v-if="!isExpired">
     <section name="redirects">
-      <div class="sp-loader" v-if="isSCConnecting"></div>
-      <ServiceControlNotAvailable
-        :isSCConnected="isSCConnected"
-        :isSCConnecting="isSCConnecting"
-        :scConnectedAtLeastOnce="scConnectedAtLeastOnce"
-      />
-
-      <template v-if="isSCConnected || scConnectedAtLeastOnce">
+      <ServiceControlNotAvailable />
+      <template v-if="connectionState.connected">
         <section>
           <busy-indicator v-if="loadingData"></busy-indicator>
 

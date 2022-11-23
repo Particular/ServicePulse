@@ -1,13 +1,8 @@
-import { ref, reactive, onMounted, watch } from "vue";
+import { reactive, onMounted, watch } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
 import { useShowToast } from "./toast.js";
 
-export const isServiceControlConnecting = ref(true);
-export const isServiceControlConnected = ref(false);
-export const serviceControlConnectedAtLeastOnce = ref(false);
-export const isServiceControlMonitoringConnecting = ref(true);
-export const isServiceControlMonitoringConnected = ref(false);
 export const stats = reactive({
   active_endpoints: 0,
   failing_endpoints: 0,
@@ -19,6 +14,20 @@ export const stats = reactive({
   number_of_pending_retries: 0,
   number_of_endpoints: 0,
   number_of_disconnected_endpoints: 0,
+});
+
+export const connectionState = reactive({
+  connected: false,
+  connecting: false,
+  connectedAtLeastOnce: false,
+  unableToConnect: false,
+});
+
+export const monitoringConnectionState = reactive({
+  connected: false,
+  connecting: false,
+  connectedAtLeastOnce: false,
+  unableToConnect: false,
 });
 
 export const environment = reactive({
@@ -71,6 +80,62 @@ export const connections = reactive({
   },
 });
 
+export function useServiceControl(serviceControlUrl, monitoringUrl) {
+  onMounted(() => {
+    useServiceControlStats(serviceControlUrl);
+    useServiceControlMonitoringStats(monitoringUrl);
+  });
+
+  setInterval(() => useServiceControlStats(serviceControlUrl), 5000); //NOTE is 5 seconds too often?
+  setInterval(() => useServiceControlMonitoringStats(monitoringUrl), 5000); //NOTE is 5 seconds too often?
+
+  watch(connectionState, async (newValue, oldValue) => {
+    if (newValue.connected != oldValue.connected) {
+      //NOTE to eliminate success msg showing everytime the screen is refreshed
+      if (!newValue.connected) {
+        useShowToast(
+          "error",
+          "Error",
+          "Could not connect to ServiceControl at " +
+            serviceControlUrl.value +
+            '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
+        );
+      } else {
+        useShowToast(
+          "success",
+          "Success",
+          "Connection to ServiceControl was successful at " +
+            serviceControlUrl.value +
+            "."
+        );
+      }
+    }
+  });
+
+  watch(monitoringConnectionState, async (newValue, oldValue) => {
+    if (newValue.connected != oldValue.connected) {
+      //NOTE to eliminate success msg showing everytime the screen is refreshed
+      if (!newValue.connected) {
+        useShowToast(
+          "error",
+          "Error",
+          "Could not connect to the ServiceControl Monitoring service at " +
+            monitoringUrl.value +
+            '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
+        );
+      } else {
+        useShowToast(
+          "success",
+          "Success",
+          "Connection to ServiceControl Monitoring service was successful at " +
+            monitoringUrl.value +
+            "."
+        );
+      }
+    }
+  });
+}
+
 export function useServiceControlStats(serviceControlUrl) {
   const failedHeartBeatsResult = getFailedHeartBeatsCount(serviceControlUrl);
   const failedMessagesResult = getFailedMessagesCount(serviceControlUrl);
@@ -87,12 +152,9 @@ export function useServiceControlStats(serviceControlUrl) {
       stats.number_of_failed_messages = failedM;
       stats.number_of_failed_checks = failedCC;
       stats.number_of_failed_heartbeats = failedHB;
-
-      isServiceControlConnecting.value = false;
     })
     .catch((err) => {
       console.log(err)(err);
-      isServiceControlConnecting.value = false;
     });
 }
 
@@ -107,8 +169,6 @@ export function useServiceControlMonitoringStats(monitoringUrl) {
   ]).then(([, disconnectedEndpoints]) => {
     //Do something here with the argument to the callback in the future if we are using them
     stats.number_of_disconnected_endpoints = disconnectedEndpoints;
-
-    isServiceControlMonitoringConnecting.value = false;
   });
 }
 
@@ -267,80 +327,70 @@ function getMonitoringVersion(monitoringUrl) {
     });
 }
 
+function fetchWithErrorHandling(url, connectionState) {
+  connectionState.connecting = true;
+  connectionState.connected = false;
+  return fetch(url)
+    .then((response) => {
+      connectionState.connecting = false;
+      connectionState.unableToConnect = false;
+      connectionState.connectedAtLeastOnce = true;
+      connectionState.connected = true;
+      return response;
+    })
+    .catch((err) => {
+      connectionState.connected = false;
+      connectionState.unableToConnect = true;
+      console.log(err);
+      return 0;
+    });
+}
+
 function getFailedHeartBeatsCount(serviceControlUrl) {
-  return fetch(serviceControlUrl + "heartbeats/stats")
+  return fetchWithErrorHandling(
+    serviceControlUrl + "heartbeats/stats",
+    connectionState
+  )
     .then((response) => {
       return response.json();
     })
     .then((json) => {
-      isServiceControlConnected.value = true;
-      serviceControlConnectedAtLeastOnce.value = true;
       return parseInt(json.failing);
-    })
-    .catch((err) => {
-      isServiceControlConnected.value = false;
-      console.log(err);
-      return 0;
-      // return Math.floor(Math.random()*(10-0+1)+0)
     });
 }
 
 function getFailedMessagesCount(serviceControlUrl) {
-  return fetch(serviceControlUrl + "errors?status=unresolved")
-    .then((response) => {
-      isServiceControlConnected.value = true;
-      serviceControlConnectedAtLeastOnce.value = true;
-      return parseInt(response.headers.get("Total-Count"));
-    })
-    .catch((err) => {
-      isServiceControlConnected.value = false;
-      console.log(err);
-      return 0;
-      //return Math.floor(Math.random()*(10-0+1)+0)
-    });
+  return fetchWithErrorHandling(
+    serviceControlUrl + "errors?status=unresolved",
+    connectionState
+  ).then((response) => {
+    return parseInt(response.headers.get("Total-Count"));
+  });
 }
 
 function getFailedCustomChecksCount(serviceControlUrl) {
-  return fetch(serviceControlUrl + "customchecks?status=fail")
-    .then((response) => {
-      isServiceControlConnected.value = true;
-      serviceControlConnectedAtLeastOnce.value = true;
-      return parseInt(response.headers.get("Total-Count"));
-    })
-    .catch((err) => {
-      isServiceControlConnected.value = false;
-      console.log(err);
-      return 0;
-      //return Math.floor(Math.random()*(10-0+1)+0)
-    });
+  return fetchWithErrorHandling(
+    serviceControlUrl + "customchecks?status=fail",
+    connectionState
+  ).then((response) => {
+    return parseInt(response.headers.get("Total-Count"));
+  });
 }
 
 function getMonitoredEndpoints(monitoringUrl) {
-  return fetch(monitoringUrl + "monitored-endpoints?history=1")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      isServiceControlMonitoringConnected.value = true;
-      return data;
-    })
-    .catch((err) => {
-      isServiceControlMonitoringConnected.value = false;
-      console.log(err);
-    });
+  return fetchWithErrorHandling(
+    monitoringUrl + "monitored-endpoints?history=1",
+    monitoringConnectionState
+  ).then((response) => {
+    return response.json();
+  });
 }
 
 function getDisconnectedEndpointsCount(monitoringUrl) {
-  return fetch(monitoringUrl + "monitored-endpoints/disconnected")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      isServiceControlMonitoringConnected.value = true;
-      return data;
-    })
-    .catch((err) => {
-      isServiceControlMonitoringConnected.value = false;
-      console.log(err);
-    });
+  return fetchWithErrorHandling(
+    monitoringUrl + "monitored-endpoints/disconnected",
+    monitoringConnectionState
+  ).then((response) => {
+    return response.json();
+  });
 }
