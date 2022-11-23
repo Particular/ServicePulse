@@ -69,7 +69,6 @@ function getLicense() {
     license.value = lic.value;
   });
 }
-//setInterval(() => getLicense(), 60000);
 
 provide(key_License, license);
 
