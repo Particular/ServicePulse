@@ -24,7 +24,7 @@ import {
   retryPendingMessagesForQueue,
 } from "../../composables/serviceRedirects.js";
 
-const isExpired = ref(useLicenseStatus.isExpired);
+const isExpired = useLicenseStatus.isExpired;
 
 const emit = defineEmits(["redirectCountUpdated"]);
 

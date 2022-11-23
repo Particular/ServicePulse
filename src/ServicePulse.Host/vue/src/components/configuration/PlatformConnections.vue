@@ -11,7 +11,7 @@ import {
   key_UnableToConnectToMonitoring,
 } from "../../composables/keys.js";
 
-const isExpired = ref(useLicenseStatus.isExpired);
+const isExpired = useLicenseStatus.isExpired;
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);

@@ -18,7 +18,7 @@ import {
 } from "../../composables/serviceNotifications.js";
 import { useShowToast } from "../../composables/toast.js";
 
-const isExpired = ref(useLicenseStatus.isExpired);
+const isExpired = useLicenseStatus.isExpired;
 
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);

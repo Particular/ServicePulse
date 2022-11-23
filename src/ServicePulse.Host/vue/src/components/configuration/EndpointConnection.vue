@@ -15,7 +15,7 @@ import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
-const isExpired = ref(useLicenseStatus.isExpired);
+const isExpired = useLicenseStatus.isExpired;
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);
