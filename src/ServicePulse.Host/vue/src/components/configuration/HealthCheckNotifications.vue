@@ -2,7 +2,7 @@
 import { inject, ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import {
   key_ServiceControlUrl,
@@ -18,7 +18,7 @@ import {
 } from "../../composables/serviceNotifications.js";
 import { useShowToast } from "../../composables/toast.js";
 
-const isExpired = licenseStatus.isExpired;
+const isExpired = ref(useLicenseStatus.isExpired);
 
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);

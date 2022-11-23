@@ -2,7 +2,7 @@
 import { ref, inject } from "vue";
 import { useRoute } from "vue-router";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import {
   key_ServiceControlUrl,
   key_MonitoringUrl,
@@ -11,7 +11,7 @@ import {
   key_UnableToConnectToMonitoring,
 } from "../../composables/keys.js";
 
-const isExpired = licenseStatus.isExpired;
+const isExpired = ref(useLicenseStatus.isExpired);
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);

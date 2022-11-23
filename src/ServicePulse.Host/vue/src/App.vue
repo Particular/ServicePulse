@@ -20,10 +20,6 @@ import {
   key_NewMonitoringVersionLink,
   key_NewMonitoringVersionNumber,
   key_License,
-  key_IsPlatformExpired,
-  key_IsPlatformTrialExpired,
-  key_IsInvalidDueToUpgradeProtectionExpired,
-  key_IsExpired,
   key_SPVersion,
   key_NewSPVersion,
   key_NewSPVersionLink,
@@ -51,30 +47,33 @@ import {
 } from "./composables/serviceServiceControl.js";
 import {
   useLicense,
-  licenseStatus,
+  useLicenseStatus,
   useGetWarningMessage,
 } from "./composables/serviceLicense.js";
 import { useShowToast } from "./composables/toast.js";
+
+onMounted(() => {
+  getLicense();
+  getServiceControlVersions();
+  getServiceControlStats();
+  getServiceControlMonitoringStats();
+});
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls();
 provide(key_ServiceControlUrl, serviceControlUrl);
 provide(key_MonitoringUrl, monitoringUrl);
 
 let license = ref(null);
-useLicense(serviceControlUrl.value).then((lic) => {
-  license.value = lic.value;
-});
+function getLicense() {
+  useLicense(serviceControlUrl.value).then((lic) => {
+    license.value = lic.value;
+  });
+}
+//setInterval(() => getLicense(), 60000);
 
 provide(key_License, license);
-provide(key_IsPlatformExpired, licenseStatus.isPlatformExpired);
-provide(key_IsPlatformTrialExpired, licenseStatus.isPlatformTrialExpired);
-provide(
-  key_IsInvalidDueToUpgradeProtectionExpired,
-  licenseStatus.isInvalidDueToUpgradeProtectionExpired
-);
-provide(key_IsExpired, licenseStatus.isExpired);
 
-watch(licenseStatus.isExpired, async (newValue, oldValue) => {
+watch(useLicenseStatus.isExpired, async (newValue, oldValue) => {
   if (newValue != oldValue) {
     if (newValue) {
       useShowToast(
@@ -95,12 +94,6 @@ watch(license, async (newValue, oldValue) => {
   if (checkForWarnings) {
     useGetWarningMessage(newValue.license_status, useShowToast);
   }
-});
-
-onMounted(() => {
-  getServiceControlVersions();
-  getServiceControlStats();
-  getServiceControlMonitoringStats();
 });
 
 let isSCConnecting = ref(true);

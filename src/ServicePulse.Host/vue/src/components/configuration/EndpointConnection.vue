@@ -2,7 +2,7 @@
 import { ref, inject, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import {
   key_ServiceControlUrl,
   key_MonitoringUrl,
@@ -15,7 +15,7 @@ import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
-const isExpired = licenseStatus.isExpired;
+const isExpired = ref(useLicenseStatus.isExpired);
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);

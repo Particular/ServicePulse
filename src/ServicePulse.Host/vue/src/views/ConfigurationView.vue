@@ -5,7 +5,10 @@ import PlatformLicense from "../components/configuration/PlatformLicense.vue";
 import EndpointConnection from "../components/configuration/EndpointConnection.vue";
 import HealthCheckNotifications from "../components/configuration/HealthCheckNotifications.vue";
 import RetryRedirects from "../components/configuration/RetryRedirects.vue";
-import { useLicenseWarningLevel } from "../composables/serviceLicense.js";
+import {
+  useLicenseWarningLevel,
+  useLicenseStatus,
+} from "../composables/serviceLicense.js";
 import ExclamationMark from "../components/ExclamationMark.vue";
 import {
   key_UnableToConnectToServiceControl,
@@ -13,7 +16,6 @@ import {
   key_IsSCConnected,
   key_ScConnectedAtLeastOnce,
   key_License,
-  key_IsExpired,
 } from "./../composables/keys.js";
 
 const unableToConnectToServiceControl = inject(
@@ -22,8 +24,8 @@ const unableToConnectToServiceControl = inject(
 const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
-const isExpired = inject(key_IsExpired);
-const license = inject(key_License);
+const pLicense = inject(key_License);
+const isExpired = ref(useLicenseStatus.isExpired);
 
 const routes = {
   license: PlatformLicense,
@@ -89,7 +91,7 @@ onMounted(() => {
           >
             <a href="#license">License</a>
             <exclamation-mark
-              :type="useLicenseWarningLevel(license.license_status)"
+              :type="useLicenseWarningLevel(pLicense.license_status)"
             />
           </h5>
           <h5

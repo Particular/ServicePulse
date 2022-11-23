@@ -1,5 +1,5 @@
 <script setup>
-import { inject } from "vue";
+import { inject, ref } from "vue";
 import DashboardItem from "../components/DashboardItem.vue";
 import EventItemShort from "../components/EventItemShort.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
@@ -10,16 +10,16 @@ import {
   key_IsSCConnecting,
 } from "../composables/keys.js";
 import { stats } from "./../composables/serviceServiceControl.js";
-import { licenseStatus } from "./../composables/serviceLicense.js";
+import { useLicenseStatus } from "./../composables/serviceLicense.js";
 
-const isExpired = licenseStatus.isExpired;
+const isExpired = ref(useLicenseStatus.isExpired);
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
 const isSCConnecting = inject(key_IsSCConnecting);
 </script>
 
 <template>
-  <LicenseExpired/>
+  <LicenseExpired />
   <template v-if="!isExpired">
     <div class="container">
       <div class="sp-loader" v-if="isSCConnecting"></div>

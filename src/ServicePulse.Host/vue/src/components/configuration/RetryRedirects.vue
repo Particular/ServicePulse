@@ -1,7 +1,7 @@
 <script setup>
 import { inject, ref, reactive, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
 import RetryRedirectDelete from "./RetryRedirectDelete.vue";
@@ -24,7 +24,7 @@ import {
   retryPendingMessagesForQueue,
 } from "../../composables/serviceRedirects.js";
 
-const isExpired = licenseStatus.isExpired;
+const isExpired = ref(useLicenseStatus.isExpired);
 
 const emit = defineEmits(["redirectCountUpdated"]);
 

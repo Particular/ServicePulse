@@ -1,10 +1,10 @@
 <script setup>
-import { licenseStatus } from "./../composables/serviceLicense.js";
+import { useLicenseStatus } from "./../composables/serviceLicense.js";
 
-const isPlatformExpired = licenseStatus.isPlatformExpired
-const isPlatformTrialExpired = licenseStatus.isPlatformTrialExpired
-const isInvalidDueToUpgradeProtectionExpired = licenseStatus.isInvalidDueToUpgradeProtectionExpired
-
+const isPlatformExpired = useLicenseStatus.isPlatformExpired;
+const isPlatformTrialExpired = useLicenseStatus.isPlatformTrialExpired;
+const isInvalidDueToUpgradeProtectionExpired =
+  useLicenseStatus.isInvalidDueToUpgradeProtectionExpired;
 </script>
 
 <template>

@@ -49,7 +49,7 @@ const isExpired = computed(() => {
   );
 });
 
-export const licenseStatus = {
+export const useLicenseStatus = {
   isPlatformExpired: isPlatformExpired,
   isPlatformTrialExpired: isPlatformTrialExpired,
   isInvalidDueToUpgradeProtectionExpired:
