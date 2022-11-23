@@ -17,6 +17,7 @@ const toastOptions = {
   hideProgressBar: true,
   containerClassName: "toast-container",
   toastClassName: "vue-toast",
+  closeButtonClassName: "toast-close-button",
 };
 app.use(Toast, toastOptions);
 app.use(SimpleTypeahead);
