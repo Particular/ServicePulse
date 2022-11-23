@@ -15,19 +15,7 @@ import {
   key_IsMonitoringEnabled,
   key_IsSCMonitoringConnected,
   key_IsSCMonitoringConnecting,
-  key_MonitoringVersion,
-  key_NewMonitoringVersion,
-  key_NewMonitoringVersionLink,
-  key_NewMonitoringVersionNumber,
   key_License,
-  key_SPVersion,
-  key_NewSPVersion,
-  key_NewSPVersionLink,
-  key_NewSPVersionNumber,
-  key_SCVersion,
-  key_NewSCVersion,
-  key_NewSCVersionLink,
-  key_NewSCVersionNumber,
 } from "./composables/keys.js";
 import {
   useServiceControlUrls,
@@ -42,8 +30,6 @@ import {
   useServiceControlMonitoringStats,
   isServiceControlMonitoringConnecting,
   isServiceControlMonitoringConnected,
-  environment,
-  newVersions,
 } from "./composables/serviceServiceControl.js";
 import {
   useLicense,
@@ -54,14 +40,16 @@ import { useShowToast } from "./composables/toast.js";
 
 onMounted(() => {
   getLicense();
-  getServiceControlVersions();
   getServiceControlStats();
   getServiceControlMonitoringStats();
 });
 
 const { serviceControlUrl, monitoringUrl } = useServiceControlUrls();
+
 provide(key_ServiceControlUrl, serviceControlUrl);
 provide(key_MonitoringUrl, monitoringUrl);
+
+useServiceControlVersion(serviceControlUrl.value, monitoringUrl.value);
 
 let license = ref(null);
 function getLicense() {
@@ -195,77 +183,6 @@ watch(isSCMonitoringConnected, async (newValue, oldValue) => {
     }
   }
 });
-
-let scVersion = ref(null);
-let newSCVersion = ref(null);
-let newSCVersionLink = ref(null);
-let newSCVersionNumber = ref(null);
-let spVersion = ref(null);
-let newSPVersion = ref(null);
-let newSPVersionLink = ref(null);
-let newSPVersionNumber = ref(null);
-let monitoringVersion = ref(null);
-let newmonitoringVersion = ref(null);
-let newmonitoringVersionLink = ref(null);
-let newmonitoringVersionNumber = ref(null);
-let isCompatibleWithSC = ref(true);
-let minimumSupportedSCVersion = ref(null);
-
-watch(isCompatibleWithSC, async (newValue, oldValue) => {
-  if (newValue != oldValue) {
-    if (!newValue) {
-      useShowToast(
-        "error",
-        "Error",
-        "You are using Service Control version " +
-          scVersion.value +
-          ". Please, upgrade to version " +
-          minimumSupportedSCVersion.value +
-          " or higher to unlock new functionality in ServicePulse."
-      );
-    }
-  }
-});
-
-setInterval(() => getServiceControlVersions(), 60000); //NOTE is this often enough or too often?
-
-function getServiceControlVersions() {
-  useServiceControlVersion(serviceControlUrl.value, monitoringUrl.value).then(
-    () => {
-      scVersion.value = environment.sc_version;
-      newSCVersion.value = newVersions.newSCVersion.newscversion;
-      newSCVersionLink.value = newVersions.newSCVersion.newscversionlink;
-      newSCVersionNumber.value = newVersions.newSCVersion.newscversionnumber;
-
-      spVersion.value = environment.sp_version;
-      newSPVersion.value = newVersions.newSPVersion.newspversion;
-      newSPVersionLink.value = newVersions.newSPVersion.newspversionlink;
-      newSPVersionNumber.value = newVersions.newSPVersion.newspversionnumber;
-
-      monitoringVersion.value = environment.monitoring_version;
-      newmonitoringVersion.value = newVersions.newMVersion.newmversion;
-      newmonitoringVersionLink.value = newVersions.newMVersion.newmversionlink;
-      newmonitoringVersionNumber.value =
-        newVersions.newMVersion.newmversionnumber;
-
-      isCompatibleWithSC.value = environment.is_compatible_with_sc;
-      minimumSupportedSCVersion.value =
-        environment.minimum_supported_sc_version;
-    }
-  );
-}
-provide(key_SCVersion, scVersion);
-provide(key_NewSCVersion, newSCVersion);
-provide(key_NewSCVersionLink, newSCVersionLink);
-provide(key_NewSCVersionNumber, newSCVersionNumber);
-provide(key_SPVersion, spVersion);
-provide(key_NewSPVersion, newSPVersion);
-provide(key_NewSPVersionLink, newSPVersionLink);
-provide(key_NewSPVersionNumber, newSPVersionNumber);
-provide(key_MonitoringVersion, monitoringVersion);
-provide(key_NewMonitoringVersion, newmonitoringVersion);
-provide(key_NewMonitoringVersionLink, newmonitoringVersionLink);
-provide(key_NewMonitoringVersionNumber, newmonitoringVersionNumber);
 </script>
 
 <template>

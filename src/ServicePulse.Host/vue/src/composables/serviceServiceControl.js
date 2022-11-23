@@ -1,6 +1,7 @@
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
+import { useShowToast } from "./toast.js";
 
 export const isServiceControlConnecting = ref(true);
 export const isServiceControlConnected = ref(false);
@@ -132,6 +133,29 @@ export function useServiceControlConnections(serviceControlUrl, monitoringUrl) {
 }
 
 export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
+  onMounted(() => {
+    getServiceControlVersion(serviceControlUrl, monitoringUrl);
+    setInterval(() => getServiceControlVersion(serviceControlUrl, monitoringUrl), 60000);
+  });
+
+  watch(environment, async (newValue, oldValue) => {
+    if (newValue.is_compatible_with_sc != oldValue.is_compatible_with_sc) {
+      if (!newValue.is_compatible_with_sc) {
+        useShowToast(
+          "error",
+          "Error",
+          "You are using Service Control version " +
+            newValue.sc_version +
+            ". Please, upgrade to version " +
+            newValue.minimum_supported_sc_version.value +
+            " or higher to unlock new functionality in ServicePulse."
+        );
+      }
+    }
+  });
+}
+
+function getServiceControlVersion(serviceControlUrl, monitoringUrl) {
   const productsResult = useServiceProductUrls();
   const scResult = getSCVersion(serviceControlUrl);
   const mResult = getMonitoringVersion(monitoringUrl);

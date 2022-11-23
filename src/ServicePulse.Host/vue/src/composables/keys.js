@@ -16,17 +16,3 @@ export const key_UpdateConnections = Symbol("updateConnections");
 export const key_Stats = Symbol("stats");
 export const key_License = Symbol("license");
 export const key_IsCompatibleWithSC = Symbol("IsCompatibleWithSC");
-export const key_SPVersion = Symbol("spVersion");
-export const key_NewSPVersion = Symbol("newSPVersion");
-export const key_NewSPVersionLink = Symbol("newSPVersionLink");
-export const key_NewSPVersionNumber = Symbol("newSPVersionNumber");
-export const key_SCVersion = Symbol("scVersion");
-export const key_NewSCVersion = Symbol("newSCVersion");
-export const key_NewSCVersionLink = Symbol("newSPCersionLink");
-export const key_NewSCVersionNumber = Symbol("newSCPVersionNumber");
-export const key_MonitoringVersion = Symbol("monitoringVersion");
-export const key_NewMonitoringVersion = Symbol("newMonitoringVersion");
-export const key_NewMonitoringVersionLink = Symbol("newMonitoringVersionLink");
-export const key_NewMonitoringVersionNumber = Symbol(
-  "newMonitoringVersionNumber"
-);
