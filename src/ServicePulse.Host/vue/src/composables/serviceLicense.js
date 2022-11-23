@@ -24,6 +24,39 @@ const license = ref({
   license_status: "Unavailable",
 });
 
+const isPlatformExpired = computed(() => {
+  return license.value
+    ? license.value.license_status == "InvalidDueToExpiredSubscription"
+    : false;
+});
+
+const isPlatformTrialExpired = computed(() => {
+  return license.value
+    ? license.value.license_status === "InvalidDueToExpiredTrial"
+    : false;
+});
+const isInvalidDueToUpgradeProtectionExpired = computed(() => {
+  return license.value
+    ? license.value.license_status === "InvalidDueToExpiredUpgradeProtection"
+    : false;
+});
+
+const isExpired = computed(() => {
+  return (
+    isPlatformExpired.value ||
+    isPlatformTrialExpired.value ||
+    isInvalidDueToUpgradeProtectionExpired.value
+  );
+});
+
+export const useLicenseStatus = {
+  isPlatformExpired: isPlatformExpired,
+  isPlatformTrialExpired: isPlatformTrialExpired,
+  isInvalidDueToUpgradeProtectionExpired:
+    isInvalidDueToUpgradeProtectionExpired,
+  isExpired: isExpired,
+};
+
 export function useLicense(serviceControlUrl) {
   return getLicense(serviceControlUrl, license).then((lic) => {
     license.value = lic;
@@ -63,18 +96,6 @@ export function useIsValidWithWarning(licenseStatus) {
     licenseStatus === "ValidWithExpiredUpgradeProtection" ||
     licenseStatus === "ValidWithExpiringSubscription"
   );
-}
-
-export function useIsPlatformTrialExpired(licenseStatus) {
-  return licenseStatus === "InvalidDueToExpiredTrial";
-}
-
-export function useIsPlatformExpired(licenseStatus) {
-  return licenseStatus === "InvalidDueToExpiredSubscription";
-}
-
-export function useIsInvalidDueToUpgradeProtectionExpired(licenseStatus) {
-  return licenseStatus === "InvalidDueToExpiredUpgradeProtection";
 }
 
 export function useLicenseWarningLevel(licenseStatus) {

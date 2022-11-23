@@ -1,19 +1,17 @@
 <script setup>
 import { ref, inject } from "vue";
 import { useRoute } from "vue-router";
-import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
-import PlatformTrialExpired from "../PlatformTrialExpired.vue";
-import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
+import LicenseExpired from "../LicenseExpired.vue";
+import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import {
   key_ServiceControlUrl,
   key_MonitoringUrl,
-  key_IsPlatformExpired,
-  key_IsPlatformTrialExpired,
-  key_IsInvalidDueToUpgradeProtectionExpired,
   key_UpdateConnections,
   key_UnableToConnectToServiceControl,
   key_UnableToConnectToMonitoring,
 } from "../../composables/keys.js";
+
+const isExpired = ref(useLicenseStatus.isExpired);
 
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);
@@ -26,12 +24,6 @@ const unableToConnectToServiceControl = inject(
   key_UnableToConnectToServiceControl
 );
 const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
-
-const isPlatformExpired = inject(key_IsPlatformExpired);
-const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired);
-const isInvalidDueToUpgradeProtectionExpired = inject(
-  key_IsInvalidDueToUpgradeProtectionExpired
-);
 
 const testingServiceControl = ref(false);
 const serviceControlValid = ref(null);
@@ -87,21 +79,8 @@ function saveConnections(event) {
 </script>
 
 <template>
-  <PlatformLicenseExpired :isPlatformExpired="isPlatformExpired" />
-  <PlatformTrialExpired :isPlatformTrialExpired="isPlatformTrialExpired" />
-  <PlatformProtectionExpired
-    :isInvalidDueToUpgradeProtectionExpired="
-      isInvalidDueToUpgradeProtectionExpired
-    "
-  />
-
-  <template
-    v-if="
-      !isPlatformTrialExpired &&
-      !isPlatformExpired &&
-      !isInvalidDueToUpgradeProtectionExpired
-    "
-  >
+  <LicenseExpired />
+  <template v-if="!isExpired">
     <section name="connections">
       <div class="box">
         <div class="row">

@@ -1,32 +1,24 @@
 <script setup>
 import { ref, inject, onMounted } from "vue";
-import PlatformLicenseExpired from "../PlatformLicenseExpired.vue";
-import PlatformTrialExpired from "../PlatformTrialExpired.vue";
-import PlatformProtectionExpired from "../PlatformProtectionExpired.vue";
+import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import {
   key_ServiceControlUrl,
   key_MonitoringUrl,
   key_IsSCConnected,
   key_ScConnectedAtLeastOnce,
   key_IsSCConnecting,
-  key_IsPlatformExpired,
-  key_IsPlatformTrialExpired,
-  key_IsInvalidDueToUpgradeProtectionExpired,
 } from "./../../composables/keys.js";
 import { useServiceControlConnections } from "../../composables/serviceServiceControl.js";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
+const isExpired = ref(useLicenseStatus.isExpired);
+
 const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 const configuredMonitoringUrl = inject(key_MonitoringUrl);
-
-const isPlatformExpired = inject(key_IsPlatformExpired);
-const isPlatformTrialExpired = inject(key_IsPlatformTrialExpired);
-const isInvalidDueToUpgradeProtectionExpired = inject(
-  key_IsInvalidDueToUpgradeProtectionExpired
-);
 
 const isSCConnected = inject(key_IsSCConnected);
 const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
@@ -93,21 +85,8 @@ function switchJsonTab() {
 </script>
 
 <template>
-  <PlatformLicenseExpired :isPlatformExpired="isPlatformExpired" />
-  <PlatformTrialExpired :isPlatformTrialExpired="isPlatformTrialExpired" />
-  <PlatformProtectionExpired
-    :isInvalidDueToUpgradeProtectionExpired="
-      isInvalidDueToUpgradeProtectionExpired
-    "
-  />
-
-  <template
-    v-if="
-      !isPlatformTrialExpired &&
-      !isPlatformExpired &&
-      !isInvalidDueToUpgradeProtectionExpired
-    "
-  >
+  <LicenseExpired />
+  <template v-if="!isExpired">
     <section name="platformconnection">
       <div class="sp-loader" v-if="isSCConnecting"></div>
       <ServiceControlNotAvailable

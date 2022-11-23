@@ -15,12 +15,6 @@ export const key_IsSCMonitoringConnecting = Symbol("isSCMonitoringConnecting");
 export const key_UpdateConnections = Symbol("updateConnections");
 export const key_Stats = Symbol("stats");
 export const key_License = Symbol("license");
-export const key_IsPlatformExpired = Symbol("isPlatformExpired");
-export const key_IsPlatformTrialExpired = Symbol("isPlatformTrialExpired");
-export const key_IsInvalidDueToUpgradeProtectionExpired = Symbol(
-  "isInvalidDueToUpgradeProtectionExpired"
-);
-export const key_IsExpired = Symbol("isExpired");
 export const key_IsCompatibleWithSC = Symbol("IsCompatibleWithSC");
 export const key_SPVersion = Symbol("spVersion");
 export const key_NewSPVersion = Symbol("newSPVersion");
