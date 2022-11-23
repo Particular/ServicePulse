@@ -67,8 +67,8 @@ const isSCConnecting = inject(key_IsSCConnecting);
                     >
                   </div>
                 </div>
-              </div>              
-            </div>            
+              </div>
+            </div>
           </div>
           <EventItemShort></EventItemShort>
         </div>
