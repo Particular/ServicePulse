@@ -1,4 +1,4 @@
-import { reactive, onMounted, watch } from "vue";
+import { reactive, onMounted, watch, computed } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
 import { useShowToast } from "./toast.js";
@@ -20,14 +20,16 @@ export const connectionState = reactive({
   connected: false,
   connecting: false,
   connectedAtLeastOnce: false,
-  unableToConnect: false,
+  connectedRecently: false,
+  unableToConnect: true,
 });
 
 export const monitoringConnectionState = reactive({
   connected: false,
   connecting: false,
   connectedAtLeastOnce: false,
-  unableToConnect: false,
+  connectedRecently: false,
+  unableToConnect: true,
 });
 
 export const environment = reactive({
@@ -89,15 +91,18 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
   setInterval(() => useServiceControlStats(serviceControlUrl), 5000); //NOTE is 5 seconds too often?
   setInterval(() => useServiceControlMonitoringStats(monitoringUrl), 5000); //NOTE is 5 seconds too often?
 
-  watch(connectionState, async (newValue, oldValue) => {
-    if (newValue.connected != oldValue.connected) {
+  const scConnectionFailure = computed(() => connectionState.unableToConnect);
+  const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
+
+  watch(scConnectionFailure, async (newValue, oldValue) => {
+    if (newValue != oldValue) {
       //NOTE to eliminate success msg showing everytime the screen is refreshed
-      if (!newValue.connected) {
+      if (newValue) {
         useShowToast(
           "error",
           "Error",
           "Could not connect to ServiceControl at " +
-            serviceControlUrl.value +
+            serviceControlUrl +
             '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
         );
       } else {
@@ -105,22 +110,22 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
           "success",
           "Success",
           "Connection to ServiceControl was successful at " +
-            serviceControlUrl.value +
+            serviceControlUrl +
             "."
         );
       }
     }
   });
 
-  watch(monitoringConnectionState, async (newValue, oldValue) => {
-    if (newValue.connected != oldValue.connected) {
+  watch(monitoringConnectionFailure, async (newValue, oldValue) => {
+    if (newValue != oldValue) {
       //NOTE to eliminate success msg showing everytime the screen is refreshed
-      if (!newValue.connected) {
+      if (newValue) {
         useShowToast(
           "error",
           "Error",
           "Could not connect to the ServiceControl Monitoring service at " +
-            monitoringUrl.value +
+            monitoringUrl +
             '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
         );
       } else {
@@ -128,7 +133,7 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
           "success",
           "Success",
           "Connection to ServiceControl Monitoring service was successful at " +
-            monitoringUrl.value +
+            monitoringUrl +
             "."
         );
       }
@@ -328,22 +333,37 @@ function getMonitoringVersion(monitoringUrl) {
 }
 
 function fetchWithErrorHandling(url, connectionState, action) {
-  connectionState.connecting = true;
-  connectionState.connected = false;
-  return fetch(url)
-    .then((response) => {
-      connectionState.connecting = false;
-      connectionState.unableToConnect = false;
-      connectionState.connectedAtLeastOnce = true;
-      connectionState.connected = true;
-      return response;
-    })
-    .then(response => action(response))
-    .catch((err) => {
-      connectionState.connected = false;
-      connectionState.unableToConnect = true;
-      console.log(err);
+  if (connectionState.connecting) { //Skip the connection state checking
+    return fetch(url)
+      .then(response => action(response))
+      .catch((err) => {
+        console.log(err);
     });
+  } 
+  try {
+    connectionState.connecting = true;
+    connectionState.connected = false;
+    return fetch(url)
+      .then((response) => {
+        connectionState.unableToConnect = false;
+        connectionState.connectedAtLeastOnce = true;
+        connectionState.connectedRecently = true;
+        connectionState.connected = true;
+        connectionState.connecting = false;
+        return response;
+      })
+      .then(response => action(response))
+      .catch((err) => {
+        connectionState.connected = false;
+        connectionState.unableToConnect = true;
+        connectionState.connectedRecently = false;
+        connectionState.connecting = false;
+        console.log(err);
+      });
+  } catch (err) {
+    connectionState.connecting = false;
+    connectionState.connected = false;
+  }
 }
 
 function getFailedHeartBeatsCount(serviceControlUrl) {

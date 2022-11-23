@@ -73,7 +73,7 @@ onMounted(() => {
               active: subIsActive('#license') || subIsActive(''),
               disabled:
                 !connectionState.connected &&
-                !connectionState.connectedAtLeastOnce,
+                !connectionState.connectedRecently,
             }"
           >
             <a href="#license">License</a>
@@ -85,7 +85,7 @@ onMounted(() => {
               active: subIsActive('#health-check-notifications'),
               disabled:
                 !connectionState.connected &&
-                !connectionState.connectedAtLeastOnce,
+                !connectionState.connectedRecently,
             }"
           >
             <a href="#health-check-notifications">Health Check Notifications</a>
@@ -96,7 +96,7 @@ onMounted(() => {
               active: subIsActive('#retry-redirects'),
               disabled:
                 !connectionState.connected &&
-                !connectionState.connectedAtLeastOnce,
+                !connectionState.connectedRecently,
             }"
           >
             <a href="#retry-redirects"
@@ -125,7 +125,7 @@ onMounted(() => {
               active: subIsActive('#endpoint-connection'),
               disabled:
                 !connectionState.connected &&
-                !connectionState.connectedAtLeastOnce,
+                !connectionState.connectedRecently,
             }"
           >
             <a href="#endpoint-connection">Endpoint Connection</a>
