@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import {
   license,
   useLicenseStatus,
@@ -8,14 +8,6 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
-
-const licenseEdition = ref(license.value.licenseEdition);
-const instanceName = ref(license.value.formattedInstanceName);
-
-const formattedExpirationDate = ref(license.value.formattedExpirationDate);
-const formattedUpgradeProtectionExpiration = ref(
-  license.value.formattedUpgradeProtectionExpiration
-);
 
 const loading = computed(() => {
   return !license;
@@ -35,7 +27,7 @@ const loading = computed(() => {
               <div class="license-info">
                 <div>
                   <b>Platform license type:</b> {{ license.license_type
-                  }}{{ licenseEdition }}
+                  }}{{ license.licenseEdition.value }}
                 </div>
 
                 <template v-if="useLicenseStatus.isSubscriptionLicense">
@@ -46,7 +38,7 @@ const loading = computed(() => {
                         'license-expired': useLicenseStatus.isPlatformExpired,
                       }"
                     >
-                      {{ formattedExpirationDate }}
+                      {{ license.formattedExpirationDate.value }}
                       {{ useLicenseStatus.subscriptionDaysLeft }}
                       <exclamation-mark :type="useLicenseStatus.warningLevel" />
                     </span>
@@ -68,7 +60,7 @@ const loading = computed(() => {
                           useLicenseStatus.isPlatformTrialExpired,
                       }"
                     >
-                      {{ formattedExpirationDate }}
+                      {{ license.formattedExpirationDate.value }}
                       {{ useLicenseStatus.trialDaysLeft }}
                       <exclamation-mark :type="useLicenseStatus.warningLevel" />
                     </span>
@@ -107,7 +99,7 @@ const loading = computed(() => {
                             useLicenseStatus.isInvalidDueToUpgradeProtectionExpired,
                         }"
                       >
-                        {{ formattedUpgradeProtectionExpiration }}
+                        {{ license.formattedUpgradeProtectionExpiration.value }}
                         {{ useLicenseStatus.upgradeDaysLeft }}
                         <exclamation-mark
                           :type="useLicenseStatus.warningLevel"
@@ -135,7 +127,10 @@ const loading = computed(() => {
                     </div>
                   </div>
                 </template>
-                <div><b>ServiceControl instance:</b> {{ instanceName }}</div>
+                <div>
+                  <b>ServiceControl instance:</b>
+                  {{ license.formattedInstanceName.value }}
+                </div>
                 <ul class="license-install-info">
                   <li>
                     <a
