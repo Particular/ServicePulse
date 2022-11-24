@@ -19,7 +19,6 @@ export const stats = reactive({
 export const connectionState = reactive({
   connected: false,
   connecting: false,
-  connectedAtLeastOnce: false,
   connectedRecently: false,
   unableToConnect: null,
 });
@@ -27,7 +26,6 @@ export const connectionState = reactive({
 export const monitoringConnectionState = reactive({
   connected: false,
   connecting: false,
-  connectedAtLeastOnce: false,
   connectedRecently: false,
   unableToConnect: null,
 });
