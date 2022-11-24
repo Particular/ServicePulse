@@ -54,6 +54,14 @@ function setupEvents(newPath) {
 }
 
 onMounted(() => {
+  const path = currentPath.value.slice(1) || "/";
+  if (
+    path === "/" &&
+    !connectionState.connected &&
+    !connectionState.connectedRecently
+  ) {
+    window.location.hash = "connections";
+  }
   setupEvents(currentPath.value);
 });
 </script>
