@@ -13,11 +13,20 @@ import {
 import ExclamationMark from "../components/ExclamationMark.vue";
 
 const routes = {
-  license: PlatformLicense,
-  "health-check-notifications": HealthCheckNotifications,
-  "retry-redirects": RetryRedirects,
-  connections: PlatformConnections,
-  "endpoint-connection": EndpointConnection,
+  license: { component: PlatformLicense, title: "License" },
+  "health-check-notifications": {
+    component: HealthCheckNotifications,
+    title: "Health Check Notifications",
+  },
+  "retry-redirects": { component: RetryRedirects, title: "Retry Redirects" },
+  connections: {
+    component: PlatformConnections,
+    title: "Platform Connections",
+  },
+  "endpoint-connection": {
+    component: EndpointConnection,
+    title: "Endpoint Connetion",
+  },
 };
 
 const currentPath = ref(window.location.hash);
@@ -37,12 +46,19 @@ function subIsActive(subPath) {
 }
 
 const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || "/"] || PlatformLicense;
+  return routes[currentPath.value.slice(1) || "/"]
+    ? routes[currentPath.value.slice(1) || "/"].component
+    : PlatformLicense;
 });
 
 const currentEvents = ref({});
 watch(currentPath, async (newValue) => {
   setupEvents(newValue);
+  if (routes[currentPath.value.slice(1) || "/"]) {
+    document.title =
+      routes[currentPath.value.slice(1) || "/"].title +
+      " - Configuration • ServicePulse";
+  }
 });
 
 function setupEvents(newPath) {
