@@ -1,16 +1,14 @@
 ﻿<script setup>
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getEventLogItems } from "../composables/eventLogItems.js";
-import { key_ServiceControlUrl } from "@/composables/keys";
 import TimeSince from "./TimeSince.vue";
 
 const router = useRouter();
 const eventLogItems = ref([]);
 const eventCount = ref(0);
 onMounted(() => {
-  const serviceControlUrl = inject(key_ServiceControlUrl);
-  getEventLogItems(serviceControlUrl).then((data) => {
+  getEventLogItems().then((data) => {
     eventCount.value = data.length;
     eventLogItems.value = data.slice(0, 10);
   });

@@ -1,5 +1,5 @@
 <script setup>
-import { inject, computed } from "vue";
+import { computed } from "vue";
 import {
   environment,
   newVersions,
@@ -7,15 +7,18 @@ import {
   monitoringConnectionState,
 } from "../composables/serviceServiceControl.js";
 import {
-  key_ServiceControlUrl,
-  key_MonitoringUrl,
-  key_IsMonitoringEnabled,
-} from "../composables/keys.js";
+  serviceControlUrl,
+  monitoringUrl,
+} from "../composables/serviceServiceControlUrls.js";
 
-const serviceControlUrl = inject(key_ServiceControlUrl);
-
-const monitoringUrl = inject(key_MonitoringUrl);
-const isMonitoringEnabled = inject(key_IsMonitoringEnabled);
+const isMonitoringEnabled = computed(() => {
+  return (
+    monitoringUrl.value !== "!" &&
+    monitoringUrl.value !== "" &&
+    monitoringUrl.value !== null &&
+    monitoringUrl.value !== undefined
+  );
+});
 
 const scAddressTooltip = computed(() => {
   return "ServiceControl URL " + serviceControlUrl.value;

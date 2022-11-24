@@ -1,11 +1,10 @@
 <script setup>
-import { inject, ref, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import { key_ServiceControlUrl } from "./../../composables/keys.js";
 import {
   useEmailNotifications,
   useUpdateEmailNotifications,
@@ -15,9 +14,6 @@ import {
 import { useShowToast } from "../../composables/toast.js";
 
 const isExpired = useLicenseStatus.isExpired;
-
-const configuredServiceControlUrl = inject(key_ServiceControlUrl);
-
 const emailTestSuccessful = ref(null);
 const emailTestInProgress = ref(null);
 const emailToggleSucessful = ref(null);
@@ -39,7 +35,6 @@ function toggleEmailNotifications() {
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
   useToggleEmailNotifications(
-    configuredServiceControlUrl.value,
     emailNotifications.value.enabled === null
       ? true
       : !emailNotifications.value.enabled
@@ -64,10 +59,7 @@ function editEmailNotifications() {
 function saveEditedEmailNotifications(newSettings) {
   emailUpdateSuccessful.value = null;
   showEmailConfiguration.value = false;
-  useUpdateEmailNotifications(
-    configuredServiceControlUrl.value,
-    newSettings
-  ).then((result) => {
+  useUpdateEmailNotifications(newSettings).then((result) => {
     if (result.message === "success") {
       emailUpdateSuccessful.value = true;
       useShowToast("info", "Info", "Email settings updated.");
@@ -91,21 +83,19 @@ function testEmailNotifications() {
   emailTestInProgress.value = true;
   emailToggleSucessful.value = null;
   emailUpdateSuccessful.value = null;
-  useTestEmailNotifications(configuredServiceControlUrl.value).then(
-    (result) => {
-      if (result.message === "success") {
-        emailTestSuccessful.value = true;
-      } else {
-        emailTestSuccessful.value = false;
-      }
-      emailTestInProgress.value = false;
+  useTestEmailNotifications().then((result) => {
+    if (result.message === "success") {
+      emailTestSuccessful.value = true;
+    } else {
+      emailTestSuccessful.value = false;
     }
-  );
+    emailTestInProgress.value = false;
+  });
 }
 
 function getEmailNotifications() {
   showEmailConfiguration.value = false;
-  useEmailNotifications(configuredServiceControlUrl.value).then((result) => {
+  useEmailNotifications().then((result) => {
     emailNotifications.value.enabled = result.enabled;
     emailNotifications.value.enable_tls = result.enable_tls;
     emailNotifications.value.smtp_server = result.smtp_server
@@ -133,7 +123,7 @@ onMounted(() => {
   <template v-if="!isExpired">
     <section name="notifications">
       <ServiceControlNotAvailable />
-      <template v-if="connectionState.connected">
+      <template v-if="!connectionState.unableToConnect">
         <section>
           <div class="row">
             <div class="col-sm-12">

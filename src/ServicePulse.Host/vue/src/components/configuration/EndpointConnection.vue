@@ -1,12 +1,8 @@
 <script setup>
-import { ref, inject, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
-import {
-  key_ServiceControlUrl,
-  key_MonitoringUrl,
-} from "./../../composables/keys.js";
 import {
   useServiceControlConnections,
   connectionState,
@@ -16,9 +12,6 @@ import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
 const isExpired = useLicenseStatus.isExpired;
-
-const configuredServiceControlUrl = inject(key_ServiceControlUrl);
-const configuredMonitoringUrl = inject(key_MonitoringUrl);
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);
@@ -39,10 +32,7 @@ function getCode() {
 var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
-  useServiceControlConnections(
-    configuredServiceControlUrl.value,
-    configuredMonitoringUrl.value
-  ).then((connections) => {
+  useServiceControlConnections().then((connections) => {
     const config = {
       heartbeats: connections.serviceControl.settings.Heartbeats,
       customChecks: connections.serviceControl.settings.CustomChecks,
@@ -85,7 +75,7 @@ function switchJsonTab() {
   <template v-if="!isExpired">
     <section name="platformconnection">
       <ServiceControlNotAvailable />
-      <template v-if="connectionState.connected">
+      <template v-if="!connectionState.unableToConnect">
         <div class="box">
           <div class="row">
             <div class="col-sm-12">

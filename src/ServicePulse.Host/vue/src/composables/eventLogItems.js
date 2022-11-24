@@ -1,7 +1,7 @@
-﻿export function getEventLogItems(serviceControlUrl) {
-  var url = serviceControlUrl.value + "eventlogitems";
+﻿import { fetchFromServiceControl } from "./serviceServiceControlUrls";
 
-  return fetch(url).then((response) => {
+export function getEventLogItems() {
+  return fetchFromServiceControl("eventlogitems").then((response) => {
     return response.json();
   });
 }

@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -10,8 +10,6 @@ import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "../../composables/toast.js";
 import TimeSince from "../TimeSince.vue";
-
-import { key_ServiceControlUrl } from "./../../composables/keys.js";
 import {
   useRedirects,
   useUpdateRedirects,
@@ -23,8 +21,6 @@ import {
 const isExpired = useLicenseStatus.isExpired;
 
 const emit = defineEmits(["redirectCountUpdated"]);
-
-const configuredServiceControlUrl = inject(key_ServiceControlUrl);
 
 const loadingData = ref(true);
 const redirects = reactive({
@@ -46,7 +42,7 @@ const redirectSaveSuccessful = ref(null);
 
 function getRedirect() {
   loadingData.value = true;
-  useRedirects(configuredServiceControlUrl.value).then((result) => {
+  useRedirects().then((result) => {
     if (redirects.total != result.total) {
       emit("redirectCountUpdated", result.total);
     }
@@ -77,7 +73,6 @@ function saveEditedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
   useUpdateRedirects(
-    configuredServiceControlUrl.value,
     redirect.redirectId,
     redirect.sourceQueue,
     redirect.targetQueue
@@ -105,10 +100,7 @@ function saveEditedRedirect(redirect) {
     })
     .then((result) => {
       if (result.message === "success" && redirect.immediatelyRetry) {
-        return retryPendingMessagesForQueue(
-          configuredServiceControlUrl.value,
-          redirect.sourceQueue
-        );
+        return retryPendingMessagesForQueue(redirect.sourceQueue);
       } else {
         return result;
       }
@@ -118,41 +110,39 @@ function saveEditedRedirect(redirect) {
 function saveCreatedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  useCreateRedirects(
-    configuredServiceControlUrl.value,
-    redirect.sourceQueue,
-    redirect.targetQueue
-  ).then((result) => {
-    if (result.message === "success") {
-      redirectSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Redirect created successfully");
-      getRedirect();
-    } else {
-      redirectSaveSuccessful.value = false;
-      if (
-        (result.status === "409" || result.status === 409) &&
-        result.statusText === "Duplicate"
-      ) {
-        useShowToast(
-          "error",
-          "Error",
-          "Failed to create a redirect, can not create more than one redirect for queue: " +
-            redirect.sourceQueue
-        );
-      } else if (
-        (result.status === "409" || result.status === 409) &&
-        result.statusText === "Dependents"
-      ) {
-        useShowToast(
-          "error",
-          "Error",
-          "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect."
-        );
+  useCreateRedirects(redirect.sourceQueue, redirect.targetQueue).then(
+    (result) => {
+      if (result.message === "success") {
+        redirectSaveSuccessful.value = true;
+        useShowToast("info", "Info", "Redirect created successfully");
+        getRedirect();
       } else {
-        useShowToast("error", "Error", result.message);
+        redirectSaveSuccessful.value = false;
+        if (
+          (result.status === "409" || result.status === 409) &&
+          result.statusText === "Duplicate"
+        ) {
+          useShowToast(
+            "error",
+            "Error",
+            "Failed to create a redirect, can not create more than one redirect for queue: " +
+              redirect.sourceQueue
+          );
+        } else if (
+          (result.status === "409" || result.status === 409) &&
+          result.statusText === "Dependents"
+        ) {
+          useShowToast(
+            "error",
+            "Error",
+            "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect."
+          );
+        } else {
+          useShowToast("error", "Error", result.message);
+        }
       }
     }
-  });
+  );
 }
 
 function deleteRedirect(redirect) {
@@ -163,18 +153,16 @@ function deleteRedirect(redirect) {
 
 function saveDeleteRedirect(redirectId) {
   showDelete.value = false;
-  useDeleteRedirects(configuredServiceControlUrl.value, redirectId).then(
-    (result) => {
-      if (result.message === "success") {
-        redirectSaveSuccessful.value = true;
-        useShowToast("info", "Info", "Redirect deleted");
-        getRedirect();
-      } else {
-        redirectSaveSuccessful.value = false;
-        useShowToast("error", "Error", result.message);
-      }
+  useDeleteRedirects(redirectId).then((result) => {
+    if (result.message === "success") {
+      redirectSaveSuccessful.value = true;
+      useShowToast("info", "Info", "Redirect deleted");
+      getRedirect();
+    } else {
+      redirectSaveSuccessful.value = false;
+      useShowToast("error", "Error", result.message);
     }
-  );
+  });
 }
 
 onMounted(() => {
@@ -187,7 +175,7 @@ onMounted(() => {
   <template v-if="!isExpired">
     <section name="redirects">
       <ServiceControlNotAvailable />
-      <template v-if="connectionState.connected">
+      <template v-if="!connectionState.unableToConnect">
         <section>
           <busy-indicator v-if="loadingData"></busy-indicator>
 

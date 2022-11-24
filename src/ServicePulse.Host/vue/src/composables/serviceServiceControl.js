@@ -1,6 +1,12 @@
 import { reactive, onMounted, watch, computed } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
+import {
+  fetchFromServiceControl,
+  fetchFromMonitoring,
+  serviceControlUrl,
+  monitoringUrl,
+} from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast.js";
 
 export const stats = reactive({
@@ -80,14 +86,14 @@ export const connections = reactive({
   },
 });
 
-export function useServiceControl(serviceControlUrl, monitoringUrl) {
+export function useServiceControl() {
   onMounted(() => {
-    useServiceControlStats(serviceControlUrl);
-    useServiceControlMonitoringStats(monitoringUrl);
+    useServiceControlStats();
+    useServiceControlMonitoringStats();
   });
 
-  setInterval(() => useServiceControlStats(serviceControlUrl), 5000); //NOTE is 5 seconds too often?
-  setInterval(() => useServiceControlMonitoringStats(monitoringUrl), 5000); //NOTE is 5 seconds too often?
+  setInterval(() => useServiceControlStats(), 5000); //NOTE is 5 seconds too often?
+  setInterval(() => useServiceControlMonitoringStats(), 5000); //NOTE is 5 seconds too often?
 
   const scConnectionFailure = computed(() => connectionState.unableToConnect);
   const monitoringConnectionFailure = computed(
@@ -102,7 +108,7 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
           "error",
           "Error",
           "Could not connect to ServiceControl at " +
-            serviceControlUrl +
+            serviceControlUrl.value +
             '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
         );
       } else {
@@ -110,7 +116,7 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
           "success",
           "Success",
           "Connection to ServiceControl was successful at " +
-            serviceControlUrl +
+            serviceControlUrl.value +
             "."
         );
       }
@@ -125,7 +131,7 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
           "error",
           "Error",
           "Could not connect to the ServiceControl Monitoring service at " +
-            monitoringUrl +
+            monitoringUrl.value +
             '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
         );
       } else {
@@ -133,7 +139,7 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
           "success",
           "Success",
           "Connection to ServiceControl Monitoring service was successful at " +
-            monitoringUrl +
+            monitoringUrl.value +
             "."
         );
       }
@@ -141,11 +147,10 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
   });
 }
 
-export function useServiceControlStats(serviceControlUrl) {
-  const failedHeartBeatsResult = getFailedHeartBeatsCount(serviceControlUrl);
-  const failedMessagesResult = getFailedMessagesCount(serviceControlUrl);
-  const failedCustomChecksResult =
-    getFailedCustomChecksCount(serviceControlUrl);
+export function useServiceControlStats() {
+  const failedHeartBeatsResult = getFailedHeartBeatsCount();
+  const failedMessagesResult = getFailedMessagesCount();
+  const failedCustomChecksResult = getFailedCustomChecksCount();
 
   return Promise.all([
     failedHeartBeatsResult,
@@ -163,10 +168,9 @@ export function useServiceControlStats(serviceControlUrl) {
     });
 }
 
-export function useServiceControlMonitoringStats(monitoringUrl) {
-  const monitoredEndpointsResult = getMonitoredEndpoints(monitoringUrl);
-  const disconnectedEndpointsCountResult =
-    getDisconnectedEndpointsCount(monitoringUrl);
+export function useServiceControlMonitoringStats() {
+  const monitoredEndpointsResult = getMonitoredEndpoints();
+  const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
   return Promise.all([
     monitoredEndpointsResult,
@@ -177,9 +181,9 @@ export function useServiceControlMonitoringStats(monitoringUrl) {
   });
 }
 
-export function useServiceControlConnections(serviceControlUrl, monitoringUrl) {
-  const scConnectionResult = getSCConnection(serviceControlUrl);
-  const monitoringConnectionResult = getMonitoringConnection(monitoringUrl);
+export function useServiceControlConnections() {
+  const scConnectionResult = getSCConnection();
+  const monitoringConnectionResult = getMonitoringConnection();
 
   return Promise.all([scConnectionResult, monitoringConnectionResult]).then(
     ([scConnection, mConnection]) => {
@@ -197,13 +201,10 @@ export function useServiceControlConnections(serviceControlUrl, monitoringUrl) {
   );
 }
 
-export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
+export function useServiceControlVersion() {
   onMounted(() => {
-    getServiceControlVersion(serviceControlUrl, monitoringUrl);
-    setInterval(
-      () => getServiceControlVersion(serviceControlUrl, monitoringUrl),
-      60000
-    );
+    getServiceControlVersion();
+    setInterval(() => getServiceControlVersion(), 60000);
   });
 
   watch(environment, async (newValue, oldValue) => {
@@ -223,10 +224,10 @@ export function useServiceControlVersion(serviceControlUrl, monitoringUrl) {
   });
 }
 
-function getServiceControlVersion(serviceControlUrl, monitoringUrl) {
+function getServiceControlVersion() {
   const productsResult = useServiceProductUrls();
-  const scResult = getSCVersion(serviceControlUrl);
-  const mResult = getMonitoringVersion(monitoringUrl);
+  const scResult = getSCVersion();
+  const mResult = getMonitoringVersion();
 
   return Promise.all([productsResult, scResult, mResult]).then(
     ([products, scVer]) => {
@@ -282,34 +283,36 @@ function getServiceControlVersion(serviceControlUrl, monitoringUrl) {
   );
 }
 
-function getSCConnection(serviceControlUrl) {
-  return fetch(serviceControlUrl + "connection")
+function getSCConnection() {
+  return fetchFromServiceControl("connection")
     .then((response) => {
       return response.json();
     })
     .catch(() => {
       connections.serviceControl.errors = [
-        "Error reaching ServiceControl at " + serviceControlUrl + "connection",
+        "Error reaching ServiceControl at " +
+          serviceControlUrl.value +
+          "connection",
       ];
       return {};
     });
 }
 
-function getMonitoringConnection(monitoringUrl) {
-  return fetch(monitoringUrl + "connection")
+function getMonitoringConnection() {
+  return fetchFromMonitoring("connection")
     .then((response) => {
       return response.json();
     })
     .catch(() => {
       connections.monitoring.errors = [
-        "Error SC Monitoring instance at " + monitoringUrl + "connection",
+        "Error SC Monitoring instance at " + monitoringUrl.value + "connection",
       ];
       return {};
     });
 }
 
-function getSCVersion(serviceControlUrl) {
-  return fetch(serviceControlUrl)
+function getSCVersion() {
+  return fetchFromServiceControl("")
     .then((response) => {
       environment.sc_version = response.headers.get("X-Particular-Version");
       return response.json();
@@ -319,8 +322,8 @@ function getSCVersion(serviceControlUrl) {
     });
 }
 
-function getMonitoringVersion(monitoringUrl) {
-  return fetch(monitoringUrl)
+function getMonitoringVersion() {
+  return fetchFromMonitoring("")
     .then((response) => {
       environment.monitoring_version = response.headers.get(
         "X-Particular-Version"
@@ -332,10 +335,10 @@ function getMonitoringVersion(monitoringUrl) {
     });
 }
 
-function fetchWithErrorHandling(url, connectionState, action) {
+function fetchWithErrorHandling(fetchFunction, connectionState, action) {
   if (connectionState.connecting) {
     //Skip the connection state checking
-    return fetch(url)
+    return fetchFunction()
       .then((response) => action(response))
       .catch((err) => {
         console.log(err);
@@ -344,7 +347,8 @@ function fetchWithErrorHandling(url, connectionState, action) {
   try {
     connectionState.connecting = true;
     connectionState.connected = false;
-    return fetch(url)
+    return fetchFunction()
+      .then((response) => action(response))
       .then((response) => {
         connectionState.unableToConnect = false;
         connectionState.connectedRecently = true;
@@ -352,7 +356,6 @@ function fetchWithErrorHandling(url, connectionState, action) {
         connectionState.connecting = false;
         return response;
       })
-      .then((response) => action(response))
       .catch((err) => {
         connectionState.connected = false;
         connectionState.unableToConnect = true;
@@ -366,9 +369,9 @@ function fetchWithErrorHandling(url, connectionState, action) {
   }
 }
 
-function getFailedHeartBeatsCount(serviceControlUrl) {
+function getFailedHeartBeatsCount() {
   return fetchWithErrorHandling(
-    serviceControlUrl + "heartbeats/stats",
+    () => fetchFromServiceControl("heartbeats/stats"),
     connectionState,
     (response) => {
       return response.json().then((data) => {
@@ -378,34 +381,42 @@ function getFailedHeartBeatsCount(serviceControlUrl) {
   );
 }
 
-function getFailedMessagesCount(serviceControlUrl) {
+function getFailedMessagesCount() {
   return fetchWithErrorHandling(
-    serviceControlUrl + "errors?status=unresolved",
+    () => fetchFromServiceControl("errors?status=unresolved"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count"))
   );
 }
 
-function getFailedCustomChecksCount(serviceControlUrl) {
+function getFailedCustomChecksCount() {
   return fetchWithErrorHandling(
-    serviceControlUrl + "customchecks?status=fail",
+    () => fetchFromServiceControl("customchecks?status=fail"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count"))
   );
 }
 
-function getMonitoredEndpoints(monitoringUrl) {
+function getMonitoredEndpoints() {
   return fetchWithErrorHandling(
-    monitoringUrl + "monitored-endpoints?history=1",
+    () => fetchFromMonitoring("monitored-endpoints?history=1"),
     monitoringConnectionState,
-    (response) => response.json()
-  );
+    (response) => {
+      if (response != null && response.ok) {
+        return response.json();
+      }
+      throw "Error connecting to monitoring";
+    });
 }
 
-function getDisconnectedEndpointsCount(monitoringUrl) {
+function getDisconnectedEndpointsCount() {
   return fetchWithErrorHandling(
-    monitoringUrl + "monitored-endpoints/disconnected",
+    () => fetchFromMonitoring("monitored-endpoints/disconnected"),
     monitoringConnectionState,
-    (response) => response.json()
-  );
+    (response) => {
+      if (response != null && response.ok) {
+        return response.json();
+      }
+      throw "Error connecting to monitoring";
+    });
 }

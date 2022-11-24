@@ -1,18 +1,25 @@
+import {
+  fetchFromServiceControl,
+  deleteFromServiceControl,
+  putToServiceControl,
+  postToServiceControl,
+} from "./serviceServiceControlUrls.js";
+
 const redirects = {
   data: [],
   queues: [],
   total: 0,
 };
-export function useRedirects(serviceControlUrl) {
-  return getRedirects(serviceControlUrl)
-    .then(() => getKnownQueues(serviceControlUrl))
+export function useRedirects() {
+  return getRedirects()
+    .then(() => getKnownQueues())
     .then(() => {
       return redirects;
     });
 }
 
-function getKnownQueues(serviceControlUrl) {
-  return fetch(serviceControlUrl + `errors/queues/addresses`)
+function getKnownQueues() {
+  return fetchFromServiceControl(`errors/queues/addresses`)
     .then((response) => {
       return response.json();
     })
@@ -26,8 +33,8 @@ function getKnownQueues(serviceControlUrl) {
     });
 }
 
-function getRedirects(serviceControlUrl) {
-  return fetch(serviceControlUrl + "redirects")
+function getRedirects() {
+  return fetchFromServiceControl("redirects")
     .then((response) => {
       redirects.total = parseInt(response.headers.get("Total-Count"));
       return response.json();
@@ -40,14 +47,8 @@ function getRedirects(serviceControlUrl) {
     });
 }
 
-export function retryPendingMessagesForQueue(serviceControlUrl, queueName) {
-  const requestOptions = {
-    method: "POST",
-  };
-  return fetch(
-    serviceControlUrl + "errors/queues/" + queueName + "/retry",
-    requestOptions
-  )
+export function retryPendingMessagesForQueue(queueName) {
+  return postToServiceControl("errors/queues/" + queueName + "/retry")
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -65,23 +66,12 @@ export function retryPendingMessagesForQueue(serviceControlUrl, queueName) {
     });
 }
 
-export function useUpdateRedirects(
-  serviceControlUrl,
-  redirectId,
-  sourceEndpoint,
-  targetEndpoint
-) {
-  const requestOptions = {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      id: redirectId,
-      fromphysicaladdress: sourceEndpoint,
-      tophysicaladdress: targetEndpoint,
-    }),
-  };
-
-  return fetch(serviceControlUrl + "redirects/" + redirectId, requestOptions)
+export function useUpdateRedirects(redirectId, sourceEndpoint, targetEndpoint) {
+  return putToServiceControl("redirects/" + redirectId, {
+    id: redirectId,
+    fromphysicaladdress: sourceEndpoint,
+    tophysicaladdress: targetEndpoint,
+  })
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -100,21 +90,11 @@ export function useUpdateRedirects(
     });
 }
 
-export function useCreateRedirects(
-  serviceControlUrl,
-  sourceEndpoint,
-  targetEndpoint
-) {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fromphysicaladdress: sourceEndpoint,
-      tophysicaladdress: targetEndpoint,
-    }),
-  };
-
-  return fetch(serviceControlUrl + "redirects", requestOptions)
+export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
+  return postToServiceControl("redirects", {
+    fromphysicaladdress: sourceEndpoint,
+    tophysicaladdress: targetEndpoint,
+  })
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -133,12 +113,8 @@ export function useCreateRedirects(
     });
 }
 
-export function useDeleteRedirects(serviceControlUrl, redirectId) {
-  const requestOptions = {
-    method: "DELETE",
-  };
-
-  return fetch(serviceControlUrl + "redirects/" + redirectId, requestOptions)
+export function useDeleteRedirects(redirectId) {
+  return deleteFromServiceControl("redirects/" + redirectId)
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,

@@ -1,23 +1,14 @@
 <script setup>
 import { ref, inject } from "vue";
-import { useRoute } from "vue-router";
 import LicenseExpired from "../LicenseExpired.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
+import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl} from "./../../composables/serviceServiceControlUrls.js";
 import {
   connectionState,
   monitoringConnectionState,
 } from "../../composables/serviceServiceControl";
-import {
-  key_ServiceControlUrl,
-  key_MonitoringUrl,
-  key_UpdateConnections,
-} from "../../composables/keys.js";
 
 const isExpired = useLicenseStatus.isExpired;
-
-const configuredServiceControlUrl = inject(key_ServiceControlUrl);
-const configuredMonitoringUrl = inject(key_MonitoringUrl);
-const updateConnections = inject(key_UpdateConnections);
 
 const serviceControlUrl = ref(configuredServiceControlUrl.value);
 const monitoringUrl = ref(configuredMonitoringUrl.value);
@@ -29,14 +20,13 @@ const testingMonitoring = ref(false);
 const monitoringValid = ref(null);
 
 const connectionSaved = ref(null);
-const urlParams = ref(useRoute());
 
 function testServiceControlUrl(event) {
   if (event) {
     testingServiceControl.value = true;
     return fetch(serviceControlUrl.value)
-      .then(() => {
-        serviceControlValid.value = true;
+      .then((response) => {
+        serviceControlValid.value = response.ok && response.headers.has('X-Particular-Version');
       })
       .catch(() => {
         serviceControlValid.value = false;
@@ -51,8 +41,8 @@ function testMonitoringUrl(event) {
   if (event) {
     testingMonitoring.value = true;
     return fetch(monitoringUrl.value + "monitored-endpoints")
-      .then(() => {
-        monitoringValid.value = true;
+      .then((response) => {
+        monitoringValid.value = response.ok && response.headers.has('X-Particular-Version');
       })
       .catch(() => {
         monitoringValid.value = false;
@@ -65,11 +55,7 @@ function testMonitoringUrl(event) {
 
 function saveConnections(event) {
   if (event) {
-    updateConnections(
-      urlParams.value,
-      serviceControlUrl.value,
-      monitoringUrl.value
-    );
+    updateServiceControlUrls(serviceControlUrl.value, monitoringUrl.value);
     connectionSaved.value = true;
   }
 }

@@ -1,5 +1,6 @@
 import { reactive, computed, watch } from "vue";
 import { useGetDayDiffFromToday } from "./formatter";
+import { fetchFromServiceControl } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast.js";
 
 const subscriptionExpiring =
@@ -42,7 +43,7 @@ export const useLicenseStatus = reactive({
   warningLevel: "",
 });
 
-export function useLicense(serviceControlUrl) {
+export function useLicense() {
   watch(license, async (newValue, oldValue) => {
     const checkForWarnings =
       oldValue !== null
@@ -53,7 +54,7 @@ export function useLicense(serviceControlUrl) {
     }
   });
 
-  return getLicense(serviceControlUrl, license)
+  return getLicense(license)
     .then((lic) => {
       license = lic;
       license.licenseEdition = computed(() => {
@@ -216,8 +217,8 @@ function getUpgradeDaysLeft(license) {
   return " - " + expiringIn + " days left";
 }
 
-function getLicense(serviceControlUrl, emptyLicense) {
-  return fetch(serviceControlUrl + "license?refresh=true")
+function getLicense(emptyLicense) {
+  return fetchFromServiceControl("license?refresh=true")
     .then((response) => {
       return response.json();
     })

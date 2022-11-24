@@ -17,7 +17,7 @@ const loading = computed(() => {
 <template>
   <section name="license">
     <ServiceControlNotAvailable />
-    <template v-if="connectionState.connected">
+    <template v-if="!connectionState.unableToConnect">
       <section>
         <busy-indicator v-if="loading"></busy-indicator>
 

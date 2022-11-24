@@ -1,8 +1,6 @@
 ﻿<script setup>
-import { inject } from "vue";
-import { key_ServiceControlUrl } from "./../composables/keys.js";
 import { connectionState } from "./../composables/serviceServiceControl";
-const serviceControlUrl = inject(key_ServiceControlUrl);
+import { serviceControlUrl } from "./../composables/serviceServiceControlUrls";
 </script>
 
 <template>
