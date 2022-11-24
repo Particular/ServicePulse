@@ -9,8 +9,8 @@ const router = createRouter({
       name: "dashboard",
       component: DashboardView,
       meta: {
-        title: 'Dashboard • ServicePulse'
-      }
+        title: "Dashboard • ServicePulse",
+      },
     },
     {
       path: "/",
@@ -24,8 +24,8 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/ConfigurationView.vue"),
       meta: {
-        title: 'Configuration • ServicePulse'
-      }
+        title: "Configuration • ServicePulse",
+      },
     },
   ],
   strict: false,
