@@ -7,7 +7,9 @@ const serviceControlUrl = inject(key_ServiceControlUrl);
 
 <template>
   <div class="sp-loader" v-if="connectionState.connecting"></div>
-  <template v-if="connectionState.unableToConnect && !connectionState.connecting">
+  <template
+    v-if="connectionState.unableToConnect && !connectionState.connecting"
+  >
     <div class="text-center monitoring-no-data">
       <h1>Cannot connect to ServiceControl</h1>
       <p>
