@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject } from "vue";
+import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { useLicenseStatus } from "../../composables/serviceLicense.js";
 import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl} from "./../../composables/serviceServiceControlUrls.js";
