@@ -21,7 +21,7 @@ export const connectionState = reactive({
   connecting: false,
   connectedAtLeastOnce: false,
   connectedRecently: false,
-  unableToConnect: true,
+  unableToConnect: null,
 });
 
 export const monitoringConnectionState = reactive({
@@ -29,7 +29,7 @@ export const monitoringConnectionState = reactive({
   connecting: false,
   connectedAtLeastOnce: false,
   connectedRecently: false,
-  unableToConnect: true,
+  unableToConnect: null,
 });
 
 export const environment = reactive({
@@ -92,11 +92,13 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
   setInterval(() => useServiceControlMonitoringStats(monitoringUrl), 5000); //NOTE is 5 seconds too often?
 
   const scConnectionFailure = computed(() => connectionState.unableToConnect);
-  const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
+  const monitoringConnectionFailure = computed(
+    () => monitoringConnectionState.unableToConnect
+  );
 
   watch(scConnectionFailure, async (newValue, oldValue) => {
-    if (newValue != oldValue) {
-      //NOTE to eliminate success msg showing everytime the screen is refreshed
+    //NOTE to eliminate success msg showing everytime the screen is refreshed
+    if (newValue != oldValue && !(oldValue === null && newValue === false)) {
       if (newValue) {
         useShowToast(
           "error",
@@ -118,8 +120,8 @@ export function useServiceControl(serviceControlUrl, monitoringUrl) {
   });
 
   watch(monitoringConnectionFailure, async (newValue, oldValue) => {
-    if (newValue != oldValue) {
-      //NOTE to eliminate success msg showing everytime the screen is refreshed
+    //NOTE to eliminate success msg showing everytime the screen is refreshed
+    if (newValue != oldValue && !(oldValue === null && newValue === false)) {
       if (newValue) {
         useShowToast(
           "error",
@@ -333,26 +335,26 @@ function getMonitoringVersion(monitoringUrl) {
 }
 
 function fetchWithErrorHandling(url, connectionState, action) {
-  if (connectionState.connecting) { //Skip the connection state checking
+  if (connectionState.connecting) {
+    //Skip the connection state checking
     return fetch(url)
-      .then(response => action(response))
+      .then((response) => action(response))
       .catch((err) => {
         console.log(err);
-    });
-  } 
+      });
+  }
   try {
     connectionState.connecting = true;
     connectionState.connected = false;
     return fetch(url)
       .then((response) => {
         connectionState.unableToConnect = false;
-        connectionState.connectedAtLeastOnce = true;
         connectionState.connectedRecently = true;
         connectionState.connected = true;
         connectionState.connecting = false;
         return response;
       })
-      .then(response => action(response))
+      .then((response) => action(response))
       .catch((err) => {
         connectionState.connected = false;
         connectionState.unableToConnect = true;
@@ -370,7 +372,11 @@ function getFailedHeartBeatsCount(serviceControlUrl) {
   return fetchWithErrorHandling(
     serviceControlUrl + "heartbeats/stats",
     connectionState,
-    response => parseInt(response.json().failing)
+    (response) => {
+      return response.json().then((data) => {
+        return parseInt(data.failing);
+      });
+    }
   );
 }
 
@@ -378,26 +384,30 @@ function getFailedMessagesCount(serviceControlUrl) {
   return fetchWithErrorHandling(
     serviceControlUrl + "errors?status=unresolved",
     connectionState,
-    response => parseInt(response.headers.get("Total-Count")));
+    (response) => parseInt(response.headers.get("Total-Count"))
+  );
 }
 
 function getFailedCustomChecksCount(serviceControlUrl) {
   return fetchWithErrorHandling(
     serviceControlUrl + "customchecks?status=fail",
     connectionState,
-    response => parseInt(response.headers.get("Total-Count")));
+    (response) => parseInt(response.headers.get("Total-Count"))
+  );
 }
 
 function getMonitoredEndpoints(monitoringUrl) {
   return fetchWithErrorHandling(
     monitoringUrl + "monitored-endpoints?history=1",
     monitoringConnectionState,
-    response => response.json());
+    (response) => response.json()
+  );
 }
 
 function getDisconnectedEndpointsCount(monitoringUrl) {
   return fetchWithErrorHandling(
     monitoringUrl + "monitored-endpoints/disconnected",
     monitoringConnectionState,
-    response => response.json());
+    (response) => response.json()
+  );
 }
