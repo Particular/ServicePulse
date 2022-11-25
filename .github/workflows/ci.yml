@@ -43,12 +43,15 @@ jobs:
           name: NuGet packages
           path: nugets/
           retention-days: 7
-      - name: Run .NET tests
-        run: dotnet test --configuration Release --no-build --logger "GitHubActions;report-warnings=false"
-        working-directory: src/ServicePulse.Host.Tests
-      - name: Install test npm packages
-        run: npm install
-        working-directory: src/ServicePulse.Host.Tests
-      - name: Run Javascript tests
-        run: npm run test-firefox-ci
-        working-directory: src/ServicePulse.Host.Tests
+      - name: Deploy static web app
+        id: deploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          action: "upload"
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "/src/ServicePulse.Host/app" # App source code path
+          skip_app_build: true
+          ###### End of Repository/Build Configurations ######        
