@@ -1,8 +1,8 @@
 import {
-  fetchFromServiceControl,
-  deleteFromServiceControl,
-  putToServiceControl,
-  postToServiceControl,
+  useFetchFromServiceControl,
+  useDeleteFromServiceControl,
+  usePutToServiceControl,
+  usePostToServiceControl,
 } from "./serviceServiceControlUrls.js";
 
 const redirects = {
@@ -19,7 +19,7 @@ export function useRedirects() {
 }
 
 function getKnownQueues() {
-  return fetchFromServiceControl(`errors/queues/addresses`)
+  return useFetchFromServiceControl(`errors/queues/addresses`)
     .then((response) => {
       return response.json();
     })
@@ -34,7 +34,7 @@ function getKnownQueues() {
 }
 
 function getRedirects() {
-  return fetchFromServiceControl("redirects")
+  return useFetchFromServiceControl("redirects")
     .then((response) => {
       redirects.total = parseInt(response.headers.get("Total-Count"));
       return response.json();
@@ -47,8 +47,8 @@ function getRedirects() {
     });
 }
 
-export function retryPendingMessagesForQueue(queueName) {
-  return postToServiceControl("errors/queues/" + queueName + "/retry")
+export function useRetryPendingMessagesForQueue(queueName) {
+  return usePostToServiceControl("errors/queues/" + queueName + "/retry")
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -67,7 +67,7 @@ export function retryPendingMessagesForQueue(queueName) {
 }
 
 export function useUpdateRedirects(redirectId, sourceEndpoint, targetEndpoint) {
-  return putToServiceControl("redirects/" + redirectId, {
+  return usePutToServiceControl("redirects/" + redirectId, {
     id: redirectId,
     fromphysicaladdress: sourceEndpoint,
     tophysicaladdress: targetEndpoint,
@@ -91,7 +91,7 @@ export function useUpdateRedirects(redirectId, sourceEndpoint, targetEndpoint) {
 }
 
 export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
-  return postToServiceControl("redirects", {
+  return usePostToServiceControl("redirects", {
     fromphysicaladdress: sourceEndpoint,
     tophysicaladdress: targetEndpoint,
   })
@@ -114,7 +114,7 @@ export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
 }
 
 export function useDeleteRedirects(redirectId) {
-  return deleteFromServiceControl("redirects/" + redirectId)
+  return useDeleteFromServiceControl("redirects/" + redirectId)
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,

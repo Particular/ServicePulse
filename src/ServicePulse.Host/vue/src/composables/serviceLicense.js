@@ -1,6 +1,6 @@
 import { reactive, computed, watch } from "vue";
 import { useGetDayDiffFromToday } from "./formatter";
-import { fetchFromServiceControl } from "./serviceServiceControlUrls";
+import { useFetchFromServiceControl } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast.js";
 
 const subscriptionExpiring =
@@ -26,7 +26,7 @@ export var license = reactive({
   license_status: "Unavailable",
 });
 
-export const useLicenseStatus = reactive({
+export const licenseStatus = reactive({
   isSubscriptionLicense: false,
   isUpgradeProtectionLicense: false,
   isTrialLicense: false,
@@ -85,37 +85,35 @@ export function useLicense() {
       return license;
     })
     .then((lic) => {
-      useLicenseStatus.isSubscriptionLicense = isSubscriptionLicense(lic);
-      useLicenseStatus.isUpgradeProtectionLicense =
+      licenseStatus.isSubscriptionLicense = isSubscriptionLicense(lic);
+      licenseStatus.isUpgradeProtectionLicense =
         isUpgradeProtectionLicense(lic);
-      useLicenseStatus.isTrialLicense = lic.trial_license;
-      useLicenseStatus.isPlatformExpired =
+      licenseStatus.isTrialLicense = lic.trial_license;
+      licenseStatus.isPlatformExpired =
         lic.license_status === "InvalidDueToExpiredSubscription";
-      useLicenseStatus.isPlatformTrialExpiring =
+      licenseStatus.isPlatformTrialExpiring =
         lic.license_status === "ValidWithExpiringTrial";
-      useLicenseStatus.isPlatformTrialExpired =
+      licenseStatus.isPlatformTrialExpired =
         lic.license_status === "InvalidDueToExpiredTrial";
-      useLicenseStatus.isInvalidDueToUpgradeProtectionExpired =
+      licenseStatus.isInvalidDueToUpgradeProtectionExpired =
         lic.license_status === "InvalidDueToExpiredUpgradeProtection";
-      useLicenseStatus.isValidWithExpiredUpgradeProtection =
+      licenseStatus.isValidWithExpiredUpgradeProtection =
         lic.license_status === "ValidWithExpiredUpgradeProtection";
-      useLicenseStatus.isValidWithExpiringUpgradeProtection =
+      licenseStatus.isValidWithExpiringUpgradeProtection =
         lic.license_status === "ValidWithExpiringUpgradeProtection";
-      useLicenseStatus.upgradeDaysLeft = getUpgradeDaysLeft(lic);
-      useLicenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft(lic);
-      useLicenseStatus.trialDaysLeft = getTrialDaysLeft(lic);
-      useLicenseStatus.warningLevel = getLicenseWarningLevel(
-        lic.license_status
-      );
-      useLicenseStatus.isExpired =
-        useLicenseStatus.isPlatformExpired ||
-        useLicenseStatus.isPlatformTrialExpired ||
-        useLicenseStatus.isInvalidDueToUpgradeProtectionExpired;
+      licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft(lic);
+      licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft(lic);
+      licenseStatus.trialDaysLeft = getTrialDaysLeft(lic);
+      licenseStatus.warningLevel = getLicenseWarningLevel(lic.license_status);
+      licenseStatus.isExpired =
+        licenseStatus.isPlatformExpired ||
+        licenseStatus.isPlatformTrialExpired ||
+        licenseStatus.isInvalidDueToUpgradeProtectionExpired;
       return lic;
     });
 }
 
-export function getLicenseWarningLevel(licenseStatus) {
+function getLicenseWarningLevel(licenseStatus) {
   if (
     licenseStatus === "InvalidDueToExpiredTrial" ||
     licenseStatus === "InvalidDueToExpiredSubscription" ||
@@ -218,7 +216,7 @@ function getUpgradeDaysLeft(license) {
 }
 
 function getLicense(emptyLicense) {
-  return fetchFromServiceControl("license?refresh=true")
+  return useFetchFromServiceControl("license?refresh=true")
     .then((response) => {
       return response.json();
     })

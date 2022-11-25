@@ -13,7 +13,6 @@ useServiceControlUrls();
 useServiceControl();
 useServiceControlVersion();
 useLicense();
-
 </script>
 
 <template>

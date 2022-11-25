@@ -1,14 +1,18 @@
 <script setup>
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { useLicenseStatus } from "../../composables/serviceLicense.js";
-import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl} from "./../../composables/serviceServiceControlUrls.js";
+import { licenseStatus } from "../../composables/serviceLicense.js";
+import {
+  updateServiceControlUrls,
+  serviceControlUrl as configuredServiceControlUrl,
+  monitoringUrl as configuredMonitoringUrl,
+} from "./../../composables/serviceServiceControlUrls.js";
 import {
   connectionState,
   monitoringConnectionState,
 } from "../../composables/serviceServiceControl";
 
-const isExpired = useLicenseStatus.isExpired;
+const isExpired = licenseStatus.isExpired;
 
 const serviceControlUrl = ref(configuredServiceControlUrl.value);
 const monitoringUrl = ref(configuredMonitoringUrl.value);
@@ -26,7 +30,8 @@ function testServiceControlUrl(event) {
     testingServiceControl.value = true;
     return fetch(serviceControlUrl.value)
       .then((response) => {
-        serviceControlValid.value = response.ok && response.headers.has('X-Particular-Version');
+        serviceControlValid.value =
+          response.ok && response.headers.has("X-Particular-Version");
       })
       .catch(() => {
         serviceControlValid.value = false;
@@ -42,7 +47,8 @@ function testMonitoringUrl(event) {
     testingMonitoring.value = true;
     return fetch(monitoringUrl.value + "monitored-endpoints")
       .then((response) => {
-        monitoringValid.value = response.ok && response.headers.has('X-Particular-Version');
+        monitoringValid.value =
+          response.ok && response.headers.has("X-Particular-Version");
       })
       .catch(() => {
         monitoringValid.value = false;

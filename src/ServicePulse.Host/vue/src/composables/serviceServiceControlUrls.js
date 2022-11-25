@@ -3,18 +3,22 @@ import { ref } from "vue";
 export const serviceControlUrl = ref(null);
 export const monitoringUrl = ref(null);
 
-export function fetchFromServiceControl(suffix) {
+export function useFetchFromServiceControl(suffix) {
   return fetch(serviceControlUrl.value + suffix);
 }
 
-export function fetchFromMonitoring(suffix) {
-  if (monitoringUrl.value === null || monitoringUrl.value === "" || monitoringUrl.value === "!") {
+export function useFetchFromMonitoring(suffix) {
+  if (
+    monitoringUrl.value === null ||
+    monitoringUrl.value === "" ||
+    monitoringUrl.value === "!"
+  ) {
     return Promise.resolve(null);
   }
   return fetch(monitoringUrl.value + suffix);
 }
 
-export function postToServiceControl(suffix, payload) {
+export function usePostToServiceControl(suffix, payload) {
   const requestOptions = {
     method: "POST",
   };
@@ -25,7 +29,7 @@ export function postToServiceControl(suffix, payload) {
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function putToServiceControl(suffix, payload) {
+export function usePutToServiceControl(suffix, payload) {
   const requestOptions = {
     method: "PUT",
   };
@@ -36,7 +40,7 @@ export function putToServiceControl(suffix, payload) {
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function deleteFromServiceControl(suffix) {
+export function useDeleteFromServiceControl(suffix) {
   const requestOptions = {
     method: "DELETE",
   };

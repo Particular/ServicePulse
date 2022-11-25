@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { useLicenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
@@ -15,10 +15,10 @@ import {
   useUpdateRedirects,
   useCreateRedirects,
   useDeleteRedirects,
-  retryPendingMessagesForQueue,
+  useRetryPendingMessagesForQueue,
 } from "../../composables/serviceRedirects.js";
 
-const isExpired = useLicenseStatus.isExpired;
+const isExpired = licenseStatus.isExpired;
 
 const emit = defineEmits(["redirectCountUpdated"]);
 
@@ -100,7 +100,7 @@ function saveEditedRedirect(redirect) {
     })
     .then((result) => {
       if (result.message === "success" && redirect.immediatelyRetry) {
-        return retryPendingMessagesForQueue(redirect.sourceQueue);
+        return useRetryPendingMessagesForQueue(redirect.sourceQueue);
       } else {
         return result;
       }

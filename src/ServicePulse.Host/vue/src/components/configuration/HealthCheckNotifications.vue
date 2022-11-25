@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { useLicenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
 import {
@@ -13,7 +13,7 @@ import {
 } from "../../composables/serviceNotifications.js";
 import { useShowToast } from "../../composables/toast.js";
 
-const isExpired = useLicenseStatus.isExpired;
+const isExpired = licenseStatus.isExpired;
 const emailTestSuccessful = ref(null);
 const emailTestInProgress = ref(null);
 const emailToggleSucessful = ref(null);

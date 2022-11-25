@@ -4,12 +4,12 @@ import EventItemShort from "../components/EventItemShort.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
 import { connectionState, stats } from "../composables/serviceServiceControl";
-import { useLicenseStatus } from "./../composables/serviceLicense.js";
+import { licenseStatus } from "./../composables/serviceLicense.js";
 </script>
 
 <template>
   <LicenseExpired />
-  <template v-if="!useLicenseStatus.isExpired">
+  <template v-if="!licenseStatus.isExpired">
     <div class="container">
       <ServiceControlNotAvailable />
 

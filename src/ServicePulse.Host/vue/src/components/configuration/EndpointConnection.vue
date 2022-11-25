@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { useLicenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import {
   useServiceControlConnections,
   connectionState,
@@ -11,7 +11,7 @@ import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
-const isExpired = useLicenseStatus.isExpired;
+const isExpired = licenseStatus.isExpired;
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);

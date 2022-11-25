@@ -7,7 +7,7 @@ import {
   connectionState,
   monitoringConnectionState,
 } from "../composables/serviceServiceControl.js";
-import { useLicenseStatus } from "./../composables/serviceLicense.js";
+import { licenseStatus } from "./../composables/serviceLicense.js";
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];
@@ -18,13 +18,13 @@ function subIsActive(input, exact) {
 }
 
 const displayWarn = computed(() => {
-  return useLicenseStatus.warningLevel === "warning";
+  return licenseStatus.warningLevel === "warning";
 });
 const displayDanger = computed(() => {
   return (
     connectionState.unableToConnect ||
     monitoringConnectionState.unableToConnect ||
-    useLicenseStatus.warningLevel === "danger"
+    licenseStatus.warningLevel === "danger"
   );
 });
 </script>

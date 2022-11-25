@@ -1,9 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import {
-  license,
-  useLicenseStatus,
-} from "./../../composables/serviceLicense.js";
+import { license, licenseStatus } from "./../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
@@ -30,43 +27,42 @@ const loading = computed(() => {
                   }}{{ license.licenseEdition.value }}
                 </div>
 
-                <template v-if="useLicenseStatus.isSubscriptionLicense">
+                <template v-if="licenseStatus.isSubscriptionLicense">
                   <div>
                     <b>License expiry date: </b>
                     <span
                       :class="{
-                        'license-expired': useLicenseStatus.isPlatformExpired,
+                        'license-expired': licenseStatus.isPlatformExpired,
                       }"
                     >
                       {{ license.formattedExpirationDate.value }}
-                      {{ useLicenseStatus.subscriptionDaysLeft }}
-                      <exclamation-mark :type="useLicenseStatus.warningLevel" />
+                      {{ licenseStatus.subscriptionDaysLeft }}
+                      <exclamation-mark :type="licenseStatus.warningLevel" />
                     </span>
                     <div
                       class="license-expired-text"
-                      v-if="useLicenseStatus.isPlatformExpired"
+                      v-if="licenseStatus.isPlatformExpired"
                     >
                       Your license expired. Please update the license to
                       continue using the Particular Service Platform.
                     </div>
                   </div>
                 </template>
-                <template v-if="useLicenseStatus.isTrialLicense">
+                <template v-if="licenseStatus.isTrialLicense">
                   <div>
                     <b>License expiry date: </b>
                     <span
                       :class="{
-                        'license-expired':
-                          useLicenseStatus.isPlatformTrialExpired,
+                        'license-expired': licenseStatus.isPlatformTrialExpired,
                       }"
                     >
                       {{ license.formattedExpirationDate.value }}
-                      {{ useLicenseStatus.trialDaysLeft }}
-                      <exclamation-mark :type="useLicenseStatus.warningLevel" />
+                      {{ licenseStatus.trialDaysLeft }}
+                      <exclamation-mark :type="licenseStatus.warningLevel" />
                     </span>
                     <div
                       class="license-expired-text"
-                      v-if="useLicenseStatus.isPlatformTrialExpired"
+                      v-if="licenseStatus.isPlatformTrialExpired"
                     >
                       Your license expired. To continue using the Particular
                       Service Platform you'll need to extend your license.
@@ -74,8 +70,8 @@ const loading = computed(() => {
                     <div
                       class="license-page-extend-trial"
                       v-if="
-                        useLicenseStatus.isPlatformTrialExpiring &&
-                        useLicenseStatus.isPlatformTrialExpired
+                        licenseStatus.isPlatformTrialExpiring &&
+                        licenseStatus.isPlatformTrialExpired
                       "
                     >
                       <a
@@ -89,28 +85,26 @@ const loading = computed(() => {
                     </div>
                   </div>
                 </template>
-                <template v-if="useLicenseStatus.isUpgradeProtectionLicense">
+                <template v-if="licenseStatus.isUpgradeProtectionLicense">
                   <div>
                     <span>
                       <b>Upgrade protection expiry date:</b>
                       <span
                         :class="{
                           'license-expired':
-                            useLicenseStatus.isInvalidDueToUpgradeProtectionExpired,
+                            licenseStatus.isInvalidDueToUpgradeProtectionExpired,
                         }"
                       >
                         {{ license.formattedUpgradeProtectionExpiration.value }}
-                        {{ useLicenseStatus.upgradeDaysLeft }}
-                        <exclamation-mark
-                          :type="useLicenseStatus.warningLevel"
-                        />
+                        {{ licenseStatus.upgradeDaysLeft }}
+                        <exclamation-mark :type="licenseStatus.warningLevel" />
                       </span>
                     </span>
                     <div
                       class="license-expired-text"
                       v-if="
-                        useLicenseStatus.isValidWithExpiredUpgradeProtection ||
-                        useLicenseStatus.isValidWithExpiringUpgradeProtection
+                        licenseStatus.isValidWithExpiredUpgradeProtection ||
+                        licenseStatus.isValidWithExpiringUpgradeProtection
                       "
                     >
                       <b>Warning:</b> Once upgrade protection expires, you'll no
@@ -119,7 +113,7 @@ const loading = computed(() => {
                     <div
                       class="license-expired-text"
                       v-if="
-                        useLicenseStatus.isInvalidDueToUpgradeProtectionExpired
+                        licenseStatus.isInvalidDueToUpgradeProtectionExpired
                       "
                     >
                       Your license upgrade protection expired before this

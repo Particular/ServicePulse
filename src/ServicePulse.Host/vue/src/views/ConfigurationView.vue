@@ -5,7 +5,7 @@ import PlatformLicense from "../components/configuration/PlatformLicense.vue";
 import EndpointConnection from "../components/configuration/EndpointConnection.vue";
 import HealthCheckNotifications from "../components/configuration/HealthCheckNotifications.vue";
 import RetryRedirects from "../components/configuration/RetryRedirects.vue";
-import { useLicenseStatus } from "../composables/serviceLicense.js";
+import { licenseStatus } from "../composables/serviceLicense.js";
 import {
   connectionState,
   monitoringConnectionState,
@@ -101,10 +101,10 @@ onMounted(() => {
             }"
           >
             <a href="#license">License</a>
-            <exclamation-mark :type="useLicenseStatus.warningLevel" />
+            <exclamation-mark :type="licenseStatus.warningLevel" />
           </h5>
           <h5
-            v-if="!useLicenseStatus.isExpired"
+            v-if="!licenseStatus.isExpired"
             :class="{
               active: subIsActive('#health-check-notifications'),
               disabled:
@@ -115,7 +115,7 @@ onMounted(() => {
             <a href="#health-check-notifications">Health Check Notifications</a>
           </h5>
           <h5
-            v-if="!useLicenseStatus.isExpired"
+            v-if="!licenseStatus.isExpired"
             :class="{
               active: subIsActive('#retry-redirects'),
               disabled:
@@ -128,7 +128,7 @@ onMounted(() => {
             </a>
           </h5>
           <h5
-            v-if="!useLicenseStatus.isExpired"
+            v-if="!licenseStatus.isExpired"
             :class="{ active: subIsActive('#connections') }"
           >
             <a href="#connections">
@@ -144,7 +144,7 @@ onMounted(() => {
             </a>
           </h5>
           <h5
-            v-if="!useLicenseStatus.isExpired"
+            v-if="!licenseStatus.isExpired"
             :class="{
               active: subIsActive('#endpoint-connection'),
               disabled:

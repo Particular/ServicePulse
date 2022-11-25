@@ -1,6 +1,6 @@
 import {
-  fetchFromServiceControl,
-  postToServiceControl,
+  useFetchFromServiceControl,
+  usePostToServiceControl,
 } from "./serviceServiceControlUrls";
 
 export function useEmailNotifications() {
@@ -16,7 +16,7 @@ export function useEmailNotifications() {
 }
 
 function getEmailNotifications() {
-  return fetchFromServiceControl("notifications/email")
+  return useFetchFromServiceControl("notifications/email")
     .then((response) => {
       return response.json();
     })
@@ -34,7 +34,7 @@ function getEmailNotifications() {
 }
 
 export function useUpdateEmailNotifications(settings) {
-  return postToServiceControl("notifications/email", settings)
+  return usePostToServiceControl("notifications/email", settings)
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -54,7 +54,7 @@ export function useUpdateEmailNotifications(settings) {
 }
 
 export function useTestEmailNotifications() {
-  return postToServiceControl("notifications/email/test", {})
+  return usePostToServiceControl("notifications/email/test", {})
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -74,7 +74,7 @@ export function useTestEmailNotifications() {
 }
 
 export function useToggleEmailNotifications(enabled) {
-  return postToServiceControl("notifications/email/toggle", {
+  return usePostToServiceControl("notifications/email/toggle", {
     enabled: enabled,
   })
     .then((response) => {

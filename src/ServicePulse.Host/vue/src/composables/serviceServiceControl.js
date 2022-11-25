@@ -2,8 +2,8 @@ import { reactive, onMounted, watch, computed } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
 import {
-  fetchFromServiceControl,
-  fetchFromMonitoring,
+  useFetchFromServiceControl,
+  useFetchFromMonitoring,
   serviceControlUrl,
   monitoringUrl,
 } from "./serviceServiceControlUrls";
@@ -284,7 +284,7 @@ function getServiceControlVersion() {
 }
 
 function getSCConnection() {
-  return fetchFromServiceControl("connection")
+  return useFetchFromServiceControl("connection")
     .then((response) => {
       return response.json();
     })
@@ -299,7 +299,7 @@ function getSCConnection() {
 }
 
 function getMonitoringConnection() {
-  return fetchFromMonitoring("connection")
+  return useFetchFromMonitoring("connection")
     .then((response) => {
       return response.json();
     })
@@ -312,7 +312,7 @@ function getMonitoringConnection() {
 }
 
 function getSCVersion() {
-  return fetchFromServiceControl("")
+  return useFetchFromServiceControl("")
     .then((response) => {
       environment.sc_version = response.headers.get("X-Particular-Version");
       return response.json();
@@ -323,7 +323,7 @@ function getSCVersion() {
 }
 
 function getMonitoringVersion() {
-  return fetchFromMonitoring("")
+  return useFetchFromMonitoring("")
     .then((response) => {
       environment.monitoring_version = response.headers.get(
         "X-Particular-Version"
@@ -371,7 +371,7 @@ function fetchWithErrorHandling(fetchFunction, connectionState, action) {
 
 function getFailedHeartBeatsCount() {
   return fetchWithErrorHandling(
-    () => fetchFromServiceControl("heartbeats/stats"),
+    () => useFetchFromServiceControl("heartbeats/stats"),
     connectionState,
     (response) => {
       return response.json().then((data) => {
@@ -383,7 +383,7 @@ function getFailedHeartBeatsCount() {
 
 function getFailedMessagesCount() {
   return fetchWithErrorHandling(
-    () => fetchFromServiceControl("errors?status=unresolved"),
+    () => useFetchFromServiceControl("errors?status=unresolved"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count"))
   );
@@ -391,7 +391,7 @@ function getFailedMessagesCount() {
 
 function getFailedCustomChecksCount() {
   return fetchWithErrorHandling(
-    () => fetchFromServiceControl("customchecks?status=fail"),
+    () => useFetchFromServiceControl("customchecks?status=fail"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count"))
   );
@@ -399,24 +399,26 @@ function getFailedCustomChecksCount() {
 
 function getMonitoredEndpoints() {
   return fetchWithErrorHandling(
-    () => fetchFromMonitoring("monitored-endpoints?history=1"),
+    () => useFetchFromMonitoring("monitored-endpoints?history=1"),
     monitoringConnectionState,
     (response) => {
       if (response != null && response.ok) {
         return response.json();
       }
       throw "Error connecting to monitoring";
-    });
+    }
+  );
 }
 
 function getDisconnectedEndpointsCount() {
   return fetchWithErrorHandling(
-    () => fetchFromMonitoring("monitored-endpoints/disconnected"),
+    () => useFetchFromMonitoring("monitored-endpoints/disconnected"),
     monitoringConnectionState,
     (response) => {
       if (response != null && response.ok) {
         return response.json();
       }
       throw "Error connecting to monitoring";
-    });
+    }
+  );
 }
