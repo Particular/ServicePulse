@@ -89,7 +89,7 @@ function navigateToEvent(eventLogItem) {
       window.location = "/a/#/failed-messages/groups";
       break;
     case "MessageRedirects":
-      router.push("/configuration#redirects");
+      router.push("/configuration#retry-redirects");
       break;
     default:
   }
