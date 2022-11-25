@@ -23,7 +23,7 @@ jobs:
         with:
           dotnet-version: 5.0.x
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.2
+        uses: microsoft/setup-msbuild@v1.1.3
       - name: Setup Advanced Installer
         run: |
           $version = "18.8.1"
