@@ -98,9 +98,3 @@ src/scaffolding.config
 
 # Visual Studio Code
 .vscode
-
-# Vue build output
-src/ServicePulse.Host/vue/dist/
-
-# Combined output for Vue and AngularJs 
-src/ServicePulse.Host/app/
