@@ -1,29 +1,21 @@
 <script setup>
-import { ref, inject } from "vue";
-import { useRoute } from "vue-router";
+import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { useLicenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import {
-  key_ServiceControlUrl,
-  key_MonitoringUrl,
-  key_UpdateConnections,
-  key_UnableToConnectToServiceControl,
-  key_UnableToConnectToMonitoring,
-} from "../../composables/keys.js";
+  updateServiceControlUrls,
+  serviceControlUrl as configuredServiceControlUrl,
+  monitoringUrl as configuredMonitoringUrl,
+} from "./../../composables/serviceServiceControlUrls.js";
+import {
+  connectionState,
+  monitoringConnectionState,
+} from "../../composables/serviceServiceControl";
 
-const isExpired = ref(useLicenseStatus.isExpired);
-
-const configuredServiceControlUrl = inject(key_ServiceControlUrl);
-const configuredMonitoringUrl = inject(key_MonitoringUrl);
-const updateConnections = inject(key_UpdateConnections);
+const isExpired = licenseStatus.isExpired;
 
 const serviceControlUrl = ref(configuredServiceControlUrl.value);
 const monitoringUrl = ref(configuredMonitoringUrl.value);
-
-const unableToConnectToServiceControl = inject(
-  key_UnableToConnectToServiceControl
-);
-const unableToConnectToMonitoring = inject(key_UnableToConnectToMonitoring);
 
 const testingServiceControl = ref(false);
 const serviceControlValid = ref(null);
@@ -32,14 +24,14 @@ const testingMonitoring = ref(false);
 const monitoringValid = ref(null);
 
 const connectionSaved = ref(null);
-const urlParams = ref(useRoute());
 
 function testServiceControlUrl(event) {
   if (event) {
     testingServiceControl.value = true;
     return fetch(serviceControlUrl.value)
-      .then(() => {
-        serviceControlValid.value = true;
+      .then((response) => {
+        serviceControlValid.value =
+          response.ok && response.headers.has("X-Particular-Version");
       })
       .catch(() => {
         serviceControlValid.value = false;
@@ -54,8 +46,9 @@ function testMonitoringUrl(event) {
   if (event) {
     testingMonitoring.value = true;
     return fetch(monitoringUrl.value + "monitored-endpoints")
-      .then(() => {
-        monitoringValid.value = true;
+      .then((response) => {
+        monitoringValid.value =
+          response.ok && response.headers.has("X-Particular-Version");
       })
       .catch(() => {
         monitoringValid.value = false;
@@ -68,11 +61,7 @@ function testMonitoringUrl(event) {
 
 function saveConnections(event) {
   if (event) {
-    updateConnections(
-      urlParams.value,
-      serviceControlUrl.value,
-      monitoringUrl.value
-    );
+    updateServiceControlUrls(serviceControlUrl.value, monitoringUrl.value);
     connectionSaved.value = true;
   }
 }
@@ -91,7 +80,7 @@ function saveConnections(event) {
                 <div class="col-sm-7 form-group">
                   <label for="serviceControlUrl"
                     >CONNECTION URL
-                    <template v-if="unableToConnectToServiceControl">
+                    <template v-if="connectionState.unableToConnect">
                       <span class="failed-validation">
                         <i class="fa fa-exclamation-triangle"></i> Unable to
                         connect</span
@@ -148,7 +137,7 @@ function saveConnections(event) {
                   <label for="monitoringUrl"
                     >CONNECTION URL
                     <span class="auxilliary-label">(OPTIONAL)</span>
-                    <template v-if="unableToConnectToMonitoring">
+                    <template v-if="monitoringConnectionState.unableToConnect">
                       <span class="failed-validation">
                         <i class="fa fa-exclamation-triangle"></i> Unable to
                         connect

@@ -1,14 +1,9 @@
 <script setup>
-import { useLicenseStatus } from "./../composables/serviceLicense.js";
-
-const isPlatformExpired = useLicenseStatus.isPlatformExpired;
-const isPlatformTrialExpired = useLicenseStatus.isPlatformTrialExpired;
-const isInvalidDueToUpgradeProtectionExpired =
-  useLicenseStatus.isInvalidDueToUpgradeProtectionExpired;
+import { licenseStatus } from "./../composables/serviceLicense.js";
 </script>
 
 <template>
-  <template v-if="isPlatformExpired">
+  <template v-if="licenseStatus.isPlatformExpired">
     <div class="text-center monitoring-no-data" style="max-width: 620px">
       <h1>Platform license expired</h1>
       <p>
@@ -22,7 +17,7 @@ const isInvalidDueToUpgradeProtectionExpired =
       </div>
     </div>
   </template>
-  <template v-if="isPlatformTrialExpired">
+  <template v-if="licenseStatus.isPlatformTrialExpired">
     <div class="text-center monitoring-no-data" style="max-width: 720px">
       <h1>License expired</h1>
       <p>
@@ -42,7 +37,7 @@ const isInvalidDueToUpgradeProtectionExpired =
       </div>
     </div>
   </template>
-  <template v-if="isInvalidDueToUpgradeProtectionExpired">
+  <template v-if="licenseStatus.isInvalidDueToUpgradeProtectionExpired">
     <div class="text-center monitoring-no-data" style="max-width: 620px">
       <h1>Platform license expired</h1>
       <p>

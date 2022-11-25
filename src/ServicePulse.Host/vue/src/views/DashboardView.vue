@@ -1,35 +1,19 @@
 <script setup>
-import { inject, ref } from "vue";
 import DashboardItem from "../components/DashboardItem.vue";
 import EventItemShort from "../components/EventItemShort.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
-import {
-  key_IsSCConnected,
-  key_ScConnectedAtLeastOnce,
-  key_IsSCConnecting,
-} from "../composables/keys.js";
-import { stats } from "./../composables/serviceServiceControl.js";
-import { useLicenseStatus } from "./../composables/serviceLicense.js";
-
-const isExpired = ref(useLicenseStatus.isExpired);
-const isSCConnected = inject(key_IsSCConnected);
-const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
-const isSCConnecting = inject(key_IsSCConnecting);
+import { connectionState, stats } from "../composables/serviceServiceControl";
+import { licenseStatus } from "./../composables/serviceLicense.js";
 </script>
 
 <template>
   <LicenseExpired />
-  <template v-if="!isExpired">
+  <template v-if="!licenseStatus.isExpired">
     <div class="container">
-      <div class="sp-loader" v-if="isSCConnecting"></div>
-      <ServiceControlNotAvailable
-        :isSCConnected="isSCConnected"
-        :isSCConnecting="isSCConnecting"
-        :scConnectedAtLeastOnce="scConnectedAtLeastOnce"
-      />
+      <ServiceControlNotAvailable />
 
-      <template v-if="isSCConnected || scConnectedAtLeastOnce">
+      <template v-if="connectionState.connected">
         <div class="row">
           <div class="col-sm-12">
             <h1>Dashboard</h1>
@@ -67,8 +51,8 @@ const isSCConnecting = inject(key_IsSCConnecting);
                     >
                   </div>
                 </div>
-              </div>              
-            </div>            
+              </div>
+            </div>
           </div>
           <EventItemShort></EventItemShort>
         </div>

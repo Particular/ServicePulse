@@ -1,7 +1,51 @@
 import { ref } from "vue";
 
-const serviceControlUrl = ref(null);
-const monitoringUrl = ref(null);
+export const serviceControlUrl = ref(null);
+export const monitoringUrl = ref(null);
+
+export function useFetchFromServiceControl(suffix) {
+  return fetch(serviceControlUrl.value + suffix);
+}
+
+export function useFetchFromMonitoring(suffix) {
+  if (
+    monitoringUrl.value === null ||
+    monitoringUrl.value === "" ||
+    monitoringUrl.value === "!"
+  ) {
+    return Promise.resolve(null);
+  }
+  return fetch(monitoringUrl.value + suffix);
+}
+
+export function usePostToServiceControl(suffix, payload) {
+  const requestOptions = {
+    method: "POST",
+  };
+  if (payload !== undefined) {
+    requestOptions.headers = { "Content-Type": "application/json" };
+    requestOptions.body = JSON.stringify(payload);
+  }
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+
+export function usePutToServiceControl(suffix, payload) {
+  const requestOptions = {
+    method: "PUT",
+  };
+  if (payload !== undefined) {
+    requestOptions.headers = { "Content-Type": "application/json" };
+    requestOptions.body = JSON.stringify(payload);
+  }
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+
+export function useDeleteFromServiceControl(suffix) {
+  const requestOptions = {
+    method: "DELETE",
+  };
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
 
 export function useServiceControlUrls() {
   const params = getParams();
@@ -56,7 +100,6 @@ export function useServiceControlUrls() {
 }
 
 export function updateServiceControlUrls(
-  route,
   newServiceControlUrl,
   newMonitoringUrl
 ) {

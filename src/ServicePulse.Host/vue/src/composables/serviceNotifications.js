@@ -1,5 +1,10 @@
-export function useEmailNotifications(serviceControlUrl) {
-  const emailNotificationResults = getEmailNotifications(serviceControlUrl);
+import {
+  useFetchFromServiceControl,
+  usePostToServiceControl,
+} from "./serviceServiceControlUrls";
+
+export function useEmailNotifications() {
+  const emailNotificationResults = getEmailNotifications();
 
   return Promise.all([emailNotificationResults])
     .then(([emailNotifications]) => {
@@ -10,8 +15,8 @@ export function useEmailNotifications(serviceControlUrl) {
     });
 }
 
-function getEmailNotifications(serviceControlUrl) {
-  return fetch(serviceControlUrl + "notifications/email")
+function getEmailNotifications() {
+  return useFetchFromServiceControl("notifications/email")
     .then((response) => {
       return response.json();
     })
@@ -28,14 +33,8 @@ function getEmailNotifications(serviceControlUrl) {
     });
 }
 
-export function useUpdateEmailNotifications(serviceControlUrl, settings) {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(settings),
-  };
-
-  return fetch(serviceControlUrl + "notifications/email", requestOptions)
+export function useUpdateEmailNotifications(settings) {
+  return usePostToServiceControl("notifications/email", settings)
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -54,14 +53,8 @@ export function useUpdateEmailNotifications(serviceControlUrl, settings) {
     });
 }
 
-export function useTestEmailNotifications(serviceControlUrl) {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({}),
-  };
-
-  return fetch(serviceControlUrl + "notifications/email/test", requestOptions)
+export function useTestEmailNotifications() {
+  return usePostToServiceControl("notifications/email/test", {})
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,
@@ -80,14 +73,10 @@ export function useTestEmailNotifications(serviceControlUrl) {
     });
 }
 
-export function useToggleEmailNotifications(serviceControlUrl, enabled) {
-  const requestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ enabled: enabled }),
-  };
-
-  return fetch(serviceControlUrl + "notifications/email/toggle", requestOptions)
+export function useToggleEmailNotifications(enabled) {
+  return usePostToServiceControl("notifications/email/toggle", {
+    enabled: enabled,
+  })
     .then((response) => {
       var result = {
         message: response.ok ? "success" : "error:" + response.statusText,

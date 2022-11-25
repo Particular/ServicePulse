@@ -1,28 +1,17 @@
 <script setup>
-import { ref, inject, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { useLicenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense.js";
 import {
-  key_ServiceControlUrl,
-  key_MonitoringUrl,
-  key_IsSCConnected,
-  key_ScConnectedAtLeastOnce,
-  key_IsSCConnecting,
-} from "./../../composables/keys.js";
-import { useServiceControlConnections } from "../../composables/serviceServiceControl.js";
+  useServiceControlConnections,
+  connectionState,
+} from "../../composables/serviceServiceControl.js";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
-const isExpired = ref(useLicenseStatus.isExpired);
-
-const configuredServiceControlUrl = inject(key_ServiceControlUrl);
-const configuredMonitoringUrl = inject(key_MonitoringUrl);
-
-const isSCConnected = inject(key_IsSCConnected);
-const scConnectedAtLeastOnce = inject(key_ScConnectedAtLeastOnce);
-const isSCConnecting = inject(key_IsSCConnecting);
+const isExpired = licenseStatus.isExpired;
 
 const loading = ref(true);
 const showCodeOnlyTab = ref(true);
@@ -43,10 +32,7 @@ function getCode() {
 var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
-  useServiceControlConnections(
-    configuredServiceControlUrl.value,
-    configuredMonitoringUrl.value
-  ).then((connections) => {
+  useServiceControlConnections().then((connections) => {
     const config = {
       heartbeats: connections.serviceControl.settings.Heartbeats,
       customChecks: connections.serviceControl.settings.CustomChecks,
@@ -88,14 +74,8 @@ function switchJsonTab() {
   <LicenseExpired />
   <template v-if="!isExpired">
     <section name="platformconnection">
-      <div class="sp-loader" v-if="isSCConnecting"></div>
-      <ServiceControlNotAvailable
-        :isSCConnected="isSCConnected"
-        :isSCConnecting="isSCConnecting"
-        :scConnectedAtLeastOnce="scConnectedAtLeastOnce"
-      />
-
-      <template v-if="isSCConnected || scConnectedAtLeastOnce">
+      <ServiceControlNotAvailable />
+      <template v-if="!connectionState.unableToConnect">
         <div class="box">
           <div class="row">
             <div class="col-sm-12">

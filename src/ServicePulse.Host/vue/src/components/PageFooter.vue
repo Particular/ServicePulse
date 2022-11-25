@@ -1,48 +1,24 @@
 <script setup>
-import { inject, computed } from "vue";
+import { computed } from "vue";
 import {
-  key_ServiceControlUrl,
-  key_IsSCConnected,
-  key_IsSCConnecting,
-  key_MonitoringUrl,
-  key_IsMonitoringEnabled,
-  key_IsSCMonitoringConnected,
-  key_IsSCMonitoringConnecting,
-  key_SCVersion,
-  key_NewSCVersion,
-  key_NewSCVersionLink,
-  key_NewSCVersionNumber,
-  key_SPVersion,
-  key_NewSPVersion,
-  key_NewSPVersionLink,
-  key_NewSPVersionNumber,
-  key_MonitoringVersion,
-  key_NewMonitoringVersion,
-  key_NewMonitoringVersionLink,
-  key_NewMonitoringVersionNumber,
-} from "../composables/keys.js";
+  environment,
+  newVersions,
+  connectionState,
+  monitoringConnectionState,
+} from "../composables/serviceServiceControl.js";
+import {
+  serviceControlUrl,
+  monitoringUrl,
+} from "../composables/serviceServiceControlUrls.js";
 
-const serviceControlUrl = inject(key_ServiceControlUrl);
-const isSCConnected = inject(key_IsSCConnected);
-const isSCConnecting = inject(key_IsSCConnecting);
-
-const monitoringUrl = inject(key_MonitoringUrl);
-const isMonitoringEnabled = inject(key_IsMonitoringEnabled);
-const isSCMonitoringConnected = inject(key_IsSCMonitoringConnected);
-const isSCMonitoringConnecting = inject(key_IsSCMonitoringConnecting);
-
-const scVersion = inject(key_SCVersion);
-const scNewVersion = inject(key_NewSCVersion);
-const scNewVersionLink = inject(key_NewSCVersionLink);
-const scNewVersionNumber = inject(key_NewSCVersionNumber);
-const spVersion = inject(key_SPVersion);
-const spNewVersion = inject(key_NewSPVersion);
-const spNewVersionLink = inject(key_NewSPVersionLink);
-const spNewVersionNumber = inject(key_NewSPVersionNumber);
-const monitoringVersion = inject(key_MonitoringVersion);
-const monitoringNewVersion = inject(key_NewMonitoringVersion);
-const monitoringNewVersionLink = inject(key_NewMonitoringVersionLink);
-const monitoringNewVersionNumber = inject(key_NewMonitoringVersionNumber);
+const isMonitoringEnabled = computed(() => {
+  return (
+    monitoringUrl.value !== "!" &&
+    monitoringUrl.value !== "" &&
+    monitoringUrl.value !== null &&
+    monitoringUrl.value !== undefined
+  );
+});
 
 const scAddressTooltip = computed(() => {
   return "ServiceControl URL " + serviceControlUrl.value;
@@ -65,43 +41,61 @@ const scMonitoringAddressTooltip = computed(() => {
             >
           </span>
 
-          <span v-if="!spNewVersion && spVersion">
-            ServicePulse v{{ spVersion }}
+          <span
+            v-if="
+              !newVersions.newSPVersion.newspversion && environment.sp_version
+            "
+          >
+            ServicePulse v{{ environment.sp_version }}
           </span>
-          <span v-if="spNewVersion && spVersion">
-            ServicePulse v{{ spVersion }} (<i
-              v-if="spNewVersionNumber"
+          <span
+            v-if="
+              newVersions.newSPVersion.newspversion && environment.sp_version
+            "
+          >
+            ServicePulse v{{ environment.sp_version }} (<i
+              v-if="newVersions.newSPVersion.newspversionnumber"
               class="fa fa-level-up fake-link"
             ></i>
-            <a :href="spNewVersionLink" target="_blank"
-              >v{{ spNewVersionNumber }} available</a
+            <a :href="newVersions.newSPVersion.newspversionlink" target="_blank"
+              >v{{ newVersions.newSPVersion.newspversionnumber }} available</a
             >)
           </span>
           <span :title="scAddressTooltip">
             Service Control:
             <span
               class="connected-status"
-              v-if="isSCConnected && !isSCConnecting"
+              v-if="connectionState.connected && !connectionState.connecting"
             >
               <div class="fa pa-connection-success"></div>
-              <span v-if="!scVersion">Connected</span>
-              <span v-if="scVersion" class="versionnumber"
-                >v{{ scVersion }}</span
+              <span v-if="!environment.sc_version">Connected</span>
+              <span v-if="environment.sc_version" class="versionnumber"
+                >v{{ environment.sc_version }}</span
               >
-              <span v-if="scNewVersion" class="newscversion"
+              <span
+                v-if="newVersions.newSCVersion.newscversion"
+                class="newscversion"
                 >(<i class="fa fa-level-up fake-link"></i>
-                <a :href="scNewVersionLink" target="_blank"
-                  >v{{ scNewVersionNumber }} available</a
+                <a
+                  :href="newVersions.newSCVersion.newscversionlink"
+                  target="_blank"
+                  >v{{
+                    newVersions.newSCVersion.newscversionnumber
+                  }}
+                  available</a
                 >)</span
               >
             </span>
             <span
-              v-if="!isSCConnected && !isSCConnecting"
+              v-if="!connectionState.connected && !connectionState.connecting"
               class="connection-failed"
             >
               <i class="fa pa-connection-failed"></i> Not connected
             </span>
-            <span v-if="isSCConnecting" class="connection-establishing">
+            <span
+              v-if="connectionState.connecting"
+              class="connection-establishing"
+            >
               <i class="fa pa-connection-establishing"></i> Connecting
             </span>
           </span>
@@ -114,25 +108,38 @@ const scMonitoringAddressTooltip = computed(() => {
               SC Monitoring:
               <span
                 class="connected-status"
-                v-if="isSCMonitoringConnected && !isSCMonitoringConnecting"
+                v-if="
+                  monitoringConnectionState.connected &&
+                  !monitoringConnectionState.connecting
+                "
               >
                 <div class="fa pa-connection-success"></div>
-                <span v-if="monitoringVersion"> v{{ monitoringVersion }}</span>
-                <span v-if="monitoringNewVersion"
+                <span v-if="environment.monitoring_version">
+                  v{{ environment.monitoring_version }}</span
+                >
+                <span v-if="newVersions.newMVersion.newmversion"
                   >(<i class="fa fa-level-up fake-link"></i>
-                  <a :href="monitoringNewVersionLink" target="_blank"
-                    >v{{ monitoringNewVersionNumber }} available</a
+                  <a
+                    :href="newVersions.newMVersion.newmversionlink"
+                    target="_blank"
+                    >v{{
+                      newVersions.newMVersion.newmversionnumber
+                    }}
+                    available</a
                   >)</span
                 >
               </span>
               <span
-                v-if="!isSCMonitoringConnected && !isSCMonitoringConnecting"
+                v-if="
+                  !monitoringConnectionState.connected &&
+                  !monitoringConnectionState.connecting
+                "
                 class="connection-failed"
               >
                 <i class="fa pa-connection-failed"></i> Not connected
               </span>
               <span
-                v-if="isSCMonitoringConnecting"
+                v-if="monitoringConnectionState.connecting"
                 class="connection-establishing"
               >
                 <i class="fa pa-connection-establishing"></i> Connecting

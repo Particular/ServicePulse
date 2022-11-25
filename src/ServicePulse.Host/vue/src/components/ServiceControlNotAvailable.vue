@@ -1,22 +1,12 @@
 ﻿<script setup>
-import { inject } from "vue";
-import { key_ServiceControlUrl } from "./../composables/keys.js";
-const serviceControlUrl = inject(key_ServiceControlUrl);
-
-const props = defineProps({
-  isSCConnected: Boolean,
-  isSCConnecting: Boolean,
-  scConnectedAtLeastOnce: Boolean,
-});
+import { connectionState } from "./../composables/serviceServiceControl";
+import { serviceControlUrl } from "./../composables/serviceServiceControlUrls";
 </script>
 
 <template>
+  <div class="sp-loader" v-if="connectionState.connecting"></div>
   <template
-    v-if="
-      !props.isSCConnected &&
-      !props.isSCConnecting &&
-      !props.scConnectedAtLeastOnce
-    "
+    v-if="connectionState.unableToConnect && !connectionState.connecting"
   >
     <div class="text-center monitoring-no-data">
       <h1>Cannot connect to ServiceControl</h1>
