@@ -889,10 +889,7 @@ namespace ServicePulse.Host.Hosting
                 }
             }
 
-            if (c.Option != null)
-            {
-                c.Option.Invoke(c);
-            }
+            c.Option?.Invoke(c);
 
             return unprocessed;
         }
