@@ -1,4 +1,4 @@
-﻿namespace ServicePulse.Host.Owin
+namespace ServicePulse.Host.Owin
 {
     using System;
     using System.IO;

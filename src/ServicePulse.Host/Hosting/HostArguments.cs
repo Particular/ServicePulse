@@ -29,12 +29,6 @@ namespace ServicePulse.Host.Hosting
             Password = string.Empty;
             OutputPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
 
-#if DEBUG
-            if (Debugger.IsAttached)
-            {
-                OutputPath = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..\\..\\app"));
-            }
-#endif
             var runOptions = new CaseLessOptionSet
             {
                 {

@@ -55,7 +55,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/js/app.js"),
+                    Path = new PathString("/a/js/app.js"),
                     Method = method
                 },
                 Response =
@@ -76,7 +76,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/NoIE.html"),
+                    Path = new PathString("/a/NoIE.html"),
                     Method = "GET"
                 },
                 Response =
@@ -98,7 +98,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/nOie.html"),
+                    Path = new PathString("/a/nOie.html"),
                     Method = "GET"
                 },
                 Response =
@@ -121,7 +121,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/js/views/message/editor/messageEditorModal.controller.js"),
+                    Path = new PathString("/a/js/views/message/editor/messageEditorModal.controller.js"),
                     Method = "GET"
                 },
                 Response =

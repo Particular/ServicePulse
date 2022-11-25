@@ -7,19 +7,36 @@ Keep track of the health of your system's endpoints, monitor for any processing 
 
 ## Setting up the project for development
 
-### Connecting to ServiceControl and ServiceControl Monitoring
+ServicePulse is in the proces of migrating from AngularJS to Vue.js, during which both frameworks are used to serv parts of the application. In development environment process AngularJS and Vue.js http servers are run side-by-side behind a reverse proxy. This enables accessing both applications from the same domain i.e. `localhost:1331` where uri prefixed with `/a/` are served by AngularJS and rest is handled by Vue.js. This mimics the production deployment where the Vue.js application is deployed in the main folder and AngularJS in `/a/` subfolders. 
 
-ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl). Endpoint metrics data is provided by [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring).
+```mermaid
+graph LR
+  subgraph ServiceControl
+    ScMonitoring
+    ScError
+  end
 
-The URLs for both services can be set in `ServicePulse.Host/app/js/app.constants.js` under the constant `scConfig`.
+  subgraph ServicePulse
+    AngularJs
+    VueJs
+  end
 
-#### URL ACL Reservation
+  Browser --> Nginx[Nginx<br>Reverse Proxy]
+  Nginx -- http://host.docker.internal:5174/a/ --> AngularJs[AngularJS<br> Development Server]
+  Nginx -- http://host.docker.internal:5173 --> VueJs[Vue.js<br> Development Server]
 
-ServicePulse depends on a self-hosted webserver. In order to start the project a URL ACL reservation needs to be setup. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
+  AngularJs --> ScMonitoring[Monitoring Instance]
+  AngularJs --> ScError[Main Instance]
 
+  VueJs --> ScMonitoring
+  VueJs --> ScError
 ```
-netsh http add urlacl url=http://+:8081/ user=Everyone
-```
+### Setting up ServiceControl Main and ServiceControl Monitoring instances
+
+ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl) and [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring) instances.
+
+The URLs for both services can be set in `ServicePulse.Host/vue/public/app/js/app.constants.js` under the constant `scConfig`.
+
 
 ### Setting up package manager
 
@@ -31,21 +48,48 @@ Install the following dependencies if you don't have them installed yet
 
  - [Node.js](https://nodejs.org/en/download/)
  - [Git for Windows](https://git-for-windows.github.io/)
+ - [Docker](https://docs.docker.com/get-docker/)
  - Chutzpah
    - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
    - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
 
-#### Set development environment
+### Set development environment
 
- - Open cmd window and navigate into `ServicePulse\src\ServicePulse.Host` path
- - run `npm install` to install all the npm dependencies
- - run the following command `npm run dev`. This script will use webpack configuration to finish ServicePulse's required configuration, start watching root folder for changes, and it will host a dev server on port 8080
+#### Step 1 - run Nginx reverse proxy
+  
+Open a command window and navigate into `ServicePulse\src\ServicePulse.Host` path (NOTE: ensure using cmd, not PowerShell). Run `nginx` that is a reverse proxy for AngularJS and Vue.js applications:
+```cmd
+> docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
+```
+#### Step 2 - run AngularJS development server 
+
+Navigate to `ServicePulse\src\ServicePulse.Host\angular` and:
+  - run `npm install` to install all the npm dependencies
+  - run the following command `npm run dev`. This will host a dev server on port 5174 and start watching for changes in `/angular` directory
  
+#### Step 3 - run Vue.js development server 
+
+Navigate to `ServicePulse\src\ServicePulse.Host\vue` and:
+  - run `npm install` to install all the npm dependencies
+  - run the following command `npm run dev`. This will host a dev server on port 5173 and start watching for changes in `/vue` directory
+
 In case `npm run dev` fails with an error related to git submodule not properly configured, run the `npm install` command again to ensure all required dependencies are available, and then run `npm run dev`.
 
-After doing the above steps one can open Visual Studio or your IDE of choice and continue working on this project. The site will be served for debugging at `http://localhost:8080`.
+#### Step 4 - open the browser
 
-#### Provided npm scripts
+After doing the above steps one can open `http://localhost:1331` to see ServicePulse application.
+
+### Provided npm scripts 
+
+#### Vue.js
+
+ - `dev` - runs `vite` that starts development server doing hot reload over source files
+ - `build` - runs build script that outputs files to `..\app` folder
+ - `lint` - checks with eslint all js files
+ - `preview` - runs `build` and starts static http server that enables smoketesting production build
+
+#### AngularJS
+
  - `test` - runs js tests in ServicePulse.Host.Test project
  - `setup` - this command runs few commands
  	- installs the npm packages
@@ -62,10 +106,32 @@ After doing the above steps one can open Visual Studio or your IDE of choice and
 NOTE:
 Webpack observes files and updates the artifacts whenever they are changed, however at the moment not every bit of code is processed by webpack. Only monitoring and configuration is.
 
-
 ### Configuring automated tests
 
 For information how to run automated tests please follow [ServicePulse.Host.Tests/Readme](https://github.com/Particular/ServicePulse/blob/master/src/ServicePulse.Host.Tests/README.md).
+
+## Running from ServicePulse.Host.exe
+
+It is possible to run ServicePulse directly via `ServicePulse.Host.exe`.
+
+### Step 1 - reserve URL ACL
+
+ServicePulse.Host.exe depends on a self-hosted webserver. In order to start the project a URL ACL reservation needs to be setup. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
+
+### Step 2 - build ServicePulse site 
+
+Execute build script from commandline:
+
+```cmd
+> PowerShell -File .\build.ps1
+```
+
+NOTE: It might be necessary to change PowerShell execution policy using `Set-ExecutionPolicy Unrestricted`
+
+### Step 3 - run `ServicePulse.Host.exe`
+
+In the Ide, Build and run `ServicePulse.Host` project.
+
 
 ## Supported browser versions
 
