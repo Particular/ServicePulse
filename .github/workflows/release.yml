@@ -29,8 +29,14 @@ jobs:
           $version = "18.8.1"
           choco install advanced-installer --version=$version
           & "C:\Program Files (x86)\Caphyon\Advanced Installer $version\bin\x86\AdvancedInstaller.com" /register ${{ secrets.ADVANCED_INSTALLER_LICENSE_KEY }}  
-      - name: Install Host npm packages
+      - name: AngularJs - Install Host npm packages
         run: npm run load
+        working-directory: src/ServicePulse.Host/angular
+      - name: AngularJs - Run lint
+        run: npm run lint
+        working-directory: src/ServicePulse.Host/angular
+      - name: Build AngularJS and Vue.js
+        run: PowerShell -File .\build.ps1
         working-directory: src/ServicePulse.Host
       - name: Prepare AIP file
         run: |
