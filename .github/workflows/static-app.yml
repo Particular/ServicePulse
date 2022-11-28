@@ -23,7 +23,14 @@ jobs:
         working-directory: src/ServicePulse.Host
       - name: Install Host npm packages
         run: npm run load
-        working-directory: src/ServicePulse.Host        
+        working-directory: src/ServicePulse.Host
+      - name: Install minver
+        run: dotnet tool install -g minver-cli
+      - name: Replace ServicePulse version
+        run: |
+          set MINVER_VERSION = minver .
+          echo $MINVER_VERSION
+          sed -i 's/1.2.0/$MINVER_VERSION' src/ServicePulse.Host/app/js/app.constants.js
       - name: Deploy static web app
         id: deploy
         uses: Azure/static-web-apps-deploy@v1
