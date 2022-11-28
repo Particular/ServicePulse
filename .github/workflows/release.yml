@@ -10,7 +10,7 @@ env:
   RELEASE_WORKFLOW: true
 jobs:
   release:
-    runs-on: windows-2019 # Code signing requirement https://github.com/NuGet/Home/issues/7939
+    runs-on: windows-2022 # Code signing requirement https://github.com/NuGet/Home/issues/7939
     outputs:
       version: ${{ steps.save-version.outputs.version }}
     steps:
