@@ -49,8 +49,8 @@ jobs:
           AZURE_KEY_VAULT_CLIENT_SECRET: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
         run: msbuild src -p:Configuration=Release -restore -m
       - id: save-version
-        name: Save version
-        run: echo "::set-output name=version::${{env.MinVerVersion}}"
+        name: Save version 
+        run: echo "version=${{env.MinVerVersion}}" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf-8 -Append
       - name: Sign NuGet packages
         uses: Particular/sign-nuget-packages-action@v1.0.0
         with:
