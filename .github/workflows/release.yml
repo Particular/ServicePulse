@@ -24,7 +24,7 @@ jobs:
         with:
           dotnet-version: 5.0.x
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.3
+        uses: microsoft/setup-msbuild@v1.3.3
       - name: Setup Advanced Installer
         run: |
           $version = "18.8.1"
@@ -89,7 +89,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.1.0
+        uses: actions/checkout@v3.2.0
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
         shell: pwsh
