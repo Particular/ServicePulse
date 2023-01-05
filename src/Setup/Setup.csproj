@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Particular.Packaging" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Particular.Packaging" Version="2.3.0" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="CreateInstaller" AfterTargets="Build" Condition="'$(CI)' == 'true' AND '$(RELEASE_WORKFLOW)' == 'true'">
