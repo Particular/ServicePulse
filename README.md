@@ -66,6 +66,8 @@ Open a command window and navigate into `ServicePulse\src\ServicePulse.Host` pat
 Navigate to `ServicePulse\src\ServicePulse.Host\angular` and:
   - run `npm install` to install all the npm dependencies
   - run the following command `npm run dev`. This will host a dev server on port 5174 and start watching for changes in `/angular` directory
+
+_Note: If you receive an error similar to `Error: error:0308010C:digital envelope routines::unsupported` when Webpack attempts to execute `LoadRunner.js` it means that you need to configure Node to use a legacy SSL provider. You can do this by setting an environment variable called `NODE_OPTIONS` to the value `--openssl-legacy-provider`. E.g. Run `export NODE_OPTIONS=--openssl-legacy-provider` from a bash shell.
  
 #### Step 3 - run Vue.js development server 
 
