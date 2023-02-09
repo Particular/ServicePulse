@@ -70,7 +70,7 @@ onMounted(() => {
     !connectionState.connected &&
     !connectionState.connectedRecently
   ) {
-    window.location.hash = "connections";
+   /* window.location.hash = "connections";*/
   }
   setupEvents(currentPath.value);
 });
@@ -85,7 +85,7 @@ onMounted(() => {
           <h1>Failed Messages</h1>
         </div>
       </div>
-      
+
       <div class="row">
         <div class="col-sm-12">
           <div class="tabs">
