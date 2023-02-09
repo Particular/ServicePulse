@@ -3,10 +3,11 @@ import { ref, computed, watch, onMounted } from "vue";
 import FailedMessageGroups from "../components/failedmessages/FailedMessageGroups.vue";
 import AllFailedMessages from "../components/failedmessages/AllFailedMessages.vue";
 import DeletedMessageGroups from "../components/failedmessages/DeletedMessageGroups.vue";
+import AllDeletedMessages from "../components/failedmessages/AllDeletedMessages.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
 /* import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue"; */
 import { licenseStatus } from "./../composables/serviceLicense.js";
-import { connectionState } from "../composables/serviceServiceControl";
+import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
 
 const routes = {
   "failed-message-groups": {
@@ -20,6 +21,10 @@ const routes = {
   "deleted-message-groups": {
     component: DeletedMessageGroups,
     title: "Deleted Message Groups",
+  },
+  "all-deleted-messages": {
+    component: AllDeletedMessages,
+    title: "All Deleted Messages",
   },
 };
 const currentPath = ref(window.location.hash);
@@ -81,13 +86,13 @@ onMounted(() => {
           <div class="tabs">
             <!--Failed Message Groups-->
             <h5
-              :class="{
-                active:
-                  subIsActive('#failed-message-groups') || subIsActive(''),
-                disabled:
-                  !connectionState.connected &&
-                  !connectionState.connectedRecently,
-              }"
+                :class="{
+                    active:
+                        subIsActive('#failed-message-groups') || subIsActive(''),
+                    disabled:
+                        !connectionState.connected &&
+                        !connectionState.connectedRecently,
+                }"
             >
               <a href="#failed-message-groups">Failed Message Groups</a>
               <exclamation-mark :type="licenseStatus.warningLevel" />
@@ -95,30 +100,53 @@ onMounted(() => {
 
             <!--All Failed Messages-->
             <h5
-              v-if="!licenseStatus.isExpired"
-              :class="{
-                active: subIsActive('#all-failed-messages'),
-                disabled:
-                  !connectionState.connected &&
-                  !connectionState.connectedRecently,
-              }"
+                v-if="!licenseStatus.isExpired"
+                :class="{
+                    active: subIsActive('#all-failed-messages'),
+                    disabled:
+                        !connectionState.connected &&
+                        !connectionState.connectedRecently,
+                }"
             >
               <a href="#all-failed-messages">All Failed Messages</a>
             </h5>
 
             <!--Deleted Message Group-->
             <h5
-              v-if="!licenseStatus.isExpired"
-              :class="{
-                active: subIsActive('#deleted-message-groups'),
-                disabled:
-                  !connectionState.connected &&
-                  !connectionState.connectedRecently,
-              }"
+                v-if="!licenseStatus.isExpired"
+                :class="{
+                    active: subIsActive('#deleted-message-groups'),
+                    disabled:
+                        !connectionState.connected &&
+                        !connectionState.connectedRecently,
+                }"
             >
               <a href="#deleted-message-groups">
                 Deleted Message Groups ({{ redirectCount }})
               </a>
+            </h5>
+
+            <!--All Deleted Messages-->
+            <h5
+                v-if="!licenseStatus.isExpired"
+                :class="{ 
+                    active: subIsActive('#all-deleted-messages'),
+                    disabled:
+                        !connectionState.connected &&
+                        !connectionState.connectedRecently,
+                }"
+            >
+                <a href="#all-deleted-messages">
+                    All Deleted Messages
+                    <template
+                        v-if="
+                            connectionState.unableToConnect ||
+                            monitoringConnectionState.unableToConnect
+                        "
+                    >
+                        <span><i class="fa fa-exclamation-triangle"></i></span>
+                    </template>
+                </a>
             </h5>
           </div>
         </div>
