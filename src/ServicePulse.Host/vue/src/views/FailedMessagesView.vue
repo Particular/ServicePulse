@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
 import FailedMessageGroups from "../components/failedmessages/FailedMessageGroups.vue";
+import AllFailedMessages from "../components/failedmessages/AllFailedMessages.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
 /* import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue"; */
 import { licenseStatus } from "./../composables/serviceLicense.js";
@@ -10,6 +11,10 @@ const routes = {
   "failed-message-groups": {
     component: FailedMessageGroups,
     title: "Failed Message Groups",
+  },
+  "all-failed-messages": {
+    component: AllFailedMessages,
+    title: "All Failed Messages",
   },
 };
 const currentPath = ref(window.location.hash);
@@ -81,6 +86,19 @@ onMounted(() => {
             >
               <a href="#failed-message-groups">Failed Message Groups</a>
               <exclamation-mark :type="licenseStatus.warningLevel" />
+            </h5>
+
+            <!--All Failed Messages-->
+            <h5
+              v-if="!licenseStatus.isExpired"
+              :class="{
+                active: subIsActive('#all-failed-messages'),
+                disabled:
+                  !connectionState.connected &&
+                  !connectionState.connectedRecently,
+              }"
+            >
+              <a href="#all-failed-messages">All Failed Messages</a>
             </h5>
           </div>
         </div>

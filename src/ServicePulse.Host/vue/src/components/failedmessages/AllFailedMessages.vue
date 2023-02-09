@@ -11,9 +11,9 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
         <div class="row">
           <div class="col-sm-12">
             <div class="list-section">
-              <h3>Failed message group</h3>
+              <h3>All failed messages</h3>
               <div class="col-sm-7 form-group">
-                <label for="serviceControlUrl"> message group detail </label>
+                <label for="serviceControlUrl"> message details </label>
               </div>
             </div>
           </div>
