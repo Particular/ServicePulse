@@ -110,6 +110,10 @@ const displayDanger = computed(() => {
                 >{{ stats.number_of_failed_messages }}</span
               >
             </RouterLink>
+                class="badge badge-important"
+                >{{ stats.number_of_failed_messages }}</span
+              >
+            </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/custom-checks') }">
             <a href="/a/#/custom-checks">
