@@ -5,7 +5,7 @@ import AllFailedMessages from "../components/failedmessages/AllFailedMessages.vu
 import DeletedMessageGroups from "../components/failedmessages/DeletedMessageGroups.vue";
 import AllDeletedMessages from "../components/failedmessages/AllDeletedMessages.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
-import LastTenOperations from "../components/failedmessages/LastTenOperations.vue";
+
 /* import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue"; */
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import {
@@ -85,7 +85,7 @@ onMounted(() => {
           <h1>Failed Messages</h1>
         </div>
       </div>
-      <LastTenOperations></LastTenOperations>
+      
       <div class="row">
         <div class="col-sm-12">
           <div class="tabs">
