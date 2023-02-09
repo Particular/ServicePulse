@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import DashboardView from "../views/DashboardView.vue";
+import FailedMessagesView from "../views/FailedMessagesView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,14 @@ const router = createRouter({
     {
       path: "/",
       redirect: "/dashboard",
+    },
+    {
+      path: "/failed-messages",
+      name: "failed-messages",
+      component: FailedMessagesView,
+      meta: {
+        title: "Failed Messages • ServicePulse",
+      },
     },
     {
       path: "/configuration",
