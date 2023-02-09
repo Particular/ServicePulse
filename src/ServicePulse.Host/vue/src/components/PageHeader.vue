@@ -99,10 +99,7 @@ const displayDanger = computed(() => {
           <li
             :class="{
               active:
-                subIsActive('/a/#/failed-messages/groups') ||
-                subIsActive('/a/#/failed-messages/all') ||
-                subIsActive('/a/#/failed-messages/archived') ||
-                subIsActive('/a/#/failed-messages/pending-retries'),
+                subIsActive('/failed-messages')
             }"
           >
             <RouterLink :to="{ name: 'failed-messages' }">
