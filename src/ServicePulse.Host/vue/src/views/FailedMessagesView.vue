@@ -32,10 +32,7 @@ const routes = {
   },
 };
 const currentPath = ref(window.location.hash);
-const redirectCount = ref(0);
-function updateRedirectCount(newCount) {
-  redirectCount.value = newCount;
-}
+//const redirectCount = ref(0);
 window.addEventListener("hashchange", () => {
   currentPath.value = window.location.hash;
 });
@@ -48,8 +45,8 @@ const currentView = computed(() => {
     : FailedMessageGroups;
 });
 const currentEvents = ref({});
-watch(currentPath, async (newValue) => {
-  setupEvents(newValue);
+watch(currentPath, async () => {
+  // setupEvents(newValue);
   if (routes[currentPath.value.slice(1) || "/"]) {
     document.title =
       routes[currentPath.value.slice(1) || "/"].title +
@@ -64,9 +61,8 @@ onMounted(() => {
     !connectionState.connected &&
     !connectionState.connectedRecently
   ) {
-
+    /* empty */
   }
-
 });
 </script>
 
@@ -93,7 +89,7 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-                <a href="#failed-message-groups">Failed Message Groups (##)</a>
+              <a href="#failed-message-groups">Failed Message Groups (##)</a>
               <exclamation-mark :type="licenseStatus.warningLevel" />
             </h5>
 
@@ -107,7 +103,7 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-                <a href="#all-failed-messages">All Failed Messages (##)</a>
+              <a href="#all-failed-messages">All Failed Messages (##)</a>
             </h5>
 
             <!--Deleted Message Group-->
@@ -135,15 +131,17 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-                <a href="#all-deleted-messages">
-                    All Deleted Messages (##)
-                    <template v-if="
+              <a href="#all-deleted-messages">
+                All Deleted Messages (##)
+                <template
+                  v-if="
                     connectionState.unableToConnect ||
                     monitoringConnectionState.unableToConnect
-                  ">
-                        <span><i class="fa fa-exclamation-triangle"></i></span>
-                    </template>
-                </a>
+                  "
+                >
+                  <span><i class="fa fa-exclamation-triangle"></i></span>
+                </template>
+              </a>
             </h5>
           </div>
         </div>
