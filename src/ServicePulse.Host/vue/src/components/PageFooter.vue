@@ -36,9 +36,7 @@ const scMonitoringAddressTooltip = computed(() => {
         <div class="connectivity-status">
           <span>
             <i class="fa fa-plus sp-blue"></i>
-            <a href="configuration#endpoint-connection"
-              >Connect new endpoint</a
-            >
+            <a href="configuration#endpoint-connection">Connect new endpoint</a>
           </span>
 
           <span

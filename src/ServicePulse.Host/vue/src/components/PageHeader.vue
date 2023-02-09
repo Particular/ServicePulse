@@ -88,13 +88,29 @@ const displayDanger = computed(() => {
           >
             <a href="/a/#/failed-messages/groups">
               <i class="fa fa-envelope icon-white"></i>
-              <span class="navbar-label">Failed Messages</span>
+              <span class="navbar-label">Failed Messages (AngularJS)</span>
               <span
                 v-if="stats.number_of_failed_messages > 0"
                 class="badge badge-important"
                 >{{ stats.number_of_failed_messages }}</span
               >
             </a>
+          </li>
+          <li
+            :class="{
+              active:
+                subIsActive('/failed-messages')
+            }"
+          >
+            <RouterLink :to="{ name: 'failed-messages' }">
+              <i class="fa fa-envelope icon-white"></i>
+              <span class="navbar-label">Failed Messages</span>
+              <span
+                v-if="stats.number_of_failed_messages > 0"
+                class="badge badge-important"
+                >{{ stats.number_of_failed_messages }}</span
+              >
+            </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/custom-checks') }">
             <a href="/a/#/custom-checks">
