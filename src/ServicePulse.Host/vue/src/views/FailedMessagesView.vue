@@ -13,6 +13,8 @@ import {
   monitoringConnectionState,
 } from "../composables/serviceServiceControl";
 
+import ExclamationMark from "../components/ExclamationMark.vue";
+
 const routes = {
   "failed-message-groups": {
     component: FailedMessageGroups,
