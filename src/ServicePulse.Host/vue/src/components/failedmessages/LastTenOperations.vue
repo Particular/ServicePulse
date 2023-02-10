@@ -67,7 +67,7 @@ onMounted(() => {
               <div class="col-sm-12 no-side-padding">
                 <div class="row box-header">
                   <div class="col-sm-12 no-side-padding">
-                    <p class="lead break"></p>
+                    <p class="lead break"> {{ group.originator || 'Selection of individual message(s)' }}</p>
                   </div>
                 </div>
 
@@ -76,7 +76,7 @@ onMounted(() => {
                     <p class="metadata">
                       <span class="metadata"
                         ><i aria-hidden="true" class="fa fa-envelope"></i>
-                        Messages sent:
+                        Messages sent: {{ group.number_of_messages_processed }}
                       </span>
                       <span class="metadata"
                         ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry
