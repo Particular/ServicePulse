@@ -97,13 +97,17 @@ onMounted(() => {
         </div>
         <span
           class="short-group-history"
-          ng-show="vm.historicGroups.length === 1"
-          >There is only 1 completed group retry</span
+          v-show="historicOperations.length === 1"
+          >There is only {{ historicOperations.length }} completed group
+          retry</span
         >
         <span
           class="short-group-history"
-          ng-show="vm.historicGroups.length < 10 && vm.historicGroups.length > 1"
-          >There are only ## completed group retries</span
+          v-show="
+            historicOperations.length < 10 && historicOperations.length > 1
+          "
+          >There are only {{ historicOperations.length }} completed group
+          retries</span
         >
       </div>
     </div>
