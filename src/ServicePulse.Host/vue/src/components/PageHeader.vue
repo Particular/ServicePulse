@@ -98,8 +98,7 @@ const displayDanger = computed(() => {
           </li>
           <li
             :class="{
-              active:
-                subIsActive('/failed-messages')
+              active: subIsActive('/failed-messages'),
             }"
           >
             <RouterLink :to="{ name: 'failed-messages' }">
