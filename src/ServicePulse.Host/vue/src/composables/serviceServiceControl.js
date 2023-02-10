@@ -345,8 +345,11 @@ function fetchWithErrorHandling(fetchFunction, connectionState, action) {
       });
   }
   try {
-    connectionState.connecting = true;
-    connectionState.connected = false;
+    if (!connectionState.connected) {
+      connectionState.connecting = true;
+      connectionState.connected = false;
+    }
+
     return fetchFunction()
       .then((response) => action(response))
       .then((response) => {
