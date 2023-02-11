@@ -229,7 +229,6 @@ onMounted(() => {
                           ><i aria-hidden="true" class="fa fa-repeat"></i> Last
                           retried:
                           <time-since
-                            empty-message="never"
                             :date-utc="group.last_operation_completion_time"
                           ></time-since
                         ></span>
