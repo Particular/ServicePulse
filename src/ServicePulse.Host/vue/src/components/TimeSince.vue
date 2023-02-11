@@ -10,23 +10,28 @@ const props = defineProps({
 });
 
 var interval = null;
-const title = ref(),
-  text = ref();
+const title = ref();
+const text = ref();
 
-function updateText() {
-  const m = moment.utc(props.dateUtc);
-  text.value = m.fromNow();
-  title.value =
-    m.local().format("LLLL") + " (local)\n" + m.utc().format("LLLL") + " (UTC)";
+ function updateText() {
+
+    if (props.dateUtc) {
+        const m = moment.utc(props.dateUtc);
+        text.value = m.fromNow();
+        title.value =
+            m.local().format("LLLL") + " (local)\n" + m.utc().format("LLLL") + " (UTC)";
+    }
+    else {
+        text.value = "Never";
+        title.value = "Never";
+    }
 }
 
 onMounted(() => {
   interval = setInterval(function () {
     updateText();
   }, 5000);
-  if (props.dateUtc) {
-    updateText();
-  }
+  updateText();
 });
 
 onUnmounted(() => clearInterval(interval));
