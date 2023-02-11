@@ -118,7 +118,6 @@ onMounted(() => {
               <a href="#all-failed-messages">All Failed Messages </a>
               <span
                 v-if="stats.number_of_failed_messages !== 0"
-                title="There's varying numbers of failed message groups depending on group type"
                 class="badge badge-important"
                 >{{ stats.number_of_failed_messages }}</span
               >
@@ -153,17 +152,12 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#all-deleted-messages">
-                All Deleted Messages (##)
-                <template
-                  v-if="
-                    connectionState.unableToConnect ||
-                    monitoringConnectionState.unableToConnect
-                  "
-                >
-                  <span><i class="fa fa-exclamation-triangle"></i></span>
-                </template>
-              </a>
+              <a href="#all-deleted-messages">All Deleted Messages </a>
+              <span
+                v-if="stats.number_of_archived_messages !== 0"
+                class="badge badge-important"
+                >{{ stats.number_of_archived_messages }}</span
+              >
             </h5>
           </div>
         </div>
