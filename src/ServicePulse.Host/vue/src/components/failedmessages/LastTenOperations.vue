@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import NoData from "../NoData.vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import TimeSince from "../TimeSince.vue";
 
 const historicOperations = ref([]);
 const showHistoricRetries = ref(false);
@@ -81,13 +82,13 @@ onMounted(() => {
                       <span class="metadata"
                         ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry
                         request started:
-                        <sp-moment date="{{group.start_time}}"></sp-moment
-                      ></span>
+                        <time-since :date-utc="group.start_time"></time-since>
+                      </span>
                       <span class="metadata"
                         ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry
                         request completed:
-                        <sp-moment date="{{group.completion_time}}"></sp-moment
-                      ></span>
+                        <time-since :date-utc="group.completion_time"></time-since>
+                      </span>
                     </p>
                   </div>
                 </div>
