@@ -5,15 +5,8 @@ import AllFailedMessages from "../components/failedmessages/AllFailedMessages.vu
 import DeletedMessageGroups from "../components/failedmessages/DeletedMessageGroups.vue";
 import AllDeletedMessages from "../components/failedmessages/AllDeletedMessages.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
-
-/* import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue"; */
-import { useFormatLargeNumber } from "../composables/formatter";
 import { licenseStatus } from "./../composables/serviceLicense.js";
-import {
-  stats,
-  connectionState,
-  monitoringConnectionState,
-} from "../composables/serviceServiceControl";
+import { stats, connectionState } from "../composables/serviceServiceControl";
 
 const routes = {
   "failed-message-groups": {
@@ -92,7 +85,7 @@ onMounted(() => {
               }"
             >
               <a href="#failed-message-groups">
-                Failed Message Groups 
+                Failed Message Groups
                 <span v-show="stats.number_of_failed_messages === 0">
                   (0)
                 </span>
