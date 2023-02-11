@@ -9,11 +9,10 @@ import LicenseExpired from "../components/LicenseExpired.vue";
 /* import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue"; */
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import {
+  stats,
   connectionState,
   monitoringConnectionState,
 } from "../composables/serviceServiceControl";
-
-import ExclamationMark from "../components/ExclamationMark.vue";
 
 const routes = {
   "failed-message-groups": {
@@ -91,8 +90,12 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#failed-message-groups">Failed Message Groups (##)</a>
-              <exclamation-mark :type="licenseStatus.warningLevel" />
+              <a href="#failed-message-groups">Failed Message Groups<span v-show="stats.number_of_failed_messages === 0"> (0)</span></a>&nbsp 
+              <span 
+                v-show="stats.number_of_failed_messages !== 0" 
+                title="There's varying numbers of failed message groups depending on group type" 
+                class="badge badge-important"
+                >!</span>
             </h5>
 
             <!--All Failed Messages-->
