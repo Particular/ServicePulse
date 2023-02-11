@@ -134,9 +134,13 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#deleted-message-groups">
-                Deleted Message Groups (##)
-              </a>
+              <a href="#deleted-message-groups">Deleted Message Groups </a>
+              <span
+                v-if="stats.number_of_archived_messages !== 0"
+                title="There's varying numbers of deleted message groups depending on group type"
+                class="badge badge-important"
+                >!</span
+              >
             </h5>
 
             <!--All Deleted Messages-->
