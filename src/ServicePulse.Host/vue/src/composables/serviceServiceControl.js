@@ -151,17 +151,20 @@ export function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
+  const archivedMessagesResult = getArchivedMessagesCount();
 
   return Promise.all([
     failedHeartBeatsResult,
     failedMessagesResult,
     failedCustomChecksResult,
+    archivedMessagesResult,
   ])
-    .then(([failedHB, failedM, failedCC]) => {
+    .then(([failedHB, failedM, failedCC, archivedM]) => {
       stats.failing_endpoints = failedHB;
       stats.number_of_failed_messages = failedM;
       stats.number_of_failed_checks = failedCC;
       stats.number_of_failed_heartbeats = failedHB;
+      stats.number_of_archived_messages = archivedM;
     })
     .catch((err) => {
       console.log(err);
@@ -387,6 +390,14 @@ function getFailedHeartBeatsCount() {
 function getFailedMessagesCount() {
   return fetchWithErrorHandling(
     () => useFetchFromServiceControl("errors?status=unresolved"),
+    connectionState,
+    (response) => parseInt(response.headers.get("Total-Count"))
+  );
+}
+
+function getArchivedMessagesCount() {
+  return fetchWithErrorHandling(
+    () => useFetchFromServiceControl("errors?status=archived"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count"))
   );
