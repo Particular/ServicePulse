@@ -7,6 +7,7 @@ import AllDeletedMessages from "../components/failedmessages/AllDeletedMessages.
 import LicenseExpired from "../components/LicenseExpired.vue";
 
 /* import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue"; */
+import { useFormatLargeNumber } from "../composables/formatter";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import {
   stats,
@@ -90,12 +91,18 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#failed-message-groups">Failed Message Groups<span v-show="stats.number_of_failed_messages === 0"> (0)</span></a>&nbsp 
-              <span 
-                v-show="stats.number_of_failed_messages !== 0" 
-                title="There's varying numbers of failed message groups depending on group type" 
+              <a href="#failed-message-groups">
+                Failed Message Groups 
+                <span v-show="stats.number_of_failed_messages === 0">
+                  (0)
+                </span>
+              </a>
+              <span
+                v-if="stats.number_of_failed_messages !== 0"
+                title="There's varying numbers of failed message groups depending on group type"
                 class="badge badge-important"
-                >!</span>
+                >!</span
+              >
             </h5>
 
             <!--All Failed Messages-->
@@ -108,7 +115,13 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#all-failed-messages">All Failed Messages (##)</a>
+              <a href="#all-failed-messages">All Failed Messages </a>
+              <span
+                v-if="stats.number_of_failed_messages !== 0"
+                title="There's varying numbers of failed message groups depending on group type"
+                class="badge badge-important"
+                >{{ stats.number_of_failed_messages }}</span
+              >
             </h5>
 
             <!--Deleted Message Group-->
