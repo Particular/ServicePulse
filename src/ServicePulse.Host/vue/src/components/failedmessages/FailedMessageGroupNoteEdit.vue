@@ -1,29 +1,27 @@
 <script setup>
-import { ref, computed } from "vue";
-
+import { ref } from "vue";
 const emit = defineEmits(["create", "edit", "cancel"]);
 
-const model = defineProps({
+const settings = defineProps({
   groupid: String,
-  comment: String
+  comment: String,
 });
-
-
+const grpcomment = ref(settings.comment);
 
 function create() {
-    var group = {
-        groupid: model.groupid,
-        comment: txtcomment.value
-    };
-    emit("create", group);
+  var updatedGroup = {
+    groupid: settings.groupid,
+    comment: grpcomment.value,
+  };
+  emit("create", updatedGroup);
 }
 
 function edit() {
-  var group = {
-      groupid: model.groupid,
-      comment: txtcomment.value
+  var updatedGroup = {
+    groupid: settings.groupid,
+    comment: grpcomment.value,
   };
-    emit("edit", group);
+  emit("edit", updatedGroup);
 }
 
 function close() {
@@ -36,33 +34,36 @@ function close() {
     <div class="modal-wrapper">
       <div class="modal-container">
         <div class="modal-header">
-          <h3 class="modal-title" v-if="model.comment">
-            Modify Note
-          </h3>
-          <h3 class="modal-title" v-if="!model.comment">
-            Create Note
-          </h3>
+          <h3 class="modal-title" v-if="settings.comment">Modify Note</h3>
+          <h3 class="modal-title" v-if="!settings.comment">Create Note</h3>
         </div>
 
         <form name="commentNoteForm" novalidate @submit.prevent="save">
           <div class="modal-body">
-              <div class="row">
-                  <div class="form-group">
-                      <label for="comment">Note</label>
-                      <textarea type="text" id="txtcomment" name="txtcomment" v-model="model.comment" placeholder="Comment" class="form-control"></textarea>
-                  </div>
+            <div class="row">
+              <div class="form-group">
+                <label for="comment">Note</label>
+                <textarea
+                  type="text"
+                  id="txtcomment"
+                  name="txtcomment"
+                  v-model="grpcomment"
+                  placeholder="Comment"
+                  class="form-control"
+                ></textarea>
               </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button
-              v-if="model.comment"
+              v-if="settings.comment"
               class="btn btn-primary"
               @click="edit"
             >
               Modify
             </button>
             <button
-              v-if="!model.comment"
+              v-if="!settings.comment"
               class="btn btn-primary"
               @click="create"
             >

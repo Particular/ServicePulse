@@ -151,14 +151,14 @@ export function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
-    const exceptionGroupsResult = getExceptionGroupsCount();
+  const exceptionGroupsResult = getExceptionGroupsCount();
   return Promise.all([
     failedHeartBeatsResult,
     failedMessagesResult,
     failedCustomChecksResult,
-      exceptionGroupsResult,
+    exceptionGroupsResult,
   ])
-      .then(([failedHB, failedM, failedCC, exceptionG]) => {
+    .then(([failedHB, failedM, failedCC, exceptionG]) => {
       stats.failing_endpoints = failedHB;
       stats.number_of_failed_messages = failedM;
       stats.number_of_failed_checks = failedCC;
@@ -402,15 +402,20 @@ function getFailedCustomChecksCount() {
   );
 }
 function getExceptionGroupsCount(groupId, sortBy, page) {
-    //var url = uri.join(scu, 'recoverability', 'groups', groupId, 'errors?page=' + page + '&sort=' + sortBy + '&status=unresolved');
-    var url ="/recoverability/groups"
-    return fetchWithErrorHandling(
-        () => useFetchFromServiceControl(url),
-        connectionState,
-        (response) => parseInt(response.headers.get("Total-Count"))
-    );
+  var url =
+    "/recoverability/groups" +
+    groupId +
+    "errors?page=" +
+    page +
+    "&sort=" +
+    sortBy +
+    "&status=unresolved";
+  return fetchWithErrorHandling(
+    () => useFetchFromServiceControl(url),
+    connectionState,
+    (response) => parseInt(response.headers.get("Total-Count"))
+  );
 }
-
 
 function getMonitoredEndpoints() {
   return fetchWithErrorHandling(
