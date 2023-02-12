@@ -2,8 +2,10 @@
 import { ref, onMounted } from "vue";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
+    import { stats } from "../../composables/serviceServiceControl";
+    import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+
 const exceptionGroups = ref([]);
 // const sortSelectors  = ref([]);
 //  const stats ;
@@ -11,8 +13,31 @@ const exceptionGroups = ref([]);
 //const isBeingArchived = ref(false);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
-const emit = defineEmits(["InitialLoadComplete"]);
+    const emit = defineEmits(["InitialLoadComplete","ExceptionGroupCountUpdated"]);
+const sortSelectors = [{
+        description: 'Name',
+        selector: function (group) { return group.title; }
+    }, {
+        description: 'Number of messages',
+        selector: function (group) { return group.count; }
+    }, {
+        description: 'First Failed Time',
+        selector: function (group) { return group.first; }
+    }, {
+        description: 'Last Failed Time',
+        selector: function (group) { return group.last; }
+    }, {
+        description: 'Last Retried Time',
+        selector: function (group) { return group.last_operation_completion_time; }
+    }];
 
+    //isBeingRetried = function (group) {
+    //    return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group.workflow_state.status);
+    //};
+
+    //isBeingArchived = function (status) {
+    //    return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
+    //};
 function getExceptionGroups() {
   exceptionGroups.value = [];
   // return serviceControlService.getExceptionGroups(vm.selectedClassification)
@@ -24,23 +49,23 @@ function getExceptionGroups() {
       exceptionGroups.value = [];
       exceptionGroups.value = data;
     });
-  //if (response.status === 304 && exceptionGroups.length > 0) {
-  //    return true;
-  //}
-  //if (response.data.length > 0) {
+  if (response.status === 304 && exceptionGroups.length > 0) {
+      return true;
+  }
+  if (response.data.length > 0) {
 
-  //    // need a map in some ui state for controlling animations
-  //    //exceptionGroups = response.data.map(initializeGroupState);
-  //    //exceptionGroups.sort(getSort());
+      // need a map in some ui state for controlling animations
+      exceptionGroups = response.data.map(initializeGroupState);
+      //exceptionGroups.sort(getSort());
 
-  //    //if (exceptionGroups.length !== stats.number_of_exception_groups) {
-  //    //    stats.number_of_exception_groups = exceptionGroups.length;
-  //    //    notifier.notify('ExceptionGroupCountUpdated', stats.number_of_exception_groups);
-  //    //}
-  //    exceptionGroups.value = [];
-  //    exceptionGroups.value = data;
-  //}
-  //return true;
+      if (exceptionGroups.length !== stats.number_of_exception_groups) {
+          stats.number_of_exception_groups = exceptionGroups.length;
+          emit('ExceptionGroupCountUpdated', stats.number_of_exception_groups);
+      }
+    //  exceptionGroups.value = [];
+    //  exceptionGroups.value = data;
+  }
+  return true;
 }
 
 //    function getSort() {
@@ -85,6 +110,18 @@ function getExceptionGroups() {
 
 //    return sortSelectors.find(function (selector) { return selector.description.toLowerCase() === sortBy.toLowerCase(); }).description + sortDir;
 //};
+    function initializeGroupState(group) {
+        var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) ||
+            'none';
+        if (operationStatus === 'preparing' && group.operation_progress === 1) {
+            operationStatus = 'queued';
+        }
+
+        group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
+
+        return group;
+    };
+
 
 function initialLoad() {
   loadingData.value = true;
@@ -145,8 +182,8 @@ onMounted(() => {
             vm.selectedSort
             <span class="caret"></span>
           </button>
-          <ul class="dropdown-menu">
-            <li ng-repeat-start="sort in vm.sortSelectors">
+          <ul class="dropdown-menu" v-for="sort in sortSelectors">
+            <li >
               <a href="#/failed-messages/groups?sortBy={{sort.description}}"
                 >sort.description</a
               >
@@ -287,7 +324,7 @@ onMounted(() => {
                       <button
                         type="button"
                         class="btn btn-link btn-sm"
-                        ng-if="!group.comment"
+                        v-if="!group.comment"
                         ng-click="vm.addComment(group, group.comment, $event)"
                       >
                         <i
@@ -299,7 +336,7 @@ onMounted(() => {
                       <button
                         type="button"
                         class="btn btn-link btn-sm"
-                        ng-if="group.comment"
+                        v-if="group.comment"
                         ng-click="vm.editComment(group, group.comment, $event)"
                       >
                         <i
@@ -311,6 +348,7 @@ onMounted(() => {
                       <button
                         type="button"
                         class="btn btn-link btn-sm"
+                        v-if="group.comment"
                         confirm-click="vm.deleteComment(group, $event)"
                         confirm-title="Are you sure you want to delete this note?"
                         confirm-message="Deleted note will not be available."
