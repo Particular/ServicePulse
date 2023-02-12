@@ -1,12 +1,12 @@
 <script setup>
-const emit = defineEmits(["delete", "cancel"]);
+    const emit = defineEmits(["delete", "cancel"]);
 
-const model = defineProps({
-  group_id: String,
+const settings = defineProps({
+    groupid: String
 });
 
 function deleteNote() {
-  emit("delete", model.group_id);
+    emit("delete", settings.groupid);
 }
 
 function close() {

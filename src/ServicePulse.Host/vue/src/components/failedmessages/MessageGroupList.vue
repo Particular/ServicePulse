@@ -19,7 +19,7 @@ const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 
 const showDelete = ref(false);
 const showEdit = ref(false);
-const selectedNote = ref({
+const selectedGroup = ref({
   groupid: "",
   comment: "",
 });
@@ -83,8 +83,10 @@ function initialLoad() {
 //delete comment note
 function deleteNote(group) {
   noteSaveSuccessful.value = null;
-  (selectedNote.value.groupid = group.id), (showDelete.value = true);
+  selectedGroup.value.groupid = group.id,
+  showDelete.value = true;
 }
+
 function saveDeleteNote(groupId) {
   showDelete.value = false;
   useDeleteNote(groupId).then((result) => {
@@ -123,8 +125,8 @@ function saveCreatedNote(group) {
 //edit comment note
 function editNote(group) {
   noteSaveSuccessful.value = null;
-  selectedNote.value.groupid = group.id;
-  selectedNote.value.comment = group.comment;
+  selectedGroup.value.groupid = group.id;
+  selectedGroup.value.comment = group.comment;
   showEdit.value = true;
 }
 function saveEditedNote(group) {
@@ -489,7 +491,7 @@ onMounted(() => {
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteDelete
       v-if="showDelete === true"
-      :group_id="selectedNote.groupid"
+      :group_id="selectedGroup.groupid"
       @cancel="showDelete = false"
       @delete="saveDeleteNote"
     ></FailedMessageGroupNoteDelete>
@@ -497,8 +499,8 @@ onMounted(() => {
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteEdit
       v-if="showEdit === true"
-      v-bind="selectedNote"
-      :group_id="selectedNote.groupid"
+      v-bind="selectedGroup"
+      :group_id="selectedGroup.groupid"
       @cancel="showEdit = false"
       @create="saveCreatedNote"
       @edit="saveEditedNote"
