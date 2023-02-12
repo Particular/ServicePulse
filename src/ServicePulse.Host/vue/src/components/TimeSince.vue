@@ -22,8 +22,8 @@ const text = ref();
             m.local().format("LLLL") + " (local)\n" + m.utc().format("LLLL") + " (UTC)";
     }
     else {
-        text.value = "Never";
-        title.value = "Never";
+        text.value = "never";
+        title.value = "never";
     }
 }
 
