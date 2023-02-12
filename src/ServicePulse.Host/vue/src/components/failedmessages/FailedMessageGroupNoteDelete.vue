@@ -6,7 +6,7 @@ const model = defineProps({
 });
 
 function deleteNote() {
-    emit("delete", model.group_id);
+  emit("delete", model.group_id);
 }
 
 function close() {
@@ -24,9 +24,7 @@ function close() {
           </div>
         </div>
         <div class="modal-body">
-          <p>
-            Deleted note will not be available.
-          </p>
+          <p>Deleted note will not be available.</p>
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" @click="deleteNote">Yes</button>
