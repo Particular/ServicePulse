@@ -5,9 +5,10 @@ import TimeSince from "../TimeSince.vue";
 import { stats } from "../../composables/serviceServiceControl";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
     import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
+    import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
     import { useShowToast } from "../../composables/toast.js";
 import {
-        useDeleteNote,
+        useDeleteNote, useEditOrCreateNote
     } from "../../composables/serviceGroupNote.js";
 const exceptionGroups = ref([]);
 // const sortSelectors  = ref([]);
@@ -34,10 +35,12 @@ const sortSelectors = [{
         selector: function (group) { return group.last_operation_completion_time; }
     }];
 const showDelete = ref(false);
-const selectedNote = ref({
+const showEdit = ref(false);
+    const selectedNote = ref({
+       groupid:"",
         comment: "",
     });
-    const noteSaveSuccessful = ref(null);
+const noteSaveSuccessful = ref(null);
     //isBeingRetried = function (group) {
     //    return group.workflow_state.status !== 'none' && (group.workflow_state.status !== 'completed' || group.need_user_acknowledgement === true) && !vm.isBeingArchived(group.workflow_state.status);
     //};
@@ -123,9 +126,7 @@ function getExceptionGroups() {
         if (operationStatus === 'preparing' && group.operation_progress === 1) {
             operationStatus = 'queued';
         }
-
         group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
-
         return group;
     };
 
@@ -146,9 +147,9 @@ function initialLoad() {
 }
     //delete comment note
     function deleteNote(group) {
-         noteSaveSuccessful.value = null;
-        (selectedNote.value.groupid = group.id),
-            (showDelete.value = true);
+        noteSaveSuccessful.value = null;
+        selectedNote.value.groupid = group.id,
+        showDelete.value = true;
     }
     function saveDeleteNote(groupId) {
         showDelete.value = false;
@@ -163,6 +164,53 @@ function initialLoad() {
             }
         });
     }
+
+    // create comment note
+    function createNote(group) {
+        noteSaveSuccessful.value = null;
+        selectedNote.value.groupid = group.id;
+        selectedNote.value.comment = "";
+        showEdit.value = true;
+    }
+    function saveCreatedNote(group) {
+        noteSaveSuccessful.value = null;
+        showEdit.value = false;
+        useEditOrCreateNote(group.groupid,group.comment).then((result) => {
+                if (result.message === "success") {
+                    noteSaveSuccessful.value = true;
+                    useShowToast("info", "Info", "Note created successfully");
+                    getExceptionGroups(); //reload the groups
+                } else {
+                    noteSaveSuccessful.value = false;
+                    useShowToast("error", "Error", "Failed to create a Note:" + result.message);
+                }
+        });
+    }
+
+    //edit comment note
+    function editNote(group) {
+        noteSaveSuccessful.value = null;
+        selectedNote.value.groupid = group.id;
+        selectedNote.value.comment = group.comment;
+        showEdit.value = true;
+    }
+    function saveEditedNote(group) {
+        noteSaveSuccessful.value = null;
+        showEdit.value = false;
+        useEditOrCreateNote(group.groupid, group.comment).then((result) => {
+            if (result.message === "success") {
+                noteSaveSuccessful.value = true;
+                useShowToast("info", "Info", "Note updated successfully");
+                getExceptionGroups(); //reload the groups
+            } else {
+                noteSaveSuccessful.value = false;
+                useShowToast("error", "Error", "Failed to update Note:" + result.message);
+            }
+        });
+    }
+
+
+
 onMounted(() => {
   initialLoad();
 });
@@ -308,14 +356,14 @@ onMounted(() => {
                                             <button type="button"
                                                     class="btn btn-link btn-sm"
                                                     v-if="!group.comment"
-                                                    ng-click="vm.addComment(group, group.comment, $event)">
+                                                    @click="editNote(group)">
                                                 <i aria-hidden="true"
                                                    class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note
                                             </button>
                                             <button type="button"
                                                     class="btn btn-link btn-sm"
                                                     v-if="group.comment"
-                                                    ng-click="vm.editComment(group, group.comment, $event)">
+                                                    @click="editNote(group)">
                                                 <i aria-hidden="true"
                                                    class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note
                                             </button>
@@ -453,11 +501,19 @@ onMounted(() => {
             </div>
         </div>
     </div>
+
     <Teleport to="#modalDisplay">
         <FailedMessageGroupNoteDelete v-if="showDelete === true"
-                             :group_id="selectedNote.groupid"
-                             @cancel="showDelete = false"
-                             @delete="saveDeleteNote"></FailedMessageGroupNoteDelete>
+                                      :group_id="selectedNote.groupid"
+                                      @cancel="showDelete = false"
+                                      @delete="saveDeleteNote"></FailedMessageGroupNoteDelete>
+    </Teleport>
+    <Teleport to="#modalDisplay">
+        <FailedMessageGroupNoteEdit v-if="showEdit === true" v-bind="selectedNote"
+                                      :group_id="selectedNote.groupid"
+                                      @cancel="showEdit = false"
+                                      @create="saveCreatedNote"
+                                      @edit="saveEditedNote"></FailedMessageGroupNoteEdit>
     </Teleport>
 </template>
 
