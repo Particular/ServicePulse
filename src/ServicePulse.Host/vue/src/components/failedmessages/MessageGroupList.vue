@@ -44,7 +44,8 @@ function initialLoad() {
 //delete comment note
 function deleteNote(group) {
   noteSaveSuccessful.value = null;
-  (selectedGroup.value.groupid = group.id), (showDelete.value = true);
+  selectedGroup.value.groupid = group.id;
+  showDelete.value = true;
 }
 function saveDeleteNote(groupId) {
   showDelete.value = false;
