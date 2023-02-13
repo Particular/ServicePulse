@@ -159,14 +159,20 @@ export function useServiceControlStats() {
     failedCustomChecksResult,
     archivedMessagesResult,
   ])
-    .then(([failedHB, failedM, failedCC, archivedM]) => {
-      stats.failing_endpoints = failedHB;
-      stats.number_of_failed_messages = failedM;
-      stats.number_of_failed_checks = failedCC;
-      stats.number_of_failed_heartbeats = failedHB;
-      stats.number_of_archived_messages = archivedM;
-    })
-    .catch((err) => {
+    .then(
+      ([
+        failedHeartbeats,
+        failedMessages,
+        failedCustomChecks,
+        archivedMessages,
+      ]) => {
+        stats.failing_endpoints = failedHeartbeats;
+        stats.number_of_failed_messages = failedMessages;
+        stats.number_of_failed_checks = failedCustomChecks;
+        stats.number_of_failed_heartbeats = failedHeartbeats;
+        stats.number_of_archived_messages = archivedMessages;
+      }
+    ).catch((err) => {
       console.log(err);
     });
 }
