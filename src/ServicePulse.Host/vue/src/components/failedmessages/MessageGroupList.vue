@@ -10,7 +10,8 @@ import { useShowToast } from "../../composables/toast.js";
 import {
   useDeleteNote,
   useEditOrCreateNote,
-} from "../../composables/serviceGroupNote.js";
+  useGetExceptionGroups,
+} from "../../composables/serviceMessageGroup.js";
 const exceptionGroups = ref([]);
 
 const loadingData = ref(true);
@@ -26,59 +27,20 @@ const selectedGroup = ref({
 const noteSaveSuccessful = ref(null);
 
 function getExceptionGroups() {
-  exceptionGroups.value = [];
-  // return serviceControlService.getExceptionGroups(vm.selectedClassification)
-  return useFetchFromServiceControl("recoverability/groups")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      exceptionGroups.value = [];
-      exceptionGroups.value = data;
+    exceptionGroups.value = [];
+    useGetExceptionGroups().then((result) => {
+        exceptionGroups.value = result;
+
     });
-  //if (response.status === 304 && exceptionGroups.value.length > 0) {
-  //  return true;
-  //}
-  //if (response.data.length > 0) {
-  //  // need a map in some ui state for controlling animations
-  //  exceptionGroups.value = response.data.map(initializeGroupState);
-  //  //exceptionGroups.sort(getSort());
-
-  //  if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
-  //    stats.number_of_exception_groups = exceptionGroups.value.length;
-  //    emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
-  //  }
-  //  exceptionGroups.value = [];
-  //  exceptionGroups.value = data;
-  //}
-  // return true;
 }
-
-//function initializeGroupState(group) {
-//  var operationStatus =
-//    (group.operation_status ? group.operation_status.toLowerCase() : null) ||
-//    "none";
-//  if (operationStatus === "preparing" && group.operation_progress === 1) {
-//    operationStatus = "queued";
-//  }
-//  //group.workflow_state = createWorkflowState(
-//  //  operationStatus,
-//  //  group.operation_progress,
-//  //  group.operation_failed
-//  //);
-//  return group;
-//}
 
 function initialLoad() {
   loadingData.value = true;
   initialLoadComplete.value = false;
-
-  getExceptionGroups().then(function () {
+    getExceptionGroups();
     loadingData.value = false;
     initialLoadComplete.value = true;
     emit("InitialLoadComplete");
-    return true;
-  });
 }
 //delete comment note
 function deleteNote(group) {
@@ -86,7 +48,6 @@ function deleteNote(group) {
   selectedGroup.value.groupid = group.id,
   showDelete.value = true;
 }
-
 function saveDeleteNote(groupId) {
   showDelete.value = false;
   useDeleteNote(groupId).then((result) => {
@@ -203,14 +164,12 @@ onMounted(() => {
     </div>
 
     <div class="row">
-      <div class="col-sm-12">
-        <busy v-show="loadingData" message="fetching more messages"></busy>
-        <no-data
-          v-if="exceptionGroups.length === 0 && !loadingData"
-          title="message groups"
-          message="There are currently no grouped message failures"
-        ></no-data>
-      </div>
+        <div class="col-sm-12">
+            <busy v-show="loadingData" message="fetching more messages"></busy>
+            <no-data v-if="exceptionGroups.length === 0 && !loadingData"
+                     title="message groups"
+                     message="There are currently no grouped message failures"></no-data>
+        </div>
     </div>
 
     <div class="row">
@@ -220,7 +179,7 @@ onMounted(() => {
             class="row box box-group wf-{{group.workflow_state.status}} repeat-modify"
             v-for="(group, index) in exceptionGroups"
             :key="index"
-            v-show="exceptionGroups.length"
+            v-show="exceptionGroups.length > 0"
             ng-click="vm.viewExceptionGroup(group)"
             ng-disabled="group.count == 0"
             ng-mouseenter="group.hover2 = true"
@@ -491,6 +450,7 @@ onMounted(() => {
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteDelete
       v-if="showDelete === true"
+       v-bind="selectedGroup"
       :group_id="selectedGroup.groupid"
       @cancel="showDelete = false"
       @delete="saveDeleteNote"

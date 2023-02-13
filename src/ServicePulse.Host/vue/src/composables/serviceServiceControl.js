@@ -151,19 +151,16 @@ export function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
-  const exceptionGroupsResult = getExceptionGroupsCount();
   return Promise.all([
     failedHeartBeatsResult,
     failedMessagesResult,
     failedCustomChecksResult,
-    exceptionGroupsResult,
   ])
-    .then(([failedHB, failedM, failedCC, exceptionG]) => {
+    .then(([failedHB, failedM, failedCC]) => {
       stats.failing_endpoints = failedHB;
       stats.number_of_failed_messages = failedM;
       stats.number_of_failed_checks = failedCC;
       stats.number_of_failed_heartbeats = failedHB;
-      stats.number_of_exception_groups = exceptionG;
     })
     .catch((err) => {
       console.log(err);
@@ -398,21 +395,7 @@ function getFailedCustomChecksCount() {
     (response) => parseInt(response.headers.get("Total-Count"))
   );
 }
-function getExceptionGroupsCount(groupId, sortBy, page) {
-  var url =
-    "/recoverability/groups" +
-    groupId +
-    "errors?page=" +
-    page +
-    "&sort=" +
-    sortBy +
-    "&status=unresolved";
-  return fetchWithErrorHandling(
-    () => useFetchFromServiceControl(url),
-    connectionState,
-    (response) => parseInt(response.headers.get("Total-Count"))
-  );
-}
+
 
 function getMonitoredEndpoints() {
   return fetchWithErrorHandling(
