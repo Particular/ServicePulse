@@ -35,7 +35,7 @@ function getExceptionGroups() {
 function initialLoad() {
   loadingData.value = true;
   initialLoadComplete.value = false;
-  getExceptionGroups().then((result) => {
+  getExceptionGroups().then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
     emit("InitialLoadComplete");
