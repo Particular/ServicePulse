@@ -27,7 +27,7 @@ const noteSaveSuccessful = ref(null);
 
 function getExceptionGroups() {
   exceptionGroups.value = [];
-  useGetExceptionGroups().then((result) => {
+  return useGetExceptionGroups().then((result) => {
     exceptionGroups.value = result;
   });
 }
