@@ -35,10 +35,11 @@ function getExceptionGroups() {
 function initialLoad() {
   loadingData.value = true;
   initialLoadComplete.value = false;
-  getExceptionGroups();
-  loadingData.value = false;
-  initialLoadComplete.value = true;
-  emit("InitialLoadComplete");
+  getExceptionGroups().then((result) => {
+    loadingData.value = false;
+    initialLoadComplete.value = true;
+    emit("InitialLoadComplete");
+  });
 }
 //delete comment note
 function deleteNote(group) {
