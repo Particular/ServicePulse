@@ -41,6 +41,7 @@ function initialLoad() {
     emit("InitialLoadComplete");
   });
 }
+
 //delete comment note
 function deleteNote(group) {
   noteSaveSuccessful.value = null;
