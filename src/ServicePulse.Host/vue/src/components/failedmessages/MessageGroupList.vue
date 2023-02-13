@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import { useShowToast } from "../../composables/toast.js";
@@ -27,26 +26,24 @@ const selectedGroup = ref({
 const noteSaveSuccessful = ref(null);
 
 function getExceptionGroups() {
-    exceptionGroups.value = [];
-    useGetExceptionGroups().then((result) => {
-        exceptionGroups.value = result;
-
-    });
+  exceptionGroups.value = [];
+  useGetExceptionGroups().then((result) => {
+    exceptionGroups.value = result;
+  });
 }
 
 function initialLoad() {
   loadingData.value = true;
   initialLoadComplete.value = false;
-    getExceptionGroups();
-    loadingData.value = false;
-    initialLoadComplete.value = true;
-    emit("InitialLoadComplete");
+  getExceptionGroups();
+  loadingData.value = false;
+  initialLoadComplete.value = true;
+  emit("InitialLoadComplete");
 }
 //delete comment note
 function deleteNote(group) {
   noteSaveSuccessful.value = null;
-  selectedGroup.value.groupid = group.id,
-  showDelete.value = true;
+  (selectedGroup.value.groupid = group.id), (showDelete.value = true);
 }
 function saveDeleteNote(groupId) {
   showDelete.value = false;
@@ -164,12 +161,14 @@ onMounted(() => {
     </div>
 
     <div class="row">
-        <div class="col-sm-12">
-            <busy v-show="loadingData" message="fetching more messages"></busy>
-            <no-data v-if="exceptionGroups.length === 0 && !loadingData"
-                     title="message groups"
-                     message="There are currently no grouped message failures"></no-data>
-        </div>
+      <div class="col-sm-12">
+        <busy v-show="loadingData" message="fetching more messages"></busy>
+        <no-data
+          v-if="exceptionGroups.length === 0 && !loadingData"
+          title="message groups"
+          message="There are currently no grouped message failures"
+        ></no-data>
+      </div>
     </div>
 
     <div class="row">
@@ -450,7 +449,7 @@ onMounted(() => {
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteDelete
       v-if="showDelete === true"
-       v-bind="selectedGroup"
+      v-bind="selectedGroup"
       :group_id="selectedGroup.groupid"
       @cancel="showDelete = false"
       @delete="saveDeleteNote"
