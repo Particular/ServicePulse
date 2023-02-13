@@ -27,7 +27,7 @@ const noteSaveSuccessful = ref(null);
 
 function getExceptionGroups() {
   exceptionGroups.value = [];
-  useGetExceptionGroups().then((result) => {
+  return useGetExceptionGroups().then((result) => {
     exceptionGroups.value = result;
   });
 }
@@ -35,15 +35,18 @@ function getExceptionGroups() {
 function initialLoad() {
   loadingData.value = true;
   initialLoadComplete.value = false;
-  getExceptionGroups();
-  loadingData.value = false;
-  initialLoadComplete.value = true;
-  emit("InitialLoadComplete");
+  getExceptionGroups().then((result) => {
+    loadingData.value = false;
+    initialLoadComplete.value = true;
+    emit("InitialLoadComplete");
+  });
 }
+
 //delete comment note
 function deleteNote(group) {
   noteSaveSuccessful.value = null;
-  (selectedGroup.value.groupid = group.id), (showDelete.value = true);
+  selectedGroup.value.groupid = group.id;
+  showDelete.value = true;
 }
 function saveDeleteNote(groupId) {
   showDelete.value = false;
