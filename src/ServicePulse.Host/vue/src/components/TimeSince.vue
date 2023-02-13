@@ -23,7 +23,8 @@ function updateText() {
       m.utc().format("LLLL") +
       " (UTC)";
   } else {
-    text.value = "unknown";
+    text.value = "n/a";
+    title.value = "n/a";
   }
 }
 
