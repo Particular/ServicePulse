@@ -30,7 +30,7 @@ const displayDanger = computed(() => {
 </script>
 
 <template>
-  <nav class="navbar navbar-inverse navbar-fixed-top">
+  <nav class="navbar navbar-expand-lg navbar-inverse">
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="/">
@@ -38,10 +38,7 @@ const displayDanger = computed(() => {
         </a>
       </div>
 
-      <div
-        id="navbar"
-        class="collapse navbar-collapse navbar-right navbar-inverse"
-      >
+      <div id="navbar" class="navbar navbar-expand-lg">
         <ul class="nav navbar-nav navbar-inverse">
           <li :class="{ active: subIsActive('/dashboard', true) }">
             <RouterLink :to="{ name: 'dashboard' }">
