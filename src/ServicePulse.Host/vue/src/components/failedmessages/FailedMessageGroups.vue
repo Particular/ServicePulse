@@ -1,10 +1,11 @@
 <script setup>
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import LicenseExpired from "../../components/LicenseExpired.vue";
 import { connectionState } from "../../composables/serviceServiceControl.js";
+import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList from "../failedmessages/MessageGroupList.vue";
+import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 </script>
 
 <template>
@@ -14,7 +15,14 @@ import MessageGroupList from "../failedmessages/MessageGroupList.vue";
     <template v-if="!connectionState.unableToConnect">
       <section name="message_groups">
         <LastTenOperations></LastTenOperations>
-        <h3>Failed message group</h3>
+        <div class="row">
+          <div class="col-xs-6 list-section">
+            <h3>Failed message group</h3>
+          </div>
+          <div class="col-xs-6 toolbar-menus no-side-padding">
+            <GroupAndOrderBy></GroupAndOrderBy>
+          </div>
+        </div>
         <div class="box">
           <div class="row">
             <div class="col-sm-12">
