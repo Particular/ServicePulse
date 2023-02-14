@@ -67,12 +67,6 @@ onMounted(() => {
     <div class="container">
       <div class="row">
         <div class="col-sm-12">
-          <h1>Failed Messages</h1>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-12">
           <div class="tabs">
             <!--Failed Message Groups-->
             <h5
