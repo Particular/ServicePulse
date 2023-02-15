@@ -17,8 +17,8 @@ const loadingData = ref(true);
 const initialLoadComplete = ref(false);
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 
-const showDelete = ref(false);
-const showEdit = ref(false);
+const showDeleteNoteModal = ref(false);
+const showEditNoteModal = ref(false);
 const selectedGroup = ref({
   groupid: "",
   comment: "",
@@ -43,13 +43,14 @@ function initialLoad() {
 }
 
 //delete comment note
-function deleteNote(group) {
+    function deleteNote(group) {
+        alert("from grouplist vue");
   noteSaveSuccessful.value = null;
   selectedGroup.value.groupid = group.id;
-  showDelete.value = true;
+  showDeleteNoteModal.value = true;
 }
 function saveDeleteNote(groupId) {
-  showDelete.value = false;
+  showDeleteNoteModal.value = false;
   useDeleteNote(groupId).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -66,7 +67,7 @@ function saveDeleteNote(groupId) {
 
 function saveCreatedNote(group) {
   noteSaveSuccessful.value = null;
-  showEdit.value = false;
+  showEditNoteModal.value = false;
   useEditOrCreateNote(group.groupid, group.comment).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -88,11 +89,11 @@ function editNote(group) {
   noteSaveSuccessful.value = null;
   selectedGroup.value.groupid = group.id;
   selectedGroup.value.comment = group.comment;
-  showEdit.value = true;
+  showEditNoteModal.value = true;
 }
 function saveEditedNote(group) {
   noteSaveSuccessful.value = null;
-  showEdit.value = false;
+  showEditNoteModal.value = false;
   useEditOrCreateNote(group.groupid, group.comment).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -334,21 +335,21 @@ onMounted(() => {
 
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteDelete
-      v-if="showDelete === true"
+      v-if="showDeleteNoteModal === true"
       v-bind="selectedGroup"
       :group_id="selectedGroup.groupid"
-      @cancel="showDelete = false"
-      @delete="saveDeleteNote"
+      @cancelDeleteNote="showDeleteNoteModal = false"
+      @deleteNoteConfirmed="saveDeleteNote"
     ></FailedMessageGroupNoteDelete>
   </Teleport>
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteEdit
-      v-if="showEdit === true"
+      v-if="showEditNoteModal === true"
       v-bind="selectedGroup"
       :group_id="selectedGroup.groupid"
-      @cancel="showEdit = false"
-      @create="saveCreatedNote"
-      @edit="saveEditedNote"
+      @cancelEditNote="showEditNoteModal = false"
+      @createNoteConfirmed="saveCreatedNote"
+      @editNoteConfirmed="saveEditedNote"
     ></FailedMessageGroupNoteEdit>
   </Teleport>
 </template>

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-const emit = defineEmits(["create", "edit", "cancel"]);
+    const emit = defineEmits(["createNoteConfirmed", "editNoteConfirmed", "cancelEditNote"]);
 
 const settings = defineProps({
   groupid: String,
@@ -8,24 +8,24 @@ const settings = defineProps({
 });
 const grpcomment = ref(settings.comment);
 
-function create() {
+function createNote() {
   var updatedGroup = {
     groupid: settings.groupid,
     comment: grpcomment.value,
   };
-  emit("create", updatedGroup);
+  emit("createNoteConfirmed", updatedGroup);
 }
 
-function edit() {
+function editNote() {
   var updatedGroup = {
     groupid: settings.groupid,
     comment: grpcomment.value,
   };
-  emit("edit", updatedGroup);
+  emit("editNoteConfirmed", updatedGroup);
 }
 
 function close() {
-  emit("cancel");
+  emit("cancelEditNote");
 }
 </script>
 
@@ -58,14 +58,14 @@ function close() {
             <button
               v-if="settings.comment"
               class="btn btn-primary"
-              @click="edit"
+              @click="editNote"
             >
               Modify
             </button>
             <button
               v-if="!settings.comment"
               class="btn btn-primary"
-              @click="create"
+              @click="createNote"
             >
               Create
             </button>

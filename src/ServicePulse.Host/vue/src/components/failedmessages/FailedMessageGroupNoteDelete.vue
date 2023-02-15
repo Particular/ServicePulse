@@ -1,17 +1,17 @@
 <script setup>
-    const emit = defineEmits(["delete", "cancel"]);
+    const emit = defineEmits(["deleteNoteConfirmed", "cancelDeleteNote"]);
 
-const settings1 = defineProps({
+const settings = defineProps({
         groupid: String,
         comment: String,
 });
 
-function deleteNote() {
-    emit("delete", settings1.groupid);
+    function deleteNote() {
+    emit("deleteNoteConfirmed", settings.groupid);
 }
 
 function close() {
-  emit("cancel");
+  emit("cancelDeleteNote");
 }
 </script>
 
