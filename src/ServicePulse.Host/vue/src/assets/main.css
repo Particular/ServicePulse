@@ -1,5 +1,6 @@
 @import 'bootstrap/dist/css/bootstrap.css';
-@import '../../../angular/app/css/particular.css';
+@import 'navbar.css';
+@import 'font-awesome/css/font-awesome.css';
 
 .Vue-Toastification__container.toast-container {
     width: 400px;    
@@ -47,5 +48,32 @@
 
 body {
     padding-top: 0px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
 }
 
+.fa {
+    color: #929e9e;
+}
+
+.badge.badge-important {
+    background-color: #CE4844;
+    background-image: none;
+    border: none;
+}
+
+.badge {
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #777777;
+    border-radius: 10px;
+}
