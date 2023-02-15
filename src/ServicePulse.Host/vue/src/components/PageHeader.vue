@@ -30,7 +30,7 @@ const displayDanger = computed(() => {
 </script>
 
 <template>
-  <nav class="navbar navbar-expand-lg navbar-inverse">
+  <nav class="navbar navbar-expand-lg navbar-inverse navbar-dark">
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="/">
