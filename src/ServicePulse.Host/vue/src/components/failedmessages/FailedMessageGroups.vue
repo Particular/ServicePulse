@@ -4,6 +4,7 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
 import { connectionState } from "../../composables/serviceServiceControl.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
+import MessageGroupList from "../failedmessages/MessageGroupList.vue";
 </script>
 
 <template>
@@ -18,8 +19,10 @@ import LastTenOperations from "../failedmessages/LastTenOperations.vue";
           <div class="row">
             <div class="col-sm-12">
               <div class="list-section">
-                <div class="col-sm-7 form-group">
-                  <label for="serviceControlUrl"> message group detail </label>
+
+                <div class="col-sm-12 form-group">
+                  <MessageGroupList></MessageGroupList>
+
                 </div>
               </div>
             </div>
