@@ -1,45 +1,118 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import NoData from "../NoData.vue";
+import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import TimeSince from "../TimeSince.vue";
+
+const historicOperations = ref([]);
+const showHistoricRetries = ref(false);
+
+function getHistoricOperations() {
+  return useFetchFromServiceControl("recoverability/history")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      historicOperations.value = [];
+      historicOperations.value = data.historic_operations;
+    });
+}
+
+onMounted(() => {
+  getHistoricOperations();
+});
+</script>
+
 <template>
-    <div class="lasttenoperations">
-        <div class="row">
-            <div class="col-sm-12 list-section">
-                <h6>
-                    <span class="fake-link" aria-hidden="true"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
-                    <a>Last 10 completed retry requests</a>
-                </h6>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-12 no-mobile-side-padding">
-                <no-data ng-show="vm.historicGroups.length === 0" title="message group retries" message="No group retry requests have ever been completed"></no-data>
-                <div class="row box extra-box-padding repeat-modify" ng-repeat="group in vm.historicGroups" ng-show="vm.historicGroups.length">
-                    <div class="col-sm-12 no-mobile-side-padding">
-                        <div class="row">
-                            <div class="col-sm-12 no-side-padding">
-                                <div class="row box-header">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="lead break"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-sm-12 no-side-padding">
-                                        <p class="metadata">
-                                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages sent: </span>
-                                            <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <sp-moment date="{{group.start_time}}"></sp-moment></span>
-                                            <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <sp-moment date="{{group.completion_time}}"></sp-moment></span>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <span class="short-group-history" ng-show="vm.historicGroups.length === 1">There is only 1 completed group retry</span>
-                <span class="short-group-history" ng-show="vm.historicGroups.length < 10 && vm.historicGroups.length > 1">There are only ## completed group retries</span>
-            </div>
-        </div>
+  <div class="lasttenoperations">
+    <div class="row">
+      <div class="col-sm-12 list-section">
+        <h6>
+          <span
+            class="no-link-underline"
+            aria-hidden="true"
+            v-show="showHistoricRetries"
+            ><i class="fa fa-angle-down" aria-hidden="true"></i>
+          </span>
+          <span
+            class="fake-link"
+            aria-hidden="true"
+            v-show="!showHistoricRetries"
+            ><i class="fa fa-angle-right" aria-hidden="true"></i>
+          </span>
+          <a v-on:click="showHistoricRetries = !showHistoricRetries"
+            >Last 10 completed retry requests</a
+          >
+        </h6>
+      </div>
     </div>
+
+    <div class="row">
+      <div
+        class="col-sm-12 no-mobile-side-padding"
+        v-show="showHistoricRetries"
+      >
+        <no-data
+          v-if="historicOperations.length === 0"
+          title="message group retries"
+          message="No group retry requests have ever been completed"
+        ></no-data>
+        <div
+          class="row box extra-box-padding repeat-modify"
+          v-for="(group, index) in historicOperations"
+          :key="index"
+          v-show="historicOperations.length"
+        >
+          <div class="col-sm-12 no-mobile-side-padding">
+            <div class="row">
+              <div class="col-sm-12 no-side-padding">
+                <div class="row box-header">
+                  <div class="col-sm-12 no-side-padding">
+                    <p class="lead break"> {{ group.originator || 'Selection of individual message(s)' }}</p>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-12 no-side-padding">
+                    <p class="metadata">
+                      <span class="metadata"
+                        ><i aria-hidden="true" class="fa fa-envelope"></i>
+                        Messages sent: {{ group.number_of_messages_processed }}
+                      </span>
+                      <span class="metadata"
+                        ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry
+                        request started:
+                        <time-since :date-utc="group.start_time"></time-since>
+                      </span>
+                      <span class="metadata"
+                        ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry
+                        request completed:
+                        <time-since :date-utc="group.completion_time"></time-since>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <span
+          class="short-group-history"
+          v-show="historicOperations.length === 1"
+          >There is only {{ historicOperations.length }} completed group
+          retry</span
+        >
+        <span
+          class="short-group-history"
+          v-show="
+            historicOperations.length < 10 && historicOperations.length > 1
+          "
+          >There are only {{ historicOperations.length }} completed group
+          retries</span
+        >
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>
@@ -48,6 +121,6 @@
 }
 
 .lasttenoperations {
-    padding-bottom: 2em;
+  padding-bottom: 2em;
 }
 </style>

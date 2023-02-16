@@ -6,24 +6,24 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 </script>
 
 <template>
-    <LicenseExpired />
-    <template v-if="!licenseStatus.isExpired">
-        <ServiceControlNotAvailable />
-        <template v-if="!connectionState.unableToConnect">
-            <section name="message_groups">
-                <div class="box">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="list-section">
-                                <h3>All failed messages</h3>
-                                <div class="col-sm-7 form-group">
-                                    <label for="serviceControlUrl"> message details </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  <LicenseExpired />
+  <template v-if="!licenseStatus.isExpired">
+    <ServiceControlNotAvailable />
+    <template v-if="!connectionState.unableToConnect">
+      <section name="message_groups">
+        <div class="box">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="list-section">
+                <h3>All failed messages</h3>
+                <div class="col-sm-7 form-group">
+                  <label for="serviceControlUrl"> message details </label>
                 </div>
-            </section>
-        </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </template>
+  </template>
 </template>

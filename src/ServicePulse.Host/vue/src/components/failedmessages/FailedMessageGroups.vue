@@ -19,8 +19,10 @@ import MessageGroupList from "../failedmessages/MessageGroupList.vue";
           <div class="row">
             <div class="col-sm-12">
               <div class="list-section">
+
                 <div class="col-sm-12 form-group">
                   <MessageGroupList></MessageGroupList>
+
                 </div>
               </div>
             </div>

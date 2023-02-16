@@ -5,13 +5,8 @@ import AllFailedMessages from "../components/failedmessages/AllFailedMessages.vu
 import DeletedMessageGroups from "../components/failedmessages/DeletedMessageGroups.vue";
 import AllDeletedMessages from "../components/failedmessages/AllDeletedMessages.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
-
-/* import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue"; */
 import { licenseStatus } from "./../composables/serviceLicense.js";
-import {
-  connectionState,
-  monitoringConnectionState,
-} from "../composables/serviceServiceControl";
+import { stats, connectionState } from "../composables/serviceServiceControl";
 
 const routes = {
   "failed-message-groups": {
@@ -89,8 +84,18 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#failed-message-groups">Failed Message Groups (##)</a>
-              <exclamation-mark :type="licenseStatus.warningLevel" />
+              <a href="#failed-message-groups">
+                Failed Message Groups
+                <span v-show="stats.number_of_failed_messages === 0">
+                  (0)
+                </span>
+              </a>
+              <span
+                v-if="stats.number_of_failed_messages !== 0"
+                title="There's varying numbers of failed message groups depending on group type"
+                class="badge badge-important"
+                >!</span
+              >
             </h5>
 
             <!--All Failed Messages-->
@@ -103,7 +108,12 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#all-failed-messages">All Failed Messages (##)</a>
+              <a href="#all-failed-messages">All Failed Messages </a>
+              <span
+                v-if="stats.number_of_failed_messages !== 0"
+                class="badge badge-important"
+                >{{ stats.number_of_failed_messages }}</span
+              >
             </h5>
 
             <!--Deleted Message Group-->
@@ -116,9 +126,13 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#deleted-message-groups">
-                Deleted Message Groups (##)
-              </a>
+              <a href="#deleted-message-groups">Deleted Message Groups </a>
+              <span
+                v-if="stats.number_of_archived_messages !== 0"
+                title="There's varying numbers of deleted message groups depending on group type"
+                class="badge badge-important"
+                >!</span
+              >
             </h5>
 
             <!--All Deleted Messages-->
@@ -131,17 +145,12 @@ onMounted(() => {
                   !connectionState.connectedRecently,
               }"
             >
-              <a href="#all-deleted-messages">
-                All Deleted Messages (##)
-                <template
-                  v-if="
-                    connectionState.unableToConnect ||
-                    monitoringConnectionState.unableToConnect
-                  "
-                >
-                  <span><i class="fa fa-exclamation-triangle"></i></span>
-                </template>
-              </a>
+              <a href="#all-deleted-messages">All Deleted Messages </a>
+              <span
+                v-if="stats.number_of_archived_messages !== 0"
+                class="badge badge-important"
+                >{{ stats.number_of_archived_messages }}</span
+              >
             </h5>
           </div>
         </div>

@@ -151,18 +151,29 @@ export function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
+  const archivedMessagesResult = getArchivedMessagesCount();
+
+
   return Promise.all([
     failedHeartBeatsResult,
     failedMessagesResult,
     failedCustomChecksResult,
+    archivedMessagesResult,
   ])
-    .then(([failedHB, failedM, failedCC]) => {
-      stats.failing_endpoints = failedHB;
-      stats.number_of_failed_messages = failedM;
-      stats.number_of_failed_checks = failedCC;
-      stats.number_of_failed_heartbeats = failedHB;
-    })
-    .catch((err) => {
+    .then(
+      ([
+        failedHeartbeats,
+        failedMessages,
+        failedCustomChecks,
+        archivedMessages,
+      ]) => {
+        stats.failing_endpoints = failedHeartbeats;
+        stats.number_of_failed_messages = failedMessages;
+        stats.number_of_failed_checks = failedCustomChecks;
+        stats.number_of_failed_heartbeats = failedHeartbeats;
+        stats.number_of_archived_messages = archivedMessages;
+      }
+    ).catch((err) => {
       console.log(err);
     });
 }
@@ -386,6 +397,14 @@ function getFailedHeartBeatsCount() {
 function getFailedMessagesCount() {
   return fetchWithErrorHandling(
     () => useFetchFromServiceControl("errors?status=unresolved"),
+    connectionState,
+    (response) => parseInt(response.headers.get("Total-Count"))
+  );
+}
+
+function getArchivedMessagesCount() {
+  return fetchWithErrorHandling(
+    () => useFetchFromServiceControl("errors?status=archived"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count"))
   );
