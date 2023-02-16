@@ -4,7 +4,7 @@ import { licenseStatus } from "./../composables/serviceLicense.js";
 
 <template>
   <template v-if="licenseStatus.isPlatformExpired">
-    <div class="text-center monitoring-no-data" style="max-width: 620px">
+    <div class="text-center monitoring-no-data">
       <h1>Platform license expired</h1>
       <p>
         Please update your license to continue using the Particular Service
@@ -18,7 +18,7 @@ import { licenseStatus } from "./../composables/serviceLicense.js";
     </div>
   </template>
   <template v-if="licenseStatus.isPlatformTrialExpired">
-    <div class="text-center monitoring-no-data" style="max-width: 720px">
+    <div class="text-center monitoring-no-data">
       <h1>License expired</h1>
       <p>
         To continue using the Particular Service Platform, please extend your
@@ -38,7 +38,7 @@ import { licenseStatus } from "./../composables/serviceLicense.js";
     </div>
   </template>
   <template v-if="licenseStatus.isInvalidDueToUpgradeProtectionExpired">
-    <div class="text-center monitoring-no-data" style="max-width: 620px">
+    <div class="text-center monitoring-no-data">
       <h1>Platform license expired</h1>
       <p>
         Your upgrade protection period has elapsed and your license is not valid

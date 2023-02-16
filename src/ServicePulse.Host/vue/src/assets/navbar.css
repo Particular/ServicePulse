@@ -140,10 +140,10 @@ a.btn-feedback, a.btn-feedback:visited, a.btn-feedback:focus {
         margin: 7.5px -15px;
     }
 
-        .navbar-nav > li {
-            float: none;
-            float: none;
-        }
+    .navbar-nav > li {
+        float: none;
+        float: none;
+    }
 
     .navbar-nav > li > a {
         padding-top: 10px;
