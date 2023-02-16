@@ -112,3 +112,226 @@ body {
     padding-top: 0px;
 }
 
+span.connection-successful, span.connection-successful i {
+    color: #00C468 !important;
+}
+
+span.connection-failed, span.connection-failed i, .failed-validation, .failed-validation i {
+    color: #CE4844 !important;
+}
+
+span.connection-test {
+    position: relative;
+    top: 14px;
+    left: 10px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: black;
+}
+
+form .connection h3 {
+    margin-bottom: 16px;
+}
+
+form .connection .form-group {
+    padding-left: 0;
+}
+
+.connection:nth-child(2) h3 {
+    margin-top: 40px;
+}
+
+form .connection .form-group input {
+    font-size: 16px;
+    height: 44px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.modal-header {
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modal-title {
+    margin: 0;
+    line-height: 1.42857143;
+}
+
+h3 {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.modal-body {
+    position: relative;
+    padding: 15px;
+}
+
+.has-error .form-control {
+    border-color: #a94442;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px #00000013;
+}
+
+.form-control {
+    width: 100% !important;
+}
+
+.btn-default {
+    padding: 8px 16px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.btn.btn-default.disabled {
+    opacity: 0.4;
+}
+
+.btn.btn-default.disabled:hover {
+    border-color: #00A3C4;
+}
+
+.btn-primary {
+    background-color: #00A3C4 !important;
+    border-color: #0686AA;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #0DB3C8;
+    border-color: #00A3C4;
+}
+
+.btn-primary i {
+    color: #ffffff;
+    font-size: 12px;
+}
+
+.btn-secondary {
+    background-color: #fff;
+    color: #00A3C4;
+    border-color: #00A3C4;
+}
+
+.btn-secondary:hover {
+    color: #00A3C4;
+    border-color: #00A3C4;
+    background-color: #fff;
+    opacity: 0.7;
+}
+
+.btn-secondary.disabled {
+    border-color: #00A3C4;
+}
+
+.modal-open .modal.modal-msg-editor {
+    overflow-y: hidden;
+}
+
+.modal-msg-editor .modal-dialog {
+    width: 70%;
+}
+
+.modal-msg-editor .modal-body {
+    overflow-y: auto;
+    height: 80vh;
+}
+
+.modal-msg-editor .msg-tabs {
+    margin-top: 20px;
+}
+
+.modal-msg-editor .row, .modal-msg-editor .col-sm-12 {
+    height: 100%;
+}
+
+.modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"], .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody !== undefined && message.messageBody !== null"] {
+    height: calc(100% - 260px);
+}
+
+.modal-msg-editor textarea {
+    height: 100%;
+    margin-top: 20px;
+}
+
+.modal-msg-editor tr td:first-child {
+    padding-top: 15px;
+    padding-left: 0;
+    width: 30%;
+}
+
+.modal-msg-editor tr td:first-child i.fa {
+    font-size: 18px;
+    padding-left: 6px;
+    position: relative;
+    top: 1px;
+}
+
+.modal-msg-editor tr td:first-child i.fa.fa-exclamation-triangle {
+    color: #FF9000 ;
+}
+
+.modal-msg-editor tr td:first-child i.fa.fa-pencil {
+    color: #8543E9 !important;
+}
+
+.modal-msg-editor tr td:nth-child(3) {
+    width: 60px;
+    padding: 12px 0 0 10px;
+}
+
+.modal-msg-editor tr td:nth-child(3) a {
+    font-size: 18px;
+}
+
+.modal-msg-editor tr td:nth-child(3) a:hover {
+    cursor: pointer;
+}
+
+.modal-msg-editor tr td:nth-child(3) i.fa.fa-trash {
+    color: #555;
+    margin-right: 10px;
+}
+
+.modal-msg-editor tr td:nth-child(3) i.fa.fa-undo {
+    color: #00a3c4;
+}
+
+.modal-msg-editor tr td:nth-child(3) i.fa:hover {
+    opacity: 0.8;
+}
+
+.modal .btn.btn-primary {
+    padding: 8px 20px;
+}
+
+.modal-footer .btn + .btn {
+    margin-bottom: 0;
+    margin-left: 5px;
+}
+
+.modal-footer {
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #e5e5e5;
+}
+
+.modal-container .btn {
+    font-size: 14px;
+}
+
+.form-control {
+    font-size: 14px;
+}
+

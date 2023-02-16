@@ -126,7 +126,7 @@ onMounted(() => {
       <template v-if="!connectionState.unableToConnect">
         <section>
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-12">
               <p class="screen-intro">
                 Configure notifications for health checks built into
                 ServiceControl (low disk space, stale database indexes, and
@@ -135,11 +135,11 @@ onMounted(() => {
             </div>
           </div>
           <div class="notifications row">
-            <div class="col-sm-12">
+            <div class="col-12">
               <div class="row box box-no-click">
-                <div class="col-sm-12 no-side-padding">
+                <div class="col-12 no-side-padding">
                   <div class="row">
-                    <div class="col-xs-1">
+                    <div class="col-1">
                       <div class="onoffswitch">
                         <input
                           type="checkbox"
@@ -165,7 +165,7 @@ onMounted(() => {
                     </div>
                     <div class="col-xs-9 col-sm-10 col-lg-11">
                       <div class="row box-header">
-                        <div class="col-xs-12">
+                        <div class="col-12">
                           <p class="lead">Email notifications</p>
                           <p class="endpoint-metadata">
                             <button
@@ -252,6 +252,7 @@ onMounted(() => {
     -moz-user-select: none;
     -ms-user-select: none;
     -webkit-user-select: none;
+    user-select: none;
     position: relative;
     width: 76px;
 }
@@ -325,5 +326,65 @@ onMounted(() => {
 
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
   right: 0px;
+}
+
+.box-header {
+  padding-bottom: 3px;
+  padding-top: 2px;
+}
+
+.box-header ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.lead {
+  -ms-word-wrap: break-word;
+  word-wrap: break-word;
+  color: #181919 !important;
+  font-size: 14px !important;
+  font-weight: bold;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+p.endpoint-metadata {
+  display: inline-block;
+  margin-top: 4px;
+  padding-right: 30px;
+}
+
+.endpoint-metadata sp-moment {
+  padding-top: 0;
+}
+
+.endpoint-metadata button i {
+  color: #00a3c4;
+  margin-right: 4px;
+}
+
+.btn-sm {
+  color: #00a3c4;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 0 36px 10px 0;
+  text-decoration: none;
+}
+
+.btn-connection-test {
+  margin-top: 25px;
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
+
+.notifications .btn-sm {
+  padding: 0px;
+}
+
+.notifications .connection-test {
+  top: 2px;
 }
 </style>
