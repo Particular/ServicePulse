@@ -21,6 +21,8 @@ jobs:
         uses: actions/setup-dotnet@v3.0.3
         with:
           dotnet-version: 5.0.x
+      - name: Add NODE_OPTIONS to ENVVARS
+        run: export NODE_OPTIONS=--openssl-legacy-provider
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.3
       - name: AngularJs - Install Host npm packages
