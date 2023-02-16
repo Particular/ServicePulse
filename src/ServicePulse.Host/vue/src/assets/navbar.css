@@ -39,6 +39,7 @@
     position: relative;
     display: block;
     padding: 10px 15px 15px 10px;
+    color: var(--bs-link-color);
 }
 
 .navbar-nav > li > a > span.no-margin {
