@@ -37,3 +37,16 @@ h5.nav-item {
     margin-bottom: 5px;
     padding: 20px;
 }
+
+.box-no-click {
+    background: none;
+    border-bottom: 1px solid #ced6d3;
+    border-left: none;
+    border-right: none;
+    cursor: default;
+}
+
+.no-side-padding {
+    padding-right: 0;
+    padding-left: 0;
+}
