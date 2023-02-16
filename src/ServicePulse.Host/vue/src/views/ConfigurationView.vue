@@ -120,20 +120,4 @@ onMounted(() => {
 </template>
 
 <style>
-
-.license-info {
-  font-size: 16px;
-  padding: 2em;
-  line-height: 3em;
-}
-
-.license-install-info li {
-  line-height: 1em;
-}
-
-.need-help {
-  margin-top: 38px;
-  padding-top: 20px;
-  border-top: 2px solid #F2F2F2;
-}
 </style>
