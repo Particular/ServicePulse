@@ -26,6 +26,14 @@ const router = createRouter({
       },
     },
     {
+      path: "/failed-messages/message/:messageId",
+      name: "message",
+      component: () => import("../views/MessageView.vue"),
+      meta: {
+        title: "Message • ServicePulse",
+      },
+    },
+    {
       path: "/configuration",
       name: "configuration",
       // route level code-splitting
