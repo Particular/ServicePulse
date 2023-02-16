@@ -15,4 +15,4 @@ ServicePulse.Host/app/bower_components
 _Chutzpah.*/	
 
 # Webpack results	
-ServicePulse.Host/app/modules/dist/
+ServicePulse.Host/angular/app/modules/dist
