@@ -60,35 +60,7 @@ function saveDeleteNote(groupId) {
   });
 }
 
-// create comment note
-function saveCreatedNote(group) {
-  noteSaveSuccessful.value = null;
-  showEditNoteModal.value = false;
-
-  useEditOrCreateNote(group.groupid, group.comment).then((result) => {
-    if (result.message === "success") {
-      noteSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Note created successfully");
-      getExceptionGroups(); //reload the groups
-    } else {
-      noteSaveSuccessful.value = false;
-      useShowToast(
-        "error",
-        "Error",
-        "Failed to create a Note:" + result.message
-      );
-    }
-  });
-}
-
-function editNote(group) {
-  noteSaveSuccessful.value = null;
-  selectedGroup.value.groupid = group.id;
-  selectedGroup.value.comment = group.comment;
-  showEditNoteModal.value = true;
-}
-
-function saveEditedNote(group) {
+function saveNote(group) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
 
@@ -102,6 +74,21 @@ function saveEditedNote(group) {
       useShowToast("error", "Error", "Failed to update Note:" + result.message);
     }
   });
+}
+
+function saveCreatedNote(group) {
+  saveNote(group);
+}
+
+function saveEditedNote(group) {
+  saveNote(group);
+}
+
+function editNote(group) {
+  noteSaveSuccessful.value = null;
+  selectedGroup.value.groupid = group.id;
+  selectedGroup.value.comment = group.comment;
+  showEditNoteModal.value = true;
 }
 
 onMounted(() => {
