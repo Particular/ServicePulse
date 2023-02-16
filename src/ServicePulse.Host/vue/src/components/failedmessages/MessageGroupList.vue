@@ -2,17 +2,12 @@
 import { ref, onMounted } from "vue";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
-
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import { useShowToast } from "../../composables/toast.js";
-import {
-  useDeleteNote,
-  useEditOrCreateNote,
-  useGetExceptionGroups,
-} from "../../composables/serviceMessageGroup.js";
-const exceptionGroups = ref([]);
+import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, } from "../../composables/serviceMessageGroup.js";
 
+const exceptionGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
@@ -27,6 +22,7 @@ const noteSaveSuccessful = ref(null);
 
 function getExceptionGroups() {
   exceptionGroups.value = [];
+
   return useGetExceptionGroups().then((result) => {
     exceptionGroups.value = result;
   });
@@ -35,6 +31,7 @@ function getExceptionGroups() {
 function initialLoad() {
   loadingData.value = true;
   initialLoadComplete.value = false;
+
   getExceptionGroups().then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
@@ -42,15 +39,15 @@ function initialLoad() {
   });
 }
 
-//delete comment note
-    function deleteNote(group) {
-        alert("from grouplist vue");
+function deleteNote(group) {
   noteSaveSuccessful.value = null;
   selectedGroup.value.groupid = group.id;
   showDeleteNoteModal.value = true;
 }
+
 function saveDeleteNote(groupId) {
   showDeleteNoteModal.value = false;
+
   useDeleteNote(groupId).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -64,10 +61,10 @@ function saveDeleteNote(groupId) {
 }
 
 // create comment note
-
 function saveCreatedNote(group) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
+
   useEditOrCreateNote(group.groupid, group.comment).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -84,16 +81,17 @@ function saveCreatedNote(group) {
   });
 }
 
-//edit comment note
 function editNote(group) {
   noteSaveSuccessful.value = null;
   selectedGroup.value.groupid = group.id;
   selectedGroup.value.comment = group.comment;
   showEditNoteModal.value = true;
 }
+
 function saveEditedNote(group) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
+
   useEditOrCreateNote(group.groupid, group.comment).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -110,54 +108,36 @@ onMounted(() => {
   initialLoad();
 });
 </script>
+
 <template>
   <div class="messagegrouplist">
     <div class="row">
       <div class="col-sm-12 toolbar-menus no-side-padding">
         <div class="msg-group-menu dropdown">
           <label class="control-label">Group by:</label>
-          <button
-            type="button"
-            class="btn btn-default dropdown-toggle sp-btn-menu"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
+          <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             vm.selectedClassification
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
             <li ng-repeat="classifier in vm.availableClassifiers">
-              <a href="#/failed-messages/groups?groupBy={{classifier}}"
-                >classifier</a
-              >
+              <a href="#/failed-messages/groups?groupBy={{classifier}}">classifier</a>
             </li>
           </ul>
         </div>
 
         <div class="msg-group-menu dropdown">
           <label class="control-label">Sort by:</label>
-          <button
-            type="button"
-            class="btn btn-default dropdown-toggle sp-btn-menu"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
+          <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             vm.selectedSort
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" ng-for="sort in sortSelectors">
             <li>
-              <a href="#/failed-messages/groups?sortBy={{sort.description}}"
-                >sort.description</a
-              >
+              <a href="#/failed-messages/groups?sortBy={{sort.description}}">sort.description</a>
             </li>
             <li ng-repeat-end>
-              <a
-                href="#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc"
-                >sort.description <span>(Descending)</span></a
-              >
+              <a href="#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">sort.description <span>(Descending)</span></a>
             </li>
           </ul>
         </div>
@@ -167,11 +147,7 @@ onMounted(() => {
     <div class="row">
       <div class="col-sm-12">
         <busy v-show="loadingData" message="fetching more messages"></busy>
-        <no-data
-          v-if="exceptionGroups.length === 0 && !loadingData"
-          title="message groups"
-          message="There are currently no grouped message failures"
-        ></no-data>
+        <no-data v-if="exceptionGroups.length === 0 && !loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
       </div>
     </div>
 
@@ -186,17 +162,13 @@ onMounted(() => {
             ng-click="vm.viewExceptionGroup(group)"
             ng-disabled="group.count == 0"
             ng-mouseenter="group.hover2 = true"
-            ng-mouseleave="group.hover2 = false"
-          >
+            ng-mouseleave="group.hover2 = false">
             <div class="col-sm-12 no-mobile-side-padding">
               <div class="row">
                 <div class="col-sm-12 no-side-padding">
                   <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
-                      <p
-                        class="lead break"
-                        ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}"
-                      >
+                      <p class="lead break" ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}">
                         {{ group.title }}
                       </p>
                       <p
@@ -205,10 +177,7 @@ onMounted(() => {
                       >
                         <span class="metadata">
                           <i aria-hidden="true" class="fa fa-envelope"></i>
-                          {{ group.count }} message<span
-                            v-show="group.count > 1"
-                            >s</span
-                          >
+                          {{ group.count }} message<span v-show="group.count > 1">s</span>
                           <span v-show="group.operation_remaining_count > 0">
                             (currently retrying group.operation_remaining_count
                             | number)
@@ -230,17 +199,12 @@ onMounted(() => {
                         <span class="metadata">
                           <i aria-hidden="true" class="fa fa-repeat"></i> Last
                           retried:
-                          <time-since
-                            :date-utc="group.last_operation_completion_time"
-                          ></time-since>
+                          <time-since :date-utc="group.last_operation_completion_time"></time-since>
                         </span>
                       </p>
                     </div>
                   </div>
-                  <div
-                    class="row"
-                    ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)"
-                  >
+                  <div class="row" ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                     <div class="col-sm-12 no-side-padding">
                       <div class="note" v-show="group.comment">
                         <span>
@@ -249,10 +213,7 @@ onMounted(() => {
                       </div>
                     </div>
                   </div>
-                  <div
-                    class="row"
-                    ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)"
-                  >
+                  <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
                     <div class="col-sm-12 no-side-padding">
                       <button
                         type="button"
@@ -264,11 +225,7 @@ onMounted(() => {
                         confirm-title="Are you sure you want to retry this group?"
                         confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?"
                       >
-                        <i
-                          aria-hidden="true"
-                          class="fa fa-repeat no-link-underline"
-                          >&nbsp;</i
-                        >Request retry
+                        <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
                       </button>
                       <button
                         type="button"
@@ -280,47 +237,16 @@ onMounted(() => {
                         confirm-title="Are you sure you want to delete this group?"
                         confirm-message="Messages that are deleted will be cleaned up according to the ServiceControl retention policy, and aren't available for retrying unless they're restored."
                       >
-                        <i
-                          aria-hidden="true"
-                          class="fa fa-trash no-link-underline"
-                          >&nbsp;</i
-                        >Delete group
+                        <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp;</i>Delete group
                       </button>
-                      <button
-                        type="button"
-                        class="btn btn-link btn-sm"
-                        v-if="!group.comment"
-                        @click="editNote(group)"
-                      >
-                        <i
-                          aria-hidden="true"
-                          class="fa fa-sticky-note no-link-underline"
-                          >&nbsp;</i
-                        >Add note
+                      <button type="button" class="btn btn-link btn-sm" v-if="!group.comment" @click="editNote(group)">
+                        <i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note
                       </button>
-                      <button
-                        type="button"
-                        class="btn btn-link btn-sm"
-                        v-if="group.comment"
-                        @click="editNote(group)"
-                      >
-                        <i
-                          aria-hidden="true"
-                          class="fa fa-pencil no-link-underline"
-                          >&nbsp;</i
-                        >Edit note
+                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="editNote(group)">
+                        <i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note
                       </button>
-                      <button
-                        type="button"
-                        class="btn btn-link btn-sm"
-                        v-if="group.comment"
-                        @click="deleteNote(group)"
-                      >
-                        <i
-                          aria-hidden="true"
-                          class="fa fa-eraser no-link-underline"
-                          >&nbsp;</i
-                        >Remove note
+                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="deleteNote(group)">
+                        <i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp;</i>Remove note
                       </button>
                     </div>
                   </div>

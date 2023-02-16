@@ -1,13 +1,12 @@
 <script setup>
-    const emit = defineEmits(["deleteNoteConfirmed", "cancelDeleteNote"]);
-
+const emit = defineEmits(["deleteNoteConfirmed", "cancelDeleteNote"]);
 const settings = defineProps({
-        groupid: String,
-        comment: String,
+  groupid: String,
+  comment: String,
 });
 
-    function deleteNote() {
-    emit("deleteNoteConfirmed", settings.groupid);
+function deleteNote() {
+  emit("deleteNoteConfirmed", settings.groupid);
 }
 
 function close() {
@@ -37,6 +36,7 @@ function close() {
     </div>
   </div>
 </template>
+
 <style>
 .modal-mask {
   position: fixed;

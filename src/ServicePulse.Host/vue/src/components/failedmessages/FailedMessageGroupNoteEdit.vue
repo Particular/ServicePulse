@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
-    const emit = defineEmits(["createNoteConfirmed", "editNoteConfirmed", "cancelEditNote"]);
 
+const emit = defineEmits(["createNoteConfirmed", "editNoteConfirmed", "cancelEditNote"]);
 const settings = defineProps({
   groupid: String,
   comment: String,
@@ -55,18 +55,10 @@ function close() {
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              v-if="settings.comment"
-              class="btn btn-primary"
-              @click="editNote"
-            >
+            <button v-if="settings.comment" class="btn btn-primary" @click="editNote">
               Modify
             </button>
-            <button
-              v-if="!settings.comment"
-              class="btn btn-primary"
-              @click="createNote"
-            >
+            <button v-if="!settings.comment" class="btn btn-primary" @click="createNote">
               Create
             </button>
             <button class="btn btn-default" @click="close">Cancel</button>
