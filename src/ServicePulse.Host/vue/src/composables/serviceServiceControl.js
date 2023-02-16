@@ -153,6 +153,7 @@ export function useServiceControlStats() {
   const failedCustomChecksResult = getFailedCustomChecksCount();
   const archivedMessagesResult = getArchivedMessagesCount();
 
+
   return Promise.all([
     failedHeartBeatsResult,
     failedMessagesResult,
@@ -416,6 +417,7 @@ function getFailedCustomChecksCount() {
     (response) => parseInt(response.headers.get("Total-Count"))
   );
 }
+
 
 function getMonitoredEndpoints() {
   return fetchWithErrorHandling(

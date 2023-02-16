@@ -23,6 +23,8 @@ jobs:
           dotnet-version: 5.0.x
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.3
+      - name: Add NODE_OPTIONS to ENVVARS # Must do this after Add msbuild to PATH as Add msbuild to PATH uses node v16 which will cause this to fail
+        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $env:GITHUB_ENV
       - name: AngularJs - Install Host npm packages
         run: npm run load
         working-directory: src/ServicePulse.Host/angular
@@ -32,6 +34,8 @@ jobs:
       - name: Build AngularJS and Vue.js
         run: PowerShell -File .\build.ps1
         working-directory: src/ServicePulse.Host
+      - name: Add NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
+        run: echo "NODE_OPTIONS=" >> $env:GITHUB_ENV
       - name: Build
         run: msbuild src -p:Configuration=Release -restore -m
       - name: Upload assets

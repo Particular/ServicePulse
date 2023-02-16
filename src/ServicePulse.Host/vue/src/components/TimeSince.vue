@@ -10,6 +10,7 @@ const props = defineProps({
 });
 
 var interval = null;
+
 const title = ref(),
   text = ref();
 
@@ -26,15 +27,14 @@ function updateText() {
     text.value = "n/a";
     title.value = "n/a";
   }
+
 }
 
 onMounted(() => {
   interval = setInterval(function () {
     updateText();
   }, 5000);
-  if (props.dateUtc) {
-    updateText();
-  }
+  updateText();
 });
 
 onUnmounted(() => clearInterval(interval));
