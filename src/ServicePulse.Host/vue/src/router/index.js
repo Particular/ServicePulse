@@ -26,7 +26,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/failed-messages/message/:messageId",
+      path: "/failed-messages/message/:id",
       name: "message",
       component: () => import("../views/MessageView.vue"),
       meta: {
