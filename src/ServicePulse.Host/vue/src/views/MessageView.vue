@@ -1,15 +1,36 @@
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import { connectionState } from "../composables/serviceServiceControl";
 import stackTrace from "../components/message/StackTrace.vue";
+import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 
-const routes = [{
-  path: '/failed-messages/message/:messageId',
-  "stack-trace": { component: stackTrace, title: "Stack Trace" },
-}];
+const route = useRoute();
+const id = route.params.id;
+
+const routes = [
+  {
+    path: "/failed-messages/message/:id",
+  },
+  {
+    "stack-trace": { component: stackTrace, title: "Stack Trace" },
+  },
+];
+
+const messageErrorDetails = ref([]);
+
+function getMessageErrorDetails() {
+  return useFetchFromServiceControl("errors/last/" + id)
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      messageErrorDetails.value = [];
+      messageErrorDetails.value = data;
+    });
+}
 
 const currentPath = ref(window.location.hash);
-//const redirectCount = ref(0);
 window.addEventListener("hashchange", () => {
   currentPath.value = window.location.hash;
 });
@@ -23,7 +44,6 @@ const currentView = computed(() => {
 });
 const currentEvents = ref({});
 watch(currentPath, async () => {
-  // setupEvents(newValue);
   if (routes[currentPath.value.slice(1) || "/"]) {
     document.title =
       routes[currentPath.value.slice(1) || "/"].title +
@@ -32,6 +52,7 @@ watch(currentPath, async () => {
 });
 
 onMounted(() => {
+  getMessageErrorDetails();
   const path = currentPath.value.slice(1) || "/";
   if (
     path === "/" &&
@@ -47,7 +68,7 @@ onMounted(() => {
   <div class="container">
     <div class="row">
       <div class="col-sm-12">
-        <h1>{Msg 1} {{ $route.params.messageId }}</h1>
+        <h1>{{ messageErrorDetails.message_type }}</h1>
       </div>
     </div>
     <div class="row">
@@ -61,7 +82,9 @@ onMounted(() => {
                 !connectionState.connectedRecently,
             }"
           >
-            <a href="#stack-trace">Stack Trace</a>
+            <a href="#stack-trace"
+              >Stack Trace {{ messageErrorDetails }}</a
+            >
           </h5>
           <h5
             :class="{
