@@ -1,6 +1,7 @@
 @import 'bootstrap/dist/css/bootstrap.css';
-@import 'navbar.css';
 @import 'font-awesome/css/font-awesome.css';
+@import 'navbar.css';
+@import 'tabs.css';
 
 .Vue-Toastification__container.toast-container {
     width: 400px;    
@@ -25,11 +26,11 @@
     height: 100%;
 }
 
-
 .Vue-Toastification__toast--default.vue-toast {
     background-color: #030303;
     vertical-align: top;
 }
+
 .Vue-Toastification__toast--success.vue-toast {
     background-color: #00C468;
 }
@@ -51,6 +52,7 @@ body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 14px;
     line-height: 1.42857143;
+    background-color: #f2f6f7 !important;
 }
 
 .fa {
@@ -76,6 +78,34 @@ body {
     vertical-align: middle;
     background-color: #777777;
     border-radius: 10px;
+}
+
+.container {
+    width: 92%;
+    max-width: inherit;
+    padding: 0;
+}
+
+#main-content {
+    padding-top: 20px;
+}
+
+h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin: 0 0 32px;
+}
+
+a {
+    text-decoration: none;
+    color: #00a3c4;
+    outline: none;
+    border: none;
+}
+
+a:hover {
+    color: #00a3c4;
+    text-decoration: underline;
 }
 
 body {

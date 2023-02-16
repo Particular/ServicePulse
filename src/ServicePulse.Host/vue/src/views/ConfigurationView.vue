@@ -6,10 +6,7 @@ import EndpointConnection from "../components/configuration/EndpointConnection.v
 import HealthCheckNotifications from "../components/configuration/HealthCheckNotifications.vue";
 import RetryRedirects from "../components/configuration/RetryRedirects.vue";
 import { licenseStatus } from "../composables/serviceLicense.js";
-import {
-  connectionState,
-  monitoringConnectionState,
-} from "../composables/serviceServiceControl";
+import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
 import ExclamationMark from "../components/ExclamationMark.vue";
 
 const routes = {
@@ -91,67 +88,28 @@ onMounted(() => {
     </div>
     <div class="row">
       <div class="col-sm-12">
-        <div class="tabs">
-          <h5
-            :class="{
-              active: subIsActive('#license') || subIsActive(''),
-              disabled:
-                !connectionState.connected &&
-                !connectionState.connectedRecently,
-            }"
-          >
+        <div class="nav">
+          <h5 :class="{ active: subIsActive('#license') || subIsActive(''), disabled: !connectionState.connected && !connectionState.connectedRecently, }" class="nav-item">
             <a href="#license">License</a>
             <exclamation-mark :type="licenseStatus.warningLevel" />
           </h5>
-          <h5
-            v-if="!licenseStatus.isExpired"
-            :class="{
-              active: subIsActive('#health-check-notifications'),
-              disabled:
-                !connectionState.connected &&
-                !connectionState.connectedRecently,
-            }"
-          >
+          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#health-check-notifications'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
             <a href="#health-check-notifications">Health Check Notifications</a>
           </h5>
-          <h5
-            v-if="!licenseStatus.isExpired"
-            :class="{
-              active: subIsActive('#retry-redirects'),
-              disabled:
-                !connectionState.connected &&
-                !connectionState.connectedRecently,
-            }"
-          >
+          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#retry-redirects'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
             <a href="#retry-redirects"
               >Retry Redirects ({{ redirectCount }})
             </a>
           </h5>
-          <h5
-            v-if="!licenseStatus.isExpired"
-            :class="{ active: subIsActive('#connections') }"
-          >
+          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#connections') }" class="nav-item">
             <a href="#connections">
               Connections
-              <template
-                v-if="
-                  connectionState.unableToConnect ||
-                  monitoringConnectionState.unableToConnect
-                "
-              >
+              <template v-if="connectionState.unableToConnect || monitoringConnectionState.unableToConnect">
                 <span><i class="fa fa-exclamation-triangle"></i></span>
               </template>
             </a>
           </h5>
-          <h5
-            v-if="!licenseStatus.isExpired"
-            :class="{
-              active: subIsActive('#endpoint-connection'),
-              disabled:
-                !connectionState.connected &&
-                !connectionState.connectedRecently,
-            }"
-          >
+          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#endpoint-connection'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
             <a href="#endpoint-connection">Endpoint Connection</a>
           </h5>
         </div>
@@ -161,4 +119,21 @@ onMounted(() => {
   </div>
 </template>
 
-<style></style>
+<style>
+
+.license-info {
+  font-size: 16px;
+  padding: 2em;
+  line-height: 3em;
+}
+
+.license-install-info li {
+  line-height: 1em;
+}
+
+.need-help {
+  margin-top: 38px;
+  padding-top: 20px;
+  border-top: 2px solid #F2F2F2;
+}
+</style>
