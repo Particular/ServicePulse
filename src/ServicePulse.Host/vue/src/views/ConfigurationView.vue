@@ -177,4 +177,8 @@ div.btn-toolbar, div.form-inline {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+section[name="connections"] .box {
+  padding-bottom: 50px;
+}
 </style>
