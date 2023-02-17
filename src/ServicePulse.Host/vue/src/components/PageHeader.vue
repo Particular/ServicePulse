@@ -77,6 +77,10 @@ const displayDanger = computed(() => {
               <span class="navbar-label">Failed Messages</span>
               <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </RouterLink>
+                class="badge badge-important"
+                >{{ stats.number_of_failed_messages }}</span
+              >
+            </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/custom-checks') }">
             <a href="/a/#/custom-checks">
