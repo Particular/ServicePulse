@@ -1,5 +1,5 @@
 <script setup>
-    const emit = defineEmits(["deleteGroupConfirmed", "cancelDeleteGroup"]);
+const emit = defineEmits(["deleteGroupConfirmed", "cancelDeleteGroup"]);
 
 
 const settings = defineProps({
