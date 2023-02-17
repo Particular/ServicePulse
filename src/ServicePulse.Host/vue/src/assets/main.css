@@ -374,3 +374,37 @@ label {
     left: 1.2em;
     position: relative;
 }
+
+.btn-link:hover, .btn-link:focus {
+    color: #23527c;
+    text-decoration: underline;
+    background-color: transparent;
+}
+
+input.check-label {
+    margin: 4px 6px 0 0;
+    float: left;
+}
+
+.btn {
+    font-size: 14px;
+}
+
+.has-error .help-block,
+.has-error .control-label,
+.has-error .radio,
+.has-error .checkbox,
+.has-error .radio-inline,
+.has-error .checkbox-inline,
+.has-error.radio label,
+.has-error.checkbox label,
+.has-error.radio-inline label,
+.has-error.checkbox-inline label {
+    color: #a94442;
+}
+
+.control-label {
+    float: left;
+    padding-top: 7.5px;
+    margin-right: -10px;
+}
