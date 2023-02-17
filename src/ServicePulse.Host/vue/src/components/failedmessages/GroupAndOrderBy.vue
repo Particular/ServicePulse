@@ -2,7 +2,9 @@
 import { ref, onMounted } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 
+const selectedClassifier = ref(null);
 const classifiers = ref([]);
+const selectedSort = ref("Name");
 const sortOptions = [
   {
     description: "Name",
@@ -55,12 +57,12 @@ onMounted(() => {
   <div class="msg-group-menu dropdown">
     <label class="control-label">Group by:</label>
     <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      vm.selecteasddClassification
+      {{ selectedClassifier }}
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
       <li v-for="(classifier, index) in classifiers" :key="index">
-        <a href="#/failed-messages/groups?groupBy={{classifier}}">{{ classifier }}</a>
+        <a :href="'failed-messages#failed-message-groups/groups?groupBy=' + classifier">{{ classifier }}</a>
       </li>
     </ul>
   </div>
@@ -68,16 +70,16 @@ onMounted(() => {
   <div class="msg-group-menu dropdown">
     <label class="control-label">Sort by:</label>
     <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      vm.selectedSort
+      {{ selectedSort }}
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
       <span v-for="(sort, index) in sortOptions" :key="index">
         <li>
-          <a href="#/failed-messages/groups?sortBy={{sort.description}}">{{ sort.description }}</a>
+          <a :href="'failed-messages#failed-message-groups/groups?sortBy=' + sort.description">{{ sort.description }}</a>
         </li>
         <li>
-          <a href="#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">{{ sort.description }}<span> (Descending)</span></a>
+          <a :href="'failed-messages#failed-message-groups/groups?sortBy=' + sort.description + '&sortdir=desc'">{{ sort.description }}<span> (Descending)</span></a>
         </li>
       </span>
     </ul>
