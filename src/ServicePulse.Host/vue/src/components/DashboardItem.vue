@@ -7,14 +7,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <a
-    class="summary-item"
-    :class="{
-      'summary-danger': counter > 0,
-      'summary-info': counter === 0 || !counter,
-    }"
-    :href="url"
-  >
+  <a class="summary-item" :class="{ 'summary-danger': counter > 0, 'summary-info': counter === 0 || !counter, }" :href="url">
     <i class="fa fa-3x" :class="props.iconClass"> </i>
     <span v-if="counter > 0" class="badge badge-important">{{ counter }}</span>
     <h4>
