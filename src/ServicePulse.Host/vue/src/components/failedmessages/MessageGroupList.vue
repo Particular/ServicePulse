@@ -4,8 +4,12 @@ import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
+import FailedMessageGroupDelete from "./FailedMessageGroupDelete.vue";
+import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
-import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, } from "../../composables/serviceMessageGroup.js";
+import {
+        useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup,
+   } from "../../composables/serviceMessageGroup.js";
 
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
@@ -14,18 +18,46 @@ const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 
 const showDeleteNoteModal = ref(false);
 const showEditNoteModal = ref(false);
+const showDeleteGroupModal = ref(false);
 const selectedGroup = ref({
   groupid: "",
   comment: "",
 });
 const noteSaveSuccessful = ref(null);
+const groupDeleteSuccessful = ref(null);
+const isBeingArchived = ref(null);
+const isBeingRetried = ref(null);
 
 function getExceptionGroups() {
   exceptionGroups.value = [];
 
   return useGetExceptionGroups().then((result) => {
-    exceptionGroups.value = result;
+      exceptionGroups.value = result;
+      if (result.length > 0) {
+          // need a map in some ui state for controlling animations
+          exceptionGroups.value = result.map(initializeGroupState);
+          // exceptionGroups.sort(getSort());
+
+          if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
+              stats.number_of_exception_groups = exceptionGroups.value.length;
+              //notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
+          }
+      }
   });
+}
+function initializeGroupState(group) {
+    var operationStatus =
+        (group.operation_status ? group.operation_status.toLowerCase() : null) ||
+        "none";
+    if (operationStatus === "preparing" && group.operation_progress === 1) {
+        operationStatus = "queued";
+    }
+    group.workflow_state = createWorkflowState(
+        operationStatus,
+        group.operation_progress,
+        group.operation_failed
+    );
+    return group;
 }
 
 function initialLoad() {
@@ -38,7 +70,7 @@ function initialLoad() {
     emit("InitialLoadComplete");
   });
 }
-
+//delete comment note
 function deleteNote(group) {
   noteSaveSuccessful.value = null;
   selectedGroup.value.groupid = group.id;
@@ -60,10 +92,10 @@ function saveDeleteNote(groupId) {
   });
 }
 
+// create comment note
 function saveNote(group) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
-
   useEditOrCreateNote(group.groupid, group.comment).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -91,6 +123,105 @@ function editNote(group) {
   showEditNoteModal.value = true;
 }
 
+    //delete a group
+    var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivefinalizing', 'archivecompleted'];
+    function deleteGroup(group) {
+        groupDeleteSuccessful.value = null;
+        selectedGroup.value.groupid = group.id;
+        showDeleteGroupModal.value = true;
+    }
+    function saveDeleteGroup(group) {
+        showDeleteGroupModal.value = false;
+        group.workflow_state = { status: "archivestarted", message: 'Delete request initiated...' };
+
+        saveDeleteNote(group.id)
+        useArchiveExceptionGroup(group.groupid).then((result) => {
+            if (result.message === "success") {
+                groupDeleteSuccessful.value = true;
+                useShowToast("info", "Info", "Group deleted succesfully");
+                //notifier.notify('ArchiveGroupRequestAccepted', group);
+                this.emit('ArchiveGroupRequestAccepted', group);
+                // getExceptionGroups(); //reload the groups
+            } else {
+                groupDeleteSuccessful.value = false;
+                useShowToast(
+                    "error",
+                    "Error",
+                    "Failed to delete the group:" + result.message
+                );
+            }
+        });
+    }
+
+
+
+    //create workflow state
+    function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
+        if (optionalTotal && optionalTotal <= 1) {
+            optionalTotal = optionalTotal * 100;
+        }
+        return {
+            status: optionalStatus || "working",
+            total: optionalTotal || 0,
+            failed: optionalFailed || false,
+        };
+    }
+
+    //getClassesForArchiveOperation
+    function getClassesForArchiveOperation(stepStatus, currentStatus) {
+        return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
+    };
+
+    //getClasses
+    var getClasses = function (stepStatus, currentStatus, statusArray) {
+        var indexOfStep = statusArray.indexOf(stepStatus);
+        var indexOfCurrent = statusArray.indexOf(currentStatus);
+        if (indexOfStep > indexOfCurrent) {
+            return 'left-to-do';
+        } else if (indexOfStep === indexOfCurrent) {
+            return 'active';
+        } else {
+            return 'completed';
+        }
+    };
+
+    var archiveOperationEventHandler = function (data, status) {
+        var group = exceptionGroups.filter(function (item) { return item.id === data.request_id });
+
+        group.forEach(function (item) {
+            item
+                .workflow_state =
+                createWorkflowState(status,
+                    data.progress.percentage);
+
+            item.operation_remaining_count = data.progress.messages_remaining;
+            item.operation_messages_completed_count = data.progress.number_of_messages_archived;
+            item.operation_start_time = data.start_time;
+
+            if (status === "archivecompleted") {
+                item.operation_completion_time = data.completion_time;
+                item.need_user_acknowledgement = true;
+            }
+        });
+    };
+
+
+isBeingArchived.value = function (status) {
+    return (
+        status === "archivestarted" ||
+        status === "archiveprogressing" ||
+        status === "archivefinalizing" ||
+        status === "archivecompleted"
+    );
+};
+isBeingRetried.value = function (group) {
+    return (
+        group.workflow_state.status !== "none" &&
+        (group.workflow_state.status !== "completed" ||
+            group.need_user_acknowledgement === true) &&
+        !isBeingArchived(group.workflow_state.status)
+    );
+};
 onMounted(() => {
   initialLoad();
 });
@@ -152,92 +283,168 @@ onMounted(() => {
             ng-mouseleave="group.hover2 = false">
             <div class="col-sm-12 no-mobile-side-padding">
               <div class="row">
-                <div class="col-sm-12 no-side-padding">
-                  <div class="row box-header">
-                    <div class="col-sm-12 no-side-padding">
-                      <p class="lead break" ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}">
-                        {{ group.title }}
-                      </p>
-                      <p
-                        class="metadata"
-                        ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)"
-                      >
-                        <span class="metadata">
-                          <i aria-hidden="true" class="fa fa-envelope"></i>
-                          {{ group.count }} message<span v-show="group.count > 1">s</span>
-                          <span v-show="group.operation_remaining_count > 0">
-                            (currently retrying group.operation_remaining_count
-                            | number)
-                          </span>
-                        </span>
+                  <div class="col-sm-12 no-side-padding">
+                      <div class="row box-header">
+                          <div class="col-sm-12 no-side-padding">
+                              <p class="lead break" ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}">
+                                  {{ group.title }}
+                              </p>
+                              <p class="metadata"
+                                 ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
+                                  <span class="metadata">
+                                      <i aria-hidden="true" class="fa fa-envelope"></i>
+                                      {{ group.count }} message<span v-show="group.count > 1">s</span>
+                                      <span v-show="group.operation_remaining_count > 0">
+                                          (currently retrying group.operation_remaining_count
+                                          | number)
+                                      </span>
+                                  </span>
 
-                        <span class="metadata">
-                          <i aria-hidden="true" class="fa fa-clock-o"></i>
-                          First failed:
-                          <time-since :date-utc="group.first"></time-since>
-                        </span>
+                                  <span class="metadata">
+                                      <i aria-hidden="true" class="fa fa-clock-o"></i>
+                                      First failed:
+                                      <time-since :date-utc="group.first"></time-since>
+                                  </span>
 
-                        <span class="metadata">
-                          <i aria-hidden="true" class="fa fa-clock-o"></i> Last
-                          failed:
-                          <time-since :date-utc="group.last"></time-since>
-                        </span>
+                                  <span class="metadata">
+                                      <i aria-hidden="true" class="fa fa-clock-o"></i> Last
+                                      failed:
+                                      <time-since :date-utc="group.last"></time-since>
+                                  </span>
 
-                        <span class="metadata">
-                          <i aria-hidden="true" class="fa fa-repeat"></i> Last
-                          retried:
-                          <time-since :date-utc="group.last_operation_completion_time"></time-since>
-                        </span>
-                      </p>
-                    </div>
-                  </div>
-                  <div class="row" ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
-                    <div class="col-sm-12 no-side-padding">
-                      <div class="note" v-show="group.comment">
-                        <span>
-                          <strong>NOTE:</strong> {{ group.comment }}
-                        </span>
+                                  <span class="metadata">
+                                      <i aria-hidden="true" class="fa fa-repeat"></i> Last
+                                      retried:
+                                      <time-since :date-utc="group.last_operation_completion_time"></time-since>
+                                  </span>
+                              </p>
+                          </div>
                       </div>
-                    </div>
+                      <div class="row" ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
+                          <div class="col-sm-12 no-side-padding">
+                              <div class="note" v-show="group.comment">
+                                  <span>
+                                      <strong>NOTE:</strong> {{ group.comment }}
+                                  </span>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
+                          <div class="col-sm-12 no-side-padding">
+                              <button type="button"
+                                      class="btn btn-link btn-sm"
+                                      confirm-click="vm.retryExceptionGroup(group, $event)"
+                                      ng-disabled="group.count == 0 || vm.isBeingRetried(group)"
+                                      ng-mouseenter="group.hover3 = true"
+                                      ng-mouseleave="group.hover3 = false"
+                                      confirm-title="Are you sure you want to retry this group?"
+                                      confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
+                                  <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
+                              </button>
+
+                              <button type="button"
+                                      class="btn btn-link btn-sm"
+                                     ng-disabled="group.count == 0 || isBeingRetried(group)"
+                                      @mouseenter="group.hover3 = true"
+                                      @mouseleave="group.hover3 = false"
+                                      v-if="exceptionGroups.length > 0"
+                                      @click="deleteGroup(group)">
+                                  <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp;</i>Delete group
+                              </button>
+                              <button type="button" class="btn btn-link btn-sm" v-if="!group.comment" @click="editNote(group)">
+                                  <i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note
+                              </button>
+                              <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="editNote(group)">
+                                  <i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note
+                              </button>
+                              <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="deleteNote(group)">
+                                  <i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp;</i>Remove note
+                              </button>
+                          </div>
+                      </div>
+
+                      <!--isBeingArchived-->
+                      <div class="row"
+                           v-show="isBeingArchived(group.workflow_state.status)">
+                          <div class="col-sm-12 no-side-padding">
+                              <div class="panel panel-default panel-retry">
+                                  <div class="panel-body">
+                                      <ul class="retry-request-progress">
+                                          <li>TEST workflow_state.status: {{group.workflow_state.status}}: </li>
+                                          <li v-hide="group.workflow_state.status === 'archivecompleted'"
+                                              v-bind:class="getClassesForArchiveOperation('archivestarted', group.workflow_state.status)">
+                                              <div class="bulk-retry-progress-status">
+                                                  Initialize delete request...
+                                              </div>
+                                          </li>
+                                          <li v-hide="group.workflow_state.status === 'archivecompleted'"
+                                              v-bind:class="getClassesForArchiveOperation('archiveprogressing', group.workflow_state.status)">
+                                              <div class="row">
+                                                  <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                      <div class="bulk-retry-progress-status">
+                                                          Delete request in progress...
+                                                      </div>
+                                                  </div>
+
+                                                  <div class="col-xs-12 col-sm-6">
+                                                      <div class="progress bulk-retry-progress"
+                                                           v-show="group.workflow_state.status === 'archiveprogressing'">
+                                                          <div class="progress-bar progress-bar-striped active"
+                                                               role="progressbar"
+                                                               aria-valuenow="{{group.workflow_state.total}}"
+                                                               aria-valuemin="0"
+                                                               aria-valuemax="100"
+                                                               ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                              group.workflow_state.total | number : 0 %
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </li>
+                                          <li v-hide="group.workflow_state.status === 'archivecompleted'"
+                                              v-bind:class="getClassesForArchiveOperation('archivefinalizing', group.workflow_state.status)">
+                                              <div class="row">
+                                                  <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                      <div class="bulk-retry-progress-status">
+                                                          Cleaning up...
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </li>
+                                          <li v-show="group.workflow_state.status === 'archivecompleted'">
+                                              <div class="retry-completed bulk-retry-progress-status">
+                                                  Delete request completed
+                                              </div>
+                                              <button type="button"
+                                                      class="btn btn-default btn-primary btn-xs btn-retry-dismiss"
+                                                      v-show="group.need_user_acknowledgement == true"
+                                                      ng-click="acknowledgeArchiveGroup(group, $event)">
+                                                  Dismiss
+                                              </button>
+                                          </li>
+                                      </ul>
+
+                                      <div class="op-metadata">
+                                          <span class="metadata">
+                                              <i aria-hidden="true" class="fa fa-clock-o"></i>
+                                              Delete request started: <time-since :date-utc="group.operation_start_time"></time-since>
+                                          </span>
+                                          <span class="metadata">
+                                              <i aria-hidden="true" class="fa fa-envelope"></i>
+                                              Messages left to delete:
+                                              {{(group.operation_remaining_count || 0) | number}}
+                                          </span>
+                                          <span class="metadata">
+                                              <i aria-hidden="true" class="fa fa-envelope"></i>
+                                              Messages deleted:
+                                              {{(group.operation_remaining_count || 0) | number}}
+                                          </span>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
                   </div>
-                  <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
-                    <div class="col-sm-12 no-side-padding">
-                      <button
-                        type="button"
-                        class="btn btn-link btn-sm"
-                        confirm-click="vm.retryExceptionGroup(group, $event)"
-                        ng-disabled="group.count == 0 || vm.isBeingRetried(group)"
-                        ng-mouseenter="group.hover3 = true"
-                        ng-mouseleave="group.hover3 = false"
-                        confirm-title="Are you sure you want to retry this group?"
-                        confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?"
-                      >
-                        <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-link btn-sm"
-                        confirm-click="vm.archiveExceptionGroup(group, $event)"
-                        ng-disabled="group.count == 0 || vm.isBeingRetried(group)"
-                        ng-mouseenter="group.hover3 = true"
-                        ng-mouseleave="group.hover3 = false"
-                        confirm-title="Are you sure you want to delete this group?"
-                        confirm-message="Messages that are deleted will be cleaned up according to the ServiceControl retention policy, and aren't available for retrying unless they're restored."
-                      >
-                        <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp;</i>Delete group
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm" v-if="!group.comment" @click="editNote(group)">
-                        <i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="editNote(group)">
-                        <i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note
-                      </button>
-                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="deleteNote(group)">
-                        <i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp;</i>Remove note
-                      </button>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -245,7 +452,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
-
+ <!--modal display - delete comment note-->
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteDelete
       v-if="showDeleteNoteModal === true"
@@ -255,6 +462,8 @@ onMounted(() => {
       @deleteNoteConfirmed="saveDeleteNote"
     ></FailedMessageGroupNoteDelete>
   </Teleport>
+
+  <!--modal display - create new/edit comment note-->
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteEdit
       v-if="showEditNoteModal === true"
@@ -264,6 +473,17 @@ onMounted(() => {
       @createNoteConfirmed="saveCreatedNote"
       @editNoteConfirmed="saveEditedNote"
     ></FailedMessageGroupNoteEdit>
+  </Teleport>
+
+  <!--modal display - delete group-->
+  <Teleport to="#modalDisplay">
+    <FailedMessageGroupDelete
+      v-if="showDeleteGroupModal === true"
+      v-bind="selectedGroup"
+      :group_id="selectedGroup.groupid"
+      @cancelDeleteGroup="showDeleteGroupModal = false"
+      @deleteGroupConfirmed="saveDeleteGroup"
+    ></FailedMessageGroupDelete>
   </Teleport>
 </template>
 
