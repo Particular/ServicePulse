@@ -5,6 +5,7 @@ import PageHeader from "./components/PageHeader.vue";
 import { useServiceControlUrls } from "./composables/serviceServiceControlUrls.js";
 import { useServiceControlVersion, useServiceControl } from "./composables/serviceServiceControl.js";
 import { useLicense } from "./composables/serviceLicense.js";
+import 'Bootstrap';
 
 useServiceControlUrls();
 useServiceControl();
