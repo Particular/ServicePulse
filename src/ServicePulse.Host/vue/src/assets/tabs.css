@@ -50,3 +50,55 @@ h5.nav-item {
     padding-right: 0;
     padding-left: 0;
 }
+
+.tabs {
+    border-bottom: 1px solid #E6E6E6;
+    padding: 0;
+    margin-bottom: -1px;
+}
+
+.tabs h5 {
+    display: inline;
+    padding-bottom: 10px;
+    margin-bottom: 0;
+}
+
+.tabs h5 a:hover {
+    text-decoration: none;
+}
+
+.tabs h5.active {
+    border-bottom: 3px solid #181919;
+    color: #181919;
+}
+
+.tabs h5.active a {
+    color: #181919;
+    text-decoration: none;
+}
+
+.tabs a {
+    color: #00a3c4;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.tabs a:hover {
+    color: #00729c;
+}
+
+.tabs h5.active > a:hover {
+    color: #181919;
+    cursor: default;
+    text-decoration: none;
+}
+
+.tabs h5.disabled > a {
+    color: #aaa;
+    cursor: default;
+    text-decoration: none;
+}
+
+.tabs h5.disabled > a:hover {
+    cursor: not-allowed;
+}
