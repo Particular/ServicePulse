@@ -24,7 +24,8 @@ const showDeleteGroupModal = ref(false);
 const showRetryGroupModal = ref(false);
 
 const selectedGroup = ref({
-  groupid: "",
+    groupid: "",
+    messagecount: "",
   comment: "",
 });
 const noteSaveSuccessful = ref(null);
@@ -180,6 +181,7 @@ function getClassesForArchiveOperation(stepStatus, currentStatus) {
 function retryGroup(group) {
     groupRetrySuccessful.value = null;
     selectedGroup.value.groupid = group.id;
+    selectedGroup.value.messagecount = group.count;
     showRetryGroupModal.value = true;
     }
 function saveRetryGroup(group) {

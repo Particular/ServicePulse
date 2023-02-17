@@ -5,7 +5,8 @@ const emit = defineEmits(["retryGroupConfirmed", "cancelRetryGroup"]);
 const settings = defineProps({
        groupid: String,
         workflow_state: [],
-        comment: String,
+    comment: String,
+    messagecount: String,
 });
 
 function retryGroup() {
@@ -29,7 +30,7 @@ function close() {
         <div class="modal-body">
             <p>
                 Retrying a whole group can take some time and put extra load on your system.
-                Are you sure you want to retry this group of ### messages?
+                Are you sure you want to retry this group of {{settings.messagecount}} messages?
             </p>
         </div>
         <div class="modal-footer">
