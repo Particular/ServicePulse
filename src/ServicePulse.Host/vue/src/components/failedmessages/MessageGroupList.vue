@@ -2,7 +2,6 @@
 import { ref, onMounted } from "vue";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
-    import BusyIndicator from "../BusyIndicator.vue"; //<busy-indicator v-show="loading"></busy-indicator>
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import FailedMessageGroupDelete from "./FailedMessageGroupDelete.vue";
@@ -145,8 +144,7 @@ function saveDeleteGroup(group) {
     useArchiveExceptionGroup(group.groupid).then((result) => {
         if (result.message === "success") {
             groupDeleteSuccessful.value = true;
-            //notifier.notify('ArchiveGroupRequestAccepted', group);
-            this.emit('ArchiveGroupRequestAccepted', group);
+            emit('ArchiveGroupRequestAccepted', group);
 
         } else {
             groupDeleteSuccessful.value = false;
@@ -185,14 +183,14 @@ function retryGroup(group) {
     showRetryGroupModal.value = true;
     }
 function saveRetryGroup(group) {
-        showRetryGroupModal.value = false;
+    showRetryGroupModal.value = false;
     group.workflow_state = { status: "waiting", message: 'Retry Group Request Enqueued...' };
 
-        saveDeleteNote(group.id)
+    saveDeleteNote(group.id)
     useRetryExceptionGroup(group.groupid).then((result) => {
             if (result.message === "success") {
                 groupRetrySuccessful.value = true;
-                this.emit('RetryGroupRequestAccepted', group);
+                emit('RetryGroupRequestAccepted', group);
 
             } else {
                 groupRetrySuccessful.value = false;
@@ -268,7 +266,9 @@ var acknowledgeGroup = function (group) {
             //$event.stopPropagation();
         });
 
-    };
+};
+
+
     //var archiveOperationEventHandler = function (data, status) {
     //    var group = exceptionGroups.filter(function (item) { return item.id === data.request_id });
 
@@ -383,7 +383,6 @@ onMounted(() => {
 
     <div class="row">
         <div class="col-sm-12">
-            <!--<busy-indicator v-show="loadingData"></busy-indicator>-->
             <no-data v-if="exceptionGroups.length === 0 && !loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
         </div>
     </div>
@@ -396,16 +395,15 @@ onMounted(() => {
             v-for="(group, index) in exceptionGroups"
             :key="index"
             v-show="exceptionGroups.length > 0"
-            ng-click="vm.viewExceptionGroup(group)"
-            ng-disabled="group.count == 0"
-            ng-mouseenter="group.hover2 = true"
-            ng-mouseleave="group.hover2 = false">
+            :disabled="group.count == 0"
+            @mouseenter="group.hover2 = true"
+            @mouseleave="group.hover2 = false">
             <div class="col-sm-12 no-mobile-side-padding">
               <div class="row">
                   <div class="col-sm-12 no-side-padding">
                       <div class="row box-header">
                           <div class="col-sm-12 no-side-padding">
-                              <p class="lead break" ng-class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}">
+                              <p class="lead break" v-bind:class="{'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3}">
                                   {{ group.title }}
                               </p>
                               <p class="metadata"
@@ -414,8 +412,7 @@ onMounted(() => {
                                       <i aria-hidden="true" class="fa fa-envelope"></i>
                                       {{ group.count }} message<span v-show="group.count > 1">s</span>
                                       <span v-show="group.operation_remaining_count > 0">
-                                          (currently retrying group.operation_remaining_count
-                                          | number)
+                                          (currently retrying {{group.operation_remaining_count}}
                                       </span>
                                   </span>
 
@@ -439,7 +436,8 @@ onMounted(() => {
                               </p>
                           </div>
                       </div>
-                      <div class="row" ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
+                      <!--v-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)"-->
+                      <div class="row" v-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                           <div class="col-sm-12 no-side-padding">
                               <div class="note" v-show="group.comment">
                                   <span>
@@ -452,7 +450,7 @@ onMounted(() => {
                           <div class="col-sm-12 no-side-padding">
                               <button type="button"
                                       class="btn btn-link btn-sm"
-                                      ng-disabled="group.count == 0 || isBeingRetried(group)"
+                                      :disabled="(group.count == 0 || isBeingRetried(group))"
                                       @mouseenter="group.hover3 = true"
                                       @mouseleave="group.hover3 = false"
                                       v-if="exceptionGroups.length > 0"
@@ -462,7 +460,7 @@ onMounted(() => {
 
                               <button type="button"
                                       class="btn btn-link btn-sm"
-                                      ng-disabled="group.count == 0 || isBeingRetried(group)"
+                                      :disabled="(group.count == 0 || isBeingRetried(group))"
                                       @mouseenter="group.hover3 = true"
                                       @mouseleave="group.hover3 = false"
                                       v-if="exceptionGroups.length > 0"
@@ -499,14 +497,14 @@ onMounted(() => {
 
                                                   <div class="col-xs-12 col-sm-6">
                                                       <div class="progress bulk-retry-progress" v-show="group.workflow_state.status === 'preparing'">
-                                                          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
-                                                              group.workflow_state.total | number : 0}}%
+                                                          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" :style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                              {{group.workflow_state.total}}%
                                                           </div>
                                                       </div>
                                                   </div>
                                               </div>
                                           </li>
-                                          <li v-hide="group.workflow_state.status === 'completed'"  v-bind:class="getClassesForRetryOperation('forwarding', group.workflow_state.status)">
+                                          <li v-hide="group.workflow_state.status === 'completed'" v-bind:class="getClassesForRetryOperation('forwarding', group.workflow_state.status)">
 
                                               <div class="row">
                                                   <div class="col-xs-9 col-sm-4 col-md-3 no-side-padding">
@@ -518,8 +516,8 @@ onMounted(() => {
                                                   <div class="col-xs-12 col-sm-6">
 
                                                       <div class="progress bulk-retry-progress" v-show="group.workflow_state.status === 'forwarding'">
-                                                          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
-                                                              group.workflow_state.total | number : 0}}%
+                                                          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" :style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                              {{group.workflow_state.total }}%
                                                           </div>
                                                       </div>
                                                   </div>
@@ -530,16 +528,16 @@ onMounted(() => {
                                               <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-show="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">
                                                   Dismiss
                                               </button>
-                                              <div class="danger sc-restart-warning" ng-show="{{group.workflow_state.failed}}">
+                                              <div class="danger sc-restart-warning" v-show="group.workflow_state.failed">
                                                   <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining messages.
                                               </div>
                                           </li>
                                       </ul>
 
                                       <div class="op-metadata">
-                                          <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.operation_remaining_count || group.count) | number}}</span>
+                                          <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.operation_remaining_count || group.count)}}</span>
                                           <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started:  <time-since :date-utc="group.operation_start_time"></time-since></span>
-                                          <span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed:  <time-since :date-utc="group.operation_completion_time"></time-since></span>
+                                          <span class="metadata" v-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed:  <time-since :date-utc="group.operation_completion_time"></time-since></span>
                                       </div>
                                   </div>
                               </div>
@@ -553,9 +551,6 @@ onMounted(() => {
                               <div class="panel panel-default panel-retry">
                                   <div class="panel-body">
                                       <ul class="retry-request-progress">
-                                          <li>TEST workflow_state.status: {{group.workflow_state.status}} isBeingArchived:{{isBeingArchived(group.workflow_state.status)}} </li>
-                                          <li>TEST group.workflow_state.total: {{group.workflow_state.total}}</li>
-                                          <li>TEST group.need_user_acknowledgement: {{group.need_user_acknowledgement}}</li>
                                           <li v-hide="group.workflow_state.status === 'archivecompleted'"
                                               v-bind:class="getClassesForArchiveOperation('archivestarted', group.workflow_state.status)">
                                               <div class="bulk-retry-progress-status">
@@ -578,8 +573,8 @@ onMounted(() => {
                                                                aria-valuenow="{{group.workflow_state.total}}"
                                                                aria-valuemin="0"
                                                                aria-valuemax="100"
-                                                               ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
-                                                              group.workflow_state.total | number : 0 %
+                                                               :style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                              {{ group.workflow_state.total}} %
                                                           </div>
                                                       </div>
                                                   </div>
@@ -616,12 +611,12 @@ onMounted(() => {
                                           <span class="metadata">
                                               <i aria-hidden="true" class="fa fa-envelope"></i>
                                               Messages left to delete:
-                                              {{(group.operation_remaining_count || 0) | number}}
+                                              {{(group.operation_remaining_count || 0)}}
                                           </span>
                                           <span class="metadata">
                                               <i aria-hidden="true" class="fa fa-envelope"></i>
                                               Messages deleted:
-                                              {{(group.operation_messages_completed_count || 0) | number}}
+                                              {{(group.operation_messages_completed_count || 0) }}
                                           </span>
                                       </div>
                                   </div>
