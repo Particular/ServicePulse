@@ -1,5 +1,5 @@
 <script setup>
-    const emit = defineEmits(["retryGroupConfirmed", "cancelRetryGroup"]);
+const emit = defineEmits(["retryGroupConfirmed", "cancelRetryGroup"]);
 
 
 const settings = defineProps({
