@@ -2,13 +2,16 @@
 import { ref, onMounted } from "vue";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
+    import BusyIndicator from "../BusyIndicator.vue"; //<busy-indicator v-show="loading"></busy-indicator>
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import FailedMessageGroupDelete from "./FailedMessageGroupDelete.vue";
+import FailedMessageGroupRetry from "./FailedMessageGroupRetry.vue";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import {
-        useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup,
+        useDeleteNote, useEditOrCreateNote, useGetExceptionGroups,
+        useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup
    } from "../../composables/serviceMessageGroup.js";
 
 const exceptionGroups = ref([]);
@@ -19,14 +22,17 @@ const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 const showDeleteNoteModal = ref(false);
 const showEditNoteModal = ref(false);
 const showDeleteGroupModal = ref(false);
+const showRetryGroupModal = ref(false);
+
 const selectedGroup = ref({
   groupid: "",
   comment: "",
 });
 const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
-const isBeingArchived = ref(null);
-const isBeingRetried = ref(null);
+const groupRetrySuccessful = ref(null);
+    var isBeingArchived = ref(false);
+    var isBeingRetried = ref(false);
 
 function getExceptionGroups() {
   exceptionGroups.value = [];
@@ -40,6 +46,7 @@ function getExceptionGroups() {
 
           if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
               stats.number_of_exception_groups = exceptionGroups.value.length;
+              emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
               //notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
           }
       }
@@ -124,89 +131,200 @@ function editNote(group) {
 }
 
     //delete a group
-    var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivefinalizing', 'archivecompleted'];
-    function deleteGroup(group) {
-        groupDeleteSuccessful.value = null;
-        selectedGroup.value.groupid = group.id;
-        showDeleteGroupModal.value = true;
+var statusesForArchiveOperation = ['archivestarted', 'archiveprogressing', 'archivefinalizing', 'archivecompleted'];
+function deleteGroup(group) {
+    groupDeleteSuccessful.value = null;
+    selectedGroup.value.groupid = group.id;
+    showDeleteGroupModal.value = true;
+}
+function saveDeleteGroup(group) {
+    showDeleteGroupModal.value = false;
+    group.workflow_state = { status: "archivestarted", message: 'Delete request initiated...' };
+
+    saveDeleteNote(group.id)
+    useArchiveExceptionGroup(group.groupid).then((result) => {
+        if (result.message === "success") {
+            groupDeleteSuccessful.value = true;
+            //notifier.notify('ArchiveGroupRequestAccepted', group);
+            this.emit('ArchiveGroupRequestAccepted', group);
+
+        } else {
+            groupDeleteSuccessful.value = false;
+            useShowToast(
+                "error",
+                "Error",
+                "Failed to delete the group:" + result.message
+            );
+        }
+    });
+}
+
+
+
+//create workflow state
+function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
+    if (optionalTotal && optionalTotal <= 1) {
+        optionalTotal = optionalTotal * 100;
     }
-    function saveDeleteGroup(group) {
-        showDeleteGroupModal.value = false;
-        group.workflow_state = { status: "archivestarted", message: 'Delete request initiated...' };
+    return {
+        status: optionalStatus || "working",
+        total: optionalTotal || 0,
+        failed: optionalFailed || false,
+    };
+}
+
+//getClassesForArchiveOperation
+function getClassesForArchiveOperation(stepStatus, currentStatus) {
+    return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
+};
+
+//Retry operation
+function retryGroup(group) {
+    groupRetrySuccessful.value = null;
+    selectedGroup.value.groupid = group.id;
+    showRetryGroupModal.value = true;
+    }
+function saveRetryGroup(group) {
+        showRetryGroupModal.value = false;
+    group.workflow_state = { status: "waiting", message: 'Retry Group Request Enqueued...' };
 
         saveDeleteNote(group.id)
-        useArchiveExceptionGroup(group.groupid).then((result) => {
+    useRetryExceptionGroup(group.groupid).then((result) => {
             if (result.message === "success") {
-                groupDeleteSuccessful.value = true;
-                useShowToast("info", "Info", "Group deleted succesfully");
-                //notifier.notify('ArchiveGroupRequestAccepted', group);
-                this.emit('ArchiveGroupRequestAccepted', group);
-                // getExceptionGroups(); //reload the groups
+                groupRetrySuccessful.value = true;
+                this.emit('RetryGroupRequestAccepted', group);
+
             } else {
-                groupDeleteSuccessful.value = false;
+                groupRetrySuccessful.value = false;
                 useShowToast(
                     "error",
                     "Error",
-                    "Failed to delete the group:" + result.message
+                    "Failed to retry the group:" + result.message
                 );
             }
         });
+}
+var statusesForRetryOperation = ['waiting', 'preparing', 'queued', 'forwarding'];
+function getClassesForRetryOperation (stepStatus, currentStatus) {
+    if (currentStatus === 'queued') {
+        currentStatus = 'forwarding';
     }
+    return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
+ };
 
-
-
-    //create workflow state
-    function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
-        if (optionalTotal && optionalTotal <= 1) {
-            optionalTotal = optionalTotal * 100;
-        }
-        return {
-            status: optionalStatus || "working",
-            total: optionalTotal || 0,
-            failed: optionalFailed || false,
-        };
+//getClasses
+var getClasses = function (stepStatus, currentStatus, statusArray) {
+    var indexOfStep = statusArray.indexOf(stepStatus);
+    var indexOfCurrent = statusArray.indexOf(currentStatus);
+    if (indexOfStep > indexOfCurrent) {
+        return 'left-to-do';
+    } else if (indexOfStep === indexOfCurrent) {
+        return 'active';
+    } else {
+        return 'completed';
     }
+};
 
-    //getClassesForArchiveOperation
-    function getClassesForArchiveOperation(stepStatus, currentStatus) {
-        return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
-    };
-
-    //getClasses
-    var getClasses = function (stepStatus, currentStatus, statusArray) {
-        var indexOfStep = statusArray.indexOf(stepStatus);
-        var indexOfCurrent = statusArray.indexOf(currentStatus);
-        if (indexOfStep > indexOfCurrent) {
-            return 'left-to-do';
-        } else if (indexOfStep === indexOfCurrent) {
-            return 'active';
+var acknowledgeArchiveGroup = function (group) {
+    //useAcknowledgeArchiveGroup.acknowledgeArchiveGroup(group.id,
+    //    'Group Acknowledged',
+    //    'Acknowledging Group Failed')
+    //    .then(function () {
+    //        exceptionGroups.splice(exceptionGroups.indexOf(group), 1);
+    //    });
+    //$event.stopPropagation();
+    useAcknowledgeArchiveGroup(group.id).then((result) => {
+        if (result.message === "success") {
+           // exceptionGroups.splice(exceptionGroups.indexOf(group), 1);
+            useShowToast("info", "Info", "Group deleted succesfully");
+            getExceptionGroups(); //reload the groups
         } else {
-            return 'completed';
+
+            useShowToast(
+                "error",
+                "Error",
+                "Acknowledging Group Failed':" + result.message
+            );
         }
-    };
+        //$event.stopPropagation();
+    });
 
-    var archiveOperationEventHandler = function (data, status) {
-        var group = exceptionGroups.filter(function (item) { return item.id === data.request_id });
+};
 
-        group.forEach(function (item) {
-            item
-                .workflow_state =
-                createWorkflowState(status,
-                    data.progress.percentage);
+var acknowledgeGroup = function (group) {
+        useAcknowledgeArchiveGroup(group.id).then((result) => {
+            if (result.message === "success") {
+               // exceptionGroups.splice(exceptionGroups.indexOf(group), 1);
+                useShowToast("info", "Info", "Group retried succesfully");
+                getExceptionGroups(); //reload the groups
+            } else {
 
-            item.operation_remaining_count = data.progress.messages_remaining;
-            item.operation_messages_completed_count = data.progress.number_of_messages_archived;
-            item.operation_start_time = data.start_time;
-
-            if (status === "archivecompleted") {
-                item.operation_completion_time = data.completion_time;
-                item.need_user_acknowledgement = true;
+                useShowToast(
+                    "error",
+                    "Error",
+                    "Acknowledging Group Failed':" + result.message
+                );
             }
+            //$event.stopPropagation();
         });
+
     };
+    //var archiveOperationEventHandler = function (data, status) {
+    //    var group = exceptionGroups.filter(function (item) { return item.id === data.request_id });
+
+    //    group.forEach(function (item) {
+    //        item
+    //            .workflow_state =
+    //            createWorkflowState(status,
+    //                data.progress.percentage);
+
+    //        item.operation_remaining_count = data.progress.messages_remaining;
+    //        item.operation_messages_completed_count = data.progress.number_of_messages_archived;
+    //        item.operation_start_time = data.start_time;
+
+    //        if (status === "archivecompleted") {
+    //            item.operation_completion_time = data.completion_time;
+    //            item.need_user_acknowledgement = true;
+    //        }
+    //    });
+    //};
 
 
-isBeingArchived.value = function (status) {
+    //notifier.subscribe(scope, function (event, data) {
+    //    archiveOperationEventHandler(data, "archivestarted");
+    //}, 'ArchiveOperationStarting');
+
+    //notifier.subscribe(scope, function (event, data) {
+    //    archiveOperationEventHandler(data, "archiveprogressing");
+    //}, 'ArchiveOperationBatchCompleted');
+
+    //notifier.subscribe(scope, function (event, data) {
+    //    archiveOperationEventHandler(data, "archivefinalizing");
+    //}, 'ArchiveOperationFinalizing');
+
+    //notifier.subscribe(scope, function (event, data) {
+    //    archiveOperationEventHandler(data, "archivecompleted");
+    //    getHistoricGroups();
+    //}, 'ArchiveOperationCompleted');
+
+    //function notifier() {
+    //    return {
+    //        subscribe: function (scope, callback, event) {
+    //            var handler = $rootScope.$on(event,
+    //                function (event, data) {
+    //                    $log.debug({ 'e': event, 'd': data });
+    //                    callback(event, data);
+    //                });
+    //            scope.$on('$destroy', handler);
+
+    //            return handler;
+    //        },
+    //        notify: function (event, data) {
+    //            emit(event, data);
+    //        }
+    //    };
+    //}
+isBeingArchived = function (status) {
     return (
         status === "archivestarted" ||
         status === "archiveprogressing" ||
@@ -214,14 +332,15 @@ isBeingArchived.value = function (status) {
         status === "archivecompleted"
     );
 };
-isBeingRetried.value = function (group) {
+isBeingRetried = function (group) {
     return (
         group.workflow_state.status !== "none" &&
         (group.workflow_state.status !== "completed" ||
             group.need_user_acknowledgement === true) &&
         !isBeingArchived(group.workflow_state.status)
     );
-};
+    };
+
 onMounted(() => {
   initialLoad();
 });
@@ -263,10 +382,10 @@ onMounted(() => {
     </div>
 
     <div class="row">
-      <div class="col-sm-12">
-        <busy v-show="loadingData" message="fetching more messages"></busy>
-        <no-data v-if="exceptionGroups.length === 0 && !loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
-      </div>
+        <div class="col-sm-12">
+            <!--<busy-indicator v-show="loadingData"></busy-indicator>-->
+            <no-data v-if="exceptionGroups.length === 0 && !loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+        </div>
     </div>
 
     <div class="row">
@@ -290,7 +409,7 @@ onMounted(() => {
                                   {{ group.title }}
                               </p>
                               <p class="metadata"
-                                 ng-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
+                                 v-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                                   <span class="metadata">
                                       <i aria-hidden="true" class="fa fa-envelope"></i>
                                       {{ group.count }} message<span v-show="group.count > 1">s</span>
@@ -329,22 +448,21 @@ onMounted(() => {
                               </div>
                           </div>
                       </div>
-                      <div class="row" ng-show="!vm.isBeingRetried(group) && !vm.isBeingArchived(group.workflow_state.status)">
+                      <div class="row" v-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                           <div class="col-sm-12 no-side-padding">
                               <button type="button"
                                       class="btn btn-link btn-sm"
-                                      confirm-click="vm.retryExceptionGroup(group, $event)"
-                                      ng-disabled="group.count == 0 || vm.isBeingRetried(group)"
-                                      ng-mouseenter="group.hover3 = true"
-                                      ng-mouseleave="group.hover3 = false"
-                                      confirm-title="Are you sure you want to retry this group?"
-                                      confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{group.count}} messages?">
+                                      ng-disabled="group.count == 0 || isBeingRetried(group)"
+                                      @mouseenter="group.hover3 = true"
+                                      @mouseleave="group.hover3 = false"
+                                      v-if="exceptionGroups.length > 0"
+                                      @click="retryGroup(group)">
                                   <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
                               </button>
 
                               <button type="button"
                                       class="btn btn-link btn-sm"
-                                     ng-disabled="group.count == 0 || isBeingRetried(group)"
+                                      ng-disabled="group.count == 0 || isBeingRetried(group)"
                                       @mouseenter="group.hover3 = true"
                                       @mouseleave="group.hover3 = false"
                                       v-if="exceptionGroups.length > 0"
@@ -363,6 +481,71 @@ onMounted(() => {
                           </div>
                       </div>
 
+                      <!--isBeingRetried-->
+                      <div class="row" v-show="isBeingRetried(group)">
+                          <div class="col-sm-12 no-side-padding">
+                              <div class="panel panel-default panel-retry">
+                                  <div class="panel-body">
+                                      <ul class="retry-request-progress">
+                                          <li v-hide="group.workflow_state.status === 'completed'" v-bind:class="getClassesForRetryOperation('waiting', group.workflow_state.status)">
+                                              <div class="bulk-retry-progress-status">Initialize retry request...</div>
+                                          </li>
+                                          <li v-hide="group.workflow_state.status === 'completed'" v-bind:class="getClassesForRetryOperation('preparing', group.workflow_state.status)">
+
+                                              <div class="row">
+                                                  <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
+                                                      <div class="bulk-retry-progress-status">Prepare messages...</div>
+                                                  </div>
+
+                                                  <div class="col-xs-12 col-sm-6">
+                                                      <div class="progress bulk-retry-progress" v-show="group.workflow_state.status === 'preparing'">
+                                                          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                              group.workflow_state.total | number : 0}}%
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </li>
+                                          <li v-hide="group.workflow_state.status === 'completed'"  v-bind:class="getClassesForRetryOperation('forwarding', group.workflow_state.status)">
+
+                                              <div class="row">
+                                                  <div class="col-xs-9 col-sm-4 col-md-3 no-side-padding">
+                                                      <div class="bulk-retry-progress-status">Send messages to retry...</div>
+                                                  </div>
+                                                  <div class="col-xs-3 col-sm-3 retry-op-queued" v-show="group.workflow_state.status === 'queued'">
+                                                      (Queued)
+                                                  </div>
+                                                  <div class="col-xs-12 col-sm-6">
+
+                                                      <div class="progress bulk-retry-progress" v-show="group.workflow_state.status === 'forwarding'">
+                                                          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" ng-style="{'min-width': '2em', 'width': group.workflow_state.total + '%'}">
+                                                              group.workflow_state.total | number : 0}}%
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </li>
+                                          <li v-show="group.workflow_state.status === 'completed'">
+                                              <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
+                                              <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-show="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">
+                                                  Dismiss
+                                              </button>
+                                              <div class="danger sc-restart-warning" ng-show="{{group.workflow_state.failed}}">
+                                                  <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining messages.
+                                              </div>
+                                          </li>
+                                      </ul>
+
+                                      <div class="op-metadata">
+                                          <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{group.workflow_state.status === 'completed' ? 'Messages sent:' : 'Messages to send:'}} {{(group.operation_remaining_count || group.count) | number}}</span>
+                                          <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started:  <time-since :date-utc="group.operation_start_time"></time-since></span>
+                                          <span class="metadata" ng-show="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed:  <time-since :date-utc="group.operation_completion_time"></time-since></span>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
                       <!--isBeingArchived-->
                       <div class="row"
                            v-show="isBeingArchived(group.workflow_state.status)">
@@ -370,7 +553,9 @@ onMounted(() => {
                               <div class="panel panel-default panel-retry">
                                   <div class="panel-body">
                                       <ul class="retry-request-progress">
-                                          <li>TEST workflow_state.status: {{group.workflow_state.status}}: </li>
+                                          <li>TEST workflow_state.status: {{group.workflow_state.status}} isBeingArchived:{{isBeingArchived(group.workflow_state.status)}} </li>
+                                          <li>TEST group.workflow_state.total: {{group.workflow_state.total}}</li>
+                                          <li>TEST group.need_user_acknowledgement: {{group.need_user_acknowledgement}}</li>
                                           <li v-hide="group.workflow_state.status === 'archivecompleted'"
                                               v-bind:class="getClassesForArchiveOperation('archivestarted', group.workflow_state.status)">
                                               <div class="bulk-retry-progress-status">
@@ -385,7 +570,6 @@ onMounted(() => {
                                                           Delete request in progress...
                                                       </div>
                                                   </div>
-
                                                   <div class="col-xs-12 col-sm-6">
                                                       <div class="progress bulk-retry-progress"
                                                            v-show="group.workflow_state.status === 'archiveprogressing'">
@@ -418,7 +602,7 @@ onMounted(() => {
                                               <button type="button"
                                                       class="btn btn-default btn-primary btn-xs btn-retry-dismiss"
                                                       v-show="group.need_user_acknowledgement == true"
-                                                      ng-click="acknowledgeArchiveGroup(group, $event)">
+                                                      @click="acknowledgeArchiveGroup(group)">
                                                   Dismiss
                                               </button>
                                           </li>
@@ -437,7 +621,7 @@ onMounted(() => {
                                           <span class="metadata">
                                               <i aria-hidden="true" class="fa fa-envelope"></i>
                                               Messages deleted:
-                                              {{(group.operation_remaining_count || 0) | number}}
+                                              {{(group.operation_messages_completed_count || 0) | number}}
                                           </span>
                                       </div>
                                   </div>
@@ -485,7 +669,20 @@ onMounted(() => {
       @deleteGroupConfirmed="saveDeleteGroup"
     ></FailedMessageGroupDelete>
   </Teleport>
+
+
+  <!--modal display - retry group-->
+  <Teleport to="#modalDisplay">
+    <FailedMessageGroupRetry
+      v-if="showRetryGroupModal === true"
+      v-bind="selectedGroup"
+      :group_id="selectedGroup.groupid"
+      @cancelRetryGroup="showRetryGroupModal = false"
+      @retryGroupConfirmed="saveRetryGroup"
+    ></FailedMessageGroupRetry>
+  </Teleport>
 </template>
+
 
 <style>
 .fake-link i {
