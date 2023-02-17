@@ -85,6 +85,8 @@ export function useArchiveExceptionGroup(groupId) {
             return result;
         });
 }
+
+
 //restore exception group by group id
 //restoreGroup
 export function useRestoreExceptionGroup(groupId) {
@@ -108,6 +110,7 @@ export function useRestoreExceptionGroup(groupId) {
             return result;
         });
 }
+
 //retry exception group by group id
 //retryGroup
 export function useRetryExceptionGroup(groupId) {
@@ -131,6 +134,7 @@ export function useRetryExceptionGroup(groupId) {
             return result;
         });
 }
+
 //acknowledge archive exception group by group id
 export function useAcknowledgeArchiveGroup(groupId) {
     return useDeleteFromServiceControl(
