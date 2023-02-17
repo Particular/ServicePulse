@@ -84,28 +84,12 @@ function close() {
             <div class="row">
               <div class="form-group">
                 <label for="sourceQueue">From physical address</label>
-                <span :title="sourceQueueTooltip"
-                  ><i class="fa fa-info-circle"></i
-                ></span>
-                <div
-                  :class="{
-                    'has-error': !sourceQueueIsValid,
-                    'has-success': sourceQueueIsValid,
-                  }"
-                >
-                  <select
-                    id="sourceQueue"
-                    name="sourceQueue"
-                    v-model="sourceQueue"
-                    class="form-control"
-                    required
-                    :disabled="model.message_redirect_id"
-                  >
-                    <option
-                      v-for="option in model.queues"
-                      :value="option"
-                      :key="option"
-                    >
+                <span :title="sourceQueueTooltip">
+                  <i class="fa fa-info-circle"></i>
+                </span>
+                <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid, }">
+                  <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-select" required :disabled="model.message_redirect_id">
+                    <option v-for="option in model.queues" :value="option" :key="option">
                       {{ option }}
                     </option>
                   </select>
@@ -114,15 +98,10 @@ function close() {
               <div class="row"></div>
               <div class="form-group">
                 <label for="targetQueue">To physical address</label>
-                <span :title="targetQueueTooltip"
-                  ><i class="fa fa-info-circle"></i
-                ></span>
-                <div
-                  :class="{
-                    'has-error': !targetQueueIsValid,
-                    'has-success': targetQueueIsValid,
-                  }"
-                >
+                <span :title="targetQueueTooltip">
+                  <i class="fa fa-info-circle"></i>
+                </span>
+                <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid, }">
                   <vue3-simple-typeahead
                     id="targetQueue"
                     name="targetQueue"
@@ -159,32 +138,16 @@ function close() {
                 </div>
               </div>
               <div class="form-group">
-                <input
-                  type="checkbox"
-                  v-model="immediatelyRetry"
-                  class="check-label"
-                  id="immediatelyRetry"
-                /><label for="immediatelyRetry"
-                  >Immediately retry any matching failed messages</label
-                >
+                <input type="checkbox" v-model="immediatelyRetry" class="check-label" id="immediatelyRetry" />
+                <label for="immediatelyRetry">Immediately retry any matching failed messages</label>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              v-if="model.message_redirect_id"
-              class="btn btn-primary"
-              :disabled="!formIsValid"
-              @click="edit"
-            >
+            <button v-if="model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="edit">
               Modify
             </button>
-            <button
-              v-if="!model.message_redirect_id"
-              class="btn btn-primary"
-              :disabled="!formIsValid"
-              @click="create"
-            >
+            <button v-if="!model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="create">
               Create
             </button>
             <button class="btn btn-default" @click="close">Cancel</button>

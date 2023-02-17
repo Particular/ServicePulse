@@ -88,7 +88,7 @@ onMounted(() => {
     </div>
     <div class="row">
       <div class="col-sm-12">
-        <div class="nav">
+        <div class="nav tabs">
           <h5 :class="{ active: subIsActive('#license') || subIsActive(''), disabled: !connectionState.connected && !connectionState.connectedRecently, }" class="nav-item">
             <a href="#license">License</a>
             <exclamation-mark :type="licenseStatus.warningLevel" />
@@ -120,4 +120,61 @@ onMounted(() => {
 </template>
 
 <style>
+.tabs-config-snippets .tabs {
+  margin: 30px 0 15px;
+}
+
+.tabs-config-snippets highlight {
+  margin-bottom: 20px;
+  display: block;
+}
+
+.tabs-config-snippets p {
+  font-size: 16px;
+  color: #181919;
+}
+
+.tabs-config-snippets .alert {
+  margin-bottom: 15px;
+}
+
+.tabs-config-snippets .alert li {
+  margin-bottom: 0;
+}
+
+.btn-toolbar {
+  padding: 12px 0 0;
+  margin-left: 0;
+}
+
+div.btn-toolbar, div.form-inline {
+  margin-bottom: 12px;
+}
+
+.btn-toolbar button:last-child {
+  margin-top: 0 !important;
+}
+
+.pa-redirect-source {
+  background-image: url('@/assets/redirect-source.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.pa-redirect-small {
+  position: relative;
+  top: 1px;
+  height: 14px;
+  width: 14px;
+}
+
+.pa-redirect-large {
+  height: 24px;
+}
+
+.pa-redirect-destination {
+  background-image: url('@/assets/redirect-destination.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+}
 </style>
