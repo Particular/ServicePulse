@@ -227,39 +227,6 @@ onMounted(() => {
 <template>
   <div class="messagegrouplist">
     <div class="row">
-      <div class="col-sm-12 toolbar-menus no-side-padding">
-        <div class="msg-group-menu dropdown">
-          <label class="control-label">Group by:</label>
-          <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            vm.selectedClassification
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li ng-repeat="classifier in vm.availableClassifiers">
-              <a href="#/failed-messages/groups?groupBy={{classifier}}">classifier</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="msg-group-menu dropdown">
-          <label class="control-label">Sort by:</label>
-          <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            vm.selectedSort
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" ng-for="sort in sortSelectors">
-            <li>
-              <a href="#/failed-messages/groups?sortBy={{sort.description}}">sort.description</a>
-            </li>
-            <li ng-repeat-end>
-              <a href="#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">sort.description <span>(Descending)</span></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
       <div class="col-sm-12">
         <no-data v-if="exceptionGroups.length === 0 && !loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
       </div>

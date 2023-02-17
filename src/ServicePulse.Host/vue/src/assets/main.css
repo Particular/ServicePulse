@@ -3,6 +3,7 @@
 @import 'navbar.css';
 @import 'footer.css';
 @import 'tabs.css';
+@import 'dropdown.css';
 
 .Vue-Toastification__container.toast-container {
     width: 400px;    

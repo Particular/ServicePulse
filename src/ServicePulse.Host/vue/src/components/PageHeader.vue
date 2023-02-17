@@ -45,11 +45,8 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
-          <li
-            :class="{
+          <li :class="{ active:subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint'), }">
               active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint'),
-            }"
-          >
             <a href="/a/#/monitoring">
               <i class="fa pa-monitoring icon-white"></i>
               <span class="navbar-label">Monitoring</span>
@@ -59,27 +56,18 @@ const displayDanger = computed(() => {
           <li
             :class="{
               active: subIsActive('/a/#/failed-messages/groups') || subIsActive('/a/#/failed-messages/all') || subIsActive('/a/#/failed-messages/archived') || subIsActive('/a/#/failed-messages/pending-retries'),
-            }"
-          >
+            }">
             <a href="/a/#/failed-messages/groups">
               <i class="fa fa-envelope icon-white"></i>
               <span class="navbar-label">Failed Messages (AngularJS)</span>
               <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </a>
           </li>
-          <li
-            :class="{
-              active: subIsActive('/failed-messages'),
-            }"
-          >
+          <li :class="{ active: subIsActive('/failed-messages'), }">
             <RouterLink :to="{ name: 'failed-messages' }">
               <i class="fa fa-envelope icon-white"></i>
               <span class="navbar-label">Failed Messages</span>
               <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
-            </RouterLink>
-                class="badge badge-important"
-                >{{ stats.number_of_failed_messages }}</span
-              >
             </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/custom-checks') }">
