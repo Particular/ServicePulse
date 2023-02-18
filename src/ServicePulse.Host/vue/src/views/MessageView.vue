@@ -66,10 +66,16 @@ onMounted(() => {
             <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
             <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
             <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
+            <span class="metadata" ng-show="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{failedMessage.redirect}}</span>
+          </div>
+          <div class="metadata group-title group-message-count message-metadata" ng-show="failedMessage.archived">
+            <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <sp-moment date="{{vm.message.last_modified}}"></sp-moment></span>
+            <span class="metadata danger" ng-show="message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
+            <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <sp-moment class="danger" date="{{vm.message.deleted_in}}"></sp-moment></span>
           </div>
         </div>
       </div>
-      <div class="row" ng-show="vm.message">
+      <div class="row">
         <div class="col-sm-12">
           <div class="btn-toolbar message-toolbar">
             <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message </button>
@@ -81,7 +87,7 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div class="row" v-show="failedMessage">
+      <div class="row">
         <div class="col-sm-12">
           <div class="row">
             <div isolate-click class="col-sm-12 no-side-padding">
