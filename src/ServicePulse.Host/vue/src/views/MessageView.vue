@@ -95,7 +95,7 @@ onMounted(() => {
               v-if="failedMessage.number_of_processing_attempts > 1"
               tooltip="This message has already failed {{failedMessage.number_of_processing_attempts}} times"
               class="label sidebar-label label-important metadata-label"
-              >{{ messageErrorDetails.number_of_processing_attempts }} Retry
+              >{{ failedMessage.number_of_processing_attempts }} Retry
               Failures</span
             >
             <span class="metadata"
