@@ -7,7 +7,6 @@ import TimeSince from "../components/TimeSince.vue";
 
 const route = useRoute();
 const id = route.params.id;
-const messageErrorDetails = ref([]);
 const failedMessage = ref({});
 
 function loadFailedMessage() {
