@@ -32,6 +32,28 @@ function loadFailedMessage() {
     });
 }
 
+function downloadHeadersAndBody() {
+    return useFetchFromServiceControl("messages/search/" + id)
+    .then((response) => {
+      /* if (response.status === 404) {
+        failedMessage.value = { notFound: true };
+      } else {
+        failedMessage.value = { error: true };
+      } */
+      return response.json();
+    })
+    .then((data) => {
+      var message = data[0];
+      var headers = message.headers;
+      //message.headers = messageHeaders.value;
+      failedMessage.value.headers = headers;
+    })
+    .catch((err) => {
+      console.log(err);
+      return;
+    });
+}
+
 function togglePanel(panelNum) {
   if (failedMessage.value.notFound || failedMessage.value.error) return false;
 
@@ -41,6 +63,7 @@ function togglePanel(panelNum) {
 
 onMounted(() => {
   loadFailedMessage().then(() => { togglePanel(1); });
+  downloadHeadersAndBody();
 });
 </script>
 
@@ -66,7 +89,7 @@ onMounted(() => {
             <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
             <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
             <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
-            <span class="metadata" ng-show="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{failedMessage.redirect}}</span>
+            <span class="metadata" ng-show="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
           </div>
           <div class="metadata group-title group-message-count message-metadata" ng-show="failedMessage.archived">
             <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <sp-moment date="{{vm.message.last_modified}}"></sp-moment></span>
@@ -103,16 +126,16 @@ onMounted(() => {
               <table isolate-click class="table" v-if="failedMessage.panel === 2 && failedMessage.headers">
                     <tbody>
                         <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
-                            <td nowrap="nowrap">{{header.key}}</td>
+                            <td nowrap="nowrap">{{ header.key }}</td>
                             <td>
-                                <pre>{{header.value}}</pre>
+                                <pre>{{ header.value }}</pre>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 2 && failedMessage.headersUnavailable">{{failedMessage.headersUnavailable}}</div>
-                <pre isolate-click v-if="failedMessage.panel === 3 && failedMessage.messageBody">{{failedMessage.messageBody}}</pre>
-                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 3 && failedMessage.bodyUnavailable">{{failedMessage.bodyUnavailable}}</div>
+                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 2 && failedMessage.headersUnavailable">{{ failedMessage.headersUnavailable }}</div>
+                <pre isolate-click v-if="failedMessage.panel === 3 && failedMessage.messageBody">{{ failedMessage.messageBody }}</pre>
+                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 3 && failedMessage.bodyUnavailable">{{ failedMessage.bodyUnavailable }}</div>
                 <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="failedMessage.panel === 4"></flow-diagram>
             </div>
           </div>
