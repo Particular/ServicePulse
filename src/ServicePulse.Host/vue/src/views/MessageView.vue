@@ -46,21 +46,9 @@ onMounted(() => {
 
 <template>
   <section name="failed_message">
-    <no-data
-      v-if="failedMessage?.notFound"
-      title="message failures"
-      message="Could not find message. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl."
-    ></no-data>
-    <no-data
-      v-if="failedMessage?.error"
-      title="message failures"
-      message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."
-    >
-    </no-data>
-    <div
-      v-if="!failedMessage?.error && !failedMessage?.notFound"
-      class="container"
-    >
+    <no-data v-if="failedMessage?.notFound" title="message failures" message="Could not find message. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl."></no-data>
+    <no-data v-if="failedMessage?.error" title="message failures" message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
+    <div v-if="!failedMessage?.error && !failedMessage?.notFound" class="container">
       <div class="row">
         <div class="col-sm-12">
           <div class="active break group-title">
@@ -70,46 +58,14 @@ onMounted(() => {
       </div>
       <div class="row">
         <div class="col-sm-12">
-          <div
-            class="metadata group-title group-message-count message-metadata"
-          >
-            <span
-              v-if="failedMessage.retried"
-              title="Message is being retried"
-              class="label sidebar-label label-info metadata-label"
-              >Retried</span
-            >
-            <span
-              v-if="failedMessage.archived"
-              title="Message is being deleted"
-              class="label sidebar-label label-warning metadata-label"
-              >Deleted</span
-            >
-            <span
-              v-if="failedMessage.resolved"
-              title="Message was processed successfully"
-              class="label sidebar-label label-warning metadata-label"
-              >Processed</span
-            >
-            <span
-              v-if="failedMessage.number_of_processing_attempts > 1"
-              tooltip="This message has already failed {{failedMessage.number_of_processing_attempts}} times"
-              class="label sidebar-label label-important metadata-label"
-              >{{ failedMessage.number_of_processing_attempts }} Retry
-              Failures</span
-            >
-            <span class="metadata"
-              ><i class="fa fa-clock-o"></i> Failed:
-              <time-since :date-utc="failedMessage.time_of_failure"></time-since
-            ></span>
-            <span class="metadata"
-              ><i class="fa pa-endpoint"></i> Endpoint:
-              {{ failedMessage.receiving_endpoint?.name }}</span
-            >
-            <span class="metadata"
-              ><i class="fa fa-laptop"></i> Machine:
-              {{ failedMessage.receiving_endpoint?.host }}</span
-            >
+          <div class="metadata group-title group-message-count message-metadata">
+            <span v-if="failedMessage.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
+            <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
+            <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
+            <span v-if="failedMessage.number_of_processing_attempts > 1" title="This message has already failed {{failedMessage.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
+            <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
+            <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
+            <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
           </div>
         </div>
       </div>
