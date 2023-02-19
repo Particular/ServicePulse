@@ -141,7 +141,7 @@ function saveDeleteGroup(group) {
     showDeleteGroupModal.value = false;
     group.workflow_state = { status: "archivestarted", message: 'Delete request initiated...' };
 
-    saveDeleteNote(group.id)
+    saveDeleteNote(group.id) //delete comment note when group is archived
     useArchiveExceptionGroup(group.groupid).then((result) => {
         if (result.message === "success") {
             groupDeleteSuccessful.value = true;
@@ -225,31 +225,6 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
     }
 };
 
-var acknowledgeArchiveGroup = function (group) {
-    //useAcknowledgeArchiveGroup.acknowledgeArchiveGroup(group.id,
-    //    'Group Acknowledged',
-    //    'Acknowledging Group Failed')
-    //    .then(function () {
-    //        exceptionGroups.splice(exceptionGroups.indexOf(group), 1);
-    //    });
-    //$event.stopPropagation();
-    useAcknowledgeArchiveGroup(group.id).then((result) => {
-        if (result.message === "success") {
-           // exceptionGroups.splice(exceptionGroups.indexOf(group), 1);
-            useShowToast("info", "Info", "Group deleted succesfully");
-            getExceptionGroups(); //reload the groups
-        } else {
-
-            useShowToast(
-                "error",
-                "Error",
-                "Acknowledging Group Failed':" + result.message
-            );
-        }
-        //$event.stopPropagation();
-    });
-
-};
 
 var acknowledgeGroup = function (group) {
         useAcknowledgeArchiveGroup(group.id).then((result) => {
@@ -309,23 +284,6 @@ var acknowledgeGroup = function (group) {
     //    getHistoricGroups();
     //}, 'ArchiveOperationCompleted');
 
-    //function notifier() {
-    //    return {
-    //        subscribe: function (scope, callback, event) {
-    //            var handler = $rootScope.$on(event,
-    //                function (event, data) {
-    //                    $log.debug({ 'e': event, 'd': data });
-    //                    callback(event, data);
-    //                });
-    //            scope.$on('$destroy', handler);
-
-    //            return handler;
-    //        },
-    //        notify: function (event, data) {
-    //            emit(event, data);
-    //        }
-    //    };
-    //}
 isBeingArchived = function (status) {
     return (
         status === "archivestarted" ||
@@ -438,7 +396,7 @@ onMounted(() => {
                               </p>
                           </div>
                       </div>
-                      <!--v-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)"-->
+
                       <div class="row" v-show="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                           <div class="col-sm-12 no-side-padding">
                               <div class="note" v-show="group.comment">
@@ -599,7 +557,7 @@ onMounted(() => {
                                               <button type="button"
                                                       class="btn btn-default btn-primary btn-xs btn-retry-dismiss"
                                                       v-show="group.need_user_acknowledgement == true"
-                                                      @click="acknowledgeArchiveGroup(group)">
+                                                      @click="acknowledgeGroup(group)">
                                                   Dismiss
                                               </button>
                                           </li>
