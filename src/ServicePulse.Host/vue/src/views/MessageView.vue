@@ -35,18 +35,39 @@ function loadFailedMessage() {
 function downloadHeadersAndBody() {
     return useFetchFromServiceControl("messages/search/" + id)
     .then((response) => {
-      /* if (response.status === 404) {
-        failedMessage.value = { notFound: true };
-      } else {
-        failedMessage.value = { error: true };
-      } */
       return response.json();
     })
     .then((data) => {
+        if (data[0] === undefined) {
+            failedMessage.value.headersNotFound = true ;
+            failedMessage.value.messageBodyNotFound = true;
+            return;
+        }
       var message = data[0];
       var headers = message.headers;
-      //message.headers = messageHeaders.value;
       failedMessage.value.headers = headers;
+      downloadBody();
+    })
+    .catch((err) => {
+      console.log(err);
+      return;
+    });
+}
+
+function downloadBody() {
+    return useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body")
+    .then((response) => {
+        if (response.status === 404) {
+            failedMessage.value.messageBodyNotFound = true;
+        } 
+        return response.json();
+    })
+    .then((data) => {
+        if (data === undefined) {
+            failedMessage.value.messageBodyNotFound = true;
+            return;
+        }
+      failedMessage.value.messageBody = data;
     })
     .catch((err) => {
       console.log(err);
@@ -123,7 +144,7 @@ onMounted(() => {
 
               <pre isolate-click v-if="failedMessage.panel === 0">{{ failedMessage.exception?.message }}</pre> 
               <pre isolate-click v-if="failedMessage.panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
-              <table isolate-click class="table" v-if="failedMessage.panel === 2 && failedMessage.headers">
+              <table isolate-click class="table" v-if="failedMessage.panel === 2 && !failedMessage.headersNotFound">
                     <tbody>
                         <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
                             <td nowrap="nowrap">{{ header.key }}</td>
@@ -133,9 +154,9 @@ onMounted(() => {
                         </tr>
                     </tbody>
                 </table>
-                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 2 && failedMessage.headersUnavailable">{{ failedMessage.headersUnavailable }}</div>
-                <pre isolate-click v-if="failedMessage.panel === 3 && failedMessage.messageBody">{{ failedMessage.messageBody }}</pre>
-                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 3 && failedMessage.bodyUnavailable">{{ failedMessage.bodyUnavailable }}</div>
+                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 2 && failedMessage?.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
+                <pre isolate-click v-if="failedMessage.panel === 3 && !failedMessage?.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
+                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 3 && failedMessage?.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
                 <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="failedMessage.panel === 4"></flow-diagram>
             </div>
           </div>
