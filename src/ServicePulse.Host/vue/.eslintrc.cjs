@@ -16,4 +16,13 @@ module.exports = {
       },
     ],
   },
+  "rules": {
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto",
+        printWidth: 999,
+      }
+    ]
+  }
 };

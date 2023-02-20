@@ -48,16 +48,18 @@ export class useSortingsAndGroupClassifiers {
     let direction = cookies.get("sortDirection");
 
     if (criteria && direction) {
-      var sortBy = this.getSortOptions().find((sort) => { return sort.description.toLowerCase() === criteria.toLowerCase(); });
+      var sortBy = this.getSortOptions().find((sort) => {
+        return sort.description.toLowerCase() === criteria.toLowerCase();
+      });
       return { sort: this.getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy.description };
     }
 
-    return { sort: (firstElement, secondElement) => { return firstElement.title < secondElement.title ? -1 : 1; }, dir: "asc", description: "Name" };
+    return { sort: (firstElement, secondElement) => {return firstElement.title < secondElement.title ? -1 : 1; }, dir: "asc", description: "Name" };
   }
 
   getSortFunction(selector, dir) {
     return (firstElement, secondElement) => {
-      if (dir === 'asc') {
+      if (dir === "asc") {
         return selector(firstElement) < selector(secondElement) ? -1 : 1;
       } else {
         return selector(firstElement) < selector(secondElement) ? 1 : -1;
