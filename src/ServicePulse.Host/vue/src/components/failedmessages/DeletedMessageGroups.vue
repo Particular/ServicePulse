@@ -3,7 +3,6 @@ import { licenseStatus } from "../../composables/serviceLicense.js";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import { connectionState } from "../../composables/serviceServiceControl.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import MessageGroupList from "../failedmessages/MessageGroupList.vue";
 </script>
 
 <template>
@@ -17,11 +16,7 @@ import MessageGroupList from "../failedmessages/MessageGroupList.vue";
             <div class="col-sm-12">
               <div class="list-section">
                 <h3>Deleted message groups</h3>
-                <div class="col-sm-7 form-group">
-                    Deleted message groups
-
-
-                </div>
+                <div class="col-sm-7 form-group">Deleted message groups</div>
               </div>
             </div>
           </div>
