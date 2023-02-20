@@ -35,27 +35,10 @@ function setSortOptions() {
   emit('sortUpdated', savedSort);
 }
 
-function loadClassifier() {
-  // if ($routeParams.groupBy) {
-  //   saveSelectedClassification($routeParams.groupBy);
-  //   return $routeParams.groupBy;
-  // }
-
-  // var storedClassification = $cookies.get("failed_groups_classification");
-
-  // if (typeof storedClassification === "undefined") {
-  //   return classifiers[0];
-  // }
-  // var storedClassification = cookies.get("failed_groups_classification");
-
-  // return storedClassification;
-}
-
 onMounted(() => {
   setSortOptions();
 
-  getGroupingClassifiers()
-    .then(loadClassifier);
+  getGroupingClassifiers();
 });
 </script>
 
