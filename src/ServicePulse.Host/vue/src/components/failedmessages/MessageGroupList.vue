@@ -31,8 +31,7 @@ const selectedGroup = ref({
 const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
-    var isBeingArchived = ref(false);
-    var isBeingRetried = ref(false);
+
 
 function getExceptionGroups() {
   exceptionGroups.value = [];
@@ -284,22 +283,22 @@ var acknowledgeGroup = function (group) {
     //    getHistoricGroups();
     //}, 'ArchiveOperationCompleted');
 
-isBeingArchived = function (status) {
+ function isBeingArchived (status) {
     return (
         status === "archivestarted" ||
         status === "archiveprogressing" ||
         status === "archivefinalizing" ||
         status === "archivecompleted"
     );
-};
-isBeingRetried = function (group) {
+}
+ function isBeingRetried (group) {
     return (
         group.workflow_state.status !== "none" &&
         (group.workflow_state.status !== "completed" ||
             group.need_user_acknowledgement === true) &&
         !isBeingArchived(group.workflow_state.status)
     );
-    };
+}
 
 onMounted(() => {
   initialLoad();
