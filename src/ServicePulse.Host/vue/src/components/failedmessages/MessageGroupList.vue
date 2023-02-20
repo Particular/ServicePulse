@@ -10,6 +10,11 @@ import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
 
+const props = defineProps({
+  sortFunction: Object
+});
+
+
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
@@ -33,6 +38,8 @@ function getExceptionGroups() {
   exceptionGroups.value = [];
 
   return useGetExceptionGroups().then((result) => {
+    result.sort(props.sortFunction);
+
     exceptionGroups.value = result;
     if (result.length > 0) {
       // need a map in some ui state for controlling animations

@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 
+const emit = defineEmits(["sortUpdated", "filterTextUpdated"]);
 const selectedClassifier = ref(null);
 const classifiers = ref([]);
 const selectedSort = ref("Name");
@@ -48,6 +49,11 @@ function getGroupingClassifiers() {
     });
 }
 
+function sortUpdated(sort) {
+  selectedSort.value = sort.description;
+  emit('sortUpdated', sort);
+}
+
 onMounted(() => {
   getGroupingClassifiers();
 });
@@ -76,10 +82,10 @@ onMounted(() => {
     <ul class="dropdown-menu">
       <span v-for="(sort, index) in sortOptions" :key="index">
         <li>
-          <a :href="'failed-messages#failed-message-groups/groups?sortBy=' + sort.description">{{ sort.description }}</a>
+          <a @click="sortUpdated({ selector: sort.selector, dir: 'asc', description: sort.description })" href="#">{{ sort.description }}</a>
         </li>
         <li>
-          <a :href="'failed-messages#failed-message-groups/groups?sortBy=' + sort.description + '&sortdir=desc'">{{ sort.description }}<span> (Descending)</span></a>
+          <a @click="sortUpdated({ selector: sort.selector, dir: 'desc', description: sort.description + ' (Descending)' })" href="#">{{ sort.description }}<span> (Descending)</span></a>
         </li>
       </span>
     </ul>
