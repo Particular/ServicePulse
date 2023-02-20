@@ -357,10 +357,6 @@ p.endpoint-metadata {
   padding-right: 30px;
 }
 
-.endpoint-metadata sp-moment {
-  padding-top: 0;
-}
-
 .endpoint-metadata button i {
   color: #00a3c4;
   margin-right: 4px;
