@@ -15,6 +15,7 @@
     "highlight.js": "^11.6.0",
     "moment": "^2.29.4",
     "vue": "^3.2.41",
+    "vue3-cookies": "^1.0.6",
     "vue-highlight-code": "^0.1.16",
     "vue-router": "^4.1.5",
     "vue-toastification": "^2.0.0-rc.5",
@@ -28,9 +29,9 @@
     "eslint": "^8.22.0",
     "eslint-plugin-vue": "^9.3.0",
     "jsdom": "^20.0.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
     "vite": "^3.1.8",
-    "vitest": "^0.24.3",
-    "npm-run-all": "^4.1.5"
+    "vitest": "^0.24.3"
   }
 }

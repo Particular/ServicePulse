@@ -38,7 +38,9 @@ function getExceptionGroups() {
   exceptionGroups.value = [];
 
   return useGetExceptionGroups().then((result) => {
-    result.sort(props.sortFunction);
+    if (props.sortFunction) {
+      result.sort(props.sortFunction);
+    }
 
     exceptionGroups.value = result;
     if (result.length > 0) {

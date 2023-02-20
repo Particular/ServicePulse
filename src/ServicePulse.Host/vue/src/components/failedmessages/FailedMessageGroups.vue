@@ -12,15 +12,7 @@ const forceReRenderKey = ref(0);
 const sortMethod = ref((firstElement, secondElement) => { return firstElement.title < secondElement.title ? -1 : 1; }); // default sort by title in ASC order
 
 function sortGroups(sort) {
-  var sortFunction = (firstElement, secondElement) => {
-    if (sort.dir === 'asc') {
-      return sort.selector(firstElement) < sort.selector(secondElement) ? -1 : 1;
-    } else {
-      return sort.selector(firstElement) < sort.selector(secondElement) ? 1 : -1;
-    }
-  };
-
-  sortMethod.value = sortFunction;
+  sortMethod.value = sort.sort;
 
   // force a re-render of the messagegroup list
   forceReRenderKey.value += 1;

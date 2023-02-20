@@ -1,43 +1,13 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useSortingsAndGroupClassifiers } from "../../composables/serviceSortingsAndGroupClassifiers";
 
+const sortingHelper = new useSortingsAndGroupClassifiers();
 const emit = defineEmits(["sortUpdated", "filterTextUpdated"]);
 const selectedClassifier = ref(null);
 const classifiers = ref([]);
 const selectedSort = ref("Name");
-const sortOptions = [
-  {
-    description: "Name",
-    selector: function (group) {
-      return group.title;
-    },
-  },
-  {
-    description: "Number of messages",
-    selector: function (group) {
-      return group.count;
-    },
-  },
-  {
-    description: "First Failed Time",
-    selector: function (group) {
-      return group.first;
-    },
-  },
-  {
-    description: "Last Failed Time",
-    selector: function (group) {
-      return group.last;
-    },
-  },
-  {
-    description: "Last Retried Time",
-    selector: function (group) {
-      return group.last_operation_completion_time;
-    },
-  },
-];
 
 function getGroupingClassifiers() {
   return useFetchFromServiceControl("recoverability/classifiers")
@@ -50,12 +20,42 @@ function getGroupingClassifiers() {
 }
 
 function sortUpdated(sort) {
-  selectedSort.value = sort.description;
+  selectedSort.value = sort.description + (sort.dir == "desc" ? " (Descending)" : "");
+  sortingHelper.saveSortOption(sort.description, sort.dir);
+
+  sort.sort = sortingHelper.getSortFunction(sort.selector, sort.dir);
+
   emit('sortUpdated', sort);
 }
 
+function setSortOptions() {
+  const savedSort = sortingHelper.loadSavedSortOption();
+  selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
+  
+  emit('sortUpdated', savedSort);
+}
+
+function loadClassifier() {
+  // if ($routeParams.groupBy) {
+  //   saveSelectedClassification($routeParams.groupBy);
+  //   return $routeParams.groupBy;
+  // }
+
+  // var storedClassification = $cookies.get("failed_groups_classification");
+
+  // if (typeof storedClassification === "undefined") {
+  //   return classifiers[0];
+  // }
+  // var storedClassification = cookies.get("failed_groups_classification");
+
+  // return storedClassification;
+}
+
 onMounted(() => {
-  getGroupingClassifiers();
+  setSortOptions();
+
+  getGroupingClassifiers()
+    .then(loadClassifier);
 });
 </script>
 
@@ -80,12 +80,12 @@ onMounted(() => {
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
-      <span v-for="(sort, index) in sortOptions" :key="index">
+      <span v-for="(sort, index) in sortingHelper.getSortOptions()" :key="index">
         <li>
           <a @click="sortUpdated({ selector: sort.selector, dir: 'asc', description: sort.description })" href="#">{{ sort.description }}</a>
         </li>
         <li>
-          <a @click="sortUpdated({ selector: sort.selector, dir: 'desc', description: sort.description + ' (Descending)' })" href="#">{{ sort.description }}<span> (Descending)</span></a>
+          <a @click="sortUpdated({ selector: sort.selector, dir: 'desc', description: sort.description })" href="#">{{ sort.description }}<span> (Descending)</span></a>
         </li>
       </span>
     </ul>
