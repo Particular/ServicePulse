@@ -14,6 +14,7 @@ var interval = null;
 const title = ref(),
   text = ref();
 
+
  function updateText() {
     if (props.dateUtc !== "0001-01-01T00:00:00" && props.dateUtc!= undefined) {
     const m = moment.utc(props.dateUtc);

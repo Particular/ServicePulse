@@ -19,8 +19,6 @@ import MessageGroupList from "../failedmessages/MessageGroupList.vue";
                 <h3>Deleted message groups</h3>
                 <div class="col-sm-7 form-group">
                     Deleted message groups
-
-
                 </div>
               </div>
             </div>

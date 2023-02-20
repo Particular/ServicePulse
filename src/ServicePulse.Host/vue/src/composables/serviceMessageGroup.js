@@ -62,6 +62,7 @@ export function useEditOrCreateNote(groupId, comment) {
       return result;
     });
 }
+
 //archive exception group by group id
 //archiveGroup
 export function useArchiveExceptionGroup(groupId) {
@@ -157,3 +158,4 @@ export function useAcknowledgeArchiveGroup(groupId) {
             return result;
         });
 }
+
