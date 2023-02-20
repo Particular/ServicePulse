@@ -45,6 +45,11 @@ function setSortOptions() {
   emit("sortUpdated", savedSort);
 }
 
+function sortUpdated(sort) {
+  selectedSort.value = sort.description;
+  emit('sortUpdated', sort);
+}
+
 onMounted(() => {
   setSortOptions();
 

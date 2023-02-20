@@ -17,6 +17,11 @@ const props = defineProps({
   sortFunction: Object,
 });
 
+const props = defineProps({
+  sortFunction: Object
+});
+
+
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
@@ -37,8 +42,6 @@ const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
 function getExceptionGroups(classifier) {
-  exceptionGroups.value = [];
-
   return useGetExceptionGroups(classifier).then((result) => {
     if (props.sortFunction) {
       result.sort(props.sortFunction);
