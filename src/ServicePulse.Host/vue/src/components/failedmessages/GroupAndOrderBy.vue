@@ -25,14 +25,14 @@ function sortUpdated(sort) {
 
   sort.sort = sortingHelper.getSortFunction(sort.selector, sort.dir);
 
-  emit('sortUpdated', sort);
+  emit("sortUpdated", sort);
 }
 
 function setSortOptions() {
   const savedSort = sortingHelper.loadSavedSortOption();
   selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
-  
-  emit('sortUpdated', savedSort);
+
+  emit("sortUpdated", savedSort);
 }
 
 onMounted(() => {

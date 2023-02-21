@@ -54,7 +54,13 @@ export class useSortingsAndGroupClassifiers {
       return { sort: this.getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy.description };
     }
 
-    return { sort: (firstElement, secondElement) => {return firstElement.title < secondElement.title ? -1 : 1; }, dir: "asc", description: "Name" };
+    return {
+      sort: (firstElement, secondElement) => {
+        return firstElement.title < secondElement.title ? -1 : 1;
+      },
+      dir: "asc",
+      description: "Name",
+    };
   }
 
   getSortFunction(selector, dir) {

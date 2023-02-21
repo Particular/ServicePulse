@@ -9,7 +9,9 @@ import MessageGroupList from "../failedmessages/MessageGroupList.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 
 const forceReRenderKey = ref(0);
-const sortMethod = ref((firstElement, secondElement) => { return firstElement.title < secondElement.title ? -1 : 1; }); // default sort by title in ASC order
+const sortMethod = ref((firstElement, secondElement) => {
+  return firstElement.title < secondElement.title ? -1 : 1;
+}); // default sort by title in ASC order
 
 function sortGroups(sort) {
   sortMethod.value = sort.sort;
@@ -31,9 +33,7 @@ function sortGroups(sort) {
             <h3>Failed message group</h3>
           </div>
           <div class="col-xs-6 toolbar-menus no-side-padding">
-            <GroupAndOrderBy
-              @sort-updated="sortGroups"
-            ></GroupAndOrderBy>
+            <GroupAndOrderBy @sort-updated="sortGroups"></GroupAndOrderBy>
           </div>
         </div>
         <div class="box">

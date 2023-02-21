@@ -11,9 +11,8 @@ import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
 
 const props = defineProps({
-  sortFunction: Object
+  sortFunction: Object,
 });
-
 
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
