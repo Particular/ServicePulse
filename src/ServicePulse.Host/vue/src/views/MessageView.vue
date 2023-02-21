@@ -33,20 +33,20 @@ function loadFailedMessage() {
 }
 
 function downloadHeadersAndBody() {
-    return useFetchFromServiceControl("messages/search/" + id)
+  return useFetchFromServiceControl("messages/search/" + id)
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-        if (data[0] === undefined) {
-            failedMessage.value.headersNotFound = true ;
-            failedMessage.value.messageBodyNotFound = true;
-            return;
-        }
+      if (data[0] === undefined) {
+        failedMessage.value.headersNotFound = true ;
+        failedMessage.value.messageBodyNotFound = true;
+        return;
+      }
       var message = data[0];
       var headers = message.headers;
       failedMessage.value.headers = headers;
-      downloadBody();
+      return downloadBody();
     })
     .catch((err) => {
       console.log(err);
@@ -55,18 +55,18 @@ function downloadHeadersAndBody() {
 }
 
 function downloadBody() {
-    return useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body")
+  return useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body")
     .then((response) => {
-        if (response.status === 404) {
-            failedMessage.value.messageBodyNotFound = true;
-        } 
+      if (response.status === 404) {
+          failedMessage.value.messageBodyNotFound = true;
+      } 
         return response.json();
     })
     .then((data) => {
-        if (data === undefined) {
-            failedMessage.value.messageBodyNotFound = true;
-            return;
-        }
+      if (data === undefined) {
+          failedMessage.value.messageBodyNotFound = true;
+          return;
+      }
       failedMessage.value.messageBody = data;
     })
     .catch((err) => {
@@ -76,9 +76,10 @@ function downloadBody() {
 }
 
 function togglePanel(panelNum) {
-  if (failedMessage.value.notFound || failedMessage.value.error) return false;
+  if (!failedMessage.value.notFound && !failedMessage.value.error) {
+    failedMessage.value.panel = panelNum;
+  } 
 
-  failedMessage.value.panel = panelNum;
   return false;
 }
 
@@ -106,16 +107,16 @@ onMounted(() => {
             <span v-if="failedMessage.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
             <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
             <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
-            <span v-if="failedMessage.number_of_processing_attempts > 1" title="This message has already failed {{failedMessage.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
+            <span v-if="failedMessage.number_of_processing_attempts > 1" title="This message has already failed {{ failedMessage.number_of_processing_attempts }} times" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
             <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
             <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
             <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
             <span class="metadata" ng-show="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
           </div>
           <div class="metadata group-title group-message-count message-metadata" ng-show="failedMessage.archived">
-            <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <sp-moment date="{{vm.message.last_modified}}"></sp-moment></span>
+            <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <sp-moment date="{{ vm.message.last_modified }}"></sp-moment></span>
             <span class="metadata danger" ng-show="message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
-            <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <sp-moment class="danger" date="{{vm.message.deleted_in}}"></sp-moment></span>
+            <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <sp-moment class="danger" date="{{ vm.message.deleted_in }}"></sp-moment></span>
           </div>
         </div>
       </div>
@@ -145,14 +146,14 @@ onMounted(() => {
               <pre isolate-click v-if="failedMessage.panel === 0">{{ failedMessage.exception?.message }}</pre> 
               <pre isolate-click v-if="failedMessage.panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
               <table isolate-click class="table" v-if="failedMessage.panel === 2 && !failedMessage.headersNotFound">
-                    <tbody>
-                        <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
-                            <td nowrap="nowrap">{{ header.key }}</td>
-                            <td>
-                                <pre>{{ header.value }}</pre>
-                            </td>
-                        </tr>
-                    </tbody>
+                  <tbody>
+                      <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
+                        <td nowrap="nowrap">{{ header.key }}</td>
+                        <td>
+                          <pre>{{ header.value }}</pre>
+                        </td>
+                      </tr>
+                  </tbody>
                 </table>
                 <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 2 && failedMessage?.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
                 <pre isolate-click v-if="failedMessage.panel === 3 && !failedMessage?.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
