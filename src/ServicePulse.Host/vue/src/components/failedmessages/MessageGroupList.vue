@@ -24,8 +24,8 @@ const showDeleteGroupModal = ref(false);
 const showRetryGroupModal = ref(false);
 
 const selectedGroup = ref({
-    groupid: "",
-    messagecount: "",
+  groupid: "",
+  messagecount: "",
   comment: "",
 });
 const noteSaveSuccessful = ref(null);
@@ -41,12 +41,10 @@ function getExceptionGroups() {
       if (result.length > 0) {
           // need a map in some ui state for controlling animations
           exceptionGroups.value = result.map(initializeGroupState);
-          // exceptionGroups.sort(getSort());
 
           if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
               stats.number_of_exception_groups = exceptionGroups.value.length;
               emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
-              //notifier.notify('ExceptionGroupCountUpdated', vm.stats.number_of_exception_groups);
           }
       }
   });
@@ -157,8 +155,6 @@ function saveDeleteGroup(group) {
     });
 }
 
-
-
 //create workflow state
 function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
     if (optionalTotal && optionalTotal <= 1) {
@@ -182,7 +178,7 @@ function retryGroup(group) {
     selectedGroup.value.groupid = group.id;
     selectedGroup.value.messagecount = group.count;
     showRetryGroupModal.value = true;
-    }
+}
 function saveRetryGroup(group) {
     showRetryGroupModal.value = false;
     group.workflow_state = { status: "waiting", message: 'Retry Group Request Enqueued...' };
@@ -224,7 +220,6 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
     }
 };
 
-
 var acknowledgeGroup = function (group) {
         useAcknowledgeArchiveGroup(group.id).then((result) => {
             if (result.message === "success") {
@@ -239,49 +234,8 @@ var acknowledgeGroup = function (group) {
                     "Acknowledging Group Failed':" + result.message
                 );
             }
-            //$event.stopPropagation();
         });
-
 };
-
-
-    //var archiveOperationEventHandler = function (data, status) {
-    //    var group = exceptionGroups.filter(function (item) { return item.id === data.request_id });
-
-    //    group.forEach(function (item) {
-    //        item
-    //            .workflow_state =
-    //            createWorkflowState(status,
-    //                data.progress.percentage);
-
-    //        item.operation_remaining_count = data.progress.messages_remaining;
-    //        item.operation_messages_completed_count = data.progress.number_of_messages_archived;
-    //        item.operation_start_time = data.start_time;
-
-    //        if (status === "archivecompleted") {
-    //            item.operation_completion_time = data.completion_time;
-    //            item.need_user_acknowledgement = true;
-    //        }
-    //    });
-    //};
-
-
-    //notifier.subscribe(scope, function (event, data) {
-    //    archiveOperationEventHandler(data, "archivestarted");
-    //}, 'ArchiveOperationStarting');
-
-    //notifier.subscribe(scope, function (event, data) {
-    //    archiveOperationEventHandler(data, "archiveprogressing");
-    //}, 'ArchiveOperationBatchCompleted');
-
-    //notifier.subscribe(scope, function (event, data) {
-    //    archiveOperationEventHandler(data, "archivefinalizing");
-    //}, 'ArchiveOperationFinalizing');
-
-    //notifier.subscribe(scope, function (event, data) {
-    //    archiveOperationEventHandler(data, "archivecompleted");
-    //    getHistoricGroups();
-    //}, 'ArchiveOperationCompleted');
 
  function isBeingArchived (status) {
     return (
@@ -623,7 +577,6 @@ onMounted(() => {
       @deleteGroupConfirmed="saveDeleteGroup"
     ></FailedMessageGroupDelete>
   </Teleport>
-
 
   <!--modal display - retry group-->
   <Teleport to="#modalDisplay">
