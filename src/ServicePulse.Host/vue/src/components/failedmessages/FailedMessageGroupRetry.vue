@@ -1,10 +1,9 @@
 <script setup>
 const emit = defineEmits(["retryGroupConfirmed", "cancelRetryGroup"]);
 
-
 const settings = defineProps({
-       groupid: String,
-        workflow_state: [],
+    groupid: String,
+    workflow_state: [],
     comment: String,
     messagecount: String,
 });

@@ -1,7 +1,6 @@
 <script setup>
 const emit = defineEmits(["deleteGroupConfirmed", "cancelDeleteGroup"]);
 
-
 const settings = defineProps({
        groupid: String,
         workflow_state: [],
