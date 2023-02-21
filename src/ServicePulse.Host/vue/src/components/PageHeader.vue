@@ -46,7 +46,6 @@ const displayDanger = computed(() => {
             </a>
           </li>
           <li :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
-            active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint'),
             <a href="/a/#/monitoring">
               <i class="fa pa-monitoring icon-white"></i>
               <span class="navbar-label">Monitoring</span>
