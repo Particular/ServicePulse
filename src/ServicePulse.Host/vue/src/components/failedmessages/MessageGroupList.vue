@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute, onBeforeRouteUpdate } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
@@ -10,6 +11,7 @@ import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
 
+const route = useRoute();
 const props = defineProps({
   sortFunction: Object,
 });
@@ -33,10 +35,10 @@ const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
-function getExceptionGroups() {
+function getExceptionGroups(classifier) {
   exceptionGroups.value = [];
 
-  return useGetExceptionGroups().then((result) => {
+  return useGetExceptionGroups(classifier).then((result) => {
     if (props.sortFunction) {
       result.sort(props.sortFunction);
     }
@@ -62,13 +64,14 @@ function initializeGroupState(group) {
   return group;
 }
 
-function initialLoad() {
+function initialLoad(groupBy) {
   loadingData.value = true;
   initialLoadComplete.value = false;
 
-  getExceptionGroups().then(() => {
+  getExceptionGroups(groupBy ?? route.query.groupBy).then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
+    
     emit("InitialLoadComplete");
   });
 }
@@ -226,6 +229,12 @@ function isBeingArchived(status) {
 function isBeingRetried(group) {
   return group.workflow_state.status !== "none" && (group.workflow_state.status !== "completed" || group.need_user_acknowledgement === true) && !isBeingArchived(group.workflow_state.status);
 }
+
+onBeforeRouteUpdate((to, from, next) => {
+  initialLoad(to.query.groupBy);
+
+  return next();
+});
 
 onMounted(() => {
   initialLoad();

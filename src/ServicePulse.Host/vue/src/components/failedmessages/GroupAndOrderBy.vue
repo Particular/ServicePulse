@@ -1,8 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute, RouterLink } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useSortingsAndGroupClassifiers } from "../../composables/serviceSortingsAndGroupClassifiers";
 
+const route = useRoute();
 const sortingHelper = new useSortingsAndGroupClassifiers();
 const emit = defineEmits(["sortUpdated", "filterTextUpdated"]);
 const selectedClassifier = ref(null);
@@ -51,7 +53,8 @@ onMounted(() => {
     </button>
     <ul class="dropdown-menu">
       <li v-for="(classifier, index) in classifiers" :key="index">
-        <a :href="'failed-messages#failed-message-groups/groups?groupBy=' + classifier">{{ classifier }}</a>
+        <RouterLink :key="index" :to="{ path:'/failed-messages', query: { groupBy: classifier } }">{{ classifier }}</RouterLink>
+        <!-- <a @click.prevent="changeClassificationGrouping(classifier)" :href="'/failed-messages/' + classifier">{{ classifier }}</a> -->
       </li>
     </ul>
   </div>
