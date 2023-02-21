@@ -43,18 +43,14 @@ function subIsActive(subPath) {
 }
 
 const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || "/"]
-    ? routes[currentPath.value.slice(1) || "/"].component
-    : PlatformLicense;
+  return routes[currentPath.value.slice(1) || "/"] ? routes[currentPath.value.slice(1) || "/"].component : PlatformLicense;
 });
 
 const currentEvents = ref({});
 watch(currentPath, async (newValue) => {
   setupEvents(newValue);
   if (routes[currentPath.value.slice(1) || "/"]) {
-    document.title =
-      routes[currentPath.value.slice(1) || "/"].title +
-      " - Configuration • ServicePulse";
+    document.title = routes[currentPath.value.slice(1) || "/"].title + " - Configuration • ServicePulse";
   }
 });
 
@@ -68,11 +64,7 @@ function setupEvents(newPath) {
 
 onMounted(() => {
   const path = currentPath.value.slice(1) || "/";
-  if (
-    path === "/" &&
-    !connectionState.connected &&
-    !connectionState.connectedRecently
-  ) {
+  if (path === "/" && !connectionState.connected && !connectionState.connectedRecently) {
     window.location.hash = "connections";
   }
   setupEvents(currentPath.value);
@@ -89,7 +81,7 @@ onMounted(() => {
     <div class="row">
       <div class="col-sm-12">
         <div class="nav tabs">
-          <h5 :class="{ active: subIsActive('#license') || subIsActive(''), disabled: !connectionState.connected && !connectionState.connectedRecently, }" class="nav-item">
+          <h5 :class="{ active: subIsActive('#license') || subIsActive(''), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
             <a href="#license">License</a>
             <exclamation-mark :type="licenseStatus.warningLevel" />
           </h5>
@@ -97,9 +89,7 @@ onMounted(() => {
             <a href="#health-check-notifications">Health Check Notifications</a>
           </h5>
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#retry-redirects'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <a href="#retry-redirects"
-              >Retry Redirects ({{ redirectCount }})
-            </a>
+            <a href="#retry-redirects">Retry Redirects ({{ redirectCount }}) </a>
           </h5>
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#connections') }" class="nav-item">
             <a href="#connections">
@@ -147,7 +137,8 @@ onMounted(() => {
   margin-left: 0;
 }
 
-div.btn-toolbar, div.form-inline {
+div.btn-toolbar,
+div.form-inline {
   margin-bottom: 12px;
 }
 
@@ -156,7 +147,7 @@ div.btn-toolbar, div.form-inline {
 }
 
 .pa-redirect-source {
-  background-image: url('@/assets/redirect-source.svg');
+  background-image: url("@/assets/redirect-source.svg");
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -173,7 +164,7 @@ div.btn-toolbar, div.form-inline {
 }
 
 .pa-redirect-destination {
-  background-image: url('@/assets/redirect-destination.svg');
+  background-image: url("@/assets/redirect-destination.svg");
   background-position: center;
   background-repeat: no-repeat;
 }

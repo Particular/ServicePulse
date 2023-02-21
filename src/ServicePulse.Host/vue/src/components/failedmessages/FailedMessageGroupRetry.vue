@@ -2,18 +2,18 @@
 const emit = defineEmits(["retryGroupConfirmed", "cancelRetryGroup"]);
 
 const settings = defineProps({
-    groupid: String,
-    workflow_state: [],
-    comment: String,
-    messagecount: String,
+  groupid: String,
+  workflow_state: [],
+  comment: String,
+  messagecount: String,
 });
 
 function retryGroup() {
-    emit("retryGroupConfirmed", settings);
+  emit("retryGroupConfirmed", settings);
 }
 
 function close() {
-    emit("cancelRetryGroup");
+  emit("cancelRetryGroup");
 }
 </script>
 
@@ -27,10 +27,7 @@ function close() {
           </div>
         </div>
         <div class="modal-body">
-            <p>
-                Retrying a whole group can take some time and put extra load on your system.
-                Are you sure you want to retry this group of {{settings.messagecount}} messages?
-            </p>
+          <p>Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of {{ settings.messagecount }} messages?</p>
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" @click="retryGroup">Yes</button>

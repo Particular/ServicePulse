@@ -10,13 +10,7 @@ import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "../../composables/toast.js";
 import TimeSince from "../TimeSince.vue";
-import {
-  useRedirects,
-  useUpdateRedirects,
-  useCreateRedirects,
-  useDeleteRedirects,
-  useRetryPendingMessagesForQueue,
-} from "../../composables/serviceRedirects.js";
+import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, useRetryPendingMessagesForQueue } from "../../composables/serviceRedirects.js";
 
 const isExpired = licenseStatus.isExpired;
 
@@ -55,8 +49,7 @@ function getRedirect() {
 
 function createRedirect() {
   redirectSaveSuccessful.value = null;
-  (selectedRedirect.value.message_redirect_id = null),
-    (selectedRedirect.value.from_physical_address = "");
+  (selectedRedirect.value.message_redirect_id = null), (selectedRedirect.value.from_physical_address = "");
   selectedRedirect.value.to_physical_address = "";
   showEdit.value = true;
 }
@@ -72,11 +65,7 @@ function editRedirect(redirect) {
 function saveEditedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  useUpdateRedirects(
-    redirect.redirectId,
-    redirect.sourceQueue,
-    redirect.targetQueue
-  )
+  useUpdateRedirects(redirect.redirectId, redirect.sourceQueue, redirect.targetQueue)
     .then((result) => {
       if (result.message === "success") {
         redirectSaveSuccessful.value = true;
@@ -85,13 +74,7 @@ function saveEditedRedirect(redirect) {
       } else {
         redirectSaveSuccessful.value = false;
         if (result.status === "409" || result.status === 409) {
-          useShowToast(
-            "error",
-            "Error",
-            "Failed to update a redirect, can not create redirect to a queue" +
-              redirect.targetQueue +
-              " as it already has a redirect. Provide a different queue or end the redirect."
-          );
+          useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
         } else {
           useShowToast("error", "Error", result.message);
         }
@@ -110,45 +93,27 @@ function saveEditedRedirect(redirect) {
 function saveCreatedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  useCreateRedirects(redirect.sourceQueue, redirect.targetQueue).then(
-    (result) => {
-      if (result.message === "success") {
-        redirectSaveSuccessful.value = true;
-        useShowToast("info", "Info", "Redirect created successfully");
-        getRedirect();
+  useCreateRedirects(redirect.sourceQueue, redirect.targetQueue).then((result) => {
+    if (result.message === "success") {
+      redirectSaveSuccessful.value = true;
+      useShowToast("info", "Info", "Redirect created successfully");
+      getRedirect();
+    } else {
+      redirectSaveSuccessful.value = false;
+      if ((result.status === "409" || result.status === 409) && result.statusText === "Duplicate") {
+        useShowToast("error", "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
+      } else if ((result.status === "409" || result.status === 409) && result.statusText === "Dependents") {
+        useShowToast("error", "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
       } else {
-        redirectSaveSuccessful.value = false;
-        if (
-          (result.status === "409" || result.status === 409) &&
-          result.statusText === "Duplicate"
-        ) {
-          useShowToast(
-            "error",
-            "Error",
-            "Failed to create a redirect, can not create more than one redirect for queue: " +
-              redirect.sourceQueue
-          );
-        } else if (
-          (result.status === "409" || result.status === 409) &&
-          result.statusText === "Dependents"
-        ) {
-          useShowToast(
-            "error",
-            "Error",
-            "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect."
-          );
-        } else {
-          useShowToast("error", "Error", result.message);
-        }
+        useShowToast("error", "Error", result.message);
       }
     }
-  );
+  });
 }
 
 function deleteRedirect(redirect) {
   redirectSaveSuccessful.value = null;
-  (selectedRedirect.value.message_redirect_id = redirect.message_redirect_id),
-    (showDelete.value = true);
+  (selectedRedirect.value.message_redirect_id = redirect.message_redirect_id), (showDelete.value = true);
 }
 
 function saveDeleteRedirect(redirectId) {
@@ -182,9 +147,7 @@ onMounted(() => {
           <div class="row">
             <div class="col-sm-12">
               <div class="btn-toolbar">
-                <button type="button" class="btn btn-default" @click="createRedirect">
-                  <i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect
-                </button>
+                <button type="button" class="btn btn-default" @click="createRedirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</button>
                 <span></span>
               </div>
             </div>
@@ -216,12 +179,8 @@ onMounted(() => {
                     <div class="row">
                       <div isolate-click class="col-sm-12">
                         <p class="small">
-                          <button type="button" class="btn btn-link btn-sm" @click="deleteRedirect(redirect)">
-                            End Redirect
-                          </button>
-                          <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">
-                            Modify Redirect
-                          </button>
+                          <button type="button" class="btn btn-link btn-sm" @click="deleteRedirect(redirect)">End Redirect</button>
+                          <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">Modify Redirect</button>
                         </p>
                       </div>
                     </div>
@@ -231,21 +190,10 @@ onMounted(() => {
             </template>
           </div>
           <Teleport to="#modalDisplay">
-            <RetryRedirectDelete
-              v-if="showDelete === true"
-              :message_redirect_id="selectedRedirect.message_redirect_id"
-              @cancel="showDelete = false"
-              @delete="saveDeleteRedirect"
-            ></RetryRedirectDelete>
+            <RetryRedirectDelete v-if="showDelete === true" :message_redirect_id="selectedRedirect.message_redirect_id" @cancel="showDelete = false" @delete="saveDeleteRedirect"></RetryRedirectDelete>
           </Teleport>
           <Teleport to="#modalDisplay">
-            <RetryRedirectEdit
-              v-if="showEdit === true"
-              v-bind="selectedRedirect"
-              @cancel="showEdit = false"
-              @create="saveCreatedRedirect"
-              @edit="saveEditedRedirect"
-            ></RetryRedirectEdit>
+            <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
           </Teleport>
         </section>
       </template>

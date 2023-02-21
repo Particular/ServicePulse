@@ -2,17 +2,17 @@
 const emit = defineEmits(["deleteGroupConfirmed", "cancelDeleteGroup"]);
 
 const settings = defineProps({
-       groupid: String,
-        workflow_state: [],
-        comment: String,
+  groupid: String,
+  workflow_state: [],
+  comment: String,
 });
 
 function deleteGroup() {
-    emit("deleteGroupConfirmed", settings);
+  emit("deleteGroupConfirmed", settings);
 }
 
 function close() {
-    emit("cancelDeleteGroup");
+  emit("cancelDeleteGroup");
 }
 </script>
 
@@ -26,11 +26,7 @@ function close() {
           </div>
         </div>
         <div class="modal-body">
-          <p>
-            Messages that are deleted will be cleaned up according to the
-            ServiceControl retention policy, and aren't available for retrying
-            unless they're restored..
-          </p>
+          <p>Messages that are deleted will be cleaned up according to the ServiceControl retention policy, and aren't available for retrying unless they're restored..</p>
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" @click="deleteGroup">Yes</button>

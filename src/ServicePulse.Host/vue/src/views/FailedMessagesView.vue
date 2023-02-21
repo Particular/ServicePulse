@@ -35,27 +35,19 @@ function subIsActive(subPath) {
   return currentPath.value === subPath;
 }
 const currentView = computed(() => {
-  return routes[currentPath.value.slice(1) || "/"]
-    ? routes[currentPath.value.slice(1) || "/"].component
-    : FailedMessageGroups;
+  return routes[currentPath.value.slice(1) || "/"] ? routes[currentPath.value.slice(1) || "/"].component : FailedMessageGroups;
 });
 const currentEvents = ref({});
 watch(currentPath, async () => {
   // setupEvents(newValue);
   if (routes[currentPath.value.slice(1) || "/"]) {
-    document.title =
-      routes[currentPath.value.slice(1) || "/"].title +
-      " - Configuration � ServicePulse";
+    document.title = routes[currentPath.value.slice(1) || "/"].title + " - Configuration � ServicePulse";
   }
 });
 
 onMounted(() => {
   const path = currentPath.value.slice(1) || "/";
-  if (
-    path === "/" &&
-    !connectionState.connected &&
-    !connectionState.connectedRecently
-  ) {
+  if (path === "/" && !connectionState.connected && !connectionState.connectedRecently) {
     /* empty */
   }
 });
@@ -71,25 +63,15 @@ onMounted(() => {
             <!--Failed Message Groups-->
             <h5
               :class="{
-                active:
-                  subIsActive('#failed-message-groups') || subIsActive(''),
-                disabled:
-                  !connectionState.connected &&
-                  !connectionState.connectedRecently,
+                active: subIsActive('#failed-message-groups') || subIsActive(''),
+                disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
               <a href="#failed-message-groups">
                 Failed Message Groups
-                <span v-show="stats.number_of_failed_messages === 0">
-                  (0)
-                </span>
+                <span v-show="stats.number_of_failed_messages === 0"> (0) </span>
               </a>
-              <span
-                v-if="stats.number_of_failed_messages !== 0"
-                title="There's varying numbers of failed message groups depending on group type"
-                class="badge badge-important"
-                >!</span
-              >
+              <span v-if="stats.number_of_failed_messages !== 0" title="There's varying numbers of failed message groups depending on group type" class="badge badge-important">!</span>
             </h5>
 
             <!--All Failed Messages-->
@@ -97,17 +79,11 @@ onMounted(() => {
               v-if="!licenseStatus.isExpired"
               :class="{
                 active: subIsActive('#all-failed-messages'),
-                disabled:
-                  !connectionState.connected &&
-                  !connectionState.connectedRecently,
+                disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
               <a href="#all-failed-messages">All Failed Messages </a>
-              <span
-                v-if="stats.number_of_failed_messages !== 0"
-                class="badge badge-important"
-                >{{ stats.number_of_failed_messages }}</span
-              >
+              <span v-if="stats.number_of_failed_messages !== 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </h5>
 
             <!--Deleted Message Group-->
@@ -115,18 +91,11 @@ onMounted(() => {
               v-if="!licenseStatus.isExpired"
               :class="{
                 active: subIsActive('#deleted-message-groups'),
-                disabled:
-                  !connectionState.connected &&
-                  !connectionState.connectedRecently,
+                disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
               <a href="#deleted-message-groups">Deleted Message Groups </a>
-              <span
-                v-if="stats.number_of_archived_messages !== 0"
-                title="There's varying numbers of deleted message groups depending on group type"
-                class="badge badge-important"
-                >!</span
-              >
+              <span v-if="stats.number_of_archived_messages !== 0" title="There's varying numbers of deleted message groups depending on group type" class="badge badge-important">!</span>
             </h5>
 
             <!--All Deleted Messages-->
@@ -134,17 +103,11 @@ onMounted(() => {
               v-if="!licenseStatus.isExpired"
               :class="{
                 active: subIsActive('#all-deleted-messages'),
-                disabled:
-                  !connectionState.connected &&
-                  !connectionState.connectedRecently,
+                disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
               <a href="#all-deleted-messages">All Deleted Messages </a>
-              <span
-                v-if="stats.number_of_archived_messages !== 0"
-                class="badge badge-important"
-                >{{ stats.number_of_archived_messages }}</span
-              >
+              <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
           </div>
         </div>

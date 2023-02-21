@@ -8,7 +8,7 @@
     "build": "npm run lint && vite build",
     "preview": "npm run lint && vite preview",
     "test:unit": "npm run lint && vitest --environment jsdom --root src/",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix"
   },
   "dependencies": {
     "bootstrap": "^5.2.0",
