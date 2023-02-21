@@ -15,19 +15,14 @@ const title = ref(),
   text = ref();
 
 function updateText() {
-  if (props.dateUtc !== "0001-01-01T00:00:00" && props.dateUtc!= undefined) {
+  if (props.dateUtc !== "0001-01-01T00:00:00" && props.dateUtc != undefined) {
     const m = moment.utc(props.dateUtc);
     text.value = m.fromNow();
-    title.value =
-      m.local().format("LLLL") +
-      " (local)\n" +
-      m.utc().format("LLLL") +
-      " (UTC)";
+    title.value = m.local().format("LLLL") + " (local)\n" + m.utc().format("LLLL") + " (UTC)";
   } else {
     text.value = "n/a";
     title.value = "n/a";
   }
-
 }
 
 onMounted(() => {

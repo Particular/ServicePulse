@@ -2,11 +2,7 @@
 import { RouterLink, useRoute } from "vue-router";
 import { computed } from "vue";
 import ExclamationMark from "./ExclamationMark.vue";
-import {
-  stats,
-  connectionState,
-  monitoringConnectionState,
-} from "../composables/serviceServiceControl.js";
+import { stats, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 
 function subIsActive(input, exact) {
@@ -21,11 +17,7 @@ const displayWarn = computed(() => {
   return licenseStatus.warningLevel === "warning";
 });
 const displayDanger = computed(() => {
-  return (
-    connectionState.unableToConnect ||
-    monitoringConnectionState.unableToConnect ||
-    licenseStatus.warningLevel === "danger"
-  );
+  return connectionState.unableToConnect || monitoringConnectionState.unableToConnect || licenseStatus.warningLevel === "danger";
 });
 </script>
 
@@ -50,47 +42,29 @@ const displayDanger = computed(() => {
             <a href="/a/#/endpoints">
               <i class="fa fa-heartbeat icon-white"></i>
               <span class="navbar-label">Heartbeats</span>
-              <span
-                v-if="stats.number_of_failed_heartbeats > 0"
-                class="badge badge-important"
-                >{{ stats.number_of_failed_heartbeats }}</span
-              >
+              <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
           <li
             :class="{
-              active:
-                subIsActive('/a/#/monitoring') ||
-                subIsActive('/a/#/monitoring/endpoint'),
+              active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint'),
             }"
           >
             <a href="/a/#/monitoring">
               <i class="fa pa-monitoring icon-white"></i>
               <span class="navbar-label">Monitoring</span>
-              <span
-                v-if="stats.number_of_disconnected_endpoints > 0"
-                class="badge badge-important"
-                >{{ stats.number_of_disconnected_endpoints }}</span
-              >
+              <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
             </a>
           </li>
           <li
             :class="{
-              active:
-                subIsActive('/a/#/failed-messages/groups') ||
-                subIsActive('/a/#/failed-messages/all') ||
-                subIsActive('/a/#/failed-messages/archived') ||
-                subIsActive('/a/#/failed-messages/pending-retries'),
+              active: subIsActive('/a/#/failed-messages/groups') || subIsActive('/a/#/failed-messages/all') || subIsActive('/a/#/failed-messages/archived') || subIsActive('/a/#/failed-messages/pending-retries'),
             }"
           >
             <a href="/a/#/failed-messages/groups">
               <i class="fa fa-envelope icon-white"></i>
               <span class="navbar-label">Failed Messages (AngularJS)</span>
-              <span
-                v-if="stats.number_of_failed_messages > 0"
-                class="badge badge-important"
-                >{{ stats.number_of_failed_messages }}</span
-              >
+              <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </a>
           </li>
           <li
@@ -101,22 +75,14 @@ const displayDanger = computed(() => {
             <RouterLink :to="{ name: 'failed-messages' }">
               <i class="fa fa-envelope icon-white"></i>
               <span class="navbar-label">Failed Messages</span>
-              <span
-                v-if="stats.number_of_failed_messages > 0"
-                class="badge badge-important"
-                >{{ stats.number_of_failed_messages }}</span
-              >
+              <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/custom-checks') }">
             <a href="/a/#/custom-checks">
               <i class="fa fa-check icon-white"></i>
               <span class="navbar-label">Custom Checks</span>
-              <span
-                v-if="stats.number_of_failed_checks > 0"
-                class="badge badge-important"
-                >{{ stats.number_of_failed_checks }}</span
-              >
+              <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
             </a>
           </li>
           <li :class="{ active: subIsActive('/a/#/events') }">
@@ -134,11 +100,7 @@ const displayDanger = computed(() => {
             </RouterLink>
           </li>
           <li>
-            <a
-              class="btn-feedback"
-              href="https://github.com/Particular/ServicePulse/issues/new"
-              target="_blank"
-            >
+            <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
               <i class="fa fa-comment"></i>
               <span class="navbar-label">Feedback</span>
             </a>

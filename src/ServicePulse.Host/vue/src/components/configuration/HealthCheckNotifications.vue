@@ -5,12 +5,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import {
-  useEmailNotifications,
-  useUpdateEmailNotifications,
-  useTestEmailNotifications,
-  useToggleEmailNotifications,
-} from "../../composables/serviceNotifications.js";
+import { useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications } from "../../composables/serviceNotifications.js";
 import { useShowToast } from "../../composables/toast.js";
 
 const isExpired = licenseStatus.isExpired;
@@ -34,11 +29,7 @@ const emailNotifications = ref({
 function toggleEmailNotifications() {
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
-  useToggleEmailNotifications(
-    emailNotifications.value.enabled === null
-      ? true
-      : !emailNotifications.value.enabled
-  ).then((result) => {
+  useToggleEmailNotifications(emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled).then((result) => {
     if (result.message === "success") {
       emailToggleSucessful.value = true;
     } else {
@@ -66,10 +57,8 @@ function saveEditedEmailNotifications(newSettings) {
       emailNotifications.value.enable_tls = newSettings.enable_tls;
       emailNotifications.value.smtp_server = newSettings.smtp_server;
       emailNotifications.value.smtp_port = newSettings.smtp_port;
-      emailNotifications.value.authentication_account =
-        newSettings.authorization_account;
-      emailNotifications.value.authentication_password =
-        newSettings.authorization_password;
+      emailNotifications.value.authentication_account = newSettings.authorization_account;
+      emailNotifications.value.authentication_password = newSettings.authorization_password;
       emailNotifications.value.from = newSettings.from;
       emailNotifications.value.to = newSettings.to;
     } else {
@@ -98,16 +87,10 @@ function getEmailNotifications() {
   useEmailNotifications().then((result) => {
     emailNotifications.value.enabled = result.enabled;
     emailNotifications.value.enable_tls = result.enable_tls;
-    emailNotifications.value.smtp_server = result.smtp_server
-      ? result.smtp_server
-      : "";
-    emailNotifications.value.smtp_port = result.smtp_port
-      ? result.smtp_port
-      : undefined;
-    emailNotifications.value.authentication_account =
-      result.authentication_account ? result.authentication_account : "";
-    emailNotifications.value.authentication_password =
-      result.authentication_password ? result.authentication_password : "";
+    emailNotifications.value.smtp_server = result.smtp_server ? result.smtp_server : "";
+    emailNotifications.value.smtp_port = result.smtp_port ? result.smtp_port : undefined;
+    emailNotifications.value.authentication_account = result.authentication_account ? result.authentication_account : "";
+    emailNotifications.value.authentication_password = result.authentication_password ? result.authentication_password : "";
     emailNotifications.value.from = result.from ? result.from : "";
     emailNotifications.value.to = result.to ? result.to : "";
   });
@@ -127,11 +110,7 @@ onMounted(() => {
         <section>
           <div class="row">
             <div class="col-12">
-              <p class="screen-intro">
-                Configure notifications for health checks built into
-                ServiceControl (low disk space, stale database indexes, and
-                messages in error queue).
-              </p>
+              <p class="screen-intro">Configure notifications for health checks built into ServiceControl (low disk space, stale database indexes, and messages in error queue).</p>
             </div>
           </div>
           <div class="notifications row">
@@ -141,14 +120,7 @@ onMounted(() => {
                   <div class="row">
                     <div class="col-1">
                       <div class="onoffswitch">
-                        <input
-                          type="checkbox"
-                          id="onoffswitch"
-                          name="onoffswitch"
-                          class="onoffswitch-checkbox"
-                          @click="toggleEmailNotifications"
-                          v-model="emailNotifications.enabled"
-                        />
+                        <input type="checkbox" id="onoffswitch" name="onoffswitch" class="onoffswitch-checkbox" @click="toggleEmailNotifications" v-model="emailNotifications.enabled" />
                         <label class="onoffswitch-label" for="onoffswitch">
                           <span class="onoffswitch-inner"></span>
                           <span class="onoffswitch-switch"></span>
@@ -156,10 +128,7 @@ onMounted(() => {
                       </div>
                       <div>
                         <span class="connection-test connection-failed">
-                          <template v-if="emailToggleSucessful === false">
-                            <i class="fa fa-exclamation-triangle"></i> Update
-                            failed
-                          </template>
+                          <template v-if="emailToggleSucessful === false"> <i class="fa fa-exclamation-triangle"></i> Update failed </template>
                         </span>
                       </div>
                     </div>
@@ -168,48 +137,24 @@ onMounted(() => {
                         <div class="col-12">
                           <p class="lead">Email notifications</p>
                           <p class="endpoint-metadata">
-                            <button
-                              class="btn btn-link btn-sm"
-                              type="button"
-                              @click="editEmailNotifications"
-                            >
-                              <i class="fa fa-edit"></i>Configure
-                            </button>
+                            <button class="btn btn-link btn-sm" type="button" @click="editEmailNotifications"><i class="fa fa-edit"></i>Configure</button>
                           </p>
                           <p class="endpoint-metadata">
-                            <button
-                              class="btn btn-link btn-sm"
-                              type="button"
-                              @click="testEmailNotifications"
-                              :disabled="emailTestInProgress"
-                            >
-                              <i class="fa fa-envelope"></i>Send test
-                              notification
-                            </button>
+                            <button class="btn btn-link btn-sm" type="button" @click="testEmailNotifications" :disabled="emailTestInProgress"><i class="fa fa-envelope"></i>Send test notification</button>
                             <span class="connection-test connection-testing">
                               <template v-if="emailTestInProgress">
-                                <i
-                                  class="glyphicon glyphicon-refresh rotate"
-                                ></i>
+                                <i class="glyphicon glyphicon-refresh rotate"></i>
                                 Testing
                               </template>
                             </span>
                             <span class="connection-test connection-successful">
-                              <template v-if="emailTestSuccessful === true">
-                                <i class="fa fa-check"></i> Test email sent
-                                successfully
-                              </template>
+                              <template v-if="emailTestSuccessful === true"> <i class="fa fa-check"></i> Test email sent successfully </template>
                             </span>
                             <span class="connection-test connection-failed">
-                              <template v-if="emailTestSuccessful === false">
-                                <i class="fa fa-exclamation-triangle"></i> Test
-                                failed
-                              </template>
+                              <template v-if="emailTestSuccessful === false"> <i class="fa fa-exclamation-triangle"></i> Test failed </template>
                             </span>
                             <span class="connection-test connection-successful">
-                              <template v-if="emailUpdateSuccessful === true">
-                                <i class="fa fa-check"></i> Update successful
-                              </template>
+                              <template v-if="emailUpdateSuccessful === true"> <i class="fa fa-check"></i> Update successful </template>
                             </span>
                             <span class="connection-test connection-failed">
                               <template v-if="emailUpdateSuccessful === false">
@@ -231,13 +176,7 @@ onMounted(() => {
 
       <Teleport to="#modalDisplay">
         <!-- use the modal component, pass in the prop -->
-        <HealthCheckNotifications_EmailConfiguration
-          v-if="showEmailConfiguration === true"
-          v-bind="emailNotifications"
-          @cancel="showEmailConfiguration = false"
-          @save="saveEditedEmailNotifications"
-        >
-        </HealthCheckNotifications_EmailConfiguration>
+        <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications"> </HealthCheckNotifications_EmailConfiguration>
       </Teleport>
     </section>
   </template>
@@ -249,12 +188,12 @@ onMounted(() => {
 }
 
 .onoffswitch {
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
-    user-select: none;
-    position: relative;
-    width: 76px;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+  width: 76px;
 }
 
 .onoffswitch-checkbox {
@@ -262,7 +201,7 @@ onMounted(() => {
 }
 
 .onoffswitch-label {
-  border: 2px solid #929E9E;
+  border: 2px solid #929e9e;
   border-radius: 20px;
   cursor: pointer;
   display: block;
@@ -277,7 +216,8 @@ onMounted(() => {
   width: 200%;
 }
 
-.onoffswitch-inner:before, .onoffswitch-inner:after {
+.onoffswitch-inner:before,
+.onoffswitch-inner:after {
   box-sizing: border-box;
   color: white;
   display: block;
@@ -292,23 +232,23 @@ onMounted(() => {
 }
 
 .onoffswitch-inner:before {
-  background-color: #00A3C4;
-  color: #FFFFFF;
+  background-color: #00a3c4;
+  color: #ffffff;
   content: "ON";
   padding-left: 10px;
 }
 
 .onoffswitch-inner:after {
-  background-color: #F2F6F7;
-  color: #929E9E;
+  background-color: #f2f6f7;
+  color: #929e9e;
   content: "OFF";
   padding-right: 10px;
   text-align: right;
 }
 
 .onoffswitch-switch {
-  background: #FFFFFF;
-  border: 2px solid #929E9E;
+  background: #ffffff;
+  border: 2px solid #929e9e;
   border-radius: 20px;
   bottom: 0;
   display: block;

@@ -39,7 +39,7 @@ function downloadHeadersAndBody() {
     })
     .then((data) => {
       if (data[0] === undefined) {
-        failedMessage.value.headersNotFound = true ;
+        failedMessage.value.headersNotFound = true;
         failedMessage.value.messageBodyNotFound = true;
         return;
       }
@@ -58,14 +58,14 @@ function downloadBody() {
   return useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body")
     .then((response) => {
       if (response.status === 404) {
-          failedMessage.value.messageBodyNotFound = true;
-      } 
-        return response.json();
+        failedMessage.value.messageBodyNotFound = true;
+      }
+      return response.json();
     })
     .then((data) => {
       if (data === undefined) {
-          failedMessage.value.messageBodyNotFound = true;
-          return;
+        failedMessage.value.messageBodyNotFound = true;
+        return;
       }
       failedMessage.value.messageBody = data;
     })
@@ -78,13 +78,15 @@ function downloadBody() {
 function togglePanel(panelNum) {
   if (!failedMessage.value.notFound && !failedMessage.value.error) {
     failedMessage.value.panel = panelNum;
-  } 
+  }
 
   return false;
 }
 
 onMounted(() => {
-  loadFailedMessage().then(() => { togglePanel(1); });
+  loadFailedMessage().then(() => {
+    togglePanel(1);
+  });
   downloadHeadersAndBody();
 });
 </script>
@@ -123,12 +125,12 @@ onMounted(() => {
       <div class="row">
         <div class="col-sm-12">
           <div class="btn-toolbar message-toolbar">
-            <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message </button>
-            <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Restore </button>
-            <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message </button>
-            <button type="button" class="btn btn-default" ng-show="vm.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry </button>
-            <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" tooltip="Browse this message in ServiceInsight, if installed"><img src="../assets/si-icon.svg" /> View in ServiceInsight </button>
-            <button type="button" class="btn btn-default" ng-click="vm.exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message </button>
+            <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
+            <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
+            <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
+            <button type="button" class="btn btn-default" ng-show="vm.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
+            <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" tooltip="Browse this message in ServiceInsight, if installed"><img src="../assets/si-icon.svg" /> View in ServiceInsight</button>
+            <button type="button" class="btn btn-default" ng-click="vm.exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message</button>
           </div>
         </div>
       </div>
@@ -143,22 +145,22 @@ onMounted(() => {
                 <h5 :class="{ active: failedMessage.panel === 4 }" v-on:click="togglePanel(4)"><a>Flow Diagram</a></h5>
               </div>
 
-              <pre isolate-click v-if="failedMessage.panel === 0">{{ failedMessage.exception?.message }}</pre> 
+              <pre isolate-click v-if="failedMessage.panel === 0">{{ failedMessage.exception?.message }}</pre>
               <pre isolate-click v-if="failedMessage.panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
               <table isolate-click class="table" v-if="failedMessage.panel === 2 && !failedMessage.headersNotFound">
-                  <tbody>
-                      <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
-                        <td nowrap="nowrap">{{ header.key }}</td>
-                        <td>
-                          <pre>{{ header.value }}</pre>
-                        </td>
-                      </tr>
-                  </tbody>
-                </table>
-                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 2 && failedMessage?.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
-                <pre isolate-click v-if="failedMessage.panel === 3 && !failedMessage?.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
-                <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 3 && failedMessage?.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
-                <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="failedMessage.panel === 4"></flow-diagram>
+                <tbody>
+                  <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
+                    <td nowrap="nowrap">{{ header.key }}</td>
+                    <td>
+                      <pre>{{ header.value }}</pre>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 2 && failedMessage?.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
+              <pre isolate-click v-if="failedMessage.panel === 3 && !failedMessage?.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
+              <div isolate-click class="alert alert-info" v-if="failedMessage.panel === 3 && failedMessage?.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
+              <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="failedMessage.panel === 4"></flow-diagram>
             </div>
           </div>
         </div>

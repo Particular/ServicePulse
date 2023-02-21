@@ -18,41 +18,20 @@ function iconClasses(eventItem) {
   return {
     normal: eventItem.severity === "info",
     danger: eventItem.severity === "error",
-    "fa-heartbeat":
-      eventItem.category === "Endpoints" ||
-      eventItem.category === "EndpointControl" ||
-      eventItem.category === "HeartbeatMonitoring",
+    "fa-heartbeat": eventItem.category === "Endpoints" || eventItem.category === "EndpointControl" || eventItem.category === "HeartbeatMonitoring",
     "fa-check": eventItem.category === "CustomChecks",
-    "fa-envelope":
-      eventItem.category === "MessageFailures" ||
-      eventItem.category === "Recoverability",
-    "pa-redirect-source pa-redirect-large":
-      eventItem.category === "MessageRedirects",
+    "fa-envelope": eventItem.category === "MessageFailures" || eventItem.category === "Recoverability",
+    "pa-redirect-source pa-redirect-large": eventItem.category === "MessageRedirects",
     "fa-exclamation": eventItem.category === "ExternalIntegrations",
   };
 }
 
 function iconSubClasses(eventItem) {
   return {
-    "fa-times fa-error":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.severity === "error",
-    "fa-pencil":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.category === "MessageRedirects" &&
-      eventItem.event_type === "MessageRedirectChanged",
-    "fa-plus":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.category === "MessageRedirects" &&
-      eventItem.event_type === "MessageRedirectCreated",
-    "fa-trash":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.category === "MessageRedirects" &&
-      eventItem.event_type === "MessageRedirectRemoved",
+    "fa-times fa-error": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.severity === "error",
+    "fa-pencil": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectChanged",
+    "fa-plus": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectCreated",
+    "fa-trash": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectRemoved",
   };
 }
 
@@ -75,10 +54,7 @@ function navigateToEvent(eventLogItem) {
       break;
     case "MessageFailures":
       var newlocation = "/a/#/failed-messages/groups";
-      if (
-        eventLogItem.related_to &&
-        eventLogItem.related_to[0].search("message") > 0
-      ) {
+      if (eventLogItem.related_to && eventLogItem.related_to[0].search("message") > 0) {
         newlocation = "/a/#/failed-messages" + eventLogItem.related_to[0];
       }
       //router.push(newlocation);

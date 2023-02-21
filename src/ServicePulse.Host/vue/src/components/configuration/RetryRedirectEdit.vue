@@ -35,8 +35,7 @@ const noKnownQueues = computed(() => {
 });
 
 const sourceQueueTooltip = "Choose a queue that is known to Service Control";
-const targetQueueTooltip =
-  "Choose a queue that is known to Service Control or provide a custom queue";
+const targetQueueTooltip = "Choose a queue that is known to Service Control or provide a custom queue";
 
 function selectToAddress(item) {
   targetQueue.value = item;
@@ -71,12 +70,8 @@ function close() {
     <div class="modal-wrapper">
       <div class="modal-container">
         <div class="modal-header">
-          <h3 class="modal-title" v-if="model.message_redirect_id">
-            Modify redirect
-          </h3>
-          <h3 class="modal-title" v-if="!model.message_redirect_id">
-            Create redirect
-          </h3>
+          <h3 class="modal-title" v-if="model.message_redirect_id">Modify redirect</h3>
+          <h3 class="modal-title" v-if="!model.message_redirect_id">Create redirect</h3>
         </div>
 
         <form name="redirectForm" novalidate @submit.prevent="save">
@@ -87,7 +82,7 @@ function close() {
                 <span :title="sourceQueueTooltip">
                   <i class="fa fa-info-circle"></i>
                 </span>
-                <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid, }">
+                <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
                   <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-select" required :disabled="model.message_redirect_id">
                     <option v-for="option in model.queues" :value="option" :key="option">
                       {{ option }}
@@ -101,38 +96,17 @@ function close() {
                 <span :title="targetQueueTooltip">
                   <i class="fa fa-info-circle"></i>
                 </span>
-                <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid, }">
-                  <vue3-simple-typeahead
-                    id="targetQueue"
-                    name="targetQueue"
-                    :defaultItem="model.to_physical_address"
-                    v-model="targetQueue"
-                    @selectItem="selectToAddress"
-                    class="form-control"
-                    required
-                    placeholder="Start writing..."
-                    :items="model.queues"
-                    :minInputLength="1"
-                  >
-                  </vue3-simple-typeahead>
+                <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
+                  <vue3-simple-typeahead id="targetQueue" name="targetQueue" :defaultItem="model.to_physical_address" v-model="targetQueue" @selectItem="selectToAddress" class="form-control" required placeholder="Start writing..." :items="model.queues" :minInputLength="1"> </vue3-simple-typeahead>
 
                   <template v-if="noKnownQueues">
                     <div :class="{ 'has-error': noKnownQueues }">
-                      <p class="control-label">
-                        No known queues found. You can provide a non-audited
-                        queue name, but if you don't provide a valid address,
-                        the redirected message will be lost.
-                      </p>
+                      <p class="control-label">No known queues found. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.</p>
                     </div>
                   </template>
                   <template v-if="notKnownQueue">
                     <div :class="{ 'has-error': notKnownQueue }">
-                      <p class="control-label">
-                        Target queue does not match any known queue. You can
-                        provide a non-audited queue name, but if you don't
-                        provide a valid address, the redirected message will be
-                        lost.
-                      </p>
+                      <p class="control-label">Target queue does not match any known queue. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.</p>
                     </div>
                   </template>
                 </div>
@@ -144,12 +118,8 @@ function close() {
             </div>
           </div>
           <div class="modal-footer">
-            <button v-if="model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="edit">
-              Modify
-            </button>
-            <button v-if="!model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="create">
-              Create
-            </button>
+            <button v-if="model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="edit">Modify</button>
+            <button v-if="!model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="create">Create</button>
             <button class="btn btn-default" @click="close">Cancel</button>
           </div>
         </form>

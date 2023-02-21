@@ -17,9 +17,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
               <div class="list-section">
                 <h3>All deleted messages</h3>
                 <div class="col-sm-7 form-group">
-                  <label for="serviceControlUrl">
-                    deleted messages details
-                  </label>
+                  <label for="serviceControlUrl"> deleted messages details </label>
                 </div>
               </div>
             </div>

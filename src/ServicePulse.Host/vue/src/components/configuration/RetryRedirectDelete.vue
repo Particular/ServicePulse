@@ -24,11 +24,7 @@ function close() {
           </div>
         </div>
         <div class="modal-body">
-          <p>
-            Once the redirect is ended, any affected messages will be sent to
-            the original destination queue. Ensure this queue is ready to accept
-            messages again.
-          </p>
+          <p>Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.</p>
         </div>
         <div class="modal-footer">
           <button class="btn btn-primary" @click="deleteRedirect">Yes</button>

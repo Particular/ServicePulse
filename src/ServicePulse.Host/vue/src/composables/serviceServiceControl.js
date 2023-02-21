@@ -1,12 +1,7 @@
 import { reactive, onMounted, watch, computed } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
-import {
-  useFetchFromServiceControl,
-  useFetchFromMonitoring,
-  serviceControlUrl,
-  monitoringUrl,
-} from "./serviceServiceControlUrls";
+import { useFetchFromServiceControl, useFetchFromMonitoring, serviceControlUrl, monitoringUrl } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast.js";
 
 export const stats = reactive({
@@ -41,10 +36,7 @@ export const environment = reactive({
   sc_version: "",
   minimum_supported_sc_version: "1.39.0",
   is_compatible_with_sc: true,
-  sp_version:
-    window.defaultConfig && window.defaultConfig.version
-      ? window.defaultConfig.version
-      : "1.1.0",
+  sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "1.1.0",
   supportsArchiveGroups: false,
   endpoints_error_url: "",
   known_endpoints_url: "",
@@ -96,29 +88,15 @@ export function useServiceControl() {
   setInterval(() => useServiceControlMonitoringStats(), 5000); //NOTE is 5 seconds too often?
 
   const scConnectionFailure = computed(() => connectionState.unableToConnect);
-  const monitoringConnectionFailure = computed(
-    () => monitoringConnectionState.unableToConnect
-  );
+  const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
 
   watch(scConnectionFailure, async (newValue, oldValue) => {
     //NOTE to eliminate success msg showing everytime the screen is refreshed
     if (newValue != oldValue && !(oldValue === null && newValue === false)) {
       if (newValue) {
-        useShowToast(
-          "error",
-          "Error",
-          "Could not connect to ServiceControl at " +
-            serviceControlUrl.value +
-            '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
-        );
+        useShowToast("error", "Error", "Could not connect to ServiceControl at " + serviceControlUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>');
       } else {
-        useShowToast(
-          "success",
-          "Success",
-          "Connection to ServiceControl was successful at " +
-            serviceControlUrl.value +
-            "."
-        );
+        useShowToast("success", "Success", "Connection to ServiceControl was successful at " + serviceControlUrl.value + ".");
       }
     }
   });
@@ -127,21 +105,9 @@ export function useServiceControl() {
     //NOTE to eliminate success msg showing everytime the screen is refreshed
     if (newValue != oldValue && !(oldValue === null && newValue === false)) {
       if (newValue) {
-        useShowToast(
-          "error",
-          "Error",
-          "Could not connect to the ServiceControl Monitoring service at " +
-            monitoringUrl.value +
-            '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>'
-        );
+        useShowToast("error", "Error", "Could not connect to the ServiceControl Monitoring service at " + monitoringUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>');
       } else {
-        useShowToast(
-          "success",
-          "Success",
-          "Connection to ServiceControl Monitoring service was successful at " +
-            monitoringUrl.value +
-            "."
-        );
+        useShowToast("success", "Success", "Connection to ServiceControl Monitoring service was successful at " + monitoringUrl.value + ".");
       }
     }
   });
@@ -153,27 +119,15 @@ export function useServiceControlStats() {
   const failedCustomChecksResult = getFailedCustomChecksCount();
   const archivedMessagesResult = getArchivedMessagesCount();
 
-
-  return Promise.all([
-    failedHeartBeatsResult,
-    failedMessagesResult,
-    failedCustomChecksResult,
-    archivedMessagesResult,
-  ])
-    .then(
-      ([
-        failedHeartbeats,
-        failedMessages,
-        failedCustomChecks,
-        archivedMessages,
-      ]) => {
-        stats.failing_endpoints = failedHeartbeats;
-        stats.number_of_failed_messages = failedMessages;
-        stats.number_of_failed_checks = failedCustomChecks;
-        stats.number_of_failed_heartbeats = failedHeartbeats;
-        stats.number_of_archived_messages = archivedMessages;
-      }
-    ).catch((err) => {
+  return Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult])
+    .then(([failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages]) => {
+      stats.failing_endpoints = failedHeartbeats;
+      stats.number_of_failed_messages = failedMessages;
+      stats.number_of_failed_checks = failedCustomChecks;
+      stats.number_of_failed_heartbeats = failedHeartbeats;
+      stats.number_of_archived_messages = archivedMessages;
+    })
+    .catch((err) => {
       console.log(err);
     });
 }
@@ -182,10 +136,7 @@ export function useServiceControlMonitoringStats() {
   const monitoredEndpointsResult = getMonitoredEndpoints();
   const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
-  return Promise.all([
-    monitoredEndpointsResult,
-    disconnectedEndpointsCountResult,
-  ]).then(([, disconnectedEndpoints]) => {
+  return Promise.all([monitoredEndpointsResult, disconnectedEndpointsCountResult]).then(([, disconnectedEndpoints]) => {
     //Do something here with the argument to the callback in the future if we are using them
     stats.number_of_disconnected_endpoints = disconnectedEndpoints;
   });
@@ -195,20 +146,18 @@ export function useServiceControlConnections() {
   const scConnectionResult = getSCConnection();
   const monitoringConnectionResult = getMonitoringConnection();
 
-  return Promise.all([scConnectionResult, monitoringConnectionResult]).then(
-    ([scConnection, mConnection]) => {
-      if (scConnection) {
-        connections.serviceControl.settings = scConnection.settings;
-        connections.serviceControl.errors = scConnection.errors;
-      }
-
-      if (mConnection) {
-        connections.monitoring.settings = mConnection.Metrics;
-      }
-
-      return connections;
+  return Promise.all([scConnectionResult, monitoringConnectionResult]).then(([scConnection, mConnection]) => {
+    if (scConnection) {
+      connections.serviceControl.settings = scConnection.settings;
+      connections.serviceControl.errors = scConnection.errors;
     }
-  );
+
+    if (mConnection) {
+      connections.monitoring.settings = mConnection.Metrics;
+    }
+
+    return connections;
+  });
 }
 
 export function useServiceControlVersion() {
@@ -220,15 +169,7 @@ export function useServiceControlVersion() {
   watch(environment, async (newValue, oldValue) => {
     if (newValue.is_compatible_with_sc != oldValue.is_compatible_with_sc) {
       if (!newValue.is_compatible_with_sc) {
-        useShowToast(
-          "error",
-          "Error",
-          "You are using Service Control version " +
-            newValue.sc_version +
-            ". Please, upgrade to version " +
-            newValue.minimum_supported_sc_version.value +
-            " or higher to unlock new functionality in ServicePulse."
-        );
+        useShowToast("error", "Error", "You are using Service Control version " + newValue.sc_version + ". Please, upgrade to version " + newValue.minimum_supported_sc_version.value + " or higher to unlock new functionality in ServicePulse.");
       }
     }
   });
@@ -239,58 +180,39 @@ function getServiceControlVersion() {
   const scResult = getSCVersion();
   const mResult = getMonitoringVersion();
 
-  return Promise.all([productsResult, scResult, mResult]).then(
-    ([products, scVer]) => {
-      if (scVer) {
-        environment.supportsArchiveGroups =
-          scVer.archived_groups_url && scVer.archived_groups_url.length > 0;
-        environment.is_compatible_with_sc = useIsSupported(
-          environment.sc_version,
-          environment.minimum_supported_sc_version
-        );
-        environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
-        environment.known_endpoints_url = scVer && scVer.known_endpoints_url;
-        environment.endpoints_message_search_url =
-          scVer.endpoints_message_search_url;
-        environment.endpoints_messages_url = scVer.endpoints_messages_url;
-        environment.endpoints_url = scVer.endpoints_url;
-        environment.errors_url = scVer.errors_url;
-        environment.configuration = scVer.configuration;
-        environment.message_search_url = scVer.message_search_url;
-        environment.sagas_url = scVer.sagas_url;
-      }
-
-      if (
-        products.latestSP &&
-        useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)
-      ) {
-        newVersions.newSPVersion.newspversion = true;
-        newVersions.newSPVersion.newspversionlink = products.latestSP.release;
-        newVersions.newSPVersion.newspversionnumber = products.latestSP.tag;
-      }
-
-      if (
-        products.latestSC &&
-        useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)
-      ) {
-        newVersions.newSCVersion.newscversion = true;
-        newVersions.newSCVersion.newscversionlink = products.latestSC.release;
-        newVersions.newSCVersion.newscversionnumber = products.latestSC.tag;
-      }
-
-      if (
-        products.latestSC &&
-        useIsUpgradeAvailable(
-          environment.monitoring_version,
-          products.latestSC.tag
-        )
-      ) {
-        newVersions.newMVersion.newmversion = true;
-        newVersions.newMVersion.newmversionlink = products.latestSC.release;
-        newVersions.newMVersion.newmversionnumber = products.latestSC.tag;
-      }
+  return Promise.all([productsResult, scResult, mResult]).then(([products, scVer]) => {
+    if (scVer) {
+      environment.supportsArchiveGroups = scVer.archived_groups_url && scVer.archived_groups_url.length > 0;
+      environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version);
+      environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
+      environment.known_endpoints_url = scVer && scVer.known_endpoints_url;
+      environment.endpoints_message_search_url = scVer.endpoints_message_search_url;
+      environment.endpoints_messages_url = scVer.endpoints_messages_url;
+      environment.endpoints_url = scVer.endpoints_url;
+      environment.errors_url = scVer.errors_url;
+      environment.configuration = scVer.configuration;
+      environment.message_search_url = scVer.message_search_url;
+      environment.sagas_url = scVer.sagas_url;
     }
-  );
+
+    if (products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
+      newVersions.newSPVersion.newspversion = true;
+      newVersions.newSPVersion.newspversionlink = products.latestSP.release;
+      newVersions.newSPVersion.newspversionnumber = products.latestSP.tag;
+    }
+
+    if (products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
+      newVersions.newSCVersion.newscversion = true;
+      newVersions.newSCVersion.newscversionlink = products.latestSC.release;
+      newVersions.newSCVersion.newscversionnumber = products.latestSC.tag;
+    }
+
+    if (products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
+      newVersions.newMVersion.newmversion = true;
+      newVersions.newMVersion.newmversionlink = products.latestSC.release;
+      newVersions.newMVersion.newmversionnumber = products.latestSC.tag;
+    }
+  });
 }
 
 function getSCConnection() {
@@ -299,11 +221,7 @@ function getSCConnection() {
       return response.json();
     })
     .catch(() => {
-      connections.serviceControl.errors = [
-        "Error reaching ServiceControl at " +
-          serviceControlUrl.value +
-          "connection",
-      ];
+      connections.serviceControl.errors = ["Error reaching ServiceControl at " + serviceControlUrl.value + "connection"];
       return {};
     });
 }
@@ -314,9 +232,7 @@ function getMonitoringConnection() {
       return response.json();
     })
     .catch(() => {
-      connections.monitoring.errors = [
-        "Error SC Monitoring instance at " + monitoringUrl.value + "connection",
-      ];
+      connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
       return {};
     });
 }
@@ -335,9 +251,7 @@ function getSCVersion() {
 function getMonitoringVersion() {
   return useFetchFromMonitoring("")
     .then((response) => {
-      environment.monitoring_version = response.headers.get(
-        "X-Particular-Version"
-      );
+      environment.monitoring_version = response.headers.get("X-Particular-Version");
       return response.json();
     })
     .catch(() => {
@@ -417,7 +331,6 @@ function getFailedCustomChecksCount() {
     (response) => parseInt(response.headers.get("Total-Count"))
   );
 }
-
 
 function getMonitoredEndpoints() {
   return fetchWithErrorHandling(
