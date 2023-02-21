@@ -12,9 +12,10 @@ const failedMessage = ref({});
 function loadFailedMessage() {
   return useFetchFromServiceControl("errors/last/" + id)
     .then((response) => {
+
       if (response.status === 404) {
         failedMessage.value = { notFound: true };
-      } else {
+      } else if (response.status !== 200) {
         failedMessage.value = { error: true };
       }
       return response.json();
@@ -25,6 +26,7 @@ function loadFailedMessage() {
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
       failedMessage.value = message;
+      return;
     })
     .catch((err) => {
       console.log(err);
@@ -33,7 +35,7 @@ function loadFailedMessage() {
 }
 
 function downloadHeadersAndBody() {
-  return useFetchFromServiceControl("messages/search/" + id)
+  return useFetchFromServiceControl("messages/search/" + failedMessage.value.message_id)
     .then((response) => {
       return response.json();
     })
@@ -86,8 +88,9 @@ function togglePanel(panelNum) {
 onMounted(() => {
   loadFailedMessage().then(() => {
     togglePanel(1);
-  });
-  downloadHeadersAndBody();
+  }).then(() => {
+    downloadHeadersAndBody();
+  });  
 });
 </script>
 
