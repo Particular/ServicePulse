@@ -141,7 +141,7 @@ onMounted(() => {
           </div>
             <div class="row">
               <div isolate-click class="col-sm-12 no-side-padding">
-                <div class="nav tabs">
+                <div class="nav tabs msg-tabs">
                   <h5 :class="{ active: failedMessage.panel === 1 }" class="nav-item" v-on:click="togglePanel(1)"><a href="#">Stacktrace</a></h5>
                   <h5 :class="{ active: failedMessage.panel === 2 }" class="nav-item" v-on:click="togglePanel(2)"><a href="#">Headers</a></h5>
                   <h5 :class="{ active: failedMessage.panel === 3 }" class="nav-item" v-on:click="togglePanel(3)"><a href="#">Message body</a></h5>
@@ -372,6 +372,34 @@ span.metadata {
     display: inline-block;
     padding: 0px 20px 2px 0;
     color: #777f7f;
+}
+
+code, kbd, pre, samp {
+    font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+pre {
+    margin: 3px 0 2px;
+}
+pre {
+    white-space: pre-wrap;
+}
+pre {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.msg-tabs {
+    margin-bottom: 20px;
 }
 
 /* .label-warning,
