@@ -30,8 +30,6 @@ const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
 function getExceptionGroups() {
-  exceptionGroups.value = [];
-
   return useGetExceptionGroups().then((result) => {
     exceptionGroups.value = result;
     if (result.length > 0) {
@@ -221,6 +219,10 @@ function isBeingRetried(group) {
 
 onMounted(() => {
   initialLoad();
+
+  setInterval(() => {
+    initialLoad();
+  }, 5000);
 });
 </script>
 
