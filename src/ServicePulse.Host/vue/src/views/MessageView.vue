@@ -302,7 +302,6 @@ button img {
 
 .btn-default:active:hover, .btn-default.active:hover, .open > .dropdown-toggle.btn-default:hover, .btn-default:active:focus, .btn-default.active:focus, .open > .dropdown-toggle.btn-default:focus, .btn-default:active.focus, .btn-default.active.focus, .open > .dropdown-toggle.btn-default.focus {
     color: #333;
-    background-color: #d4d4d4;
     border-color: #8c8c8c;
 }
 
@@ -332,6 +331,9 @@ button img {
 
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
     cursor: not-allowed;
+    pointer-events: unset;
+    border-color: #adadad;
+    background-color: #fff;
     filter: alpha(opacity=65);
     opacity: 0.65;
     -webkit-box-shadow: none;
