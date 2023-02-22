@@ -28,8 +28,8 @@ const routes = {
   },
   "pending-retries": {
     component: PendingRetries,
-    title: "Pending Retries"
-  }
+    title: "Pending Retries",
+  },
 };
 const currentPath = ref(window.location.hash);
 //const redirectCount = ref(0);
@@ -66,7 +66,7 @@ onMounted(() => {
         <div class="col-sm-12">
           <div class="tabs">
             <!--Failed Message Groups-->
-            <h5 :class="{ active: subIsActive('#failed-message-groups') || subIsActive(''), disabled: !connectionState.connected && !connectionState.connectedRecently, }">
+            <h5 :class="{ active: subIsActive('#failed-message-groups') || subIsActive(''), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <a href="/failed-messages#failed-message-groups">
                 Failed Message Groups
                 <span v-show="stats.number_of_failed_messages === 0"> (0) </span>
@@ -75,28 +75,25 @@ onMounted(() => {
             </h5>
 
             <!--All Failed Messages-->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#all-failed-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently, }">
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#all-failed-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <a href="/failed-messages#all-failed-messages">All Failed Messages </a>
               <span v-if="stats.number_of_failed_messages !== 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </h5>
 
             <!--Deleted Message Group-->
-            <h5
-              v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#deleted-message-groups'), disabled: !connectionState.connected && !connectionState.connectedRecently, }">
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#deleted-message-groups'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <a href="/failed-messages#deleted-message-groups">Deleted Message Groups </a>
               <span v-if="stats.number_of_archived_messages !== 0" title="There's varying numbers of deleted message groups depending on group type" class="badge badge-important">!</span>
             </h5>
 
             <!--All Deleted Messages-->
-            <h5
-              v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#all-deleted-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently, }">
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#all-deleted-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <a href="/failed-messages#all-deleted-messages">All Deleted Messages </a>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
 
             <!--All Pending Retries -->
-            <h5
-              v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently, }">
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <a href="#pending-retries">Pending Retries </a>
               <span v-if="stats.number_of_pending_retries !== 0" class="badge badge-important">{{ stats.number_of_pending_retries }}</span>
             </h5>
@@ -108,5 +105,4 @@ onMounted(() => {
   </template>
 </template>
 
-<style>
-</style>
+<style></style>
