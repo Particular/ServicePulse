@@ -1,5 +1,6 @@
 import { useDeleteFromServiceControl, usePostToServiceControl, useFetchFromServiceControl } from "./serviceServiceControlUrls.js";
 
+//get all failed message groups
 export function useGetExceptionGroups() {
   //todo - add sort, page and classifers
   return useFetchFromServiceControl("recoverability/groups")
@@ -15,6 +16,21 @@ export function useGetExceptionGroups() {
     });
 }
 
+//get all deleted message groups
+export function useGetArchiveGroups() {
+    //todo - add  page and classifers
+    return useFetchFromServiceControl("errors/groups")
+        .then((response) => {
+            return response.json();
+        })
+        .catch((err) => {
+            console.log(err);
+            var result = {
+                message: "error",
+            };
+            return result;
+        });
+}
 //delete note by group id
 export function useDeleteNote(groupId) {
   return useDeleteFromServiceControl("recoverability/groups/" + groupId + "/comment")
@@ -78,9 +94,8 @@ export function useArchiveExceptionGroup(groupId) {
     });
 }
 
-//restore exception group by group id
-//restoreGroup
-export function useRestoreExceptionGroup(groupId) {
+//restore group by group id
+export function useRestoreGroup(groupId) {
   return usePostToServiceControl("recoverability/groups/" + groupId + "/errors/unarchive")
     .then((response) => {
       var result = {
