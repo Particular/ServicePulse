@@ -69,7 +69,7 @@ onMounted(() => {
     </button>
     <ul class="dropdown-menu">
       <li v-for="(classifier, index) in classifiers" :key="index">
-        <a @click.prevent="classifierChanged(classifier)" :key="index" :to="{ path: '/failed-messages', query: { groupBy: classifier } }">{{ classifier }}</a>
+        <a @click.prevent="classifierChanged(classifier)">{{ classifier }}</a>
       </li>
     </ul>
   </div>
