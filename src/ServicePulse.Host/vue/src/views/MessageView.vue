@@ -84,7 +84,22 @@ function togglePanel(panelNum) {
   return false;
 }
 
+function getConfiguration(){
+  return useFetchFromServiceControl("configuration")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      var config = data;
+    })
+}
+
+/* function updateMessageDeleteDate(){
+
+} */
+
 onMounted(() => {
+  getConfiguration();
   loadFailedMessage()
     .then(() => {
       togglePanel(1);
