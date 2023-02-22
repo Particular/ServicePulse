@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
@@ -9,7 +10,9 @@ import FailedMessageGroupRetry from "./FailedMessageGroupRetry.vue";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
+import { useFailedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
 
+const route = useRoute();
 const props = defineProps({
   sortFunction: Object,
 });
@@ -33,10 +36,10 @@ const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
-function getExceptionGroups() {
+function getExceptionGroups(classifier) {
   exceptionGroups.value = [];
 
-  return useGetExceptionGroups().then((result) => {
+  return useGetExceptionGroups(classifier).then((result) => {
     if (props.sortFunction) {
       result.sort(props.sortFunction);
     }
@@ -62,13 +65,18 @@ function initializeGroupState(group) {
   return group;
 }
 
-function initialLoad() {
+function loadFailedMessageGroups(groupBy) {
   loadingData.value = true;
-  initialLoadComplete.value = false;
 
-  getExceptionGroups().then(() => {
+  if (!initialLoadComplete.value) {
+    const classificationHelper = new useFailedMessageGroupClassification();
+    groupBy = classificationHelper.loadDefaultGroupingClassifier(route);
+  }
+
+  getExceptionGroups(groupBy ?? route.query.groupBy).then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
+
     emit("InitialLoadComplete");
   });
 }
@@ -228,7 +236,11 @@ function isBeingRetried(group) {
 }
 
 onMounted(() => {
-  initialLoad();
+  loadFailedMessageGroups();
+});
+
+defineExpose({
+  loadFailedMessageGroups,
 });
 </script>
 

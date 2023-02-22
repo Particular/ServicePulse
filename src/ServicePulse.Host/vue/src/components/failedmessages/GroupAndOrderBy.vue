@@ -1,22 +1,32 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { useSortingsAndGroupClassifiers } from "../../composables/serviceSortingsAndGroupClassifiers";
+import { useRouter, useRoute } from "vue-router";
+import { useFailedMessageGroupSortings } from "../../composables/serviceFailedMessageGroupSortings";
+import { useFailedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
 
-const sortingHelper = new useSortingsAndGroupClassifiers();
-const emit = defineEmits(["sortUpdated", "filterTextUpdated"]);
+const emit = defineEmits(["sortUpdated", "classifierUpdated"]);
+
+const sortingHelper = new useFailedMessageGroupSortings();
+const classificationHelper = new useFailedMessageGroupClassification();
 const selectedClassifier = ref(null);
 const classifiers = ref([]);
 const selectedSort = ref("Name");
+const router = useRouter();
+const route = useRoute();
 
 function getGroupingClassifiers() {
-  return useFetchFromServiceControl("recoverability/classifiers")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      classifiers.value = data;
-    });
+  return classificationHelper.getGroupingClassifiers().then((data) => {
+    classifiers.value = data;
+  });
+}
+
+function classifierChanged(classifier) {
+  selectedClassifier.value = classifier;
+  router.push({ path: "/failed-messages", query: { groupBy: classifier } });
+
+  classificationHelper.saveDefaultGroupingClassifier(classifier);
+
+  emit("classifierUpdated", classifier);
 }
 
 function sortUpdated(sort) {
@@ -38,7 +48,15 @@ function setSortOptions() {
 onMounted(() => {
   setSortOptions();
 
-  getGroupingClassifiers();
+  getGroupingClassifiers().then(() => {
+    let savedClassifier = classificationHelper.loadDefaultGroupingClassifier(route);
+
+    if (!savedClassifier) {
+      savedClassifier = classifiers.value[0];
+    }
+
+    selectedClassifier.value = savedClassifier;
+  });
 });
 </script>
 
@@ -51,7 +69,7 @@ onMounted(() => {
     </button>
     <ul class="dropdown-menu">
       <li v-for="(classifier, index) in classifiers" :key="index">
-        <a :href="'failed-messages#failed-message-groups/groups?groupBy=' + classifier">{{ classifier }}</a>
+        <a @click.prevent="classifierChanged(classifier)">{{ classifier }}</a>
       </li>
     </ul>
   </div>

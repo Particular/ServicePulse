@@ -8,6 +8,7 @@ import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList from "../failedmessages/MessageGroupList.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 
+const messageGroupList = ref();
 const forceReRenderKey = ref(0);
 const sortMethod = ref((firstElement, secondElement) => {
   return firstElement.title < secondElement.title ? -1 : 1;
@@ -18,6 +19,10 @@ function sortGroups(sort) {
 
   // force a re-render of the messagegroup list
   forceReRenderKey.value += 1;
+}
+
+function classifierUpdated(classifier) {
+  messageGroupList.value.loadFailedMessageGroups(classifier);
 }
 </script>
 
@@ -33,7 +38,7 @@ function sortGroups(sort) {
             <h3>Failed message group</h3>
           </div>
           <div class="col-xs-6 toolbar-menus no-side-padding">
-            <GroupAndOrderBy @sort-updated="sortGroups"></GroupAndOrderBy>
+            <GroupAndOrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated"></GroupAndOrderBy>
           </div>
         </div>
         <div class="box">
@@ -41,7 +46,7 @@ function sortGroups(sort) {
             <div class="col-sm-12">
               <div class="list-section">
                 <div class="col-sm-12 form-group">
-                  <MessageGroupList :key="forceReRenderKey" :sortFunction="sortMethod"></MessageGroupList>
+                  <MessageGroupList :key="forceReRenderKey" :sortFunction="sortMethod" ref="messageGroupList"></MessageGroupList>
                 </div>
               </div>
             </div>

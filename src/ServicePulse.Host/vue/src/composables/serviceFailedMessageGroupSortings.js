@@ -2,7 +2,7 @@ import { useCookies } from "vue3-cookies";
 
 const cookies = useCookies().cookies;
 
-export class useSortingsAndGroupClassifiers {
+export class useFailedMessageGroupSortings {
   getSortOptions() {
     return [
       {
