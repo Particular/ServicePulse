@@ -4,6 +4,7 @@ import FailedMessageGroups from "../components/failedmessages/FailedMessageGroup
 import AllFailedMessages from "../components/failedmessages/AllFailedMessages.vue";
 import DeletedMessageGroups from "../components/failedmessages/DeletedMessageGroups.vue";
 import AllDeletedMessages from "../components/failedmessages/AllDeletedMessages.vue";
+import PendingRetries from "../components/failedmessages/PendingRetries.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { stats, connectionState } from "../composables/serviceServiceControl";
@@ -25,6 +26,10 @@ const routes = {
     component: AllDeletedMessages,
     title: "All Deleted Messages",
   },
+  "pending-retries": {
+    component: PendingRetries,
+    title: "Pending Retries"
+  }
 };
 const currentPath = ref(window.location.hash);
 //const redirectCount = ref(0);
@@ -87,6 +92,13 @@ onMounted(() => {
               v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#all-deleted-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently, }">
               <a href="/failed-messages#all-deleted-messages">All Deleted Messages </a>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
+            </h5>
+
+            <!--All Pending Retries -->
+            <h5
+              v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently, }">
+              <a href="#pending-retries">Pending Retries </a>
+              <span v-if="stats.number_of_pending_retries !== 0" class="badge badge-important">{{ stats.number_of_pending_retries }}</span>
             </h5>
           </div>
         </div>
