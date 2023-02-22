@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute, onBeforeRouteUpdate } from "vue-router";
+import { useRoute } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
@@ -10,6 +10,7 @@ import FailedMessageGroupRetry from "./FailedMessageGroupRetry.vue";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
+import { useFailedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
 
 const route = useRoute();
 const props = defineProps({
@@ -64,14 +65,18 @@ function initializeGroupState(group) {
   return group;
 }
 
-function initialLoad(groupBy) {
+function loadFailedMessageGroups(groupBy) {
   loadingData.value = true;
-  initialLoadComplete.value = false;
+
+  if (!initialLoadComplete.value) {
+    const classificationHelper = new useFailedMessageGroupClassification();
+    groupBy = classificationHelper.loadDefaultGroupingClassifier(route);
+  }
 
   getExceptionGroups(groupBy ?? route.query.groupBy).then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
-    
+
     emit("InitialLoadComplete");
   });
 }
@@ -230,14 +235,12 @@ function isBeingRetried(group) {
   return group.workflow_state.status !== "none" && (group.workflow_state.status !== "completed" || group.need_user_acknowledgement === true) && !isBeingArchived(group.workflow_state.status);
 }
 
-onBeforeRouteUpdate((to, from, next) => {
-  initialLoad(to.query.groupBy);
-
-  return next();
+onMounted(() => {
+  loadFailedMessageGroups();
 });
 
-onMounted(() => {
-  initialLoad();
+defineExpose({
+  loadFailedMessageGroups,
 });
 </script>
 
