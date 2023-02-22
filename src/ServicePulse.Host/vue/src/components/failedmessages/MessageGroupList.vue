@@ -245,6 +245,10 @@ onMounted(() => {
 defineExpose({
   loadFailedMessageGroups,
 });
+
+defineExpose({
+  loadFailedMessageGroups,
+});
 </script>
 
 <template>
