@@ -28,10 +28,9 @@ const selectedGroup = ref({
 const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
+let refreshInterval = null;
 
 function getExceptionGroups() {
-  exceptionGroups.value = [];
-
   return useGetExceptionGroups().then((result) => {
     exceptionGroups.value = result;
     if (result.length > 0) {
@@ -221,6 +220,10 @@ function isBeingRetried(group) {
 
 onMounted(() => {
   initialLoad();
+
+  refreshInterval = setInterval(() => {
+    initialLoad();
+  }, 5000);
 });
 </script>
 
