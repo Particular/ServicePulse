@@ -80,19 +80,17 @@ export function useServiceControlUrls() {
 }
 
 export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl) {
+  const regex = /\/$/gm;  // checks for a trailing forward slash
+
   if (!newServiceControlUrl.value) {
     throw "ServiceControl URL is mandatory";
+  } else if (newServiceControlUrl.value.match(regex) === null) {
+    newServiceControlUrl.value += "/";
   }
 
   if (!newMonitoringUrl.value) {
     newMonitoringUrl.value = "!"; //disabled
-  }
-
-  const regex = /\/$/gm;
-  if (newServiceControlUrl.value.match(regex) === null){
-    newServiceControlUrl.value += "/";
-  }
-  if (newMonitoringUrl.value.match(regex) === null && newMonitoringUrl.value !== '!'){
+  } else if (newMonitoringUrl.value.match(regex) === null){
     newMonitoringUrl.value += "/";
   }
 
