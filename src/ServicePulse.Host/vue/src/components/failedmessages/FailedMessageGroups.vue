@@ -24,6 +24,44 @@ function sortGroups(sort) {
 function classifierUpdated(classifier) {
   messageGroupList.value.loadFailedMessageGroups(classifier);
 }
+
+const sortOptions = [
+  {
+    description: "Name",
+    selector: function (group) {
+      return group.title;
+    },
+    icon: "bi-sort-alpha-",
+  },
+  {
+    description: "Number of messages",
+    selector: function (group) {
+      return group.count;
+    },
+    icon: "bi-sort-numeric-",
+  },
+  {
+    description: "First Failed Time",
+    selector: function (group) {
+      return group.first;
+    },
+    icon: "bi-sort-",
+  },
+  {
+    description: "Last Failed Time",
+    selector: function (group) {
+      return group.last;
+    },
+    icon: "bi-sort-",
+  },
+  {
+    description: "Last Retried Time",
+    selector: function (group) {
+      return group.last_operation_completion_time;
+    },
+    icon: "bi-sort-",
+  },
+];
 </script>
 
 <template>
@@ -38,7 +76,7 @@ function classifierUpdated(classifier) {
             <h3>Failed message group</h3>
           </div>
           <div class="col-xs-6 toolbar-menus no-side-padding">
-            <GroupAndOrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated"></GroupAndOrderBy>
+            <GroupAndOrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated" :sortOptions="sortOptions"></GroupAndOrderBy>
           </div>
         </div>
         <div class="box">

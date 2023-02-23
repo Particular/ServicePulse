@@ -1,23 +1,58 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useFailedMessageGroupSortings } from "../../composables/serviceFailedMessageGroupSortings";
 import { useFailedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
+import { useCookies } from "vue3-cookies";
 
 const emit = defineEmits(["sortUpdated", "classifierUpdated"]);
 
 const props = defineProps({
   hideGroupBy: Boolean,
   hideSort: Boolean,
+  sortOptions: Array,
+  sortSavePrefix: String
 });
 
-const sortingHelper = new useFailedMessageGroupSortings();
+const cookies = useCookies().cookies;
+const router = useRouter();
+const route = useRoute();
 const classificationHelper = new useFailedMessageGroupClassification();
 const selectedClassifier = ref(null);
 const classifiers = ref([]);
-const selectedSort = ref("Name");
-const router = useRouter();
-const route = useRoute();
+const selectedSort = ref(props.sortOptions[0].description);
+
+function getSortOptions() {
+  return props.sortOptions;
+}
+
+function saveSortOption(sortCriteria, sortDirection) {
+  cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`, sortCriteria);
+  cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`, sortDirection);
+}
+
+function loadSavedSortOption() {
+  let criteria = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`);
+  let direction = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`);
+
+  if (criteria && direction) {
+    var sortBy = getSortOptions().find((sort) => {
+      return sort.description.toLowerCase() === criteria.toLowerCase();
+    });
+    return { sort: getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy.description };
+  }
+
+  return props.sortOptions[0];
+}
+
+function getSortFunction(selector, dir) {
+  return (firstElement, secondElement) => {
+    if (dir === "asc") {
+      return selector(firstElement) < selector(secondElement) ? -1 : 1;
+    } else {
+      return selector(firstElement) < selector(secondElement) ? 1 : -1;
+    }
+  };
+}
 
 function getGroupingClassifiers() {
   return classificationHelper.getGroupingClassifiers().then((data) => {
@@ -36,15 +71,15 @@ function classifierChanged(classifier) {
 
 function sortUpdated(sort) {
   selectedSort.value = sort.description + (sort.dir == "desc" ? " (Descending)" : "");
-  sortingHelper.saveSortOption(sort.description, sort.dir);
+  saveSortOption(sort.description, sort.dir);
 
-  sort.sort = sortingHelper.getSortFunction(sort.selector, sort.dir);
+  sort.sort = getSortFunction(sort.selector, sort.dir);
 
   emit("sortUpdated", sort);
 }
 
 function setSortOptions() {
-  const savedSort = sortingHelper.loadSavedSortOption();
+  const savedSort = loadSavedSortOption();
   selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
 
   emit("sortUpdated", savedSort);
@@ -86,7 +121,7 @@ onMounted(() => {
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
-      <span v-for="(sort, index) in sortingHelper.getSortOptions()" :key="index">
+      <span v-for="(sort, index) in getSortOptions()" :key="index">
         <li>
           <button @click="sortUpdated({ selector: sort.selector, dir: 'asc', description: sort.description })"><i class="bi" :class="`${sort.icon}up`"></i>{{ sort.description }}</button>
         </li>
