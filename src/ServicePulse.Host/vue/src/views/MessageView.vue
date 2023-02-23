@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 import NoData from "../components/NoData.vue";
 import TimeSince from "../components/TimeSince.vue";
+import moment from "moment";
 
 const route = useRoute();
 const id = route.params.id;
@@ -23,14 +24,35 @@ function loadFailedMessage() {
       var message = data;
       message.archived = message.status === "archived";
       message.resolved = message.status === "resolved";
-      message.retried = message.status === "retryIssued";
-      failedMessage.value = message;
-      return;
+      message.retried = message.status === "retryIssued";         
+      failedMessage.value = message;            
+      return getErrorRetentionPeriod();
+    })
+    .then(() => {
+      return updateMessageDeleteDate();
     })
     .catch((err) => {
       console.log(err);
       return;
     });
+}
+
+function getErrorRetentionPeriod() {
+  return useFetchFromServiceControl("configuration")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      var configuration = data;
+      failedMessage.value.error_retention_period = moment.duration(configuration.data_retention.error_retention_period).asHours();
+      return;
+    });
+}
+
+function updateMessageDeleteDate(){
+  var countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, 'hours');
+  failedMessage.value.delete_soon = countdown < moment();
+  failedMessage.value.deleted_in = countdown.format();
 }
 
 function downloadHeadersAndBody() {
@@ -84,22 +106,7 @@ function togglePanel(panelNum) {
   return false;
 }
 
-function getConfiguration(){
-  return useFetchFromServiceControl("configuration")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      var config = data;
-    })
-}
-
-/* function updateMessageDeleteDate(){
-
-} */
-
-onMounted(() => {
-  getConfiguration();
+onMounted(() => {  
   loadFailedMessage()
     .then(() => {
       togglePanel(1);
@@ -134,12 +141,12 @@ onMounted(() => {
                 <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
-                <span class="metadata" ng-show="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
+                <span class="metadata" v-if="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
               </div>
-              <div class="metadata group-title group-message-count message-metadata" ng-show="failedMessage.archived">
-                <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <sp-moment date="{{ vm.message.last_modified }}"></sp-moment></span>
-                <span class="metadata danger" ng-show="message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
-                <span class="metadata danger" ng-show="!message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <sp-moment class="danger" date="{{ vm.message.deleted_in }}"></sp-moment></span>
+              <div class="metadata group-title group-message-count message-metadata" v-if="failedMessage.archived">
+                <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="failedMessage.last_modified"></time-since></span>
+                <span class="metadata danger" v-if="failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
+                <span class="metadata danger" v-if="!failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <time-since :date-utc="failedMessage.deleted_in"></time-since></span>
               </div>
             </div>
           </div>
