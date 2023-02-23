@@ -80,19 +80,27 @@ export function useServiceControlUrls() {
 }
 
 export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl) {
-  if (!newServiceControlUrl) {
+  if (!newServiceControlUrl.value) {
     throw "ServiceControl URL is mandatory";
   }
 
-  if (!newMonitoringUrl) {
-    newMonitoringUrl = "!"; //disabled
+  if (!newMonitoringUrl.value) {
+    newMonitoringUrl.value = "!"; //disabled
+  }
+
+  const regex = /\/$/gm;
+  if (newServiceControlUrl.value.match(regex) === null){
+    newServiceControlUrl.value += "/";
+  }
+  if (newMonitoringUrl.value.match(regex) === null){
+    newMonitoringUrl.value += "/";
   }
 
   //values have changed. They'll be reset after page reloads
   window.localStorage.removeItem("scu");
   window.localStorage.removeItem("mu");
 
-  let newSearch = "?scu=" + newServiceControlUrl + "&mu=" + newMonitoringUrl;
+  let newSearch = "?scu=" + newServiceControlUrl.value + "&mu=" + newMonitoringUrl.value;
   console.debug("updateConnections - new query string: ", newSearch);
   window.location.search = newSearch;
 }
