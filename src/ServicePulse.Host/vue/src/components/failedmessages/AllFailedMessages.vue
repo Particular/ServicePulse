@@ -8,6 +8,23 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 
 const sortMethod = ref({});
 
+const sortOptions = [
+  {
+    description: "Time of failure",
+    selector: function (group) {
+      return group.title;
+    },
+    icon: "bi-sort-",
+  },
+  {
+    description: "Message Type",
+    selector: function (group) {
+      return group.count;
+    },
+    icon: "bi-sort-alpha-",
+  },
+];
+
 function sortGroups(sort) {
   sortMethod.value = sort.sort;
 }
@@ -31,7 +48,7 @@ function sortGroups(sort) {
             </div>
           </div>
           <div class="col-3">
-            <GroupAndOrderBy @sort-updated="sortGroups" :hideGroupBy="true"></GroupAndOrderBy>
+            <GroupAndOrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="all_failed_"></GroupAndOrderBy>
           </div>
         </div>
       </section>
