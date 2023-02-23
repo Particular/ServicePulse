@@ -146,4 +146,10 @@ onMounted(() => {
   color: #00a3c4;
   text-decoration: underline;
 }
+
+.btn-toolbar > .btn-default:hover {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
+}
 </style>
