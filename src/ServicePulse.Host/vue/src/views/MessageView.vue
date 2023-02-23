@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 import NoData from "../components/NoData.vue";
 import TimeSince from "../components/TimeSince.vue";
+import { useShowToast } from "../composables/toast";
 import moment from "moment";
 
 const route = useRoute();
@@ -63,6 +64,10 @@ function getEditAndRetryConfig() {
     .then((data) => {
       failedMessage.value.isEditAndRetryEnabled = data.enabled;
     });
+}
+
+function archiveMessage(){
+  useShowToast("info", "Info", "Deleting the message " + failedMessage.value.message_id + " ...");
 }
 
 function downloadHeadersAndBody() {
