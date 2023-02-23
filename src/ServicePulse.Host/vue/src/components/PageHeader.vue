@@ -45,11 +45,7 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
-          <li
-            :class="{
-              active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint'),
-            }"
-          >
+          <li :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
             <a href="/a/#/monitoring">
               <i class="fa pa-monitoring icon-white"></i>
               <span class="navbar-label">Monitoring</span>
@@ -67,11 +63,7 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </a>
           </li>
-          <li
-            :class="{
-              active: subIsActive('/failed-messages'),
-            }"
-          >
+          <li :class="{ active: subIsActive('/failed-messages') }">
             <RouterLink :to="{ name: 'failed-messages' }">
               <i class="fa fa-envelope icon-white"></i>
               <span class="navbar-label">Failed Messages</span>
