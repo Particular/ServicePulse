@@ -132,11 +132,6 @@ onMounted(() => {
   margin-bottom: 0;
 }
 
-.btn-toolbar {
-  padding: 12px 0 0;
-  margin-left: 0;
-}
-
 div.btn-toolbar,
 div.form-inline {
   margin-bottom: 12px;
