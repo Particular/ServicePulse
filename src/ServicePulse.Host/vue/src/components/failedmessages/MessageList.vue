@@ -3,16 +3,35 @@ const props = defineProps({
     messages: Array
 });
 
+function getSelectedMessageIds() {
+    return props.messages.filter(m => m.selected).map(m => m.id);
+}
+
+function selectAll() {
+    props.messages.forEach(m => m.selected = true);
+}
+
+function deselectAll() {
+    props.messages.forEach(m => m.selected = false);
+}
+
+function isAnythingSelected() {
+    return props.messages.find(m => m.selected);
+}
+
+defineExpose({
+    getSelectedMessageIds,
+    selectAll,
+    deselectAll,
+    isAnythingSelected,
+});
 </script>
 
 <template>
     <div v-for="message in props.messages" class="row box repeat-item failed-message">
-        <div class="check col-1">
-            <div class="checkbox">
-                <input type="checkbox" :id="`onoffswitch${message.id}`" :name="`onoffswitch{$message.id}`" :disabled="message.retried || message.archived">
-                <label :for="`onoffswitch{$message.id}`"></label>
-            </div>
-        </div>
+        <label class="check col-1" :for="`checkbox${message.id}`">
+            <input type="checkbox" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`">
+        </label>
         <div class="col-11 failed-message-data">
             <div class="row">
                 <div class="col-12">
@@ -117,7 +136,7 @@ div.failed-message-data {
     border: 2px solid #00a3c4;
 }
 
-.checkbox label:after {
+label:after .checkbox  {
     opacity: 0;
     content: '';
     position: absolute;
@@ -134,10 +153,6 @@ div.failed-message-data {
 
 .checkbox input[type=checkbox]:checked + label:after {
     opacity: 1;
-}
-
-input[type="checkbox"] {
-  visibility: hidden;
 }
 
 p.metadata {
@@ -177,6 +192,4 @@ span.metadata {
     padding: 0px 20px 2px 0;
     color: #777f7f;
 }
-
-
 </style>
