@@ -52,7 +52,7 @@ function testMonitoringUrl(event) {
 
 function saveConnections(event) {
   if (event) {
-    updateServiceControlUrls(serviceControlUrl.value, monitoringUrl.value);
+    updateServiceControlUrls(serviceControlUrl, monitoringUrl);
     connectionSaved.value = true;
   }
 }
