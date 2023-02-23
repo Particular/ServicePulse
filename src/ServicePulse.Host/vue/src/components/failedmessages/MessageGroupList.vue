@@ -235,10 +235,10 @@ function isBeingRetried(group) {
 
 onMounted(() => {
   loadFailedMessageGroups();
-});
 
-defineExpose({
-  loadFailedMessageGroups,
+  setInterval(() => {
+    loadFailedMessageGroups();
+  }, 5000);
 });
 
 defineExpose({
