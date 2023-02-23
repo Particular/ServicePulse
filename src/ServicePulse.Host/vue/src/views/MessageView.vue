@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, usePatchToServiceControl } from "../composables/serviceServiceControlUrls";
 import NoData from "../components/NoData.vue";
 import TimeSince from "../components/TimeSince.vue";
-import { useShowToast } from "../composables/toast";
+//import { useShowToast } from "../composables/toast";
 import moment from "moment";
 
 const route = useRoute();
@@ -66,9 +66,33 @@ function getEditAndRetryConfig() {
     });
 }
 
-function archiveMessage(){
-  useShowToast("info", "Info", "Deleting the message " + failedMessage.value.message_id + " ...");
+function unarchiveMessage() {
+  //useShowToast("info", "Info", "Deleting the message " + failedMessage.value.message_id + " ...");
+  //var ids = [id];
+  return usePatchToServiceControl("errors/unarchive/", [id])
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      return data.json();
+    });
 }
+
+/* function prepareAndSaveExportFile(){
+  var txtStr = "STACKTRACE\n";
+  
+  txtStr += "\n\nHEADERS";
+  for (var i = 0; i < message.headers.length; i++) {
+      txtStr += '\n' + message.headers[i].key + ': ' + message.headers[i].value;
+  }
+
+  txtStr += "\n\nMESSAGE BODY\n";
+  txtStr += message.messageBody;
+
+  exportToFile.downloadString(txtStr, "text/txt", "failedMessage.txt");
+
+  toastService.showInfo("Message export completed.");
+} */
 
 function downloadHeadersAndBody() {
   return useFetchFromServiceControl("messages/search/" + failedMessage.value.message_id)
@@ -170,7 +194,7 @@ onMounted(() => {
             <div class="col-sm-12">
               <div class="btn-toolbar message-toolbar">
                 <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." v-on:click="archiveMessage()" confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
-                <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
+                <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." v-on:click="unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
                 <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
                 <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" tooltip="Browse this message in ServiceInsight, if installed"><img src="../assets/si-icon.svg" /> View in ServiceInsight</button>
