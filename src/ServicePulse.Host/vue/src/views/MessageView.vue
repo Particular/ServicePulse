@@ -169,7 +169,7 @@ onMounted(() => {
           <div class="row">
             <div class="col-sm-12">
               <div class="btn-toolbar message-toolbar">
-                <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
+                <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." v-on:click="archiveMessage()" confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
                 <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
@@ -208,6 +208,10 @@ onMounted(() => {
       </section>
     </section>
   </div>
+  <!--modal display - delete message-->
+  <Teleport to="#modalDisplay">
+    <FailedMessageGroupDelete v-if="showDeleteGroupModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelDeleteGroup="showDeleteGroupModal = false" @deleteGroupConfirmed="saveDeleteGroup"></FailedMessageGroupDelete>
+  </Teleport>
 </template>
 
 <style>
