@@ -83,10 +83,10 @@ onMounted(() => {
     <ul class="dropdown-menu">
       <span v-for="(sort, index) in sortingHelper.getSortOptions()" :key="index">
         <li>
-          <a @click="sortUpdated({ selector: sort.selector, dir: 'asc', description: sort.description })" href="#">{{ sort.description }}</a>
+          <a @click="sortUpdated({ selector: sort.selector, dir: 'asc', description: sort.description })" href="#"><i class="bi" :class="`${sort.icon}up`"></i>{{ sort.description }}</a>
         </li>
         <li>
-          <a @click="sortUpdated({ selector: sort.selector, dir: 'desc', description: sort.description })" href="#">{{ sort.description }}<span> (Descending)</span></a>
+          <a @click="sortUpdated({ selector: sort.selector, dir: 'desc', description: sort.description })" href="#"><i class="bi" :class="`${sort.icon}down`"></i>{{ sort.description }}<span> (Descending)</span></a>
         </li>
       </span>
     </ul>
@@ -94,6 +94,10 @@ onMounted(() => {
 </template>
 
 <style>
+.dropdown-menu .bi {
+  padding-right: 5px;
+}
+
 .btn.sp-btn-menu {
   background: none;
   border: none;

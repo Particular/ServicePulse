@@ -28,6 +28,10 @@ export default defineConfig({
         find: "~bootstrap",
         replacement: path.resolve(__dirname, "node_modules/bootstrap"),
       },
+      {
+        find: "~bootstrap-icons",
+        replacement: path.resolve(__dirname, "node_modules/bootstrap-icons"),
+      },
     ],
   },
   build: {
