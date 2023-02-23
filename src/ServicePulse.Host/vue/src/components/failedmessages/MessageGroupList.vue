@@ -37,13 +37,11 @@ const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
 function getExceptionGroups(classifier) {
-  exceptionGroups.value = [];
-
   return useGetExceptionGroups(classifier).then((result) => {
     if (props.sortFunction) {
       result.sort(props.sortFunction);
     }
-
+    
     exceptionGroups.value = result;
     if (result.length > 0) {
       // need a map in some ui state for controlling animations
@@ -237,6 +235,10 @@ function isBeingRetried(group) {
 
 onMounted(() => {
   loadFailedMessageGroups();
+  
+  setInterval(() => {
+    initialLoad();
+  }, 5000);
 });
 
 defineExpose({
