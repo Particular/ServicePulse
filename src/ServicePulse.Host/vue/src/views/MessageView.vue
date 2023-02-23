@@ -24,8 +24,8 @@ function loadFailedMessage() {
       var message = data;
       message.archived = message.status === "archived";
       message.resolved = message.status === "resolved";
-      message.retried = message.status === "retryIssued";         
-      failedMessage.value = message;            
+      message.retried = message.status === "retryIssued";
+      failedMessage.value = message;
       return getErrorRetentionPeriod();
     })
     .then(() => {
@@ -49,10 +49,20 @@ function getErrorRetentionPeriod() {
     });
 }
 
-function updateMessageDeleteDate(){
-  var countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, 'hours');
+function updateMessageDeleteDate() {
+  var countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
   failedMessage.value.delete_soon = countdown < moment();
   failedMessage.value.deleted_in = countdown.format();
+}
+
+function getEditAndRetryConfig() {
+  return useFetchFromServiceControl("edit/config")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      failedMessage.value.isEditAndRetryEnabled = data.enabled;
+    });
 }
 
 function downloadHeadersAndBody() {
@@ -106,13 +116,14 @@ function togglePanel(panelNum) {
   return false;
 }
 
-onMounted(() => {  
+onMounted(() => {
   loadFailedMessage()
     .then(() => {
       togglePanel(1);
     })
     .then(() => {
       downloadHeadersAndBody();
+      getEditAndRetryConfig();
     });
 });
 </script>
@@ -156,7 +167,7 @@ onMounted(() => {
                 <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." confirm-click="vm.unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
-                <button type="button" class="btn btn-default" ng-show="vm.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
                 <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" tooltip="Browse this message in ServiceInsight, if installed"><img src="../assets/si-icon.svg" /> View in ServiceInsight</button>
                 <button type="button" class="btn btn-default" ng-click="vm.exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message</button>
               </div>
