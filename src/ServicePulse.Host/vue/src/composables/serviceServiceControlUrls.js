@@ -92,7 +92,7 @@ export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl)
   if (newServiceControlUrl.value.match(regex) === null){
     newServiceControlUrl.value += "/";
   }
-  if (newMonitoringUrl.value.match(regex) === null){
+  if (newMonitoringUrl.value.match(regex) === null && newMonitoringUrl.value !== '!'){
     newMonitoringUrl.value += "/";
   }
 
