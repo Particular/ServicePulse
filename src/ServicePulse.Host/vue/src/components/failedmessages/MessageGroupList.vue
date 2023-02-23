@@ -17,11 +17,6 @@ const props = defineProps({
   sortFunction: Object,
 });
 
-const props = defineProps({
-  sortFunction: Object
-});
-
-
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
