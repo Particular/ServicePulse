@@ -10,7 +10,7 @@ const props = defineProps({
   hideGroupBy: Boolean,
   hideSort: Boolean,
   sortOptions: Array,
-  sortSavePrefix: String
+  sortSavePrefix: String,
 });
 
 const cookies = useCookies().cookies;

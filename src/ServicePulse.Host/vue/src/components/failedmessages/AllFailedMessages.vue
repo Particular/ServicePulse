@@ -35,15 +35,15 @@ function sortGroups(sort) {
 
 function loadMessages(page, sortBy, direction) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
-  if (typeof direction === "undefined") direction = "desc"
+  if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
-  
+
   return useFetchFromServiceControl(`errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
-    .then(response => {
+    .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       return response.json();
     })
-    .then(response => {
+    .then((response) => {
       messages.value = response;
     })
     .catch((err) => {
@@ -55,12 +55,73 @@ function loadMessages(page, sortBy, direction) {
     });
 }
 
-function retrySelected() {
-  var ids = messageList.value.getSelectedMessageIds();
+function retrySelected() {}
+
+function exportSelected() {
+  function downloadString(text, fileType, fileName) {
+    const blob = new Blob([text], { type: fileType });
+
+    const a = document.createElement("a");
+    a.download = fileName;
+    a.href = URL.createObjectURL(blob);
+    a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => {
+      URL.revokeObjectURL(a.href);
+    }, 1500);
+  }
+
+  function toCSV(array) {
+    const keys = Object.keys(array[0]);
+    let result = keys.join("\t") + "\n";
+    array.forEach((obj) => {
+      result += keys.map((k) => obj[k]).join(",") + "\n";
+    });
+
+    return result;
+  }
+
+  function parseObject(obj, propertiesToSkip, path) {
+    if (path == undefined) path = "";
+
+    const type = typeof obj;
+    let d = {};
+
+    if (type == "array" || type == "object") {
+      for (let i in obj) {
+        const newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
+        d = Object.assign(d, newD);
+      }
+      return d;
+    } else if (type == "number" || type == "string" || type == "boolean" || type == "null") {
+      const endPath = path.substr(0, path.length - 1);
+      if (propertiesToSkip && propertiesToSkip.includes(endPath)) {
+        return d;
+      }
+      d[endPath] = obj;
+      return d;
+    }
+
+    return d;
+  }
+
+  const selectedMessages = messageList.value.getSelectedMessages();
+  const propertiesToSkip = ["hover", "selected", "hover2", "$$hashKey", "panel", "edit_of", "edited"];
+
+  var preparedMessagesForExport = [];
+  for (var i = 0; i < selectedMessages.length; i++) {
+    preparedMessagesForExport.push(parseObject(selectedMessages[i], propertiesToSkip));
+  }
+
+  var csvStr = toCSV(preparedMessagesForExport);
+  downloadString(csvStr, "text/csv", "failedMessages.csv");
 }
 
 function numberSelected() {
-  return (messageList?.value?.getSelectedMessageIds()?.length ?? 0);
+  return messageList?.value?.getSelectedMessages()?.length ?? 0;
 }
 
 function selectAll() {
@@ -78,7 +139,6 @@ function isAnythingSelected() {
 onMounted(() => {
   loadMessages();
 });
-
 </script>
 
 <template>
@@ -94,7 +154,7 @@ onMounted(() => {
               <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
               <button type="button" class="btn btn-default" @click="retrySelected()" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" confirm-title="Are you sure you want to delete the selected messages?" confirm-message="If you delete, these messages won't be available for retrying unless they're later restored." confirm-click="vm.archiveSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" ng-click="vm.exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" @click="exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
             </div>
           </div>
