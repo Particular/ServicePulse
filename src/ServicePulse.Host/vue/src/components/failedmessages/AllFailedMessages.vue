@@ -92,9 +92,9 @@ onMounted(() => {
             <div class="btn-toolbar">
               <button type="button" class="btn btn-default select-all" @click="selectAll" v-if="!isAnythingSelected()">Select all</button>
               <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
-              <button type="button" class="btn btn-default" @click="retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" confirm-title="Are you sure you want to delete the selected messages?" confirm-message="If you delete, these messages won't be available for retrying unless they're later restored." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" ng-click="vm.exportSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" @click="retrySelected()" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" confirm-title="Are you sure you want to delete the selected messages?" confirm-message="If you delete, these messages won't be available for retrying unless they're later restored." confirm-click="vm.archiveSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" ng-click="vm.exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
             </div>
           </div>
