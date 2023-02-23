@@ -44,6 +44,13 @@ function loadMessages(page, sortBy, direction) {
       return response.json();
     })
     .then((response) => {
+      if (messages.value.length && response.length) {
+        // merge the previously selected messages into the new list so we can replace them
+        messages.value.forEach(previousMessage => {
+          response.find(m => m.id === previousMessage.id).selected = previousMessage.selected;
+        });
+      }
+
       messages.value = response;
     })
     .catch((err) => {
@@ -138,6 +145,10 @@ function isAnythingSelected() {
 
 onMounted(() => {
   loadMessages();
+
+  setInterval(() => {
+    loadMessages();
+  }, 5000);
 });
 </script>
 
