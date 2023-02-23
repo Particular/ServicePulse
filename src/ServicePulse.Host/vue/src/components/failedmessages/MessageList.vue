@@ -1,0 +1,156 @@
+<script setup>
+const props = defineProps({
+    messages: Array
+});
+
+</script>
+
+<template>
+    <div v-for="message in props.messages" class="row box repeat-item failed-message">
+        <div class="check col-1">
+            <div class="checkbox">
+                <input type="checkbox" :id="`onoffswitch${message.id}`" :name="`onoffswitch{$message.id}`" :disabled="message.retried || message.archived">
+                <label :for="`onoffswitch{$message.id}`"></label>
+            </div>
+        </div>
+        <div class="col-11 failed-message-data">
+            <div class="row">
+                <div class="col-12">
+                    <div class="row box-header">
+                        <div class="col-12 no-side-padding">
+                            <p class="lead break">{{message.message_type || 'Message Type Unknown - missing metadata EnclosedMessageTypes'}}</p>
+                            <p class="metadata">
+                                <span v-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
+                                <span v-if="message.archived" tooltip="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
+                                <span v-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{message.number_of_processing_attempts}} Retry Failures</span>
+                                <span v-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
+
+                                <span class="metadata"><i class="fa fa-clock-o"></i> Failed: XXMOMENTXX</span>
+                                <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{message.receiving_endpoint.name}}</span>
+                                <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{message.receiving_endpoint.host}}</span>
+                                <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{message.redirect}}</span>
+                                <button type="button" class="btn btn-link btn-sm">
+                                    <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp</i>Request retry
+                                </button>
+                            </p>
+
+                            <pre class="stacktrace-preview" isolate-click ng-show="message.panel === 0">{{ message.exception.message }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+.stacktrace-preview {
+    height: 38px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  color: #333333;
+  word-break: break-all;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.check:hover, .failed-message-data:hover {
+  background-color: #edf6f7;
+}
+
+.failed-message:hover {
+  border: 1px solid #00a3c4;
+}
+
+.repeat-item {
+    padding: 0 !important;
+}
+
+.check,
+div.failed-message-data {
+  padding-top: 15px;
+  padding-left: 25px;
+  padding-bottom: 0;
+}
+
+.box p {
+  color: #777f7f;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.pa-endpoint {
+  position: relative;
+  top: 3px;
+  background-image: url('@/assets/endpoint.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 15px;
+  width: 15px;
+}
+
+.checkbox {
+    margin-top: 1px;
+    margin-left: 1px;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #929e9e;
+    background-color: #fff;
+}
+
+.checkbox:hover, .check-hover {
+    margin-top: 0;
+    margin-left: 0;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #00a3c4;
+}
+
+.checkbox label:after {
+    opacity: 0;
+    content: '';
+    position: absolute;
+    width: 11px;
+    height: 7px;
+    background: transparent;
+    top: 2px;
+    left: 2px;
+    border: 3px solid #333;
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+}
+
+.checkbox input[type=checkbox]:checked + label:after {
+    opacity: 1;
+}
+
+input[type="checkbox"] {
+  visibility: hidden;
+}
+
+.metadata:first-child {
+  padding-left: 0;
+}
+
+span.metadata {
+  display: inline-block;
+  padding: 0px 20px 2px 0;
+  color: #777f7f;
+}
+
+.repeat-item > .col-1 {
+    width:100px;
+}
+</style>

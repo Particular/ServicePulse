@@ -1,13 +1,16 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
+import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import MessageList from "./MessageList.vue";
 
+const totalCount = ref(0);
+const messages = ref([]);
 const sortMethod = ref({});
-
 const sortOptions = [
   {
     description: "Time of failure",
@@ -28,6 +31,33 @@ const sortOptions = [
 function sortGroups(sort) {
   sortMethod.value = sort.sort;
 }
+
+function loadMessages(page, sortBy, direction) {
+  if (typeof sortBy === "undefined") sortBy = "time_of_failure";
+  if (typeof direction === "undefined") direction = "desc"
+  if (typeof page === "undefined") page = 1;
+  
+  return useFetchFromServiceControl(`errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
+    .then(response => {
+      totalCount.value = parseInt(response.headers.get("Total-Count"));
+      return response.json();
+    })
+    .then(response => {
+      messages.value = response;
+    })
+    .catch((err) => {
+      console.log(err);
+      var result = {
+        message: "error",
+      };
+      return result;
+    });
+}
+
+onMounted(() => {
+  loadMessages();
+});
+
 </script>
 
 <template>
@@ -49,6 +79,11 @@ function sortGroups(sort) {
           </div>
           <div class="col-3">
             <GroupAndOrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="all_failed_"></GroupAndOrderBy>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <MessageList :messages="messages"></MessageList>
           </div>
         </div>
       </section>
