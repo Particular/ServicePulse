@@ -1,4 +1,6 @@
 <script setup>
+import TimeSince from "../TimeSince.vue";
+
 const props = defineProps({
   messages: Array,
 });
@@ -44,7 +46,7 @@ defineExpose({
                 <span v-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts }} Retry Failures</span>
                 <span v-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
 
-                <span class="metadata"><i class="fa fa-clock-o"></i> Failed: XXMOMENTXX</span>
+                <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :dateUtc="message.time_of_failure"></time-since></span>
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
