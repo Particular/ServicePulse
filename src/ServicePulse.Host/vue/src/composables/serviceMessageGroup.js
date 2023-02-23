@@ -1,8 +1,7 @@
 import { useDeleteFromServiceControl, usePostToServiceControl, useFetchFromServiceControl } from "./serviceServiceControlUrls.js";
 
-export function useGetExceptionGroups() {
-  //todo - add sort, page and classifers
-  return useFetchFromServiceControl("recoverability/groups")
+export function useGetExceptionGroups(classifier) {
+  return useFetchFromServiceControl(`recoverability/groups/${classifier ? classifier : ""}`)
     .then((response) => {
       return response.json();
     })

@@ -1,10 +1,29 @@
 <script setup>
+import { ref } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import LicenseExpired from "../../components/LicenseExpired.vue";
 import { connectionState } from "../../composables/serviceServiceControl.js";
+import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList from "../failedmessages/MessageGroupList.vue";
+import GroupAndOrderBy from "./GroupAndOrderBy.vue";
+
+const messageGroupList = ref();
+const forceReRenderKey = ref(0);
+const sortMethod = ref((firstElement, secondElement) => {
+  return firstElement.title < secondElement.title ? -1 : 1;
+}); // default sort by title in ASC order
+
+function sortGroups(sort) {
+  sortMethod.value = sort.sort;
+
+  // force a re-render of the messagegroup list
+  forceReRenderKey.value += 1;
+}
+
+function classifierUpdated(classifier) {
+  messageGroupList.value.loadFailedMessageGroups(classifier);
+}
 </script>
 
 <template>
@@ -14,13 +33,20 @@ import MessageGroupList from "../failedmessages/MessageGroupList.vue";
     <template v-if="!connectionState.unableToConnect">
       <section name="message_groups">
         <LastTenOperations></LastTenOperations>
-        <h3>Failed message group</h3>
+        <div class="row">
+          <div class="col-xs-6 list-section">
+            <h3>Failed message group</h3>
+          </div>
+          <div class="col-xs-6 toolbar-menus no-side-padding">
+            <GroupAndOrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated"></GroupAndOrderBy>
+          </div>
+        </div>
         <div class="box">
           <div class="row">
             <div class="col-sm-12">
               <div class="list-section">
                 <div class="col-sm-12 form-group">
-                  <MessageGroupList></MessageGroupList>
+                  <MessageGroupList :key="forceReRenderKey" :sortFunction="sortMethod" ref="messageGroupList"></MessageGroupList>
                 </div>
               </div>
             </div>

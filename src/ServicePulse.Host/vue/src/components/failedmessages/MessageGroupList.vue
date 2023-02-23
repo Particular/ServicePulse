@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
@@ -9,6 +10,12 @@ import FailedMessageGroupRetry from "./FailedMessageGroupRetry.vue";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
+import { useFailedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
+
+const route = useRoute();
+const props = defineProps({
+  sortFunction: Object,
+});
 
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
@@ -29,8 +36,12 @@ const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
-function getExceptionGroups() {
-  return useGetExceptionGroups().then((result) => {
+function getExceptionGroups(classifier) {
+  return useGetExceptionGroups(classifier).then((result) => {
+    if (props.sortFunction) {
+      result.sort(props.sortFunction);
+    }
+
     exceptionGroups.value = result;
     if (result.length > 0) {
       // need a map in some ui state for controlling animations
@@ -52,13 +63,18 @@ function initializeGroupState(group) {
   return group;
 }
 
-function initialLoad() {
+function loadFailedMessageGroups(groupBy) {
   loadingData.value = true;
-  initialLoadComplete.value = false;
 
-  getExceptionGroups().then(() => {
+  if (!initialLoadComplete.value) {
+    const classificationHelper = new useFailedMessageGroupClassification();
+    groupBy = classificationHelper.loadDefaultGroupingClassifier(route);
+  }
+
+  getExceptionGroups(groupBy ?? route.query.groupBy).then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
+
     emit("InitialLoadComplete");
   });
 }
@@ -218,49 +234,20 @@ function isBeingRetried(group) {
 }
 
 onMounted(() => {
-  initialLoad();
+  loadFailedMessageGroups();
 
   setInterval(() => {
-    initialLoad();
+    loadFailedMessageGroups();
   }, 5000);
+});
+
+defineExpose({
+  loadFailedMessageGroups,
 });
 </script>
 
 <template>
   <div class="messagegrouplist">
-    <div class="row">
-      <div class="col-sm-12 toolbar-menus no-side-padding">
-        <div class="msg-group-menu dropdown">
-          <label class="control-label">Group by:</label>
-          <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            vm.selectedClassification
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li ng-repeat="classifier in vm.availableClassifiers">
-              <a href="#/failed-messages/groups?groupBy={{classifier}}">classifier</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="msg-group-menu dropdown">
-          <label class="control-label">Sort by:</label>
-          <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            vm.selectedSort
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu" ng-for="sort in sortSelectors">
-            <li>
-              <a href="#/failed-messages/groups?sortBy={{sort.description}}">sort.description</a>
-            </li>
-            <li ng-repeat-end>
-              <a href="#/failed-messages/groups?sortBy={{sort.description}}&sortdir=desc">sort.description <span>(Descending)</span></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
     <div class="row">
       <div class="col-sm-12">
         <no-data v-if="exceptionGroups.length === 0 && !loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
