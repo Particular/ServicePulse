@@ -10,30 +10,35 @@ export class useFailedMessageGroupSortings {
         selector: function (group) {
           return group.title;
         },
+        icon: "bi-sort-alpha-",
       },
       {
         description: "Number of messages",
         selector: function (group) {
           return group.count;
         },
+        icon: "bi-sort-numeric-",
       },
       {
         description: "First Failed Time",
         selector: function (group) {
           return group.first;
         },
+        icon: "bi-sort-",
       },
       {
         description: "Last Failed Time",
         selector: function (group) {
           return group.last;
         },
+        icon: "bi-sort-",
       },
       {
         description: "Last Retried Time",
         selector: function (group) {
           return group.last_operation_completion_time;
         },
+        icon: "bi-sort-",
       },
     ];
   }
