@@ -2,7 +2,7 @@
 import { ref, onMounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls.js";
+import { useFetchFromServiceControl, usePostToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -62,7 +62,18 @@ function loadMessages(page, sortBy, direction) {
     });
 }
 
-function retrySelected() {}
+function retrySelected() {
+  const selectedMessages = messageList.value.getSelectedMessages().map(m => m.id);
+
+  // toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
+  usePostToServiceControl("errors/retry", selectedMessages)
+    .then(()=> {
+      messageList.value.deselectAll();
+      messages.value = messages.value.filter((message) => {
+        return !selectedMessages.find(id => id == message.id);
+      });
+    });
+}
 
 function exportSelected() {
   function downloadString(text, fileType, fileName) {
