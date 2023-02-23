@@ -6,6 +6,13 @@
     list-style: none;
 }
 
+.dropdown-menu > span > li > button {
+    border: none;
+    background: none;
+}
+
+.dropdown-menu > span > li > button,
+.dropdown-menu > li > button,
 .dropdown-menu > li > a,
 .dropdown-menu > span > li > a {
     display: block;
