@@ -1,8 +1,16 @@
 <script setup>
+import { ref } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import LicenseExpired from "../../components/LicenseExpired.vue";
 import { connectionState } from "../../composables/serviceServiceControl.js";
+import LicenseExpired from "../../components/LicenseExpired.vue";
+import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+
+const sortMethod = ref({});
+
+function sortGroups(sort) {
+  sortMethod.value = sort.sort;
+}
 </script>
 
 <template>
@@ -23,27 +31,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
             </div>
           </div>
           <div class="col-3">
-            <div class="msg-group-menu dropdown msg-list-dropdown">
-              <label class="control-label">Sort by:</label>
-              <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Message Type (ascending)
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li>
-                  <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Message Type (ascending)</a>
-                </li>
-                <li>
-                  <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'message_type', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Message Type (descending)</a>
-                </li>
-                <li>
-                  <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'time_of_failure', 'asc')"><span class="glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span> Time Of Failure (ascending)</a>
-                </li>
-                <li>
-                  <a href="#" ng-click="$event.preventDefault();vm.selectGroup(vm.selectedExceptionGroup, 'time_of_failure', 'desc')"><span class="glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span> Time Of Failure (descending)</a>
-                </li>
-              </ul>
-            </div>
+            <GroupAndOrderBy @sort-updated="sortGroups" :hideGroupBy="true"></GroupAndOrderBy>
           </div>
         </div>
       </section>
