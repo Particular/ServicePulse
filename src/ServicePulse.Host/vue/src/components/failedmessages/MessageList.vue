@@ -52,25 +52,25 @@ const props = defineProps({
 }
 
 pre {
-  display: block;
-  padding: 9.5px;
-  margin: 0 0 10px;
-  font-size: 13px;
-  line-height: 1.42857143;
-  color: #333333;
-  word-break: break-all;
-  word-wrap: break-word;
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333333;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 .check:hover, .failed-message-data:hover {
-  background-color: #edf6f7;
+    background-color: #edf6f7;
 }
 
 .failed-message:hover {
-  border: 1px solid #00a3c4;
+    border: 1px solid #00a3c4;
 }
 
 .repeat-item {
@@ -79,25 +79,25 @@ pre {
 
 .check,
 div.failed-message-data {
-  padding-top: 15px;
-  padding-left: 25px;
-  padding-bottom: 0;
+    padding-top: 15px;
+    padding-left: 25px;
+    padding-bottom: 0;
 }
 
 .box p {
-  color: #777f7f;
-  font-size: 14px;
-  margin-bottom: 0;
+    color: #777f7f;
+    font-size: 14px;
+    margin-bottom: 0;
 }
 
 .pa-endpoint {
-  position: relative;
-  top: 3px;
-  background-image: url('@/assets/endpoint.svg');
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 15px;
-  width: 15px;
+    position: relative;
+    top: 3px;
+    background-image: url('@/assets/endpoint.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 15px;
+    width: 15px;
 }
 
 .checkbox {
@@ -140,17 +140,43 @@ input[type="checkbox"] {
   visibility: hidden;
 }
 
+p.metadata {
+    margin-bottom: 6px;
+    position: relative;
+}
+
+p.metadata button {
+    position: absolute;
+    right: 0px;
+    top: 0;
+}
+
+.metadata > .btn-sm {
+    color: #00a3c4;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0 36px 10px 0;
+    text-decoration: none;
+    display: none;
+}
+
+.failed-message:hover .metadata > .btn-sm {
+    display: block;
+}
+
+.metadata > .btn-sm > i {
+    color: #00a3c4;
+}
+
 .metadata:first-child {
-  padding-left: 0;
+    padding-left: 0;
 }
 
 span.metadata {
-  display: inline-block;
-  padding: 0px 20px 2px 0;
-  color: #777f7f;
+    display: inline-block;
+    padding: 0px 20px 2px 0;
+    color: #777f7f;
 }
 
-.repeat-item > .col-1 {
-    width:100px;
-}
+
 </style>
