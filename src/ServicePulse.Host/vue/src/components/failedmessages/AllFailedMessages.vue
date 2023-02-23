@@ -8,6 +8,7 @@ import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 
+const messageList = ref();
 const totalCount = ref(0);
 const messages = ref([]);
 const sortMethod = ref({});
@@ -54,6 +55,26 @@ function loadMessages(page, sortBy, direction) {
     });
 }
 
+function retrySelected() {
+  var ids = messageList.value.getSelectedMessageIds();
+}
+
+function numberSelected() {
+  return (messageList?.value?.getSelectedMessageIds()?.length ?? 0);
+}
+
+function selectAll() {
+  messageList.value.selectAll();
+}
+
+function deselectAll() {
+  messageList.value.deselectAll();
+}
+
+function isAnythingSelected() {
+  return messageList?.value?.isAnythingSelected();
+}
+
 onMounted(() => {
   loadMessages();
 });
@@ -69,12 +90,12 @@ onMounted(() => {
         <div class="row">
           <div class="col-9">
             <div class="btn-toolbar">
-              <button type="button" class="btn btn-default select-all" ng-click="vm.selectAllMessages()"><span ng-show="vm.selectedIds.length == 0">Select all</span></button>
-              <button type="button" class="btn btn-default" ng-click="vm.retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-repeat"></i> Retry XX selected</button>
-              <button type="button" class="btn btn-default" confirm-title="Are you sure you want to delete the selected messages?" confirm-message="If you delete, these messages won't be available for retrying unless they're later restored." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-trash"></i> Delete XX selected</button>
-              <button type="button" class="btn btn-default" ng-click="vm.exportSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-download"></i> Export XX selected</button>
+              <button type="button" class="btn btn-default select-all" @click="selectAll" v-if="!isAnythingSelected()">Select all</button>
+              <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
+              <button type="button" class="btn btn-default" @click="retrySelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" confirm-title="Are you sure you want to delete the selected messages?" confirm-message="If you delete, these messages won't be available for retrying unless they're later restored." confirm-click="vm.archiveSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" ng-click="vm.exportSelected()" ng-disabled="vm.selectedIds.length == 0"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
-              <button type="button" class="btn btn-default" ng-show="vm.selectedExceptionGroup.id" confirm-title="Are you sure you want to delete this group?" confirm-message="If you delete, the messages in the group won't be available for retrying unless they're later restored." confirm-click="vm.archiveExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-trash"></i> Delete all</button>
             </div>
           </div>
           <div class="col-3">
@@ -83,7 +104,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages"></MessageList>
+            <MessageList :messages="messages" ref="messageList"></MessageList>
           </div>
         </div>
       </section>
