@@ -46,8 +46,8 @@ function loadMessages(page, sortBy, direction) {
     .then((response) => {
       if (messages.value.length && response.length) {
         // merge the previously selected messages into the new list so we can replace them
-        messages.value.forEach(previousMessage => {
-          response.find(m => m.id === previousMessage.id).selected = previousMessage.selected;
+        messages.value.forEach((previousMessage) => {
+          response.find((m) => m.id === previousMessage.id).selected = previousMessage.selected;
         });
       }
 
@@ -63,16 +63,15 @@ function loadMessages(page, sortBy, direction) {
 }
 
 function retrySelected() {
-  const selectedMessages = messageList.value.getSelectedMessages().map(m => m.id);
+  const selectedMessages = messageList.value.getSelectedMessages().map((m) => m.id);
 
   // toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
-  usePostToServiceControl("errors/retry", selectedMessages)
-    .then(()=> {
-      messageList.value.deselectAll();
-      messages.value = messages.value.filter((message) => {
-        return !selectedMessages.find(id => id == message.id);
-      });
+  usePostToServiceControl("errors/retry", selectedMessages).then(() => {
+    messageList.value.deselectAll();
+    messages.value = messages.value.filter((message) => {
+      return !selectedMessages.find((id) => id == message.id);
     });
+  });
 }
 
 function exportSelected() {
@@ -154,6 +153,12 @@ function isAnythingSelected() {
   return messageList?.value?.isAnythingSelected();
 }
 
+function retryRequested(id) {
+  usePostToServiceControl("errors/retry", [id]).then(() => {
+    messages.value = messages.value.filter((message) => message.id != id);
+  });
+}
+
 onMounted(() => {
   loadMessages();
 
@@ -186,7 +191,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" ref="messageList"></MessageList>
+            <MessageList :messages="messages" @retry-requested="retryRequested" ref="messageList"></MessageList>
           </div>
         </div>
       </section>
