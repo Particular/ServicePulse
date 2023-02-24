@@ -67,7 +67,7 @@ onMounted(() => {
                 disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
-              <a href="#failed-message-groups">
+              <a href="/failed-messages#failed-message-groups">
                 Failed Message Groups
                 <span v-show="stats.number_of_failed_messages === 0"> (0) </span>
               </a>
@@ -82,7 +82,7 @@ onMounted(() => {
                 disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
-              <a href="#all-failed-messages">All Failed Messages </a>
+              <a href="/failed-messages#all-failed-messages">All Failed Messages </a>
               <span v-if="stats.number_of_failed_messages !== 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </h5>
 
@@ -94,7 +94,7 @@ onMounted(() => {
                 disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
-              <a href="#deleted-message-groups">Deleted Message Groups </a>
+              <a href="/failed-messages#deleted-message-groups">Deleted Message Groups </a>
               <span v-if="stats.number_of_archived_messages !== 0" title="There's varying numbers of deleted message groups depending on group type" class="badge badge-important">!</span>
             </h5>
 
@@ -106,7 +106,7 @@ onMounted(() => {
                 disabled: !connectionState.connected && !connectionState.connectedRecently,
               }"
             >
-              <a href="#all-deleted-messages">All Deleted Messages </a>
+              <a href="/failed-messages#all-deleted-messages">All Deleted Messages </a>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
           </div>
