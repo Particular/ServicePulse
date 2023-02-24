@@ -58,7 +58,7 @@ defineExpose({
 </script>
 
 <template>
-  <div v-for="(message, index,) in props.messages" class="row box repeat-item failed-message" :key="message.id">
+  <div v-for="(message, index) in props.messages" class="row box repeat-item failed-message" :key="message.id">
     <label class="check col-1" :for="`checkbox${message.id}`" @click="labelClicked($event, index)">
       <input type="checkbox" :disabled="message.retryInProgress" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
     </label>
