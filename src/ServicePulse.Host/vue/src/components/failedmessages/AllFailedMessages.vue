@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
@@ -10,6 +10,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import FailedMessageDelete from "./FailedMessageDelete.vue";
 
+let refreshInterval = undefined;
 let sortMethod = undefined;
 let isGroupDetails = false;
 const pageNumber = ref(1);
@@ -220,10 +221,16 @@ function setPage(page) {
   loadMessages();
 }
 
+onUnmounted(() => {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+});
+
 onMounted(() => {
   loadMessages();
 
-  setInterval(() => {
+  refreshInterval = setInterval(() => {
     loadMessages();
   }, 5000);
 });
