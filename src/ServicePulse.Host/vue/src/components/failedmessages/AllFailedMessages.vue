@@ -75,7 +75,7 @@ function loadPagedMessages(page, sortBy, direction) {
 function retryRequested(id) {
   useShowToast("info", "Info", "Message retry requested...");
   usePostToServiceControl("errors/retry", [id]).then(() => {
-    const message = messages.value.find(m => m.id == id);
+    const message = messages.value.find((m) => m.id == id);
     if (message) {
       message.retryInProgress = true;
     }
@@ -86,9 +86,12 @@ function retrySelected() {
   const selectedMessages = messageList.value.getSelectedMessages();
 
   useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
-  usePostToServiceControl("errors/retry", selectedMessages.map(m => m.id)).then(() => {
+  usePostToServiceControl(
+    "errors/retry",
+    selectedMessages.map((m) => m.id)
+  ).then(() => {
     messageList.value.deselectAll();
-    selectedMessages.forEach(m => m.retryInProgress = true);
+    selectedMessages.forEach((m) => (m.retryInProgress = true));
   });
 }
 
@@ -172,7 +175,7 @@ function isAnythingSelected() {
 }
 
 onMounted(() => {
-    loadMessages();
+  loadMessages();
 
   setInterval(() => {
     loadMessages();
