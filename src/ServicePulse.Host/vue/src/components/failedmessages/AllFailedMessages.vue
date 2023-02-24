@@ -9,10 +9,10 @@ import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 
+let sortMethod = undefined;
 const messageList = ref();
 const totalCount = ref(0);
 const messages = ref([]);
-const sortMethod = ref({});
 const sortOptions = [
   {
     description: "Time of failure",
@@ -31,10 +31,15 @@ const sortOptions = [
 ];
 
 function sortGroups(sort) {
-  sortMethod.value = sort.sort;
+  sortMethod = sort;
+  loadMessages();
 }
 
-function loadMessages(page, sortBy, direction) {
+function loadMessages() {
+  loadPagedMessages(undefined, sortMethod.description.replace(" ", "_"), sortMethod.dir);
+}
+
+function loadPagedMessages(page, sortBy, direction) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
@@ -68,9 +73,12 @@ function loadMessages(page, sortBy, direction) {
 }
 
 function retryRequested(id) {
-  useShowToast("info", "Info", "Message retry requested...", true);
+  useShowToast("info", "Info", "Message retry requested...");
   usePostToServiceControl("errors/retry", [id]).then(() => {
-    messages.retryInProgress = true;
+    const message = messages.value.find(m => m.id == id);
+    if (message) {
+      message.retryInProgress = true;
+    }
   });
 }
 
@@ -164,7 +172,7 @@ function isAnythingSelected() {
 }
 
 onMounted(() => {
-  loadMessages();
+    loadMessages();
 
   setInterval(() => {
     loadMessages();
