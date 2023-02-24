@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
@@ -17,6 +17,7 @@ const props = defineProps({
   sortFunction: Object,
 });
 
+let refreshInterval = undefined;
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
@@ -233,10 +234,16 @@ function isBeingRetried(group) {
   return group.workflow_state.status !== "none" && (group.workflow_state.status !== "completed" || group.need_user_acknowledgement === true) && !isBeingArchived(group.workflow_state.status);
 }
 
+onUnmounted(() => {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+});
+
 onMounted(() => {
   loadFailedMessageGroups();
 
-  setInterval(() => {
+  refreshInterval = setInterval(() => {
     loadFailedMessageGroups();
   }, 5000);
 });
