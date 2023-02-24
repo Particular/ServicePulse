@@ -259,7 +259,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" @retry-requested="retryRequested" ref="messageList"></MessageList>
+            <MessageList :messages="messages" :showRequestRetry="true" @retry-requested="retryRequested" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row">
@@ -278,14 +278,7 @@ onMounted(() => {
           </div>
         </div>
         <Teleport to="#modalDisplay">
-          <FailedMessageDelete
-            v-if="showDelete === true"
-            @cancel="showDelete = false"
-            @confirm="
-              showDelete = false;
-              deleteSelectedMessages();
-            "
-          ></FailedMessageDelete>
+          <FailedMessageDelete v-if="showDelete === true" @cancel="showDelete = false" @confirm="showDelete = false; deleteSelectedMessages();"></FailedMessageDelete>
         </Teleport>
       </section>
     </template>

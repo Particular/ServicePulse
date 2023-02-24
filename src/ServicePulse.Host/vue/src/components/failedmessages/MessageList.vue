@@ -5,6 +5,7 @@ let lastLabelClickedIndex = undefined;
 const emit = defineEmits(["retryRequested"]);
 const props = defineProps({
   messages: Array,
+  showRequestRetry: Boolean
 });
 
 function getSelectedMessages() {
@@ -35,9 +36,9 @@ function labelClicked($event, index) {
     }
 
     clearSelection();
-  } else {
-    lastLabelClickedIndex = index;
   }
+
+  lastLabelClickedIndex = index;
 }
 
 function clearSelection() {
@@ -69,7 +70,9 @@ defineExpose({
             <div class="col-12 no-side-padding">
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
+                <span v-if="message.submittedForRetrial" tooltip="Message was submitted for retrying" class="label sidebar-label label-info metadata-label">To retry</span>
                 <span v-if="message.retried || message.retryInProgress" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retry in progress</span>
+                <span v-if="message.resolved" class="label sidebar-label label-info metadata-label">Resolved</span>
                 <span v-if="message.archived || message.deleteInProgress" tooltip="Message is being deleted" class="label sidebar-label label-warning metadata-label metadata in-progress"><i class="bi-trash"></i> Scheduled for deletion</span>
                 <span v-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts }} Retry Failures</span>
                 <span v-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
@@ -78,7 +81,7 @@ defineExpose({
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
-                <button type="button" v-if="!message.retryInProgress" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
+                <button type="button" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
               </p>
 
               <pre class="stacktrace-preview" isolate-click>{{ message.exception.message }}</pre>
@@ -225,5 +228,38 @@ span.metadata {
 
 .metadata > .in-progress {
   font-style: italic;
+}
+
+.label-info {
+  background-color: #1b809e;
+}
+
+.metadata-label {
+  margin-right: 24px;
+  position: relative;
+  top: -1px;
+}
+
+.sidebar-label {
+  box-shadow: none;
+  color: #ffffff;
+  display: inline-block;
+  font-size: 12px;
+  margin-top: 3px;
+  max-width: 100%;
+  padding: 6px 10px;
+}
+
+.label {
+  display: inline;
+  padding: 4px 0.6em 0.3em;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25em;
 }
 </style>

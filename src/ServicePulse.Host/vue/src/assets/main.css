@@ -389,3 +389,8 @@ input.check-label {
     margin-left: 0;
     margin-right: 5px;
 }
+
+.modal-container {
+    padding: 0;
+    border-radius: 5px;
+}
