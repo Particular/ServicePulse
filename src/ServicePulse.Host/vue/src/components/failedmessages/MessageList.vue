@@ -1,6 +1,7 @@
 <script setup>
 import TimeSince from "../TimeSince.vue";
 
+const emit = defineEmits(["retryRequested"]);
 const props = defineProps({
   messages: Array,
 });
@@ -50,7 +51,7 @@ defineExpose({
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
-                <button type="button" class="btn btn-link btn-sm"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
+                <button type="button" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
               </p>
 
               <pre class="stacktrace-preview" isolate-click>{{ message.exception.message }}</pre>
