@@ -15,9 +15,9 @@ let sortMethod = undefined;
 let isGroupDetails = false;
 const pageNumber = ref(1);
 const numberOfPages = ref(1);
+const totalCount = ref(0);
 const showDelete = ref(false);
 const messageList = ref();
-const totalCount = ref(0);
 const messages = ref([]);
 const sortOptions = [
   {

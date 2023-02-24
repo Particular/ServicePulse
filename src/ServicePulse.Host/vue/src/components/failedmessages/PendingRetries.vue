@@ -18,6 +18,9 @@ const selectedQueue = ref("empty");
 const showConfirmRetry = ref(false);
 const showConfirmResolve = ref(false);
 const showConfirmResolveAll = ref(false);
+const pageNumber = ref(1);
+const numberOfPages = ref(1);
+const totalCount = ref(0);
 
 function loadEndpoints() {
   const loader = new useEndpoints();
@@ -30,14 +33,21 @@ function clearSelectedQueue() {
   selectedQueue.value = "empty";
 }
 
-function loadPendingRetryMessages(page, sortBy, direction, searchPhrase) {
+function loadPendingRetryMessages() {
+  return loadPagedPendingRetryMessages(pageNumber.value, undefined, undefined, selectedQueue.value);
+}
+
+function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
-  if (typeof searchPhrase === "undefined") searchPhrase = "";
+  if (typeof searchPhrase === "undefined" || searchPhrase === "empty") searchPhrase = "";
 
   return useFetchFromServiceControl(`errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}`)
     .then((response) => {
+      totalCount.value = parseInt(response.headers.get("Total-Count"));
+      numberOfPages.value = Math.ceil(totalCount.value / 50);
+
       return response.json();
     })
     .then(response => {
@@ -103,6 +113,27 @@ function resolveAllMessages() {
   });
 }
 
+function nextPage() {
+  pageNumber.value = pageNumber.value + 1;
+  if (pageNumber.value > numberOfPages.value) {
+    pageNumber.value = numberOfPages.value;
+  }
+  loadPendingRetryMessages();
+}
+
+function previousPage() {
+  pageNumber.value = pageNumber.value - 1;
+  if (pageNumber.value == 0) {
+    pageNumber.value = 1;
+  }
+  loadPendingRetryMessages();
+}
+
+function setPage(page) {
+  pageNumber.value = page;
+  loadPendingRetryMessages();
+}
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -159,6 +190,21 @@ onMounted(() => {
         <div class="row">
           <div class="col-12">
             <MessageList :messages="messages" ref="messageList"></MessageList>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col align-self-center">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" :class="{ disabled: pageNumber == 1 }">
+                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
+              </li>
+              <li v-for="n in numberOfPages" class="page-item" :class="{ active: pageNumber == n }" :key="n">
+                <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
+              </li>
+            </ul>
           </div>
         </div>
         <Teleport to="#modalDisplay">
