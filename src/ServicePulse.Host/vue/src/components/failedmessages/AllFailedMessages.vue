@@ -48,7 +48,11 @@ function loadMessages(page, sortBy, direction) {
       if (messages.value.length && response.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
-          response.find((m) => m.id === previousMessage.id).selected = previousMessage.selected;
+          const receivedMessage = response.find((m) => m.id === previousMessage.id);
+          if (receivedMessage) {
+            receivedMessage.selected = previousMessage.selected;
+            receivedMessage.retryInProgress = previousMessage.retryInProgress;
+          }
         });
       }
 
@@ -63,15 +67,20 @@ function loadMessages(page, sortBy, direction) {
     });
 }
 
-function retrySelected() {
-  const selectedMessages = messageList.value.getSelectedMessages().map((m) => m.id);
+function retryRequested(id) {
+  useShowToast("info", "Info", "Message retry requested...", true);
+  usePostToServiceControl("errors/retry", [id]).then(() => {
+    messages.retryInProgress = true;
+  });
+}
 
-  useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...", true);
-  usePostToServiceControl("errors/retry", selectedMessages).then(() => {
+function retrySelected() {
+  const selectedMessages = messageList.value.getSelectedMessages();
+
+  useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
+  usePostToServiceControl("errors/retry", selectedMessages.map(m => m.id)).then(() => {
     messageList.value.deselectAll();
-    messages.value = messages.value.filter((message) => {
-      return !selectedMessages.find((id) => id == message.id);
-    });
+    selectedMessages.forEach(m => m.retryInProgress = true);
   });
 }
 
@@ -152,12 +161,6 @@ function deselectAll() {
 
 function isAnythingSelected() {
   return messageList?.value?.isAnythingSelected();
-}
-
-function retryRequested(id) {
-  usePostToServiceControl("errors/retry", [id]).then(() => {
-    messages.value = messages.value.filter((message) => message.id != id);
-  });
 }
 
 onMounted(() => {
