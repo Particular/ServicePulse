@@ -43,6 +43,17 @@ export function useDeleteFromServiceControl(suffix) {
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
+export function usePatchToServiceControl(suffix, payload) {
+  const requestOptions = {
+    method: "PATCH",
+  };
+  if (payload !== undefined) {
+    requestOptions.headers = { "Content-Type": "application/json" };
+    requestOptions.body = JSON.stringify(payload);
+  }
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+
 export function useServiceControlUrls() {
   const params = getParams();
   const scu = getParameter(params, "scu");

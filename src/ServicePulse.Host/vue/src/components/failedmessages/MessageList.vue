@@ -70,7 +70,7 @@ defineExpose({
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
                 <span v-if="message.retried || message.retryInProgress" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retry in progress</span>
-                <span v-if="message.archived" tooltip="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
+                <span v-if="message.archived || message.deleteInProgress" tooltip="Message is being deleted" class="label sidebar-label label-warning metadata-label metadata in-progress"><i class="bi-trash"></i> Scheduled for deletion</span>
                 <span v-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts }} Retry Failures</span>
                 <span v-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
 

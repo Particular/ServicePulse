@@ -2,14 +2,16 @@
 import { ref, onMounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
-import { useFetchFromServiceControl, usePostToServiceControl } from "../../composables/serviceServiceControlUrls.js";
+import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
+import FailedMessageDelete from "./FailedMessageDelete.vue";
 
 let sortMethod = undefined;
+const showDelete = ref(false);
 const messageList = ref();
 const totalCount = ref(0);
 const messages = ref([]);
@@ -57,6 +59,7 @@ function loadPagedMessages(page, sortBy, direction) {
           if (receivedMessage) {
             if (previousMessage.last_modified == receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
+              receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
             }
 
             receivedMessage.selected = previousMessage.selected;
@@ -81,6 +84,7 @@ function retryRequested(id) {
     const message = messages.value.find((m) => m.id == id);
     if (message) {
       message.retryInProgress = true;
+      message.selected = false;
     }
   });
 }
@@ -177,6 +181,19 @@ function isAnythingSelected() {
   return messageList?.value?.isAnythingSelected();
 }
 
+function deleteSelectedMessages() {
+  const selectedMessages = messageList.value.getSelectedMessages();
+
+  useShowToast("info", "Info", "Deleting " + selectedMessages.length + " messages...");
+  usePatchToServiceControl(
+    "errors/archive",
+    selectedMessages.map((m) => m.id)
+  ).then(() => {
+    messageList.value.deselectAll();
+    selectedMessages.forEach((m) => (m.deleteInProgress = true));
+  });
+}
+
 onMounted(() => {
   loadMessages();
 
@@ -198,7 +215,7 @@ onMounted(() => {
               <button type="button" class="btn btn-default select-all" @click="selectAll" v-if="!isAnythingSelected()">Select all</button>
               <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
               <button type="button" class="btn btn-default" @click="retrySelected()" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" confirm-title="Are you sure you want to delete the selected messages?" confirm-message="If you delete, these messages won't be available for retrying unless they're later restored." confirm-click="vm.archiveSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" @click="showDelete = true" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" @click="exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
             </div>
@@ -212,6 +229,9 @@ onMounted(() => {
             <MessageList :messages="messages" @retry-requested="retryRequested" ref="messageList"></MessageList>
           </div>
         </div>
+        <Teleport to="#modalDisplay">
+          <FailedMessageDelete v-if="showDelete === true" @cancel="showDelete = false" @confirm="showDelete = false; deleteSelectedMessages()"></FailedMessageDelete>
+        </Teleport>
       </section>
     </template>
   </template>
