@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useFetchFromServiceControl, usePostToServiceControl } from "../../composables/serviceServiceControlUrls.js";
+import { useShowToast } from "../../composables/toast.js";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -65,7 +66,7 @@ function loadMessages(page, sortBy, direction) {
 function retrySelected() {
   const selectedMessages = messageList.value.getSelectedMessages().map((m) => m.id);
 
-  // toastService.showInfo("Retrying " + vm.selectedIds.length + " messages...");
+  useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...", true);
   usePostToServiceControl("errors/retry", selectedMessages).then(() => {
     messageList.value.deselectAll();
     messages.value = messages.value.filter((message) => {
