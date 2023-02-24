@@ -66,7 +66,7 @@ function initializeGroupState(group) {
 function loadFailedMessageGroups(groupBy) {
   loadingData.value = true;
 
-  if (!initialLoadComplete.value) {
+  if (!initialLoadComplete.value || !groupBy) {
     const classificationHelper = new useFailedMessageGroupClassification();
     groupBy = classificationHelper.loadDefaultGroupingClassifier(route);
   }
