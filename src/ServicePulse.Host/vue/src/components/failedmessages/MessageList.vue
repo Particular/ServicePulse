@@ -58,7 +58,7 @@ defineExpose({
 </script>
 
 <template>
-  <div v-for="(message, index) in props.messages" class="row box repeat-item failed-message" :key="message.id">
+  <div v-for="(message, index,) in props.messages" class="row box repeat-item failed-message" :key="message.id">
     <label class="check col-1" :for="`checkbox${message.id}`" @click="labelClicked($event, index)">
       <input type="checkbox" :disabled="message.retryInProgress" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
     </label>
@@ -69,7 +69,7 @@ defineExpose({
             <div class="col-12 no-side-padding">
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
-                <span v-if="message.retried || message.retryInProgress" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label metadata"><i class="bi-arrow-clockwise"></i> Retry in progress</span>
+                <span v-if="message.retried || message.retryInProgress" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retry in progress</span>
                 <span v-if="message.archived" tooltip="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
                 <span v-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts }} Retry Failures</span>
                 <span v-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
@@ -221,5 +221,9 @@ span.metadata {
   display: inline-block;
   padding: 0px 20px 2px 0;
   color: #777f7f;
+}
+
+.metadata > .in-progress {
+  font-style: italic;
 }
 </style>

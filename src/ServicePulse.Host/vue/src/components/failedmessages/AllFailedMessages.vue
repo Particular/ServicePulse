@@ -55,8 +55,11 @@ function loadPagedMessages(page, sortBy, direction) {
         messages.value.forEach((previousMessage) => {
           const receivedMessage = response.find((m) => m.id === previousMessage.id);
           if (receivedMessage) {
+            if (previousMessage.last_modified == receivedMessage.last_modified) {
+              receivedMessage.retryInProgress = previousMessage.retryInProgress;
+            }
+
             receivedMessage.selected = previousMessage.selected;
-            receivedMessage.retryInProgress = previousMessage.retryInProgress;
           }
         });
       }
@@ -253,5 +256,14 @@ onMounted(() => {
   color: #333;
   background-color: #e6e6e6;
   border-color: #adadad;
+}
+
+.metadata .label-important {
+  padding: 2px 10px;
+  border-radius: 3px;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 20px;
 }
 </style>
