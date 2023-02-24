@@ -29,8 +29,9 @@ function labelClicked($event, index) {
     const start = (index < lastLabelClickedIndex ? index : lastLabelClickedIndex) + 1;
     const end = (index < lastLabelClickedIndex ? lastLabelClickedIndex : index) + 1;
 
+    const messages = props.messages;
     for (let x = start; x < end; x++) {
-      props.messages[x].selected = !props.messages[x].selected;
+      messages[x].selected = !messages[x].selected;
     }
 
     clearSelection();
@@ -40,9 +41,9 @@ function labelClicked($event, index) {
 }
 
 function clearSelection() {
-  if(document.selection && document.selection.empty) {
+  if (document.selection && document.selection.empty) {
     document.selection.empty();
-  } else if(window.getSelection) {
+  } else if (window.getSelection) {
     var sel = window.getSelection();
     sel.removeAllRanges();
   }
