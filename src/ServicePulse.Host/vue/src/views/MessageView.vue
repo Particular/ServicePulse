@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 import NoData from "../components/NoData.vue";
 import TimeSince from "../components/TimeSince.vue";
 //import { useShowToast } from "../composables/toast";
+import { useUnarchiveMessage } from "../composables/serviceFailedMessage";
 import moment from "moment";
 
 const route = useRoute();
@@ -67,32 +68,33 @@ function getEditAndRetryConfig() {
 }
 
 function unarchiveMessage() {
-  //useShowToast("info", "Info", "Deleting the message " + failedMessage.value.message_id + " ...");
-  //var ids = [id];
-  return usePatchToServiceControl("errors/unarchive/", [id])
+  //var ids = id;
+  //var ids = [""];
+  var ids = [id];
+  //var ids = [failedMessage.value.message_id];
+  //var ids = [123];
+  return useUnarchiveMessage(ids)
     .then((response) => {
-      return response.json();
+      if (response === true) {
+        return loadFailedMessage()
+          .then(() => {
+            togglePanel(1);
+          })
+          .then(() => {
+            downloadHeadersAndBody();
+            getEditAndRetryConfig();
+          });
+      }
+      return response;
     })
-    .then((data) => {
-      return data.json();
+    .catch((err) => {
+      console.log(err);
+      var result = {
+        message: "error",
+      };
+      return result;
     });
 }
-
-/* function prepareAndSaveExportFile(){
-  var txtStr = "STACKTRACE\n";
-  
-  txtStr += "\n\nHEADERS";
-  for (var i = 0; i < message.headers.length; i++) {
-      txtStr += '\n' + message.headers[i].key + ': ' + message.headers[i].value;
-  }
-
-  txtStr += "\n\nMESSAGE BODY\n";
-  txtStr += message.messageBody;
-
-  exportToFile.downloadString(txtStr, "text/txt", "failedMessage.txt");
-
-  toastService.showInfo("Message export completed.");
-} */
 
 function downloadHeadersAndBody() {
   return useFetchFromServiceControl("messages/search/" + failedMessage.value.message_id)
