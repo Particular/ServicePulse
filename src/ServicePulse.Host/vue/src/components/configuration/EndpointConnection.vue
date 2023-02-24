@@ -69,7 +69,7 @@ function switchJsonTab() {
     <section name="platformconnection">
       <ServiceControlNotAvailable />
       <template v-if="!connectionState.unableToConnect">
-        <div class="box">
+        <div class="box configuration">
           <div class="row">
             <div class="col-12">
               <h3>Connect an endpoint to ServiceControl</h3>
@@ -136,7 +136,7 @@ function switchJsonTab() {
 </template>
 
 <style>
-pre {
+.configuration pre {
   border: none;
   background-color: #282c34;
 }
