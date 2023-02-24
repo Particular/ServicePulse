@@ -1,6 +1,7 @@
 <script setup>
 import TimeSince from "../TimeSince.vue";
 
+let lastLabelClickedIndex = undefined;
 const emit = defineEmits(["retryRequested"]);
 const props = defineProps({
   messages: Array,
@@ -22,6 +23,31 @@ function isAnythingSelected() {
   return props.messages.find((m) => m.selected);
 }
 
+function labelClicked($event, index) {
+  if ($event.shiftKey && typeof lastLabelClickedIndex !== "undefined") {
+    // toggle selection from lastLabel until current index
+    const start = (index < lastLabelClickedIndex ? index : lastLabelClickedIndex) + 1;
+    const end = (index < lastLabelClickedIndex ? lastLabelClickedIndex : index) + 1;
+
+    for (let x = start; x < end; x++) {
+      props.messages[x].selected = !props.messages[x].selected;
+    }
+
+    clearSelection();
+  } else {
+    lastLabelClickedIndex = index;
+  }
+}
+
+function clearSelection() {
+  if(document.selection && document.selection.empty) {
+    document.selection.empty();
+  } else if(window.getSelection) {
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+  }
+}
+
 defineExpose({
   getSelectedMessages,
   selectAll,
@@ -31,8 +57,8 @@ defineExpose({
 </script>
 
 <template>
-  <div v-for="message in props.messages" class="row box repeat-item failed-message" :key="message.id">
-    <label class="check col-1" :for="`checkbox${message.id}`">
+  <div v-for="(message, index) in props.messages" class="row box repeat-item failed-message" :key="message.id">
+    <label class="check col-1" :for="`checkbox${message.id}`" @click="labelClicked($event, index)">
       <input type="checkbox" :disabled="message.retryInProgress" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
     </label>
     <div class="col-11 failed-message-data">
