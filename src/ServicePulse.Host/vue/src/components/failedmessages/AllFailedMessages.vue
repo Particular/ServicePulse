@@ -41,7 +41,7 @@ function sortGroups(sort) {
 }
 
 function loadMessages() {
-  loadPagedMessages(pageNumber.value, sortMethod.description.replace(" ", "_"), sortMethod.dir);
+  loadPagedMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
 }
 
 function loadPagedMessages(page, sortBy, direction) {
