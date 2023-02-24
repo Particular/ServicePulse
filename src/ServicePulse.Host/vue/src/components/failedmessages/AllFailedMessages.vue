@@ -11,6 +11,9 @@ import MessageList from "./MessageList.vue";
 import FailedMessageDelete from "./FailedMessageDelete.vue";
 
 let sortMethod = undefined;
+let isGroupDetails = false;
+const pageNumber = ref(1);
+const numberOfPages = ref(1);
 const showDelete = ref(false);
 const messageList = ref();
 const totalCount = ref(0);
@@ -38,7 +41,7 @@ function sortGroups(sort) {
 }
 
 function loadMessages() {
-  loadPagedMessages(undefined, sortMethod.description.replace(" ", "_"), sortMethod.dir);
+  loadPagedMessages(pageNumber.value, sortMethod.description.replace(" ", "_"), sortMethod.dir);
 }
 
 function loadPagedMessages(page, sortBy, direction) {
@@ -49,6 +52,8 @@ function loadPagedMessages(page, sortBy, direction) {
   return useFetchFromServiceControl(`errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
+      numberOfPages.value = Math.ceil(totalCount.value / 50);
+
       return response.json();
     })
     .then((response) => {
@@ -194,6 +199,27 @@ function deleteSelectedMessages() {
   });
 }
 
+function nextPage() {
+  pageNumber.value = pageNumber.value + 1;
+  if (pageNumber.value > numberOfPages.value) {
+    pageNumber.value = numberOfPages.value;
+  }
+  loadMessages();
+}
+
+function previousPage() {
+  pageNumber.value = pageNumber.value - 1;
+  if (pageNumber.value == 0) {
+    pageNumber.value = 1;
+  }
+  loadMessages();
+}
+
+function setPage(page) {
+  pageNumber.value = page;
+  loadMessages();
+}
+
 onMounted(() => {
   loadMessages();
 
@@ -217,7 +243,7 @@ onMounted(() => {
               <button type="button" class="btn btn-default" @click="retrySelected()" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" @click="showDelete = true" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" @click="exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
+              <button type="button" class="btn btn-default" v-if="isGroupDetails" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
             </div>
           </div>
           <div class="col-3">
@@ -229,8 +255,30 @@ onMounted(() => {
             <MessageList :messages="messages" @retry-requested="retryRequested" ref="messageList"></MessageList>
           </div>
         </div>
+        <div class="row">
+          <div class="col align-self-center">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" :class="{ disabled: pageNumber == 1 }">
+                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
+              </li>
+              <li v-for="n in numberOfPages" class="page-item" :class="{ active: pageNumber == n }" :key="n">
+                <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
+              </li>
+            </ul>
+          </div>
+        </div>
         <Teleport to="#modalDisplay">
-          <FailedMessageDelete v-if="showDelete === true" @cancel="showDelete = false" @confirm="showDelete = false; deleteSelectedMessages()"></FailedMessageDelete>
+          <FailedMessageDelete
+            v-if="showDelete === true"
+            @cancel="showDelete = false"
+            @confirm="
+              showDelete = false;
+              deleteSelectedMessages();
+            "
+          ></FailedMessageDelete>
         </Teleport>
       </section>
     </template>
