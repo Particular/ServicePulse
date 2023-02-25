@@ -12,7 +12,7 @@ let refreshInterval = undefined;
 let panel = undefined;
 const route = useRoute();
 const id = route.params.id;
-const failedMessage = ref({});
+const failedMessage = ref([]);
 
 function loadFailedMessage() {
   return useFetchFromServiceControl("errors/last/" + id)
@@ -72,9 +72,11 @@ function getEditAndRetryConfig() {
 function unarchiveMessage() {
   return useUnarchiveMessage([id])
     .then((response) => {
-      if(response !== undefined){
+      if(response !== undefined) {
         return loadFailedMessage().then(() => {
           failedMessage.value.archived = false;
+          downloadHeadersAndBody();
+          getEditAndRetryConfig();
         });
       }
       return false;
@@ -201,7 +203,7 @@ onMounted(() => {
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." v-on:click="unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
                 <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
-                <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" tooltip="Browse this message in ServiceInsight, if installed"><img src="../assets/si-icon.svg" /> View in ServiceInsight</button>
+                <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" title="Browse this message in ServiceInsight, if installed"><img src="../assets/si-icon.svg" /> View in ServiceInsight</button>
                 <button type="button" class="btn btn-default" ng-click="vm.exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
@@ -229,17 +231,13 @@ onMounted(() => {
               <div isolate-click class="alert alert-info" v-if="panel === 2 && failedMessage?.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
               <pre isolate-click v-if="panel === 3 && !failedMessage?.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
               <div isolate-click class="alert alert-info" v-if="panel === 3 && failedMessage?.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
-              <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="panel === 4"></flow-diagram>
+              <!-- <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="panel === 4"></flow-diagram> -->
             </div>
           </div>
         </div>
       </section>
     </section>
   </div>
-  <!--modal display - delete message-->
-  <Teleport to="#modalDisplay">
-    <FailedMessageGroupDelete v-if="showDeleteGroupModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelDeleteGroup="showDeleteGroupModal = false" @deleteGroupConfirmed="saveDeleteGroup"></FailedMessageGroupDelete>
-  </Teleport>
 </template>
 
 <style>
