@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeMount/* , onUnmounted */ } from "vue";
+import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 import NoData from "../components/NoData.vue";
@@ -31,7 +31,7 @@ function loadFailedMessage() {
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
       message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-      failedMessage.value = message;     
+      failedMessage.value = message;
       updateMessageDeleteDate();
       return downloadHeadersAndBody();
     })
@@ -138,22 +138,21 @@ onBeforeMount(() => {
   getConfiguration().then(() => {
     return loadFailedMessage();
   });
-  
 });
 
 onMounted(() => {
   togglePanel(1);
 
-  /* refreshInterval = setInterval(() => {
+  refreshInterval = setInterval(() => {
     loadFailedMessage();
-  }, 5000); */
+  }, 5000);
 });
 
-/* onUnmounted(() => {
+onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
-}); */
+});
 </script>
 
 <template>
