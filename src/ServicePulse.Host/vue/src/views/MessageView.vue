@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onBeforeMount/* , onUnmounted */ } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 import NoData from "../components/NoData.vue";
@@ -13,6 +13,7 @@ let panel = undefined;
 const route = useRoute();
 const id = route.params.id;
 const failedMessage = ref([]);
+const configuration = ref([]);
 
 function loadFailedMessage() {
   return useFetchFromServiceControl("errors/last/" + id)
@@ -29,11 +30,10 @@ function loadFailedMessage() {
       message.archived = message.status === "archived";
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
-      failedMessage.value = message;
-      return getErrorRetentionPeriod();
-    })
-    .then(() => {
-      return updateMessageDeleteDate();
+      message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+      failedMessage.value = message;     
+      updateMessageDeleteDate();
+      return downloadHeadersAndBody();
     })
     .catch((err) => {
       console.log(err);
@@ -41,14 +41,13 @@ function loadFailedMessage() {
     });
 }
 
-function getErrorRetentionPeriod() {
+function getConfiguration() {
   return useFetchFromServiceControl("configuration")
     .then((response) => {
       return response.json();
     })
     .then((data) => {
-      var configuration = data;
-      failedMessage.value.error_retention_period = moment.duration(configuration.data_retention.error_retention_period).asHours();
+      configuration.value = data;
       return;
     });
 }
@@ -59,7 +58,7 @@ function updateMessageDeleteDate() {
   failedMessage.value.deleted_in = countdown.format();
 }
 
-function getEditAndRetryConfig() {
+/* function getEditAndRetryConfig() {
   return useFetchFromServiceControl("edit/config")
     .then((response) => {
       return response.json();
@@ -67,16 +66,15 @@ function getEditAndRetryConfig() {
     .then((data) => {
       failedMessage.value.isEditAndRetryEnabled = data.enabled;
     });
-}
+} */
 
 function unarchiveMessage() {
   return useUnarchiveMessage([id])
     .then((response) => {
-      if(response !== undefined) {
+      if (response !== undefined) {
         return loadFailedMessage().then(() => {
           failedMessage.value.archived = false;
           downloadHeadersAndBody();
-          getEditAndRetryConfig();
         });
       }
       return false;
@@ -99,8 +97,7 @@ function downloadHeadersAndBody() {
         return;
       }
       var message = data[0];
-      var headers = message.headers;
-      failedMessage.value.headers = headers;
+      failedMessage.value.headers = message.headers;
       return downloadBody();
     })
     .catch((err) => {
@@ -134,33 +131,29 @@ function togglePanel(panelNum) {
   if (!failedMessage.value.notFound && !failedMessage.value.error) {
     panel = panelNum;
   }
-
   return false;
 }
 
-onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
-  }
+onBeforeMount(() => {
+  getConfiguration().then(() => {
+    return loadFailedMessage();
+  });
+  
 });
 
 onMounted(() => {
-  loadFailedMessage()
-    .then(() => {
-      togglePanel(1);
-    })
-    .then(() => {
-      downloadHeadersAndBody();
-      getEditAndRetryConfig();
-    });
+  togglePanel(1);
 
-  refreshInterval = setInterval(() => {
-    loadFailedMessage().then(() => {
-      downloadHeadersAndBody();
-      getEditAndRetryConfig();
-    });
-  }, 5000);
+  /* refreshInterval = setInterval(() => {
+    loadFailedMessage();
+  }, 5000); */
 });
+
+/* onUnmounted(() => {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+}); */
 </script>
 
 <template>
@@ -202,7 +195,7 @@ onMounted(() => {
                 <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." v-on:click="archiveMessage()" confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." v-on:click="unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
-                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button>
+                <!-- <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button> -->
                 <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" title="Browse this message in ServiceInsight, if installed"><img src="../assets/si-icon.svg" /> View in ServiceInsight</button>
                 <button type="button" class="btn btn-default" ng-click="vm.exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message</button>
               </div>
@@ -217,7 +210,7 @@ onMounted(() => {
                 <h5 :class="{ active: panel === 4 }" class="nav-item" v-on:click="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
               </div>
               <pre isolate-click v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
-              <pre isolate-click v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
+              <pre isolate-click v-if="panel === 1">{{ failedMessage.exception.stack_trace }}</pre>
               <table isolate-click class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
                 <tbody>
                   <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
@@ -228,9 +221,9 @@ onMounted(() => {
                   </tr>
                 </tbody>
               </table>
-              <div isolate-click class="alert alert-info" v-if="panel === 2 && failedMessage?.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
-              <pre isolate-click v-if="panel === 3 && !failedMessage?.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
-              <div isolate-click class="alert alert-info" v-if="panel === 3 && failedMessage?.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
+              <div isolate-click class="alert alert-info" v-if="panel === 2 && failedMessage.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
+              <pre isolate-click v-if="panel === 3 && !failedMessage.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
+              <div isolate-click class="alert alert-info" v-if="panel === 3 && failedMessage.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
               <!-- <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="panel === 4"></flow-diagram> -->
             </div>
           </div>
@@ -511,24 +504,4 @@ pre {
 .msg-tabs {
   margin-bottom: 20px;
 }
-
-/* .label-warning,
-.badge-warning {
-    background-color: #aa6708;
-    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, hsl(35, 95%, 76%)), color-stop(100%, hsl(35, 95%, 61%)));
-    background-image: -webkit-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
-    background-image: -moz-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
-    background-image: -ms-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
-    background-image: -o-linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
-    background-image: linear-gradient(top, hsl(35, 95%, 76%), hsl(35, 95%, 61%));
-    border-color: #aa6708;
-} */
-
-/* body {
-    background-color: #e9eaed;
-    color: #181919;
-    overflow-y: scroll;
-    padding-top: 100px;
-    padding-bottom: 100px;
-} */
 </style>
