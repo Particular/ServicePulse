@@ -50,7 +50,7 @@ function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase) {
 
       return response.json();
     })
-    .then(response => {
+    .then((response) => {
       messages.value.forEach((previousMessage) => {
         const receivedMessage = response.find((m) => m.id === previousMessage.id);
         if (receivedMessage) {
@@ -84,10 +84,12 @@ function numberSelected() {
 
 function retrySelectedMessages() {
   const selectedMessages = messageList.value.getSelectedMessages();
-  
+
   useShowToast("info", "Info", "Selected messages were submitted for retry...");
-  return usePostToServiceControl("pendingretries/retry", selectedMessages.map((m) => m.id))
-  .then(() => {
+  return usePostToServiceControl(
+    "pendingretries/retry",
+    selectedMessages.map((m) => m.id)
+  ).then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.submittedForRetrial = true));
   });
@@ -95,10 +97,9 @@ function retrySelectedMessages() {
 
 function resolveSelectedMessages() {
   const selectedMessages = messageList.value.getSelectedMessages();
-  
+
   useShowToast("info", "Info", "Selected messages were marked as resolved.");
-  return usePatchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) })
-  .then(() => {
+  return usePatchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) }).then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.resolved = true));
   });
@@ -106,8 +107,7 @@ function resolveSelectedMessages() {
 
 function resolveAllMessages() {
   useShowToast("info", "Info", "All filtered messages were marked as resolved.");
-  return usePatchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() })
-  .then(() => {
+  return usePatchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() }).then(() => {
     messageList.value.deselectAll();
     messageList.value.forEach((m) => (m.resolved = true));
   });
@@ -211,7 +211,10 @@ onMounted(() => {
           <ConfirmDialog
             v-if="showConfirmRetry === true"
             @cancel="showConfirmRetry = false"
-            @confirm="showConfirmRetry = false; retrySelectedMessages();"
+            @confirm="
+              showConfirmRetry = false;
+              retrySelectedMessages();
+            "
             :heading="'Are you sure you want to retry the selected messages?'"
             :body="'Ensure that the selected messages were not processed previously as this will create a duplicate message.'"
             :second-paragraph="'NOTE: If the selection includes messages to be processed via unaudited endpoints, those messages will need to be marked as resolved once the retry is manually verified'"
@@ -220,7 +223,10 @@ onMounted(() => {
           <ConfirmDialog
             v-if="showConfirmResolve === true"
             @cancel="showConfirmResolve = false"
-            @confirm="showConfirmResolve = false; resolveSelectedMessages();"
+            @confirm="
+              showConfirmResolve = false;
+              resolveSelectedMessages();
+            "
             :heading="'Are you sure you want to mark as resolved the selected messages?'"
             :body="'If you mark these messages as resolved they will not be available for Retry. Messages should only be marked as resolved only if they belong to unaudited endpoints.'"
           ></ConfirmDialog>
@@ -228,7 +234,10 @@ onMounted(() => {
           <ConfirmDialog
             v-if="showConfirmResolveAll === true"
             @cancel="showConfirmResolveAll = false"
-            @confirm="showConfirmResolveAll = false; resolveAllMessages();"
+            @confirm="
+              showConfirmResolveAll = false;
+              resolveAllMessages();
+            "
             :heading="'Are you sure you want to resolve all messages?'"
             :body="'Are you sure you want to mark as resolved all messages? If you do they will not be available for Retry.'"
           ></ConfirmDialog>

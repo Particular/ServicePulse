@@ -5,7 +5,7 @@ let lastLabelClickedIndex = undefined;
 const emit = defineEmits(["retryRequested"]);
 const props = defineProps({
   messages: Array,
-  showRequestRetry: Boolean
+  showRequestRetry: Boolean,
 });
 
 function getSelectedMessages() {

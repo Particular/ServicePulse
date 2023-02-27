@@ -278,7 +278,14 @@ onMounted(() => {
           </div>
         </div>
         <Teleport to="#modalDisplay">
-          <FailedMessageDelete v-if="showDelete === true" @cancel="showDelete = false" @confirm="showDelete = false; deleteSelectedMessages();"></FailedMessageDelete>
+          <FailedMessageDelete
+            v-if="showDelete === true"
+            @cancel="showDelete = false"
+            @confirm="
+              showDelete = false;
+              deleteSelectedMessages();
+            "
+          ></FailedMessageDelete>
         </Teleport>
       </section>
     </template>

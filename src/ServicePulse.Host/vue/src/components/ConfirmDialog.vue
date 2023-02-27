@@ -4,7 +4,7 @@ const emit = defineEmits(["confirm", "cancel"]);
 const settings = defineProps({
   heading: String,
   body: String,
-  secondParagraph: String
+  secondParagraph: String,
 });
 
 function confirm() {
