@@ -13,6 +13,7 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 
 let refreshInterval = undefined;
 let sortMethod = undefined;
+const selectedPeriod = ref("All Pending Retries");
 const endpoints = ref([]);
 const messageList = ref();
 const messages = ref([]);
@@ -48,6 +49,12 @@ const sortOptions = [
     icon: "bi-sort-",
   },
 ];
+const periodOptions = [
+  "All Pending Retries",
+  "Retried in the last 2 Hours",
+  "Retried in the last 1 Day",
+  "Retried in the last 7 Days",
+];
 
 function loadEndpoints() {
   const loader = new useEndpoints();
@@ -62,6 +69,20 @@ function clearSelectedQueue() {
 }
 
 function loadPendingRetryMessages() {
+  let startDate = new Date(0);
+  let endDate = new Date();
+
+  switch (selectedPeriod.value) {
+    case "Retried in the last 2 Hours":
+      break;
+
+      case "Retried in the last 1 Day":
+      break;
+
+      case "Retried in the last 7 Days":
+      break;
+  }
+
   return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value);
 }
 
@@ -200,6 +221,11 @@ function sortGroups(sort) {
   loadPendingRetryMessages();
 }
 
+function periodChanged(period) {
+  selectedPeriod.value = period;
+  loadPendingRetryMessages();
+}
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -243,7 +269,19 @@ onMounted(() => {
             </div>
           </div>
           <div class="col-6">
-            <GroupAndOrderBy @sort-updated="sortGroups" :groupTitle="'Period'" :sortOptions="sortOptions" sortSavePrefix="pending_retries"></GroupAndOrderBy>
+            <div class="msg-group-menu dropdown">
+              <label class="control-label">Period:</label>
+              <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ selectedPeriod }}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li v-for="(period, index) in periodOptions" :key="index">
+                  <a @click.prevent="periodChanged(period)">{{ period }}</a>
+                </li>
+              </ul>
+            </div>
+            <GroupAndOrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="pending_retries"></GroupAndOrderBy>
           </div>
         </div>
         <div class="row">

@@ -11,7 +11,6 @@ const props = defineProps({
   hideSort: Boolean,
   sortOptions: Array,
   sortSavePrefix: String,
-  groupTitle: String
 });
 
 const cookies = useCookies().cookies;
@@ -104,7 +103,7 @@ onMounted(() => {
 
 <template>
   <div class="msg-group-menu dropdown" v-show="!props.hideGroupBy">
-    <label class="control-label">{{ groupTitle ?? `Group by` }}:</label>
+    <label class="control-label">Group by:</label>
     <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ selectedClassifier }}
       <span class="caret"></span>
