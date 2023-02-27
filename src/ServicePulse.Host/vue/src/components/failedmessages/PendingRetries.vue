@@ -5,6 +5,7 @@ import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useEndpoints } from "../../composables/serviceEndpoints";
 import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
+import { useCookies } from "vue3-cookies";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -13,6 +14,7 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 
 let refreshInterval = undefined;
 let sortMethod = undefined;
+const cookies = useCookies().cookies;
 const selectedPeriod = ref("All Pending Retries");
 const endpoints = ref([]);
 const messageList = ref();
@@ -49,12 +51,7 @@ const sortOptions = [
     icon: "bi-sort-",
   },
 ];
-const periodOptions = [
-  "All Pending Retries",
-  "Retried in the last 2 Hours",
-  "Retried in the last 1 Day",
-  "Retried in the last 7 Days",
-];
+const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"];
 
 function loadEndpoints() {
   const loader = new useEndpoints();
@@ -74,25 +71,33 @@ function loadPendingRetryMessages() {
 
   switch (selectedPeriod.value) {
     case "Retried in the last 2 Hours":
+      startDate = new Date();
+      startDate.setHours(startDate.getHours() - 2);
       break;
 
-      case "Retried in the last 1 Day":
+    case "Retried in the last 1 Day":
+      startDate = new Date();
+      startDate.setHours(startDate.getHours() - 24);
       break;
 
-      case "Retried in the last 7 Days":
+    case "Retried in the last 7 days":
+      startDate = new Date();
+      startDate.setHours(startDate.getHours() - 24 * 7);
       break;
   }
 
-  return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value);
+  return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value, startDate.toISOString(), endDate.toISOString());
 }
 
-function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase) {
+function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, startDate, endDate) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
   if (typeof searchPhrase === "undefined" || searchPhrase === "empty") searchPhrase = "";
+  if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
+  if (typeof endDate === "undefined") endDate = new Date().toISOString();
 
-  return useFetchFromServiceControl(`errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}`)
+  return useFetchFromServiceControl(`errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -177,14 +182,13 @@ function retryAllMessages() {
   data.from = new Date(0).toISOString();
   data.to = new Date().toISOString();
 
-  return usePostToServiceControl(url, data)
-    .then(() => {
-      messages.value.forEach((message) => {
-        message.selected = false;
-        message.submittedForRetrial = true;
-        message.retried = false;
-      });
+  return usePostToServiceControl(url, data).then(() => {
+    messages.value.forEach((message) => {
+      message.selected = false;
+      message.submittedForRetrial = true;
+      message.retried = false;
     });
+  });
 }
 
 function retryAllClicked() {
@@ -216,13 +220,18 @@ function setPage(page) {
   loadPendingRetryMessages();
 }
 
-function sortGroups(sort) {
+function sortGroups(sort, isInitialLoad) {
   sortMethod = sort;
-  loadPendingRetryMessages();
+
+  if (!isInitialLoad) {
+    loadPendingRetryMessages();
+  }
 }
 
 function periodChanged(period) {
   selectedPeriod.value = period;
+  cookies.set("pending_retries_period", period);
+
   loadPendingRetryMessages();
 }
 
@@ -233,7 +242,15 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
+  let cookiePeriod = cookies.get("pending_retries_period");
+  if (typeof cookiePeriod === "undefined") {
+    cookiePeriod = periodOptions[0];
+  }
+
+  selectedPeriod.value = cookiePeriod;
+
   loadEndpoints();
+
   loadPendingRetryMessages();
 
   refreshInterval = setInterval(() => {
@@ -309,7 +326,7 @@ onMounted(() => {
                 <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
               </li>
               <li class="page-item">
-                <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
+                <a class="page-link" href="#" @click.prevent="nextPage" :class="{ disabled: pageNumber >= numberOfPages }">Next</a>
               </li>
             </ul>
           </div>
@@ -349,16 +366,7 @@ onMounted(() => {
             :body="'Are you sure you want to mark as resolved all messages? If you do they will not be available for Retry.'"
           ></ConfirmDialog>
 
-          <ConfirmDialog
-            v-if="showCantRetryAll === true"
-            @cancel="showCantRetryAll = false"
-            @confirm="
-              showCantRetryAll = false;
-            "
-            :hide-cancel="true"
-            :heading="'Select a queue first'"
-            :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"
-          ></ConfirmDialog>
+          <ConfirmDialog v-if="showCantRetryAll === true" @cancel="showCantRetryAll = false" @confirm="showCantRetryAll = false" :hide-cancel="true" :heading="'Select a queue first'" :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"></ConfirmDialog>
 
           <ConfirmDialog
             v-if="showRetryAllConfirm === true"

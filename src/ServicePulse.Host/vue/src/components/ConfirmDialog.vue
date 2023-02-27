@@ -5,7 +5,7 @@ const settings = defineProps({
   heading: String,
   body: String,
   secondParagraph: String,
-  hideCancel: Boolean
+  hideCancel: Boolean,
 });
 
 function confirm() {
