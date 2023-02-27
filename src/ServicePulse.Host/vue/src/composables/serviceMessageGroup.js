@@ -16,18 +16,18 @@ export function useGetExceptionGroups(classifier) {
 
 //get all deleted message groups
 export function useGetArchiveGroups() {
-    //todo - add  page and classifers
-    return useFetchFromServiceControl("errors/groups")
-        .then((response) => {
-            return response.json();
-        })
-        .catch((err) => {
-            console.log(err);
-            var result = {
-                message: "error",
-            };
-            return result;
-        });
+  //todo - add  page and classifers
+  return useFetchFromServiceControl("errors/groups")
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      console.log(err);
+      var result = {
+        message: "error",
+      };
+      return result;
+    });
 }
 //delete note by group id
 export function useDeleteNote(groupId) {
