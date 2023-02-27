@@ -3,6 +3,7 @@ import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
+import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
@@ -30,6 +31,12 @@ function loadFailedMessage() {
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
       message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+
+      if (failedMessage.value.last_modified === message.last_modified) {
+        message.retried = failedMessage.value.retried;
+        message.archived = failedMessage.value.archived;
+      }
+
       Object.assign(failedMessage.value, message);
       updateMessageDeleteDate();
       return downloadHeadersAndBody();
@@ -72,7 +79,7 @@ function archiveMessage() {
     .then((response) => {
       if (response !== undefined) {
         return loadFailedMessage().then(() => {
-          failedMessage.value.archived = false;
+          failedMessage.value.archived = true;
           downloadHeadersAndBody();
         });
       }
@@ -158,6 +165,24 @@ function togglePanel(panelNum) {
   return false;
 }
 
+function debugInServiceInsight() {
+  const messageId = failedMessage.value.message_id;
+  const endpointName = failedMessage.value.receiving_endpoint.name;
+  let serviceControlUrl = useServiceControlUrls().serviceControlUrl.value.toLowerCase();
+
+  if (serviceControlUrl.indexOf("https") === 0) {
+    serviceControlUrl = serviceControlUrl.replace("https://", "");
+  } else {
+    serviceControlUrl = serviceControlUrl.replace("http://", "");
+  }
+
+  window.open("si://" + serviceControlUrl + "?search=" + messageId + "&endpointname=" + endpointName);
+}
+
+function exportMessage() {
+  debugger;
+}
+
 onBeforeMount(() => {
   getConfiguration().then(() => {
     return loadFailedMessage();
@@ -219,8 +244,8 @@ onUnmounted(() => {
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." v-on:click="unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" @click="retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
                 <!-- <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button> -->
-                <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
-                <button type="button" class="btn btn-default" ng-click="vm.exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message</button>
+                <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
+                <button type="button" class="btn btn-default" @click="exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
           </div>
