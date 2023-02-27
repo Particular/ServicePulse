@@ -15,9 +15,9 @@ let sortMethod = undefined;
 let isGroupDetails = false;
 const pageNumber = ref(1);
 const numberOfPages = ref(1);
+const totalCount = ref(0);
 const showDelete = ref(false);
 const messageList = ref();
-const totalCount = ref(0);
 const messages = ref([]);
 const sortOptions = [
   {
@@ -259,7 +259,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" @retry-requested="retryRequested" ref="messageList"></MessageList>
+            <MessageList :messages="messages" :showRequestRetry="true" @retry-requested="retryRequested" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row">
@@ -334,7 +334,6 @@ onMounted(() => {
 }
 
 .metadata .label-important {
-  padding: 2px 10px;
   border-radius: 3px;
   color: white;
   font-size: 13px;

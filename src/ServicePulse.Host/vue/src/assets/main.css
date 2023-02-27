@@ -8,6 +8,13 @@
 @import 'toast.css';
 @import 'pagination.css';
 
+:root {
+    --bs-btn-hover-color: #333;
+    --bs-btn-hover-bg: #e6e6e6;
+    --bs-btn-hover-border-color: #adadad;
+}
+
+
 body {
     padding-top: 0px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -381,4 +388,9 @@ input.check-label {
 .action-btns .btn {
     margin-left: 0;
     margin-right: 5px;
+}
+
+.modal-container {
+    padding: 0;
+    border-radius: 5px;
 }

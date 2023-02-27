@@ -62,7 +62,8 @@ function getGroupingClassifiers() {
 
 function classifierChanged(classifier) {
   selectedClassifier.value = classifier;
-  router.push({ query: { groupBy: classifier } });
+  var subPath = route.fullPath.substring(route.fullPath.indexOf("#"));
+  router.push({ query: { groupBy: classifier }, hash: subPath });
 
   classificationHelper.saveDefaultGroupingClassifier(classifier);
 
@@ -78,15 +79,15 @@ function sortUpdated(sort) {
   emit("sortUpdated", sort);
 }
 
-function setSortOptions() {
+function setSortOptions(isInitialLoad) {
   const savedSort = loadSavedSortOption();
   selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
 
-  emit("sortUpdated", savedSort);
+  emit("sortUpdated", savedSort, isInitialLoad);
 }
 
 onMounted(() => {
-  setSortOptions();
+  setSortOptions(true);
 
   getGroupingClassifiers().then(() => {
     let savedClassifier = classificationHelper.loadDefaultGroupingClassifier(route);

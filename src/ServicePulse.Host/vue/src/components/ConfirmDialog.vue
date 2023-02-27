@@ -1,19 +1,19 @@
 <script setup>
-const emit = defineEmits(["restoreGroupConfirmed", "cancelRestoreGroup"]);
+const emit = defineEmits(["confirm", "cancel"]);
 
 const settings = defineProps({
-  groupid: String,
-  workflow_state: [],
-  comment: String,
-  messagecount: String,
+  heading: String,
+  body: String,
+  secondParagraph: String,
+  hideCancel: Boolean,
 });
 
-function restoreGroup() {
-  emit("restoreGroupConfirmed", settings);
+function confirm() {
+  emit("confirm", settings);
 }
 
 function close() {
-  emit("cancelRestoreGroup");
+  emit("cancel");
 }
 </script>
 
@@ -23,15 +23,16 @@ function close() {
       <div class="modal-container">
         <div class="modal-header">
           <div class="modal-title">
-            <h3>Are you sure you want to restore this group?</h3>
+            <h3>{{ heading }}</h3>
           </div>
         </div>
         <div class="modal-body">
-          <p>Restored messages will be moved back to the list of failed messages</p>
+          <p>{{ body }}</p>
+          <p v-if="secondParagraph && secondParagraph.length">{{ secondParagraph }}</p>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" @click="restoreGroup">Yes</button>
-          <button class="btn btn-default" @click="close">No</button>
+          <button class="btn btn-primary" @click="confirm">{{ hideCancel ? "Ok" : "Yes" }}</button>
+          <button v-if="!hideCancel" class="btn btn-default" @click="close">No</button>
         </div>
       </div>
     </div>

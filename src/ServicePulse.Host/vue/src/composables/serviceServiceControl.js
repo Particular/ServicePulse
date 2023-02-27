@@ -118,14 +118,16 @@ export function useServiceControlStats() {
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
   const archivedMessagesResult = getArchivedMessagesCount();
+  const pendingRetriesResult = getPendingRetriesCount();
 
-  return Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult])
-    .then(([failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages]) => {
+  return Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult, pendingRetriesResult])
+    .then(([failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages, pendingRetries]) => {
       stats.failing_endpoints = failedHeartbeats;
       stats.number_of_failed_messages = failedMessages;
       stats.number_of_failed_checks = failedCustomChecks;
       stats.number_of_failed_heartbeats = failedHeartbeats;
       stats.number_of_archived_messages = archivedMessages;
+      stats.number_of_pending_retries = pendingRetries;
     })
     .catch((err) => {
       console.log(err);
@@ -311,6 +313,14 @@ function getFailedHeartBeatsCount() {
 function getFailedMessagesCount() {
   return fetchWithErrorHandling(
     () => useFetchFromServiceControl("errors?status=unresolved"),
+    connectionState,
+    (response) => parseInt(response.headers.get("Total-Count"))
+  );
+}
+
+function getPendingRetriesCount() {
+  return fetchWithErrorHandling(
+    () => useFetchFromServiceControl("errors?status=retryissued"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count"))
   );
