@@ -16,7 +16,6 @@ export function useGetExceptionGroups(classifier) {
 
 //get all deleted message groups
 export function useGetArchiveGroups() {
-  //todo - add  page and classifers
   return useFetchFromServiceControl("errors/groups")
     .then((response) => {
       return response.json();
