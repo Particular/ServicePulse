@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { useUnarchiveMessage, useArchiveMessage } from "../../composables/serviceFailedMessage";
+import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
@@ -88,12 +88,20 @@ function unarchiveMessage() {
   return useUnarchiveMessage([id])
     .then((response) => {
       if (response !== undefined) {
-        return loadFailedMessage().then(() => {
-          failedMessage.value.archived = false;
-          downloadHeadersAndBody();
-        });
+        failedMessage.value.archived = false;
       }
       return false;
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
+}
+
+function retryMessage() {
+  return useRetryMessages([id])
+    .then((response) => {
+      failedMessage.value.retried = true;
     })
     .catch((err) => {
       console.log(err);
@@ -209,7 +217,7 @@ onUnmounted(() => {
               <div class="btn-toolbar message-toolbar">
                 <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." v-on:click="archiveMessage()" confirm-click="vm.archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." v-on:click="unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
-                <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" confirm-click="vm.retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
+                <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" @click="retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
                 <!-- <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button> -->
                 <button type="button" class="btn btn-default" ng-click="vm.debugInServiceInsight($index)" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
                 <button type="button" class="btn btn-default" ng-click="vm.exportMessage()" ng-show="!vm.message.notFound && !vm.message.error"><i class="fa fa-download"></i> Export message</button>
@@ -293,6 +301,10 @@ h3.group-title {
   margin-right: 24px;
   position: relative;
   top: -1px;
+}
+
+.metadata > .metadata-label {
+  padding: 6px 10px;
 }
 
 .label {
@@ -518,5 +530,10 @@ pre {
 
 .msg-tabs {
   margin-bottom: 20px;
+}
+
+.label-info, .badge-info {
+  background-color: #1b809e;
+  border-color: #1b809e;
 }
 </style>

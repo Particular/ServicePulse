@@ -41,7 +41,7 @@ export function useArchiveMessage(ids) {
 export function useRetryMessages(ids) {
   return usePostToServiceControl(
     "errors/retry",
-    selectedMessages.map((m) => m.id)
+    ids
   )
   .catch((error) => {
     console.error("There was an error trying to retry messages with the provided id(s): ", ids, "\n", error);
