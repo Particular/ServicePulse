@@ -1,11 +1,10 @@
 <script setup>
 import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
-import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
-import NoData from "../components/NoData.vue";
-import TimeSince from "../components/TimeSince.vue";
-//import { useShowToast } from "../composables/toast";
-import { useUnarchiveMessage } from "../composables/serviceFailedMessage";
+import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import NoData from "../NoData.vue";
+import TimeSince from "../TimeSince.vue";
+import { useUnarchiveMessage } from "../../composables/serviceFailedMessage";
 import moment from "moment";
 
 let refreshInterval = undefined;
@@ -176,7 +175,7 @@ onUnmounted(() => {
                 <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
                 <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
                 <span v-if="failedMessage.number_of_processing_attempts > 1" title="This message has already failed {{ failedMessage.number_of_processing_attempts }} times" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
-                <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
+                <span class="metadata" v-if="failedMessage.time_of_failure"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
                 <span class="metadata" v-if="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>

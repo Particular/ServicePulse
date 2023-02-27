@@ -29,6 +29,7 @@ onMounted(() => {
   interval = setInterval(function () {
     updateText();
   }, 5000);
+
   updateText();
 });
 
