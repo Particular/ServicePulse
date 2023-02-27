@@ -2,9 +2,9 @@
 import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useUnarchiveMessage, useArchiveMessage } from "../../composables/serviceFailedMessage";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
-import { useUnarchiveMessage } from "../../composables/serviceFailedMessage";
 import moment from "moment";
 
 let refreshInterval = undefined;
@@ -66,6 +66,23 @@ function updateMessageDeleteDate() {
       failedMessage.value.isEditAndRetryEnabled = data.enabled;
     });
 } */
+
+function archiveMessage() {
+  return useArchiveMessage([id])
+    .then((response) => {
+      if (response !== undefined) {
+        return loadFailedMessage().then(() => {
+          failedMessage.value.archived = false;
+          downloadHeadersAndBody();
+        });
+      }
+      return false;
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
+}
 
 function unarchiveMessage() {
   return useUnarchiveMessage([id])
