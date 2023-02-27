@@ -5,6 +5,7 @@ const settings = defineProps({
   heading: String,
   body: String,
   secondParagraph: String,
+  hideCancel: Boolean
 });
 
 function confirm() {
@@ -30,8 +31,8 @@ function close() {
           <p v-if="secondParagraph && secondParagraph.length">{{ secondParagraph }}</p>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" @click="confirm">Yes</button>
-          <button class="btn btn-default" @click="close">No</button>
+          <button class="btn btn-primary" @click="confirm">{{ hideCancel ? "Ok" : "Yes" }}</button>
+          <button v-if="!hideCancel" class="btn btn-default" @click="close">No</button>
         </div>
       </div>
     </div>

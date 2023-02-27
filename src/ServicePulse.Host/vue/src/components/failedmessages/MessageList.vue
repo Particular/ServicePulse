@@ -24,6 +24,10 @@ function isAnythingSelected() {
   return props.messages.find((m) => m.selected);
 }
 
+function isAnythingDisplayed() {
+  return props.messages.length > 0;
+}
+
 function labelClicked($event, index) {
   if ($event.shiftKey && typeof lastLabelClickedIndex !== "undefined") {
     // toggle selection from lastLabel until current index
@@ -55,13 +59,14 @@ defineExpose({
   selectAll,
   deselectAll,
   isAnythingSelected,
+  isAnythingDisplayed,
 });
 </script>
 
 <template>
   <div v-for="(message, index) in props.messages" class="row box repeat-item failed-message" :key="message.id">
     <label class="check col-1" :for="`checkbox${message.id}`" @click="labelClicked($event, index)">
-      <input type="checkbox" :disabled="message.retryInProgress" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
+      <input type="checkbox" :disabled="message.retryInProgress || message.submittedForRetrial" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
     </label>
     <div class="col-11 failed-message-data">
       <div class="row">

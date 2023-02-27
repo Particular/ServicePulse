@@ -5,12 +5,14 @@ import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useEndpoints } from "../../composables/serviceEndpoints";
 import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
+import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
 let refreshInterval = undefined;
+let sortMethod = undefined;
 const endpoints = ref([]);
 const messageList = ref();
 const messages = ref([]);
@@ -18,9 +20,34 @@ const selectedQueue = ref("empty");
 const showConfirmRetry = ref(false);
 const showConfirmResolve = ref(false);
 const showConfirmResolveAll = ref(false);
+const showCantRetryAll = ref(false);
+const showRetryAllConfirm = ref(false);
 const pageNumber = ref(1);
 const numberOfPages = ref(1);
 const totalCount = ref(0);
+const sortOptions = [
+  {
+    description: "Time of failure",
+    selector: function (group) {
+      return group.title;
+    },
+    icon: "bi-sort-",
+  },
+  {
+    description: "Message Type",
+    selector: function (group) {
+      return group.count;
+    },
+    icon: "bi-sort-alpha-",
+  },
+  {
+    description: "Time of retry request",
+    selector: function (group) {
+      return group.count;
+    },
+    icon: "bi-sort-",
+  },
+];
 
 function loadEndpoints() {
   const loader = new useEndpoints();
@@ -31,10 +58,11 @@ function loadEndpoints() {
 
 function clearSelectedQueue() {
   selectedQueue.value = "empty";
+  loadPendingRetryMessages();
 }
 
 function loadPendingRetryMessages() {
-  return loadPagedPendingRetryMessages(pageNumber.value, undefined, undefined, selectedQueue.value);
+  return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value);
 }
 
 function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase) {
@@ -72,6 +100,10 @@ function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase) {
       };
       return result;
     });
+}
+
+function isAnythingDisplayed() {
+  return messageList?.value?.isAnythingDisplayed();
 }
 
 function isAnythingSelected() {
@@ -113,6 +145,35 @@ function resolveAllMessages() {
   });
 }
 
+function retryAllMessages() {
+  let url = "pendingretries/retry";
+  const data = {};
+  if (selectedQueue.value !== "empty") {
+    url = "pendingretries/queues/retry";
+    data.queueaddress = selectedQueue.value;
+  }
+
+  data.from = new Date(0).toISOString();
+  data.to = new Date().toISOString();
+
+  return usePostToServiceControl(url, data)
+    .then(() => {
+      messages.value.forEach((message) => {
+        message.selected = false;
+        message.submittedForRetrial = true;
+        message.retried = false;
+      });
+    });
+}
+
+function retryAllClicked() {
+  if (selectedQueue.value === "empty") {
+    showCantRetryAll.value = true;
+  } else {
+    showRetryAllConfirm.value = true;
+  }
+}
+
 function nextPage() {
   pageNumber.value = pageNumber.value + 1;
   if (pageNumber.value > numberOfPages.value) {
@@ -131,6 +192,11 @@ function previousPage() {
 
 function setPage(page) {
   pageNumber.value = page;
+  loadPendingRetryMessages();
+}
+
+function sortGroups(sort) {
+  sortMethod = sort;
   loadPendingRetryMessages();
 }
 
@@ -166,7 +232,7 @@ onMounted(() => {
             <div class="filter-input">
               <div class="input-group mb-3">
                 <label class="input-group-text"><i class="fa fa-filter" aria-hidden="true"></i> <span class="hidden-xs">Filter</span></label>
-                <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true;" v-model="selectedQueue">
+                <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true;" @change="loadPendingRetryMessages()" v-model="selectedQueue">
                   <option selected disabled hidden class="placeholder" value="empty">Select a queue...</option>
                   <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">{{ endpoint }}</option>
                 </select>
@@ -176,13 +242,16 @@ onMounted(() => {
               </div>
             </div>
           </div>
+          <div class="col-6">
+            <GroupAndOrderBy @sort-updated="sortGroups" :groupTitle="'Period'" :sortOptions="sortOptions" sortSavePrefix="pending_retries"></GroupAndOrderBy>
+          </div>
         </div>
         <div class="row">
           <div class="col-6 col-xs-12 toolbar-menus">
             <div class="action-btns">
               <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmRetry = true"><i class="fa fa-repeat"></i> <span>Retry</span> ({{ numberSelected() }})</button>
               <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmResolve = true"><i class="fa fa-check-square-o"></i> <span>Mark as resolved</span> ({{ numberSelected() }})</button>
-              <button type="button" class="btn btn-default" ng-disabled="vm.filteredTotal === '0'" confirm-title="vm.retryAllConfirmationTitle()" confirm-message="vm.retryAllConfirmationMessage()" confirm-click="vm.retryAll()" confirm-ok-only="vm.isQueueFilterEmpty()"><i class="fa fa-repeat"></i> <span>Retry all</span></button>
+              <button type="button" class="btn btn-default" :disabled="!isAnythingDisplayed()" @click="retryAllClicked()"><i class="fa fa-repeat"></i> <span>Retry all</span></button>
               <button type="button" class="btn btn-default" @click="showConfirmResolveAll = true"><i class="fa fa-check-square-o"></i> <span>Mark all as resolved</span></button>
             </div>
           </div>
@@ -240,6 +309,28 @@ onMounted(() => {
             "
             :heading="'Are you sure you want to resolve all messages?'"
             :body="'Are you sure you want to mark as resolved all messages? If you do they will not be available for Retry.'"
+          ></ConfirmDialog>
+
+          <ConfirmDialog
+            v-if="showCantRetryAll === true"
+            @cancel="showCantRetryAll = false"
+            @confirm="
+              showCantRetryAll = false;
+            "
+            :hide-cancel="true"
+            :heading="'Select a queue first'"
+            :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"
+          ></ConfirmDialog>
+
+          <ConfirmDialog
+            v-if="showRetryAllConfirm === true"
+            @cancel="showRetryAllConfirm = false"
+            @confirm="
+              showRetryAllConfirm = false;
+              retryAllMessages();
+            "
+            :heading="'Confirm retry of all messages?'"
+            :body="'Are you sure you want to retry all previously retried messages? If the selected messages were processed in the meanwhile, then duplicate messages will be produced.'"
           ></ConfirmDialog>
         </Teleport>
       </section>
