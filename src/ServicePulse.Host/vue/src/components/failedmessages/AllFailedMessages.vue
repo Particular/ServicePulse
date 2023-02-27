@@ -5,6 +5,7 @@ import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
+import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -108,22 +109,6 @@ function retrySelected() {
 }
 
 function exportSelected() {
-  function downloadString(text, fileType, fileName) {
-    const blob = new Blob([text], { type: fileType });
-
-    const a = document.createElement("a");
-    a.download = fileName;
-    a.href = URL.createObjectURL(blob);
-    a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => {
-      URL.revokeObjectURL(a.href);
-    }, 1500);
-  }
-
   function toCSV(array) {
     const keys = Object.keys(array[0]);
     let result = keys.join("\t") + "\n";
@@ -167,7 +152,7 @@ function exportSelected() {
   }
 
   var csvStr = toCSV(preparedMessagesForExport);
-  downloadString(csvStr, "text/csv", "failedMessages.csv");
+  useDownloadFile(csvStr, "text/csv", "failedMessages.csv");
 }
 
 function numberSelected() {

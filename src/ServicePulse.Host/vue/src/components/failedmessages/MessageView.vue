@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
+import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
@@ -181,6 +182,18 @@ function debugInServiceInsight() {
 
 function exportMessage() {
   debugger;
+  let txtStr = "STACKTRACE\n";
+  txtStr += failedMessage.value.exception.stack_trace;
+
+  txtStr += "\n\nHEADERS";
+  for (var i = 0; i < failedMessage.value.headers.length; i++) {
+      txtStr += '\n' + failedMessage.value.headers[i].key + ': ' + failedMessage.value.headers[i].value;
+  }
+
+  txtStr += "\n\nMESSAGE BODY\n";
+  txtStr += failedMessage.value.messageBody;
+
+  useDownloadFile(txtStr, "text/txt", "failedMessage.txt");
 }
 
 onBeforeMount(() => {
