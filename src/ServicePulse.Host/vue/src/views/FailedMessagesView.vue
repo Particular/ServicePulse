@@ -94,7 +94,7 @@ onMounted(() => {
 
             <!--All Pending Retries -->
             <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <a href="#pending-retries">Pending Retries </a>
+              <a href="/failed-messages#pending-retries">Pending Retries </a>
               <span v-if="stats.number_of_pending_retries !== 0" class="badge badge-important">{{ stats.number_of_pending_retries }}</span>
             </h5>
           </div>

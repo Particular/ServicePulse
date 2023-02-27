@@ -63,7 +63,8 @@ function getGroupingClassifiers() {
 
 function classifierChanged(classifier) {
   selectedClassifier.value = classifier;
-  router.push({ query: { groupBy: classifier } });
+  var subPath = route.fullPath.substring(route.fullPath.indexOf("#"));
+  router.push({ query: { groupBy: classifier }, hash: subPath });
 
   classificationHelper.saveDefaultGroupingClassifier(classifier);
 
