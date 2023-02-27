@@ -86,7 +86,7 @@ defineExpose({
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
-                <button type="button" v-if="!message.retryInProgress" class="btn btn-link btn-sm" name="retryMessage" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
+                <button type="button" v-if="!message.retryInProgress  && props.showRequestRetry" class="btn btn-link btn-sm" name="retryMessage" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
               </p>
 
               <pre class="stacktrace-preview" isolate-click>{{ message.exception.message }}</pre>
