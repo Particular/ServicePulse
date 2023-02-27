@@ -334,7 +334,6 @@ onMounted(() => {
 }
 
 .metadata .label-important {
-  padding: 2px 10px;
   border-radius: 3px;
   color: white;
   font-size: 13px;

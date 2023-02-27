@@ -228,6 +228,11 @@ span.metadata {
 
 .metadata > .in-progress {
   font-style: italic;
+  color: white;
+}
+
+.metadata > .metadata-label {
+  padding: 6px 10px;
 }
 
 .label-info {
