@@ -11,7 +11,7 @@ let refreshInterval = undefined;
 let panel = undefined;
 const route = useRoute();
 const id = route.params.id;
-const failedMessage = ref([]);
+const failedMessage = ref({});
 const configuration = ref([]);
 
 function loadFailedMessage() {
@@ -30,7 +30,7 @@ function loadFailedMessage() {
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
       message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-      failedMessage.value = message;
+      Object.assign(failedMessage.value, message);
       updateMessageDeleteDate();
       return downloadHeadersAndBody();
     })
