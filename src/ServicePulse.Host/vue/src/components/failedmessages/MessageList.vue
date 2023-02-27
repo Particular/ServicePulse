@@ -236,6 +236,6 @@ span.metadata {
 }
 
 .lead.break {
-  cursor:pointer;
+  cursor: pointer;
 }
 </style>

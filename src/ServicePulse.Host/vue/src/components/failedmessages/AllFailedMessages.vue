@@ -88,8 +88,7 @@ function loadPagedMessages(page, sortBy, direction) {
 
 function retryRequested(id) {
   useShowToast("info", "Info", "Message retry requested...");
-  return useRetryMessages([id])
-  .then(() => {
+  return useRetryMessages([id]).then(() => {
     const message = messages.value.find((m) => m.id == id);
     if (message) {
       message.retryInProgress = true;
@@ -101,8 +100,7 @@ function retryRequested(id) {
 function retrySelected() {
   const selectedMessages = messageList.value.getSelectedMessages();
   useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
-  return useRetryMessages(selectedMessages.map((m) => m.id))
-  .then(() => {
+  return useRetryMessages(selectedMessages.map((m) => m.id)).then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.retryInProgress = true));
   });

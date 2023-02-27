@@ -108,7 +108,7 @@ function unarchiveMessage() {
 
 function retryMessage() {
   return useRetryMessages([id])
-    .then((response) => {
+    .then(() => {
       failedMessage.value.retried = true;
     })
     .catch((err) => {
@@ -181,13 +181,12 @@ function debugInServiceInsight() {
 }
 
 function exportMessage() {
-  debugger;
   let txtStr = "STACKTRACE\n";
   txtStr += failedMessage.value.exception.stack_trace;
 
   txtStr += "\n\nHEADERS";
   for (var i = 0; i < failedMessage.value.headers.length; i++) {
-      txtStr += '\n' + failedMessage.value.headers[i].key + ': ' + failedMessage.value.headers[i].value;
+    txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
   }
 
   txtStr += "\n\nMESSAGE BODY\n";
@@ -570,7 +569,8 @@ pre {
   margin-bottom: 20px;
 }
 
-.label-info, .badge-info {
+.label-info,
+.badge-info {
   background-color: #1b809e;
   border-color: #1b809e;
 }
