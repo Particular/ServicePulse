@@ -1,4 +1,4 @@
-import { usePatchToServiceControl } from "./serviceServiceControlUrls";
+import { usePatchToServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
 
 export function useUnarchiveMessage(ids) {
   return usePatchToServiceControl("errors/unarchive/", ids)
@@ -36,4 +36,15 @@ export function useArchiveMessage(ids) {
       console.error("There was an error trying to unarchive messages with the provided id(s): ", ids, "\n", error);
       return;
     });
+}
+
+export function useRetryMessages(ids) {
+  return usePostToServiceControl(
+    "errors/retry",
+    selectedMessages.map((m) => m.id)
+  )
+  .catch((error) => {
+    console.error("There was an error trying to retry messages with the provided id(s): ", ids, "\n", error);
+    return;
+  });
 }

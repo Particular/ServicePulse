@@ -2,8 +2,9 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
-import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
+import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
+import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -86,7 +87,8 @@ function loadPagedMessages(page, sortBy, direction) {
 
 function retryRequested(id) {
   useShowToast("info", "Info", "Message retry requested...");
-  usePostToServiceControl("errors/retry", [id]).then(() => {
+  return useRetryMessages([id])
+  .then(() => {
     const message = messages.value.find((m) => m.id == id);
     if (message) {
       message.retryInProgress = true;
@@ -97,12 +99,9 @@ function retryRequested(id) {
 
 function retrySelected() {
   const selectedMessages = messageList.value.getSelectedMessages();
-
   useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
-  usePostToServiceControl(
-    "errors/retry",
-    selectedMessages.map((m) => m.id)
-  ).then(() => {
+  return useRetryMessages(selectedMessages.map((m) => m.id))
+  .then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.retryInProgress = true));
   });
