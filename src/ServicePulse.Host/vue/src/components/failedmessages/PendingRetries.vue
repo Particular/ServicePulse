@@ -128,6 +128,10 @@ function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, st
     });
 }
 
+function numberDisplayed() {
+  return messageList?.value?.numberDisplayed();
+}
+
 function isAnythingDisplayed() {
   return messageList?.value?.isAnythingDisplayed();
 }
@@ -352,7 +356,7 @@ onMounted(() => {
               resolveSelectedMessages();
             "
             :heading="'Are you sure you want to mark as resolved the selected messages?'"
-            :body="'If you mark these messages as resolved they will not be available for Retry. Messages should only be marked as resolved only if they belong to unaudited endpoints.'"
+            :body="`If you mark these messages as resolved they will not be available for Retry. Messages should only be marked as resolved only if they belong to unaudited endpoints.`"
           ></ConfirmDialog>
 
           <ConfirmDialog
@@ -363,7 +367,7 @@ onMounted(() => {
               resolveAllMessages();
             "
             :heading="'Are you sure you want to resolve all messages?'"
-            :body="'Are you sure you want to mark as resolved all messages? If you do they will not be available for Retry.'"
+            :body="`Are you sure you want to mark all ${ numberDisplayed() } messages as resolved? If you do they will not be available for Retry.`"
           ></ConfirmDialog>
 
           <ConfirmDialog v-if="showCantRetryAll === true" @cancel="showCantRetryAll = false" @confirm="showCantRetryAll = false" :hide-cancel="true" :heading="'Select a queue first'" :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"></ConfirmDialog>

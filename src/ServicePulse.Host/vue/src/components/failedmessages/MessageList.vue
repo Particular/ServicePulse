@@ -28,6 +28,10 @@ function isAnythingDisplayed() {
   return props.messages.length > 0;
 }
 
+function numberDisplayed() {
+  return props.messages.length;
+}
+
 function labelClicked($event, index) {
   if ($event.shiftKey && typeof lastLabelClickedIndex !== "undefined") {
     // toggle selection from lastLabel until current index
@@ -60,6 +64,7 @@ defineExpose({
   deselectAll,
   isAnythingSelected,
   isAnythingDisplayed,
+  numberDisplayed,
 });
 </script>
 
