@@ -28,7 +28,7 @@ const router = createRouter({
     {
       path: "/failed-messages/message/:id",
       name: "message",
-      component: () => import("../views/MessageView.vue"),
+      component: () => import("../components/failedmessages/MessageView.vue"),
       meta: {
         title: "Message • ServicePulse",
       },

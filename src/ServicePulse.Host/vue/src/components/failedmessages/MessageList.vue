@@ -1,7 +1,9 @@
 <script setup>
 import TimeSince from "../TimeSince.vue";
+import { useRouter } from "vue-router";
 
 let lastLabelClickedIndex = undefined;
+const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
 const props = defineProps({
   messages: Array,
@@ -58,6 +60,12 @@ function clearSelection() {
   }
 }
 
+function navigateToMessage($event, messageId) {
+  if ($event.originalTarget.name !== "retryMessage") {
+    router.push({ path: `/failed-messages/message/${messageId}` });
+  }
+}
+
 defineExpose({
   getSelectedMessages,
   selectAll,
@@ -77,7 +85,7 @@ defineExpose({
       <div class="row">
         <div class="col-12">
           <div class="row box-header">
-            <div class="col-12 no-side-padding">
+            <div class="col-12 no-side-padding" @click="navigateToMessage($event, message.id)">
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
                 <span v-if="message.submittedForRetrial" tooltip="Message was submitted for retrying" class="label sidebar-label label-info metadata-label">To retry</span>
@@ -276,5 +284,9 @@ span.metadata {
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: 0.25em;
+}
+
+.lead.break {
+  cursor: pointer;
 }
 </style>
