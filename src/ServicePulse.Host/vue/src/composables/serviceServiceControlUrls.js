@@ -36,17 +36,6 @@ export function usePutToServiceControl(suffix, payload) {
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function usePatchToServiceControl(suffix, payload) {
-  const requestOptions = {
-    method: "PATCH",
-  };
-  if (payload !== undefined) {
-    requestOptions.headers = { "Content-Type": "application/json" };
-    requestOptions.body = JSON.stringify(payload);
-  }
-  return fetch(serviceControlUrl.value + suffix, requestOptions);
-}
-
 export function useDeleteFromServiceControl(suffix) {
   const requestOptions = {
     method: "DELETE",
@@ -104,13 +93,13 @@ export function useServiceControlUrls() {
 export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl) {
   if (!newServiceControlUrl.value) {
     throw "ServiceControl URL is mandatory";
-  } else if (!newServiceControlUrl.value.endsWith('/')) {
+  } else if (!newServiceControlUrl.value.endsWith("/")) {
     newServiceControlUrl.value += "/";
   }
 
   if (!newMonitoringUrl.value) {
     newMonitoringUrl.value = "!"; //disabled
-  } else if (!newMonitoringUrl.value.endsWith('/')){
+  } else if (!newMonitoringUrl.value.endsWith("/")) {
     newMonitoringUrl.value += "/";
   }
 

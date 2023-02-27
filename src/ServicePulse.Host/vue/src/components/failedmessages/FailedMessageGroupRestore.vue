@@ -9,11 +9,11 @@ const settings = defineProps({
 });
 
 function restoreGroup() {
-   emit("restoreGroupConfirmed", settings);
+  emit("restoreGroupConfirmed", settings);
 }
 
 function close() {
-    emit("cancelRestoreGroup");
+  emit("cancelRestoreGroup");
 }
 </script>
 

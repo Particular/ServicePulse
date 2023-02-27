@@ -1,7 +1,9 @@
 <script setup>
 import TimeSince from "../TimeSince.vue";
+import { useRouter } from "vue-router";
 
 let lastLabelClickedIndex = undefined;
+const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
 const props = defineProps({
   messages: Array,
@@ -49,6 +51,12 @@ function clearSelection() {
   }
 }
 
+function navigateToMessage($event, messageId) {
+  if ($event.originalTarget.name !== "retryMessage") {
+    router.push({ path: `/failed-messages/message/${messageId}` });
+  }
+}
+
 defineExpose({
   getSelectedMessages,
   selectAll,
@@ -66,7 +74,7 @@ defineExpose({
       <div class="row">
         <div class="col-12">
           <div class="row box-header">
-            <div class="col-12 no-side-padding">
+            <div class="col-12 no-side-padding" @click="navigateToMessage($event, message.id)">
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
                 <span v-if="message.retried || message.retryInProgress" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retry in progress</span>
@@ -78,7 +86,7 @@ defineExpose({
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
-                <button type="button" v-if="!message.retryInProgress" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
+                <button type="button" v-if="!message.retryInProgress" class="btn btn-link btn-sm" name="retryMessage" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
               </p>
 
               <pre class="stacktrace-preview" isolate-click>{{ message.exception.message }}</pre>
@@ -225,5 +233,9 @@ span.metadata {
 
 .metadata > .in-progress {
   font-style: italic;
+}
+
+.lead.break {
+  cursor:pointer;
 }
 </style>
