@@ -224,7 +224,7 @@ function setPage(page) {
   loadMessages();
 }
 
-onBeforeRouteLeave((from, to) => {
+onBeforeRouteLeave(() => {
   groupId.value = undefined;
   groupName.value = undefined;
 });
