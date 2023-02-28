@@ -490,4 +490,8 @@ defineExpose({
 .messagegrouplist {
   padding-bottom: 2em;
 }
+
+.toolbar-menus > .msg-group-menu {
+  margin: 0;
+}
 </style>

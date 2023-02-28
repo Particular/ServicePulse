@@ -30,7 +30,7 @@ onMounted(() => {
         <h6>
           <span class="no-link-underline" aria-hidden="true" v-show="showHistoricRetries"><i class="fa fa-angle-down" aria-hidden="true"></i> </span>
           <span class="fake-link" aria-hidden="true" v-show="!showHistoricRetries"><i class="fa fa-angle-right" aria-hidden="true"></i> </span>
-          <a v-on:click="showHistoricRetries = !showHistoricRetries">Last 10 completed retry requests</a>
+          <a class="lastTenHeading" v-on:click="showHistoricRetries = !showHistoricRetries">Last 10 completed retry requests</a>
         </h6>
       </div>
     </div>
@@ -81,5 +81,14 @@ onMounted(() => {
 
 .lasttenoperations {
   padding-bottom: 2em;
+}
+
+.lasttenoperations > div > div > h6 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.lastTenHeading {
+  color: #00a3c4;
 }
 </style>

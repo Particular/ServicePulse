@@ -72,18 +72,18 @@ const sortOptions = [
       <section name="message_groups">
         <LastTenOperations></LastTenOperations>
         <div class="row">
-          <div class="col-xs-6 list-section">
+          <div class="col-6 list-section">
             <h3>Failed message group</h3>
           </div>
-          <div class="col-xs-6 toolbar-menus no-side-padding">
+          <div class="col-6 toolbar-menus no-side-padding">
             <GroupAndOrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated" :sortOptions="sortOptions"></GroupAndOrderBy>
           </div>
         </div>
         <div class="box">
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-12">
               <div class="list-section">
-                <div class="col-sm-12 form-group">
+                <div class="col-12 form-group">
                   <MessageGroupList :key="forceReRenderKey" :sortFunction="sortMethod" ref="messageGroupList"></MessageGroupList>
                 </div>
               </div>
