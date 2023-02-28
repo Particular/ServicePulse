@@ -29,51 +29,24 @@ const selectedGroup = ref({
 
 const groupRestoreSuccessful = ref(null);
 
-    const forceReRenderKey = ref(0);
-    const sortMethod = ref((firstElement, secondElement) => {
-        return firstElement.title < secondElement.title ? -1 : 1;
-    }); // default sort by title in ASC order
+   // const forceReRenderKey = ref(0);
+    //const sortMethod = ref((firstElement, secondElement) => {
+    //    return firstElement.title < secondElement.title ? -1 : 1;
+    //}); // default sort by title in ASC order
 
-    function sortGroups(sort) {
-        sortMethod.value = sort.sort;
+    //function sortGroups(sort) {
+    //    sortMethod.value = sort.sort;
 
-        // force a re-render of the messagegroup list
-        forceReRenderKey.value += 1;
-    }
+    //    // force a re-render of the messagegroup list
+    //    forceReRenderKey.value += 1;
+    //}
 
     function classifierUpdated(classifier) {
-        messageGroupList.value.loadArchivedMessageGroups(classifier);
+        messageGroupList.value=loadArchivedMessageGroups(classifier);
     }
 
     const sortOptions = [
-        {
-            description: "Name",
-            selector: function (group) {
-                return group.title;
-            },
-            icon: "bi-sort-alpha-",
-        },
-        {
-            description: "Number of messages",
-            selector: function (group) {
-                return group.count;
-            },
-            icon: "bi-sort-numeric-",
-        },
-        {
-            description: "First Failed Time",
-            selector: function (group) {
-                return group.first;
-            },
-            icon: "bi-sort-",
-        },
-        {
-            description: "Last Failed Time",
-            selector: function (group) {
-                return group.last;
-            },
-            icon: "bi-sort-",
-        },
+
         {
             description: "Last Retried Time",
             selector: function (group) {
@@ -213,7 +186,7 @@ onMounted(() => {
                     <h3>Deleted message group</h3>
                 </div>
                 <div class="col-xs-6 toolbar-menus no-side-padding">
-                    <GroupAndOrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated" :sortOptions="sortOptions"></GroupAndOrderBy>
+                    <GroupAndOrderBy :hideSort="true"  @classifier-updated="classifierUpdated" :sortOptions="sortOptions"></GroupAndOrderBy>
                 </div>
             </div>
 
