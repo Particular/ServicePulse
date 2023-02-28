@@ -6,6 +6,7 @@ import { useFetchFromServiceControl, usePatchToServiceControl } from "../../comp
 import { useShowToast } from "../../composables/toast.js";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
+import { useRoute } from "vue-router";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -15,6 +16,9 @@ import FailedMessageDelete from "./FailedMessageDelete.vue";
 let refreshInterval = undefined;
 let sortMethod = undefined;
 let isGroupDetails = false;
+const route = useRoute();
+const groupId = route.params.groupId;
+const groupName = ref("");
 const pageNumber = ref(1);
 const numberOfPages = ref(1);
 const totalCount = ref(0);
@@ -44,15 +48,26 @@ function sortGroups(sort) {
 }
 
 function loadMessages() {
-  loadPagedMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
+  loadPagedMessages(groupId, pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
 }
 
-function loadPagedMessages(page, sortBy, direction) {
+function loadPagedMessages(groupId, page, sortBy, direction) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
 
-  return useFetchFromServiceControl(`errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
+  let loadGroupDetails;
+  if (groupId && !groupName.value) {
+    loadGroupDetails = useFetchFromServiceControl(`recoverability/groups/id/${groupId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        groupName.value = data.title;
+      });
+  }
+
+  const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -84,6 +99,12 @@ function loadPagedMessages(page, sortBy, direction) {
       };
       return result;
     });
+
+  if (loadGroupDetails) {
+    return Promise.all([loadGroupDetails, loadMessages]);
+  }
+
+  return loadMessages;
 }
 
 function retryRequested(id) {
@@ -224,6 +245,14 @@ onMounted(() => {
     <ServiceControlNotAvailable />
     <template v-if="!connectionState.unableToConnect">
       <section name="message_groups">
+        <div class="row" v-if="groupName && messages.length > 0">
+          <div class="col-sm-12">
+            <h1 v-if="groupName" class="active break group-title">
+              {{ groupName }}
+            </h1>
+            <h3 class="active group-title group-message-count">{{ totalCount }} messages in group</h3>
+          </div>
+        </div>
         <div class="row">
           <div class="col-9">
             <div class="btn-toolbar">
@@ -321,5 +350,24 @@ onMounted(() => {
   font-size: 13px;
   font-weight: bold;
   margin-right: 20px;
+}
+
+h3.group-message-count {
+  color: #a8b3b1;
+  font-size: 16px;
+  margin: 4px 0 12px;
+  display: block;
+}
+
+.group-title {
+  display: block;
+  font-size: 30px;
+  margin: 10px 0 0;
+}
+
+h2.group-title,
+h3.group-title {
+  font-weight: bold;
+  line-height: 28px;
 }
 </style>
