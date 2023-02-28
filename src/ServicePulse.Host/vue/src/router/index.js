@@ -25,11 +25,6 @@ const router = createRouter({
       },
       children: [
         {
-          name: "message-groups",
-          path: "group/:groupId",
-          component: FailedMessagesView,
-        },
-        {
           name: "failed-messages",
           path: "",
           component: () => import("../components/failedmessages/FailedMessageGroups.vue"),
@@ -49,6 +44,11 @@ const router = createRouter({
         {
           path: "pending-retries",
           component: () => import("../components/failedmessages/PendingRetries.vue"),
+        },
+        {
+          name: "message-groups",
+          path: "group/:groupId",
+          component: () => import("../components/failedmessages/AllFailedMessages.vue"),
         },
       ],
     },
