@@ -19,11 +19,38 @@ const router = createRouter({
     },
     {
       path: "/failed-messages",
-      name: "failed-messages",
       component: FailedMessagesView,
       meta: {
         title: "Failed Messages • ServicePulse",
       },
+      children: [
+        {
+          name: "message-groups",
+          path: "group/:groupId",
+          component: FailedMessagesView,
+        },
+        {
+          name: "failed-messages",
+          path: "",
+          component: () => import("../components/failedmessages/FailedMessageGroups.vue"),
+        },
+        {
+          path: "all-failed-messages",
+          component: () => import("../components/failedmessages/AllFailedMessages.vue"),
+        },
+        {
+          path: "deleted-message-groups",
+          component: () => import("../components/failedmessages/DeletedMessageGroups.vue"),
+        },
+        {
+          path: "all-deleted-messages",
+          component: () => import("../components/failedmessages/AllDeletedMessages.vue"),
+        },
+        {
+          path: "pending-retries",
+          component: () => import("../components/failedmessages/PendingRetries.vue"),
+        },
+      ],
     },
     {
       path: "/failed-messages/message/:id",
