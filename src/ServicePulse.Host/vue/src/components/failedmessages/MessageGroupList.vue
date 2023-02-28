@@ -272,7 +272,7 @@ defineExpose({
     <div class="row">
       <div class="col-sm-12 no-mobile-side-padding">
         <div v-if="exceptionGroups.length > 0">
-          <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in exceptionGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false" @click="navigateToGroup($event, group.id)">
+          <div class="row box box-group wf-{{group.workflow_state.status}} failed-message-group repeat-modify" v-for="(group, index) in exceptionGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false" @click="navigateToGroup($event, group.id)">
             <div class="col-sm-12 no-mobile-side-padding">
               <div class="row">
                 <div class="col-sm-12 no-side-padding">
@@ -493,5 +493,9 @@ defineExpose({
 
 .toolbar-menus > .msg-group-menu {
   margin: 0;
+}
+
+.failed-message-group {
+  cursor: pointer;
 }
 </style>
