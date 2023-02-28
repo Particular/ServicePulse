@@ -6,7 +6,7 @@ import { useFetchFromServiceControl, usePatchToServiceControl } from "../../comp
 import { useShowToast } from "../../composables/toast.js";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
-import { useRoute } from "vue-router";
+import { useRoute, onBeforeRouteLeave } from "vue-router";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -17,7 +17,7 @@ let refreshInterval = undefined;
 let sortMethod = undefined;
 let isGroupDetails = false;
 const route = useRoute();
-const groupId = route.params.groupId;
+const groupId = ref(route.params.groupId);
 const groupName = ref("");
 const pageNumber = ref(1);
 const numberOfPages = ref(1);
@@ -48,7 +48,7 @@ function sortGroups(sort) {
 }
 
 function loadMessages() {
-  loadPagedMessages(groupId, pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
+  loadPagedMessages(groupId.value, pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
 }
 
 function loadPagedMessages(groupId, page, sortBy, direction) {
@@ -223,6 +223,11 @@ function setPage(page) {
   pageNumber.value = page;
   loadMessages();
 }
+
+onBeforeRouteLeave(() => {
+  groupId.value = undefined;
+  groupName.value = undefined;
+});
 
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {

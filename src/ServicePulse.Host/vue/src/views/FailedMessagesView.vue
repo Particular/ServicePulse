@@ -5,6 +5,7 @@ import { stats, connectionState } from "../composables/serviceServiceControl";
 import { RouterView } from "vue-router";
 import LicenseExpired from "../components/LicenseExpired.vue";
 
+const showPendingRetry = window.defaultConfig.showPendingRetry;
 const route = useRoute();
 
 function subIsActive(subPath) {
@@ -47,7 +48,7 @@ function subIsActive(subPath) {
             </h5>
 
             <!--All Pending Retries -->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+            <h5 v-if="!licenseStatus.isExpired && showPendingRetry" :class="{ active: subIsActive('pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <RouterLink :to="{ path: '/failed-messages/pending-retries' }">Pending Retries</RouterLink>
               <span v-if="stats.number_of_pending_retries !== 0" class="badge badge-important">{{ stats.number_of_pending_retries }}</span>
             </h5>
