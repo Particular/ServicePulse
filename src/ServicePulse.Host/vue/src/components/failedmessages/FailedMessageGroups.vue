@@ -25,7 +25,8 @@ function classifierUpdated(classifier) {
   messageGroupList.value.loadFailedMessageGroups(classifier);
 }
 
-const sortOptions = [{
+const sortOptions = [
+  {
     description: "Name",
     selector: function (group) {
       return group.title;

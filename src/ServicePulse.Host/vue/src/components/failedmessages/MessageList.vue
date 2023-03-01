@@ -230,29 +230,6 @@ p.metadata button {
   display: block;
 }
 
-.metadata > .btn-sm > i {
-  color: #00a3c4;
-}
-
-.metadata:first-child {
-  padding-left: 0;
-}
-
-span.metadata {
-  display: inline-block;
-  padding: 0px 20px 2px 0;
-  color: #777f7f;
-}
-
-.metadata > .in-progress {
-  font-style: italic;
-  color: white;
-}
-
-.metadata > .metadata-label {
-  padding: 6px 10px;
-}
-
 .label-info {
   background-color: #1b809e;
 }

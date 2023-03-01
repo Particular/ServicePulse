@@ -313,14 +313,6 @@ onMounted(() => {
   width: 127px;
 }
 
-.metadata .label-important {
-  border-radius: 3px;
-  color: white;
-  font-size: 13px;
-  font-weight: bold;
-  margin-right: 20px;
-}
-
 h3.group-message-count {
   color: #a8b3b1;
   font-size: 16px;
