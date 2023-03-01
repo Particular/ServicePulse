@@ -22,13 +22,12 @@ export class useFailedMessageGroupClassification {
     if (cookieGrouping) {
       return cookieGrouping;
     }
-
     return null;
   }
 
   saveDefaultGroupingClassifier(classifier) {
     const cookies = useCookies().cookies;
-    cookies.set("failed_groups_classification", classifier);
+      cookies.set("failed_groups_classification", classifier);
   }
 }
 
@@ -60,5 +59,36 @@ export class useArchivedMessageGroupClassification {
     saveDefaultGroupingClassifier(classifier) {
         const cookies = useCookies().cookies;
         cookies.set("archived_groups_classification", classifier);
+    }
+}
+
+export class useMessageGroupClassification {
+    getGroupingClassifiers() {
+        return useFetchFromServiceControl("recoverability/classifiers").then((response) => {
+            return response.json();
+        });
+    }
+
+    loadDefaultGroupingClassifier(router,cookiename) {
+        let urlGrouping = router.query.groupBy;
+
+        if (urlGrouping) {
+            this.saveDefaultGroupingClassifier(urlGrouping, cookiename);
+            return urlGrouping;
+        }
+
+        const cookies = useCookies().cookies;
+        let cookieGrouping = cookies.get(cookiename);
+
+        if (cookieGrouping) {
+            return cookieGrouping;
+        }
+
+        return null;
+    }
+
+    saveDefaultGroupingClassifier(classifier, cookiename) {
+        const cookies = useCookies().cookies;
+        cookies.set(cookiename, classifier);
     }
 }
