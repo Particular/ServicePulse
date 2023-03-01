@@ -1,16 +1,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
-import NoData from "../NoData.vue";
-import TimeSince from "../TimeSince.vue";
-import FailedMessageGroupNoteDelete from "./FailedMessageGroupNoteDelete.vue";
-import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
-import FailedMessageGroupDelete from "./FailedMessageGroupDelete.vue";
-import FailedMessageGroupRetry from "./FailedMessageGroupRetry.vue";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
 import { useFailedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
+import NoData from "../NoData.vue";
+import TimeSince from "../TimeSince.vue";
+import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
+import ConfirmDialog from "../ConfirmDialog.vue";
 
 const route = useRoute();
 const props = defineProps({
@@ -249,7 +247,7 @@ onMounted(() => {
 
   refreshInterval = setInterval(() => {
     loadFailedMessageGroups();
-  }, 500);
+  }, 5000);
 });
 
 defineExpose({
@@ -435,11 +433,6 @@ defineExpose({
       </div>
     </div>
   </div>
-  <!--modal display - delete comment note-->
-  <Teleport to="#modalDisplay">
-    <FailedMessageGroupNoteDelete v-if="showDeleteNoteModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelDeleteNote="showDeleteNoteModal = false" @deleteNoteConfirmed="saveDeleteNote"></FailedMessageGroupNoteDelete>
-  </Teleport>
-
   <!--modal display - create new/edit comment note-->
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteEdit v-if="showEditNoteModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelEditNote="showEditNoteModal = false" @createNoteConfirmed="saveCreatedNote" @editNoteConfirmed="saveEditedNote"></FailedMessageGroupNoteEdit>
@@ -447,12 +440,39 @@ defineExpose({
 
   <!--modal display - delete group-->
   <Teleport to="#modalDisplay">
-    <FailedMessageGroupDelete v-if="showDeleteGroupModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelDeleteGroup="showDeleteGroupModal = false" @deleteGroupConfirmed="saveDeleteGroup"></FailedMessageGroupDelete>
-  </Teleport>
+    <ConfirmDialog
+      v-if="showDeleteGroupModal"
+      @cancel="showDeleteGroupModal = false"
+      @confirm="
+        showDeleteGroupModal = false;
+        saveDeleteGroup(selectedGroup);
+      "
+      :heading="'Are you sure you want to delete this group?'"
+      :body="'Messages that are deleted will be cleaned up according to the ServiceControl retention policy, and aren\'t available for retrying unless they\'re restored.'"
+    ></ConfirmDialog>
 
-  <!--modal display - retry group-->
-  <Teleport to="#modalDisplay">
-    <FailedMessageGroupRetry v-if="showRetryGroupModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelRetryGroup="showRetryGroupModal = false" @retryGroupConfirmed="saveRetryGroup"></FailedMessageGroupRetry>
+    <ConfirmDialog
+      v-if="showRetryGroupModal"
+      @cancel="showRetryGroupModal = false"
+      @confirm="
+        showRetryGroupModal = false;
+        saveRetryGroup(selectedGroup);
+      "
+      :heading="'Are you sure you want to retry this group?'"
+      :body="`Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of ${selectedGroup.messagecount} messages?`"
+    ></ConfirmDialog>
+
+    <ConfirmDialog
+      v-if="showDeleteNoteModal"
+      @cancel="showDeleteNoteModal = false"
+      @confirm="
+        showDeleteNoteModal = false;
+        saveDeleteNote();
+      "
+      :heading="'Are you sure you want to delete this note?'"
+      :body="`Deleted note will not be available.`"
+    ></ConfirmDialog>
+
   </Teleport>
 </template>
 
