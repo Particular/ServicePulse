@@ -7,15 +7,15 @@ import { useShowToast } from "../../composables/toast.js";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
+import { useArchiveExceptionGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
-import FailedMessageDelete from "./FailedMessageDelete.vue";
+import ConfirmDialog from "../ConfirmDialog.vue";
 
 let refreshInterval = undefined;
 let sortMethod = undefined;
-let isGroupDetails = false;
 const route = useRoute();
 const groupId = ref(route.params.groupId);
 const groupName = ref("");
@@ -23,10 +23,11 @@ const pageNumber = ref(1);
 const numberOfPages = ref(1);
 const totalCount = ref(0);
 const showDelete = ref(false);
+const showConfirmRetryAll = ref(false);
+const showConfirmDeleteAll = ref(false);
 const messageList = ref();
 const messages = ref([]);
-const sortOptions = [
-  {
+const sortOptions = [{
     description: "Time of failure",
     selector: function (group) {
       return group.title;
@@ -224,6 +225,20 @@ function setPage(page) {
   loadMessages();
 }
 
+function retryGroup() {
+  useShowToast("info", "Info", "Retrying all messages...");
+  useRetryExceptionGroup(groupId).then(() => {
+    messages.value.forEach((m) => (m.retryInProgress = true));
+  });
+}
+
+function deleteGroup() {
+  useShowToast("info", "Info", "Deleting all messages...");
+  useArchiveExceptionGroup(groupId).then(() => {
+    messages.value.forEach((m) => (m.deleteInProgress = true));
+  });
+}
+
 onBeforeRouteLeave(() => {
   groupId.value = undefined;
   groupName.value = undefined;
@@ -266,7 +281,8 @@ onMounted(() => {
               <button type="button" class="btn btn-default" @click="retrySelected()" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" @click="showDelete = true" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" @click="exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" v-if="isGroupDetails" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
+              <button type="button" class="btn btn-default" v-if="groupId" @click="showConfirmRetryAll = true"><i class="fa fa-repeat"></i> Retry all</button>
+              <button type="button" class="btn btn-default" v-if="groupId" @click="showConfirmDeleteAll = true"><i class="fa fa-trash"></i> Delete all</button>
             </div>
           </div>
           <div class="col-3">
@@ -294,14 +310,38 @@ onMounted(() => {
           </div>
         </div>
         <Teleport to="#modalDisplay">
-          <FailedMessageDelete
-            v-if="showDelete === true"
+          <ConfirmDialog
+            v-if="showDelete"
             @cancel="showDelete = false"
             @confirm="
               showDelete = false;
               deleteSelectedMessages();
             "
-          ></FailedMessageDelete>
+            :heading="'Are you sure you want to delete the selected messages?'"
+            :body="'If you delete, these messages won\'t be available for retrying unless they\'re later restored.'"
+          ></ConfirmDialog>
+
+          <ConfirmDialog
+            v-if="showConfirmRetryAll"
+            @cancel="showConfirmRetryAll = false"
+            @confirm="
+              showConfirmRetryAll = false;
+              retryGroup();
+            "
+            :heading="'Are you sure you want to retry the whole group?'"
+            :body="'Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?'"
+          ></ConfirmDialog>
+
+          <ConfirmDialog
+            v-if="showConfirmDeleteAll"
+            @cancel="showConfirmDeleteAll = false"
+            @confirm="
+              showConfirmDeleteAll = false;
+              deleteGroup();
+            "
+            :heading="'Are you sure you want to delete this group?'"
+            :body="'If you delete, the messages in the group won\'t be available for retrying unless they\'re later restored.'"
+          ></ConfirmDialog>
         </Teleport>
       </section>
     </template>
