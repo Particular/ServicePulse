@@ -12,6 +12,7 @@ import { useShowToast } from "../../composables/toast.js";
 import { useGetArchiveGroups, useAcknowledgeArchiveGroup, useRestoreGroup } from "../../composables/serviceMessageGroup.js";
 import { useCookies } from "vue3-cookies";
 import { useMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
+
 const messageGroupList = ref();
 const archiveGroups = ref([]);
 const loadingData = ref(true);
@@ -77,18 +78,19 @@ function initializeGroupState(group) {
   return group;
 }
 
-    function loadArchivedMessageGroups(groupBy) {
+function loadArchivedMessageGroups(groupBy) {
   loadingData.value = true;
-    if (!initialLoadComplete.value || !groupBy) {
-        const classificationHelper = new useMessageGroupClassification();
-        groupBy = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
-    }
-    getArchiveGroups(groupBy ?? route.query.groupBy).then(() => {
-        loadingData.value = false;
-        initialLoadComplete.value = true;
+  if (!initialLoadComplete.value || !groupBy) {
+    const classificationHelper = new useMessageGroupClassification();
+    groupBy = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
+  }
 
-        emit("InitialLoadComplete");
-    });
+  getArchiveGroups(groupBy ?? route.query.groupBy).then(() => {
+    loadingData.value = false;
+    initialLoadComplete.value = true;
+
+    emit("InitialLoadComplete");
+  });
 }
 
 //create workflow state
@@ -96,6 +98,7 @@ function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
   if (optionalTotal && optionalTotal <= 1) {
     optionalTotal = optionalTotal * 100;
   }
+
   return {
     status: optionalStatus || "working",
     total: optionalTotal || 0,
@@ -110,6 +113,7 @@ function restoreGroup(group) {
   selectedGroup.value.messagecount = group.count;
   showRestoreGroupModal.value = true;
 }
+
 function saveRestoreGroup(group) {
   showRestoreGroupModal.value = false;
   group.workflow_state = { status: "waiting", message: "Restore Group Request Enqueued..." };
@@ -124,6 +128,7 @@ function saveRestoreGroup(group) {
     }
   });
 }
+
 var statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"];
 function getClassesForRestoreOperation(stepStatus, currentStatus) {
   return getClasses(stepStatus, currentStatus, statusesForRestoreOperation);
@@ -137,15 +142,14 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
     return "left-to-do";
   } else if (indexOfStep === indexOfCurrent) {
     return "active";
-  } else {
-    return "completed";
   }
+
+  return "completed";
 };
 
 var acknowledgeGroup = function (group) {
   useAcknowledgeArchiveGroup(group.id).then((result) => {
     if (result.message === "success") {
-      // archiveGroups.splice(archiveGroups.indexOf(group), 1);
       useShowToast("info", "Info", "Group restored succesfully");
       getArchiveGroups(); //reload the groups
     } else {
@@ -158,26 +162,26 @@ function isBeingRestored(status) {
   return statusesForRestoreOperation.includes(status);
 }
 onUnmounted(() => {
-    if (typeof refreshInterval !== "undefined") {
-        clearInterval(refreshInterval);
-    }
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
 });
 
 onMounted(() => {
-getGroupingClassifiers().then(() => {
+  getGroupingClassifiers().then(() => {
     let savedClassifier = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
-
     if (!savedClassifier) {
-        savedClassifier = classifiers.value[0];
+      savedClassifier = classifiers.value[0];
     }
 
     selectedClassifier.value = savedClassifier;
-});
-loadArchivedMessageGroups();
-refreshInterval = setInterval(() => {
-    loadArchivedMessageGroups();
-}, 5000);
+  });
 
+  loadArchivedMessageGroups();
+
+  refreshInterval = setInterval(() => {
+    loadArchivedMessageGroups();
+  }, 5000);
 });
 </script>
 
