@@ -11,6 +11,10 @@ const route = useRoute();
 function subIsActive(subPath) {
   return route.path.endsWith(subPath);
 }
+
+function subIsActiveSubPath(subPath) {
+  return route.path.indexOf(subPath) >= 0;
+}
 </script>
 
 <template>
@@ -21,7 +25,7 @@ function subIsActive(subPath) {
         <div class="col-sm-12">
           <div class="tabs">
             <!--Failed Message Groups-->
-            <h5 :class="{ active: subIsActive('/failed-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+            <h5 :class="{ active: subIsActive('/failed-messages') || subIsActiveSubPath('/failed-messages/group/'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <RouterLink :to="{ path: '/failed-messages' }">
                 Failed Message Groups
                 <span v-show="stats.number_of_failed_messages === 0"> (0) </span>
