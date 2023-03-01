@@ -5,6 +5,7 @@ import { useFetchFromServiceControl } from "../../composables/serviceServiceCont
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
+import { useShowToast } from "../../composables/toast.js";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
@@ -81,6 +82,7 @@ function updateMessageDeleteDate() {
 } */
 
 function archiveMessage() {
+  useShowToast("info", "Info", `Deleting the message ${id} ...`);
   return useArchiveMessage([id])
     .then((response) => {
       if (response !== undefined) {
@@ -112,6 +114,8 @@ function unarchiveMessage() {
 }
 
 function retryMessage() {
+  useShowToast("info", "Info", `Retrying the message ${id} ...`);
+
   return useRetryMessages([id])
     .then(() => {
       failedMessage.value.retried = true;
@@ -198,6 +202,7 @@ function exportMessage() {
   txtStr += failedMessage.value.messageBody;
 
   useDownloadFile(txtStr, "text/txt", "failedMessage.txt");
+  useShowToast("info", "Info", "Message export completed.");
 }
 
 onBeforeMount(() => {
