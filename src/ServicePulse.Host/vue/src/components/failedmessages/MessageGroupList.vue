@@ -278,27 +278,27 @@ defineExpose({
                         {{ group.title }}
                       </p>
                       <p class="metadata" v-if="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
-                          <span class="metadata">
-                              <i aria-hidden="true" class="fa fa-envelope"></i>
+                        <span class="metadata">
+                          <i aria-hidden="true" class="fa fa-envelope"></i>
                           {{ group.count }} message<span v-if="group.count > 1">s</span>
                           <span v-if="group.operation_remaining_count > 0"> (currently retrying {{ group.operation_remaining_count }} </span>
-                          </span>
+                        </span>
 
-                          <span class="metadata">
-                              <i aria-hidden="true" class="fa fa-clock-o"></i>
-                              First failed:
-                              <time-since :date-utc="group.first"></time-since>
-                          </span>
+                        <span class="metadata">
+                          <i aria-hidden="true" class="fa fa-clock-o"></i>
+                          First failed:
+                          <time-since :date-utc="group.first"></time-since>
+                        </span>
 
-                          <span class="metadata">
-                              <i aria-hidden="true" class="fa fa-clock-o"></i> Last failed:
-                              <time-since :date-utc="group.last"></time-since>
-                          </span>
+                        <span class="metadata">
+                          <i aria-hidden="true" class="fa fa-clock-o"></i> Last failed:
+                          <time-since :date-utc="group.last"></time-since>
+                        </span>
 
-                          <span class="metadata">
-                              <i aria-hidden="true" class="fa fa-repeat"></i> Last retried:
-                              <time-since :date-utc="group.operation_completion_time"></time-since>
-                          </span>
+                        <span class="metadata">
+                          <i aria-hidden="true" class="fa fa-repeat"></i> Last retried:
+                          <time-since :date-utc="group.operation_completion_time"></time-since>
+                        </span>
                       </p>
                     </div>
                   </div>

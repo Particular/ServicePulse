@@ -27,39 +27,37 @@ export class useFailedMessageGroupClassification {
 
   saveDefaultGroupingClassifier(classifier) {
     const cookies = useCookies().cookies;
-      cookies.set("failed_groups_classification", classifier);
+    cookies.set("failed_groups_classification", classifier);
   }
 }
 
-
-
 export class useMessageGroupClassification {
-    getGroupingClassifiers() {
-        return useFetchFromServiceControl("recoverability/classifiers").then((response) => {
-            return response.json();
-        });
+  getGroupingClassifiers() {
+    return useFetchFromServiceControl("recoverability/classifiers").then((response) => {
+      return response.json();
+    });
+  }
+
+  loadDefaultGroupingClassifier(router, cookiename) {
+    let urlGrouping = router.query.groupBy;
+
+    if (urlGrouping) {
+      this.saveDefaultGroupingClassifier(urlGrouping, cookiename);
+      return urlGrouping;
     }
 
-    loadDefaultGroupingClassifier(router,cookiename) {
-        let urlGrouping = router.query.groupBy;
+    const cookies = useCookies().cookies;
+    let cookieGrouping = cookies.get(cookiename);
 
-        if (urlGrouping) {
-            this.saveDefaultGroupingClassifier(urlGrouping, cookiename);
-            return urlGrouping;
-        }
-
-        const cookies = useCookies().cookies;
-        let cookieGrouping = cookies.get(cookiename);
-
-        if (cookieGrouping) {
-            return cookieGrouping;
-        }
-
-        return null;
+    if (cookieGrouping) {
+      return cookieGrouping;
     }
 
-    saveDefaultGroupingClassifier(classifier, cookiename) {
-        const cookies = useCookies().cookies;
-        cookies.set(cookiename, classifier);
-    }
+    return null;
+  }
+
+  saveDefaultGroupingClassifier(classifier, cookiename) {
+    const cookies = useCookies().cookies;
+    cookies.set(cookiename, classifier);
+  }
 }
