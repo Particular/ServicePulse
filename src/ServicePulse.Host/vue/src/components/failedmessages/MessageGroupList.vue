@@ -244,7 +244,7 @@ onUnmounted(() => {
 });
 
 function navigateToGroup($event, groupId) {
-  if ($event.originalTarget.localName !== "button") {
+  if ($event.currentTarget.localName !== "button") {
     router.push({ name: "message-groups", params: { groupId: groupId } });
   }
 }
@@ -479,7 +479,6 @@ defineExpose({
       :heading="'Are you sure you want to delete this note?'"
       :body="`Deleted note will not be available.`"
     ></ConfirmDialog>
-
   </Teleport>
 </template>
 

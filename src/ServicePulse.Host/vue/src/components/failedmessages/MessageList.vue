@@ -61,7 +61,7 @@ function clearSelection() {
 }
 
 function navigateToMessage($event, messageId) {
-  if ($event.originalTarget.name !== "retryMessage") {
+  if ($event.currentTarget.name !== "retryMessage") {
     router.push({ path: `/failed-messages/message/${messageId}` });
   }
 }

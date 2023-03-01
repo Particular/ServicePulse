@@ -27,7 +27,8 @@ const showConfirmRetryAll = ref(false);
 const showConfirmDeleteAll = ref(false);
 const messageList = ref();
 const messages = ref([]);
-const sortOptions = [{
+const sortOptions = [
+  {
     description: "Time of failure",
     selector: function (group) {
       return group.title;
