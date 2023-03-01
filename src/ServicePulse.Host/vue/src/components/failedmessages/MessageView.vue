@@ -5,9 +5,11 @@ import { useFetchFromServiceControl } from "../../composables/serviceServiceCont
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
+import { useShowToast } from "../../composables/toast.js";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
+import ConfirmDialog from "../ConfirmDialog.vue";
 
 let refreshInterval = undefined;
 let panel = undefined;
@@ -15,6 +17,10 @@ const route = useRoute();
 const id = route.params.id;
 const failedMessage = ref({});
 const configuration = ref([]);
+
+const showDeleteConfirm = ref(false);
+const showRestoreConfirm = ref(false);
+const showRetryConfirm = ref(false);
 
 function loadFailedMessage() {
   return useFetchFromServiceControl("errors/last/" + id)
@@ -76,6 +82,7 @@ function updateMessageDeleteDate() {
 } */
 
 function archiveMessage() {
+  useShowToast("info", "Info", `Deleting the message ${id} ...`);
   return useArchiveMessage([id])
     .then((response) => {
       if (response !== undefined) {
@@ -107,6 +114,8 @@ function unarchiveMessage() {
 }
 
 function retryMessage() {
+  useShowToast("info", "Info", `Retrying the message ${id} ...`);
+
   return useRetryMessages([id])
     .then(() => {
       failedMessage.value.retried = true;
@@ -193,6 +202,7 @@ function exportMessage() {
   txtStr += failedMessage.value.messageBody;
 
   useDownloadFile(txtStr, "text/txt", "failedMessage.txt");
+  useShowToast("info", "Info", "Message export completed.");
 }
 
 onBeforeMount(() => {
@@ -252,9 +262,9 @@ onUnmounted(() => {
           <div class="row">
             <div class="col-sm-12">
               <div class="btn-toolbar message-toolbar">
-                <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to delete this message?" confirm-message="If you delete, this message won't be available for retrying unless it is later restored." v-on:click="archiveMessage()"><i class="fa fa-trash"></i> Delete message</button>
-                <button type="button" v-if="failedMessage.archived" class="btn btn-default" confirm-title="Are you sure you want to restore this message?" confirm-message="Restored message will be moved back to the list of failed messages." v-on:click="unarchiveMessage()"><i class="fa fa-undo"></i> Restore</button>
-                <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" confirm-title="Are you sure you want to retry this message?" confirm-message="Are you sure you want to retry this message?" @click="retryMessage()"><i class="fa fa-refresh"></i> Retry message</button>
+                <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
+                <button type="button" v-if="failedMessage.archived" class="btn btn-default" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
+                <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
                 <!-- <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button> -->
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
                 <button type="button" class="btn btn-default" @click="exportMessage()" v-if="!failedMessage.notFound && !failedMessage.error"><i class="fa fa-download"></i> Export message</button>
@@ -287,6 +297,42 @@ onUnmounted(() => {
               <!-- <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="panel === 4"></flow-diagram> -->
             </div>
           </div>
+
+          <!--modal display - restore group-->
+          <Teleport to="#modalDisplay">
+            <ConfirmDialog
+              v-if="showDeleteConfirm === true"
+              @cancel="showDeleteConfirm = false"
+              @confirm="
+                showDeleteConfirm = false;
+                archiveMessage();
+              "
+              :heading="'Are you sure you want to delete this message?'"
+              :body="'If you delete, this message won\'t be available for retrying unless it is later restored.'"
+            ></ConfirmDialog>
+
+            <ConfirmDialog
+              v-if="showRestoreConfirm === true"
+              @cancel="showRestoreConfirm = false"
+              @confirm="
+                showRestoreConfirm = false;
+                unarchiveMessage();
+              "
+              :heading="'Are you sure you want to restore this message?'"
+              :body="'The restored message will be moved back to the list of failed messages.'"
+            ></ConfirmDialog>
+
+            <ConfirmDialog
+              v-if="showRetryConfirm === true"
+              @cancel="showRetryConfirm = false"
+              @confirm="
+                showRetryConfirm = false;
+                retryMessage();
+              "
+              :heading="'Are you sure you want to retry this message?'"
+              :body="'Are you sure you want to retry this message?'"
+            ></ConfirmDialog>
+          </Teleport>
         </div>
       </section>
     </section>
@@ -294,10 +340,6 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* .row {
-    margin-right: 0;
-    margin-left: 0;
-} */
 
 .break {
   -ms-word-wrap: break-word;
