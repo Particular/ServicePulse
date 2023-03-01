@@ -1,6 +1,6 @@
 <script setup>
-    import { ref, onMounted, onUnmounted } from "vue";
-    import { useRoute } from "vue-router";
+import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
@@ -10,17 +10,17 @@ import FailedMessageGroupRestore from "./FailedMessageGroupRestore.vue";
 import { stats, connectionState } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useGetArchiveGroups, useAcknowledgeArchiveGroup, useRestoreGroup } from "../../composables/serviceMessageGroup.js";
-    import GroupAndOrderBy from "./GroupAndOrderBy.vue";
-    import { useArchivedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
-    const messageGroupList = ref();
+import { useCookies } from "vue3-cookies";
+import { useMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
+const messageGroupList = ref();
 const archiveGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
-    let refreshInterval = undefined;
-    const route = useRoute();
+let refreshInterval = undefined;
+const route = useRoute();
 const showRestoreGroupModal = ref(false);
-
+const archiveGroupCookieName = "archived_groups_classification";
 const selectedGroup = ref({
   groupid: "",
   messagecount: "",
@@ -28,33 +28,28 @@ const selectedGroup = ref({
 });
 
 const groupRestoreSuccessful = ref(null);
+    const cookies = useCookies().cookies;
+    const router = useRouter();
 
-   // const forceReRenderKey = ref(0);
-    //const sortMethod = ref((firstElement, secondElement) => {
-    //    return firstElement.title < secondElement.title ? -1 : 1;
-    //}); // default sort by title in ASC order
+    const classificationHelper = new useMessageGroupClassification();
+    const selectedClassifier = ref(null);
+    const classifiers = ref([]);
 
-    //function sortGroups(sort) {
-    //    sortMethod.value = sort.sort;
-
-    //    // force a re-render of the messagegroup list
-    //    forceReRenderKey.value += 1;
-    //}
-
-    function classifierUpdated(classifier) {
-        messageGroupList.value=loadArchivedMessageGroups(classifier);
+    function getGroupingClassifiers() {
+        return classificationHelper.getGroupingClassifiers().then((data) => {
+            classifiers.value = data;
+        });
     }
 
-    const sortOptions = [
+    function classifierChanged(classifier) {
 
-        {
-            description: "Last Retried Time",
-            selector: function (group) {
-                return group.last_operation_completion_time;
-            },
-            icon: "bi-sort-",
-        },
-    ];
+        selectedClassifier.value = classifier;
+        var subPath = route.fullPath.substring(route.fullPath.indexOf("#"));
+        router.push({ query: { groupBy: classifier }, hash: subPath });
+        classificationHelper.saveDefaultGroupingClassifier(classifier, archiveGroupCookieName);
+        messageGroupList.value = loadArchivedMessageGroups(classifier);
+    }
+
 
 
 function getArchiveGroups(classifier) {
@@ -85,8 +80,8 @@ function initializeGroupState(group) {
     function loadArchivedMessageGroups(groupBy) {
   loadingData.value = true;
     if (!initialLoadComplete.value || !groupBy) {
-        const classificationHelper = new useArchivedMessageGroupClassification();
-        groupBy = classificationHelper.loadDefaultGroupingClassifier(route);
+        const classificationHelper = new useMessageGroupClassification();
+        groupBy = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
     }
     getArchiveGroups(groupBy ?? route.query.groupBy).then(() => {
         loadingData.value = false;
@@ -167,11 +162,22 @@ onUnmounted(() => {
         clearInterval(refreshInterval);
     }
 });
+
 onMounted(() => {
+getGroupingClassifiers().then(() => {
+    let savedClassifier = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
+
+    if (!savedClassifier) {
+        savedClassifier = classifiers.value[0];
+    }
+
+    selectedClassifier.value = savedClassifier;
+});
+loadArchivedMessageGroups();
+refreshInterval = setInterval(() => {
     loadArchivedMessageGroups();
-    refreshInterval = setInterval(() => {
-        loadArchivedMessageGroups();
-    }, 5000);
+}, 5000);
+
 });
 </script>
 
@@ -181,14 +187,26 @@ onMounted(() => {
     <ServiceControlNotAvailable />
     <template v-if="!connectionState.unableToConnect">
       <section name="message_groups">
-            <div class="row">
-                <div class="col-xs-6 list-section">
-                    <h3>Deleted message group</h3>
-                </div>
-                <div class="col-xs-6 toolbar-menus no-side-padding">
-                    <GroupAndOrderBy :hideSort="true"  @classifier-updated="classifierUpdated" :sortOptions="sortOptions"></GroupAndOrderBy>
-                </div>
-            </div>
+          <div class="row">
+              <div class="col-xs-6 list-section">
+                  <h3>Deleted message group </h3>
+              </div>
+
+              <div class="col-xs-6 toolbar-menus no-side-padding">
+                  <div class="msg-group-menu dropdown">
+                      <label class="control-label">Group by:</label>
+                      <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          {{ selectedClassifier }}
+                          <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                          <li v-for="(classifier, index) in classifiers" :key="index">
+                              <a @click.prevent="classifierChanged(classifier)">{{ classifier }}</a>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
 
             <div class="box ">
                 <div class="messagegrouplist">
