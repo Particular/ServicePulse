@@ -253,7 +253,7 @@ onMounted(() => {
 
   refreshInterval = setInterval(() => {
     loadFailedMessageGroups();
-  }, 500);
+  }, 5000);
 });
 
 defineExpose({

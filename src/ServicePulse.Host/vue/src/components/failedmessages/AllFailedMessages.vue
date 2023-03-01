@@ -313,42 +313,6 @@ onMounted(() => {
   width: 127px;
 }
 
-.msg-list-dropdown {
-  margin: 1px 0 0 0 !important;
-  padding-right: 0;
-}
-
-.msg-group-menu {
-  margin: 21px 0px 0 6px;
-  float: right;
-  padding-top: 12px;
-}
-
-.msg-group-menu > .control-label {
-  float: none;
-}
-
-.btn.sp-btn-menu {
-  padding-left: 16px;
-  background: none;
-  border: none;
-  color: #00a3c4;
-  padding-right: 0;
-}
-
-.sp-btn-menu:hover {
-  background: none;
-  border: none;
-  color: #00a3c4;
-  text-decoration: underline;
-}
-
-.btn-toolbar > .btn-default:hover {
-  color: #333;
-  background-color: #e6e6e6;
-  border-color: #adadad;
-}
-
 .metadata .label-important {
   border-radius: 3px;
   color: white;

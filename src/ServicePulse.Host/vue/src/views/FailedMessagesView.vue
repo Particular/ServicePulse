@@ -141,6 +141,11 @@ ul.retry-request-progress li > div {
   line-height: 1;
 }
 
+.btn.btn-retry-dismiss {
+  border-radius: 4px;
+  padding: 8px 16px;
+}
+
 .btn.btn-xs {
   font-size: 12px;
 }

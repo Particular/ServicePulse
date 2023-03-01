@@ -9,7 +9,7 @@ export class useFailedMessageGroupClassification {
   }
 
   loadDefaultGroupingClassifier(router) {
-    let urlGrouping = router.query.groupBy;
+    let urlGrouping = router.query.deletedGroupBy;
 
     if (urlGrouping) {
       this.saveDefaultGroupingClassifier(urlGrouping);
@@ -39,7 +39,7 @@ export class useMessageGroupClassification {
   }
 
   loadDefaultGroupingClassifier(router, cookiename) {
-    let urlGrouping = router.query.groupBy;
+    let urlGrouping = router.query.deletedGroupBy;
 
     if (urlGrouping) {
       this.saveDefaultGroupingClassifier(urlGrouping, cookiename);

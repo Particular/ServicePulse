@@ -42,8 +42,7 @@ function getGroupingClassifiers() {
 
 function classifierChanged(classifier) {
   selectedClassifier.value = classifier;
-  var subPath = route.fullPath.substring(route.fullPath.indexOf("#"));
-  router.push({ query: { groupBy: classifier }, hash: subPath });
+  router.push({ query: { deletedGroupBy: classifier } });
   classificationHelper.saveDefaultGroupingClassifier(classifier, archiveGroupCookieName);
   messageGroupList.value = loadArchivedMessageGroups(classifier);
 }
@@ -78,7 +77,7 @@ function loadArchivedMessageGroups(groupBy) {
     groupBy = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
   }
 
-  getArchiveGroups(groupBy ?? route.query.groupBy).then(() => {
+  getArchiveGroups(groupBy ?? route.query.deletedGroupBy).then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
 
