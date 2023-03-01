@@ -244,7 +244,7 @@ onUnmounted(() => {
 });
 
 function navigateToGroup($event, groupId) {
-  if ($event.currentTarget.localName !== "button") {
+  if ($event.target.localName !== "button") {
     router.push({ name: "message-groups", params: { groupId: groupId } });
   }
 }
