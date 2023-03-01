@@ -106,7 +106,7 @@ function navigateToEvent(eventLogItem) {
 
       <div class="row text-center">
         <div class="col-12">
-          <a v-if="eventCount > 10" class="btn btn-default btn-secondary btn-all-events" href="/events">View all events</a>
+          <a v-if="eventCount > 10" class="btn btn-default btn-secondary btn-all-events" href="/a/#/events">View all events</a>
         </div>
       </div>
     </div>
