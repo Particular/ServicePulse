@@ -1,19 +1,20 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import NoData from "../NoData.vue";
-import TimeSince from "../TimeSince.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import LicenseExpired from "../../components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import FailedMessageGroupRestore from "./FailedMessageGroupRestore.vue";
 import { stats, connectionState } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
-import { useGetArchiveGroups, useAcknowledgeArchiveGroup, useRestoreGroup } from "../../composables/serviceMessageGroup.js";
+import { useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup.js";
 import { useMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
+import NoData from "../NoData.vue";
+import TimeSince from "../TimeSince.vue";
+import LicenseExpired from "../../components/LicenseExpired.vue";
+import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
+import ConfirmDialog from "../ConfirmDialog.vue";
 
 const messageGroupList = ref();
 const archiveGroups = ref([]);
+const undismissedRestoreGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
@@ -42,18 +43,27 @@ function getGroupingClassifiers() {
 
 function classifierChanged(classifier) {
   selectedClassifier.value = classifier;
-  var subPath = route.fullPath.substring(route.fullPath.indexOf("#"));
-  router.push({ query: { groupBy: classifier }, hash: subPath });
+  router.push({ query: { deletedGroupBy: classifier } });
   classificationHelper.saveDefaultGroupingClassifier(classifier, archiveGroupCookieName);
+  archiveGroups.value = [];
   messageGroupList.value = loadArchivedMessageGroups(classifier);
 }
 
 function getArchiveGroups(classifier) {
   return useGetArchiveGroups(classifier).then((result) => {
-    archiveGroups.value = result;
     if (result.length > 0) {
+      undismissedRestoreGroups.value.forEach((deletedGroup) => {
+        if (!result.find((group) => group.id === deletedGroup.id)) {
+          deletedGroup.need_user_acknowledgement = true;
+          deletedGroup.workflow_state.status = "restorecompleted";
+        }
+      });
+
       // need a map in some ui state for controlling animations
-      archiveGroups.value = result.map(initializeGroupState);
+      archiveGroups.value = result
+        .filter((group) => !undismissedRestoreGroups.value.find((deletedGroup) => deletedGroup.id === group.id))
+        .map(initializeGroupState)
+        .concat(undismissedRestoreGroups.value);
 
       if (archiveGroups.value.length !== stats.number_of_archive_groups) {
         stats.number_of_archive_groups = archiveGroups.value.length;
@@ -62,11 +72,13 @@ function getArchiveGroups(classifier) {
     }
   });
 }
+
 function initializeGroupState(group) {
   var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
   if (operationStatus === "preparing" && group.operation_progress === 1) {
     operationStatus = "queued";
   }
+
   group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
   return group;
 }
@@ -78,7 +90,7 @@ function loadArchivedMessageGroups(groupBy) {
     groupBy = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
   }
 
-  getArchiveGroups(groupBy ?? route.query.groupBy).then(() => {
+  getArchiveGroups(groupBy ?? route.query.deletedGroupBy).then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
 
@@ -100,21 +112,24 @@ function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
 }
 
 //Restore operation
-function restoreGroup(group) {
+function showRestoreGroupDialog(group) {
   groupRestoreSuccessful.value = null;
-  selectedGroup.value.groupid = group.id;
-  selectedGroup.value.messagecount = group.count;
+  selectedGroup.value = group;
   showRestoreGroupModal.value = true;
 }
 
-function saveRestoreGroup(group) {
-  showRestoreGroupModal.value = false;
-  group.workflow_state = { status: "waiting", message: "Restore Group Request Enqueued..." };
+function restoreGroup() {
+  const group = selectedGroup.value;
+  group.workflow_state = { status: "restorestarted", message: "Restore request initiated..." };
+  group.operation_start_time = new Date();
 
-  useRestoreGroup(group.groupid).then((result) => {
+  undismissedRestoreGroups.value.push(group);
+
+  useRestoreGroup(group.id).then((result) => {
     if (result.message === "success") {
       groupRestoreSuccessful.value = true;
       emit("RestoreGroupRequestAccepted", group);
+      useShowToast("info", "Info", "Group restore started...");
     } else {
       groupRestoreSuccessful.value = false;
       useShowToast("error", "Error", "Failed to restore the group:" + result.message);
@@ -140,20 +155,21 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
   return "completed";
 };
 
-var acknowledgeGroup = function (group) {
-  useAcknowledgeArchiveGroup(group.id).then((result) => {
-    if (result.message === "success") {
-      useShowToast("info", "Info", "Group restored succesfully");
-      getArchiveGroups(); //reload the groups
-    } else {
-      useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
-    }
-  });
+var acknowledgeGroup = function (dismissedGroup) {
+  undismissedRestoreGroups.value.splice(
+    undismissedRestoreGroups.value.indexOf((group) => group.id === dismissedGroup.id),
+    1
+  );
+  archiveGroups.value.splice(
+    archiveGroups.value.indexOf((group) => group.id === dismissedGroup.id),
+    1
+  );
 };
 
 function isBeingRestored(status) {
   return statusesForRestoreOperation.includes(status);
 }
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -216,21 +232,19 @@ onMounted(() => {
 
               <div class="row">
                 <div class="col-sm-12 no-mobile-side-padding">
-                  <div v-show="archiveGroups.length > 0">
-                    <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in archiveGroups" :key="index" v-show="archiveGroups.length > 0" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false">
+                  <div v-if="archiveGroups.length > 0">
+                    <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in archiveGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false">
                       <div class="col-sm-12 no-mobile-side-padding">
                         <div class="row">
                           <div class="col-sm-12 no-side-padding">
                             <div class="row box-header">
                               <div class="col-sm-12 no-side-padding">
-                                <p class="lead break" v-bind:class="{ 'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3 }">
-                                  {{ group.title }}
-                                </p>
-                                <p class="metadata" v-show="!isBeingRestored(group.workflow_state.status)">
+                                <p class="lead break" v-bind:class="{ 'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3 }">{{ group.title }}</p>
+                                <p class="metadata" v-if="!isBeingRestored(group.workflow_state.status)">
                                   <span class="metadata">
                                     <i aria-hidden="true" class="fa fa-envelope"></i>
-                                    {{ group.count }} message<span v-show="group.count > 1">s</span>
-                                    <span v-show="group.operation_remaining_count > 0"> (currently restoring {{ group.operation_remaining_count }} </span>
+                                    {{ group.count }} message<span v-if="group.count > 1">s</span>
+                                    <span v-if="group.operation_remaining_count > 0"> (currently restoring {{ group.operation_remaining_count }} </span>
                                   </span>
 
                                   <span class="metadata">
@@ -252,50 +266,30 @@ onMounted(() => {
                               </div>
                             </div>
 
-                            <div class="row" v-show="!isBeingRestored(group.workflow_state.status)">
+                            <div class="row" v-if="!isBeingRestored(group.workflow_state.status)">
                               <div class="col-sm-12 no-side-padding">
-                                <button type="button" class="btn btn-link btn-sm" :disabled="group.count == 0 || isBeingRestored(group.workflow_state.status)" @mouseenter="group.hover3 = true" @mouseleave="group.hover3 = false" v-if="archiveGroups.length > 0" @click="restoreGroup(group)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Restore group</button>
+                                <button type="button" class="btn btn-link btn-sm" :disabled="group.count == 0 || isBeingRestored(group.workflow_state.status)" @mouseenter="group.hover3 = true" @mouseleave="group.hover3 = false" v-if="archiveGroups.length > 0" @click="showRestoreGroupDialog(group)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Restore group</button>
                               </div>
                             </div>
 
                             <!--isBeingRestored-->
-                            <div class="row" v-show="isBeingRestored(group.workflow_state.status)">
+                            <div class="row" v-if="isBeingRestored(group.workflow_state.status)">
                               <div class="col-sm-12 no-side-padding">
                                 <div class="panel panel-default panel-retry">
                                   <div class="panel-body">
                                     <ul class="retry-request-progress">
-                                      <li v-hide="group.workflow_state.status === 'restorecompleted'" v-bind:class="getClassesForRestoreOperation('restorestarted', group.workflow_state.status)">
-                                        <div class="bulk-retry-progress-status">Initialize restore request...</div>
+                                      <li v-if="group.workflow_state.status !== 'restorecompleted'" :class="getClassesForRestoreOperation('restorestarted', group.workflow_state.status)">
+                                        <div class="bulk-retry-progress-status">Restore request in progress...</div>
                                       </li>
-                                      <li v-hide="group.workflow_state.status === 'restorecompleted'" v-bind:class="getClassesForRestoreOperation('restoreprogressing', group.workflow_state.status)">
-                                        <div class="row">
-                                          <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
-                                            <div class="bulk-retry-progress-status">Restore request in progress...</div>
-                                          </div>
-
-                                          <div class="col-xs-12 col-sm-6">
-                                            <div class="progress bulk-retry-progress" v-show="group.workflow_state.status === 'restoreprogressing'">
-                                              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }">{{ group.workflow_state.total }}%</div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </li>
-                                      <li v-hide="group.workflow_state.status === 'restorecompleted'" v-bind:class="getClassesForRestoreOperation('restorefinalizing', group.workflow_state.status)">
-                                        <div class="row">
-                                          <div class="col-xs-9 col-sm-4 col-md-3 no-side-padding">
-                                            <div class="bulk-retry-progress-status">Cleaning up...</div>
-                                          </div>
-                                        </div>
-                                      </li>
-                                      <li v-show="group.workflow_state.status === 'restorecompleted'">
+                                      <li v-if="group.workflow_state.status === 'restorecompleted'">
                                         <div class="retry-completed bulk-retry-progress-status">Restore request completed</div>
-                                        <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-show="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
+                                        <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
                                       </li>
                                     </ul>
                                     <div class="op-metadata">
                                       <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Restore request started:<time-since :date-utc="group.operation_start_time"></time-since></span>
-                                      <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages left to restore: <time-since :date-utc="group.operation_remaining_count"></time-since></span>
-                                      <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> Messages restored: <time-since :date-utc="group.operation_messages_completed_count"></time-since></span>
+                                      <span class="metadata" v-if="group.workflow_state.status === 'restorecompleted'"><i aria-hidden="true" class="fa fa-envelope"></i> Messages restored: {{ group.count }}</span>
+                                      <span class="metadata" v-if="group.workflow_state.status !== 'restorecompleted'"><i aria-hidden="true" class="fa fa-envelope"></i> Messages being restored: {{ group.count }}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -312,7 +306,16 @@ onMounted(() => {
           </div>
           <!--modal display - restore group-->
           <Teleport to="#modalDisplay">
-            <FailedMessageGroupRestore v-if="showRestoreGroupModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelRestoreGroup="showRestoreGroupModal = false" @restoreGroupConfirmed="saveRestoreGroup"></FailedMessageGroupRestore>
+            <ConfirmDialog
+              v-if="showRestoreGroupModal"
+              @cancel="showRestoreGroupModal = false"
+              @confirm="
+                showRestoreGroupModal = false;
+                restoreGroup();
+              "
+              :heading="'Are you sure you want to restore this group?'"
+              :body="`Restored messages will be moved back to the list of failed messages`"
+            ></ConfirmDialog>
           </Teleport>
         </div>
       </section>

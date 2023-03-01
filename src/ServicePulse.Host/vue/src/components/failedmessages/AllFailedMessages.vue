@@ -6,19 +6,25 @@ import { useFetchFromServiceControl, usePatchToServiceControl } from "../../comp
 import { useShowToast } from "../../composables/toast.js";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
+import { useRoute, onBeforeRouteLeave } from "vue-router";
+import { useArchiveExceptionGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import GroupAndOrderBy from "./GroupAndOrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
-import FailedMessageDelete from "./FailedMessageDelete.vue";
+import ConfirmDialog from "../ConfirmDialog.vue";
 
 let refreshInterval = undefined;
 let sortMethod = undefined;
-let isGroupDetails = false;
+const route = useRoute();
+const groupId = ref(route.params.groupId);
+const groupName = ref("");
 const pageNumber = ref(1);
 const numberOfPages = ref(1);
 const totalCount = ref(0);
 const showDelete = ref(false);
+const showConfirmRetryAll = ref(false);
+const showConfirmDeleteAll = ref(false);
 const messageList = ref();
 const messages = ref([]);
 const sortOptions = [
@@ -44,15 +50,26 @@ function sortGroups(sort) {
 }
 
 function loadMessages() {
-  loadPagedMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
+  loadPagedMessages(groupId.value, pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
 }
 
-function loadPagedMessages(page, sortBy, direction) {
+function loadPagedMessages(groupId, page, sortBy, direction) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
 
-  return useFetchFromServiceControl(`errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
+  let loadGroupDetails;
+  if (groupId && !groupName.value) {
+    loadGroupDetails = useFetchFromServiceControl(`recoverability/groups/id/${groupId}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        groupName.value = data.title;
+      });
+  }
+
+  const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -84,6 +101,12 @@ function loadPagedMessages(page, sortBy, direction) {
       };
       return result;
     });
+
+  if (loadGroupDetails) {
+    return Promise.all([loadGroupDetails, loadMessages]);
+  }
+
+  return loadMessages;
 }
 
 function retryRequested(id) {
@@ -203,6 +226,25 @@ function setPage(page) {
   loadMessages();
 }
 
+function retryGroup() {
+  useShowToast("info", "Info", "Retrying all messages...");
+  useRetryExceptionGroup(groupId).then(() => {
+    messages.value.forEach((m) => (m.retryInProgress = true));
+  });
+}
+
+function deleteGroup() {
+  useShowToast("info", "Info", "Deleting all messages...");
+  useArchiveExceptionGroup(groupId).then(() => {
+    messages.value.forEach((m) => (m.deleteInProgress = true));
+  });
+}
+
+onBeforeRouteLeave(() => {
+  groupId.value = undefined;
+  groupName.value = undefined;
+});
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -224,6 +266,14 @@ onMounted(() => {
     <ServiceControlNotAvailable />
     <template v-if="!connectionState.unableToConnect">
       <section name="message_groups">
+        <div class="row" v-if="groupName && messages.length > 0">
+          <div class="col-sm-12">
+            <h1 v-if="groupName" class="active break group-title">
+              {{ groupName }}
+            </h1>
+            <h3 class="active group-title group-message-count">{{ totalCount }} messages in group</h3>
+          </div>
+        </div>
         <div class="row">
           <div class="col-9">
             <div class="btn-toolbar">
@@ -232,7 +282,8 @@ onMounted(() => {
               <button type="button" class="btn btn-default" @click="retrySelected()" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" @click="showDelete = true" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
               <button type="button" class="btn btn-default" @click="exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" v-if="isGroupDetails" confirm-title="Are you sure you want to retry the whole group?" confirm-message="Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?" confirm-click="vm.retryExceptionGroup(vm.selectedExceptionGroup)"><i class="fa fa-repeat"></i> Retry all</button>
+              <button type="button" class="btn btn-default" v-if="groupId" @click="showConfirmRetryAll = true"><i class="fa fa-repeat"></i> Retry all</button>
+              <button type="button" class="btn btn-default" v-if="groupId" @click="showConfirmDeleteAll = true"><i class="fa fa-trash"></i> Delete all</button>
             </div>
           </div>
           <div class="col-3">
@@ -260,14 +311,38 @@ onMounted(() => {
           </div>
         </div>
         <Teleport to="#modalDisplay">
-          <FailedMessageDelete
-            v-if="showDelete === true"
+          <ConfirmDialog
+            v-if="showDelete"
             @cancel="showDelete = false"
             @confirm="
               showDelete = false;
               deleteSelectedMessages();
             "
-          ></FailedMessageDelete>
+            :heading="'Are you sure you want to delete the selected messages?'"
+            :body="'If you delete, these messages won\'t be available for retrying unless they\'re later restored.'"
+          ></ConfirmDialog>
+
+          <ConfirmDialog
+            v-if="showConfirmRetryAll"
+            @cancel="showConfirmRetryAll = false"
+            @confirm="
+              showConfirmRetryAll = false;
+              retryGroup();
+            "
+            :heading="'Are you sure you want to retry the whole group?'"
+            :body="'Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry all these messages?'"
+          ></ConfirmDialog>
+
+          <ConfirmDialog
+            v-if="showConfirmDeleteAll"
+            @cancel="showConfirmDeleteAll = false"
+            @confirm="
+              showConfirmDeleteAll = false;
+              deleteGroup();
+            "
+            :heading="'Are you sure you want to delete this group?'"
+            :body="'If you delete, the messages in the group won\'t be available for retrying unless they\'re later restored.'"
+          ></ConfirmDialog>
         </Teleport>
       </section>
     </template>
@@ -279,47 +354,22 @@ onMounted(() => {
   width: 127px;
 }
 
-.msg-list-dropdown {
-  margin: 1px 0 0 0 !important;
-  padding-right: 0;
+h3.group-message-count {
+  color: #a8b3b1;
+  font-size: 16px;
+  margin: 4px 0 12px;
+  display: block;
 }
 
-.msg-group-menu {
-  margin: 21px 0px 0 6px;
-  float: right;
-  padding-top: 12px;
+.group-title {
+  display: block;
+  font-size: 30px;
+  margin: 10px 0 0;
 }
 
-.msg-group-menu > .control-label {
-  float: none;
-}
-
-.btn.sp-btn-menu {
-  padding-left: 16px;
-  background: none;
-  border: none;
-  color: #00a3c4;
-  padding-right: 0;
-}
-
-.sp-btn-menu:hover {
-  background: none;
-  border: none;
-  color: #00a3c4;
-  text-decoration: underline;
-}
-
-.btn-toolbar > .btn-default:hover {
-  color: #333;
-  background-color: #e6e6e6;
-  border-color: #adadad;
-}
-
-.metadata .label-important {
-  border-radius: 3px;
-  color: white;
-  font-size: 13px;
+h2.group-title,
+h3.group-title {
   font-weight: bold;
-  margin-right: 20px;
+  line-height: 28px;
 }
 </style>

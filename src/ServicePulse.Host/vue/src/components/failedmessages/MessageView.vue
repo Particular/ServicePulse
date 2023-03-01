@@ -340,7 +340,6 @@ onUnmounted(() => {
 </template>
 
 <style>
-
 .break {
   -ms-word-wrap: break-word;
   word-break: break-all;

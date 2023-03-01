@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
@@ -10,6 +10,7 @@ import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
+const router = useRouter();
 const route = useRoute();
 const props = defineProps({
   sortFunction: Object,
@@ -242,6 +243,12 @@ onUnmounted(() => {
   }
 });
 
+function navigateToGroup($event, groupId) {
+  if ($event.target.localName !== "button") {
+    router.push({ name: "message-groups", params: { groupId: groupId } });
+  }
+}
+
 onMounted(() => {
   loadFailedMessageGroups();
 
@@ -266,7 +273,7 @@ defineExpose({
     <div class="row">
       <div class="col-sm-12 no-mobile-side-padding">
         <div v-if="exceptionGroups.length > 0">
-          <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in exceptionGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false">
+          <div class="row box box-group wf-{{group.workflow_state.status}} failed-message-group repeat-modify" v-for="(group, index) in exceptionGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false" @click="navigateToGroup($event, group.id)">
             <div class="col-sm-12 no-mobile-side-padding">
               <div class="row">
                 <div class="col-sm-12 no-side-padding">
@@ -472,7 +479,6 @@ defineExpose({
       :heading="'Are you sure you want to delete this note?'"
       :body="`Deleted note will not be available.`"
     ></ConfirmDialog>
-
   </Teleport>
 </template>
 
@@ -483,5 +489,13 @@ defineExpose({
 
 .messagegrouplist {
   padding-bottom: 2em;
+}
+
+.toolbar-menus > .msg-group-menu {
+  margin: 0;
+}
+
+.failed-message-group {
+  cursor: pointer;
 }
 </style>

@@ -195,7 +195,7 @@ label {
     border-color: #00A3C4;
 }
 
-.btn-primary {
+.btn.btn-primary {
     background-color: #00A3C4 !important;
     border-color: #0686AA;
     color: #fff;
@@ -394,3 +394,56 @@ input.check-label {
     padding: 0;
     border-radius: 5px;
 }
+
+.metadata .label-important {
+    border-radius: 3px;
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.metadata > .btn-sm > i {
+    color: #00a3c4;
+  }
+  
+  .metadata:first-child {
+    padding-left: 0;
+  }
+  
+  span.metadata {
+    display: inline-block;
+    padding: 0px 20px 2px 0;
+    color: #777f7f;
+  }
+  
+  .metadata > .in-progress {
+    font-style: italic;
+    color: white;
+  }
+  
+  .metadata > .metadata-label {
+    padding: 6px 10px;
+  }
+
+  .btn-xs, .btn-group-xs > .btn {
+    border-radius: 3px;
+  }
+
+  .btn-retry-dismiss {
+    position: relative;
+    height: 28px;
+    width: 74px;
+    top: -2px;
+    left: 11px;
+    line-height: 1;
+  }
+  
+  .btn.btn-retry-dismiss {
+    border-radius: 4px;
+    padding: 8px 16px;
+  }
+  
+  .btn.btn-xs {
+    font-size: 12px;
+  }

@@ -61,7 +61,7 @@ function clearSelection() {
 }
 
 function navigateToMessage($event, messageId) {
-  if ($event.originalTarget.name !== "retryMessage") {
+  if ($event.target.name !== "retryMessage") {
     router.push({ path: `/failed-messages/message/${messageId}` });
   }
 }
@@ -99,7 +99,7 @@ defineExpose({
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
-                <button type="button" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
+                <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
               </p>
 
               <pre class="stacktrace-preview" isolate-click>{{ message.exception.message }}</pre>
@@ -228,29 +228,6 @@ p.metadata button {
 
 .failed-message:hover .metadata > .btn-sm {
   display: block;
-}
-
-.metadata > .btn-sm > i {
-  color: #00a3c4;
-}
-
-.metadata:first-child {
-  padding-left: 0;
-}
-
-span.metadata {
-  display: inline-block;
-  padding: 0px 20px 2px 0;
-  color: #777f7f;
-}
-
-.metadata > .in-progress {
-  font-style: italic;
-  color: white;
-}
-
-.metadata > .metadata-label {
-  padding: 6px 10px;
 }
 
 .label-info {
