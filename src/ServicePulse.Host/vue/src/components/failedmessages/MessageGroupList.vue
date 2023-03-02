@@ -88,6 +88,7 @@ function deleteNote(group) {
 function saveDeleteNote(group) {
   showDeleteNoteModal.value = false;
 
+
   useDeleteNote(group.groupid).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
