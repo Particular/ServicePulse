@@ -46,7 +46,7 @@ function subIsActiveSubPath(subPath) {
             </h5>
 
             <!--All Deleted Messages-->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('#ll-deleted-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-deleted-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <RouterLink :to="{ path: '/failed-messages/all-deleted-messages' }">All Deleted Messages</RouterLink>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
