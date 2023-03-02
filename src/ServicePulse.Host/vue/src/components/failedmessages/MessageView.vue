@@ -153,9 +153,11 @@ function downloadBody() {
       failedMessage.value.messageBodyNotFound = true;
     }
 
-    if (response.headers.get("content-type") == "text/json") {
+    if (response.headers.get("content-type") == "application/json") {
       return response.json().then((jsonBody) => {
-        failedMessage.value.messageBody = jsonBody;
+        jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m));
+        
+        failedMessage.value.messageBody = formatJson(jsonBody);
       });
     }
 
@@ -253,6 +255,11 @@ function formatXml(xml) {
   }
 
   return string.trim();
+}
+
+
+function formatJson(json) {
+  return JSON.stringify(json, null, 2);
 }
 
 function togglePanel(panelNum) {
