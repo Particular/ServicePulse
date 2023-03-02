@@ -88,7 +88,7 @@ function deleteNote(group) {
 function saveDeleteNote(group) {
   showDeleteNoteModal.value = false;
 
-    useDeleteNote(group.groupid).then((result) => {
+  useDeleteNote(group.groupid).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
       useShowToast("info", "Info", "Note deleted succesfully");
