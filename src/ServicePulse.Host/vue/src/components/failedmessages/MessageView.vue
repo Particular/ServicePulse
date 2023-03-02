@@ -88,7 +88,7 @@ function archiveMessage() {
       if (response !== undefined) {
         return loadFailedMessage().then(() => {
           failedMessage.value.archived = true;
-          downloadHeadersAndBody();
+          return downloadHeadersAndBody();
         });
       }
       return false;
@@ -148,24 +148,118 @@ function downloadHeadersAndBody() {
 }
 
 function downloadBody() {
-  return useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body")
-    .then((response) => {
-      if (response.status === 404) {
-        failedMessage.value.messageBodyNotFound = true;
-      }
-      return response.json();
-    })
-    .then((data) => {
-      if (data === undefined) {
-        failedMessage.value.messageBodyNotFound = true;
-        return;
-      }
-      failedMessage.value.messageBody = data;
-    })
-    .catch((err) => {
-      console.log(err);
-      return;
+  return useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body").then((response) => {
+    if (response.status === 404) {
+      failedMessage.value.messageBodyNotFound = true;
+    }
+
+    if (response.headers.get("content-type") == "application/json") {
+      return response.json().then((jsonBody) => {
+        jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m));
+        
+        failedMessage.value.messageBody = formatJson(jsonBody);
+      });
+    }
+
+    if (response.headers.get("content-type") == "text/xml") {
+      return response.text().then((xmlBody) => {
+        failedMessage.value.messageBody = formatXml(xmlBody);
+      });
+    }
+
+    return response.text().then((textBody) => {
+      failedMessage.value.messageBody = textBody;
     });
+  });
+}
+
+// taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js
+function formatXml(xml) {
+  function createShiftArr(step) {
+    let space = "";
+    if (isNaN(parseInt(step))) {
+      // argument is string
+      space = step;
+    } else {
+      // argument is integer
+      for (let i = 0; i < step; i++) {
+        space += " ";
+      }
+    }
+
+    let shift = ["\n"]; // array of shifts
+
+    for (let ix = 0; ix < 100; ix++) {
+      shift.push(shift[ix] + space);
+    }
+
+    return shift;
+  }
+
+  const indent = "\t";
+
+  let arr = xml
+    .replace(/>\s*</gm, "><")
+    .replace(/</g, "~::~<")
+    .replace(/\s*xmlns([=:])/g, "~::~xmlns$1")
+    .split("~::~");
+
+  let len = arr.length,
+    inComment = false,
+    depth = 0,
+    string = "",
+    shift = createShiftArr(indent);
+
+  for (let i = 0; i < len; i++) {
+    // start comment or <![CDATA[...]]> or <!DOCTYPE //
+    if (arr[i].indexOf("<!") !== -1) {
+      string += shift[depth] + arr[i];
+      inComment = true;
+
+      // end comment or <![CDATA[...]]> //
+      if (arr[i].indexOf("-->") !== -1 || arr[i].indexOf("]>") !== -1 || arr[i].indexOf("!DOCTYPE") !== -1) {
+        inComment = false;
+      }
+    } else if (arr[i].indexOf("-->") !== -1 || arr[i].indexOf("]>") !== -1) {
+      // end comment  or <![CDATA[...]]> //
+      string += arr[i];
+      inComment = false;
+    } else if (
+      /^<\w/.test(arr[i - 1]) &&
+      /^<\/\w/.test(arr[i]) && // <elm></elm> //
+      /^<[\w:\-.,]+/.exec(arr[i - 1])[0] === /^<\/[\w:\-.,]+/.exec(arr[i])[0].replace("/", "")
+    ) {
+      string += arr[i];
+      if (!inComment) depth--;
+    } else if (arr[i].search(/<\w/) !== -1 && arr[i].indexOf("</") === -1 && arr[i].indexOf("/>") === -1) {
+      // <elm> //
+      string += !inComment ? shift[depth++] + arr[i] : arr[i];
+    } else if (arr[i].search(/<\w/) !== -1 && arr[i].indexOf("</") !== -1) {
+      // <elm>...</elm> //
+      string += !inComment ? shift[depth] + arr[i] : arr[i];
+    } else if (arr[i].search(/<\//) > -1) {
+      // </elm> //
+      string += !inComment ? shift[--depth] + arr[i] : arr[i];
+    } else if (arr[i].indexOf("/>") !== -1) {
+      // <elm/> //
+      string += !inComment ? shift[depth] + arr[i] : arr[i];
+    } else if (arr[i].indexOf("<?") !== -1) {
+      // <? xml ... ?> //
+      string += shift[depth] + arr[i];
+    } else if (arr[i].indexOf("xmlns:") !== -1 || arr[i].indexOf("xmlns=") !== -1) {
+      // xmlns //
+      string += shift[depth] + arr[i];
+    } else {
+      string += arr[i];
+    }
+  }
+
+  return string.trim();
+}
+
+
+function formatJson(json) {
+  return JSON.stringify(json, null, 2);
 }
 
 function togglePanel(panelNum) {
