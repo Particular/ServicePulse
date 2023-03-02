@@ -1,21 +1,20 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
-import { useFailedMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
 const router = useRouter();
-const route = useRoute();
 const props = defineProps({
   sortFunction: Object,
 });
 
+let savedGroupBy = null;
 let refreshInterval = undefined;
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
@@ -66,12 +65,11 @@ function initializeGroupState(group) {
 function loadFailedMessageGroups(groupBy) {
   loadingData.value = true;
 
-  if (!initialLoadComplete.value || !groupBy) {
-    const classificationHelper = new useFailedMessageGroupClassification();
-    groupBy = classificationHelper.loadDefaultGroupingClassifier(route);
+  if (groupBy) {
+    savedGroupBy = groupBy;
   }
 
-  getExceptionGroups(groupBy ?? route.query.groupBy).then(() => {
+  getExceptionGroups(savedGroupBy).then(() => {
     loadingData.value = false;
     initialLoadComplete.value = true;
 
@@ -250,8 +248,6 @@ function navigateToGroup($event, groupId) {
 }
 
 onMounted(() => {
-  loadFailedMessageGroups();
-
   refreshInterval = setInterval(() => {
     loadFailedMessageGroups();
   }, 5000);

@@ -6,7 +6,7 @@ import { useEndpoints } from "../../composables/serviceEndpoints";
 import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useCookies } from "vue3-cookies";
-import GroupAndOrderBy from "./GroupAndOrderBy.vue";
+import OrderBy from "./OrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
@@ -302,7 +302,7 @@ onMounted(() => {
                 </li>
               </ul>
             </div>
-            <GroupAndOrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="pending_retries"></GroupAndOrderBy>
+            <OrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="pending_retries"></OrderBy>
           </div>
         </div>
         <div class="row">
