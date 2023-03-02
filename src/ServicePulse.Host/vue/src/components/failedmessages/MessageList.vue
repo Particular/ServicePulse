@@ -1,7 +1,7 @@
 <script setup>
 import TimeSince from "../TimeSince.vue";
 import { useRouter } from "vue-router";
-
+import NoData from "../NoData.vue";
 let lastLabelClickedIndex = undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
@@ -77,6 +77,11 @@ defineExpose({
 </script>
 
 <template>
+  <div class="row">
+    <div class="col-sm-12">
+      <no-data v-if="props.messages.length === 0" title="message" message="There are currently no messages"></no-data>
+    </div>
+  </div>
   <div v-for="(message, index) in props.messages" class="row box repeat-item failed-message" :key="message.id">
     <label class="check col-1" :for="`checkbox${message.id}`" @click="labelClicked($event, index)">
       <input type="checkbox" :disabled="message.retryInProgress || message.submittedForRetrial" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
@@ -99,6 +104,11 @@ defineExpose({
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
+                <!-- for deleted messages-->
+                <span class="metadata" v-if="message.status == 'archived'"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="message.last_modified"></time-since></span>
+                <span class="metadata danger" v-if="message.status == 'archived' && message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
+                <span class="metadata danger" v-if="message.status == 'archived' && !message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: <time-since class="danger" :date-utc="message.deleted_in"></time-since> </span>
+
                 <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
               </p>
 
