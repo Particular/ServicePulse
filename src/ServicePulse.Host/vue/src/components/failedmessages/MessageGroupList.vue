@@ -85,10 +85,10 @@ function deleteNote(group) {
   showDeleteNoteModal.value = true;
 }
 
-function saveDeleteNote(groupId) {
+function saveDeleteNote(group) {
   showDeleteNoteModal.value = false;
 
-  useDeleteNote(groupId).then((result) => {
+    useDeleteNote(group.groupid).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
       useShowToast("info", "Info", "Note deleted succesfully");
@@ -474,7 +474,7 @@ defineExpose({
       @cancel="showDeleteNoteModal = false"
       @confirm="
         showDeleteNoteModal = false;
-        saveDeleteNote();
+        saveDeleteNote(selectedGroup);
       "
       :heading="'Are you sure you want to delete this note?'"
       :body="`Deleted note will not be available.`"
