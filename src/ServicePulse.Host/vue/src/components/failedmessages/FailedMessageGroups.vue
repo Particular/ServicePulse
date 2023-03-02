@@ -23,11 +23,8 @@ function sortGroups(sort) {
   messageGroupList.value.loadFailedMessageGroups();
 }
 
-function classifierUpdated(classifier) {
-  messageGroupList.value.loadFailedMessageGroups(classifier);
   messageGroupList.value.clearInMemoryData();
-}
-
+  messageGroupList.value.clearInMemoryData();
 const sortOptions = [
   {
     description: "Name",

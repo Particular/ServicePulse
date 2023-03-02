@@ -211,9 +211,9 @@ function isBeingRestored(status) {
 }
 
 function navigateToGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push({ name: "deleted-message-groups", params: { groupId: groupId } });
-  }
+    if ($event.target.localName !== "button") {
+        router.push({ name: "deleted-message-groups", params: { groupId: groupId } });
+    }
 }
 
 onUnmounted(() => {

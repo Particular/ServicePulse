@@ -10,12 +10,14 @@ import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
+
+let refreshInterval = undefined;
+let groupsWithNotesAdded = [];
 const props = defineProps({
   sortFunction: Function,
 });
-
+let savedGroupBy = null;
 const router = useRouter();
-let refreshInterval = undefined;
 let groupsWithNotesAdded = [];
 let savedGroupBy = null;
 
@@ -258,6 +260,8 @@ function clearInMemoryData() {
   groupsWithNotesAdded = [];
 }
 
+}
+
 function navigateToGroup($event, groupId) {
   if ($event.target.localName !== "button") {
     router.push({ name: "message-groups", params: { groupId: groupId } });
@@ -269,7 +273,6 @@ onUnmounted(() => {
     clearInterval(refreshInterval);
   }
 });
-
 onMounted(() => {
   refreshInterval = setInterval(() => {
     loadFailedMessageGroups();
