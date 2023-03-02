@@ -10,18 +10,18 @@ import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
+const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
+
+let refreshInterval = undefined;
+let groupsWithNotesAdded = [];
 const router = useRouter();
 const route = useRoute();
 const props = defineProps({
   sortFunction: Object,
 });
-
-let refreshInterval = undefined;
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
-const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
-
 const showDeleteNoteModal = ref(false);
 const showEditNoteModal = ref(false);
 const showDeleteGroupModal = ref(false);
@@ -42,6 +42,17 @@ function getExceptionGroups(classifier) {
       result.sort(props.sortFunction);
     }
 
+    groupsWithNotesAdded.forEach((note) => {
+      const groupFromSC = result.find((group) => {
+        return group.id === note.groupId;
+      });
+      if (!groupFromSC.comment) {
+        groupFromSC.comment = note.comment;
+      } else {
+        note.alreadySaved = true;
+      }
+    });
+
     exceptionGroups.value = result;
     if (result.length > 0) {
       // need a map in some ui state for controlling animations
@@ -52,6 +63,8 @@ function getExceptionGroups(classifier) {
         emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
       }
     }
+
+    groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
   });
 }
 function initializeGroupState(group) {
@@ -88,7 +101,7 @@ function deleteNote(group) {
 function saveDeleteNote(group) {
   showDeleteNoteModal.value = false;
 
-    useDeleteNote(group.groupid).then((result) => {
+  useDeleteNote(group.groupid).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
       useShowToast("info", "Info", "Note deleted succesfully");
@@ -104,6 +117,9 @@ function saveDeleteNote(group) {
 function saveNote(group) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
+
+  groupsWithNotesAdded.push({ groupId: group.groupid, comment: group.comment });
+
   useEditOrCreateNote(group.groupid, group.comment).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
@@ -237,6 +253,10 @@ function isBeingRetried(group) {
   return group.workflow_state.status !== "none" && (group.workflow_state.status !== "completed" || group.need_user_acknowledgement === true) && !isBeingArchived(group.workflow_state.status);
 }
 
+function clearInMemoryData() {
+  groupsWithNotesAdded = [];
+}
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -259,6 +279,7 @@ onMounted(() => {
 
 defineExpose({
   loadFailedMessageGroups,
+  clearInMemoryData
 });
 </script>
 
