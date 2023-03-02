@@ -141,7 +141,7 @@ function saveDeleteGroup(group) {
   showDeleteGroupModal.value = false;
   group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
 
-  saveDeleteNote(group.id); //delete comment note when group is archived
+  saveDeleteNote(group); //delete comment note when group is archived
   useArchiveExceptionGroup(group.groupid).then((result) => {
     if (result.message === "success") {
       groupDeleteSuccessful.value = true;
@@ -182,7 +182,7 @@ function saveRetryGroup(group) {
   showRetryGroupModal.value = false;
   group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
 
-  saveDeleteNote(group.id);
+  saveDeleteNote(group);
   useRetryExceptionGroup(group.groupid).then((result) => {
     if (result.message === "success") {
       groupRetrySuccessful.value = true;
