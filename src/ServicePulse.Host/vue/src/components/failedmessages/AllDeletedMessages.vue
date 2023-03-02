@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
@@ -10,8 +10,11 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
+import moment from "moment";
 
 let refreshInterval = undefined;
+const configuration = ref([]);
+
 const route = useRoute();
 const groupId = ref(route.params.groupId);
 const groupName = ref("");
@@ -23,35 +26,35 @@ const selectedPeriod = ref("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
 const messageList = ref();
 const messages = ref([]);
-
 const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
 function loadMessages() {
   let startDate = new Date(0);
   let endDate = new Date();
 
-  switch (selectedPeriod.value) {
-    case "All Deleted":
-      startDate = new Date();
-      startDate.setHours(startDate.getHours() - 24 * 365);
-      break;
-    case "Deleted in the last 2 Hours":
-      startDate = new Date();
-      startDate.setHours(startDate.getHours() - 2);
-      break;
-    case "Deleted in the last 1 Day":
-      startDate = new Date();
-      startDate.setHours(startDate.getHours() - 24);
-      break;
-    case "Deleted in the last 7 days":
-      startDate = new Date();
-      startDate.setHours(startDate.getHours() - 24 * 7);
-      break;
-  }
-  return loadPagedMessages(groupId.value, pageNumber.value, "", "", startDate.toISOString(), endDate.toISOString());
+    switch (selectedPeriod.value) {
+        case "All Deleted":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 24 * 365);
+            break;
+        case "Deleted in the last 2 Hours":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 2);
+            break;
+        case "Deleted in the last 1 Day":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 24);
+            break;
+        case "Deleted in the last 7 days":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 24 * 7);
+            break;
+
+    }
+    return loadPagedMessages(groupId.value, pageNumber.value,"", "",  startDate.toISOString(), endDate.toISOString());
 }
 
-function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate) {
+function loadPagedMessages(groupId, page, sortBy, direction,  startDate, endDate) {
   if (typeof sortBy === "undefined") sortBy = "modified";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
@@ -69,7 +72,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
       });
   }
 
-  const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`)
+    const loadDelMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -92,7 +95,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
         });
       }
 
-      messages.value = response;
+      messages.value = updateMessagesScheduledDeletionDate(response);
     })
     .catch((err) => {
       console.log(err);
@@ -103,10 +106,21 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
     });
 
   if (loadGroupDetails) {
-    return Promise.all([loadGroupDetails, loadMessages]);
+    return Promise.all([loadGroupDetails, loadDelMessages]);
   }
 
-  return loadMessages;
+  return loadDelMessages;
+}
+
+function updateMessagesScheduledDeletionDate(messages) {
+  //check deletion time
+  messages.forEach((message) => {
+    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+    var countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
+    message.delete_soon = countdown < moment();
+    message.deleted_in = countdown.format();
+  });
+  return messages;
 }
 
 function numberSelected() {
@@ -170,6 +184,20 @@ function periodChanged(period) {
   loadMessages();
 }
 
+function getConfiguration() {
+  return useFetchFromServiceControl("configuration")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      configuration.value = data;
+      return;
+    });
+}
+
+onBeforeMount(() => {
+  getConfiguration();
+});
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -177,15 +205,15 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  let cookiePeriod = cookies.get("all_deleted_messages_period");
-  if (typeof cookiePeriod === "undefined" || cookiePeriod === "") {
-    cookiePeriod = periodOptions[3]; //default is last 7 days
-  }
-  selectedPeriod.value = cookiePeriod;
-  loadMessages();
-
-  refreshInterval = setInterval(() => {
+    let cookiePeriod = cookies.get("all_deleted_messages_period");
+    if (typeof cookiePeriod === "undefined" ||  cookiePeriod === "") {
+        cookiePeriod = periodOptions[3]; //default is last 7 days
+    }
+    selectedPeriod.value = cookiePeriod;
     loadMessages();
+
+    refreshInterval = setInterval(() => {
+        loadMessages();
   }, 5000);
 });
 </script>
@@ -213,18 +241,18 @@ onMounted(() => {
             </div>
           </div>
           <div class="col-3">
-            <div class="msg-group-menu dropdown">
-              <label class="control-label">Show:</label>
-              <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{ selectedPeriod }}
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li v-for="(period, index) in periodOptions" :key="index">
-                  <a @click.prevent="periodChanged(period)">{{ period }}</a>
-                </li>
-              </ul>
-            </div>
+              <div class="msg-group-menu dropdown">
+                  <label class="control-label">Show:</label>
+                  <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{ selectedPeriod }}
+                      <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                      <li v-for="(period, index) in periodOptions" :key="index">
+                          <a @click.prevent="periodChanged(period)">{{ period }}</a>
+                      </li>
+                  </ul>
+              </div>
           </div>
         </div>
         <div class="row">
