@@ -25,6 +25,12 @@ function sortGroups(sort) {
   forceReRenderKey.value += 1;
 }
 
+
+function classifierUpdated(classifier) {
+  messageGroupList.value.loadFailedMessageGroups(classifier);
+  messageGroupList.value.clearInMemoryData();
+}
+
 const sortOptions = [
   {
     description: "Name",
