@@ -1,11 +1,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { stats, connectionState } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup.js";
-import { useMessageGroupClassification } from "../../composables/serviceFailedMessageClassification";
+import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
@@ -21,7 +22,6 @@ const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 let refreshInterval = undefined;
 const route = useRoute();
 const showRestoreGroupModal = ref(false);
-const archiveGroupCookieName = "archived_groups_classification";
 const selectedGroup = ref({
   groupid: "",
   messagecount: "",
@@ -29,22 +29,28 @@ const selectedGroup = ref({
 });
 
 const groupRestoreSuccessful = ref(null);
-const router = useRouter();
-
-const classificationHelper = new useMessageGroupClassification();
 const selectedClassifier = ref(null);
 const classifiers = ref([]);
 
 function getGroupingClassifiers() {
-  return classificationHelper.getGroupingClassifiers().then((data) => {
-    classifiers.value = data;
-  });
+  return useFetchFromServiceControl("recoverability/classifiers")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      classifiers.value = data;
+    });
+}
+
+function saveDefaultGroupingClassifier(classifier) {
+  const cookies = useCookies().cookies;
+  cookies.set("archived_groups_classification", classifier);
 }
 
 function classifierChanged(classifier) {
+  saveDefaultGroupingClassifier(classifier);
+
   selectedClassifier.value = classifier;
-  router.push({ query: { deletedGroupBy: classifier } });
-  classificationHelper.saveDefaultGroupingClassifier(classifier, archiveGroupCookieName);
   archiveGroups.value = [];
   messageGroupList.value = loadArchivedMessageGroups(classifier);
 }
@@ -83,11 +89,21 @@ function initializeGroupState(group) {
   return group;
 }
 
+function loadDefaultGroupingClassifier() {
+  const cookies = useCookies().cookies;
+  let cookieGrouping = cookies.get("archived_groups_classification");
+
+  if (cookieGrouping) {
+    return cookieGrouping;
+  }
+
+  return null;
+}
+
 function loadArchivedMessageGroups(groupBy) {
   loadingData.value = true;
   if (!initialLoadComplete.value || !groupBy) {
-    const classificationHelper = new useMessageGroupClassification();
-    groupBy = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
+    groupBy = loadDefaultGroupingClassifier();
   }
 
   getArchiveGroups(groupBy ?? route.query.deletedGroupBy).then(() => {
@@ -177,16 +193,16 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  getGroupingClassifiers().then(() => {
-    let savedClassifier = classificationHelper.loadDefaultGroupingClassifier(route, archiveGroupCookieName);
-    if (!savedClassifier) {
-      savedClassifier = classifiers.value[0];
-    }
+  getGroupingClassifiers()
+    .then(() => {
+      let savedClassifier = loadDefaultGroupingClassifier();
+      if (!savedClassifier) {
+        savedClassifier = classifiers.value[0];
+      }
 
-    selectedClassifier.value = savedClassifier;
-  });
-
-  loadArchivedMessageGroups();
+      selectedClassifier.value = savedClassifier;
+    })
+    .then(loadArchivedMessageGroups);
 
   refreshInterval = setInterval(() => {
     loadArchivedMessageGroups();

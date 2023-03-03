@@ -1,7 +1,8 @@
 <script setup>
-import TimeSince from "../TimeSince.vue";
 import { useRouter } from "vue-router";
+import TimeSince from "../TimeSince.vue";
 import NoData from "../NoData.vue";
+
 let lastLabelClickedIndex = undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);

@@ -7,7 +7,7 @@ import { useShowToast } from "../../composables/toast.js";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 /* import { useArchiveExceptionGroup } from "../../composables/serviceMessageGroup";*/
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import GroupAndOrderBy from "./GroupAndOrderBy.vue";
+import OrderBy from "./OrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
@@ -212,7 +212,7 @@ onMounted(() => {
             </div>
           </div>
           <div class="col-3">
-            <GroupAndOrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="all_deleted_"></GroupAndOrderBy>
+            <OrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="all_deleted_"></OrderBy>
           </div>
         </div>
         <div class="row">
