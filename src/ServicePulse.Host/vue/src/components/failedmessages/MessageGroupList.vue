@@ -20,7 +20,6 @@ const props = defineProps({
 
 
 let savedGroupBy = null;
-let refreshInterval = undefined;
 
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
