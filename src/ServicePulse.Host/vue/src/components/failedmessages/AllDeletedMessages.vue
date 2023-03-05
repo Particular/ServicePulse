@@ -5,7 +5,7 @@ import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
-/* import { useArchiveExceptionGroup } from "../../composables/serviceMessageGroup";*/
+import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import OrderBy from "./OrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -13,62 +13,54 @@ import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
 let refreshInterval = undefined;
-let sortMethod = undefined;
 const route = useRoute();
 const groupId = ref(route.params.groupId);
 const groupName = ref("");
 const pageNumber = ref(1);
 const numberOfPages = ref(1);
 const totalCount = ref(0);
-
+const cookies = useCookies().cookies;
+const selectedPeriod = ref("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
 const messageList = ref();
 const messages = ref([]);
-const sortOptions = [
-  {
-    description: "All deleted",
-    selector: function (group) {
-      return group.title;
-    },
-    icon: "bi-sort-",
-  },
-  {
-    description: "Deleted in the last 2 hours",
-    selector: function (group) {
-      return group.count;
-    },
-    icon: "bi-sort-alpha-",
-  },
-  {
-    description: "Deleted in the last day",
-    selector: function (group) {
-      return group.count;
-    },
-    icon: "bi-sort-alpha-",
-  },
-  {
-    description: "Deleted in last 7 days",
-    selector: function (group) {
-      return group.count;
-    },
-    icon: "bi-sort-alpha-",
-  },
-];
 
-function sortGroups(sort) {
-  sortMethod = sort;
-  loadMessages();
-}
+const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
+
+
 
 function loadMessages() {
-  loadPagedMessages(groupId.value, pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir);
+    let startDate = new Date(0);
+    let endDate = new Date();
+
+    switch (selectedPeriod.value) {
+        case "All Deleted":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 24 * 365);
+            break;
+        case "Deleted in the last 2 Hours":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 2);
+            break;
+        case "Deleted in the last 1 Day":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 24);
+            break;
+        case "Deleted in the last 7 days":
+            startDate = new Date();
+            startDate.setHours(startDate.getHours() - 24 * 7);
+            break;
+
+    }
+    return loadPagedMessages(groupId.value, pageNumber.value,"", "",  startDate.toISOString(), endDate.toISOString());
 }
 
-function loadPagedMessages(groupId, page, sortBy, direction) {
+function loadPagedMessages(groupId, page, sortBy, direction,  startDate, endDate) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
-
+    if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
+    if (typeof endDate === "undefined") endDate = new Date().toISOString();
   let loadGroupDetails;
   if (groupId && !groupName.value) {
     loadGroupDetails = useFetchFromServiceControl(`recoverability/groups/id/${groupId}`)
@@ -174,6 +166,12 @@ onBeforeRouteLeave(() => {
   groupName.value = undefined;
 });
 
+function periodChanged(period) {
+    selectedPeriod.value = period;
+    cookies.set("all_deleted_messages_period", period);
+
+    loadMessages();
+}
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -181,10 +179,15 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  loadMessages();
-
-  refreshInterval = setInterval(() => {
+    let cookiePeriod = cookies.get("all_deleted_messages_period");
+    if (typeof cookiePeriod === "undefined" ||  cookiePeriod === "") {
+        cookiePeriod = periodOptions[3]; //default is last 7 days
+    }
+    selectedPeriod.value = cookiePeriod;
     loadMessages();
+
+    refreshInterval = setInterval(() => {
+        loadMessages();
   }, 5000);
 });
 </script>
@@ -212,7 +215,18 @@ onMounted(() => {
             </div>
           </div>
           <div class="col-3">
-            <OrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="all_deleted_"></OrderBy>
+              <div class="msg-group-menu dropdown">
+                  <label class="control-label">Show:</label>
+                  <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      {{ selectedPeriod }}
+                      <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                      <li v-for="(period, index) in periodOptions" :key="index">
+                          <a @click.prevent="periodChanged(period)">{{ period }}</a>
+                      </li>
+                  </ul>
+              </div>
           </div>
         </div>
         <div class="row">
