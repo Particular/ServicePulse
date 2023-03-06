@@ -172,6 +172,7 @@ function periodChanged(period) {
 
     loadMessages();
 }
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
