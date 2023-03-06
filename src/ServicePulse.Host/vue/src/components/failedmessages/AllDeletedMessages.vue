@@ -56,11 +56,12 @@ function loadMessages() {
 }
 
 function loadPagedMessages(groupId, page, sortBy, direction,  startDate, endDate) {
-  if (typeof sortBy === "undefined") sortBy = "time_of_failure";
+  if (typeof sortBy === "undefined") sortBy = "modified";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
-    if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
+  if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
     if (typeof endDate === "undefined") endDate = new Date().toISOString();
+    let dateRange = startDate + '...' + endDate;
   let loadGroupDetails;
   if (groupId && !groupName.value) {
     loadGroupDetails = useFetchFromServiceControl(`recoverability/groups/id/${groupId}`)
@@ -72,7 +73,7 @@ function loadPagedMessages(groupId, page, sortBy, direction,  startDate, endDate
       });
   }
 
-  const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}`)
+    const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
