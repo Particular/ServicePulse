@@ -113,7 +113,7 @@ defineExpose({
                 <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
               </p>
 
-              <pre class="stacktrace-preview" isolate-click>{{ message.exception.message }}</pre>
+              <pre class="stacktrace-preview">{{ message.exception.message }}</pre>
             </div>
           </div>
         </div>

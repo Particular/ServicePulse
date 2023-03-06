@@ -69,7 +69,9 @@ function getExceptionGroups(classifier) {
     groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
   });
 }
-function initializeGroupState(group) {
+function initializeGroupState(group, index) {
+  group.index = index;
+
   var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
   if (operationStatus === "preparing" && group.operation_progress === 1) {
     operationStatus = "queued";
@@ -299,9 +301,7 @@ defineExpose({
                 <div class="col-sm-12 no-side-padding">
                   <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
-                      <p class="lead break" v-bind:class="{ 'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3 }">
-                        {{ group.title }}
-                      </p>
+                      <p class="lead break" v-bind:class="{ 'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3 }">{{ group.title }} {{ group.index }}</p>
                       <p class="metadata" v-if="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                         <span class="metadata">
                           <i aria-hidden="true" class="fa fa-envelope"></i>
