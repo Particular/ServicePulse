@@ -177,7 +177,7 @@ onMounted(() => {
                       </div>
                     </div>
                     <div class="row">
-                      <div isolate-click class="col-sm-12">
+                      <div class="col-sm-12">
                         <p class="small">
                           <button type="button" class="btn btn-link btn-sm" @click="deleteRedirect(redirect)">End Redirect</button>
                           <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">Modify Redirect</button>
