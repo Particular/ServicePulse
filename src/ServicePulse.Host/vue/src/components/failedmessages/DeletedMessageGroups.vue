@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { stats, connectionState } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
@@ -21,6 +21,7 @@ const initialLoadComplete = ref(false);
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 let refreshInterval = undefined;
 const route = useRoute();
+const router = useRouter();
 const showRestoreGroupModal = ref(false);
 const selectedGroup = ref({
   groupid: "",
@@ -186,6 +187,12 @@ function isBeingRestored(status) {
   return statusesForRestoreOperation.includes(status);
 }
 
+function navigateToGroup($event, groupId) {
+    if ($event.target.localName !== "button") {
+        router.push({ name: "deleted-message-groups", params: { groupId: groupId } });
+    }
+}
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -249,7 +256,7 @@ onMounted(() => {
               <div class="row">
                 <div class="col-sm-12 no-mobile-side-padding">
                   <div v-if="archiveGroups.length > 0">
-                    <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in archiveGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false">
+                    <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in archiveGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false" @click="navigateToGroup($event, group.id)">
                       <div class="col-sm-12 no-mobile-side-padding">
                         <div class="row">
                           <div class="col-sm-12 no-side-padding">
