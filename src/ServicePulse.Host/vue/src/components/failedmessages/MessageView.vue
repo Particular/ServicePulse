@@ -10,6 +10,7 @@ import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
 import ConfirmDialog from "../ConfirmDialog.vue";
+import FlowDiagram from "./FlowDiagram.vue";
 
 let refreshInterval = undefined;
 let panel = undefined;
@@ -137,8 +138,11 @@ function downloadHeadersAndBody() {
         failedMessage.value.messageBodyNotFound = true;
         return;
       }
+
       var message = data[0];
       failedMessage.value.headers = message.headers;
+      failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
+
       return downloadBody();
     })
     .catch((err) => {
@@ -387,8 +391,7 @@ onUnmounted(() => {
               <div v-if="panel === 2 && failedMessage.headersNotFound" class="alert alert-info">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
               <pre v-if="panel === 3 && !failedMessage.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
               <div v-if="panel === 3 && failedMessage.messageBodyNotFound" class="alert alert-info">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
-              
-              <!-- <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="panel === 4"></flow-diagram> -->
+              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id"></FlowDiagram>
             </div>
           </div>
 
