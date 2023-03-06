@@ -7,7 +7,6 @@ import { useShowToast } from "../../composables/toast.js";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import OrderBy from "./OrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
