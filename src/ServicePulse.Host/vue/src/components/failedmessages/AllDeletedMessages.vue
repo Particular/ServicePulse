@@ -64,7 +64,7 @@ function loadPagedMessages(groupId, page, sortBy, direction,  startDate, endDate
     let dateRange = startDate + '...' + endDate;
   let loadGroupDetails;
   if (groupId && !groupName.value) {
-    loadGroupDetails = useFetchFromServiceControl(`recoverability/groups/id/${groupId}`)
+      loadGroupDetails = useFetchFromServiceControl(`archive/groups/id/${groupId}`)
       .then((response) => {
         return response.json();
       })
