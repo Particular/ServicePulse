@@ -11,6 +11,7 @@ import TimeSince from "../TimeSince.vue";
 import moment from "moment";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import FlowDiagram from "./FlowDiagram.vue";
+import EditRetryDialog from "./EditRetryDialog.vue";
 
 let refreshInterval = undefined;
 let panel = undefined;
@@ -22,6 +23,7 @@ const configuration = ref([]);
 const showDeleteConfirm = ref(false);
 const showRestoreConfirm = ref(false);
 const showRetryConfirm = ref(false);
+const showEditRetryConfirm = ref(false);
 
 function loadFailedMessage() {
   return useFetchFromServiceControl("errors/last/" + id)
@@ -39,6 +41,7 @@ function loadFailedMessage() {
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
       message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+      message.isEditAndRetryEnabled = configuration.value.isEditAndRetryEnabled;
 
       if (failedMessage.value.last_modified === message.last_modified) {
         message.retried = failedMessage.value.retried;
@@ -62,6 +65,17 @@ function getConfiguration() {
     })
     .then((data) => {
       configuration.value = data;
+      return getEditAndRetryConfig();
+    });
+}
+
+function getEditAndRetryConfig() {
+  return useFetchFromServiceControl("edit/config")
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+      configuration.value.isEditAndRetryEnabled = data.enabled;
       return;
     });
 }
@@ -362,7 +376,7 @@ onUnmounted(() => {
                 <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
-                <!-- <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" ng-click="vm.editMessage()"><i class="fa fa-pencil"></i> Edit & retry</button> -->
+                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" @click="showEditRetryConfirm = true"><i class="fa fa-pencil"></i> Edit & retry</button>
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
                 <button type="button" class="btn btn-default" @click="exportMessage()" v-if="!failedMessage.notFound && !failedMessage.error"><i class="fa fa-download"></i> Export message</button>
               </div>
@@ -429,6 +443,8 @@ onUnmounted(() => {
               :heading="'Are you sure you want to retry this message?'"
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
+
+            <EditRetryDialog v-if="showEditRetryConfirm === true" @cancel="showEditRetryConfirm = false" v-bind:message="failedMessage"></EditRetryDialog>
           </Teleport>
         </div>
       </section>
