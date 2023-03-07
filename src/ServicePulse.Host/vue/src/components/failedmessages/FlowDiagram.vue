@@ -1,7 +1,8 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { select, hierarchy, zoom, tree } from "d3";
+import { useRouter } from "vue-router";
 import moment from "moment";
 
 const props = defineProps({
@@ -178,8 +179,7 @@ function update(source) {
     .append("xhtml")
     .html((d) => {
       const m = moment.utc(d.data.timeSent);
-
-      return '<div style="width:' + (rectNode.width - rectNode.textMargin * 2) + " px; height:" + (rectNode.height - rectNode.textMargin * 2) + ' px;" class="node-text wordwrap">' + (d.data.isError ? '<i class="fa pa-flow-failed"></i>' : "") + '<i class="fa ' + (d.data.type === "Timeout message" ? "pa-flow-timeout" : d.data.type === "Event message" ? "pa-flow-event" : "pa-flow-command") + '" title="' + d.data.type + '"></i><div class="lead righ-side-ellipsis" title="' + d.data.nodeName + '"><strong>' + (d.data.isError ? "<a href=#/failed-messages/message/" + d.data.id + ">" + d.data.nodeName + "</a>" : d.data.nodeName) + "</strong></div>" + '<span class="time-sent">' + `<span class="time-since">${m.fromNow()}</span></span>` + (d.data.sagaName ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' + d.data.sagaName + '">' + d.data.sagaName + "</div>" : "") + "</div>";
+      return '<div style="width:' + (rectNode.width - rectNode.textMargin * 2) + " px; height:" + (rectNode.height - rectNode.textMargin * 2) + ' px;" class="node-text wordwrap">' + (d.data.isError ? '<i class="fa pa-flow-failed"></i>' : "") + '<i class="fa ' + (d.data.type === "Timeout message" ? "pa-flow-timeout" : d.data.type === "Event message" ? "pa-flow-event" : "pa-flow-command") + '" title="' + d.data.type + '"></i><div class="lead righ-side-ellipsis" title="' + d.data.nodeName + '"><strong>' + (d.data.isError ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" + d.data.id + "\" })' href='javascript:void(0)'>" + d.data.nodeName + "</a>" : d.data.nodeName) + "</strong></div>" + '<span class="time-sent">' + `<span class="time-since">${m.fromNow()}</span></span>` + (d.data.sagaName ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' + d.data.sagaName + '">' + d.data.sagaName + "</div>" : "") + "</div>";
     });
 
   // UPDATE
@@ -279,7 +279,17 @@ function update(source) {
   }
 }
 
+onUnmounted(() => {
+  // dereference the router
+  window.__routerReferenceForDynamicAnchorTags = undefined;
+});
+
 onMounted(() => {
+  // This is needed to expose the router to the dynamic HTML that's created as part of the rendering
+  // Without this a full page refresh is required
+  // I'm so sorry for this :(
+  window.__routerReferenceForDynamicAnchorTags = useRouter();
+
   getConversation(props.conversationId)
     .then((messages) => {
       return messages.map(mapMessage);
