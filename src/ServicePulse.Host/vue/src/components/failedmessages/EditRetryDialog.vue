@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { reactive, onMounted } from "vue";
 
 const emit = defineEmits(["cancel"]);
 
@@ -7,7 +7,7 @@ const settings = defineProps({
   message: Object,
 });
 
-const panel = reactive({number: undefined});
+const panel = reactive({ number: undefined });
 
 /* function retry() {
     emit("retry", settings);
@@ -18,8 +18,8 @@ function close() {
 }
 
 function togglePanel(panelNum) {
-    panel.number = panelNum;
-    return false;
+  panel.number = panelNum;
+  return false;
 }
 
 onMounted(() => {
@@ -47,16 +47,16 @@ onMounted(() => {
                   </div>
                   <!-- <pre isolate-click v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
                                 <pre isolate-click v-if="panel === 1">{{ failedMessage.exception.stack_trace }}</pre> -->
-                    <table isolate-click class="table" v-if="panel.number === 1">
+                  <table isolate-click class="table" v-if="panel.number === 1">
                     <tbody>
-                        <tr class="interactiveList" v-for="(header, index) in settings.message.headers" :key="index">
+                      <tr class="interactiveList" v-for="(header, index) in settings.message.headers" :key="index">
                         <td nowrap="nowrap">{{ header.key }}</td>
                         <td>
-                            <pre>{{ header.value }}</pre>
+                          <pre>{{ header.value }}</pre>
                         </td>
-                        </tr>
+                      </tr>
                     </tbody>
-                    </table>
+                  </table>
                   <!-- <div isolate-click class="alert alert-info" v-if="panel === 2 && failedMessage.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div> -->
                   <!-- <pre isolate-click v-if="panel === 3 && !failedMessage.messageBodyNotFound">{{ failedMessage.messageBody }}</pre> -->
                   <!-- <div isolate-click class="alert alert-info" v-if="panel === 3 && failedMessage.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div> -->
@@ -78,11 +78,10 @@ onMounted(() => {
 
 <style>
 .modal-container {
-    width: 70%;
-    
+  width: 70%;
 }
 .modal-body {
-    overflow-y: scroll;
-    height: 80vh;
+  overflow-y: scroll;
+  height: 80vh;
 }
 </style>
