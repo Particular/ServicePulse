@@ -13,14 +13,14 @@ import OrderBy from "./OrderBy.vue";
 const selectedClassifier = ref(null);
 const classifiers = ref([]);
 const messageGroupList = ref();
-const forceReRenderKey = ref(0);
+const orderBy = ref();
 const sortMethod = ref(() => {});
 
 function sortGroups(sort) {
-  sortMethod.value = sort.sort;
+  sortMethod.value = sort.sort ?? orderBy.value.getSortFunction(sort.selector, "asc");
 
   // force a re-render of the messagegroup list
-  forceReRenderKey.value += 1;
+  messageGroupList.value.loadFailedMessageGroups();
 }
 
 function classifierUpdated(classifier) {
@@ -136,7 +136,7 @@ onMounted(() => {
                 </li>
               </ul>
             </div>
-            <OrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated" :sortOptions="sortOptions"></OrderBy>
+            <OrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated" :sortOptions="sortOptions" ref="orderBy"></OrderBy>
           </div>
         </div>
         <div class="box">
@@ -144,7 +144,7 @@ onMounted(() => {
             <div class="col-12">
               <div class="list-section">
                 <div class="col-12 form-group">
-                  <MessageGroupList :key="forceReRenderKey" :sortFunction="sortMethod" ref="messageGroupList"></MessageGroupList>
+                  <MessageGroupList :sortFunction="sortMethod" ref="messageGroupList"></MessageGroupList>
                 </div>
               </div>
             </div>
