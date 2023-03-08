@@ -14,9 +14,7 @@ const selectedClassifier = ref(null);
 const classifiers = ref([]);
 const messageGroupList = ref();
 const forceReRenderKey = ref(0);
-const sortMethod = ref((firstElement, secondElement) => {
-  return firstElement.title < secondElement.title ? -1 : 1;
-}); // default sort by title in ASC order
+const sortMethod = ref(() => {});
 
 function sortGroups(sort) {
   sortMethod.value = sort.sort;
@@ -24,7 +22,6 @@ function sortGroups(sort) {
   // force a re-render of the messagegroup list
   forceReRenderKey.value += 1;
 }
-
 
 function classifierUpdated(classifier) {
   messageGroupList.value.loadFailedMessageGroups(classifier);

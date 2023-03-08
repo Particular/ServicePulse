@@ -58,24 +58,43 @@ function classifierChanged(classifier) {
 
 function getArchiveGroups(classifier) {
   return useGetArchiveGroups(classifier).then((result) => {
-    if (result.length > 0) {
+    if (result.length === 0 && undismissedRestoreGroups.value.length > 0) {
       undismissedRestoreGroups.value.forEach((deletedGroup) => {
-        if (!result.find((group) => group.id === deletedGroup.id)) {
-          deletedGroup.need_user_acknowledgement = true;
-          deletedGroup.workflow_state.status = "restorecompleted";
-        }
+        deletedGroup.need_user_acknowledgement = true;
+        deletedGroup.workflow_state.status = "restorecompleted";
+      });
+    }
+
+    let maxIndex = archiveGroups.value.reduce((currentMax, currentGroup) => Math.max(currentMax, currentGroup.index), 0);
+
+    result.forEach((serverGroup) => {
+      let previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id == serverGroup.id);
+
+      if (previousGroup) {
+        serverGroup.index = previousGroup.index;
+      } else {
+        serverGroup.index = ++maxIndex;
+      }
+    });
+
+    undismissedRestoreGroups.value.forEach((deletedGroup) => {
+      if (!result.find((group) => group.id === deletedGroup.id)) {
+        deletedGroup.need_user_acknowledgement = true;
+        deletedGroup.workflow_state.status = "restorecompleted";
+      }
+    });
+
+    // need a map in some ui state for controlling animations
+    archiveGroups.value = result
+      .filter((group) => !undismissedRestoreGroups.value.find((deletedGroup) => deletedGroup.id === group.id))
+      .map(initializeGroupState)
+      .concat(undismissedRestoreGroups.value)
+      .sort((group1, group2) => {
+        return group1.index - group2.index;
       });
 
-      // need a map in some ui state for controlling animations
-      archiveGroups.value = result
-        .filter((group) => !undismissedRestoreGroups.value.find((deletedGroup) => deletedGroup.id === group.id))
-        .map(initializeGroupState)
-        .concat(undismissedRestoreGroups.value);
-
-      if (archiveGroups.value.length !== stats.number_of_archive_groups) {
-        stats.number_of_archive_groups = archiveGroups.value.length;
-        emit("ArchiveGroupCountUpdated", stats.number_of_archive_groups);
-      }
+    if (archiveGroups.value.length !== stats.number_of_archive_groups) {
+      stats.number_of_archive_groups = archiveGroups.value.length;
     }
   });
 }
@@ -136,16 +155,15 @@ function showRestoreGroupDialog(group) {
 }
 
 function restoreGroup() {
+  undismissedRestoreGroups.value.push(selectedGroup.value);
+
   const group = selectedGroup.value;
   group.workflow_state = { status: "restorestarted", message: "Restore request initiated..." };
-  group.operation_start_time = new Date();
-
-  undismissedRestoreGroups.value.push(group);
+  group.operation_start_time = new Date().toUTCString();
 
   useRestoreGroup(group.id).then((result) => {
     if (result.message === "success") {
       groupRestoreSuccessful.value = true;
-      emit("RestoreGroupRequestAccepted", group);
       useShowToast("info", "Info", "Group restore started...");
     } else {
       groupRestoreSuccessful.value = false;
@@ -174,11 +192,14 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
 
 var acknowledgeGroup = function (dismissedGroup) {
   undismissedRestoreGroups.value.splice(
-    undismissedRestoreGroups.value.indexOf((group) => group.id === dismissedGroup.id),
+    undismissedRestoreGroups.value.findIndex((group) => {
+      return group.id === dismissedGroup.id;
+    }),
     1
   );
+
   archiveGroups.value.splice(
-    archiveGroups.value.indexOf((group) => group.id === dismissedGroup.id),
+    archiveGroups.value.findIndex((group) => group.id === dismissedGroup.id),
     1
   );
 };
@@ -188,9 +209,9 @@ function isBeingRestored(status) {
 }
 
 function navigateToGroup($event, groupId) {
-    if ($event.target.localName !== "button") {
-        router.push({ name: "deleted-message-groups", params: { groupId: groupId } });
-    }
+  if ($event.target.localName !== "button") {
+    router.push({ name: "deleted-message-groups", params: { groupId: groupId } });
+  }
 }
 
 onUnmounted(() => {
