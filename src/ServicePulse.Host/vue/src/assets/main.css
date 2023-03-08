@@ -405,48 +405,48 @@ input.check-label {
 
 .metadata > .btn-sm > i {
     color: #00a3c4;
-  }
+}
   
-  .metadata:first-child {
+.metadata:first-child {
     padding-left: 0;
-  }
+}
   
-  span.metadata {
+span.metadata {
     display: inline-block;
     padding: 0px 20px 2px 0;
     color: #777f7f;
-  }
+}
   
-  .metadata > .in-progress {
+.metadata > .in-progress {
     font-style: italic;
     color: white;
-  }
+}
   
-  .metadata > .metadata-label {
+.metadata > .metadata-label {
     padding: 6px 10px;
-  }
+}
 
-  .btn-xs, .btn-group-xs > .btn {
+.btn-xs, .btn-group-xs > .btn {
     border-radius: 3px;
-  }
+}
 
-  .btn-retry-dismiss {
+.btn-retry-dismiss {
     position: relative;
     height: 28px;
     width: 74px;
     top: -2px;
     left: 11px;
     line-height: 1;
-  }
+}
   
-  .btn.btn-retry-dismiss {
+.btn.btn-retry-dismiss {
     border-radius: 4px;
     padding: 8px 16px;
-  }
+}
   
-  .btn.btn-xs {
+.btn.btn-xs {
     font-size: 12px;
-  }
+}
 
 .btn.disabled,
 .btn[disabled],
@@ -461,4 +461,24 @@ fieldset[disabled] {
 .btn[disabled]:hover,
 fieldset[disabled]:hover {
     cursor: not-allowed;
+}
+.box-group:hover {
+    background-color: #edf6f7;
+    border: 1px solid #00a3c4;
+    cursor: pointer;
+}
+
+.box-group {
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid #eee;
+    padding: 15px 40px;
+}
+
+.box-container {
+    padding: 0;
+    background-color: #fff;
+}
+
+.box-container .list-section .col-12.form-group {
+    margin-bottom: 0;
 }
