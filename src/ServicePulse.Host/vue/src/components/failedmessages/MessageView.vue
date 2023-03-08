@@ -458,7 +458,13 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog v-if="showEditRetryConfirm === true" @cancel="cancelEditAndRetry()" @retry="confirmEditAndRetry()" :message="failedMessage" :configuration="configuration.edit"></EditRetryDialog>
+            <EditRetryDialog 
+              v-if="showEditRetryConfirm === true" 
+              @cancel="cancelEditAndRetry()" 
+              @retry="confirmEditAndRetry()" 
+              :message="failedMessage" 
+              :configuration="configuration.edit"
+            ></EditRetryDialog>
           </Teleport>
         </div>
       </section>
