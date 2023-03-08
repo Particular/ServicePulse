@@ -63,6 +63,10 @@ function setSortOptions(isInitialLoad) {
   emit("sortUpdated", savedSort, isInitialLoad);
 }
 
+defineExpose({
+  getSortFunction,
+});
+
 onMounted(() => {
   setSortOptions(true);
 });

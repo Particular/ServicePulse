@@ -93,6 +93,7 @@ function loadFailedMessageGroups(groupBy) {
     emit("InitialLoadComplete");
   });
 }
+
 //delete comment note
 function deleteNote(group) {
   noteSaveSuccessful.value = null;
@@ -258,17 +259,17 @@ function clearInMemoryData() {
   groupsWithNotesAdded = [];
 }
 
-onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
-  }
-});
-
 function navigateToGroup($event, groupId) {
   if ($event.target.localName !== "button") {
     router.push({ name: "message-groups", params: { groupId: groupId } });
   }
 }
+
+onUnmounted(() => {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+});
 
 onMounted(() => {
   refreshInterval = setInterval(() => {
