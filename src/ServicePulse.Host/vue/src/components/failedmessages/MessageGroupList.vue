@@ -10,16 +10,21 @@ import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
+const props = defineProps({
+  sortFunction: Function,
+});
+
+const router = useRouter();
 
 let refreshInterval = undefined;
 let groupsWithNotesAdded = [];
-const router = useRouter();
-const props = defineProps({
-  sortFunction: Object,
-});
-
-
 let savedGroupBy = null;
+
+const selectedGroup = ref({
+  groupid: "",
+  messagecount: "",
+  comment: "",
+});
 
 const exceptionGroups = ref([]);
 const loadingData = ref(true);
@@ -28,12 +33,6 @@ const showDeleteNoteModal = ref(false);
 const showEditNoteModal = ref(false);
 const showDeleteGroupModal = ref(false);
 const showRetryGroupModal = ref(false);
-
-const selectedGroup = ref({
-  groupid: "",
-  messagecount: "",
-  comment: "",
-});
 const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
@@ -166,7 +165,6 @@ function saveDeleteGroup(group) {
   useArchiveExceptionGroup(group.groupid).then((result) => {
     if (result.message === "success") {
       groupDeleteSuccessful.value = true;
-      emit("ArchiveGroupRequestAccepted", group);
     } else {
       groupDeleteSuccessful.value = false;
       useShowToast("error", "Error", "Failed to delete the group:" + result.message);
@@ -280,7 +278,7 @@ onMounted(() => {
 
 defineExpose({
   loadFailedMessageGroups,
-  clearInMemoryData
+  clearInMemoryData,
 });
 </script>
 

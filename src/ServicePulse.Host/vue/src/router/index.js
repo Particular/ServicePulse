@@ -51,9 +51,9 @@ const router = createRouter({
           component: () => import("../components/failedmessages/AllFailedMessages.vue"),
         },
         {
-            name: "deleted-message-groups",
-            path: "deleted-messages/group/:groupId",
-            component: () => import("../components/failedmessages/AllDeletedMessages.vue"),
+          name: "deleted-message-groups",
+          path: "deleted-messages/group/:groupId",
+          component: () => import("../components/failedmessages/AllDeletedMessages.vue"),
         },
       ],
     },
