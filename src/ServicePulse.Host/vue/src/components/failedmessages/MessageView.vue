@@ -14,7 +14,7 @@ import FlowDiagram from "./FlowDiagram.vue";
 import EditRetryDialog from "./EditRetryDialog.vue";
 
 let refreshInterval = undefined;
-let panel = undefined;
+let panel = ref();
 const route = useRoute();
 const id = route.params.id;
 const failedMessage = ref({});
@@ -41,7 +41,7 @@ function loadFailedMessage() {
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
       message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-      message.isEditAndRetryEnabled = configuration.value.isEditAndRetryEnabled;
+      message.isEditAndRetryEnabled = configuration.value.edit.enabled;
 
       if (failedMessage.value.last_modified === message.last_modified) {
         message.retried = failedMessage.value.retried;
@@ -75,7 +75,7 @@ function getEditAndRetryConfig() {
       return response.json();
     })
     .then((data) => {
-      configuration.value.isEditAndRetryEnabled = data.enabled;
+      configuration.value.edit = data;
       return;
     });
 }
@@ -85,16 +85,6 @@ function updateMessageDeleteDate() {
   failedMessage.value.delete_soon = countdown < moment();
   failedMessage.value.deleted_in = countdown.format();
 }
-
-/* function getEditAndRetryConfig() {
-  return useFetchFromServiceControl("edit/config")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      failedMessage.value.isEditAndRetryEnabled = data.enabled;
-    });
-} */
 
 function archiveMessage() {
   useShowToast("info", "Info", `Deleting the message ${id} ...`);
@@ -281,7 +271,7 @@ function formatJson(json) {
 
 function togglePanel(panelNum) {
   if (!failedMessage.value.notFound && !failedMessage.value.error) {
-    panel = panelNum;
+    panel.value = panelNum;
   }
   return false;
 }
@@ -316,6 +306,34 @@ function exportMessage() {
   useShowToast("info", "Info", "Message export completed.");
 }
 
+function showEditAndRetryModal() {
+  showEditRetryConfirm.value = true;
+  stopRefreshInterval();
+}
+
+function cancelEditAndRetry() {
+  showEditRetryConfirm.value = false;
+  startRefreshInterval();
+}
+
+function confirmEditAndRetry() {
+  showEditRetryConfirm.value = false;
+  startRefreshInterval();
+  return retryMessage();
+}
+
+function startRefreshInterval() {
+  refreshInterval = setInterval(() => {
+    loadFailedMessage();
+  }, 5000);
+}
+
+function stopRefreshInterval() {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+}
+
 onBeforeMount(() => {
   getConfiguration().then(() => {
     return loadFailedMessage();
@@ -324,16 +342,11 @@ onBeforeMount(() => {
 
 onMounted(() => {
   togglePanel(1);
-
-  refreshInterval = setInterval(() => {
-    loadFailedMessage();
-  }, 5000);
+  startRefreshInterval();
 });
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
-  }
+  stopRefreshInterval();
 });
 </script>
 
@@ -376,7 +389,7 @@ onUnmounted(() => {
                 <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
                 <button type="button" v-if="failedMessage.archived" class="btn btn-default" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
-                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" @click="showEditRetryConfirm = true"><i class="fa fa-pencil"></i> Edit & retry</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" @click="showEditAndRetryModal()"><i class="fa fa-pencil"></i> Edit & retry</button>
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
                 <button type="button" class="btn btn-default" @click="exportMessage()" v-if="!failedMessage.notFound && !failedMessage.error"><i class="fa fa-download"></i> Export message</button>
               </div>
@@ -390,9 +403,9 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 3 }" class="nav-item" v-on:click="togglePanel(3)"><a href="#">Message body</a></h5>
                 <h5 :class="{ active: panel === 4 }" class="nav-item" v-on:click="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
               </div>
-              <pre v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
-              <pre v-if="panel === 1">{{ failedMessage.exception.stack_trace }}</pre>
-              <table class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
+              <pre isolate-click v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
+              <pre isolate-click v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
+              <table isolate-click class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
                 <tbody>
                   <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
                     <td nowrap="nowrap">{{ header.key }}</td>
@@ -444,7 +457,13 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog v-if="showEditRetryConfirm === true" @cancel="showEditRetryConfirm = false" v-bind:message="failedMessage"></EditRetryDialog>
+            <EditRetryDialog 
+              v-if="showEditRetryConfirm === true" 
+              @cancel="cancelEditAndRetry()" 
+              @retry="confirmEditAndRetry()" 
+              :message="failedMessage" 
+              :configuration="configuration.edit"
+            ></EditRetryDialog>
           </Teleport>
         </div>
       </section>
