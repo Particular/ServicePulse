@@ -155,6 +155,8 @@ function showRestoreGroupDialog(group) {
 }
 
 function restoreGroup() {
+  selectedGroup.value = archiveGroups.value.find((group) => group.id == selectedGroup.value.id);
+
   undismissedRestoreGroups.value.push(selectedGroup.value);
 
   const group = selectedGroup.value;
