@@ -25,7 +25,7 @@ function subIsActiveSubPath(subPath) {
         <div class="col-sm-12">
           <div class="tabs">
             <!--Failed Message Groups-->
-            <h5 :class="{ active: subIsActive('/failed-messages') || subIsActiveSubPath('/failed-messages/group/'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+            <h5 :class="{ active: subIsActive('/failed-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <RouterLink :to="{ path: '/failed-messages' }">
                 Failed Message Groups
                 <span v-show="stats.number_of_failed_messages === 0"> (0) </span>
@@ -34,7 +34,7 @@ function subIsActiveSubPath(subPath) {
             </h5>
 
             <!--All Failed Messages-->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-failed-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-failed-messages') || subIsActiveSubPath('/failed-messages/group/'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <RouterLink :to="{ path: '/failed-messages/all-failed-messages' }">All Failed Messages </RouterLink>
               <span v-if="stats.number_of_failed_messages !== 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </h5>
@@ -46,7 +46,7 @@ function subIsActiveSubPath(subPath) {
             </h5>
 
             <!--All Deleted Messages-->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-deleted-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-deleted-messages')  || subIsActiveSubPath('/deleted-messages/group/'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <RouterLink :to="{ path: '/failed-messages/all-deleted-messages' }">All Deleted Messages</RouterLink>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
