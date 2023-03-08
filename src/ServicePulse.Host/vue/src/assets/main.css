@@ -447,3 +447,18 @@ input.check-label {
   .btn.btn-xs {
     font-size: 12px;
   }
+
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+    pointer-events: all;
+}
+
+.btn.disabled:hover,
+.btn[disabled]:hover,
+fieldset[disabled]:hover {
+    cursor: not-allowed;
+}
