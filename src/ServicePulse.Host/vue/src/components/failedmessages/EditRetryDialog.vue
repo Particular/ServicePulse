@@ -1,29 +1,50 @@
 <script setup>
-import { reactive, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 
-const emit = defineEmits(["cancel"]);
+const emit = defineEmits(["cancel", "retry"]);
 
 const settings = defineProps({
   message: Object,
+  configuration: Object,
 });
 
-const panel = reactive({ number: undefined });
+let panel = ref();
+let message = ref();
 
-/* function retry() {
-    emit("retry", settings);
-} */
+function initializeMessageHeaders() {
+  message.value = settings.message;
+  settings.message.headers.forEach((header, index) => {
+    header.isLocked = false;
+    header.isSensitive = false;
+    header.isMarkedAsRemoved = false;
+    header.isChanged = false;
+
+    if (settings.configuration.locked_headers.includes(header.key)) {
+      header.isLocked = true;
+    } else if (settings.configuration.sensitive_headers.includes(header.key)) {
+      header.isSensitive = true;
+    }
+
+    message.value.headers[index] = header;
+  });
+}
 
 function close() {
   emit("cancel");
 }
 
+function retry() {
+  emit("retry", settings);
+}
+
 function togglePanel(panelNum) {
-  panel.number = panelNum;
+  panel.value = panelNum;
   return false;
 }
 
 onMounted(() => {
   togglePanel(1);
+  initializeMessageHeaders();
 });
 </script>
 
@@ -39,35 +60,38 @@ onMounted(() => {
               </div>
             </div>
             <div class="modal-body">
-              <div class="row">
-                <div isolate-click class="col-sm-12 no-side-padding">
+              <div class="row msg-editor-content">
+                <div class="col-sm-12 no-side-padding">
                   <div class="nav tabs msg-tabs">
-                    <h5 :class="{ active: panelFoo === 1 }" class="nav-item" @click="togglePanel(1)"><a href="#">Headers</a></h5>
-                    <h5 :class="{ active: panelFoo === 2 }" class="nav-item" @click="togglePanel(2)"><a href="#">Message body</a></h5>
+                    <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="#">Headers</a></h5>
+                    <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="#">Message body</a></h5>
                   </div>
-                  <!-- <pre isolate-click v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
-                                <pre isolate-click v-if="panel === 1">{{ failedMessage.exception.stack_trace }}</pre> -->
-                  <table isolate-click class="table" v-if="panel.number === 1">
+                  <table class="table" v-if="panel === 1">
                     <tbody>
-                      <tr class="interactiveList" v-for="(header, index) in settings.message.headers" :key="index">
-                        <td nowrap="nowrap">{{ header.key }}</td>
+                      <tr class="interactiveList" v-for="(header, index) in message.headers" :key="index">
+                        <td nowrap="nowrap">
+                          {{ header.key }}
+                          &nbsp;
+                          <i class="fa fa-lock" tooltip="Protected system header" v-if="header.isLocked"></i>
+                        </td>
                         <td>
-                          <pre>{{ header.value }}</pre>
+                          <input class="form-control" :disabled="settings.configuration.locked_headers.includes(header.key)" v-model="header.value" />
+                        </td>
+                        <td>
+                          <a v-if="!settings.configuration.locked_headers.includes(header.key)" href="#">
+                            <i class="fa fa-trash" tooltip="Protected system header"></i>
+                          </a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <!-- <div isolate-click class="alert alert-info" v-if="panel === 2 && failedMessage.headersNotFound">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div> -->
-                  <!-- <pre isolate-click v-if="panel === 3 && !failedMessage.messageBodyNotFound">{{ failedMessage.messageBody }}</pre> -->
-                  <!-- <div isolate-click class="alert alert-info" v-if="panel === 3 && failedMessage.messageBodyNotFound">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div> -->
-                  <!-- <flow-diagram v-if="failedMessage.conversationId" conversation-id="{{failedMessage.conversationId}}" v-show="panel === 4"></flow-diagram> -->
                 </div>
               </div>
-              <pre isolate-click v-if="panel.number === 2">{{ settings.message.messageBody }}</pre>
+              <pre v-if="panel === 2">{{ settings.message.messageBody }}</pre>
             </div>
             <div class="modal-footer">
-              <!-- <button class="btn btn-primary" @click="confirm">{{ hideCancel ? "Ok" : "Yes" }}</button> -->
-              <button class="btn btn-default" @click="close">Cancel</button>
+              <button class="btn btn-default" @click="close()">Cancel</button>
+              <button class="btn btn-primary" @click="retry()">Retry</button>
             </div>
           </div>
         </div>
@@ -83,5 +107,10 @@ onMounted(() => {
 .modal-body {
   overflow-y: scroll;
   height: 80vh;
+}
+.msg-editor-content tr td:first-child {
+  padding-top: 15px;
+  padding-left: 0;
+  width: 30%;
 }
 </style>
