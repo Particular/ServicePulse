@@ -146,4 +146,9 @@ onMounted(() => {
   height: 100%;
   margin-top: 20px;
 }
+.msg-editor-content tr td:first-child {
+  padding-top: 15px;
+  padding-left: 0;
+  width: 30%;
+}
 </style>
