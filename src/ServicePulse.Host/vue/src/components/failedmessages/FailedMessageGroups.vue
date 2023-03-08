@@ -139,7 +139,7 @@ onMounted(() => {
             <OrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated" :sortOptions="sortOptions" ref="orderBy"></OrderBy>
           </div>
         </div>
-        <div class="box">
+        <div class="box-container">
           <div class="row">
             <div class="col-12">
               <div class="list-section">

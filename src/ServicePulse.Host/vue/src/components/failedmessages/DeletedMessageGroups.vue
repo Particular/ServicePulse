@@ -267,7 +267,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="box">
+        <div class="box-container">
           <div class="messagegrouplist">
             <div ref="messageGroupList">
               <div class="row">
@@ -371,10 +371,6 @@ onMounted(() => {
 <style>
 .fake-link i {
   padding-right: 0.2em;
-}
-
-.messagegrouplist {
-  padding-bottom: 2em;
 }
 
 .msg-group-menu.dropdown {

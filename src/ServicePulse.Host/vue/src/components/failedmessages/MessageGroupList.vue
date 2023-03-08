@@ -15,7 +15,6 @@ const props = defineProps({
 });
 
 const router = useRouter();
-
 let refreshInterval = undefined;
 let groupsWithNotesAdded = [];
 let savedGroupBy = null;
@@ -504,10 +503,6 @@ defineExpose({
 <style>
 .fake-link i {
   padding-right: 0.2em;
-}
-
-.messagegrouplist {
-  padding-bottom: 2em;
 }
 
 .toolbar-menus > .msg-group-menu {
