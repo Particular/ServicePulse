@@ -12,7 +12,6 @@ import moment from "moment";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import FlowDiagram from "./FlowDiagram.vue";
 import EditRetryDialog from "./EditRetryDialog.vue";
-import FlowDiagram from "./FlowDiagram.vue";
 
 let refreshInterval = undefined;
 let panel = ref();
