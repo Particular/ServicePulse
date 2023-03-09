@@ -56,7 +56,7 @@ onMounted(() => {
 
 <template>
   <section name="failed_message_editor">
-    <div class="model modal-msg-editor modal-open" style="z-index: 1050; display: block">
+    <div class="model modal-msg-editor" style="z-index: 1050; display: block">
       <div class="modal-mask">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -97,8 +97,10 @@ onMounted(() => {
                           </tr>
                         </tbody>
                       </table>
+                      <div style="height: calc(100% - 260px);">
+                        <textarea v-if="panel === 2" class="form-control" v-model="message.messageBody"></textarea>
+                      </div>
                     </div>
-                    <textarea v-if="panel === 2" class="form-control" v-model="message.messageBody"></textarea>
                   </div>
                 </div>
               </div>
@@ -140,15 +142,5 @@ onMounted(() => {
   position: relative;
   top: 1px;
   margin-right: 20px;
-}
-
-.modal-body textarea {
-  height: 100%;
-  margin-top: 20px;
-}
-.msg-editor-content tr td:first-child {
-  padding-top: 15px;
-  padding-left: 0;
-  width: 30%;
 }
 </style>
