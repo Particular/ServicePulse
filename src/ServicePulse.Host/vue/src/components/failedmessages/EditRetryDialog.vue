@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 
 const emit = defineEmits(["cancel", "retry"]);
 
@@ -10,11 +10,12 @@ const settings = defineProps({
 
 let panel = ref();
 let message = ref();
-const origMessageBody = settings.message.messageBody;
-const messageBody = computed(() => settings.message.messageBody);
-const messageHeaders = computed(() => settings.message.headers);
+let origMessageBody = undefined;
 let showEditAndRetryConfirmation = ref(false);
 //let showCancelConfirmation = ref(false);
+
+const messageBody = computed(() => settings.message.messageBody);
+const messageHeaders = computed(() => settings.message.headers);
 
 watch(messageBody, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
@@ -30,13 +31,6 @@ watch(messageBody, async (newValue, oldValue) => {
 watch(messageHeaders, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
     console.log("Message headers have changed");
-  }
-});
-
-watch(message, async (newValue) => {
-  if (newValue === undefined) {
-    console.log("Message body is empty");
-    return;
   }
 });
 
@@ -58,6 +52,7 @@ function resetBodyChanges() {
 
 function initializeMessageBodyAndHeaders() {
   message.value = settings.message;
+  origMessageBody = settings.message.messageBody;
   message.value.isBodyEmpty = false;
   message.value.isBodyChanged = false;
   settings.message.headers.forEach((header, index) => {
