@@ -197,6 +197,7 @@ label {
 }
 
 .btn.btn-primary {
+    padding: 8px 16px;
     background-color: #00A3C4 !important;
     border-color: #0686AA;
     color: #fff;
@@ -229,6 +230,13 @@ label {
     border-color: #00A3C4;
 }
 
+@media (min-width: 768px){
+    .modal-dialog {
+        width: 600px;
+        margin: 30px auto;
+    }
+}
+
 .modal-open .modal.modal-msg-editor,
 .modal-open {
     overflow-y: hidden;
@@ -247,8 +255,31 @@ label {
     margin-top: 20px;
 }
 
-.modal-msg-editor .row, .modal-msg-editor .col-sm-12 {
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.modal-msg-editor .row.msg-editor-tabs {
+    height: 52px;
+    position: relative;
+    box-shadow: -10px 20px 20px #fff;
+    z-index: 10;
+}
+
+.modal-msg-editor .row.msg-editor-content table {
+    margin-top: 20px;
+}
+
+.modal-msg-editor .row, 
+.modal-msg-editor .col-sm-12 {
     height: 100%;
+}
+
+.modal-msg-editor .row.msg-editor-content {
+    height: calc(100% - 37px);
+    overflow-y: auto;
+    padding-right: 15px;
 }
 
 .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody"], .modal-msg-editor div[ng-show="message.panel === 1 && message.messageBody !== undefined && message.messageBody !== null"] {
@@ -322,8 +353,25 @@ label {
     border-top: 1px solid #e5e5e5;
 }
 
+.modal-container {
+    padding: 0;
+    border-radius: 5px;
+}
+
 .modal-container .btn {
     font-size: 14px;
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #999;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+    box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
+    outline: 0;
 }
 
 .form-control {
@@ -390,11 +438,6 @@ input.check-label {
 .action-btns .btn {
     margin-left: 0;
     margin-right: 5px;
-}
-
-.modal-container {
-    padding: 0;
-    border-radius: 5px;
 }
 
 .metadata .label-important {

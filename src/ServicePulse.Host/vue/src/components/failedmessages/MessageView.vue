@@ -457,13 +457,7 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog 
-              v-if="showEditRetryConfirm === true" 
-              @cancel="cancelEditAndRetry()" 
-              @retry="confirmEditAndRetry()" 
-              :message="failedMessage" 
-              :configuration="configuration.edit"
-            ></EditRetryDialog>
+            <EditRetryDialog v-if="showEditRetryConfirm === true" @cancel="cancelEditAndRetry()" @retry="confirmEditAndRetry()" :message="failedMessage" :configuration="configuration.edit"></EditRetryDialog>
           </Teleport>
         </div>
       </section>
@@ -666,13 +660,6 @@ fieldset[disabled] .btn {
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
-.btn:hover,
-.btn:focus,
-.btn.focus {
-  color: #333;
-  text-decoration: none;
-}
-
 a:focus,
 button:focus {
   outline: 0 !important;
@@ -681,16 +668,6 @@ button:focus {
 button[disabled],
 html input[disabled] {
   cursor: default;
-}
-
-.btn-default {
-  padding: 8px 16px;
-}
-
-.btn-default {
-  color: #333;
-  background-color: #fff;
-  border-color: #ccc;
 }
 
 span.metadata {
