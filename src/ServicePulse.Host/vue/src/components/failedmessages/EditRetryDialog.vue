@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, reactive, onMounted, watch, computed } from "vue";
 
 const emit = defineEmits(["cancel", "retry"]);
 
@@ -10,11 +10,56 @@ const settings = defineProps({
 
 let panel = ref();
 let message = ref();
+const origMessageBody = settings.message.messageBody;
+const messageBody = computed(() => settings.message.messageBody);
+const messageHeaders = computed(() => settings.message.headers);
 let showEditAndRetryConfirmation = ref(false);
 //let showCancelConfirmation = ref(false);
 
-function initializeMessageHeaders() {
+watch(messageBody, async (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    message.value.isBodyChanged = true;
+    console.log("Message body changed");
+  }
+  if (newValue === "") {
+    message.value.isBodyEmpty = true;
+    console.log("Message body is empty");
+  }
+});
+
+watch(messageHeaders, async (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    console.log("Message headers have changed");
+  }
+});
+
+watch(message, async (newValue) => {
+  if (newValue === undefined) {
+    console.log("Message body is empty");
+    return;
+  }
+});
+
+function close() {
+  emit("cancel");
+}
+
+function retry() {
+  emit("retry", settings);
+}
+
+function confirmEditAndRetry() {
+  showEditAndRetryConfirmation.value = true;
+}
+
+function resetBodyChanges() {
+  message.value.messageBody = origMessageBody;
+}
+
+function initializeMessageBodyAndHeaders() {
   message.value = settings.message;
+  message.value.isBodyEmpty = false;
+  message.value.isBodyChanged = false;
   settings.message.headers.forEach((header, index) => {
     header.isLocked = false;
     header.isSensitive = false;
@@ -31,18 +76,6 @@ function initializeMessageHeaders() {
   });
 }
 
-function close() {
-  emit("cancel");
-}
-
-function retry() {
-  emit("retry", settings);
-}
-
-function confirmEditAndRetry() {
-  showEditAndRetryConfirmation.value = true;
-}
-
 function togglePanel(panelNum) {
   panel.value = panelNum;
   return false;
@@ -50,7 +83,7 @@ function togglePanel(panelNum) {
 
 onMounted(() => {
   togglePanel(1);
-  initializeMessageHeaders();
+  initializeMessageBodyAndHeaders();
 });
 </script>
 
@@ -78,6 +111,19 @@ onMounted(() => {
                   </div>
                   <div class="row msg-editor-content">
                     <div class="col-sm-12 no-side-padding">
+                      <!-- <div class="row alert alert-warning" ng-show="isEvent">
+                        <div class="col-sm-12">
+                            <i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by
+                            other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
+                            altering the system behavior.
+                        </div>
+                      </div> -->
+                      <!--  <div class="row alert alert-warning" ng-show="!message.isContentTypeSupported">
+                          <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{message.bodyContentType}}) is not supported. Only messages with body content serialized as JSON or XML can be edited.</div>
+                      </div> -->
+                      <!-- <div class="row alert alert-danger" ng-show="showEditRetryGenericError">
+                          <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
+                      </div> -->
                       <table class="table" v-if="panel === 1">
                         <tbody>
                           <tr class="interactiveList" v-for="(header, index) in message.headers" :key="index">
@@ -97,8 +143,11 @@ onMounted(() => {
                           </tr>
                         </tbody>
                       </table>
-                      <div style="height: calc(100% - 260px);">
-                        <textarea v-if="panel === 2" class="form-control" v-model="message.messageBody"></textarea>
+                      <div v-if="panel === 2" style="height: calc(100% - 260px)">
+                        <textarea class="form-control" v-model="message.messageBody"></textarea>
+                        <span class="empty-error" v-if="message.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
+                        <span class="reset-body" v-if="message.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()">Reset changes</a></span>
+                        <div class="alert alert-info" v-if="message.panel === 2 && message.bodyUnavailable">{{ message.bodyUnavailable }}</div>
                       </div>
                     </div>
                   </div>
@@ -122,10 +171,6 @@ onMounted(() => {
 </template>
 
 <style>
-.btn-primary:hover {
-  color: #fff;
-}
-
 .cancel-confirmation,
 .edit-retry-confirmation {
   background: #181919;
