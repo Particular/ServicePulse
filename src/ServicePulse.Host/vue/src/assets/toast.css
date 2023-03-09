@@ -36,6 +36,7 @@
     width: 400px;    
     padding-bottom: 24px;
     padding-right: 0px;
+    position: fixed;
 }
 
 .Vue-Toastification__toast {

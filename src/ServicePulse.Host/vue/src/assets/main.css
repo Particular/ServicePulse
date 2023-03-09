@@ -21,6 +21,7 @@ body {
     font-size: 14px;
     line-height: 1.42857143;
     background-color: #f2f6f7 !important;
+    overflow-y: scroll;
 }
 
 .fa {
