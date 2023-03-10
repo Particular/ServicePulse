@@ -5,12 +5,12 @@ import { licenseStatus } from "../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
-import RetryRedirectDelete from "./RetryRedirectDelete.vue";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "../../composables/toast.js";
 import TimeSince from "../TimeSince.vue";
 import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, useRetryPendingMessagesForQueue } from "../../composables/serviceRedirects.js";
+import ConfirmDialog from "../ConfirmDialog.vue";
 
 const isExpired = licenseStatus.isExpired;
 
@@ -116,9 +116,8 @@ function deleteRedirect(redirect) {
   (selectedRedirect.value.message_redirect_id = redirect.message_redirect_id), (showDelete.value = true);
 }
 
-function saveDeleteRedirect(redirectId) {
-  showDelete.value = false;
-  useDeleteRedirects(redirectId).then((result) => {
+function saveDeleteRedirect() {
+  useDeleteRedirects(selectedRedirect.value.message_redirect_id).then((result) => {
     if (result.message === "success") {
       redirectSaveSuccessful.value = true;
       useShowToast("info", "Info", "Redirect deleted");
@@ -190,7 +189,16 @@ onMounted(() => {
             </template>
           </div>
           <Teleport to="#modalDisplay">
-            <RetryRedirectDelete v-if="showDelete === true" :message_redirect_id="selectedRedirect.message_redirect_id" @cancel="showDelete = false" @delete="saveDeleteRedirect"></RetryRedirectDelete>
+            <ConfirmDialog
+              v-if="showDelete"
+              @cancel="showDelete = false"
+              @confirm="
+                showDelete = false;
+                saveDeleteRedirect();
+              "
+              :heading="'Are you sure you want to end the redirect?'"
+              :body="'Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.'"
+            ></ConfirmDialog>
           </Teleport>
           <Teleport to="#modalDisplay">
             <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
