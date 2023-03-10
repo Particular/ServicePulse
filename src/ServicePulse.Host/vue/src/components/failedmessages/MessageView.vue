@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
+import { useUnarchiveMessage, useArchiveMessage, useRetryMessages, useRetryEditedMessage } from "../../composables/serviceFailedMessage";
 import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useShowToast } from "../../composables/toast.js";
@@ -318,8 +318,21 @@ function cancelEditAndRetry() {
 
 function confirmEditAndRetry() {
   showEditRetryConfirm.value = false;
-  startRefreshInterval();
-  return retryMessage();
+  retryEditedMessage();
+  return startRefreshInterval();
+}
+
+function retryEditedMessage() {
+  useShowToast("info", "Info", `Retrying the edited message ${id} ...`);
+
+  return useRetryEditedMessage([id], failedMessage)
+    .then(() => {
+      failedMessage.value.retried = true;
+    })
+    .catch((err) => {
+      console.log(err);
+      return false;
+    });
 }
 
 function startRefreshInterval() {
@@ -371,6 +384,7 @@ onUnmounted(() => {
                 <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
                 <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
                 <span v-if="failedMessage.number_of_processing_attempts > 1" title="This message has already failed {{ failedMessage.number_of_processing_attempts }} times" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
+                <span v-if="failedMessage.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
                 <span class="metadata" v-if="failedMessage.time_of_failure"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
