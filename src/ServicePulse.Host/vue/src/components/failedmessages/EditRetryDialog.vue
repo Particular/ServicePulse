@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
+import MessageHeaders from "./EditMessageHeader.vue";
 
 const emit = defineEmits(["cancel", "retry"]);
 
@@ -11,28 +12,31 @@ const settings = defineProps({
 let panel = ref();
 let message = ref();
 let origMessageBody = undefined;
+
 let showEditAndRetryConfirmation = ref(false);
 //let showCancelConfirmation = ref(false);
 
 const messageBody = computed(() => settings.message.messageBody);
-const messageHeaders = computed(() => settings.message.headers);
+const messageHeaders = computed(() => message.value?.headers);
 
 watch(messageBody, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
     message.value.isBodyChanged = true;
-    console.log("Message body changed");
   }
   if (newValue === "") {
     message.value.isBodyEmpty = true;
-    console.log("Message body is empty");
+  } else {
+    message.value.isBodyEmpty = false;
   }
 });
 
-watch(messageHeaders, async (newValue, oldValue) => {
-  if (newValue !== oldValue) {
-    console.log("Message headers have changed");
-  }
-});
+watch(
+  () => messageHeaders.value,
+  (header) => {
+    console.log("Header value changed: " + header.value);
+  },
+  { deep: true }
+);
 
 function close() {
   emit("cancel");
@@ -51,10 +55,11 @@ function resetBodyChanges() {
 }
 
 function initializeMessageBodyAndHeaders() {
-  message.value = settings.message;
   origMessageBody = settings.message.messageBody;
+  message.value = settings.message;
   message.value.isBodyEmpty = false;
   message.value.isBodyChanged = false;
+
   settings.message.headers.forEach((header, index) => {
     header.isLocked = false;
     header.isSensitive = false;
@@ -122,19 +127,7 @@ onMounted(() => {
                       <table class="table" v-if="panel === 1">
                         <tbody>
                           <tr class="interactiveList" v-for="(header, index) in message.headers" :key="index">
-                            <td nowrap="nowrap">
-                              {{ header.key }}
-                              &nbsp;
-                              <i class="fa fa-lock" tooltip="Protected system header" v-if="header.isLocked"></i>
-                            </td>
-                            <td>
-                              <input class="form-control" :disabled="header.isLocked" v-model="header.value" />
-                            </td>
-                            <td>
-                              <a v-if="!settings.configuration.locked_headers.includes(header.key)" href="#">
-                                <i class="fa fa-trash" tooltip="Protected system header"></i>
-                              </a>
-                            </td>
+                            <MessageHeaders :header="header"></MessageHeaders>
                           </tr>
                         </tbody>
                       </table>
