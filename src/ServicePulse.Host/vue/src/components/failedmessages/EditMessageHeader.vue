@@ -13,8 +13,15 @@ watch(headerValue, async (newValue) => {
   header.value.isChanged = newValue !== origHeaderValue ? true : false;
 });
 
-function resetHeaderValue() {
+function resetHeaderChanges() {
   header.value.value = origHeaderValue;
+  header.value.isMarkedAsRemoved = false;
+  header.value.isChanged = false;
+}
+
+function markHeaderAsRemoved() {
+  header.value.isMarkedAsRemoved = true;
+  header.value.isChanged = true;
 }
 
 onMounted(() => {
@@ -24,7 +31,7 @@ onMounted(() => {
 
 <template>
   <td nowrap="nowrap">
-    {{ settings.header.key }}
+    <span :class="{ 'header-removed': header.isMarkedAsRemoved }">{{ settings.header.key }}</span>
     <span v-if="header.isLocked">
       &nbsp;
       <i class="fa fa-lock" tooltip="Protected system header"></i>
@@ -39,14 +46,25 @@ onMounted(() => {
     </span>
   </td>
   <td>
-    <input class="form-control" :disabled="header.isLocked" v-model="header.value" />
+    <input :class="{ 'header-removed': header.isMarkedAsRemoved }" class="form-control" :disabled="header.isLocked" v-model="header.value" />
   </td>
   <td>
-    <a v-if="!settings.header.isLocked" href="#">
+    <a v-if="!header.isLocked && !header.isMarkedAsRemoved" href="#" @click="markHeaderAsRemoved()">
       <i class="fa fa-trash" tooltip="Protected system header"></i>
     </a>
-    <a v-if="header.isChanged" href="#" @click="resetHeaderValue()">
+    <a v-if="header.isChanged" href="#" @click="resetHeaderChanges()">
       <i class="fa fa-undo" tooltip="Protected system header"></i>
     </a>
   </td>
 </template>
+
+<style>
+span.header-removed {
+  text-decoration: line-through 2px solid #ce4844;
+}
+
+input.header-removed {
+  opacity: 0.3;
+  pointer-events: none;
+}
+</style>

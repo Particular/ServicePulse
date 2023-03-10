@@ -243,6 +243,10 @@ label {
     overflow-y: hidden;
 }
 
+.modal-msg-editor td[nowrap="nowrap"] {
+    font-weight: bold;
+}
+
 .modal-msg-editor .reset-body {
     color: #00A3C4;
     font-weight: bold;

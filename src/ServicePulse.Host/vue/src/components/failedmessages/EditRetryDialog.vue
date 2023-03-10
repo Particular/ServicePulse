@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
-import MessageHeaders from "./EditMessageHeader.vue";
+import MessageHeader from "./EditMessageHeader.vue";
 
 const emit = defineEmits(["cancel", "retry"]);
 
@@ -127,7 +127,7 @@ onMounted(() => {
                       <table class="table" v-if="panel === 1">
                         <tbody>
                           <tr class="interactiveList" v-for="(header, index) in message.headers" :key="index">
-                            <MessageHeaders :header="header"></MessageHeaders>
+                            <MessageHeader :header="header"></MessageHeader>
                           </tr>
                         </tbody>
                       </table>
