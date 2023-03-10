@@ -494,6 +494,10 @@ span.metadata {
     padding: 0px 20px 2px 0;
     color: #777f7f;
 }
+
+span.metadata.metadata-link i.fa {
+    color: #00a3c4;
+}
   
 .metadata > .in-progress {
     font-style: italic;
