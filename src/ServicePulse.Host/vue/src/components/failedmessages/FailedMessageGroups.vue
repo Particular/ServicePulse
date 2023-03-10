@@ -23,7 +23,7 @@ function sortGroups(sort) {
   messageGroupList.value.loadFailedMessageGroups();
 }
 
-  messageGroupList.value.clearInMemoryData();
+messageGroupList.value.clearInMemoryData();
   messageGroupList.value.clearInMemoryData();
 const sortOptions = [
   {
