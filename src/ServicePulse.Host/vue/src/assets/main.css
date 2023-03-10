@@ -228,7 +228,8 @@ label {
     border-color: #00A3C4;
 }
 
-.modal-open .modal.modal-msg-editor {
+.modal-open .modal.modal-msg-editor,
+.modal-open {
     overflow-y: hidden;
 }
 
