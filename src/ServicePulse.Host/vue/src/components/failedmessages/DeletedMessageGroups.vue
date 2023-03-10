@@ -13,6 +13,7 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
+let pollingFaster = false;
 const messageGroupList = ref();
 const archiveGroups = ref([]);
 const undismissedRestoreGroups = ref([]);
@@ -155,6 +156,9 @@ function showRestoreGroupDialog(group) {
 }
 
 function restoreGroup() {
+  // We're starting a restore, poll more frequently
+  changeRefreshInterval(1000);
+
   selectedGroup.value = archiveGroups.value.find((group) => group.id == selectedGroup.value.id);
 
   undismissedRestoreGroups.value.push(selectedGroup.value);
@@ -216,6 +220,30 @@ function navigateToGroup($event, groupId) {
   }
 }
 
+function isRestoreInProgress() {
+  return archiveGroups.value.some((group) => group.workflow_state.status !== "none" && group.workflow_state.status !== "restorecompleted")
+}
+
+function changeRefreshInterval(milliseconds) {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+
+  refreshInterval = setInterval(() => {
+    // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
+    if (!pollingFaster && isRestoreInProgress()) {
+      changeRefreshInterval(1000);
+      pollingFaster = true;
+    } else if (pollingFaster && !isRestoreInProgress()) {
+      // if we're currently polling every 1 second and all restores are done, change polling frequency back to every 5 seconds
+      changeRefreshInterval(5000);
+      pollingFaster = false;
+    }
+
+    loadArchivedMessageGroups();
+  }, milliseconds);
+}
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -234,9 +262,7 @@ onMounted(() => {
     })
     .then(loadArchivedMessageGroups);
 
-  refreshInterval = setInterval(() => {
-    loadArchivedMessageGroups();
-  }, 5000);
+  changeRefreshInterval(5000);
 });
 </script>
 
