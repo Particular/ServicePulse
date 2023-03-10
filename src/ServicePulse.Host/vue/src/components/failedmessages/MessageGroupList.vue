@@ -12,11 +12,9 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 
 let refreshInterval = undefined;
-let groupsWithNotesAdded = [];
 const props = defineProps({
   sortFunction: Function,
 });
-let savedGroupBy = null;
 const router = useRouter();
 let groupsWithNotesAdded = [];
 let savedGroupBy = null;
@@ -258,8 +256,6 @@ function isBeingRetried(group) {
 
 function clearInMemoryData() {
   groupsWithNotesAdded = [];
-}
-
 }
 
 function navigateToGroup($event, groupId) {
