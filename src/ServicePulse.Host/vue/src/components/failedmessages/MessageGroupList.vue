@@ -285,7 +285,7 @@ function changeRefreshInterval(milliseconds) {
       changeRefreshInterval(1000);
       pollingFaster = true;
     } else if (pollingFaster && !isRetryOrDeleteOperationInProgress()) {
-      // if we're currently polling every 1 second but all retryes or deletes are done, change polling frequency back to every 5 seconds
+      // if we're currently polling every 1 second but all retries or deletes are done, change polling frequency back to every 5 seconds
       changeRefreshInterval(5000);
       pollingFaster = false;
     }
