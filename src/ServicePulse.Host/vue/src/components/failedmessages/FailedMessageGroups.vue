@@ -24,7 +24,7 @@ function sortGroups(sort) {
 }
 
 messageGroupList.value.clearInMemoryData();
-  messageGroupList.value.clearInMemoryData();
+messageGroupList.value.clearInMemoryData();
 const sortOptions = [
   {
     description: "Name",
