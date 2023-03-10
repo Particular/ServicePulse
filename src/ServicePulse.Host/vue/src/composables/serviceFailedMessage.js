@@ -44,3 +44,18 @@ export function useRetryMessages(ids) {
     return;
   });
 }
+
+export function useRetryEditedMessage(ids, editedMessage) {
+  var payload = { message_body: editedMessage.value.messageBody, message_headers: editedMessage.value.headers };
+  return usePostToServiceControl("edit/" + ids, payload)
+    .then(async (response) => {
+      if (response.ok === false) {
+        throw response.statusText;
+      }
+      return;
+    })
+    .catch((error) => {
+      console.error("There was an error trying to retry message with the provided id: ", ids, "\n", error);
+      return;
+    });
+}
