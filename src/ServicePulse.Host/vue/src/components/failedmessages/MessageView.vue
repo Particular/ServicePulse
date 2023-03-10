@@ -385,11 +385,11 @@ onUnmounted(() => {
                 <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
                 <span v-if="failedMessage.number_of_processing_attempts > 1" title="This message has already failed {{ failedMessage.number_of_processing_attempts }} times" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
                 <span v-if="failedMessage.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
-                <span v-if="failedMessage.edited" class="metadata metadata-link" ><i class="fa fa-history"></i> <a :href="'/failed-messages/message/' + failedMessage.edit_of">View previous version</a></span>
-                <span class="metadata" v-if="failedMessage.time_of_failure"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
+                <span v-if="failedMessage.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <a :href="'/failed-messages/message/' + failedMessage.edit_of">View previous version</a></span>
+                <span v-if="failedMessage.time_of_failure" class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
-                <span class="metadata" v-if="failedMessage.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
+                <span v-if="failedMessage.redirect" class="metadata"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
               </div>
               <div class="metadata group-title group-message-count message-metadata" v-if="failedMessage.archived">
                 <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="failedMessage.last_modified"></time-since></span>
