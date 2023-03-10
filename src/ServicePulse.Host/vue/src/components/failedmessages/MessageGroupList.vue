@@ -11,6 +11,7 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 
+let pollingFaster = false;
 let refreshInterval = undefined;
 const props = defineProps({
   sortFunction: Function,
@@ -161,6 +162,9 @@ function saveDeleteGroup(group) {
   showDeleteGroupModal.value = false;
   group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
 
+  // We've started a delete, so increase the polling frequency
+  changeRefreshInterval(1000);
+
   saveDeleteNote(group); //delete comment note when group is archived
   useArchiveExceptionGroup(group.groupid).then((result) => {
     if (result.message === "success") {
@@ -201,11 +205,13 @@ function saveRetryGroup(group) {
   showRetryGroupModal.value = false;
   group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
 
+  // We've started a retry, so increase the polling frequency
+  changeRefreshInterval(1000);
+
   saveDeleteNote(group);
   useRetryExceptionGroup(group.groupid).then((result) => {
     if (result.message === "success") {
       groupRetrySuccessful.value = true;
-      emit("RetryGroupRequestAccepted", group);
     } else {
       groupRetrySuccessful.value = false;
       useShowToast("error", "Error", "Failed to retry the group:" + result.message);
@@ -264,15 +270,39 @@ function navigateToGroup($event, groupId) {
   }
 }
 
+function isRetryOrDeleteOperationInProgress() {
+  return exceptionGroups.value.some((group) => group.operation_status !== "None" && group.operation_status !== "ArchiveCompleted" && group.operation_status !== "Completed");
+}
+
+function changeRefreshInterval(milliseconds) {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+
+  refreshInterval = setInterval(() => {
+    // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
+    if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
+      changeRefreshInterval(1000);
+      pollingFaster = true;
+    } else if (pollingFaster && !isRetryOrDeleteOperationInProgress()) {
+      // if we're currently polling every 1 second but all retryes or deletes are done, change polling frequency back to every 5 seconds
+      changeRefreshInterval(5000);
+      pollingFaster = false;
+    }
+
+    loadFailedMessageGroups();
+  }, milliseconds);
+}
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
 });
+
 onMounted(() => {
-  refreshInterval = setInterval(() => {
-    loadFailedMessageGroups();
-  }, 5000);
+  // Initialize the poll interval to 5 seconds
+  changeRefreshInterval(5000);
 });
 
 defineExpose({
