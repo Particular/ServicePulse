@@ -349,27 +349,4 @@ onMounted(() => {
   </template>
 </template>
 
-<style>
-.select-all {
-  width: 127px;
-}
-
-h3.group-message-count {
-  color: #a8b3b1;
-  font-size: 16px;
-  margin: 4px 0 12px;
-  display: block;
-}
-
-.group-title {
-  display: block;
-  font-size: 30px;
-  margin: 10px 0 0;
-}
-
-h2.group-title,
-h3.group-title {
-  font-weight: bold;
-  line-height: 28px;
-}
-</style>
+<style></style>

@@ -448,18 +448,6 @@ h1.message-type-title {
   font-size: 24px;
 }
 
-.group-title {
-  display: block;
-  font-size: 30px;
-  margin: 10px 0 0;
-}
-
-h2.group-title,
-h3.group-title {
-  font-weight: bold;
-  line-height: 28px;
-}
-
 .group-title.group-message-count sp-moment,
 .group-title.group-message-count i {
   font-size: 16px;
@@ -685,10 +673,9 @@ samp {
 
 pre {
   margin: 3px 0 2px;
-}
-pre {
   white-space: pre-wrap;
 }
+
 pre {
   display: block;
   padding: 9.5px;

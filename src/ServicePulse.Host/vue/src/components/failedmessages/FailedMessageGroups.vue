@@ -23,8 +23,6 @@ function sortGroups(sort) {
   messageGroupList.value.loadFailedMessageGroups();
 }
 
-messageGroupList.value.clearInMemoryData();
-messageGroupList.value.clearInMemoryData();
 const sortOptions = [
   {
     description: "Name",
@@ -133,7 +131,7 @@ onMounted(() => {
                 </li>
               </ul>
             </div>
-            <OrderBy @sort-updated="sortGroups" @classifier-updated="classifierUpdated" :sortOptions="sortOptions" ref="orderBy"></OrderBy>
+            <OrderBy @sort-updated="sortGroups" :sortOptions="sortOptions" ref="orderBy"></OrderBy>
           </div>
         </div>
         <div class="box-container">
