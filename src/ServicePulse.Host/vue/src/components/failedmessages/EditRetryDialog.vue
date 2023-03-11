@@ -83,7 +83,7 @@ function removeHeadersMarkedAsRemoved() {
     if (header.isMarkedAsRemoved) {
       object.splice(index, 1);
     }
-  })
+  });
 }
 
 function retryEditedMessage() {

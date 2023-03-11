@@ -104,18 +104,7 @@ function drawTree(treeData) {
       svg.attr("transform", event.transform);
     });
 
-  svg.append("defs")
-    .append("marker")
-    .attr("id", "end-arrow")
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 0)
-    .attr("refY", 0)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-    .attr("class", "arrow")
-    .append("path")
-    .attr("d", "M10,-5L0,0L10,5");
+  svg.append("defs").append("marker").attr("id", "end-arrow").attr("viewBox", "0 -5 10 10").attr("refX", 0).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").attr("class", "arrow").append("path").attr("d", "M10,-5L0,0L10,5");
 
   // declares a tree layout and assigns the size
   treemap = tree().nodeSize([rectNode.width + 20, rectNode.height]);
