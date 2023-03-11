@@ -52,10 +52,10 @@ export function useRetryEditedMessage(ids, editedMessage) {
       if (response.ok === false) {
         throw response.statusText;
       }
-      return;
+      return response;
     })
     .catch((error) => {
       console.error("There was an error trying to retry message with the provided id: ", ids, "\n", error);
-      return;
+      throw error;
     });
 }
