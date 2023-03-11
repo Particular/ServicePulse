@@ -313,7 +313,7 @@ function showEditAndRetryModal() {
 
 function cancelEditAndRetry() {
   showEditRetryModal.value = false;
-  loadFailedMessage();  //Reset the message object when canceling the edit & retry modal
+  loadFailedMessage(); //Reset the message object when canceling the edit & retry modal
   return startRefreshInterval();
 }
 
