@@ -264,7 +264,6 @@ label {
 }
 
 .modal-msg-editor .empty-error {
-    display: inline-block;
     float: right;
     margin-top: 15px;
     color: #ce4844;
