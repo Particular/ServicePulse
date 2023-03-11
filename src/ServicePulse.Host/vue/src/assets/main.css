@@ -275,6 +275,14 @@ label {
     color: #ce4844;
 }
 
+.modal-msg-editor .row.alert.alert-danger i.fa.fa-exclamation-triangle {
+    color: #ce4844;
+}
+
+.modal-msg-editor .row.alert.alert-warning i.fa.fa-exclamation-circle {
+    color: #8a6d3b;
+}
+
 .modal-msg-editor .modal-dialog {
     width: 70%;
 }
@@ -586,4 +594,24 @@ h2.group-title,
 h3.group-title {
     font-weight: bold;
     line-height: 28px;
+}
+
+div.alert.alert-warning i.fa.fa-warning {
+    color: #8a6d3b;
+}
+
+div.alert.alert-info i.fa.fa-info-circle {
+    color: #31708f;
+}
+
+div.alert.alert-warning strong {
+    text-transform: uppercase;
+}
+
+.sticky-warning.alert.alert-warning,
+.alert.alert-warning,
+.alert.alert-danger {
+    font-size: 16px;
+    margin: 25px 0 0;
+    height: unset;
 }
