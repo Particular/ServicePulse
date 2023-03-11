@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted, watch, computed } from "vue";
+import { useRetryEditedMessage } from "../../composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
 
-const emit = defineEmits(["cancel", "retry"]);
+const emit = defineEmits(["cancel", "retried"]);
 
 const settings = defineProps({
+  id: String,
   message: Object,
   configuration: Object,
 });
@@ -14,10 +16,11 @@ let message = ref();
 let origMessageBody = undefined;
 
 let showEditAndRetryConfirmation = ref(false);
-//let showCancelConfirmation = ref(false);
+let showCancelConfirmation = ref(false);
+let showEditRetryGenericError = ref(false);
 
+const id = computed(() => settings.id);
 const messageBody = computed(() => settings.message.messageBody);
-const messageHeaders = computed(() => message.value?.headers);
 
 watch(messageBody, async (newValue, oldValue) => {
   if (newValue !== oldValue) {
@@ -30,28 +33,61 @@ watch(messageBody, async (newValue, oldValue) => {
   }
 });
 
-watch(
-  () => messageHeaders.value,
-  (header) => {
-    console.log("Header value changed: " + header.value);
-  },
-  { deep: true }
-);
-
 function close() {
   emit("cancel");
-}
-
-function retry() {
-  emit("retry", settings);
 }
 
 function confirmEditAndRetry() {
   showEditAndRetryConfirmation.value = true;
 }
 
+function confirmCancel() {
+  if (message.value.isBodyChanged) {
+    showCancelConfirmation.value = true;
+    return;
+  }
+
+  if (message.value.headers.find((header) => header.isChanged === true)) {
+    showCancelConfirmation.value = true;
+    return;
+  }
+
+  close();
+}
+
 function resetBodyChanges() {
   message.value.messageBody = origMessageBody;
+}
+
+function findHeadersByKey(key) {
+  return message.value.headers.find((header) => header.key === key);
+}
+
+function getContentType() {
+  var header = findHeadersByKey("NServiceBus.ContentType");
+  return header ? header.value : null;
+}
+
+function isContentTypeSupported(contentType) {
+  return contentType === "application/json" || contentType === "text/xml";
+}
+
+function getMessageIntent() {
+  var intent = findHeadersByKey("NServiceBus.MessageIntent");
+  return intent ? intent.value : null;
+}
+
+function retryEditedMessage() {
+  return useRetryEditedMessage([id.value], message)
+    .then(() => {
+      message.value.retried = true;
+      return emit("retried", settings);
+    })
+    .catch(() => {
+      showEditAndRetryConfirmation.value = false;
+      showEditRetryGenericError.value = true;
+      return;
+    });
 }
 
 function initializeMessageBodyAndHeaders() {
@@ -59,6 +95,13 @@ function initializeMessageBodyAndHeaders() {
   message.value = settings.message;
   message.value.isBodyEmpty = false;
   message.value.isBodyChanged = false;
+
+  var contentType = getContentType();
+  message.value.bodyContentType = contentType;
+  message.value.isContentTypeSupported = isContentTypeSupported(contentType);
+
+  var messageIntent = getMessageIntent();
+  message.value.isEvent = messageIntent.value === "Publish";
 
   settings.message.headers.forEach((header, index) => {
     header.isLocked = false;
@@ -111,19 +154,15 @@ onMounted(() => {
                   </div>
                   <div class="row msg-editor-content">
                     <div class="col-sm-12 no-side-padding">
-                      <!-- <div class="row alert alert-warning" ng-show="isEvent">
-                        <div class="col-sm-12">
-                            <i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by
-                            other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
-                            altering the system behavior.
-                        </div>
-                      </div> -->
-                      <!--  <div class="row alert alert-warning" ng-show="!message.isContentTypeSupported">
-                          <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{message.bodyContentType}}) is not supported. Only messages with body content serialized as JSON or XML can be edited.</div>
-                      </div> -->
-                      <!-- <div class="row alert alert-danger" ng-show="showEditRetryGenericError">
-                          <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
-                      </div> -->
+                      <div class="row alert alert-warning" v-if="message?.isEvent">
+                        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in altering the system behavior.</div>
+                      </div>
+                      <div class="row alert alert-warning" v-if="!message?.isContentTypeSupported">
+                        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ message?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.</div>
+                      </div>
+                      <div class="row alert alert-danger" v-if="showEditRetryGenericError">
+                        <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
+                      </div>
                       <table class="table" v-if="panel === 1">
                         <tbody>
                           <tr class="interactiveList" v-for="(header, index) in message.headers" :key="index">
@@ -132,7 +171,7 @@ onMounted(() => {
                         </tbody>
                       </table>
                       <div v-if="panel === 2" style="height: calc(100% - 260px)">
-                        <textarea class="form-control" v-model="message.messageBody"></textarea>
+                        <textarea class="form-control" :disabled="!message.isContentTypeSupported" v-model="message.messageBody"></textarea>
                         <span class="empty-error" v-if="message.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
                         <span class="reset-body" v-if="message.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()">Reset changes</a></span>
                         <div class="alert alert-info" v-if="message.panel === 2 && message.bodyUnavailable">{{ message.bodyUnavailable }}</div>
@@ -142,13 +181,18 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-            <div class="modal-footer" v-if="!showEditAndRetryConfirmation">
-              <button class="btn btn-default" @click="close()">Cancel</button>
+            <div class="modal-footer" v-if="!showEditAndRetryConfirmation && !showCancelConfirmation">
+              <button class="btn btn-default" @click="confirmCancel()">Cancel</button>
               <button class="btn btn-primary" @click="confirmEditAndRetry()">Retry</button>
+            </div>
+            <div class="modal-footer cancel-confirmation" v-if="showCancelConfirmation">
+              <div>Are you sure you want to cancel? Any changes you made will be lost.</div>
+              <button class="btn btn-default" @click="close()">Yes</button>
+              <button class="btn btn-primary" @click="showCancelConfirmation = false">No</button>
             </div>
             <div class="modal-footer edit-retry-confirmation" v-if="showEditAndRetryConfirmation">
               <div>Are you sure you want to continue? If you edited the message, it may cause unexpected consequences in the system.</div>
-              <button class="btn btn-default" @click="retry()">Yes</button>
+              <button class="btn btn-default" @click="retryEditedMessage()">Yes</button>
               <button class="btn btn-primary" @click="showEditAndRetryConfirmation = false">No</button>
             </div>
           </div>

@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { useUnarchiveMessage, useArchiveMessage, useRetryMessages, useRetryEditedMessage } from "../../composables/serviceFailedMessage";
+import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useShowToast } from "../../composables/toast.js";
@@ -23,7 +23,7 @@ const configuration = ref([]);
 const showDeleteConfirm = ref(false);
 const showRestoreConfirm = ref(false);
 const showRetryConfirm = ref(false);
-const showEditRetryConfirm = ref(false);
+const showEditRetryModal = ref(false);
 
 function loadFailedMessage() {
   return useFetchFromServiceControl("errors/last/" + id)
@@ -307,32 +307,19 @@ function exportMessage() {
 }
 
 function showEditAndRetryModal() {
-  showEditRetryConfirm.value = true;
+  showEditRetryModal.value = true;
   stopRefreshInterval();
 }
 
 function cancelEditAndRetry() {
-  showEditRetryConfirm.value = false;
+  showEditRetryModal.value = false;
   startRefreshInterval();
 }
 
 function confirmEditAndRetry() {
-  showEditRetryConfirm.value = false;
-  retryEditedMessage();
-  return startRefreshInterval();
-}
-
-function retryEditedMessage() {
+  showEditRetryModal.value = false;
   useShowToast("info", "Info", `Retrying the edited message ${id} ...`);
-
-  return useRetryEditedMessage([id], failedMessage)
-    .then(() => {
-      failedMessage.value.retried = true;
-    })
-    .catch((err) => {
-      console.log(err);
-      return false;
-    });
+  return startRefreshInterval();
 }
 
 function startRefreshInterval() {
@@ -472,13 +459,7 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog 
-              v-if="showEditRetryConfirm === true" 
-              @cancel="cancelEditAndRetry()" 
-              @retry="confirmEditAndRetry()" 
-              :message="failedMessage" 
-              :configuration="configuration.edit"
-            ></EditRetryDialog>
+            <EditRetryDialog v-if="showEditRetryModal === true" @cancel="cancelEditAndRetry()" @retried="confirmEditAndRetry()" :id="id" :message="failedMessage" :configuration="configuration.edit"></EditRetryDialog>
           </Teleport>
         </div>
       </section>
