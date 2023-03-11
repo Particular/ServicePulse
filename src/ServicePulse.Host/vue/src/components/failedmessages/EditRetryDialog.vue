@@ -22,8 +22,8 @@ let showEditRetryGenericError = ref(false);
 const id = computed(() => settings.id);
 const messageBody = computed(() => settings.message.messageBody);
 
-watch(messageBody, async (newValue, oldValue) => {
-  if (newValue !== oldValue) {
+watch(messageBody, async (newValue) => {
+  if (newValue !== origMessageBody) {
     message.value.isBodyChanged = true;
   }
   if (newValue === "") {
@@ -57,6 +57,7 @@ function confirmCancel() {
 
 function resetBodyChanges() {
   message.value.messageBody = origMessageBody;
+  message.value.isBodyChanged = false;  
 }
 
 function findHeadersByKey(key) {
@@ -183,7 +184,7 @@ onMounted(() => {
             </div>
             <div class="modal-footer" v-if="!showEditAndRetryConfirmation && !showCancelConfirmation">
               <button class="btn btn-default" @click="confirmCancel()">Cancel</button>
-              <button class="btn btn-primary" @click="confirmEditAndRetry()">Retry</button>
+              <button class="btn btn-primary" :disabled="message?.isBodyEmpty" @click="confirmEditAndRetry()">Retry</button>
             </div>
             <div class="modal-footer cancel-confirmation" v-if="showCancelConfirmation">
               <div>Are you sure you want to cancel? Any changes you made will be lost.</div>
