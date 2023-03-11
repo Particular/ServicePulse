@@ -78,7 +78,16 @@ function getMessageIntent() {
   return intent ? intent.value : null;
 }
 
+function removeHeadersMarkedAsRemoved() {
+  message.value.headers.forEach((header, index, object) => {
+    if (header.isMarkedAsRemoved) {
+      object.splice(index, 1);
+    }
+  })
+}
+
 function retryEditedMessage() {
+  removeHeadersMarkedAsRemoved();
   return useRetryEditedMessage([id.value], message)
     .then(() => {
       message.value.retried = true;
