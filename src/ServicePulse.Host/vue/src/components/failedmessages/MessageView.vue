@@ -308,12 +308,13 @@ function exportMessage() {
 
 function showEditAndRetryModal() {
   showEditRetryModal.value = true;
-  stopRefreshInterval();
+  return stopRefreshInterval();
 }
 
 function cancelEditAndRetry() {
   showEditRetryModal.value = false;
-  startRefreshInterval();
+  loadFailedMessage();  //Reset the message object when canceling the edit & retry modal
+  return startRefreshInterval();
 }
 
 function confirmEditAndRetry() {

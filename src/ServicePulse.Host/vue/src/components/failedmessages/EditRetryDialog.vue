@@ -55,11 +55,6 @@ function confirmCancel() {
   close();
 }
 
-function resetBodyChanges() {
-  message.value.messageBody = origMessageBody;
-  message.value.isBodyChanged = false;  
-}
-
 function findHeadersByKey(key) {
   return message.value.headers.find((header) => header.key === key);
 }
