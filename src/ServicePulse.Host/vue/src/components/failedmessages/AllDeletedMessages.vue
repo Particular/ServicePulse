@@ -12,6 +12,7 @@ import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import moment from "moment";
 
+let pollingFaster = false;
 let refreshInterval = undefined;
 const configuration = ref([]);
 
@@ -160,21 +161,19 @@ function setPage(page) {
 }
 
 function restoreSelectedMessages() {
+  changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
+  selectedMessages.forEach((m) => m.restoreInProgress = true);
 
   useShowToast("info", "Info", "restoring " + selectedMessages.length + " messages...");
+
   usePatchToServiceControl(
     "errors/unarchive",
     selectedMessages.map((m) => m.id)
   ).then(() => {
     messageList.value.deselectAll();
-    selectedMessages.forEach((m) => (m.deleteInProgress = false));
   });
 }
-onBeforeRouteLeave(() => {
-  groupId.value = undefined;
-  groupName.value = undefined;
-});
 
 function periodChanged(period) {
   selectedPeriod.value = period;
@@ -194,9 +193,39 @@ function getConfiguration() {
     });
 }
 
+function isRestoreInProgress() {
+  return messages.value.some((message) => message.restoreInProgress);
+}
+
+function changeRefreshInterval(milliseconds) {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+
+  refreshInterval = setInterval(() => {
+    // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
+    if (!pollingFaster && isRestoreInProgress()) {
+      changeRefreshInterval(1000);
+      pollingFaster = true;
+    } else if (pollingFaster && !isRestoreInProgress()) {
+      // if we're currently polling every 1 second but all restores are done, change polling frequency back to every 5 seconds
+      changeRefreshInterval(5000);
+      pollingFaster = false;
+    }
+
+    loadMessages();
+  }, milliseconds);
+}
+
+onBeforeRouteLeave(() => {
+  groupId.value = undefined;
+  groupName.value = undefined;
+});
+
 onBeforeMount(() => {
   getConfiguration();
 });
+
 onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -211,9 +240,7 @@ onMounted(() => {
   selectedPeriod.value = cookiePeriod;
   loadMessages();
 
-  refreshInterval = setInterval(() => {
-    loadMessages();
-  }, 5000);
+  changeRefreshInterval(5000);
 });
 </script>
 

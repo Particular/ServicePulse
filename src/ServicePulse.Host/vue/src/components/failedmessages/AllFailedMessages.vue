@@ -14,6 +14,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
+let pollingFaster = false;
 let refreshInterval = undefined;
 let sortMethod = undefined;
 const route = useRoute();
@@ -110,6 +111,7 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
 }
 
 function retryRequested(id) {
+  changeRefreshInterval(1000);
   useShowToast("info", "Info", "Message retry requested...");
   return useRetryMessages([id]).then(() => {
     const message = messages.value.find((m) => m.id == id);
@@ -121,6 +123,7 @@ function retryRequested(id) {
 }
 
 function retrySelected() {
+  changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
   useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
   return useRetryMessages(selectedMessages.map((m) => m.id)).then(() => {
@@ -193,6 +196,7 @@ function isAnythingSelected() {
 }
 
 function deleteSelectedMessages() {
+  changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
 
   useShowToast("info", "Info", "Deleting " + selectedMessages.length + " messages...");
@@ -260,6 +264,32 @@ function deleteGroup() {
   });
 }
 
+function isRetryOrDeleteOperationInProgress() {
+  return messages.value.some((message) => {
+    return message.retryInProgress || message.deleteInProgress;
+  });
+}
+
+function changeRefreshInterval(milliseconds) {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+
+  refreshInterval = setInterval(() => {
+    // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
+    if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
+      changeRefreshInterval(1000);
+      pollingFaster = true;
+    } else if (pollingFaster && !isRetryOrDeleteOperationInProgress()) {
+      // if we're currently polling every 1 second but all retries or deletes are done, change polling frequency back to every 5 seconds
+      changeRefreshInterval(5000);
+      pollingFaster = false;
+    }
+
+    loadMessages();
+  }, milliseconds);
+}
+
 onBeforeRouteLeave(() => {
   groupId.value = undefined;
   groupName.value = undefined;
@@ -274,9 +304,7 @@ onUnmounted(() => {
 onMounted(() => {
   loadMessages();
 
-  refreshInterval = setInterval(() => {
-    loadMessages();
-  }, 5000);
+  changeRefreshInterval(5000);
 });
 </script>
 
