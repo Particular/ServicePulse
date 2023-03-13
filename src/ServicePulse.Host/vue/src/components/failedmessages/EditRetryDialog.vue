@@ -47,7 +47,7 @@ function confirmCancel() {
     return;
   }
 
-  if (message.value.headers.find((header) => header.isChanged === true)) {
+  if (message.value.headers.some((header) => header.isChanged)) {
     showCancelConfirmation.value = true;
     return;
   }
@@ -66,7 +66,7 @@ function findHeadersByKey(key) {
 
 function getContentType() {
   var header = findHeadersByKey("NServiceBus.ContentType");
-  return header ? header.value : null;
+  return header?.value;
 }
 
 function isContentTypeSupported(contentType) {
@@ -75,7 +75,7 @@ function isContentTypeSupported(contentType) {
 
 function getMessageIntent() {
   var intent = findHeadersByKey("NServiceBus.MessageIntent");
-  return intent ? intent.value : null;
+  return intent?.value;
 }
 
 function removeHeadersMarkedAsRemoved() {
