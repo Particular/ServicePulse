@@ -226,6 +226,26 @@ function setPage(page) {
   loadMessages();
 }
 
+function calculatePageNumbers() {
+  if (numberOfPages.value <= 10) {
+    return Array.from(Array(numberOfPages.value), (_, index) => index + 1);
+  }
+
+  let startIndex = pageNumber.value - 5;
+  let endIndex = pageNumber.value + 5;
+  if (startIndex < 0) {
+    // Increase the end index by the offset
+    endIndex -= startIndex;
+    startIndex = 0;
+  }
+
+  if (endIndex > numberOfPages.value) {
+    endIndex = numberOfPages.value;
+  }
+
+  return Array.from(Array(endIndex - startIndex), (_, index) => index + startIndex + 1);
+}
+
 function retryGroup() {
   useShowToast("info", "Info", "Retrying all messages...");
   useRetryExceptionGroup(groupId).then(() => {
@@ -301,8 +321,20 @@ onMounted(() => {
               <li class="page-item" :class="{ disabled: pageNumber == 1 }">
                 <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
               </li>
-              <li v-for="n in numberOfPages" class="page-item" :class="{ active: pageNumber == n }" :key="n">
+              <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
+                <a @click.prevent="setPage(1)" class="page-link" href="#">1</a>
+              </li>
+              <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
+                <a @click.prevent="setPage(pageNumber - 5)" class="page-link" href="#">...</a>
+              </li>
+              <li v-for="n in calculatePageNumbers()" class="page-item" :class="{ active: pageNumber == n }" :key="n">
                 <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
+              </li>
+              <li v-if="numberOfPages - pageNumber > 5" class="page-item">
+                <a @click.prevent="setPage(pageNumber + 5)" class="page-link" href="#">...</a>
+              </li>
+              <li v-if="numberOfPages - pageNumber > 5" class="page-item">
+                <a @click.prevent="setPage(numberOfPages)" class="page-link" href="#">{{ numberOfPages }}</a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
