@@ -49,7 +49,7 @@ export function useRetryEditedMessage(ids, editedMessage) {
   var payload = { message_body: editedMessage.value.messageBody, message_headers: editedMessage.value.headers };
   return usePostToServiceControl("edit/" + ids, payload)
     .then(async (response) => {
-      if (response.ok === false) {
+      if (!response.ok) {
         throw response.statusText;
       }
       return response;
