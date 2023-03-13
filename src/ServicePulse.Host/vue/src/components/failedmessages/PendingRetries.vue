@@ -86,7 +86,7 @@ function loadPendingRetryMessages() {
       break;
   }
 
-  return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replace(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value, startDate.toISOString(), endDate.toISOString());
+  return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value, startDate.toISOString(), endDate.toISOString());
 }
 
 function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, startDate, endDate) {
