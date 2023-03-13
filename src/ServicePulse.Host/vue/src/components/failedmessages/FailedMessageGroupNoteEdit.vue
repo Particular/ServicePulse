@@ -53,13 +53,13 @@ onMounted(() => {
             <div class="row">
               <div class="form-group">
                 <label for="comment">Note</label>
-                <textarea type="text" id="txtcomment" name="txtcomment" v-model="grpcomment" placeholder="Comment" class="form-control"></textarea>
+                <textarea type="text" id="txtcomment" name="txtcomment" v-model="grpcomment" placeholder="Comment" class="form-control" required></textarea>
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button v-if="settings.comment" class="btn btn-primary" @click="editNote">Modify</button>
-            <button v-if="!settings.comment" class="btn btn-primary" @click="createNote">Create</button>
+            <button v-if="settings.comment"  :disabled="!grpcomment" class="btn btn-primary" @click="editNote">Modify</button>
+            <button v-if="!settings.comment"  :disabled="!grpcomment"  class="btn btn-primary" @click="createNote">Create</button>
             <button class="btn btn-default" @click="close">Cancel</button>
           </div>
         </form>
