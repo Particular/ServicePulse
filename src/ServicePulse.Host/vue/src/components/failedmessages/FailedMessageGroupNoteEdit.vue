@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 const emit = defineEmits(["createNoteConfirmed", "editNoteConfirmed", "cancelEditNote"]);
 const settings = defineProps({
@@ -27,6 +27,16 @@ function editNote() {
 function close() {
   emit("cancelEditNote");
 }
+
+onUnmounted(() => {
+  // Must remove the class again once the modal is dismissed
+  document.getElementsByTagName("body")[0].className = "";
+});
+
+onMounted(() => {
+  // Add the `modal-open` class to the body tag
+  document.getElementsByTagName("body")[0].className = "modal-open";
+});
 </script>
 
 <template>

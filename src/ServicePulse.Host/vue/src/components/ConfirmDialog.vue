@@ -1,4 +1,6 @@
 <script setup>
+import { onMounted, onUnmounted } from 'vue';
+
 const emit = defineEmits(["confirm", "cancel"]);
 
 const settings = defineProps({
@@ -15,6 +17,16 @@ function confirm() {
 function close() {
   emit("cancel");
 }
+
+onUnmounted(() => {
+  // Must remove the class again once the modal is dismissed
+  document.getElementsByTagName("body")[0].className = "";
+});
+
+onMounted(() => {
+  // Add the `modal-open` class to the body tag
+  document.getElementsByTagName("body")[0].className = "modal-open";
+});
 </script>
 
 <template>
@@ -50,10 +62,12 @@ function close() {
   display: table;
   transition: opacity 0.3s ease;
 }
+
 .modal-wrapper {
   display: table-cell;
   vertical-align: middle;
 }
+
 .modal-container {
   width: 600px;
   margin: 0px auto;
