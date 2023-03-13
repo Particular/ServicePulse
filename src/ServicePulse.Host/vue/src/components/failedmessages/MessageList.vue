@@ -94,19 +94,16 @@ defineExpose({
             <div class="col-12 no-side-padding" @click="navigateToMessage($event, message.id)">
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
-                  <span v-if="message.submittedForRetrial" tooltip="Message was submitted for retrying" class="label sidebar-label label-info metadata-label">To retry</span>
-                  <span v-if="message.retryInProgress" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retry in progress</span>
-                  <span v-if="message.retried" tooltip="Message is being retried" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retried</span>
+                  <span v-if="message.submittedForRetrial" :title="'Message was submitted for retrying'" class="label sidebar-label label-info metadata-label">To retry</span>
+                  <span v-if="message.retryInProgress" :title="'Message is being retried'" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retry in progress</span>
+                  <span v-if="message.retried" :title="'Message is being retried'" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-arrow-clockwise"></i> Retried</span>
                   <span v-if="message.resolved" class="label sidebar-label label-info metadata-label">Resolved</span>
 
-                  <span v-if="message.restoreInProgress" tooltip="Message is being restored" class="label sidebar-label label-info metadata-label metadata in-progress"> Restore in progress</span>
-
-                  <span v-if="message.deleteInProgress" tooltip="Message is being deleted" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Scheduled for deletion</span>
-                <span v-if="message.restoreInProgress" tooltip="Message is being restored" class="label sidebar-label label-warning metadata-label metadata in-progress"><i class="bi-recycle"></i> Restore in progress</span>
-                  <span v-if="message.archived" tooltip="Message is being deleted" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Deleted</span>
-                  <span v-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts === 10 ? "9+" : message.number_of_processing_attempts }} Retry Failures</span>
-
-                  <span v-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
+                  <span v-if="message.deleteInProgress" :title="'Message is being deleted'" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Scheduled for deletion</span>
+                  <span v-if="message.archived" :title="'Message is being deleted'" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Deleted</span>
+                  <span v-if="message.number_of_processing_attempts > 1" :title="`This message has already failed ${message.number_of_processing_attempts} times`" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts === 10 ? "9+" : message.number_of_processing_attempts }} Retry Failures</span>
+                  <span v-if="message.restoreInProgress" tooltip="Message is being restored" class="label sidebar-label label-warning metadata-label metadata in-progress"><i class="bi-recycle"></i> Restore in progress</span>
+                  <span v-if="message.edited" :title="'Message was edited'" class="label sidebar-label label-info metadata-label">Edited</span>
 
                   <span class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :dateUtc="message.time_of_failure"></time-since></span>
                   <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ message.receiving_endpoint.name }}</span>
