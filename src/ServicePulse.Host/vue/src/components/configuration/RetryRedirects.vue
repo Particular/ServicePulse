@@ -161,12 +161,12 @@ onMounted(() => {
                   <div class="row box repeat-modify">
                     <div class="row" id="{{redirect.from_physical_address}}">
                       <div class="col-sm-12">
-                        <p class="lead hard-wrap truncate" uib-tooltip="{{redirect.from_physical_address}}">
-                          <i class="fa pa-redirect-source pa-redirect-small" uib-tooltip="Source queue name"></i>
+                        <p class="lead hard-wrap truncate" :title=redirect.from_physical_address>
+                          <i class="fa pa-redirect-source pa-redirect-small" title="Source queue name"></i>
                           {{ redirect.from_physical_address }}
                         </p>
-                        <p class="lead hard-wrap truncate" uib-tooltip="{{redirect.to_physical_address}}">
-                          <i class="fa pa-redirect-destination pa-redirect-small" uib-tooltip="Destination queue name"></i>
+                        <p class="lead hard-wrap truncate" :title=redirect.to_physical_address>
+                          <i class="fa pa-redirect-destination pa-redirect-small" title="Destination queue name"></i>
                           {{ redirect.to_physical_address }}
                         </p>
                         <p class="metadata">
