@@ -165,6 +165,7 @@ function restoreSelectedMessages() {
   const selectedMessages = messageList.value.getSelectedMessages();
   selectedMessages.forEach((m) => m.restoreInProgress = true);
 
+    selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast("info", "Info", "restoring " + selectedMessages.length + " messages...");
 
   usePatchToServiceControl(
@@ -237,7 +238,7 @@ onMounted(() => {
   if (typeof cookiePeriod === "undefined" || cookiePeriod === "") {
     cookiePeriod = periodOptions[3]; //default is last 7 days
   }
-  selectedPeriod.value = cookiePeriod;
+   selectedPeriod.value = cookiePeriod;
   loadMessages();
 
   changeRefreshInterval(5000);
