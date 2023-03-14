@@ -41,19 +41,19 @@ function subIsActiveSubPath(subPath) {
 
             <!--Deleted Message Group-->
             <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('deleted-message-groups'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages/deleted-message-groups' }">Deleted Message Groups</RouterLink>
+              <RouterLink :to="{ path: '/failed-messages/deleted-message-groups' }">Deleted Message Groups </RouterLink>
               <span v-if="stats.number_of_archived_messages !== 0" title="There's varying numbers of deleted message groups depending on group type" class="badge badge-important">!</span>
             </h5>
 
             <!--All Deleted Messages-->
             <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-deleted-messages') || subIsActiveSubPath('/deleted-messages/group/'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages/all-deleted-messages' }">All Deleted Messages</RouterLink>
+              <RouterLink :to="{ path: '/failed-messages/all-deleted-messages' }">All Deleted Messages </RouterLink>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
 
             <!--All Pending Retries -->
             <h5 v-if="!licenseStatus.isExpired && showPendingRetry" :class="{ active: subIsActive('pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages/pending-retries' }">Pending Retries</RouterLink>
+              <RouterLink :to="{ path: '/failed-messages/pending-retries' }">Pending Retries </RouterLink>
               <span v-if="stats.number_of_pending_retries !== 0" class="badge badge-important">{{ stats.number_of_pending_retries }}</span>
             </h5>
           </div>
