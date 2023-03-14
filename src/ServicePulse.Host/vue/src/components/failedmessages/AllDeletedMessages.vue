@@ -164,8 +164,6 @@ function restoreSelectedMessages() {
   changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
   selectedMessages.forEach((m) => m.restoreInProgress = true);
-
-    selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast("info", "Info", "restoring " + selectedMessages.length + " messages...");
 
   usePatchToServiceControl(
