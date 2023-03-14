@@ -85,7 +85,7 @@ defineExpose({
   </div>
   <div v-for="(message, index) in props.messages" class="row box repeat-item failed-message" :key="message.id">
     <label class="check col-1" :for="`checkbox${message.id}`" @click="labelClicked($event, index)">
-      <input type="checkbox" :disabled="message.retryInProgress || message.submittedForRetrial" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
+      <input type="checkbox" :disabled="message.retryInProgress || message.submittedForRetrial || message.deleteInProgress" class="checkbox" v-model="message.selected" :value="message.id" :id="`checkbox${message.id}`" />
     </label>
     <div class="col-11 failed-message-data">
       <div class="row">
@@ -101,7 +101,7 @@ defineExpose({
 
                 <span v-if="message.deleteInProgress" tooltip="Message is being deleted" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Scheduled for deletion</span>
                 <span v-if="message.restoreInProgress" tooltip="Message is being restored" class="label sidebar-label label-warning metadata-label metadata in-progress"><i class="bi-recycle"></i> Restore in progress</span>
-                <span v-if="message.archived" tooltip="Message is being deleted" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Deleted</span>      
+                <span v-if="message.archived" tooltip="Message is being deleted" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Deleted</span>
                 <span v-if="message.number_of_processing_attempts > 1" tooltip="This message has already failed {{message.number_of_processing_attempts}} times" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts === 10 ? "9+" : message.number_of_processing_attempts }} Retry Failures</span>
 
                 <span v-if="message.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
