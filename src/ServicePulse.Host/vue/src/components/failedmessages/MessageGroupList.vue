@@ -101,17 +101,22 @@ function deleteNote(group) {
   showDeleteNoteModal.value = true;
 }
 
-function saveDeleteNote(group) {
+function saveDeleteNote(group, hideToastMessage) {
   showDeleteNoteModal.value = false;
 
   useDeleteNote(group.groupid).then((result) => {
     if (result.message === "success") {
       noteSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Note deleted succesfully");
+      if (!hideToastMessage) {
+        useShowToast("info", "Info", "Note deleted succesfully");
+      }
+
       loadFailedMessageGroups(); //reload the groups
     } else {
       noteSaveSuccessful.value = false;
-      useShowToast("error", "Error", "Failed to delete a Note:");
+      if (!hideToastMessage) {
+        useShowToast("error", "Error", "Failed to delete a Note:");
+      }
     }
   });
 }
@@ -165,10 +170,11 @@ function saveDeleteGroup(group) {
   // We've started a delete, so increase the polling frequency
   changeRefreshInterval(1000);
 
-  saveDeleteNote(group); //delete comment note when group is archived
+  saveDeleteNote(group, true); // delete comment note when group is archived
   useArchiveExceptionGroup(group.groupid).then((result) => {
     if (result.message === "success") {
       groupDeleteSuccessful.value = true;
+      useShowToast("info", "info", "Group delete started...");
     } else {
       groupDeleteSuccessful.value = false;
       useShowToast("error", "Error", "Failed to delete the group:" + result.message);
@@ -208,7 +214,7 @@ function saveRetryGroup(group) {
   // We've started a retry, so increase the polling frequency
   changeRefreshInterval(1000);
 
-  saveDeleteNote(group);
+  saveDeleteNote(group, true);
   useRetryExceptionGroup(group.groupid).then((result) => {
     if (result.message === "success") {
       groupRetrySuccessful.value = true;
@@ -243,8 +249,11 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
 var acknowledgeGroup = function (group) {
   useAcknowledgeArchiveGroup(group.id).then((result) => {
     if (result.message === "success") {
-      // exceptionGroups.splice(exceptionGroups.indexOf(group), 1);
-      useShowToast("info", "Info", "Group retried succesfully");
+      if (group.operation_status === "ArchiveCompleted") {
+        useShowToast("info", "Info", "Group deleted succesfully");
+      } else {
+        useShowToast("info", "Info", "Group retried succesfully");
+      }
       loadFailedMessageGroups(); //reload the groups
     } else {
       useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
