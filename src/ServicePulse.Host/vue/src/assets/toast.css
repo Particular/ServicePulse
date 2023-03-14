@@ -40,10 +40,15 @@
 }
 
 .Vue-Toastification__toast {
-    border-radius: 0px;
+    border-radius: 5px;
     width: 100%;
     height: 100%;
-    padding: 24px 24px 56px 24px;
+    padding: 24px 24px 36px 24px;
+    opacity: 0.8;
+}
+
+.Vue-Toastification__toast p {
+    margin-bottom: 0;
 }
 
 .Vue-Toastification__fade-leave-active {
