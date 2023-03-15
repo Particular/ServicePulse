@@ -156,6 +156,21 @@ label {
     font-weight: 700;
 }
 
+pre {    
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333333;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 .modal-header {
     padding: 15px;
     border-bottom: 1px solid #e5e5e5;
@@ -188,6 +203,12 @@ label {
     border-color: #ccc;
 }
 
+.btn-default:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+
 .btn.btn-default.disabled {
     opacity: 0.4;
 }
@@ -198,7 +219,7 @@ label {
 
 .btn.btn-primary {
     padding: 8px 16px;
-    background-color: #00A3C4 !important;
+    background-color: #00A3C4;
     border-color: #0686AA;
     color: #fff;
 }
