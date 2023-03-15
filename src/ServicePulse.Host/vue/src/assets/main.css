@@ -175,6 +175,18 @@ label {
   border-color: #1b809e;
 }
 
+.label-warning, 
+.badge-warning {
+    background-color: #aa6708;
+    border-color: #aa6708;
+}
+
+.label-important, 
+.badge-important {
+    background-color: #FA603D;
+    border-color: #FA5833;
+}
+
 pre {    
     display: block;
     padding: 9.5px;
