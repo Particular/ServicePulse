@@ -361,14 +361,14 @@ onUnmounted(() => {
         <no-data v-if="failedMessage?.error" title="message failures" message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
         <div v-if="!failedMessage?.error && !failedMessage?.notFound">
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 no-side-padding">
               <div class="active break group-title">
                 <h1 class="message-type-title">{{ failedMessage.message_type }}</h1>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col-12">
+            <div class="col-sm-12 no-side-padding">
               <div class="metadata group-title group-message-count message-metadata">
                 <span v-if="failedMessage.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
                 <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
@@ -389,28 +389,28 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 no-side-padding">
               <div class="btn-toolbar message-toolbar">
-                <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
-                <button type="button" v-if="failedMessage.archived" class="btn btn-default" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
-                <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
+                <button type="button" class="btn btn-default" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved"  @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage.archived"  @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
+                <button type="button" class="btn btn-default" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved"  @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
                 <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" @click="showEditAndRetryModal()"><i class="fa fa-pencil"></i> Edit & retry</button>
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
-                <button type="button" class="btn btn-default" @click="exportMessage()" v-if="!failedMessage.notFound && !failedMessage.error"><i class="fa fa-download"></i> Export message</button>
+                <button type="button" class="btn btn-default" v-if="!failedMessage.notFound && !failedMessage.error" @click="exportMessage()" ><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="nav tabs msg-tabs">
-                <h5 :class="{ active: panel === 1 }" class="nav-item" v-on:click="togglePanel(1)"><a href="#">Stacktrace</a></h5>
-                <h5 :class="{ active: panel === 2 }" class="nav-item" v-on:click="togglePanel(2)"><a href="#">Headers</a></h5>
-                <h5 :class="{ active: panel === 3 }" class="nav-item" v-on:click="togglePanel(3)"><a href="#">Message body</a></h5>
-                <h5 :class="{ active: panel === 4 }" class="nav-item" v-on:click="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
+                <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="#">Stacktrace</a></h5>
+                <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="#">Headers</a></h5>
+                <h5 :class="{ active: panel === 3 }" class="nav-item" @click="togglePanel(3)"><a href="#">Message body</a></h5>
+                <h5 :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
               </div>
-              <pre isolate-click v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
-              <pre isolate-click v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
-              <table isolate-click class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
+              <pre v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
+              <pre v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
+              <table class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
                 <tbody>
                   <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
                     <td nowrap="nowrap">{{ header.key }}</td>
