@@ -156,6 +156,25 @@ label {
     font-weight: 700;
 }
 
+.label {
+    display: inline;
+    padding: 0.2em 0.6em 0.3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25em;
+}
+
+.label-info,
+.badge-info {
+  background-color: #1b809e;
+  border-color: #1b809e;
+}
+
 pre {    
     display: block;
     padding: 9.5px;
@@ -531,6 +550,12 @@ span.metadata.metadata-link i.fa {
     font-style: italic;
     color: white;
 }
+
+.metadata-label {
+    margin-right: 24px;
+    position: relative;
+    top: -1px;
+}
   
 .metadata > .metadata-label {
     padding: 6px 10px;
@@ -595,6 +620,13 @@ fieldset[disabled]:hover {
 
 .select-all {
     width: 127px;
+}
+
+.group-message-count {
+    color: #A8B3B1;
+    font-size: 16px;
+    margin: 4px 0 12px;
+    display: block;
 }
 
 h3.group-message-count {
