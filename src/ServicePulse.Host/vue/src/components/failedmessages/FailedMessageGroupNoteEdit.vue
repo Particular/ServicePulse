@@ -53,7 +53,7 @@ onMounted(() => {
             <div class="row">
               <div class="form-group">
                 <label for="comment">Note</label>
-                <textarea type="text" id="txtcomment" name="txtcomment" v-model="grpcomment" placeholder="Comment" class="form-control" required></textarea>
+                <textarea type="text" id="txtcomment" name="txtcomment" v-model.trim="grpcomment" placeholder="Comment" :minInputLength="1" class="form-control" required></textarea>
               </div>
             </div>
           </div>
