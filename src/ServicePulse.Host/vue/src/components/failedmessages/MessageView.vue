@@ -166,12 +166,18 @@ function downloadBody() {
         jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
 
         failedMessage.value.messageBody = formatJson(jsonBody);
+      })
+      .catch(() => {
+        failedMessage.value.bodyUnavailable = true;
       });
     }
 
     if (response.headers.get("content-type") == "text/xml") {
       return response.text().then((xmlBody) => {
         failedMessage.value.messageBody = formatXml(xmlBody);
+      })
+      .catch(() => {
+        failedMessage.value.bodyUnavailable = true;
       });
     }
 
@@ -421,8 +427,9 @@ onUnmounted(() => {
                 </tbody>
               </table>
               <div v-if="panel === 2 && failedMessage.headersNotFound" class="alert alert-info">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
-              <pre v-if="panel === 3 && !failedMessage.messageBodyNotFound">{{ failedMessage.messageBody }}</pre>
+              <pre v-if="panel === 3 && !failedMessage.messageBodyNotFound && !failedMessage.bodyUnavailable">{{ failedMessage.messageBody }}</pre>
               <div v-if="panel === 3 && failedMessage.messageBodyNotFound" class="alert alert-info">Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
+              <div v-if="panel === 3 && failedMessage.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
               <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id"></FlowDiagram>
             </div>
           </div>
