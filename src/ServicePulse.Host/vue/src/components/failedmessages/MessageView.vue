@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
+import { ref, computed, onMounted, onBeforeMount, onUnmounted } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
@@ -16,7 +16,7 @@ import EditRetryDialog from "./EditRetryDialog.vue";
 let refreshInterval = undefined;
 let panel = ref();
 const route = useRoute();
-const id = route.params.id;
+const id = computed(() => route.params.id);
 const failedMessage = ref({});
 const configuration = ref([]);
 
@@ -26,7 +26,7 @@ const showRetryConfirm = ref(false);
 const showEditRetryModal = ref(false);
 
 function loadFailedMessage() {
-  return useFetchFromServiceControl("errors/last/" + id)
+  return useFetchFromServiceControl("errors/last/" + id.value)
     .then((response) => {
       if (response.status === 404) {
         failedMessage.value = { notFound: true };
@@ -87,8 +87,8 @@ function updateMessageDeleteDate() {
 }
 
 function archiveMessage() {
-  useShowToast("info", "Info", `Deleting the message ${id} ...`);
-  return useArchiveMessage([id])
+  useShowToast("info", "Info", `Deleting the message ${id.value} ...`);
+  return useArchiveMessage([id.value])
     .then((response) => {
       if (response !== undefined) {
         return loadFailedMessage().then(() => {
@@ -105,7 +105,7 @@ function archiveMessage() {
 }
 
 function unarchiveMessage() {
-  return useUnarchiveMessage([id])
+  return useUnarchiveMessage([id.value])
     .then((response) => {
       if (response !== undefined) {
         failedMessage.value.archived = false;
@@ -119,9 +119,9 @@ function unarchiveMessage() {
 }
 
 function retryMessage() {
-  useShowToast("info", "Info", `Retrying the message ${id} ...`);
+  useShowToast("info", "Info", `Retrying the message ${id.value} ...`);
 
-  return useRetryMessages([id])
+  return useRetryMessages([id.value])
     .then(() => {
       failedMessage.value.retried = true;
     })
@@ -313,18 +313,18 @@ function showEditAndRetryModal() {
 
 function cancelEditAndRetry() {
   showEditRetryModal.value = false;
-  loadFailedMessage();    // Reset the message object when canceling the edit & retry modal
+  loadFailedMessage(); // Reset the message object when canceling the edit & retry modal
   return startRefreshInterval();
 }
 
 function confirmEditAndRetry() {
   showEditRetryModal.value = false;
-  useShowToast("info", "Info", `Retrying the edited message ${id} ...`);
+  useShowToast("info", "Info", `Retrying the edited message ${id.value} ...`);
   return startRefreshInterval();
 }
 
 function startRefreshInterval() {
-  stopRefreshInterval();    // clear interval if it exists to prevent memory leaks
+  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
   refreshInterval = setInterval(() => {
     loadFailedMessage();
@@ -375,7 +375,7 @@ onUnmounted(() => {
                 <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
                 <span v-if="failedMessage.number_of_processing_attempts > 1" :title="'This message has already failed ' + failedMessage.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
                 <span v-if="failedMessage.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
-                <span v-if="failedMessage.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="`/failed-messages/message/${failedMessage.edit_of}`">View previous version</RouterLink></span>
+                <span v-if="failedMessage.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="`/failed-messages/message/${failedMessage.edit_of}`" @click="loadFailedMessage()">View previous version</RouterLink></span>
                 <span v-if="failedMessage.time_of_failure" class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
@@ -462,7 +462,7 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog v-if="showEditRetryModal === true" @cancel="cancelEditAndRetry()" @retried="confirmEditAndRetry()" :id="id" :message="failedMessage" :configuration="configuration.edit"></EditRetryDialog>
+            <EditRetryDialog v-if="showEditRetryModal === true" @cancel="cancelEditAndRetry()" @retried="confirmEditAndRetry()" :id="id.value" :message="failedMessage" :configuration="configuration.edit"></EditRetryDialog>
           </Teleport>
         </div>
       </section>
