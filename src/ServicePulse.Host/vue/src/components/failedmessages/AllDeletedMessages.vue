@@ -234,8 +234,8 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  let cookiePeriod = cookies.get("all_deleted_messages_period");
-  if (typeof cookiePeriod === "undefined" || cookiePeriod === "") {
+    let cookiePeriod = cookies.get("all_deleted_messages_period");
+    if (typeof cookiePeriod === "undefined" || cookiePeriod === "" || cookiePeriod === null) {
     cookiePeriod = periodOptions[3]; //default is last 7 days
   }
    selectedPeriod.value = cookiePeriod;

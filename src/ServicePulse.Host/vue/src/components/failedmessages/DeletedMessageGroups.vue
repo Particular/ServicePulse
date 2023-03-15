@@ -271,6 +271,7 @@ onMounted(() => {
   <template v-if="!licenseStatus.isExpired">
     <ServiceControlNotAvailable />
     <template v-if="!connectionState.unableToConnect">
+        <br/>
       <section name="message_groups">
         <div class="row">
           <div class="col-6 list-section">
