@@ -221,7 +221,7 @@ function navigateToGroup($event, groupId) {
 }
 
 function isRestoreInProgress() {
-  return archiveGroups.value.some((group) => group.workflow_state.status !== "none" && group.workflow_state.status !== "restorecompleted")
+  return archiveGroups.value.some((group) => group.workflow_state.status !== "none" && group.workflow_state.status !== "restorecompleted");
 }
 
 function changeRefreshInterval(milliseconds) {

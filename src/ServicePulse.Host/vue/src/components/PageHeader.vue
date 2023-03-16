@@ -1,9 +1,11 @@
 <script setup>
 import { RouterLink, useRoute } from "vue-router";
 import { computed } from "vue";
-import ExclamationMark from "./ExclamationMark.vue";
 import { stats, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";
 import { licenseStatus } from "./../composables/serviceLicense.js";
+import ExclamationMark from "./ExclamationMark.vue";
+
+const baseUrl = window.defaultConfig.base_url;
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];
@@ -39,14 +41,14 @@ const displayDanger = computed(() => {
             </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/endpoints') }">
-            <a href="/a/#/endpoints">
+            <a :href="`${baseUrl}a/#/endpoints`">
               <i class="fa fa-heartbeat icon-white"></i>
               <span class="navbar-label">Heartbeats</span>
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
           <li :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
-            <a href="/a/#/monitoring">
+            <a :href="`${baseUrl}a/#/monitoring`">
               <i class="fa pa-monitoring icon-white"></i>
               <span class="navbar-label">Monitoring</span>
               <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
@@ -60,14 +62,14 @@ const displayDanger = computed(() => {
             </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/custom-checks') }">
-            <a href="/a/#/custom-checks">
+            <a :href="`${baseUrl}a/#/custom-checks`">
               <i class="fa fa-check icon-white"></i>
               <span class="navbar-label">Custom Checks</span>
               <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
             </a>
           </li>
           <li :class="{ active: subIsActive('/a/#/events') }">
-            <a href="/a/#/events">
+            <a :href="`${baseUrl}a/#/events`">
               <i class="fa fa-list-ul icon-white"></i>
               <span class="navbar-label">Events</span>
             </a>

@@ -34,11 +34,12 @@ export default defineConfig({
       },
     ],
   },
+  base: "./",
   build: {
     outDir: "../app",
     emptyOutDir: true,
     rollupOptions: {
-      external: ["/js/app.constants.js"],
+      external: ["./js/app.constants.js"],
     },
   },
   server: {
