@@ -35,34 +35,29 @@ function iconSubClasses(eventItem) {
   };
 }
 
-function navigateToEvent(eventLogItem) {
-  switch (eventLogItem.category) {
+    function navigateToEvent(eventLogItem) {
+    switch (eventLogItem.category) {
     case "Endpoints":
       router.push("/configuration#endpoints");
       break;
     case "HeartbeatMonitoring":
-      //router.push('/a/#/endpoints');
       window.location = "/a/#/endpoints";
       break;
     case "CustomChecks":
-      //router.push('/a/#/custom-checks');
       window.location = "/a/#/custom-checks";
       break;
     case "EndpointControl":
-      //router.push('/a/#/endpoints');
       window.location = "/a/#/endpoints";
       break;
     case "MessageFailures":
-      var newlocation = "/a/#/failed-messages/groups";
-      if (eventLogItem.related_to && eventLogItem.related_to[0].search("message") > 0) {
-        newlocation = "/a/#/failed-messages" + eventLogItem.related_to[0];
+      var newlocation = "/failed-messages";
+      if (eventLogItem.related_to && eventLogItem.related_to.length>0 && eventLogItem.related_to[0].search("message") > 0) {
+      newlocation = "/failed-messages" + eventLogItem.related_to[0];
       }
-      //router.push(newlocation);
-      window.location = newlocation;
+      router.push(newlocation);
       break;
     case "Recoverability":
-      //router.push('/a/#/failed-messages/groups');
-      window.location = "/a/#/failed-messages/groups";
+      router.push('/failed-messages');
       break;
     case "MessageRedirects":
       router.push("/configuration#retry-redirects");
