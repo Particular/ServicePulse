@@ -56,7 +56,7 @@ body {
 }
 
 #main-content {
-    padding-top: 20px;
+    padding-top: 40px;
     padding-bottom: 40px;
 }
 
@@ -156,6 +156,52 @@ label {
     font-weight: 700;
 }
 
+.label {
+    display: inline;
+    padding: 0.2em 0.6em 0.3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25em;
+}
+
+.label-info,
+.badge-info {
+  background-color: #1b809e;
+  border-color: #1b809e;
+}
+
+.label-warning, 
+.badge-warning {
+    background-color: #aa6708;
+    border-color: #aa6708;
+}
+
+.label-important, 
+.badge-important {
+    background-color: #FA603D;
+    border-color: #FA5833;
+}
+
+pre {    
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333333;
+    word-break: break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
 .modal-header {
     padding: 15px;
     border-bottom: 1px solid #e5e5e5;
@@ -188,6 +234,12 @@ label {
     border-color: #ccc;
 }
 
+.btn-default:hover {
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+
 .btn.btn-default.disabled {
     opacity: 0.4;
 }
@@ -198,7 +250,7 @@ label {
 
 .btn.btn-primary {
     padding: 8px 16px;
-    background-color: #00A3C4 !important;
+    background-color: #00A3C4;
     border-color: #0686AA;
     color: #fff;
 }
@@ -510,6 +562,12 @@ span.metadata.metadata-link i.fa {
     font-style: italic;
     color: white;
 }
+
+.metadata-label {
+    margin-right: 24px;
+    position: relative;
+    top: -1px;
+}
   
 .metadata > .metadata-label {
     padding: 6px 10px;
@@ -574,6 +632,13 @@ fieldset[disabled]:hover {
 
 .select-all {
     width: 127px;
+}
+
+.group-message-count {
+    color: #A8B3B1;
+    font-size: 16px;
+    margin: 4px 0 12px;
+    display: block;
 }
 
 h3.group-message-count {

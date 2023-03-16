@@ -361,15 +361,15 @@ onUnmounted(() => {
         <no-data v-if="failedMessage?.error" title="message failures" message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
         <div v-if="!failedMessage?.error && !failedMessage?.notFound">
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 no-side-padding">
               <div class="active break group-title">
                 <h1 class="message-type-title">{{ failedMessage.message_type }}</h1>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col-12">
-              <div class="metadata group-title group-message-count message-metadata">
+            <div class="col-sm-12 no-side-padding">
+              <div class="metadata group-message-count message-metadata">
                 <span v-if="failedMessage.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
                 <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
                 <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
@@ -381,7 +381,7 @@ onUnmounted(() => {
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
                 <span v-if="failedMessage.redirect" class="metadata"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
               </div>
-              <div class="metadata group-title group-message-count message-metadata" v-if="failedMessage.archived">
+              <div class="metadata group-message-count message-metadata" v-if="failedMessage.archived">
                 <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="failedMessage.last_modified"></time-since></span>
                 <span class="metadata danger" v-if="failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
                 <span class="metadata danger" v-if="!failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <time-since :date-utc="failedMessage.deleted_in"></time-since></span>
@@ -389,28 +389,28 @@ onUnmounted(() => {
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-sm-12 no-side-padding">
               <div class="btn-toolbar message-toolbar">
-                <button type="button" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" class="btn btn-default" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
-                <button type="button" v-if="failedMessage.archived" class="btn btn-default" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
-                <button type="button" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" class="btn btn-default" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
+                <button type="button" class="btn btn-default" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved"  @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage.archived"  @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
+                <button type="button" class="btn btn-default" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved"  @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
                 <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" @click="showEditAndRetryModal()"><i class="fa fa-pencil"></i> Edit & retry</button>
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
-                <button type="button" class="btn btn-default" @click="exportMessage()" v-if="!failedMessage.notFound && !failedMessage.error"><i class="fa fa-download"></i> Export message</button>
+                <button type="button" class="btn btn-default" v-if="!failedMessage.notFound && !failedMessage.error" @click="exportMessage()" ><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="nav tabs msg-tabs">
-                <h5 :class="{ active: panel === 1 }" class="nav-item" v-on:click="togglePanel(1)"><a href="#">Stacktrace</a></h5>
-                <h5 :class="{ active: panel === 2 }" class="nav-item" v-on:click="togglePanel(2)"><a href="#">Headers</a></h5>
-                <h5 :class="{ active: panel === 3 }" class="nav-item" v-on:click="togglePanel(3)"><a href="#">Message body</a></h5>
-                <h5 :class="{ active: panel === 4 }" class="nav-item" v-on:click="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
+                <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="#">Stacktrace</a></h5>
+                <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="#">Headers</a></h5>
+                <h5 :class="{ active: panel === 3 }" class="nav-item" @click="togglePanel(3)"><a href="#">Message body</a></h5>
+                <h5 :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
               </div>
-              <pre isolate-click v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
-              <pre isolate-click v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
-              <table isolate-click class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
+              <pre v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
+              <pre v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
+              <table class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
                 <tbody>
                   <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
                     <td nowrap="nowrap">{{ header.key }}</td>
@@ -471,105 +471,17 @@ onUnmounted(() => {
 </template>
 
 <style>
-.break {
-  -ms-word-wrap: break-word;
-  word-break: break-all;
-  word-wrap: break-word;
-}
-
 h1.message-type-title {
   margin: 0 0 8px;
   font-size: 24px;
 }
 
-.group-title.group-message-count sp-moment,
-.group-title.group-message-count i {
-  font-size: 16px;
-  color: #777f7f;
-}
-
-.group-title {
-  display: block;
-  font-size: 30px;
-  margin: 10px 0 0;
-}
-
-.metadata-label {
-  margin-right: 24px;
-  position: relative;
-  top: -1px;
-}
-
-.metadata > .metadata-label {
-  padding: 6px 10px;
-}
-
-.label {
-  display: inline;
-  padding: 0.2em 0.6em 0.3em;
-  font-size: 75%;
-  font-weight: 700;
-  line-height: 1;
-  color: #fff;
-  text-align: center;
-  white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: 0.25em;
-}
-
-.label-warning,
-.badge-warning {
-  background-color: #aa6708;
-  border-color: #aa6708;
-}
-
-.group-message-count {
-  color: #a8b3b1;
-  font-size: 16px;
-  margin: 4px 0 12px;
-  display: block;
-}
-
-.label-important,
-.badge-important {
-  background-image: none;
-}
-
-.sidebar-label {
-  box-shadow: none;
-  color: #ffffff;
-  display: inline-block;
-  font-size: 12px;
-  margin-top: 3px;
-  max-width: 100%;
-  padding: 6px 10px;
-}
-
 .message-metadata {
   display: inline;
-}
-
-.message-metadata {
-  display: inline;
-}
-
-span.metadata.danger,
-i.fa.fa-trash-o.danger,
-sp-moment.danger {
-  font-weight: normal !important;
-}
-
-.btn-toolbar {
-  padding: 12px 0 0;
-  margin-left: 0;
 }
 
 div.btn-toolbar.message-toolbar {
   margin-bottom: 20px;
-}
-.btn-toolbar {
-  padding: 12px 0 0;
-  margin-left: 0;
 }
 
 button img {
@@ -578,142 +490,7 @@ button img {
   width: 17px;
 }
 
-.btn-toolbar > .btn,
-.btn-toolbar > .btn-group,
-.btn-toolbar > .input-group,
-.action-btns .btn {
-  margin-left: 0;
-  margin-right: 5px;
-}
-
-.btn-default.disabled:hover,
-.btn-default[disabled]:hover,
-fieldset[disabled] .btn-default:hover,
-.btn-default.disabled:focus,
-.btn-default[disabled]:focus,
-fieldset[disabled] .btn-default:focus,
-.btn-default.disabled.focus,
-.btn-default[disabled].focus,
-fieldset[disabled] .btn-default.focus {
-  background-color: #fff;
-  border-color: #ccc;
-}
-
-.btn-default:active:hover,
-.btn-default.active:hover,
-.open > .dropdown-toggle.btn-default:hover,
-.btn-default:active:focus,
-.btn-default.active:focus,
-.open > .dropdown-toggle.btn-default:focus,
-.btn-default:active.focus,
-.btn-default.active.focus,
-.open > .dropdown-toggle.btn-default.focus {
-  color: #333;
-  border-color: #8c8c8c;
-}
-
-.btn:focus,
-.btn:active:focus,
-.btn.active:focus,
-.btn.focus,
-.btn:active.focus,
-.btn.active.focus {
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
-}
-
-.btn-default:active,
-.btn-default.active,
-.open > .dropdown-toggle.btn-default {
-  color: #333;
-  background-color: #e6e6e6;
-  background-image: none;
-  border-color: #adadad;
-}
-
-.btn-default:hover {
-  color: #333;
-  background-color: #e6e6e6;
-  border-color: #adadad;
-}
-
-.btn-default:focus,
-.btn-default.focus {
-  color: #333;
-  background-color: #e6e6e6;
-  border-color: #8c8c8c;
-}
-
-.btn.disabled,
-.btn[disabled],
-fieldset[disabled] .btn {
-  cursor: not-allowed;
-  pointer-events: unset;
-  border-color: #adadad;
-  background-color: #fff;
-  filter: alpha(opacity=65);
-  opacity: 0.65;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-
-.btn:active,
-.btn.active {
-  background-image: none;
-  outline: 0;
-  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-}
-
-a:focus,
-button:focus {
-  outline: 0 !important;
-}
-
-button[disabled],
-html input[disabled] {
-  cursor: default;
-}
-
-span.metadata {
-  display: inline-block;
-  padding: 0px 20px 2px 0;
-  color: #777f7f;
-}
-
-code,
-kbd,
-pre,
-samp {
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
-}
-
-pre {
-  margin: 3px 0 2px;
-  white-space: pre-wrap;
-}
-
-pre {
-  display: block;
-  padding: 9.5px;
-  margin: 0 0 10px;
-  font-size: 13px;
-  line-height: 1.42857143;
-  color: #333333;
-  word-break: break-all;
-  word-wrap: break-word;
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
 .msg-tabs {
   margin-bottom: 20px;
-}
-
-.label-info,
-.badge-info {
-  background-color: #1b809e;
-  border-color: #1b809e;
 }
 </style>
