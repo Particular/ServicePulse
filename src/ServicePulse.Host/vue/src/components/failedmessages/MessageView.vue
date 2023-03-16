@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeMount, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute } from "vue-router";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
@@ -14,6 +14,7 @@ import FlowDiagram from "./FlowDiagram.vue";
 import EditRetryDialog from "./EditRetryDialog.vue";
 
 let refreshInterval = undefined;
+let pollingFaster = false;
 let panel = ref();
 const route = useRoute();
 const id = route.params.id;
@@ -43,9 +44,14 @@ function loadFailedMessage() {
       message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
       message.isEditAndRetryEnabled = configuration.value.edit.enabled;
 
+      // Maintain the mutations of the message in memory until the api returns a newer modified message
       if (failedMessage.value.last_modified === message.last_modified) {
         message.retried = failedMessage.value.retried;
-        message.archived = failedMessage.value.archived;
+        message.archiving = failedMessage.value.archiving;
+        message.restoring = failedMessage.value.restoring;
+      } else {
+        message.archiving = false;
+        message.restoring = false;
       }
 
       Object.assign(failedMessage.value, message);
@@ -88,13 +94,12 @@ function updateMessageDeleteDate() {
 
 function archiveMessage() {
   useShowToast("info", "Info", `Deleting the message ${id} ...`);
+  changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
   return useArchiveMessage([id])
     .then((response) => {
       if (response !== undefined) {
-        return loadFailedMessage().then(() => {
-          failedMessage.value.archived = true;
-          return downloadHeadersAndBody();
-        });
+        failedMessage.value.archiving = true;
+        return;
       }
       return false;
     })
@@ -105,10 +110,11 @@ function archiveMessage() {
 }
 
 function unarchiveMessage() {
+  changeRefreshInterval(1000); // We've started an unarchive, so increase the polling frequency
   return useUnarchiveMessage([id])
     .then((response) => {
       if (response !== undefined) {
-        failedMessage.value.archived = false;
+        failedMessage.value.restoring = true;
       }
       return false;
     })
@@ -120,7 +126,7 @@ function unarchiveMessage() {
 
 function retryMessage() {
   useShowToast("info", "Info", `Retrying the message ${id} ...`);
-
+  changeRefreshInterval(1000); // We've started a retry, so increase the polling frequency
   return useRetryMessages([id])
     .then(() => {
       failedMessage.value.retried = true;
@@ -313,7 +319,7 @@ function showEditAndRetryModal() {
 
 function cancelEditAndRetry() {
   showEditRetryModal.value = false;
-  loadFailedMessage();    // Reset the message object when canceling the edit & retry modal
+  loadFailedMessage(); // Reset the message object when canceling the edit & retry modal
   return startRefreshInterval();
 }
 
@@ -324,7 +330,7 @@ function confirmEditAndRetry() {
 }
 
 function startRefreshInterval() {
-  stopRefreshInterval();    // clear interval if it exists to prevent memory leaks
+  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
   refreshInterval = setInterval(() => {
     loadFailedMessage();
@@ -337,15 +343,34 @@ function stopRefreshInterval() {
   }
 }
 
-onBeforeMount(() => {
-  getConfiguration().then(() => {
-    return loadFailedMessage();
-  });
-});
+function isRetryOrArchiveOperationInProgress() {
+  return failedMessage.value.retried || failedMessage.value.archiving || failedMessage.value.restoring;
+}
+
+function changeRefreshInterval(milliseconds) {
+  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
+
+  refreshInterval = setInterval(() => {
+    // If we're currently polling at the default interval of 5 seconds and there is a retry, delete, or restore in progress, then change the polling interval
+    if (!pollingFaster && isRetryOrArchiveOperationInProgress()) {
+      changeRefreshInterval(milliseconds);
+      pollingFaster = true;
+    } else if (pollingFaster && !isRetryOrArchiveOperationInProgress()) {
+      // Reset polling to default value after every retry, delete, and restore. Change polling frequency back to every 5 seconds
+      changeRefreshInterval(5000);
+      pollingFaster = false;
+    }
+    loadFailedMessage();
+  }, milliseconds);
+}
 
 onMounted(() => {
   togglePanel(1);
-  startRefreshInterval();
+
+  getConfiguration().then(() => {
+    startRefreshInterval();
+    return loadFailedMessage();
+  });
 });
 
 onUnmounted(() => {
@@ -371,6 +396,8 @@ onUnmounted(() => {
             <div class="col-sm-12 no-side-padding">
               <div class="metadata group-message-count message-metadata">
                 <span v-if="failedMessage.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
+                <span v-if="failedMessage.restoring" title="Message is being retried" class="label sidebar-label label-info metadata-label">Restoring...</span>
+                <span v-if="failedMessage.archiving" title="Message is being deleted" class="label sidebar-label label-info metadata-label">Deleting...</span>
                 <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
                 <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
                 <span v-if="failedMessage.number_of_processing_attempts > 1" :title="'This message has already failed ' + failedMessage.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label">{{ failedMessage.number_of_processing_attempts }} Retry Failures</span>
