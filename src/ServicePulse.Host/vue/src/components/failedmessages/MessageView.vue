@@ -21,9 +21,7 @@ const failedMessage = ref({});
 const configuration = ref([]);
 
 const id = computed(() => route.params.id);
-watch(id, async () => {
-  loadFailedMessage();
-});
+watch(id, async () => await loadFailedMessage());
 
 const showDeleteConfirm = ref(false);
 const showRestoreConfirm = ref(false);
