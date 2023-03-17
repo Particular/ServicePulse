@@ -247,8 +247,8 @@ onUnmounted(() => {
 
 onMounted(() => {
   let cookiePeriod = cookies.get("pending_retries_period");
-  if (typeof cookiePeriod === "undefined") {
-    cookiePeriod = periodOptions[0];
+  if (!cookiePeriod) {
+    cookiePeriod = periodOptions[0]; //default All Pending Retries
   }
 
   selectedPeriod.value = cookiePeriod;
