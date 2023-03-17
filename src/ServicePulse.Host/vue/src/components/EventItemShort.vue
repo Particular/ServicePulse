@@ -35,8 +35,8 @@ function iconSubClasses(eventItem) {
   };
 }
 
-    function navigateToEvent(eventLogItem) {
-    switch (eventLogItem.category) {
+function navigateToEvent(eventLogItem) {
+  switch (eventLogItem.category) {
     case "Endpoints":
       router.push("/configuration#endpoints");
       break;
