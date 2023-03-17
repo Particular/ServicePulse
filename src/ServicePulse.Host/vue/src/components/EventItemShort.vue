@@ -51,7 +51,7 @@ function navigateToEvent(eventLogItem) {
       break;
     case "MessageFailures":
       var newlocation = "/failed-messages";
-      if (eventLogItem.related_to && eventLogItem.related_to.length>0 && eventLogItem.related_to[0].search("message") > 0) {
+      if (eventLogItem.related_to && eventLogItem.related_to.length > 0 && eventLogItem.related_to[0].search("message") > 0) {
         newlocation = "/failed-messages" + eventLogItem.related_to[0];
       }
       router.push(newlocation);
