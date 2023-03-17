@@ -276,7 +276,7 @@ pre {
 .pa-endpoint {
     position: relative;
     top: 3px;
-    background-image: url('../img/endpoint.svg');
+    background-image: url('../a/img/endpoint.svg');
     background-position: center;
     background-repeat: no-repeat;
     height: 15px;
@@ -284,7 +284,7 @@ pre {
 }
 
 .pa-redirect-source {
-    background-image: url('../img/redirect-source.svg');
+    background-image: url('../a/img/redirect-source.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -301,7 +301,7 @@ pre {
 }
 
 .pa-redirect-destination {
-    background-image: url('../img/redirect-destination.svg');
+    background-image: url('../a/img/redirect-destination.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -2203,31 +2203,31 @@ i.fa-exclamation-triangle {
 }
 
 .pa-endpoint-lost.endpoints-overview {
-    background-image: url('../../img/endpoint-lost.svg');
+    background-image: url('../../a/img/endpoint-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .pa-monitoring-lost.endpoints-overview {
-    background-image: url('../../img/monitoring-lost.svg');
+    background-image: url('../../a/img/monitoring-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .pa-endpoint-lost.endpoint-details {
-    background-image: url('../../../img/endpoint-lost.svg');
+    background-image: url('../../../a/img/endpoint-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .pa-monitoring-lost.endpoint-details {
-    background-image: url('../../../img/monitoring-lost.svg');
+    background-image: url('../../../a/img/monitoring-lost.svg');
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .pa-warning {
-    background-image: url('../../../img/warning.svg');
+    background-image: url('../../../a/img/warning.svg');
     background-position: center;
     background-repeat: no-repeat;
     width: 20px;
@@ -2608,14 +2608,14 @@ span.fa-exclamation-triangle.danger {
 }
 
 #toast-container > .toast-error {
-    background-image: url('../img/toast-danger.svg') !important;
+    background-image: url('../a/img/toast-danger.svg') !important;
     background-position-y: 30px;
     background-size: 28px 28px;
 }
 
 #toast-container > .toast-warning {
     background-color: #F3BC52;
-    background-image: url('../img/toast-warning.svg') !important;
+    background-image: url('../a/img/toast-warning.svg') !important;
     background-position-y: 30px;
     background-size: 28px 28px;
 }
@@ -3205,11 +3205,11 @@ a.remove-endpoint:hover i {
 }
 
 .pa-check {
-    background-image: url('../img/check.svg');
+    background-image: url('../a/img/check.svg');
 }
 
 .pa-uncheck {
-    background-image: url('../img/uncheck.svg');
+    background-image: url('../a/img/uncheck.svg');
 }
 
 .pa-monitoring {
@@ -3252,11 +3252,11 @@ button[ng-click="vm.toggleSort()"] div {
 }
 
 .sort-up {
-    background-image: url('../../img/sort-up.svg');
+    background-image: url('../../a/img/sort-up.svg');
 }
 
 .sort-down {
-    background-image: url('../../img/sort-down.svg');
+    background-image: url('../../a/img/sort-down.svg');
 }
 
 .endpoint-group-title {
@@ -3383,7 +3383,7 @@ section[name="platformconnection"] li {
 }
 
 .pa-flow-saga {
-    background-image: url('../img/saga.svg');
+    background-image: url('../a/img/saga.svg');
     background-position: center;
     background-repeat: no-repeat;
     height: 15px;
@@ -3392,7 +3392,7 @@ section[name="platformconnection"] li {
 }
 
 .pa-flow-timeout {
-    background-image: url('../img/timeout.svg');
+    background-image: url('../a/img/timeout.svg');
     background-position: center;
     background-repeat: no-repeat;
     height: 15px;
@@ -3400,7 +3400,7 @@ section[name="platformconnection"] li {
 }
 
 .pa-flow-event {
-    background-image: url('../img/event.svg');
+    background-image: url('../a/img/event.svg');
     background-position: center;
     background-repeat: no-repeat;
     height: 15px;
@@ -3408,7 +3408,7 @@ section[name="platformconnection"] li {
 }
 
 .pa-flow-command {
-    background-image: url('../img/command.svg');
+    background-image: url('../a/img/command.svg');
     background-position: center;
     background-repeat: no-repeat;
     height: 15px;
@@ -3416,7 +3416,7 @@ section[name="platformconnection"] li {
 }
 
 .pa-flow-failed {
-    background-image: url('../img/failed-msg.svg');
+    background-image: url('../a/img/failed-msg.svg');
     background-position: center;
     background-repeat: no-repeat;
     height: 15px;
