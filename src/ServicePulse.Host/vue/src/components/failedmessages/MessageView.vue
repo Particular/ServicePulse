@@ -438,10 +438,10 @@ onUnmounted(() => {
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="nav tabs msg-tabs">
-                <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="#">Stacktrace</a></h5>
-                <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="#">Headers</a></h5>
-                <h5 :class="{ active: panel === 3 }" class="nav-item" @click="togglePanel(3)"><a href="#">Message body</a></h5>
-                <h5 :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
+                <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="javascript:void(0)">Stacktrace</a></h5>
+                <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="javascript:void(0)">Headers</a></h5>
+                <h5 :class="{ active: panel === 3 }" class="nav-item" @click="togglePanel(3)"><a href="javascript:void(0)">Message body</a></h5>
+                <h5 :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="javascript:void(0)">Flow Diagram</a></h5>
               </div>
               <pre v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
               <pre v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
