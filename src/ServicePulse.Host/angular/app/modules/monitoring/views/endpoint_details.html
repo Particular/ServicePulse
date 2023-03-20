@@ -307,7 +307,7 @@
                                             </div>
                                             <div class="no-side-padding sparkline-value">
                                                 {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : instance.metrics.retries.displayValue}}
-                                                <strong ng-if="instance.isStale &&  !instance.isScMonitoringDisconnected" uib-tooltip="No metrics received or instance is not configured to send metrics">?</strong>
+                                                <strong ng-if="instance.isStale && !instance.isScMonitoringDisconnected" uib-tooltip="No metrics received or instance is not configured to send metrics">?</strong>
                                                 <strong ng-if="instance.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                             </div>
                                         </div>
