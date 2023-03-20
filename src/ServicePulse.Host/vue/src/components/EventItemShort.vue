@@ -57,7 +57,7 @@ function navigateToEvent(eventLogItem) {
       router.push(newlocation);
       break;
     case "Recoverability":
-      router.push('/failed-messages');
+      router.push("/failed-messages");
       break;
     case "MessageRedirects":
       router.push("/configuration#retry-redirects");

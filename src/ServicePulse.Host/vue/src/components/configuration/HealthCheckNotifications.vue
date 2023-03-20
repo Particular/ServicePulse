@@ -8,6 +8,12 @@ import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotificati
 import { useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications } from "../../composables/serviceNotifications.js";
 import { useShowToast } from "../../composables/toast.js";
 
+// This is needed because the ConfigurationView.vue routerView expects this event.
+// The event is only actually emitted on the RetryRedirects.vue component
+// but if we don't include it, the console will show warnings about not being able to
+// subscribe to this event
+defineEmits(["redirectCountUpdated"]);
+
 const isExpired = licenseStatus.isExpired;
 const emailTestSuccessful = ref(null);
 const emailTestInProgress = ref(null);

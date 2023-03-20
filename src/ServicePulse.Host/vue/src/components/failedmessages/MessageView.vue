@@ -170,23 +170,27 @@ function downloadBody() {
     }
 
     if (response.headers.get("content-type") == "application/json") {
-      return response.json().then((jsonBody) => {
-        jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
+      return response
+        .json()
+        .then((jsonBody) => {
+          jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
 
-        failedMessage.value.messageBody = formatJson(jsonBody);
-      })
-      .catch(() => {
-        failedMessage.value.bodyUnavailable = true;
-      });
+          failedMessage.value.messageBody = formatJson(jsonBody);
+        })
+        .catch(() => {
+          failedMessage.value.bodyUnavailable = true;
+        });
     }
 
     if (response.headers.get("content-type") == "text/xml") {
-      return response.text().then((xmlBody) => {
-        failedMessage.value.messageBody = formatXml(xmlBody);
-      })
-      .catch(() => {
-        failedMessage.value.bodyUnavailable = true;
-      });
+      return response
+        .text()
+        .then((xmlBody) => {
+          failedMessage.value.messageBody = formatXml(xmlBody);
+        })
+        .catch(() => {
+          failedMessage.value.bodyUnavailable = true;
+        });
     }
 
     return response.text().then((textBody) => {

@@ -51,10 +51,6 @@
     margin-bottom: 0;
 }
 
-.Vue-Toastification__fade-leave-active {
-    padding: 22px 24px;
-}
-
 .Vue-Toastification__icon {
     vertical-align: top;
     align-items: top;
@@ -75,11 +71,15 @@
     background-color: #00C468;
 }
 .Vue-Toastification__toast--error.vue-toast {
-    background-color: #CE4844;   
+    background-color: #CE4844;
 }
 .Vue-Toastification__toast--info.vue-toast {
     background-color: #1b809e;
 }
 .Vue-Toastification__toast--warning.vue-toast {
     background-color: #F3BC52;
+}
+
+.Vue-Toastification__fade-leave-active { 
+    height: auto !important;
 }

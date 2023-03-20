@@ -7,7 +7,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="toast-container">
+  <div>
     <template v-if="props.type === 'success'">
       <div class="toast-success">
         <p>
