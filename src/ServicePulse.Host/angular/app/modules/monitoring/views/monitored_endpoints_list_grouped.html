@@ -85,7 +85,8 @@
                                     </div>
                                     <div class="no-side-padding sparkline-value">
                                         {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.queueLength.displayValue}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                        <strong ng-if="endpoint.isStale &&  !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                     </div>
                                 </div>
                             </div>
@@ -96,7 +97,8 @@
                                     </div>
                                     <div class="no-side-padding sparkline-value">
                                         {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.throughput.displayValue}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                        <strong ng-if="endpoint.isStale &&  !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +109,8 @@
                                     </div>
                                     <div class="no-side-padding sparkline-value">
                                         {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.retries.displayValue}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                        <strong ng-if="endpoint.isStale &&  !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                     </div>
                                 </div>
                             </div>
@@ -118,7 +121,8 @@
                                     </div>
                                     <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                                         {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.processingTime.displayValue.value}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                        <strong ng-if="endpoint.isStale &&  !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                         <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.processingTime.displayValue.unit}}</span>
                                     </div>
                                 </div>
@@ -130,7 +134,8 @@
                                     </div>
                                     <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                                         {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
-                                        <strong ng-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                                        <strong ng-if="endpoint.isStale &&  !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                         <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{endpoint.metrics.criticalTime.displayValue.unit}}</span>
                                     </div>
                                 </div>
