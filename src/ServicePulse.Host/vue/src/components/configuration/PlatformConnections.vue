@@ -5,6 +5,12 @@ import { licenseStatus } from "../../composables/serviceLicense.js";
 import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl } from "./../../composables/serviceServiceControlUrls.js";
 import { connectionState, monitoringConnectionState } from "../../composables/serviceServiceControl";
 
+// This is needed because the ConfigurationView.vue routerView expects this event.
+// The event is only actually emitted on the RetryRedirects.vue component
+// but if we don't include it, the console will show warnings about not being able to
+// subscribe to this event
+defineEmits(["redirectCountUpdated"]);
+
 const isExpired = licenseStatus.isExpired;
 
 const serviceControlUrl = ref(configuredServiceControlUrl.value);

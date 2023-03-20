@@ -75,6 +75,33 @@ const router = createRouter({
       meta: {
         title: "Configuration • ServicePulse",
       },
+      children: [
+        {
+          name: "license",
+          path: "",
+          component: () => import("../components/configuration/PlatformLicense.vue"),
+        },
+        {
+          name: "health-check-notifications",
+          path: "health-check-notifications",
+          component: () => import("../components/configuration/HealthCheckNotifications.vue"),
+        },
+        {
+          name: "retry-redirects",
+          path: "retry-redirects",
+          component: () => import("../components/configuration/RetryRedirects.vue"),
+        },
+        {
+          name: "connections",
+          path: "connections",
+          component: () => import("../components/configuration/PlatformConnections.vue"),
+        },
+        {
+          name: "endpoint-connection",
+          path: "endpoint-connection",
+          component: () => import("../components/configuration/EndpointConnection.vue"),
+        },
+      ],
     },
   ],
   strict: false,

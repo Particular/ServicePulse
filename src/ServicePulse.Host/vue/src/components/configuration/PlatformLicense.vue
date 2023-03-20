@@ -6,6 +6,12 @@ import { connectionState } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 
+// This is needed because the ConfigurationView.vue routerView expects this event.
+// The event is only actually emitted on the RetryRedirects.vue component
+// but if we don't include it, the console will show warnings about not being able to
+// subscribe to this event
+defineEmits(["redirectCountUpdated"]);
+
 const loading = computed(() => {
   return !license;
 });

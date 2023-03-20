@@ -8,6 +8,12 @@ import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
 
+// This is needed because the ConfigurationView.vue routerView expects this event.
+// The event is only actually emitted on the RetryRedirects.vue component
+// but if we don't include it, the console will show warnings about not being able to
+// subscribe to this event
+defineEmits(["redirectCountUpdated"]);
+
 const isExpired = licenseStatus.isExpired;
 
 const loading = ref(true);
@@ -79,7 +85,7 @@ function switchJsonTab() {
             <div class="col-12">
               <ol>
                 <li>Add the <a href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/">NServiceBus.ServicePlatform.Connector</a> NuGet package to the endpoint project.</li>
-                <li>Copy-paste the code from one of the options below. For additional options, refer to the <a href="https://docs.particular.net/platform/connecting">documentation></a></li>
+                <li>Copy-paste the code from one of the options below. For additional options, refer to the <a href="https://docs.particular.net/platform/connecting">documentation</a></li>
               </ol>
             </div>
           </div>
