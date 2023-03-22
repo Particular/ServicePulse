@@ -157,8 +157,8 @@ onMounted(() => {
                   <div class="row msg-editor-tabs">
                     <div class="col-sm-12 no-side-padding">
                       <div class="tabs msg-tabs">
-                        <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="#">Headers</a></h5>
-                        <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="#">Message body</a></h5>
+                        <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="javascript:void(0)">Headers</a></h5>
+                        <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="javascript:void(0)">Message body</a></h5>
                       </div>
                     </div>
                   </div>
@@ -183,7 +183,7 @@ onMounted(() => {
                       <div v-if="panel === 2 && !message.bodyUnavailable" style="height: calc(100% - 260px)">
                         <textarea class="form-control" :disabled="!message.isContentTypeSupported" v-model="message.messageBody"></textarea>
                         <span class="empty-error" v-if="message.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
-                        <span class="reset-body" v-if="message.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()">Reset changes</a></span>
+                        <span class="reset-body" v-if="message.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
                         <div class="alert alert-info" v-if="message.panel === 2 && message.bodyUnavailable">{{ message.bodyUnavailable }}</div>
                       </div>
                     </div>
