@@ -19,7 +19,7 @@ let showEditAndRetryConfirmation = ref(false);
 let showCancelConfirmation = ref(false);
 let showEditRetryGenericError = ref(false);
 
-const id = computed(() => settings.id);
+const id = computed(() => settings.id ?? message.value.id);
 const messageBody = computed(() => settings.message.messageBody);
 
 watch(messageBody, async (newValue) => {
