@@ -41,7 +41,7 @@ jobs:
       - name: Build AngularJS and Vue.js
         run: PowerShell -File .\build.ps1
         working-directory: src/ServicePulse.Host
-      - name: Add NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
+      - name: Remove NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
         run: echo "NODE_OPTIONS=" >> $env:GITHUB_ENV
       - name: Prepare AIP file
         run: |
