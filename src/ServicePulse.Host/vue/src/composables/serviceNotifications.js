@@ -1,7 +1,4 @@
-import {
-  useFetchFromServiceControl,
-  usePostToServiceControl,
-} from "./serviceServiceControlUrls";
+import { useFetchFromServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
 
 export function useEmailNotifications() {
   const emailNotificationResults = getEmailNotifications();

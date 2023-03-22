@@ -5,18 +5,12 @@ import { licenseStatus } from "../../composables/serviceLicense.js";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
-import RetryRedirectDelete from "./RetryRedirectDelete.vue";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
 import { useShowToast } from "../../composables/toast.js";
 import TimeSince from "../TimeSince.vue";
-import {
-  useRedirects,
-  useUpdateRedirects,
-  useCreateRedirects,
-  useDeleteRedirects,
-  useRetryPendingMessagesForQueue,
-} from "../../composables/serviceRedirects.js";
+import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, useRetryPendingMessagesForQueue } from "../../composables/serviceRedirects.js";
+import ConfirmDialog from "../ConfirmDialog.vue";
 
 const isExpired = licenseStatus.isExpired;
 
@@ -55,8 +49,7 @@ function getRedirect() {
 
 function createRedirect() {
   redirectSaveSuccessful.value = null;
-  (selectedRedirect.value.message_redirect_id = null),
-    (selectedRedirect.value.from_physical_address = "");
+  (selectedRedirect.value.message_redirect_id = null), (selectedRedirect.value.from_physical_address = "");
   selectedRedirect.value.to_physical_address = "";
   showEdit.value = true;
 }
@@ -72,11 +65,7 @@ function editRedirect(redirect) {
 function saveEditedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  useUpdateRedirects(
-    redirect.redirectId,
-    redirect.sourceQueue,
-    redirect.targetQueue
-  )
+  useUpdateRedirects(redirect.redirectId, redirect.sourceQueue, redirect.targetQueue)
     .then((result) => {
       if (result.message === "success") {
         redirectSaveSuccessful.value = true;
@@ -85,13 +74,7 @@ function saveEditedRedirect(redirect) {
       } else {
         redirectSaveSuccessful.value = false;
         if (result.status === "409" || result.status === 409) {
-          useShowToast(
-            "error",
-            "Error",
-            "Failed to update a redirect, can not create redirect to a queue" +
-              redirect.targetQueue +
-              " as it already has a redirect. Provide a different queue or end the redirect."
-          );
+          useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
         } else {
           useShowToast("error", "Error", result.message);
         }
@@ -110,50 +93,31 @@ function saveEditedRedirect(redirect) {
 function saveCreatedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  useCreateRedirects(redirect.sourceQueue, redirect.targetQueue).then(
-    (result) => {
-      if (result.message === "success") {
-        redirectSaveSuccessful.value = true;
-        useShowToast("info", "Info", "Redirect created successfully");
-        getRedirect();
+  useCreateRedirects(redirect.sourceQueue, redirect.targetQueue).then((result) => {
+    if (result.message === "success") {
+      redirectSaveSuccessful.value = true;
+      useShowToast("info", "Info", "Redirect created successfully");
+      getRedirect();
+    } else {
+      redirectSaveSuccessful.value = false;
+      if ((result.status === "409" || result.status === 409) && result.statusText === "Duplicate") {
+        useShowToast("error", "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
+      } else if ((result.status === "409" || result.status === 409) && result.statusText === "Dependents") {
+        useShowToast("error", "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
       } else {
-        redirectSaveSuccessful.value = false;
-        if (
-          (result.status === "409" || result.status === 409) &&
-          result.statusText === "Duplicate"
-        ) {
-          useShowToast(
-            "error",
-            "Error",
-            "Failed to create a redirect, can not create more than one redirect for queue: " +
-              redirect.sourceQueue
-          );
-        } else if (
-          (result.status === "409" || result.status === 409) &&
-          result.statusText === "Dependents"
-        ) {
-          useShowToast(
-            "error",
-            "Error",
-            "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect."
-          );
-        } else {
-          useShowToast("error", "Error", result.message);
-        }
+        useShowToast("error", "Error", result.message);
       }
     }
-  );
+  });
 }
 
 function deleteRedirect(redirect) {
   redirectSaveSuccessful.value = null;
-  (selectedRedirect.value.message_redirect_id = redirect.message_redirect_id),
-    (showDelete.value = true);
+  (selectedRedirect.value.message_redirect_id = redirect.message_redirect_id), (showDelete.value = true);
 }
 
-function saveDeleteRedirect(redirectId) {
-  showDelete.value = false;
-  useDeleteRedirects(redirectId).then((result) => {
+function saveDeleteRedirect() {
+  useDeleteRedirects(selectedRedirect.value.message_redirect_id).then((result) => {
     if (result.message === "success") {
       redirectSaveSuccessful.value = true;
       useShowToast("info", "Info", "Redirect deleted");
@@ -182,81 +146,40 @@ onMounted(() => {
           <div class="row">
             <div class="col-sm-12">
               <div class="btn-toolbar">
-                <button
-                  type="button"
-                  class="btn btn-default"
-                  @click="createRedirect"
-                >
-                  <i class="fa pa-redirect-source pa-redirect-small"></i> Create
-                  Redirect
-                </button>
+                <button type="button" class="btn btn-default" @click="createRedirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Create Redirect</button>
                 <span></span>
               </div>
             </div>
           </div>
 
-          <NoData
-            v-if="redirects.total === 0 && !loadingData"
-            title="Redirects"
-            message="There are currently no redirects"
-          ></NoData>
+          <NoData v-if="redirects.total === 0 && !loadingData" title="Redirects" message="There are currently no redirects"></NoData>
 
           <div class="row">
             <template v-if="redirects.total > 0">
               <div class="col-sm-12">
-                <template
-                  v-for="redirect in redirects.data"
-                  :key="redirect.message_redirect_id"
-                >
+                <template v-for="redirect in redirects.data" :key="redirect.message_redirect_id">
                   <div class="row box repeat-modify">
                     <div class="row" id="{{redirect.from_physical_address}}">
                       <div class="col-sm-12">
-                        <p
-                          class="lead hard-wrap truncate"
-                          uib-tooltip="{{redirect.from_physical_address}}"
-                        >
-                          <i
-                            class="fa pa-redirect-source pa-redirect-small"
-                            uib-tooltip="Source queue name"
-                          ></i>
+                        <p class="lead hard-wrap truncate" :title="redirect.from_physical_address">
+                          <i class="fa pa-redirect-source pa-redirect-small" title="Source queue name"></i>
                           {{ redirect.from_physical_address }}
                         </p>
-                        <p
-                          class="lead hard-wrap truncate"
-                          uib-tooltip="{{redirect.to_physical_address}}"
-                        >
-                          <i
-                            class="fa pa-redirect-destination pa-redirect-small"
-                            uib-tooltip="Destination queue name"
-                          ></i>
+                        <p class="lead hard-wrap truncate" :title="redirect.to_physical_address">
+                          <i class="fa pa-redirect-destination pa-redirect-small" title="Destination queue name"></i>
                           {{ redirect.to_physical_address }}
                         </p>
                         <p class="metadata">
                           <i class="fa fa-clock-o"></i>
-                          Last modified:
-                          <time-since
-                            :dateUtc="redirect.last_modified"
-                          ></time-since>
+                          Last modified: <time-since :dateUtc="redirect.last_modified"></time-since>
                         </p>
                       </div>
                     </div>
                     <div class="row">
-                      <div isolate-click class="col-sm-12">
+                      <div class="col-sm-12">
                         <p class="small">
-                          <button
-                            type="button"
-                            class="btn btn-link btn-sm"
-                            @click="deleteRedirect(redirect)"
-                          >
-                            End Redirect
-                          </button>
-                          <button
-                            type="button"
-                            class="btn btn-link btn-sm"
-                            @click="editRedirect(redirect)"
-                          >
-                            Modify Redirect
-                          </button>
+                          <button type="button" class="btn btn-link btn-sm" @click="deleteRedirect(redirect)">End Redirect</button>
+                          <button type="button" class="btn btn-link btn-sm" @click="editRedirect(redirect)">Modify Redirect</button>
                         </p>
                       </div>
                     </div>
@@ -266,21 +189,19 @@ onMounted(() => {
             </template>
           </div>
           <Teleport to="#modalDisplay">
-            <RetryRedirectDelete
-              v-if="showDelete === true"
-              :message_redirect_id="selectedRedirect.message_redirect_id"
+            <ConfirmDialog
+              v-if="showDelete"
               @cancel="showDelete = false"
-              @delete="saveDeleteRedirect"
-            ></RetryRedirectDelete>
+              @confirm="
+                showDelete = false;
+                saveDeleteRedirect();
+              "
+              :heading="'Are you sure you want to end the redirect?'"
+              :body="'Once the redirect is ended, any affected messages will be sent to the original destination queue. Ensure this queue is ready to accept messages again.'"
+            ></ConfirmDialog>
           </Teleport>
           <Teleport to="#modalDisplay">
-            <RetryRedirectEdit
-              v-if="showEdit === true"
-              v-bind="selectedRedirect"
-              @cancel="showEdit = false"
-              @create="saveCreatedRedirect"
-              @edit="saveEditedRedirect"
-            ></RetryRedirectEdit>
+            <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
           </Teleport>
         </section>
       </template>
@@ -288,4 +209,8 @@ onMounted(() => {
   </template>
 </template>
 
-<style scoped></style>
+<style>
+p.control-label {
+  margin-bottom: 2px;
+}
+</style>

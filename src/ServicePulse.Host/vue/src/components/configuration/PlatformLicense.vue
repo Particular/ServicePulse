@@ -6,6 +6,12 @@ import { connectionState } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 
+// This is needed because the ConfigurationView.vue routerView expects this event.
+// The event is only actually emitted on the RetryRedirects.vue component
+// but if we don't include it, the console will show warnings about not being able to
+// subscribe to this event
+defineEmits(["redirectCountUpdated"]);
+
 const loading = computed(() => {
   return !license;
 });
@@ -22,10 +28,7 @@ const loading = computed(() => {
           <div class="box">
             <div class="row">
               <div class="license-info">
-                <div>
-                  <b>Platform license type:</b> {{ license.license_type
-                  }}{{ license.licenseEdition.value }}
-                </div>
+                <div><b>Platform license type:</b> {{ license.license_type }}{{ license.licenseEdition.value }}</div>
 
                 <template v-if="licenseStatus.isSubscriptionLicense">
                   <div>
@@ -39,13 +42,7 @@ const loading = computed(() => {
                       {{ licenseStatus.subscriptionDaysLeft }}
                       <exclamation-mark :type="licenseStatus.warningLevel" />
                     </span>
-                    <div
-                      class="license-expired-text"
-                      v-if="licenseStatus.isPlatformExpired"
-                    >
-                      Your license expired. Please update the license to
-                      continue using the Particular Service Platform.
-                    </div>
+                    <div class="license-expired-text" v-if="licenseStatus.isPlatformExpired">Your license expired. Please update the license to continue using the Particular Service Platform.</div>
                   </div>
                 </template>
                 <template v-if="licenseStatus.isTrialLicense">
@@ -60,28 +57,9 @@ const loading = computed(() => {
                       {{ licenseStatus.trialDaysLeft }}
                       <exclamation-mark :type="licenseStatus.warningLevel" />
                     </span>
-                    <div
-                      class="license-expired-text"
-                      v-if="licenseStatus.isPlatformTrialExpired"
-                    >
-                      Your license expired. To continue using the Particular
-                      Service Platform you'll need to extend your license.
-                    </div>
-                    <div
-                      class="license-page-extend-trial"
-                      v-if="
-                        licenseStatus.isPlatformTrialExpiring &&
-                        licenseStatus.isPlatformTrialExpired
-                      "
-                    >
-                      <a
-                        class="btn btn-default btn-primary"
-                        href="https://particular.net/extend-your-trial?p=servicepulse"
-                        target="_blank"
-                        >Extend your license&nbsp;&nbsp;<i
-                          class="fa fa-external-link"
-                        ></i
-                      ></a>
+                    <div class="license-expired-text" v-if="licenseStatus.isPlatformTrialExpired">Your license expired. To continue using the Particular Service Platform you'll need to extend your license.</div>
+                    <div class="license-page-extend-trial" v-if="licenseStatus.isPlatformTrialExpiring && licenseStatus.isPlatformTrialExpired">
+                      <a class="btn btn-default btn-primary" href="https://particular.net/extend-your-trial?p=servicepulse" target="_blank">Extend your license&nbsp;&nbsp;<i class="fa fa-external-link"></i></a>
                     </div>
                   </div>
                 </template>
@@ -91,8 +69,7 @@ const loading = computed(() => {
                       <b>Upgrade protection expiry date:</b>
                       <span
                         :class="{
-                          'license-expired':
-                            licenseStatus.isInvalidDueToUpgradeProtectionExpired,
+                          'license-expired': licenseStatus.isInvalidDueToUpgradeProtectionExpired,
                         }"
                       >
                         {{ license.formattedUpgradeProtectionExpiration.value }}
@@ -100,25 +77,8 @@ const loading = computed(() => {
                         <exclamation-mark :type="licenseStatus.warningLevel" />
                       </span>
                     </span>
-                    <div
-                      class="license-expired-text"
-                      v-if="
-                        licenseStatus.isValidWithExpiredUpgradeProtection ||
-                        licenseStatus.isValidWithExpiringUpgradeProtection
-                      "
-                    >
-                      <b>Warning:</b> Once upgrade protection expires, you'll no
-                      longer have access to support or new product versions.
-                    </div>
-                    <div
-                      class="license-expired-text"
-                      v-if="
-                        licenseStatus.isInvalidDueToUpgradeProtectionExpired
-                      "
-                    >
-                      Your license upgrade protection expired before this
-                      version of ServicePulse was released.
-                    </div>
+                    <div class="license-expired-text" v-if="licenseStatus.isValidWithExpiredUpgradeProtection || licenseStatus.isValidWithExpiringUpgradeProtection"><b>Warning:</b> Once upgrade protection expires, you'll no longer have access to support or new product versions.</div>
+                    <div class="license-expired-text" v-if="licenseStatus.isInvalidDueToUpgradeProtectionExpired">Your license upgrade protection expired before this version of ServicePulse was released.</div>
                   </div>
                 </template>
                 <div>
@@ -127,11 +87,7 @@ const loading = computed(() => {
                 </div>
                 <ul class="license-install-info">
                   <li>
-                    <a
-                      href="https://docs.particular.net/servicecontrol/license"
-                      target="_blank"
-                      >Install or update a ServiceControl license</a
-                    >
+                    <a href="https://docs.particular.net/servicecontrol/license" target="_blank">Install or update a ServiceControl license</a>
                   </li>
                 </ul>
 
@@ -149,4 +105,20 @@ const loading = computed(() => {
   </section>
 </template>
 
-<style></style>
+<style>
+.license-info {
+  font-size: 16px;
+  padding: 2em;
+  line-height: 3em;
+}
+
+.license-install-info li {
+  line-height: 1em;
+}
+
+.need-help {
+  margin-top: 38px;
+  padding-top: 20px;
+  border-top: 2px solid #f2f2f2;
+}
+</style>

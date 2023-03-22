@@ -3,13 +3,16 @@ import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import {
-  useServiceControlConnections,
-  connectionState,
-} from "../../composables/serviceServiceControl.js";
+import { useServiceControlConnections, connectionState } from "../../composables/serviceServiceControl.js";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
+
+// This is needed because the ConfigurationView.vue routerView expects this event.
+// The event is only actually emitted on the RetryRedirects.vue component
+// but if we don't include it, the console will show warnings about not being able to
+// subscribe to this event
+defineEmits(["redirectCountUpdated"]);
 
 const isExpired = licenseStatus.isExpired;
 
@@ -46,12 +49,8 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
     inlineSnippet.value = snippetTemplate.replace("<json>", jsonText);
 
     queryErrors.value = [];
-    queryErrors.value = queryErrors.value.concat(
-      connections.serviceControl.errors || []
-    );
-    queryErrors.value = queryErrors.value.concat(
-      connections.monitoring.errors || []
-    );
+    queryErrors.value = queryErrors.value.concat(connections.serviceControl.errors || []);
+    queryErrors.value = queryErrors.value.concat(connections.monitoring.errors || []);
 
     loading.value = false;
   });
@@ -76,56 +75,36 @@ function switchJsonTab() {
     <section name="platformconnection">
       <ServiceControlNotAvailable />
       <template v-if="!connectionState.unableToConnect">
-        <div class="box">
+        <div class="box configuration">
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-12">
               <h3>Connect an endpoint to ServiceControl</h3>
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-12">
+            <div class="col-12">
               <ol>
-                <li>
-                  Add the
-                  <a
-                    href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/"
-                    >NServiceBus.ServicePlatform.Connector</a
-                  >
-                  NuGet package to the endpoint project.
-                </li>
-                <li>
-                  Copy-paste the code from one of the options below. For
-                  additional options, refer to the
-                  <a href="https://docs.particular.net/platform/connecting"
-                    >documentation></a
-                  >
-                </li>
+                <li>Add the <a href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/">NServiceBus.ServicePlatform.Connector</a> NuGet package to the endpoint project.</li>
+                <li>Copy-paste the code from one of the options below. For additional options, refer to the <a href="https://docs.particular.net/platform/connecting">documentation</a></li>
               </ol>
             </div>
           </div>
           <div class="row tabs-config-snippets">
-            <div class="col-sm-12">
+            <div class="col-12">
               <busy-indicator v-show="loading"></busy-indicator>
 
               <!-- Nav tabs -->
               <div v-if="!loading" class="tabs" role="tablist">
                 <h5 :class="{ active: showCodeOnlyTab }">
-                  <a @click="switchCodeOnlyTab()" class="ng-binding"
-                    >Endpoint configuration only</a
-                  >
+                  <a @click="switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
                 </h5>
                 <h5 :class="{ active: !showCodeOnlyTab }">
                   <a @click="switchJsonTab()" class="ng-binding">JSON file</a>
                 </h5>
               </div>
 
-              <div
-                v-if="queryErrors.length > 0 && !loading"
-                class="alert alert-warning"
-                role="alert"
-              >
-                There were problems reaching some ServiceControl instances and
-                the configuration does not contain all connectivity information.
+              <div v-if="queryErrors.length > 0 && !loading" class="alert alert-warning" role="alert">
+                There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
                 <ul>
                   <li v-for="error in queryErrors" :key="error">
                     {{ error }}
@@ -135,52 +114,22 @@ function switchJsonTab() {
 
               <section v-if="showCodeOnlyTab && !loading">
                 <div class="row">
-                  <div class="col-xs-12 no-side-padding">
-                    <HighCode
-                      :codeValue="inlineSnippet"
-                      lang="csharp"
-                      :fontSize="'10'"
-                      :width="'100%'"
-                      :height="'100%'"
-                      :borderRadius="'0px'"
-                      :nameShow="false"
-                      :copy="true"
-                    ></HighCode>
+                  <div class="col-12 h-100">
+                    <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'12px'" :width="'100%'" :height="'100%'" :borderRadius="'0px'" :nameShow="false" :copy="true"></HighCode>
                   </div>
                 </div>
               </section>
 
               <section v-if="!showCodeOnlyTab && !loading">
                 <div class="row">
-                  <div class="col-xs-12 no-side-padding">
-                    <p>
-                      Note that when using JSON for configuration, you also need
-                      to change the endpoint configuration as shown below.
-                    </p>
+                  <div class="col-12 h-100">
+                    <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                     <p><strong>Endpoint configuration:</strong></p>
-                    <HighCode
-                      :codeValue="jsonSnippet"
-                      lang="csharp"
-                      :fontSize="'10'"
-                      :width="'100%'"
-                      :height="'100%'"
-                      :nameShow="false"
-                      :borderRadius="'0px'"
-                      :copy="true"
-                    ></HighCode>
+                    <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'12px'" :width="'100%'" :height="'100%'" :nameShow="false" :borderRadius="'0px'" :copy="true"></HighCode>
                     <p style="margin-top: 15px">
                       <strong>JSON configuration file:</strong>
                     </p>
-                    <HighCode
-                      :codeValue="jsonConfig"
-                      lang="json"
-                      :fontSize="'10'"
-                      :width="'100%'"
-                      :height="'100%'"
-                      :nameShow="false"
-                      :borderRadius="'0px'"
-                      :copy="true"
-                    ></HighCode>
+                    <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'12px'" :width="'100%'" :height="'100%'" :nameShow="false" :borderRadius="'0px'" :copy="true"></HighCode>
                   </div>
                 </div>
               </section>
@@ -193,8 +142,26 @@ function switchJsonTab() {
 </template>
 
 <style>
-pre {
+.configuration pre {
   border: none;
   background-color: #282c34;
+}
+
+.box > .row {
+  margin-left: 0px;
+}
+
+section[name="platformconnection"] ol {
+  font-size: 16px;
+  padding-left: 18px;
+  margin: 15px 0 0;
+}
+
+section[name="platformconnection"] li {
+  margin-bottom: 15px;
+}
+
+.code {
+  padding-bottom: 20px;
 }
 </style>
