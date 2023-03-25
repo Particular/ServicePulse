@@ -38,7 +38,7 @@ function iconSubClasses(eventItem) {
 function navigateToEvent(eventLogItem) {
   switch (eventLogItem.category) {
     case "Endpoints":
-      router.push("/configuration#endpoints");
+      router.push("/configuration/endpoint-connection");
       break;
     case "HeartbeatMonitoring":
       window.location = "/a/#/endpoints";

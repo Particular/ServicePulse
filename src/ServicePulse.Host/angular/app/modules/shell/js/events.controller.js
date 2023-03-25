@@ -13,10 +13,9 @@
 		var subscription;
 
 		$scope.viewCategory = function (eventLogItem) {
-
-			switch(eventLogItem.category) {
+			switch (eventLogItem.category) {
 				case 'Endpoints':
-					$location.path('/configuration/endpoints');
+					window.location.href = '/#/configuration/endpoint-connection';
 					break;
 				case 'HeartbeatMonitoring':
 					$location.path('/endpoints');
@@ -28,17 +27,17 @@
 					$location.path('/endpoints');
 					break;
 				case 'MessageFailures':
-					var newlocation = '/failed-messages/groups';
+					var newlocation = '/#/failed-messages';
 					if (eventLogItem.related_to && eventLogItem.related_to[0].search('message') > 0) {
-						newlocation = '/failed-messages' + eventLogItem.related_to[0];
+						newlocation = '/#/failed-messages' + eventLogItem.related_to[0];
 					}
-					$location.path(newlocation);
+					window.location.href = newlocation;
 					break;
 				case 'Recoverability':
-					$location.path('/failed-messages/groups');
+					window.location.href = '/#/failed-messages';
 					break;
 				case 'MessageRedirects':
-					$location.path('/configuration/redirects');
+					window.location.href='/#/configuration/retry-redirects';
 					break;
 				default:
 			}
