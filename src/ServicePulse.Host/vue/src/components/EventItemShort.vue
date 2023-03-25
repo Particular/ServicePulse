@@ -60,7 +60,7 @@ function navigateToEvent(eventLogItem) {
       router.push("/failed-messages");
       break;
     case "MessageRedirects":
-      router.push("/configuration#retry-redirects");
+          router.push("/configuration/retry-redirects");
       break;
     default:
   }
