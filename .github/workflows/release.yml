@@ -27,7 +27,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1.3
       - name: Setup Advanced Installer
         run: |
-          $version = "18.8.1"
+          $version = "20.2.1"
           choco install advanced-installer --version=$version
           & "C:\Program Files (x86)\Caphyon\Advanced Installer $version\bin\x86\AdvancedInstaller.com" /register ${{ secrets.ADVANCED_INSTALLER_LICENSE_KEY }}
       - name: Add NODE_OPTIONS to ENVVARS # Must do this after checkout as checkout uses node v16 which will cause this to fail
@@ -94,10 +94,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.4.0
+      - name: Add NODE_OPTIONS to ENVVARS # Must do this after checkout as checkout uses node v16 which will cause this to fail
+        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $env:GITHUB_ENV
+        shell: pwsh
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
         shell: pwsh
         working-directory: src/ServicePulse.Host
+      - name: Remove NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
+        run: echo "NODE_OPTIONS=" >> $env:GITHUB_ENV
+        shell: pwsh
       - name: Update app.constants.js
         run: |
           $filename = "src/ServicePulse.Host/app/js/app.constants.js"
