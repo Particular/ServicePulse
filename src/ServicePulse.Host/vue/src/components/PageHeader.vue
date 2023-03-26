@@ -75,7 +75,7 @@ const displayDanger = computed(() => {
             </a>
           </li>
           <li :class="{ active: subIsActive('/configuration') }">
-            <RouterLink :to="{ name: 'configuration' }" exact>
+            <RouterLink :to="{ name: 'license' }" exact>
               <i class="fa fa-cog icon-white"></i>
               <span class="navbar-label">Configuration</span>
               <exclamation-mark :type="'warning'" v-if="displayWarn" />
