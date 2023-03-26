@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import DashboardView from "../views/DashboardView.vue";
 import FailedMessagesView from "../views/FailedMessagesView.vue";
+import ConfigurationView from "../views/ConfigurationView.vue";
 
 const router = createRouter({
   history: createWebHashHistory(window.defaultConfig.base_url),
@@ -71,7 +72,7 @@ const router = createRouter({
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import("../views/ConfigurationView.vue"),
+      component: ConfigurationView,
       meta: {
         title: "Configuration • ServicePulse",
       },
