@@ -1,7 +1,7 @@
 import { reactive, onMounted, watch, computed } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
-import { useFetchFromServiceControl, useFetchFromMonitoring, serviceControlUrl, monitoringUrl } from "./serviceServiceControlUrls";
+import { useFetchFromServiceControl, useFetchFromMonitoring, serviceControlUrl, monitoringUrl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast.js";
 
 export const stats = reactive({
@@ -101,16 +101,19 @@ export function useServiceControl() {
     }
   });
 
-  watch(monitoringConnectionFailure, async (newValue, oldValue) => {
-    //NOTE to eliminate success msg showing everytime the screen is refreshed
-    if (newValue != oldValue && !(oldValue === null && newValue === false)) {
-      if (newValue) {
-        useShowToast("error", "Error", "Could not connect to the ServiceControl Monitoring service at " + monitoringUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>');
-      } else {
-        useShowToast("success", "Success", "Connection to ServiceControl Monitoring service was successful at " + monitoringUrl.value + ".");
+  // Only watch the state change if monitoring is enabled
+  if (!useIsMonitoringDisabled()) {
+    watch(monitoringConnectionFailure, async (newValue, oldValue) => {
+      //NOTE to eliminate success msg showing everytime the screen is refreshed
+      if (newValue != oldValue && !(oldValue === null && newValue === false)) {
+        if (newValue) {
+          useShowToast("error", "Error", "Could not connect to the ServiceControl Monitoring service at " + monitoringUrl.value + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>');
+        } else {
+          useShowToast("success", "Success", "Connection to ServiceControl Monitoring service was successful at " + monitoringUrl.value + ".");
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 export function useServiceControlStats() {

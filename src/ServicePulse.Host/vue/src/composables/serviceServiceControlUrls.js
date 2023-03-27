@@ -3,12 +3,16 @@ import { ref } from "vue";
 export const serviceControlUrl = ref(null);
 export const monitoringUrl = ref(null);
 
+export function useIsMonitoringDisabled() {
+  return monitoringUrl.value === null || monitoringUrl.value === "" || monitoringUrl.value === "!";
+}
+
 export function useFetchFromServiceControl(suffix) {
   return fetch(serviceControlUrl.value + suffix);
 }
 
 export function useFetchFromMonitoring(suffix) {
-  if (monitoringUrl.value === null || monitoringUrl.value === "" || monitoringUrl.value === "!") {
+  if (useIsMonitoringDisabled()) {
     return Promise.resolve(null);
   }
   return fetch(monitoringUrl.value + suffix);
@@ -99,7 +103,7 @@ export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl)
 
   if (!newMonitoringUrl.value) {
     newMonitoringUrl.value = "!"; //disabled
-  } else if (!newMonitoringUrl.value.endsWith("/")) {
+  } else if (!newMonitoringUrl.value.endsWith("/") && newMonitoringUrl.value !== "!") {
     newMonitoringUrl.value += "/";
   }
 
