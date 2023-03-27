@@ -21,7 +21,7 @@
                 <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
                     <i class="fa pa-monitoring-lost endpoint-details" uib-tooltip="Unable to connect to monitoring server"></i>
                 </span>
-                <a ng-if="endpoint.errorCount" class="warning" href="#/failed-messages/groups/{{endpoint.serviceControlId}}">
+                <a ng-if="endpoint.errorCount" class="warning" href="/#/failed-messages/group/{{endpoint.serviceControlId}}">
                     <i class="fa fa-envelope" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list."></i>
                     <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                 </a>
@@ -280,7 +280,7 @@
                                                     <i class="fa pa-endpoint-lost endpoint-details" uib-tooltip="Unable to connect to instance"></i>
                                                 </span>
                                                 <span class="warning" ng-if="instance.errorCount">
-                                                    <a ng-if="instance.errorCount" class="warning btn" href="#/failed-messages/groups/{{instance.serviceControlId}}">
+                                                    <a ng-if="instance.errorCount" class="warning btn" href="/#/failed-messages/group/{{instance.serviceControlId}}">
                                                         <i class="fa fa-envelope" uib-tooltip="{{instance.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list."></i>
                                                         <span class="badge badge-important ng-binding">{{instance.errorCount | metricslargenumber}}</span>
                                                     </a>
