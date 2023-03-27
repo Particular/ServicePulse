@@ -179,4 +179,9 @@ ul.retry-request-progress li > div {
   border: 1px solid #faebcc;
   padding: 10px 15px;
 }
+
+.metadata.danger,
+.metadata.danger > .danger {
+    font-weight: normal !important;
+}
 </style>
