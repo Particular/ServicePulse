@@ -316,12 +316,6 @@ p.endpoint-metadata {
   text-decoration: none;
 }
 
-.btn-connection-test {
-  margin-top: 25px;
-  padding-top: 11px;
-  padding-bottom: 11px;
-}
-
 .notifications .btn-sm {
   padding: 0px;
 }

@@ -151,4 +151,10 @@ form .connection .form-group input {
 span.connection-test.save-connection {
   top: 0px;
 }
+
+.btn-connection-test {
+  margin-top: 25px;
+  padding-top: 11px;
+  padding-bottom: 11px;
+}
 </style>
