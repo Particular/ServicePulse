@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl } from "./../../composables/serviceServiceControlUrls.js";
+import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl, useIsMonitoringDisabled } from "./../../composables/serviceServiceControlUrls.js";
 import { connectionState, monitoringConnectionState } from "../../composables/serviceServiceControl";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
@@ -56,6 +56,10 @@ function testMonitoringUrl(event) {
   }
 }
 
+function isMonitoringUrlSpecified() {
+  return monitoringUrl.value && monitoringUrl.value !== "!";
+}
+
 function saveConnections(event) {
   if (event) {
     updateServiceControlUrls(serviceControlUrl, monitoringUrl);
@@ -98,7 +102,7 @@ function saveConnections(event) {
                   <label for="monitoringUrl"
                     >CONNECTION URL
                     <span class="auxilliary-label">(OPTIONAL)</span>
-                    <template v-if="monitoringConnectionState.unableToConnect">
+                    <template v-if="monitoringConnectionState.unableToConnect && !useIsMonitoringDisabled()">
                       <span class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect </span>
                     </template>
                   </label>
@@ -106,7 +110,7 @@ function saveConnections(event) {
                 </div>
 
                 <div class="col-5 no-side-padding">
-                  <button class="btn btn-default btn-secondary btn-connection-test" :class="{ disabled: !configuredMonitoringUrl }" type="button" @click="testMonitoringUrl">Test</button>
+                  <button class="btn btn-default btn-secondary btn-connection-test" :class="{ disabled: !isMonitoringUrlSpecified() }" type="button" @click="testMonitoringUrl" :disabled="!isMonitoringUrlSpecified()">Test</button>
                   <span class="connection-test connection-testing" v-if="testingMonitoring"> <i class="glyphicon glyphicon-refresh rotate"></i>Testing </span>
                   <span class="connection-test connection-successful" v-if="monitoringValid === true && !testingMonitoring"> <i class="fa fa-check"></i> Connection successful </span>
                   <span class="connection-test connection-failed" v-if="monitoringValid === false && !testingMonitoring"> <i class="fa fa-exclamation-triangle"></i> Connection failed </span>
