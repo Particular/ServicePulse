@@ -59,7 +59,7 @@ Install the following dependencies if you don't have them installed yet
   
 Open a command window and navigate into `ServicePulse\src\ServicePulse.Host` path (NOTE: ensure using cmd, not PowerShell). Run `nginx` that is a reverse proxy for AngularJS and Vue.js applications:
 ```cmd
-> docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
+docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
 ```
 #### Step 2 - run AngularJS development server 
 
@@ -125,7 +125,7 @@ ServicePulse.Host.exe depends on a self-hosted webserver. In order to start the 
 Execute build script from commandline:
 
 ```cmd
-> PowerShell -File .\build.ps1
+PowerShell -File .\build.ps1
 ```
 
 NOTE: It might be necessary to change PowerShell execution policy using `Set-ExecutionPolicy Unrestricted`
