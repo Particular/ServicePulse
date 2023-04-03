@@ -7,6 +7,10 @@ export function useIsMonitoringDisabled() {
   return monitoringUrl.value === null || monitoringUrl.value === "" || monitoringUrl.value === "!";
 }
 
+export function useIsMonitoringEnabled() {
+  return !useIsMonitoringDisabled();
+}
+
 export function useFetchFromServiceControl(suffix) {
   return fetch(serviceControlUrl.value + suffix);
 }
