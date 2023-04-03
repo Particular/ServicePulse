@@ -2,6 +2,7 @@
 import { RouterLink, useRoute } from "vue-router";
 import { computed } from "vue";
 import { stats, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";
+import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import ExclamationMark from "./ExclamationMark.vue";
 
@@ -19,7 +20,7 @@ const displayWarn = computed(() => {
   return licenseStatus.warningLevel === "warning";
 });
 const displayDanger = computed(() => {
-  return connectionState.unableToConnect || monitoringConnectionState.unableToConnect || licenseStatus.warningLevel === "danger";
+  return connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled()) || licenseStatus.warningLevel === "danger";
 });
 </script>
 
