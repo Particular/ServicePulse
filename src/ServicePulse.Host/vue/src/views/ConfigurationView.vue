@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { licenseStatus } from "../composables/serviceLicense.js";
 import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
+import { useIsMonitoringDisabled } from "../composables/serviceServiceControlUrls";
 import { useRedirects } from "../composables/serviceRedirects.js";
 import ExclamationMark from "../components/ExclamationMark.vue";
 
@@ -45,7 +46,7 @@ onMounted(() => {
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('connections') }" class="nav-item">
             <RouterLink :to="{ name: 'connections' }">
               Connections
-              <template v-if="connectionState.unableToConnect || monitoringConnectionState.unableToConnect">
+              <template v-if="connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && !useIsMonitoringDisabled())">
                 <span><i class="fa fa-exclamation-triangle"></i></span>
               </template>
             </RouterLink>
