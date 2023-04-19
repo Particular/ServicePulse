@@ -7,8 +7,6 @@ on:
   workflow_dispatch:
 env:
   DOTNET_NOLOGO: true
-  # Signals build to create the installer
-  RELEASE_WORKFLOW: true
 jobs:
   release:
     runs-on: windows-2022
@@ -23,11 +21,6 @@ jobs:
         uses: actions/setup-dotnet@v3.0.3
         with:
           dotnet-version: 7.0.x
-      - name: Setup Advanced Installer
-        run: |
-          $version = "20.2.1"
-          choco install advanced-installer --version=$version
-          & "C:\Program Files (x86)\Caphyon\Advanced Installer $version\bin\x86\AdvancedInstaller.com" /register ${{ secrets.ADVANCED_INSTALLER_LICENSE_KEY }}
       - name: Add NODE_OPTIONS to ENVVARS # Must do this after checkout as checkout uses node v16 which will cause this to fail
         run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $env:GITHUB_ENV
       - name: AngularJs - Install Host npm packages
@@ -41,14 +34,7 @@ jobs:
         working-directory: src/ServicePulse.Host
       - name: Remove NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
         run: echo "NODE_OPTIONS=" >> $env:GITHUB_ENV
-      - name: Prepare AIP file
-        run: |
-          $content = Get-Content -Raw -Path src/Setup/ServicePulse.aip
-          $content = $content -replace "replace-tenant-id", "${{ secrets.AZURE_KEY_VAULT_TENANT_ID }}" -replace "replace-app-id", "${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }}" -replace "replace-cert-name", "${{ secrets.AZURE_KEY_VAULT_CERTIFICATE_NAME }}"
-          Set-Content src/Setup/ServicePulse.aip $content
       - name: Build
-        env:
-          AZURE_KEY_VAULT_CLIENT_SECRET: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
         run: dotnet build src --configuration Release
       - id: save-version
         name: Save version
@@ -60,6 +46,20 @@ jobs:
           tenant-id: ${{ secrets.AZURE_KEY_VAULT_TENANT_ID }}
           client-secret: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
           certificate-name: ${{ secrets.AZURE_KEY_VAULT_CERTIFICATE_NAME }}
+      - name: Setup Advanced Installer
+        run: |
+          $version = "20.2.1"
+          choco install advanced-installer --version=$version
+          & "C:\Program Files (x86)\Caphyon\Advanced Installer $version\bin\x86\AdvancedInstaller.com" /register ${{ secrets.ADVANCED_INSTALLER_LICENSE_KEY }}
+      - name: Prepare AIP file
+        run: |
+          $content = Get-Content -Raw -Path src/Setup/ServicePulse.aip
+          $content = $content -replace "replace-tenant-id", "${{ secrets.AZURE_KEY_VAULT_TENANT_ID }}" -replace "replace-app-id", "${{ secrets.AZURE_KEY_VAULT_CLIENT_ID }}" -replace "replace-cert-name", "${{ secrets.AZURE_KEY_VAULT_CERTIFICATE_NAME }}"
+          Set-Content src/Setup/ServicePulse.aip $content
+      - name: Build Windows installer
+        env:
+          AZURE_KEY_VAULT_CLIENT_SECRET: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
+        run: dotnet build src/Setup --configuration Release
       - name: Publish artifacts
         uses: actions/upload-artifact@v3.1.2
         with:
