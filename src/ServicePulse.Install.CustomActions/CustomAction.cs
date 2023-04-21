@@ -7,7 +7,7 @@
     using System.Management;
     using System.Net;
     using System.Text.RegularExpressions;
-    using Microsoft.Deployment.WindowsInstaller;
+    using WixToolset.Dtf.WindowsInstaller;
 
     public class CustomActions
     {
@@ -47,7 +47,7 @@
 
                 var request = WebRequest.Create(url);
                 request.Timeout = 2000;
-#pragma warning disable IDE0019 // Use pattern matching
+
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
                     if (response == null)
@@ -65,7 +65,6 @@
                         session.Set("MONITORING_REPORTED_VERSION", version.Split(' ').First());
                     }
                 }
-#pragma warning restore IDE0019 // Use pattern matching
 
                 connectionSuccessful = true;
             }
@@ -94,7 +93,7 @@
 
                 var request = WebRequest.Create(url);
                 request.Timeout = 2000;
-#pragma warning disable IDE0019 // Use pattern matching
+
                 using (var response = request.GetResponse() as HttpWebResponse)
                 {
                     if (response == null)
@@ -112,7 +111,6 @@
                         session.Set("REPORTED_VERSION", version.Split(' ').First());
                     }
                 }
-#pragma warning restore IDE0019 // Use pattern matching
 
                 connectionSuccessful = true;
             }

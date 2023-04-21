@@ -1,4 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+
+  <!--
+
+  WARNING
+  This project is not automatically built when building the solution.
+  To build the Windows installer, explicitly build this project after having built the solution.
+
+  -->
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -9,7 +17,7 @@
     <PackageReference Include="Particular.Packaging" Version="2.3.0" PrivateAssets="All" />
   </ItemGroup>
 
-  <Target Name="CreateInstaller" AfterTargets="Build" Condition="'$(CI)' == 'true' AND '$(RELEASE_WORKFLOW)' == 'true'">
+  <Target Name="CreateInstaller" AfterTargets="Build">
     <PropertyGroup>
       <AdvancedInstallerPath>$(registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Caphyon\Advanced Installer@Advanced Installer Path)</AdvancedInstallerPath>
       <AdvancedInstallerExe>"$(AdvancedInstallerPath)bin\x86\AdvancedInstaller.com"</AdvancedInstallerExe>
