@@ -1,7 +1,7 @@
 module.exports = {
     "env": {
         "browser": true,
-        "es6": false,
+        "es6": true,
         "node": false,
         "jquery": true
     },
@@ -11,7 +11,7 @@ module.exports = {
         "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
-        "ecmaVersion": 5,
+        "ecmaVersion": 2020,
         "sourceType": "script"
     },
     "rules": {
