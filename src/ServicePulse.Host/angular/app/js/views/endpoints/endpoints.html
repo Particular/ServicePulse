@@ -34,6 +34,18 @@
                         <li ng-repeat-end><a ng-click="changeSort(sort, 'desc')">{{sort}} <span>(Descending)</span></a></li>
                     </ul>
                 </div>
+
+                <div class="msg-group-menu dropdown">
+                    <label class="control-label">Display:</label>
+                    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{display}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a ng-click="changeDisplay('Endpoint Instances')">Endpoint Instances</a></li>
+                        <li><a ng-click="changeDisplay('Logical Endpoints')">Logical Endpoints</a></li>
+                    </ul>
+                </div>
                 
                 <input type="text" placeholder="Filter by name..." class="form-control-static" ng-model="endpointFilter" />
 
@@ -51,7 +63,7 @@
                                 <div class="col-sm-12 no-side-padding">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}}</p>
+                                            <p class="lead hard-wrap">{{endpointDisplayName(endpoint)}}</p>
                                             <p>
                                                 latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
                                             </p>
@@ -77,7 +89,7 @@
                                 <div class="col-sm-12 no-side-padding">
                                     <div class="row box-header">
                                         <div class="col-sm-12 no-side-padding">
-                                            <p class="lead hard-wrap">{{endpoint.name}}@{{endpoint.host_display_name}} <a class="remove-item" ng-if="isDeleteEndpointsEnabled" ng-click="deleteEndpoint(endpoint)"><i class="fa fa-trash" uib-tooltip="Remove endpoint from list"></i></a></p>
+                                            <p class="lead hard-wrap">{{endpointDisplayName(endpoint)}} <a class="remove-item" ng-if="isDeleteEndpointsEnabled && display=='Endpoint Instances'" ng-click="deleteEndpoint(endpoint)"><i class="fa fa-trash" uib-tooltip="Remove endpoint from list"></i></a></p>
                                             <p>
                                                 latest heartbeat received <sp-moment date="{{endpoint.heartbeat_information.last_report_at}}"></sp-moment>
                                             </p>
