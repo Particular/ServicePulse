@@ -23,6 +23,18 @@
 
             <div class="filter-group">
 
+                <div class="msg-group-menu dropdown" ng-if="!isEndpointsConfiguration">
+                    <label class="control-label">Display:</label>
+                    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        {{display}}
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a ng-click="changeDisplay('Endpoint Instances')">Endpoint Instances</a></li>
+                        <li><a ng-click="changeDisplay('Logical Endpoints')">Logical Endpoints</a></li>
+                    </ul>
+                </div>
+
                 <div class="msg-group-menu dropdown">
                     <label class="control-label">Sort by:</label>
                     <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -32,18 +44,6 @@
                     <ul class="dropdown-menu">
                         <li ng-repeat-start="sort in sortOptions"><a ng-click="changeSort(sort, 'asc')">{{sort}}</a></li>
                         <li ng-repeat-end><a ng-click="changeSort(sort, 'desc')">{{sort}} <span>(Descending)</span></a></li>
-                    </ul>
-                </div>
-
-                <div class="msg-group-menu dropdown">
-                    <label class="control-label">Display:</label>
-                    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {{display}}
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a ng-click="changeDisplay('Endpoint Instances')">Endpoint Instances</a></li>
-                        <li><a ng-click="changeDisplay('Logical Endpoints')">Logical Endpoints</a></li>
                     </ul>
                 </div>
                 
