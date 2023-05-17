@@ -11,6 +11,7 @@
     function controller(
         $scope,
         $interval,
+        $cookies,
         sharedDataService,
         configurationService,
         notifyService) {
@@ -22,9 +23,15 @@
         $scope.sortOptions = ['Name', 'Latest heartbeat'];
         $scope.sort = 'Name';
         $scope.sortDir = '';
-        $scope.display = 'Endpoint Instances';
+        $scope.display = getSavedDisplayType();
 
         $scope.isInactiveEndpoints = true;
+
+        function getSavedDisplayType() {
+            var savedDisplayType = $cookies.get('heartbeats_display_type');
+
+            return savedDisplayType || 'Endpoint Instances';
+        }
 
         $scope.$on('$destroy', function() {
             $interval.cancel(timeoutId);
@@ -190,6 +197,8 @@
 
         $scope.changeDisplay = function(display) {
             $scope.display = display;
+
+            $cookies.put('heartbeats_display_type', display);
             updateUI();
         };
 
@@ -229,6 +238,7 @@
     controller.$inject = [
         '$scope',
         '$interval',
+        '$cookies',
         'sharedDataService',
         'configurationService',
         'notifyService'
