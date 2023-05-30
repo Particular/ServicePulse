@@ -168,8 +168,6 @@ a.btn-feedback, a.btn-feedback:visited, a.btn-feedback:focus {
     nav.navbar {
         width: 1440px;
         position: sticky;
-        margin-top: -100px;
-        margin-bottom: 50px;
     }
 
     div.navbar-header {
