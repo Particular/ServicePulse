@@ -59,7 +59,7 @@ jobs:
       - name: Build Windows installer
         env:
           AZURE_KEY_VAULT_CLIENT_SECRET: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
-        run: dotnet build src/Setup -property:SolutionDir=..\..\..\..\ --configuration Release
+        run: dotnet build src/Setup --configuration Release
       - name: Publish artifacts
         uses: actions/upload-artifact@v3.1.2
         with:
