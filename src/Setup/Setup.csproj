@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
+<Project Sdk="Microsoft.Build.NoTargets/3.7.0">
 
   <!--
 
@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Particular.Packaging" Version="2.3.0" PrivateAssets="All" />
+    <PackageReference Include="Particular.Packaging" Version="3.0.0" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="CreateInstaller" AfterTargets="Build">
