@@ -140,6 +140,7 @@ jobs:
           (Get-Content $filename).replace("1.2.0", "${{ needs.release.outputs.version }}") | Set-Content $filename
         shell: pwsh
       - name: Build Docker image
+        if: ${{ matrix.image-name == 'servicepulse' || (github.event_name == 'push' && github.ref_type == 'tag') }}
         run: docker build -t particular/${{ matrix.image-name }}:${{ needs.release.outputs.version }} -f ${{ matrix.dockerfile }} .
         working-directory: src
       - name: Login to Docker Hub
