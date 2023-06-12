@@ -400,7 +400,7 @@ onUnmounted(() => {
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="active break group-title">
-                <h1 class="message-type-title">{{ failedMessage.message_type }} TESTING</h1>
+                <h1 class="message-type-title">{{ failedMessage.message_type }}</h1>
               </div>
             </div>
           </div>
