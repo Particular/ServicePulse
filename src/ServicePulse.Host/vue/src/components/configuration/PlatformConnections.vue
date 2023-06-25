@@ -42,7 +42,12 @@ function testServiceControlUrl(event) {
 
 function testMonitoringUrl(event) {
   if (event) {
-    testingMonitoring.value = true;
+      testingMonitoring.value = true;
+
+      if (!monitoringUrl.value.endsWith("/") && monitoringUrl.value !== "!") {
+          monitoringUrl.value += "/";
+      }
+
     return fetch(monitoringUrl.value + "monitored-endpoints")
       .then((response) => {
         monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
