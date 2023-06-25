@@ -32,11 +32,19 @@ const fromIsValid = computed(() => {
   return from.value && emailRe.test(from.value) ? true : false;
 });
 const toIsValid = computed(() => {
-  return to.value && emailRe.test(to.value) ? true : false;
+    return to.value && validateMultipleEmailsSemicolonSeparated(to.value) ? true : false;
 });
 const formIsValid = computed(() => {
   return smtpServerIsValid.value && smtpPortIsValid.value && fromIsValid.value && toIsValid.value;
 });
+
+function validateMultipleEmailsSemicolonSeparated(value) {
+    var result = value.split(";");
+    for (var i = 0; i < result.length; i++)
+        if (!emailRe.test(result[i]))
+            return false;
+    return true;
+}
 
 function save() {
   var updatedSettings = {
@@ -98,7 +106,7 @@ function close() {
               </div>
               <div class="row"></div>
               <div class="form-group" :class="{ 'has-error': !toIsValid }">
-                <label for="to">To address</label>
+                  <label for="to">To address <br/>(Separate multiple email address with a semicolon. E.g. testing@test.com,blahbla@bla.com)</label>
                 <input type="email" id="to" name="to" v-model="to" class="form-control" required />
               </div>
             </div>
@@ -132,7 +140,7 @@ function close() {
 }
 
 .modal-container {
-  width: 400px;
+  width: 800px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
