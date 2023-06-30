@@ -23,7 +23,7 @@ const scMonitoringAddressTooltip = computed(() => {
         <div class="connectivity-status">
           <span>
             <i class="fa fa-plus sp-blue"></i>
-            <a href="/#/configuration/endpoint-connection">Connect new endpoint</a>
+            <RouterLink :to="{ name: 'endpoint-connection' }">Connect new endpoint</RouterLink>
           </span>
 
           <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
