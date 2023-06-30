@@ -14,8 +14,8 @@ import { serviceControlUrl } from "./../composables/serviceServiceControlUrls";
         >. Please ensure that ServiceControl is running and accessible from your machine.
       </p>
       <div class="action-toolbar">          
-          <RouterLink :to="{ name: 'connections' } "><span class="btn btn-default btn-primary whiteText">View Connection Details</span></RouterLink>
-          <a class="btn btn-default btn-secondary" href="https://docs.particular.net/monitoring/metrics/">Learn more</a>
+        <RouterLink :to="{ name: 'connections' } "><span class="btn btn-default btn-primary whiteText">View Connection Details</span></RouterLink>
+        <a class="btn btn-default btn-secondary" href="https://docs.particular.net/monitoring/metrics/">Learn more</a>
       </div>
     </div>
   </template>
