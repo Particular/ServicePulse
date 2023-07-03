@@ -103,7 +103,7 @@ function close() {
               </div>
               <div class="row"></div>
               <div class="form-group" :class="{ 'has-error': !toIsValid }">
-                  <label for="to">To address <br />(Separate multiple email address with a comma. E.g. testing@test.com,testing2@test.com)</label>
+                <label for="to">To address <br />(Separate multiple email address with a comma. E.g. testing@test.com,testing2@test.com)</label>
                 <input type="email" id="to" name="to" v-model="to" class="form-control" required />
               </div>
             </div>
