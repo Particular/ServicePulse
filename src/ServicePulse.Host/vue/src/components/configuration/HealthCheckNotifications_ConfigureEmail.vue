@@ -32,11 +32,16 @@ const fromIsValid = computed(() => {
   return from.value && emailRe.test(from.value) ? true : false;
 });
 const toIsValid = computed(() => {
-  return to.value && emailRe.test(to.value) ? true : false;
+  return to.value && validateMultipleEmailsCommaSeparated(to.value) ? true : false;
 });
 const formIsValid = computed(() => {
   return smtpServerIsValid.value && smtpPortIsValid.value && fromIsValid.value && toIsValid.value;
 });
+
+function validateMultipleEmailsCommaSeparated(value) {
+  var result = value.split(",");
+  return result.every(address => emailRe.test(address));
+}
 
 function save() {
   var updatedSettings = {
@@ -98,7 +103,7 @@ function close() {
               </div>
               <div class="row"></div>
               <div class="form-group" :class="{ 'has-error': !toIsValid }">
-                <label for="to">To address</label>
+                <label for="to">To address <br />(Separate multiple email address with a comma. E.g. testing@test.com,testing2@test.com)</label>
                 <input type="email" id="to" name="to" v-model="to" class="form-control" required />
               </div>
             </div>
@@ -132,7 +137,7 @@ function close() {
 }
 
 .modal-container {
-  width: 400px;
+  width: 800px;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
