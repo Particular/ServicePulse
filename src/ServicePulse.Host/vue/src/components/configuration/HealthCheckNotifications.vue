@@ -116,7 +116,7 @@ onMounted(() => {
         <section>
           <div class="row">
             <div class="col-12">
-              <p class="screen-intro">Configure notifications for health checks built into ServiceControl (low disk space, stale database indexes, and messages in error queue).</p>
+                <p class="screen-intro">Configure notifications for health checks built into ServiceControl (low disk space, stale database indexes, audit ingestion etc).</p>
             </div>
           </div>
           <div class="notifications row">
