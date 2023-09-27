@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import DashboardView from "../views/DashboardView.vue";
+import MonitoringView from "../views/MonitoringView.vue";
 import FailedMessagesView from "../views/FailedMessagesView.vue";
 import ConfigurationView from "../views/ConfigurationView.vue";
 
@@ -17,6 +18,14 @@ const router = createRouter({
     {
       path: "/",
       redirect: "/dashboard",
+    },
+    {
+      path: "/monitoring",
+      name: "monitoring",
+      component: MonitoringView,
+      meta: {
+        title: "Monitoring • ServicePulse",
+      },
     },
     {
       path: "/failed-messages",
