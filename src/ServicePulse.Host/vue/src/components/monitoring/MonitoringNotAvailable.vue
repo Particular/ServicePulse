@@ -1,5 +1,5 @@
 ﻿<script setup>
-    import { ref, onMounted } from "vue";
+    import { ref } from "vue";
     import { monitoringUrl as configuredMonitoringUrl } from "../../composables/serviceServiceControlUrls.js";
     const monitoringUrl = ref(configuredMonitoringUrl.value);
 
