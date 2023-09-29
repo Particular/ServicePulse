@@ -1,20 +1,19 @@
 <script setup>
     import { ref, onMounted } from "vue";
-    import { licenseStatus } from "../composables/serviceLicense.js";
-    import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
-    import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
+    //import { licenseStatus } from "../composables/serviceLicense.js";
+    //import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
+    //import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
     import { useRedirects } from "../composables/serviceRedirects.js";
-    import ExclamationMark from "../components/ExclamationMark.vue";
 
     const redirectCount = ref(0);
 
-    function updateRedirectCount(newCount) {
-        redirectCount.value = newCount;
-    }
+    //function updateRedirectCount(newCount) {
+    //    redirectCount.value = newCount;
+    //}
 
-    function subIsActive(subPath) {
-        return window.location.hash.endsWith(subPath);
-    }
+    //function subIsActive(subPath) {
+    //    return window.location.hash.endsWith(subPath);
+    //}
 
     onMounted(() => {
         useRedirects().then((result) => {
