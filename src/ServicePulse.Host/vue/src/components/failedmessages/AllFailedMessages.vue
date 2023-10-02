@@ -251,14 +251,14 @@ function calculatePageNumbers() {
 }
 
 function retryGroup() {
-    useShowToast("info", "Info", "Retrying all messages...");
+  useShowToast("info", "Info", "Retrying all messages...");
   useRetryExceptionGroup(groupId.value).then(() => {
     messages.value.forEach((m) => (m.retryInProgress = true));
   });
 }
 
 function deleteGroup() {
-    useShowToast("info", "Info", "Deleting all messages...");
+  useShowToast("info", "Info", "Deleting all messages...");
   useArchiveExceptionGroup(groupId.value).then(() => {
     messages.value.forEach((m) => (m.deleteInProgress = true));
   });
