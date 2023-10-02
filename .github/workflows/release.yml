@@ -36,8 +36,8 @@ jobs:
       #  shell: bash
       - name: Set up Node.js
         uses: actions/setup-node@v3.8.1
-        with:
-            node-version: 16
+        #with:
+        #    node-version: 16
       - name: AngularJs - Install Host npm packages
         run: npm run load
         working-directory: src/ServicePulse.Host/angular
@@ -45,7 +45,8 @@ jobs:
         run: npm run lint
         working-directory: src/ServicePulse.Host/angular
       - name: Build AngularJS and Vue.js
-        run: PowerShell -File .\build.ps1
+        run: .\build.ps1
+        shell: pwsh
         working-directory: src/ServicePulse.Host
     #  - name: Remove NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
     #    run: echo "NODE_OPTIONS=" >> $env:GITHUB_ENV
