@@ -40,7 +40,7 @@ const formIsValid = computed(() => {
 
 function validateMultipleEmailsCommaSeparated(value) {
   var result = value.split(",");
-  return result.every(address => emailRe.test(address));
+  return result.every((address) => emailRe.test(address));
 }
 
 function save() {
