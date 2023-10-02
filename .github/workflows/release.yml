@@ -36,8 +36,8 @@ jobs:
       #  shell: bash
       - name: Set up Node.js
         uses: actions/setup-node@v3.8.1
-        #with:
-        #    node-version: 16
+        with:
+            node-version: 17
       - name: AngularJs - Install Host npm packages
         run: npm run load
         working-directory: src/ServicePulse.Host/angular
