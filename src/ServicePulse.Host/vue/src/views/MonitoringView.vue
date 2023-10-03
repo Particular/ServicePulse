@@ -8,7 +8,7 @@
     import { useRedirects } from "../composables/serviceRedirects.js";
     //import { MonitoringNoData } from "../components/monitoring/MonitoringNoData.vue";
     // import { MonitoringNotAvailable } from "../components/monitoring/MonitoringNotAvailable.vue";
-    //import Testing from "../components/Testing.vue";
+
     const redirectCount = ref(0);
 
     //function updateRedirectCount(newCount) {
