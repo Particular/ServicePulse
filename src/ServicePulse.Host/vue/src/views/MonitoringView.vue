@@ -3,8 +3,8 @@
     import LicenseExpired from "../components/LicenseExpired.vue";
     import { licenseStatus } from "../composables/serviceLicense.js";
     import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
-    import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
-    import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
+   // import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
+   // import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
     import { useRedirects } from "../composables/serviceRedirects.js";
     //import { MonitoringNoData } from "../components/monitoring/MonitoringNoData.vue";
     // import { MonitoringNotAvailable } from "../components/monitoring/MonitoringNotAvailable.vue";
