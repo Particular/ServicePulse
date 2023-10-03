@@ -33,7 +33,6 @@ jobs:
         working-directory: src/ServicePulse.Host/angular
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
-        shell: pwsh
         working-directory: src/ServicePulse.Host
       - name: Build
         run: dotnet build src --configuration Release
