@@ -31,13 +31,13 @@ jobs:
         uses: actions/setup-dotnet@v3.2.0
         with:
           dotnet-version: 7.0.x
-      #- name: Add NODE_OPTIONS to ENVVARS # Must do this after checkout as checkout uses node v16 which will cause this to fail
-      #  run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $env:GITHUB_ENV
-      #  shell: bash
+      - name: Add NODE_OPTIONS to ENVVARS # Must do this after checkout as checkout uses node v16 which will cause this to fail
+        run: echo "NODE_OPTIONS=--openssl-legacy-provider" >> $env:GITHUB_ENV
+        shell: bash
       - name: Set up Node.js
         uses: actions/setup-node@v3.8.1
         with:
-            node-version: 16
+            node-version: 17
       - name: AngularJs - Install Host npm packages
         run: npm run load
         working-directory: src/ServicePulse.Host/angular
@@ -48,9 +48,9 @@ jobs:
         run: .\build.ps1
         shell: pwsh
         working-directory: src/ServicePulse.Host
-    #  - name: Remove NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
-    #    run: echo "NODE_OPTIONS=" >> $env:GITHUB_ENV
-    #    shell: bash
+      - name: Remove NODE_OPTIONS to ENVVARS # Must do this before the next step so that the following node v16 steps don't fail
+        run: echo "NODE_OPTIONS=" >> $env:GITHUB_ENV
+        shell: bash
       - name: Build
         run: dotnet build src --configuration Release
       - id: save-version
