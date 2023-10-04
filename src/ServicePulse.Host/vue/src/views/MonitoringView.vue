@@ -3,7 +3,7 @@
     import LicenseExpired from "../components/LicenseExpired.vue";
     import { licenseStatus } from "../composables/serviceLicense.js";
     import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
-    import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
+    import { connectionState } from "../composables/serviceServiceControl";
     import { useRedirects } from "../composables/serviceRedirects.js";
     import EndpointList from "../components/monitoring/EndpointList.vue";
 
@@ -14,17 +14,7 @@
             redirectCount.value = result.total;
         });
     });
-    /*
-      $scope.periods = historyPeriodsService.getAllPeriods();
-  $scope.selectedPeriod = historyPeriodsService.getDefaultPeriod();
-  onnectionsManager.getMonitoringUrl();
-  monitoringService.getServiceControlMonitoringVersion()
-  monitoringService.getMonitoredEndpoints()
-   monitoringService.removeEndpointInstance
-   monitoringService.createEndpointDetailsSource($routeParams.endpointName, selectedPeriod.value, selectedPeriod.refreshInterval).subscribe(function (endpoint) {
-   monitoringService.createEndpointsSource(selectedPeriod.value, selectedPeriod.refreshInterval)
-  \angular\app\modules\monitoring\js\services\services.monitoring.js
-    */
+
 </script>
 
 
