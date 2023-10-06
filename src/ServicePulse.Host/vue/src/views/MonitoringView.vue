@@ -1,26 +1,6 @@
 <script setup>
-//import { ref, onMounted } from "vue";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import LicenseExpired from "../components/LicenseExpired.vue";
-//import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
-//import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-//import { useRedirects } from "../composables/serviceRedirects.js";
-
-//const redirectCount = ref(0);
-
-//function updateRedirectCount(newCount) {
-//    redirectCount.value = newCount;
-//}
-
-//function subIsActive(subPath) {
-//    return window.location.hash.endsWith(subPath);
-//}
-
-/* onMounted(() => {
-  useRedirects().then((result) => {
-    redirectCount.value = result.total;
-  });
-}); */
 </script>
 
 <template>
@@ -96,7 +76,7 @@ import LicenseExpired from "../components/LicenseExpired.vue";
   font-family: "FontAwesome";
   width: 20px;
   content: "\f0b0";
-  color: #919E9E;
+  color: #919e9e;
   position: absolute;
   top: 29px;
   right: 250px;
@@ -108,7 +88,6 @@ import LicenseExpired from "../components/LicenseExpired.vue";
   margin: 21px 0 0 15px;
   padding-right: 10px;
   padding-left: 30px;
-  /* padding: 0.375rem 0.75rem; */
   border: 1px solid #aaa;
   border-radius: 4px;
   float: right;
