@@ -43,7 +43,7 @@ import LicenseExpired from "../components/LicenseExpired.vue";
             </ul>
             <div class="dropdown">
               <label class="control-label">Group by:</label>
-              <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button type="button" class="btn dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 button
                 <span class="caret"></span>
               </button>
@@ -93,7 +93,7 @@ import LicenseExpired from "../components/LicenseExpired.vue";
 
 .filter-group:before {
   width: 16px;
-  font-family: 'FontAwesome';
+  font-family: "FontAwesome";
   width: 20px;
   content: "\f0b0";
   color: #919E9E;
