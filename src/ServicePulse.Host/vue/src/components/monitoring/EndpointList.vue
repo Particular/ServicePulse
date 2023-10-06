@@ -10,6 +10,30 @@ monitoringService.getMonitoredEndpoints()
  monitoringService.createEndpointsSource(selectedPeriod.value, selectedPeriod.refreshInterval)
 \angular\app\modules\monitoring\js\services\services.monitoring.js
   */
+import { ref, onMounted, onUnmounted } from "vue";
+import { useRouter } from "vue-router";
+import { stats } from "../../composables/serviceServiceControl.js";
+import { useShowToast } from "../../composables/toast.js";
+import { useFetchFromMonitoring } from "../../composables/serviceServiceControlUrls";
+import MonitoringNoData from "./MonitoringNoData.vue";
+import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
+
+const endpoints = ref([]);
+const historyPeriod = 1;
+    function getMonitoredEndpoints() {
+        return useFetchFromMonitoring(`${`monitored-endpoints` }?history=${historyPeriod}`)
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            endpoints.value = [];
+            endpoints.value = data;
+        });
+}
+
+onMounted(() => {
+    getMonitoredEndpoints();
+});
 </script>
 
 
@@ -17,8 +41,18 @@ monitoringService.getMonitoredEndpoints()
     <section ng-if="grouping.selectedGrouping == 0">
 
         <!--<div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading && hasData"></div>
-        <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div>-->
+    <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div>-->
+        <div class="row">
+            <div class="col-sm-12">
+                <MonitoringNoData v-show="!endpoints" v-if="endpoints.length === 0"></MonitoringNoData>
+            </div>
+        </div>
 
+        <div class="row">
+            <div class="col-sm-12">
+                <MonitoringNotAvailable v-show="!endpoints" v-if="endpoints.length === 0"></MonitoringNotAvailable>
+            </div>
+        </div>
         <!--Table headings-->
         <div ng-show="endpoints.length" class="row box box-no-click table-head-row">
             <div class="col-xs-2 col-xl-7">
@@ -66,29 +100,29 @@ monitoringService.getMonitoredEndpoints()
         <!--endpointlist-->
         <div class="row">
             <div class="col-xs-12 no-side-padding">
-                <div class="row box endpoint-row" ng-repeat="endpoint in endpoints | filter: filter | orderBy: order.expression" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
+                <div class="row box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" ng-mouseenter="endpoint.hover1=true" ng-mouseleave="endpoint.hover1=false">
                     <div class="col-xs-12 no-side-padding">
                         <div class="row">
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                                 <div class="row box-header">
                                     <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">endpoint.name</a>
+                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{endpoint.name}}</a>
                                     </div>
-                                    <span class="endpoint-count" ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">(endpoint.connectedCount || 0)</span>
+                                    <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">{{endpoint.connectedCount || 0}}</span>
                                     <div class="col-xs-5 no-side-padding endpoint-status">
-                                        <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
+                                        <span class="warning" v-if="endpoint.metrics.criticalTime.displayValue < 0">
                                             <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
+                                        <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
                                             <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || !endpoint.connectedCount)" uib-tooltip="No data received from any instance">
+                                        <span class="warning" v-if="endpoint.isStale && (!supportsEndpointCount || !endpoint.connectedCount)" uib-tooltip="No data received from any instance">
                                             <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
                                         </span>
-                                        <span class="warning" ng-if="endpoint.errorCount" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list.">
-                                            <a ng-if="endpoint.errorCount" class="warning btn" href="/#/failed-messages/group/{{endpoint.serviceControlId}}">
+                                        <span class="warning" v-if="endpoint.errorCount" uib-tooltip="{{endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list.">
+                                            <a v-if="endpoint.errorCount" class="warning btn" href="/#/failed-messages/group/{{endpoint.serviceControlId}}">
                                                 <i class="fa fa-envelope"></i>
-                                                <span class="badge badge-important ng-binding">endpoint.errorCount | metricslargenumber</span>
+                                                <span class="badge badge-important ng-binding">{{endpoint.errorCount | metricslargenumber}}</span>
                                             </a>
                                         </span>
                                     </div>
@@ -100,9 +134,9 @@ monitoringService.getMonitoredEndpoints()
                                         <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="{{smallGraphsMinimumYAxis.queueLength}}" avg-label-color="#EA7E00" metric-suffix="MSGS" class="graph queue-length pull-left"></graph>
                                     </div>
                                     <div class="no-side-padding sparkline-value">
-                                        (endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.queueLength.displayValue
-                                        <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.queueLength.displayValue}}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                     </div>
                                 </div>
                             </div>
@@ -112,9 +146,9 @@ monitoringService.getMonitoredEndpoints()
                                         <graph plot-data="endpoint.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
                                     </div>
                                     <div class="no-side-padding sparkline-value">
-                                        (endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.throughput.displayValue
-                                        <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.throughput.displayValue}}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                     </div>
                                 </div>
                             </div>
@@ -124,9 +158,9 @@ monitoringService.getMonitoredEndpoints()
                                         <graph plot-data="endpoint.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
                                     </div>
                                     <div class="no-side-padding sparkline-value">
-                                        (endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.retries.displayValue
-                                        <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.retries.displayValue}}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
                                     </div>
                                 </div>
                             </div>
@@ -136,10 +170,10 @@ monitoringService.getMonitoredEndpoints()
                                         <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>
                                     </div>
                                     <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
-                                        (endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.processingTime.displayValue.value}}
-                                        <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
-                                        <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> endpoint.metrics.processingTime.displayValue.unit}}</span>
+                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.processingTime.displayValue.value}}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                                        <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> endpoint.metrics.processingTime.displayValue.unit}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -149,10 +183,10 @@ monitoringService.getMonitoredEndpoints()
                                         <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>
                                     </div>
                                     <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
-                                        (endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
-                                        <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                        <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
-                                        <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> endpoint.metrics.criticalTime.displayValue.unit}}</span>
+                                        {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : endpoint.metrics.criticalTime.displayValue.value}}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                                        <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> endpoint.metrics.criticalTime.displayValue.unit}}</span>
                                     </div>
                                 </div>
                             </div>
