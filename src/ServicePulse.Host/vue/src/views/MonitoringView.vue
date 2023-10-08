@@ -1,94 +1,170 @@
 <script setup>
-import { ref, onMounted } from "vue";
-//import { licenseStatus } from "../composables/serviceLicense.js";
-//import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
-//import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-import { useRedirects } from "../composables/serviceRedirects.js";
-
-const redirectCount = ref(0);
-
-//function updateRedirectCount(newCount) {
-//    redirectCount.value = newCount;
-//}
-
-//function subIsActive(subPath) {
-//    return window.location.hash.endsWith(subPath);
-//}
-
-onMounted(() => {
-  useRedirects().then((result) => {
-    redirectCount.value = result.total;
-  });
-});
+import { licenseStatus } from "./../composables/serviceLicense.js";
+import LicenseExpired from "../components/LicenseExpired.vue";
 </script>
 
 
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <h1>Endpoints overview</h1>
+  <LicenseExpired />
+  <template v-if="!licenseStatus.isExpired">
+    <div class="container monitoring-view">
+      <div class="row monitoring-head">
+        <div class="col-sm-4 no-side-padding list-section">
+          <h1>Endpoints overview</h1>
+        </div>
+        <div class="col-sm-8 no-side-padding toolbar-menus">
+          <div class="filter-group filter-monitoring">
+            <ul class="nav nav-pills period-selector">
+              <li><a href="#">1m</a></li>
+              <li><a href="#">5m</a></li>
+              <li><a href="#">10m</a></li>
+              <li><a href="#">15m</a></li>
+              <li><a href="#">30m</a></li>
+              <li><a href="#">1h</a></li>
+            </ul>
+            <div class="dropdown">
+              <label class="control-label">Group by:</label>
+              <button type="button" class="btn dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                button
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#">no grouping</a></li>
+                <li role="separator" class="divider"></li>
+                <li>
+                  <a href="#">max.segments</a>
+                </li>
+              </ul>
+            </div>
+            <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" />
+          </div>
+        </div>
       </div>
     </div>
-  </div>
+  </template>
 </template>
 <style>
-.tabs-config-snippets .tabs {
-  margin: 30px 0 15px;
-}
-
-.tabs-config-snippets highlight {
-  margin-bottom: 20px;
-  display: block;
-}
-
-.tabs-config-snippets p {
-  font-size: 16px;
-  color: #181919;
-}
-
-.tabs-config-snippets .alert {
-  margin-bottom: 15px;
-}
-
-.tabs-config-snippets .alert li {
+.form-control-static {
+  min-height: 34px;
+  padding-top: 7px;
+  padding-bottom: 7px;
   margin-bottom: 0;
 }
 
-div.btn-toolbar,
-div.form-inline {
-  margin-bottom: 12px;
+.filter-group.filter-monitoring {
+  width: 100%;
 }
 
-.btn-toolbar button:last-child {
-  margin-top: 0 !important;
+.filter-group.filter-monitoring input {
+  margin-top: 33px;
+  float: none;
+  font-size: 14px;
 }
 
-.pa-redirect-source {
-  background-image: url("@/assets/redirect-source.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.pa-redirect-small {
+.filter-group {
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
   position: relative;
-  top: 1px;
-  height: 14px;
-  width: 14px;
+  top: -3px;
+  margin-top: -26px;
+  float: right;
 }
 
-.pa-redirect-large {
-  height: 24px;
+.filter-group:before {
+  width: 16px;
+  font-family: "FontAwesome";
+  width: 20px;
+  content: "\f0b0";
+  color: #919e9e;
+  position: absolute;
+  top: 29px;
+  right: 250px;
 }
 
-.pa-redirect-destination {
-  background-image: url("@/assets/redirect-destination.svg");
-  background-position: center;
-  background-repeat: no-repeat;
+.filter-group input {
+  display: inline-block;
+  width: 280px;
+  margin: 21px 0 0 15px;
+  padding-right: 10px;
+  padding-left: 30px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  float: right;
 }
 
-section[name="connections"] .box {
-  padding-bottom: 50px;
+.nav {
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.nav.nav-pills.period-selector {
+  display: inline-block;
+  position: relative;
+  top: 30px;
+}
+
+.nav > li {
+  position: relative;
+  display: block;
+}
+
+.nav-pills > li {
+  float: left;
+}
+
+.monitoring-head h1 {
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.monitoring-head .msg-group-menu {
+  margin: 6px 0px 0 6px;
+  padding-right: 0;
+}
+
+.monitoring-head .endpoint-status {
+  top: 4px;
+}
+
+.monitoring-head .endpoint-status a {
+  top: 0;
+}
+
+.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
+  top: -5px;
+}
+
+.monitoring-head i.fa.fa-envelope {
+  font-size: 26px;
+  position: relative;
+  top: -4px;
+  left: 1px;
+}
+
+.monitoring-head .endpoint-status .badge {
+  position: relative;
+  top: 4px;
+  left: -12px;
+  font-size: 10px;
+}
+
+.monitoring-view .filter-group.filter-monitoring:before {
+  top: 41px;
+}
+
+.monitoring-view .dropdown {
+  top: 33px;
+  margin-left: 25px;
+  width: 250px;
+}
+
+.monitoring-view .dropdown .dropdown-menu {
+  top: 36px;
+  margin-left: 72px;
 }
 </style>
 
