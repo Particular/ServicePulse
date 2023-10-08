@@ -225,6 +225,7 @@ pre {
 
 .form-control {
     width: 100% !important;
+    font-size: 14px;
 }
 
 .btn-default {
@@ -464,10 +465,6 @@ pre {
     -webkit-box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
     box-shadow: 0 3px 9px rgb(0 0 0 / 50%);
     outline: 0;
-}
-
-.form-control {
-    font-size: 14px;
 }
 
 .danger {
