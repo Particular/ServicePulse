@@ -138,13 +138,13 @@ export function useServiceControlStats() {
 }
 
 export function useServiceControlMonitoringStats() {
-  const monitoredEndpointsResult = getMonitoredEndpoints();
-  const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
+        const monitoredEndpointsResult = getMonitoredEndpoints();
+        const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
-  return Promise.all([monitoredEndpointsResult, disconnectedEndpointsCountResult]).then(([, disconnectedEndpoints]) => {
-    //Do something here with the argument to the callback in the future if we are using them
-    stats.number_of_disconnected_endpoints = disconnectedEndpoints;
-  });
+        return Promise.all([monitoredEndpointsResult, disconnectedEndpointsCountResult]).then(([, disconnectedEndpoints]) => {
+            //Do something here with the argument to the callback in the future if we are using them
+            stats.number_of_disconnected_endpoints = disconnectedEndpoints;
+        });
 }
 
 export function useServiceControlConnections() {
@@ -232,14 +232,16 @@ function getSCConnection() {
 }
 
 function getMonitoringConnection() {
-  return useFetchFromMonitoring("connection")
-    .then((response) => {
-      return response.json();
-    })
-    .catch(() => {
-      connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
-      return {};
-    });
+    if (!useIsMonitoringDisabled()) {
+        return useFetchFromMonitoring("connection")
+            .then((response) => {
+                return response.json();
+            })
+            .catch(() => {
+                connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
+                return {};
+            });
+    }
 }
 
 function getSCVersion() {
@@ -346,27 +348,31 @@ function getFailedCustomChecksCount() {
 }
 
 function getMonitoredEndpoints() {
-  return fetchWithErrorHandling(
-    () => useFetchFromMonitoring("monitored-endpoints?history=1"),
-    monitoringConnectionState,
-    (response) => {
-      if (response != null && response.ok) {
-        return response.json();
-      }
-      throw "Error connecting to monitoring";
+    if (!useIsMonitoringDisabled()) {
+        return fetchWithErrorHandling(
+            () => useFetchFromMonitoring("monitored-endpoints?history=1"),
+            monitoringConnectionState,
+            (response) => {
+                if (response != null && response.ok) {
+                    return response.json();
+                }
+                throw "Error connecting to monitoring";
+            }
+        );
     }
-  );
 }
 
 function getDisconnectedEndpointsCount() {
-  return fetchWithErrorHandling(
-    () => useFetchFromMonitoring("monitored-endpoints/disconnected"),
-    monitoringConnectionState,
-    (response) => {
-      if (response != null && response.ok) {
-        return response.json();
-      }
-      throw "Error connecting to monitoring";
+    if (!useIsMonitoringDisabled()) {
+        return fetchWithErrorHandling(
+            () => useFetchFromMonitoring("monitored-endpoints/disconnected"),
+            monitoringConnectionState,
+            (response) => {
+                if (response != null && response.ok) {
+                    return response.json();
+                }
+                throw "Error connecting to monitoring";
+            }
+        );
     }
-  );
 }
