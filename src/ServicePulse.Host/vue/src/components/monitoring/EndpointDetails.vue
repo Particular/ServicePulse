@@ -6,7 +6,7 @@
 
 
 <template>
- <div> Ednpoint details page</div>
+ <div> Endpoint details page</div>
 </template>
 
 
