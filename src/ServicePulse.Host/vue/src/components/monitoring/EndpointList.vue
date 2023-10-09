@@ -115,6 +115,12 @@ monitoringService.getMonitoredEndpoints()
             router.push({ name: "message-groups", params: { groupId: groupId } });
         }
     }
+    function navigateToEndpointDetails($event, endpointName) {
+        if ($event.target.localName !== "button") {
+            //to do historyPeriod
+            router.push({ name: "endpoint-details", params: { name: endpointName } });
+        }
+    }
     function fillDisplayValuesForEndpoint(endpoint) {
 
         //$filter('graphduration')(endpoint.metrics.processingTime);
@@ -204,7 +210,7 @@ monitoringService.getMonitoredEndpoints()
                             <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                                 <div class="row box-header">
                                     <div class="col-lg-max-3 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                                        <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" class="cursorpointer" :title="`${endpoint.name}`">
+                                        <a   @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" :title="`${endpoint.name}`">
                                             {{endpoint.name}}
                                         </a>
                                     </div>
