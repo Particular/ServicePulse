@@ -52,7 +52,10 @@ monitoringService.getMonitoredEndpoints()
             exceptionGroups.value = [];
             exceptionGroups.value = result;
             //Squash and add to existing monitored endpoints
+
             if (exceptionGroups.value.length > 0) {
+                //sort the exceptiongroup list by name - case sensitive
+                exceptionGroups.value.sort((a, b) => (a.title > b.title ? 1 : a.title < b.title ? -1 : 0))//desc
                 exceptionGroups.value.forEach((failedMessageEndpoint) => {
                     if (failedMessageEndpoint.operation_status === 'ArchiveCompleted') {
                         return;
@@ -95,21 +98,14 @@ monitoringService.getMonitoredEndpoints()
                         mergeIn(endpoints.value[index], endpoint);
                     } else {
                         endpoints.value.push(endpoint);
-                        endpoints.value.sort(function (first, second) {
-                            if (first.name < second.name) {
-                                return -1;
-                            }
-
-                            if (first.name > second.name) {
-                                return 1;
-                            }
-
-                            return 0;
-                        });
                     }
                 }
 
             });
+
+            //sort the monitored endpoints by name - case sensitive
+            endpoints.value.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0))
+
         }
 
 
@@ -130,7 +126,7 @@ monitoringService.getMonitoredEndpoints()
 
     function mergeIn(destination, source) {
         for (var propName in source) {
-            if (Object.prototype.hasOwnProperty.call(source, propName)) {
+            if (source.hasOwnProperty( propName)) {
                 destination[propName] = source[propName];
             }
         }
