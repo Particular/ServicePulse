@@ -6,6 +6,7 @@ import "vue-toastification/dist/index.css";
 import SimpleTypeahead from "vue3-simple-typeahead";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 import "./assets/main.css";
+import { Tooltip } from "bootstrap";
 
 const app = createApp(App);
 
@@ -21,5 +22,12 @@ const toastOptions = {
 };
 app.use(Toast, toastOptions);
 app.use(SimpleTypeahead);
+
+// make v-tooltip available in all components
+app.directive("tooltip", {
+  mounted: (element) => {
+    new Tooltip(element);
+  },
+});
 
 app.mount("#app");
