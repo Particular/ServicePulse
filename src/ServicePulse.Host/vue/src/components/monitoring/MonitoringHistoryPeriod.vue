@@ -38,7 +38,7 @@ onMounted(() => {
 
 <template>
   <ul class="nav nav-pills period-selector" v-for="period in allPeriods" :key="period.value">
-    <li role="presentation" :class="{ active: period.value === defaultPeriod.value, notselected: period.value !== defaultPeriod.value }">
+    <li role="presentation" data-bs-placement="top" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.value === defaultPeriod.value, notselected: period.value !== defaultPeriod.value }">
       <a :href="`#`" @click.prevent="selectHistoryPeriod(period)">{{ period.text }}</a>
     </li>
   </ul>

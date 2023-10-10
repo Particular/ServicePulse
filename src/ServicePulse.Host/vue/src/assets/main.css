@@ -676,3 +676,7 @@ div.alert.alert-warning strong {
     margin: 25px 0 0;
     height: unset;
 }
+
+.tooltip {
+  font-size: 12px;
+}
