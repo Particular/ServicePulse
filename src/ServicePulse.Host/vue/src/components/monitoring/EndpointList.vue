@@ -1,8 +1,8 @@
 ﻿<script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted /* onUnmounted */ } from "vue";
 import { useRouter } from "vue-router";
-import { stats } from "../../composables/serviceServiceControl.js";
-import { useShowToast } from "../../composables/toast.js";
+//import { stats } from "../../composables/serviceServiceControl.js";
+//import { useShowToast } from "../../composables/toast.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import MonitoringNoData from "./MonitoringNoData.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
@@ -17,8 +17,8 @@ const router = useRouter();
 var hasData = ref(false);
 var supportsEndpointCount = ref();
 const metricslargenumber = ref();
-var monitoringNotAvailable = ref(false);
-const smallGraphsMinimumYAxis = { queueLength: 10, throughput: 10, retries: 10, processingTime: 10, criticalTime: 10 };
+//var monitoringNotAvailable = ref(false);
+//const smallGraphsMinimumYAxis = { queueLength: 10, throughput: 10, retries: 10, processingTime: 10, criticalTime: 10 };
 
 function getAllMonitoredEndpoints() {
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
