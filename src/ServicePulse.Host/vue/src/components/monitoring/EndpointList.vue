@@ -210,7 +210,7 @@ onMounted(() => {
                     <span class="warning" v-if="endpoint.errorCount" :title="`${endpoint.errorCount | metricslargenumber} failed messages associated with this endpoint. Click to see list.`">
                       <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
                         <i class="fa fa-envelope"></i>
-                        <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount | metricslargenumber }}</span>
+                        <span class="badge badge-important ng-binding cursorpointer">{{ filter(endpoint.errorCount, metricslargenumber) }}</span>
                       </a>
                     </span>
                   </div>
