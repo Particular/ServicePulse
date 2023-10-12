@@ -68,7 +68,7 @@ function updateUI() {
   if (endpoints.value.length > 0) {
     endpoints.value.forEach((endpoint) => {
       hasData.value = !endpoint.empty;
-      supportsEndpointCount.value = endpoint.hasOwnProperty("connectedCount"); ////$scope.supportsEndpointCount = Object.prototype.hasOwnProperty.call(endpoint, 'connectedCount');
+      supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, "connectedCount"); ////$scope.supportsEndpointCount = Object.prototype.hasOwnProperty.call(endpoint, 'connectedCount');
       if (endpoint.empty) {
         return;
       }
@@ -136,7 +136,7 @@ function formatGraphDecimal(input, deci) {
 
 function mergeIn(destination, source) {
   for (var propName in source) {
-    if (source.hasOwnProperty(propName)) {
+    if (Object.prototype.hasOwnProperty.call(source, propName)) {
       destination[propName] = source[propName];
     }
   }
