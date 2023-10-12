@@ -6,31 +6,58 @@ const hourDuration = moment.duration(60 * 1000); //this ensure that we never use
 const dayDuration = moment.duration(24 * 60 * 60 * 1000);
 
 export function useFormatTime(value) {
+
   var duration = moment.duration(value);
 
   var time = { value: 0, unit: "" };
   if (duration >= dayDuration) {
-    time.value = duration.format("D [d] h [hr]");
+      time.value = formatTimeValue(duration.days()) + " d " + formatTimeValue(duration.hours()) + " hrs"
     return time;
   } else if (duration >= hourDuration) {
-    time.value = moment.utc(duration.asMilliseconds()).format("HH:mm");
+      time.value = formatTimeValue(duration.hours(), true) + ":" + formatTimeValue(duration.minutes(),true);
     time.unit = "hr";
     return time;
   } else if (duration >= minuteDuration) {
-    time.value = duration.format("mm:ss");
-    time.unit = "min";
+      time.value = formatTimeValue(duration.minutes()) + ":" + formatTimeValue(duration.seconds());
+      time.unit = "min";
     return time;
   } else if (duration >= secondDuration) {
-    time.value = duration.format("ss");
+      time.value = formatTimeValue(duration.seconds());
     time.unit = "sec";
     return time;
   } else {
-    time.value = duration.format("s,SSS");
+      time.value = formatTimeValue(duration.asMilliseconds());
     time.unit = "ms";
     return time;
   }
+
 }
 
+//export function useFormatTimeOLD(value) {
+//    var duration = moment.duration(value);
+
+//    var time = { value: 0, unit: "" };
+//    if (duration >= dayDuration) {
+//      time.value = duration.format("D [d] h [hr]");
+//      return time;
+//    } else if (duration >= hourDuration) {
+//      time.value = moment.utc(duration.asMilliseconds()).format("HH:mm");
+//      time.unit = "hr";
+//      return time;
+//    } else if (duration >= minuteDuration) {
+//      time.value = duration.format("mm:ss");
+//      time.unit = "min";
+//      return time;
+//    } else if (duration >= secondDuration) {
+//      time.value = duration.format("ss");
+//      time.unit = "sec";
+//      return time;
+//    } else {
+//      time.value = duration.format("s,SSS");
+//      time.unit = "ms";
+//      return time;
+//    }
+//}
 export function useGetDayDiffFromToday(value) {
   if (!value) return undefined;
   var today = new Date();
@@ -60,4 +87,13 @@ export function useFormatLargeNumber(value, decimals) {
 
 function round(num, decimals) {
   return +(Math.round(num + ("e+" + decimals)) + ("e-" + decimals));
+}
+
+
+function formatTimeValue(timeValue, displayTwoDigits) {
+    var strValue = Math.floor(timeValue);
+    if (displayTwoDigits) {
+          return ("0" + strValue).slice(-2);
+    }
+    return strValue;
 }
