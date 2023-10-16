@@ -70,7 +70,7 @@
             endpoints.value.forEach((endpoint) => {
 
                 hasData = !endpoint.empty;
-                supportsEndpointCount = endpoint.hasOwnProperty('connectedCount');////$scope.supportsEndpointCount = Object.prototype.hasOwnProperty.call(endpoint, 'connectedCount');
+                supportsEndpointCount.value = endpoint.hasOwnProperty('connectedCount');
                 if (endpoint.empty) {
                     return;
                 }
@@ -233,7 +233,7 @@
                                         <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
                                             <i class="fa pa-monitoring-lost endpoints-overview" :title="`Unable to connect to monitoring server`"></i>
                                         </span>
-                                        <span class="warning" v-if="endpoint.isStale && (!supportsEndpointCount || !endpoint.connectedCount)" :title="`No data received from any instance`">
+                                        <span class="warning" v-if="endpoint.isStale && (!supportsEndpointCount.value || !endpoint.connectedCount)" :title="`No data received from any instance`">
                                             <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
                                         </span>
                                         <span class="warning" v-if="endpoint.errorCount" :title="`${endpoint.errorCount | metricslargenumber} failed messages associated with this endpoint. Click to see list.`">
