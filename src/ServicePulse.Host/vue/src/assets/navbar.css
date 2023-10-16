@@ -1,15 +1,19 @@
 :root {
     --bs-link-color: #9d9d9d;
     --bs-link-hover-color: #fff;
-}  
+}
 
 .navbar {
-    height: 60px;    
+    height: 60px;
     flex-wrap:nowrap;
 }
 
 .navbar-inverse {
     background-color: #1A1A1A;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: var(--bs-link-color);
 }
 
 .navbar > .navbar-right {
@@ -40,7 +44,6 @@
     position: relative;
     display: block;
     padding: 10px 15px 15px 10px;
-    color: var(--bs-link-color);
 }
 
 .navbar-nav > li > a > span.no-margin {
