@@ -1,15 +1,13 @@
 ﻿<script setup>
 
-    import { ref, onMounted, onUnmounted } from "vue";
+    import { ref, onMounted } from "vue";
     import { useRouter } from "vue-router";
-    import { stats } from "../../composables/serviceServiceControl.js";
-    import { useShowToast } from "../../composables/toast.js";
     import { useFetchFromMonitoring, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
-    import MonitoringNoData from "./MonitoringNoData.vue";
-    import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
     import { useGetExceptionGroups } from "../../composables/serviceMessageGroup.js";
     import {  monitoringConnectionState } from "../../composables/serviceServiceControl";
     import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
+    import MonitoringNoData from "./MonitoringNoData.vue";
+    import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 
     const endpoints = ref([]);
     const exceptionGroups = ref([]);
@@ -17,9 +15,6 @@
     const router = useRouter();
     var hasData = ref(false);
     var supportsEndpointCount = ref();
-    const metricslargenumber = ref();
-    var monitoringNotAvailable = ref(false);
-    const smallGraphsMinimumYAxis = { queueLength: 10, throughput: 10, retries: 10, processingTime: 10, criticalTime: 10, };
 
     function getAllMonitoredEndpoints() {
         if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
@@ -68,7 +63,7 @@
     function updateUI() {
         if (endpoints.value.length > 0) {
             endpoints.value.forEach((endpoint) => {
-                hasData = !endpoint.empty;
+                hasData.value = !endpoint.empty;
                 supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, 'connectedCount');
                 if (endpoint.empty) {
                     return;
@@ -236,11 +231,10 @@
                                         <span class="warning" v-if="endpoint.isStale && (!supportsEndpointCount.value || !endpoint.connectedCount)" :title="`No data received from any instance`">
                                             <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
                                         </span>
-                                        <span class="warning" v-if="endpoint.errorCount" :title="`${endpoint.errorCount | metricslargenumber} failed messages associated with this endpoint. Click to see list.`">
+                                        <span class="warning" v-if="endpoint.errorCount" :title="`${endpoint.errorCount} failed messages associated with this endpoint. Click to see list.`">
                                             <a v-if="endpoint.errorCount" class="warning  cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
                                                 <i class="fa fa-envelope"></i>
                                                 <span class="badge badge-important ng-binding cursorpointer ">{{endpoint.errorCount}}</span>
-                                                <!--<span class="badge badge-important ng-binding cursorpointer ">endpoint.errorCount | metricslargenumber}}</span>-->
                                             </a>
                                         </span>
                                     </div>
@@ -251,7 +245,7 @@
                             <div class="col-xs-2 col-xl-1 no-side-padding">
                                 <div class="row box-header">
                                     <div class="no-side-padding">
-                                        <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="{{smallGraphsMinimumYAxis.queueLength}}" avg-label-color="#EA7E00" metric-suffix="MSGS" class="graph queue-length pull-left"></graph>
+                                        <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="smallGraphsMinimumYAxis.queueLength}}" avg-label-color="#EA7E00" metric-suffix="MSGS" class="graph queue-length pull-left"></graph>
                                     </div>
                                     <div class="no-side-padding sparkline-value">
                                         {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0)}}
