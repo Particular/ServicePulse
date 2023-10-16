@@ -1,6 +1,7 @@
 <script setup>
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import LicenseExpired from "../components/LicenseExpired.vue";
+import EndpointList from "../components/monitoring/EndpointList.vue";
 </script>
 
 
@@ -8,40 +9,42 @@ import LicenseExpired from "../components/LicenseExpired.vue";
 
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
-    <div class="container monitoring-view">
-      <div class="row monitoring-head">
-        <div class="col-sm-4 no-side-padding list-section">
-          <h1>Endpoints overview</h1>
-        </div>
-        <div class="col-sm-8 no-side-padding toolbar-menus">
-          <div class="filter-group filter-monitoring">
-            <ul class="nav nav-pills period-selector">
-              <li><a href="#">1m</a></li>
-              <li><a href="#">5m</a></li>
-              <li><a href="#">10m</a></li>
-              <li><a href="#">15m</a></li>
-              <li><a href="#">30m</a></li>
-              <li><a href="#">1h</a></li>
-            </ul>
-            <div class="dropdown">
-              <label class="control-label">Group by:</label>
-              <button type="button" class="btn dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                button
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">no grouping</a></li>
-                <li role="separator" class="divider"></li>
-                <li>
-                  <a href="#">max.segments</a>
-                </li>
-              </ul>
-            </div>
-            <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" />
+      <div class="container monitoring-view">
+          <div class="row monitoring-head">
+              <div class="col-sm-4 no-side-padding list-section">
+                  <h1>Endpoints overview</h1>
+              </div>
+              <div class="col-sm-8 no-side-padding toolbar-menus">
+                  <div class="filter-group filter-monitoring">
+                      <ul class="nav nav-pills period-selector">
+                          <li><a href="#">1m</a></li>
+                          <li><a href="#">5m</a></li>
+                          <li><a href="#">10m</a></li>
+                          <li><a href="#">15m</a></li>
+                          <li><a href="#">30m</a></li>
+                          <li><a href="#">1h</a></li>
+                      </ul>
+                      <div class="dropdown">
+                          <label class="control-label">Group by:</label>
+                          <button type="button" class="btn dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              button
+                              <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                              <li><a href="#">no grouping</a></li>
+                              <li role="separator" class="divider"></li>
+                              <li>
+                                  <a href="#">max.segments</a>
+                              </li>
+                          </ul>
+                      </div>
+                      <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" />
+                  </div>
+              </div>
           </div>
-        </div>
+          <!--List of endpoints-->
+          <EndpointList></EndpointList>
       </div>
-    </div>
   </template>
 </template>
 <style>
