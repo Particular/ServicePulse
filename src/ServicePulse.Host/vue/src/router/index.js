@@ -25,16 +25,16 @@ const router = createRouter({
       component: MonitoringView,
       meta: {
         title: "Monitored Endpoints • ServicePulse",
-        },
       },
+    },
     {
       path: "/monitoring/endpoint/:name",
       name: "endpoint-details",
       component: () => import("../components/monitoring/EndpointDetails.vue"),
       meta: {
-        title: "Endpoints Details • ServicePulse"
+        title: "Endpoints Details • ServicePulse",
       },
-     },
+    },
     {
       path: "/failed-messages",
       component: FailedMessagesView,
