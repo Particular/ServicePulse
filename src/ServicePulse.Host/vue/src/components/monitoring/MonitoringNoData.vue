@@ -1,6 +1,4 @@
-﻿
-
-<template>
+﻿<template>
   <div class="row">
     <div class="col-sm-12">
       <div class="row box box-no-click">

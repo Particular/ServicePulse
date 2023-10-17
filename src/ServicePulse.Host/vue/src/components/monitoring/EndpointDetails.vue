@@ -1,12 +1,5 @@
-﻿<script setup>
-
-
-
-</script>
-
+﻿<script setup></script>
 
 <template>
- <div> Endpoint details page</div>
+  <div>Endpoint details page</div>
 </template>
-
-
