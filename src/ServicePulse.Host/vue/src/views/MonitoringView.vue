@@ -1,16 +1,19 @@
 <script setup>
+// Composables
 import { ref, onMounted } from "vue";
 import { licenseStatus } from "./../composables/serviceLicense.js";
+import { connectionState } from "../composables/serviceServiceControl";
+import { useRedirects } from "../composables/serviceRedirects.js";
+import { useFetchFromMonitoring, useIsMonitoringDisabled } from "../composables/serviceServiceControlUrls";
+import { monitoringConnectionState } from "../composables/serviceServiceControl";
+import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
+// Components
 import LicenseExpired from "../components/LicenseExpired.vue";
 import GroupBy from "../components/monitoring/MonitoringGroupBy.vue";
 import EndpointListGrouped from "../components/monitoring/EndpointListGrouped.vue";
 import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
-import { connectionState } from "../composables/serviceServiceControl";
-import { useRedirects } from "../composables/serviceRedirects.js";
 import EndpointList from "../components/monitoring/EndpointList.vue";
-import { useFetchFromMonitoring, useIsMonitoringDisabled } from "../composables/serviceServiceControlUrls";
-import { monitoringConnectionState } from "../composables/serviceServiceControl";
-import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
+import PeriodSelector from "../components/monitoring/MonitoringHistroyPeriod.vue";
 
 const redirectCount = ref(0);
 const endpoints = ref([]);
@@ -130,14 +133,7 @@ onMounted(() => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
-              <ul class="nav nav-pills period-selector">
-                <li><a href="#">1m</a></li>
-                <li><a href="#">5m</a></li>
-                <li><a href="#">10m</a></li>
-                <li><a href="#">15m</a></li>
-                <li><a href="#">30m</a></li>
-                <li><a href="#">1h</a></li>
-              </ul>
+              <PeriodSelector @period-selected="updateUI()"></PeriodSelector>
               <GroupBy v-if="endpoints.length" :endpoints="endpoints" @group-selector="updateGroupedEndpointList" />
               <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" />
             </div>
