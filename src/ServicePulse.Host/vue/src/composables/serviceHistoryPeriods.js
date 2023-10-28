@@ -10,10 +10,17 @@ const periods = [
   { value: 60, text: "1h", refreshInterval: 60 * 1000, refreshIntervalText: "Show data from the last hour. Refreshes every 1 minute" },
 ];
 
+/**
+ * @param {Object} period - A history period object
+ * @description - Saves a history period object to a cookie
+ */
 export function saveSelectedPeriod(period) {
   cookies.set(`history_period`, period.value);
 }
 
+/**
+ * @returns - The saved cookie period object or the default period object (1m)
+ */
 export function useGetDefaultPeriod() {
   const storedPeriodValue = cookies.get("history_period");
   const storedPeriod =
@@ -30,6 +37,9 @@ export function useGetDefaultPeriod() {
   return periods[0];
 }
 
+/**
+ * @returns - An array of all the history period objects
+ */
 export function getAllPeriods() {
   return periods;
 }
