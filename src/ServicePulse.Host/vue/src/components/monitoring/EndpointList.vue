@@ -1,65 +1,21 @@
 ﻿<script setup>
-import { ref, onMounted } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useFetchFromMonitoring, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
-import { useGetExceptionGroups } from "../../composables/serviceMessageGroup.js";
-import { monitoringConnectionState } from "../../composables/serviceServiceControl";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import MonitoringNoData from "./MonitoringNoData.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 
-const endpoints = ref([]);
-const exceptionGroups = ref([]);
+const endpoints = ref(settings.endpoints);
 const historyPeriod = 1;
 const router = useRouter();
-var hasData = ref(false);
-var supportsEndpointCount = ref();
+const hasData = ref(false);
+const supportsEndpointCount = ref();
 
-function getAllMonitoredEndpoints() {
-  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    return useFetchFromMonitoring(`${`monitored-endpoints`}?history=${historyPeriod}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        endpoints.value = [];
-        endpoints.value = data;
-        updateUI();
-        getEndpointsFromScSubscription();
-      });
-  } else {
-    getEndpointsFromScSubscription();
-  }
-}
+const settings = defineProps({
+  endpoints: Object,
+});
 
-function getEndpointsFromScSubscription() {
-  return useGetExceptionGroups("Endpoint Name").then((result) => {
-    exceptionGroups.value = [];
-    exceptionGroups.value = result;
-    //Squash and add to existing monitored endpoints
-
-    if (exceptionGroups.value.length > 0) {
-      //sort the exceptiongroup list by name - case sensitive
-      exceptionGroups.value.sort((a, b) => (a.title > b.title ? 1 : a.title < b.title ? -1 : 0)); //desc
-      exceptionGroups.value.forEach((failedMessageEndpoint) => {
-        if (failedMessageEndpoint.operation_status === "ArchiveCompleted") {
-          return;
-        }
-        var index = endpoints.value.findIndex(function (item) {
-          return item.name === failedMessageEndpoint.title;
-        });
-        if (index >= 0) {
-          endpoints.value[index].serviceControlId = failedMessageEndpoint.id;
-          endpoints.value[index].errorCount = failedMessageEndpoint.count;
-        } else {
-          endpoints.value.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true });
-        }
-      });
-    }
-  });
-}
-
-function updateUI() {
+/* function updateUI() {
   if (endpoints.value.length > 0) {
     endpoints.value.forEach((endpoint) => {
       hasData.value = !endpoint.empty;
@@ -90,7 +46,15 @@ function updateUI() {
     //sort the monitored endpoints by name - case sensitive
     endpoints.value.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0));
   }
-}
+} */
+
+/* function mergeIn(destination, source) {
+  for (var propName in source) {
+    if (Object.prototype.hasOwnProperty.call(source, propName)) {
+      destination[propName] = source[propName];
+    }
+  }
+} */
 
 function navigateToMessageGroup($event, groupId) {
   if ($event.target.localName !== "button") {
@@ -128,17 +92,6 @@ function formatGraphDecimal(input, deci) {
     };
   }
 }
-
-function mergeIn(destination, source) {
-  for (var propName in source) {
-    if (Object.prototype.hasOwnProperty.call(source, propName)) {
-      destination[propName] = source[propName];
-    }
-  }
-}
-onMounted(() => {
-  getAllMonitoredEndpoints();
-});
 </script>
 
 <template>
@@ -199,7 +152,7 @@ onMounted(() => {
                     <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
                       <i class="fa pa-monitoring-lost endpoints-overview" :title="`Unable to connect to monitoring server`"></i>
                     </span>
-                    <span class="warning" v-if="endpoint.isStale && (!supportsEndpointCount.value || !endpoint.connectedCount)" :title="`No data received from any instance`">
+                    <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" :title="`No data received from any instance`">
                       <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
                     </span>
                     <span class="warning" v-if="endpoint.errorCount" :title="`${endpoint.errorCount} failed messages associated with this endpoint. Click to see list.`">
