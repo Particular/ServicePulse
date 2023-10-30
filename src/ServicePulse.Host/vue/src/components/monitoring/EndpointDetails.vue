@@ -247,7 +247,8 @@ onMounted(() => {
 
     getEndpointDetails();
     console.log(endpoint.value);
-    console.log(endpoint.errorCount + "," + endpoint.isScMonitoringDisconnected  + "," + endpoint.isStale + "," + endpoint.serviceControlId);
+    console.log(endpoint.value.messageTypes);
+    console.log(endpoint.errorCount + "," + endpoint.isScMonitoringDisconnected + "," + endpoint.isStale + "," + endpoint.serviceControlId );
 });
 </script>
 
@@ -267,7 +268,7 @@ onMounted(() => {
                 <div class="row monitoring-head" ng-if="loadedSuccessfully">
                     <div class="col-sm-4 no-side-padding list-section">
                         <h1 class="righ-side-ellipsis col-lg-max-10" :title="endpointName">
-                            {{endpointName}}: {{endpoint.value.messageTypes.length}}
+                            {{endpointName}}
                         </h1>
                         <div class="endpoint-status col-xs-2">
                             <span class="warning"  v-if="negativeCriticalTimeIsPresent">
