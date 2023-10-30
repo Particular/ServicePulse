@@ -21,7 +21,7 @@ function selectHistoryPeriod(period) {
 }
 
 function checkPermaLink() {
-  if (route.query.historyPeriod !== undefined) {
+  if (route.query.historyPeriod !== undefined && !isNaN(route.query.historyPeriod)) {
     const historyPeriodParam = parseInt(route.query.historyPeriod);
     const historyPeriod = allPeriods.find((period) => {
       return period.value === historyPeriodParam;
