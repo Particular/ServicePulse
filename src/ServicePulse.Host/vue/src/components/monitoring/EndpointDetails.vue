@@ -164,7 +164,6 @@ let refreshInterval = undefined;
     }
     function IsShowInstancesBreakdownTab (isVisible) {
        showInstancesBreakdown = isVisible;
-
        refreshMessageTypes();
     };
 
@@ -219,12 +218,12 @@ let refreshInterval = undefined;
 
     function processMessageTypes() {
 
-       // endpoint.messageTypesTotalItems = endpoint.messageTypes.length;
+        endpoint.value.messageTypesTotalItems = endpoint.value.messageTypes.length;
 
-        //endpoint.messageTypes.forEach((messageType) => {
-        //    fillDisplayValues(messageType);
-        //    messageTypeParser.parseTheMessageTypeData(messageType);
-        //});
+        endpoint.value.messageTypes.forEach((messageType) => {
+            fillDisplayValues(messageType);
+            messageType=parseTheMessageTypeData(messageType);
+        });
     }
     function fillDisplayValues(instance) {
         //$filter('graphduration')(instance.metrics.processingTime);
@@ -232,6 +231,55 @@ let refreshInterval = undefined;
         //$filter('graphdecimal')(instance.metrics.throughput, 2);
         //$filter('graphdecimal')(instance.metrics.retries, 2);
     }
+
+    function parseTheMessageTypeData(messageType) {
+        if (!messageType.typeName)
+            return;
+
+        if (messageType.typeName.indexOf(';') > 0) {
+            var messageTypeHierarchy = messageType.typeName.split(';');
+            messageTypeHierarchy = messageTypeHierarchy.map((item) => {
+                var obj = {};
+                var segments = item.split(',');
+                obj.typeName = segments[0];
+                obj.assemblyName = segments[1];
+                obj.assemblyVersion = segments[2].substring(segments[2].indexOf('=') + 1);
+
+                if (!segments[4].endsWith('=null')) { //SC monitoring fills culture only if PublicKeyToken is filled
+                    obj.culture = segments[3];
+                    obj.publicKeyToken = segments[4];
+                }
+                return obj;
+            });
+            messageType.messageTypeHierarchy = messageTypeHierarchy;
+            messageType.typeName =
+                messageTypeHierarchy.map(item => item.typeName).join(", ");
+            messageType.shortName = messageTypeHierarchy.map(item => shortenTypeName(item.typeName)).join(", ");
+            messageType.containsTypeHierarchy = true;
+            messageType.tooltipText = messageTypeHierarchy.reduce((sum, item) => (sum ? `${sum}<br> ` : '') +
+                `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : '') + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ''),
+                '');
+        } else {
+            //Get the name without the namespace
+            messageType.shortName = shortenTypeName(messageType.typeName);
+
+            var tooltip = `${messageType.typeName} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
+            if (messageType.culture && messageType.culture != 'null') {
+                tooltip += ` | Culture=${messageType.culture}`;
+            }
+
+            if (messageType.publicKeyToken && messageType.publicKeyToken != 'null') {
+                tooltip += ` | PublicKeyToken=${messageType.publicKeyToken}`;
+            }
+
+            messageType.tooltipText = tooltip;
+        }
+    }
+
+    function shortenTypeName(typeName) {
+        return typeName.split('.').pop();
+    }
+
     function navigateToMessageGroup($event, groupId) {
         if ($event.target.localName !== "button") {
             router.push({ name: "message-groups", params: { groupId: groupId } });
@@ -244,6 +292,32 @@ let refreshInterval = undefined;
             router.push({ name: "monitoring/endpoint/", params: { groupId: groupId } });
         }
     }
+
+    function formatGraphDuration(input) {
+        if (input) {
+            var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+            var formatLastValue = useFormatTime(lastValue);
+            return formatLastValue;
+        }
+        return input;
+    }
+    function formatGraphDecimal(input, deci) {
+        if (input) {
+            var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+            var decimals = 0;
+            if (lastValue < 10 || input > 1000000) {
+                decimals = 2;
+            }
+            return useFormatLargeNumber(lastValue, deci || decimals);
+        } else {
+            input = {
+                points: [],
+                average: 0,
+                displayValue: 0,
+            };
+        }
+    }
+
 onMounted(() => {
 
     getEndpointDetails();
@@ -477,7 +551,7 @@ onMounted(() => {
                     </div>
 
                     <!--showInstancesBreakdown-->
-                    <section v-if="!showInstancesBreakdown" class="endpoint-instances">
+                    <section v-if="showInstancesBreakdown" class="endpoint-instances">
                         <div class="row">
                             <div class="col-xs-12 no-side-padding">
 
@@ -770,3 +844,645 @@ onMounted(() => {
 
 
 </template>
+
+<style>
+.monitoring-head h1 {
+	margin-bottom: 10px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.monitoring-head .msg-group-menu {
+	margin: 6px 0px 0 6px;
+	padding-right: 0;
+}
+
+.monitoring-head .endpoint-status {
+	top: 4px;
+}
+
+.monitoring-head .endpoint-status a {
+	top: 0;
+}
+
+.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
+	top: -5px;
+}
+
+.monitoring-head i.fa.fa-envelope {
+	font-size: 26px;
+	position: relative;
+	top: -4px;
+	left: 1px;
+}
+
+.monitoring-head .endpoint-status .badge {
+	position: relative;
+	top: 4px;
+	left: -12px;
+	font-size: 10px;
+}
+
+.pa-endpoint-lost.endpoint-details {
+	background-image: url('../../../a/img/endpoint-lost.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.pa-monitoring-lost.endpoint-details {
+	background-image: url('../../../a/img/monitoring-lost.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details,
+.monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
+	width: 32px;
+	height: 30px;
+}
+
+.endpoint-status .pa-endpoint-lost.endpoint-details,
+.endpoint-status .pa-monitoring-lost.endpoint-details,
+.endpoint-status .pa-endpoint-lost.endpoints-overview,
+.endpoint-status .pa-monitoring-lost.endpoints-overview {
+	width: 26px;
+	height: 26px;
+	left: 6px;
+	position: relative;
+}
+
+i.fa.pa-endpoint-lost.endpoints-overview,
+i.fa.pa-monitoring-lost.endpoints-overview {
+	position: relative;
+	margin-right: 4px;
+}
+
+.filter-group.filter-monitoring {
+	width: 100%;
+
+}
+
+.filter-group.filter-monitoring:before {
+	position: absolute;
+	top: 41px;
+}
+
+.filter-group.filter-monitoring input {
+	margin-top: 33px;
+	float: none;
+}
+
+.monitoring-view .filter-group.filter-monitoring:before {
+	top: 41px;
+}
+
+.monitoring-view .dropdown {
+	top: 33px;
+	margin-left: 25px;
+	width: 250px;
+}
+
+.monitoring-view .dropdown .dropdown-menu {
+	top: 36px;
+	margin-left: 72px;
+}
+
+.pa-monitoring {
+	background-image: url('../img/monitoring.svg');
+	background-position: center;
+	background-repeat: no-repeat;
+	width: 16px;
+	height: 14px;
+	position: relative;
+	top: 2px;
+}
+
+.righ-side-ellipsis {
+	direction: rtl;
+	text-align: left;
+}
+
+@supports (-ms-ime-align:auto) {
+	.righ-side-ellipsis {
+		direction: ltr;
+	}
+}
+
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
+	.righ-side-ellipsis {
+		direction: ltr;
+	}
+}
+
+.no-side-padding {
+	padding-right: 0;
+	padding-left: 0;
+}
+
+
+.endpoint-status {
+	display: inline-block;
+	position: absolute;
+	top: 1px;
+	margin-left: 7px;
+	padding-left: 0;
+}
+
+.endpoint-status i.fa-envelope,
+.endpoint-status i.fa-exclamation-triangle {
+	font-size: 20px;
+	color: #CE4844;
+}
+
+h1 .endpoint-status i.fa-envelope,
+.endpoint-status i.fa-exclamation-triangle {
+	font-size: 24px;
+}
+
+.endpoint-status i.fa-envelope {
+	color: #777f7f;
+}
+
+.endpoint-status i.fa-envelope:hover {
+	color: #23527c;
+}
+
+.overview-row-badge {
+	margin-left: 5px;
+}
+
+.endpoint-status .badge {
+	position: relative;
+	top: 8px;
+	font-size: 10px;
+	margin-right: 0;
+	left: -10px;
+}
+
+.endpoint-status i.fa-envelope,
+.endpoint-name i.fa-exclamation-triangle {
+	font-size: 20px;
+	margin-left: 6px;
+}
+
+.endpoint-status a {
+	position: relative;
+	top: -8px;
+	padding-left: 0;
+}
+
+.endpoint-status a:hover {
+	text-decoration: none;
+}
+
+.endpoint-status a[ng-if="endpoint.errorCount"] {
+	top: -11px;
+}
+
+.endpoint-status .badge {
+	position: relative;
+	top: 2px;
+	left: -9px;
+	font-size: 10px;
+}
+
+.endpoint-message-types .endpoint-status {
+	margin-top: -8px;
+}
+
+.warning {
+	color: red;
+}
+
+.warning i {
+	color: #BE0202;
+}
+
+p.lead hard-wrap.ng-binding {
+	color: #777f7f;
+}
+
+button.btn.btn-default.ng-binding.ng-isolate-scope {
+	margin-right: 4px !important;
+}
+
+
+.filter-group {
+	display: flex;
+	justify-content: flex-end;
+	width: 50%;
+	position: relative;
+	top: -3px;
+	margin-top: -26px;
+	float: right;
+}
+
+.filter-group:before {
+	width: 16px;
+	font-family: 'FontAwesome';
+	width: 20px;
+	content: "\f0b0";
+	color: #919E9E;
+	position: absolute;
+	top: 29px;
+	right: 250px;
+}
+
+.filter-group input {
+	display: inline-block;
+	width: 280px;
+	margin: 21px 0 0 15px;
+	padding-right: 10px;
+	padding-left: 30px;
+	border: 1px solid #aaa;
+	border-radius: 4px;
+	float: right;
+}
+
+.filter-group.filter-monitoring {
+	width: 100%;
+
+}
+
+.filter-group.filter-monitoring:before {
+	position: absolute;
+	top: 41px;
+}
+
+.filter-group.filter-monitoring input {
+	margin-top: 33px;
+	float: none;
+}
+
+.large-graphs {
+	width: 100%;
+	background-color: white;
+	margin-bottom: 34px;
+	padding: 30px 0;
+}
+
+.large-graph {
+	width: 100%;
+}
+
+.large-graph svg {
+	width: 100%
+}
+
+.no-side-padding {
+	padding-right: 0;
+	padding-left: 0;
+}
+
+.list-section {
+	margin-top: 14px;
+}
+
+@media (min-width: 768px) {
+	.navbar-nav>li.active>a {
+		background: transparent !important;
+		border-bottom: 5px solid #00A3C4;
+	}
+
+	.navbar-nav>li>a {
+		padding-bottom: 15px;
+		padding-top: 20px;
+	}
+
+	.graph-values .col-sm-6 {
+		width: 45%;
+	}
+}
+
+.large-graphs {
+	width: 100%;
+	background-color: white;
+	margin-bottom: 34px;
+	padding: 30px 0;
+}
+
+.large-graph {
+	width: 100%;
+}
+
+.large-graph svg {
+	width: 100%
+}
+
+.graph {
+	width: 68%;
+}
+
+.graph svg {
+	position: relative;
+	width: 100%;
+	height: 50px;
+}
+
+.graph * .graph-data-line {
+	stroke-width: 1.75px;
+	fill: none;
+}
+
+.graph * .graph-data-fill {
+	opacity: 0.8;
+}
+
+.graph * .graph-avg-line {
+	stroke-width: 1px;
+	opacity: 0.5;
+	stroke-dasharray: 5, 5;
+}
+
+.graph.queue-length * .graph-data-line {
+	stroke: #EA7E00;
+}
+
+.graph.queue-length * .graph-data-fill {
+	fill: #EADDCE;
+	stroke: #EADDCE;
+}
+
+.graph.queue-length * .graph-avg-line {
+	stroke: #EA7E00;
+}
+
+.graph.throughput * .graph-data-line {
+	stroke: #176397;
+}
+
+.graph.throughput * .graph-data-fill {
+	fill: #CADCE8;
+	stroke: #CADCE8;
+}
+
+.graph.throughput * .graph-avg-line {
+	stroke: #176397;
+}
+
+.graph.retries * .graph-data-line {
+	stroke: #CC1252;
+}
+
+.graph.retries * .graph-data-fill {
+	fill: #E9C4D1;
+	stroke: #E9C4D1;
+}
+
+.graph.retries * .graph-avg-line {
+	stroke: #CC1252;
+}
+
+.graph.processing-time * .graph-data-line {
+	stroke: #258135;
+}
+
+.graph.processing-time * .graph-data-fill {
+	fill: #BEE6C5;
+	stroke: #BEE6C5;
+}
+
+.graph.processing-time * .graph-avg-line {
+	stroke: #258135;
+}
+
+.graph.critical-time * .graph-data-line {
+	stroke: #2700CB;
+}
+
+.graph.critical-time * .graph-data-fill {
+	fill: #C4BCE5;
+	stroke: #C4BCE5;
+}
+
+.graph.critical-time * .graph-avg-line {
+	stroke: #2700CB;
+}
+
+.graph-area {
+	width: 33%;
+	box-sizing: border-box;
+}
+
+.graph-values {
+	margin-left: 60px;
+	padding-top: 10px;
+	border-top: 3px solid #fff;
+	margin-top: -8.5px;
+	width: 93%;
+}
+
+.graph-message-retries-throughputs,
+.graph-critical-processing-times {
+	margin-left: 0.5%;
+}
+
+.graph-queue-length .current,
+.graph-queue-length .average {
+	border-color: #EA7E00;
+}
+
+.queue-length-values {
+	display: inline-block;
+}
+
+.queue-length-values .metric-digest-header {
+	color: #EA7E00;
+}
+
+.metric-digest {
+	padding: 1em;
+}
+
+.metric-digest-header {
+	text-transform: uppercase;
+	display: inline-block;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.throughput-values span.metric-digest-header {
+	color: #176397;
+}
+
+.graph-queue-length .current,
+.graph-queue-length .average {
+	border-color: #EA7E00;
+}
+
+.throughput-values span.metric-digest-header {
+	color: #176397;
+}
+
+.throughput-values .current,
+.throughput-values .average {
+	border-color: #176397;
+}
+
+.scheduled-retries-rate-values span.metric-digest-header {
+	color: #CC1252;
+}
+
+.scheduled-retries-rate-values .current,
+.scheduled-retries-rate-values .average {
+	border-color: #CC1252;
+}
+
+.critical-time-values span.metric-digest-header {
+	color: #2700CB;
+}
+
+.critical-time-values .current,
+.critical-time-values .average {
+	border-color: #2700CB;
+}
+
+.processing-time-values span.metric-digest-header {
+	color: #279039;
+}
+
+.processing-time-values .current,
+.processing-time-values .average {
+	border-color: #279039;
+}
+
+.metric-digest-value {
+	font-weight: bold;
+	font-size: 22px;
+}
+
+.metric-digest-value div {
+	display: inline-block;
+}
+
+.metric-digest-value-suffix {
+	font-weight: normal;
+	font-size: 14px;
+	display: inline-block;
+	text-transform: uppercase;
+}
+
+.metric-digest {
+	padding: 1em;
+}
+
+.metric-digest-value {
+	font-weight: bold;
+	font-size: 22px;
+}
+
+.metric-digest-value div {
+	display: inline-block;
+}
+
+
+.current,
+.average {
+	margin-top: 4px;
+	margin-bottom: 8px;
+	padding-left: 4px;
+	line-height: 20px;
+	height: 19px;
+}
+
+.current {
+	border-left: 2.5px solid;
+}
+
+.average {
+	border-left: 1px dashed;
+	padding-left: 6px;
+}
+
+.toolbar-menus.endpoint-details {
+	display: flex;
+	margin-bottom: 5px;
+	justify-content: flex-end;
+}
+
+.endpoint-row a.remove-endpoint {
+	display: none;
+}
+
+.endpoint-row:hover a.remove-endpoint {
+	display: block;
+	position: absolute;
+	top: 17px;
+	right: 22px;
+}
+
+.table-head-row {
+	font-size: 12px;
+	text-transform: uppercase;
+	color: #181919;
+	padding-bottom: 5px;
+}
+
+.table-head-row p {
+	font-size: 12px;
+	text-transform: uppercase;
+	color: #181919;
+	text-transform: initial;
+}
+
+.table-head-row span.table-header-unit {
+	color: #777f7f;
+}
+
+.sparkline-value {
+	top: 16px;
+	left: -12px;
+	position: relative;
+	font-weight: normal;
+	float: right;
+	width: 25%;
+}
+
+.sparkline-value span {
+	color: #777f7f;
+	text-transform: uppercase;
+	font-size: 11px;
+}
+
+
+.sparkline-value.sec {
+	color: #0000FF;
+}
+
+.sparkline-value.sec span {
+	color: #007AFF;
+}
+
+.sparkline-value.min {
+	color: #8B00D0;
+}
+
+.sparkline-value.min span {
+	color: #B14AE4;
+}
+
+.sparkline-value.hr {
+	color: #D601DA;
+}
+
+.sparkline-value.hr span {
+	color: #D764D9;
+}
+
+.sparkline-value.d {
+	color: #AD0017;
+}
+
+.sparkline-value.d span {
+	color: #FF0004;
+}
+
+.graph-area {
+	width: 33%;
+	box-sizing: border-box;
+}
+
+
+</style>
