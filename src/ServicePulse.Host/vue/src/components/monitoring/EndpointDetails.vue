@@ -132,7 +132,7 @@ let refreshInterval = undefined;
                     }
                 });
                 endpoint.value.isStale = endpoint.value.isStale && instance.isStale;
-                //negativeCriticalTimeIsPresent |= instance.metrics.criticalTime.displayValue.value < 0;
+                negativeCriticalTimeIsPresent |= formatGraphDuration(instance.metrics.criticalTime).value < 0;
             });
 
             loadedSuccessfully.value = true;
@@ -162,10 +162,10 @@ let refreshInterval = undefined;
             }
         }
     }
-    function IsShowInstancesBreakdownTab (isVisible) {
-       showInstancesBreakdown = isVisible;
-       refreshMessageTypes();
-    };
+    //function IsShowInstancesBreakdownTab (isVisible) {
+    //   showInstancesBreakdown = isVisible;
+    //    refreshMessageTypes();
+    //};
 
     //function removeEndpoint (endpointName, instance) {
     //    instance.busy = true;
@@ -285,11 +285,14 @@ let refreshInterval = undefined;
             router.push({ name: "message-groups", params: { groupId: groupId } });
         }
     }
-    function navigateToEndpointUrl($event, selectedPeriodValue, showInstacesBreakdown, breakdownPageNo) {
+    function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
         if ($event.target.localName !== "button") {
-            var breakdownTabName = showInstacesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown';
+            showInstancesBreakdown = isVisible;
+            refreshMessageTypes();
+            var breakdownTabName = showInstancesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown';
             // TODO : return `#/monitoring/endpoint/${$scope.endpointName}?historyPeriod=${selectedPeriodValue}&tab=${breakdownTabName}&pageNo=${breakdownPageNo}`;
-            router.push({ name: "monitoring/endpoint/", params: { groupId: groupId } });
+            router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedHistoryPeriod, tab: breakdownTabName, pageNo: breakdownPageNo } });
+
         }
     }
 
@@ -543,10 +546,10 @@ onMounted(() => {
                     <!--tabs-->
                     <div class="tabs">
                         <h5 ng-class="{active: !showInstancesBreakdown}">
-                            <a ng-click="IsShowInstancesBreakdownTab(false)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, endpoint.messageTypesPage)}}" class="ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
+                            <a @click="navigateToEndpointUrl($event,false,endpoint.messageTypesPage)"  class="cursorpointer ng-binding">Message Types ({{endpoint.messageTypes.length}})</a>
                         </h5>
                         <h5 ng-class="{active: showInstancesBreakdown}">
-                            <a ng-click="IsShowInstancesBreakdownTab(true)" ng-href="{{buildUrl(selectedPeriod.value, showInstancesBreakdown, 1)}}" class="ng-binding">Instances ({{endpoint.instances.length}})</a>
+                            <a @click="navigateToEndpointUrl($event,true, 1)" class="cursorpointer ng-binding">Instances ({{endpoint.instances.length}})</a>
                         </h5>
                     </div>
 
@@ -949,7 +952,7 @@ i.fa.pa-monitoring-lost.endpoints-overview {
 }
 
 .pa-monitoring {
-	background-image: url('../img/monitoring.svg');
+	background-image: url('@/assets/monitoring.svg');
 	background-position: center;
 	background-repeat: no-repeat;
 	width: 16px;
