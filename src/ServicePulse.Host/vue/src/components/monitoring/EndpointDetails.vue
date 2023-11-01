@@ -290,7 +290,6 @@ let refreshInterval = undefined;
             showInstancesBreakdown = isVisible;
             refreshMessageTypes();
             var breakdownTabName = showInstancesBreakdown ? 'instancesBreakdown' : 'messageTypeBreakdown';
-            // TODO : return `#/monitoring/endpoint/${$scope.endpointName}?historyPeriod=${selectedPeriodValue}&tab=${breakdownTabName}&pageNo=${breakdownPageNo}`;
             router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedHistoryPeriod, tab: breakdownTabName, pageNo: breakdownPageNo } });
 
         }
