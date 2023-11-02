@@ -72,14 +72,8 @@ function periodSelected(period) {
   //changeRefreshInterval(period.refreshInterval);
 }
 
-function checkFilterString() {
-  if (route.query.filter !== undefined) {
-    filterString.value = route.query.filter;
-  }
-}
-
 watch(filterString, async (newValue) => {
-  allEndpoints.value = await MonitoringEndpoints.getAllMonitoredEndpoints(historyPeriod.value.value);
+  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.value);
   let queryParameters = { ...route.query };
   if (newValue === "") {
     isFiltered.value = false;
@@ -134,9 +128,9 @@ onMounted(async () => {
           </div>
         </div>
         <!--List of endpoints-->
-        <EndpointList v-show="!isGrouped" :endpoints="isFiltered ? filteredEndpoints : allEndpoints" :key="isFiltered ? filteredEndpoints : allEndpoints"></EndpointList>
+        <EndpointList v-if="!isGrouped" :endpoints="isFiltered ? filteredEndpoints : allEndpoints" :key="isFiltered ? filteredEndpoints : allEndpoints"></EndpointList>
         <!--Grouped list of endpoints-->
-        <EndpointListGrouped v-show="isGrouped" :grouping="grouping" :key="grouping"></EndpointListGrouped>
+        <EndpointListGrouped v-if="isGrouped" :grouping="grouping" :key="grouping"></EndpointListGrouped>
       </template>
     </div>
   </template>

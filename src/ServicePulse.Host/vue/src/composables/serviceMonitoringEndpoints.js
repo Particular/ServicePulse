@@ -7,7 +7,6 @@ import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
  * @returns the max number of segments in a array of endpoint object names
  */
 export function useFindEndpointSegments(endpoints) {
-  //await getAllMonitoredEndpoints();
   if (endpoints.value !== undefined) {
     return endpoints.value.reduce(function (acc, cur) {
       return Math.max(acc, cur.name.split(".").length - 1);
@@ -20,15 +19,19 @@ export function useFindEndpointSegments(endpoints) {
  * @param {Number} - The history period value.  The default is (1)
  * @returns A array of monitoring endpoint objects
  */
-export async function getAllMonitoredEndpoints(historyPeriod = 1) {
+export async function useGetAllMonitoredEndpoints(historyPeriod = 1) {
   const endpoints = ref([]);
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    const response = await useFetchFromMonitoring(`${`monitored-endpoints`}?history=${historyPeriod.value}`);
-    const data = await response.json();
-    endpoints.value = data;
-    await addEndpointsFromScSubscription(endpoints);
+    try {
+      const response = await useFetchFromMonitoring(`${`monitored-endpoints`}?history=${historyPeriod}`);
+      const data = await response.json();
+      endpoints.value = data;
+      await addEndpointsFromScSubscription(endpoints);
+    } catch (error) {
+      console.error(error);
+    }
   } else {
-    await addEndpointsFromScSubscription();
+    await addEndpointsFromScSubscription(endpoints);
   }
   return endpoints.value;
 }
@@ -37,7 +40,7 @@ export async function getAllMonitoredEndpoints(historyPeriod = 1) {
  * @param {String} filterString - The text entered by the user when filtering monitoring endpoints by name
  * @returns A filtered array of monitoring endpoint objects
  */
-export function filterAllMonitoredEndpointsByName(endpoints, filterString) {
+export function useFilterAllMonitoredEndpointsByName(endpoints, filterString) {
   if (filterString === "") {
     return endpoints.value;
   }
