@@ -3,15 +3,13 @@ import { ref, onMounted } from "vue";
 import { useCookies } from "vue3-cookies";
 import { useFindEndpointSegments, useGroupEndpoints } from "../../composables/serviceMonitoringEndpoints";
 
-const cookies = useCookies().cookies;
-
 const emit = defineEmits(["group-selector"]);
 const settings = defineProps({
   endpoints: Object,
 });
 
+const cookies = useCookies().cookies;
 const endpoints = ref(settings.endpoints);
-
 const grouping = ref({
   groupedEndpoints: [],
   groupSegments: useFindEndpointSegments(endpoints),
