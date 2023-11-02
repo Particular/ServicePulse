@@ -37,9 +37,24 @@ export function useGetDefaultPeriod() {
   return periods[0];
 }
 
+export function useHistoryPeriodQueryString(route) {
+  const queryParameters = { ...route.query };
+
+  if (queryParameters.historyPeriod !== undefined && !isNaN(queryParameters.historyPeriod)) {
+    const historyPeriodParam = parseInt(route.query.historyPeriod);
+    const foundHistoryPeriod = periods.find((period) => {
+      return period.value === historyPeriodParam;
+    });
+    if (foundHistoryPeriod !== undefined) {
+      return foundHistoryPeriod;
+    }
+  }
+  return undefined;
+}
+
 /**
  * @returns - An array of all the history period objects
  */
-export function getAllPeriods() {
+export function useGetAllPeriods() {
   return periods;
 }

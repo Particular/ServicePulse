@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
 import { useRedirects } from "../composables/serviceRedirects.js";
+import { useGetDefaultPeriod, useHistoryPeriodQueryString } from "../composables/serviceHistoryPeriods.js";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 // Components
 import LicenseExpired from "../components/LicenseExpired.vue";
@@ -87,15 +88,28 @@ watch(filterString, async (newValue) => {
   } else {
     isFiltered.value = true;
     await router.push({ query: { ...queryParameters, filter: newValue } }); // Update or add filter query parameter to url
-    filteredEndpoints.value = MonitoringEndpoints.filterAllMonitoredEndpointsByName(allEndpoints, newValue);
+    filteredEndpoints.value = MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(allEndpoints, newValue);
   }
 });
 
+function getUrlQueryStrings() {
+  const queryParameters = { ...route.query };
+  historyPeriod.value = useHistoryPeriodQueryString(route);
+
+  if (historyPeriod.value === undefined) {
+    historyPeriod.value = useGetDefaultPeriod();
+  }
+
+  if (queryParameters.filter !== undefined) {
+    filterString.value = queryParameters.filter;
+  }
+}
+
 onMounted(async () => {
+  getUrlQueryStrings();
+  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.value);
   const result = await useRedirects();
   redirectCount.value = result.total;
-  checkFilterString();
-  allEndpoints.value = await MonitoringEndpoints.getAllMonitoredEndpoints();
   //startRefreshInterval();
 });
 </script>
@@ -113,7 +127,7 @@ onMounted(async () => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
-              <PeriodSelector @period-selected="periodSelected"></PeriodSelector>
+              <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
               <GroupBy :endpoints="isFiltered ? filteredEndpoints : allEndpoints" @group-selector="updateGroupedEndpointList" :key="isFiltered ? filteredEndpoints : allEndpoints" />
               <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" v-model="filterString" />
             </div>

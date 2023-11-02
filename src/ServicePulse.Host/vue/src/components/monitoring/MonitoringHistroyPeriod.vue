@@ -1,13 +1,16 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { getAllPeriods, saveSelectedPeriod, useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
+import { useGetAllPeriods, saveSelectedPeriod, useGetDefaultPeriod, useHistoryPeriodQueryString } from "../../composables/serviceHistoryPeriods.js";
 
 const emit = defineEmits(["period-selected"]);
-const allPeriods = getAllPeriods();
-const defaultPeriod = ref(useGetDefaultPeriod());
-const router = useRouter();
+const settings = defineProps({
+  period: { type: Object, default: undefined },
+});
 const route = useRoute();
+const router = useRouter();
+const allPeriods = useGetAllPeriods();
+const defaultPeriod = ref(settings.period);
 
 watch(defaultPeriod, () => {
   const queryParameters = { ...route.query };
@@ -20,23 +23,16 @@ function selectHistoryPeriod(period) {
   emit("period-selected", period);
 }
 
-function checkPermaLink() {
-  if (route.query.historyPeriod !== undefined && !isNaN(route.query.historyPeriod)) {
-    const historyPeriodParam = parseInt(route.query.historyPeriod);
-    const historyPeriod = allPeriods.find((period) => {
-      return period.value === historyPeriodParam;
-    });
-    if (historyPeriod !== undefined) {
-      selectHistoryPeriod(historyPeriod);
-    } else {
-      router.push({ query: { historyPeriod: 1 } });
-      selectHistoryPeriod(allPeriods.indexOf(0));
+onMounted(() => {
+  defaultPeriod.value = settings.period;
+  if (defaultPeriod.value === undefined) {
+    defaultPeriod.value = useHistoryPeriodQueryString(route);
+    if (defaultPeriod.value === undefined) {
+      defaultPeriod.value = useGetDefaultPeriod();
     }
   }
-}
-
-onMounted(() => {
-  checkPermaLink();
+  router.push({ query: { historyPeriod: defaultPeriod.value.value } });
+  selectHistoryPeriod(defaultPeriod.value);
 });
 </script>
 
