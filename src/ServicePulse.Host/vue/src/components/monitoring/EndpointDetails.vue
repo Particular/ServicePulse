@@ -21,8 +21,12 @@ let refreshInterval = undefined;
     const route = useRoute();
     const router = useRouter();
     const endpointName = route.params.endpointName;
-    var showInstancesBreakdown = "instancesBreakdown";
-    showInstancesBreakdown = computed(() => route.params.tab);
+
+    var showInstancesBreakdown = false;
+    if (route.query.tab != "" && route.query.tab != undefined) {
+        showInstancesBreakdown = route.query.tab === 'instancesBreakdown';
+    }
+
     var selectedHistoryPeriod = "1";
     var isLoading = ref(true);
     var loadedSuccessfully = ref(false);
@@ -39,7 +43,7 @@ let refreshInterval = undefined;
     //};
     const endpoint = ref({});
     var negativeCriticalTimeIsPresent = ref(false);
-    endpoint.value.messageTypesPage = !showInstancesBreakdown ? route.params.pageNo : 1;
+    endpoint.value.messageTypesPage = !showInstancesBreakdown ? route.query.pageNo : 1;
     endpoint.value.messageTypesTotalItems = 0;
     endpoint.value.messageTypesItemsPerPage = 10
     endpoint.value.messageTypesAvailable = ref(false);
@@ -320,6 +324,7 @@ let refreshInterval = undefined;
     }
 
 onMounted(() => {
+
 
     getEndpointDetails();
     console.log(endpoint.value);
