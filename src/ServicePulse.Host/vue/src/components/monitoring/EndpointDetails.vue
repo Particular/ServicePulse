@@ -6,7 +6,7 @@ import { monitoringConnectionState, connectionState } from "../../composables/se
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useRedirects } from "../../composables/serviceRedirects.js";
-import { useFetchFromMonitoring, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromMonitoring, useIsMonitoringDisabled,useDeleteFromMonitoring } from "../../composables/serviceServiceControlUrls";
 import { useGetExceptionGroupsForEndpoint } from "../../composables/serviceMessageGroup.js";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
@@ -166,23 +166,33 @@ let refreshInterval = undefined;
             }
         }
     }
-    //function IsShowInstancesBreakdownTab (isVisible) {
-    //   showInstancesBreakdown = isVisible;
-    //    refreshMessageTypes();
-    //};
 
-    //function removeEndpoint (endpointName, instance) {
-    //    instance.busy = true;
-    //    //monitoringService.removeEndpointInstance(endpointName, instance.id).then(() => {
-    //    //    $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
+    function removeEndpoint (endpointName, instanceId) {
+        instance.busy = true;
+        return useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instanceId)
+            .then((response) => {
+                endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
+                if (endpoint.instances.length === 0) {
+                $window.location.hash = '#/monitoring';
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                var result = {
+                    message: "error",
+                };
+                return result;
+            });
+        //monitoringService.removeEndpointInstance(endpointName, instance.id).then(() => {
+        //    $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
 
-    //    //    if ($scope.endpoint.instances.length === 0) {
-    //    //        $window.location.hash = '#/monitoring';
-    //    //    }
-    //    //}, () => {
-    //    //    instance.busy = false;
-    //    //});
-    //};
+        //    if ($scope.endpoint.instances.length === 0) {
+        //        $window.location.hash = '#/monitoring';
+        //    }
+        //}, () => {
+        //    instance.busy = false;
+        //});
+    };
     //function isRemovingEndpointEnabled() {
     //    return $http({
     //        method: 'OPTIONS',
@@ -300,36 +310,37 @@ let refreshInterval = undefined;
     }
 
     function formatGraphDuration(input) {
-        if (input) {
-            var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+        if (typeof (input) !== "undefined" && input !== null) {
+            var lastValue = input;
+            if (input.points) {
+                lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+            }
             var formatLastValue = useFormatTime(lastValue);
             return formatLastValue;
         }
         return input;
     }
+
     function formatGraphDecimal(input, deci) {
         if (input) {
-            var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+            var lastValue = input;
+            if (input.points) {
+                 lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+            }
             var decimals = 0;
             if (lastValue < 10 || input > 1000000) {
                 decimals = 2;
             }
             return useFormatLargeNumber(lastValue, deci || decimals);
         } else {
-            input = {
-                points: [],
-                average: 0
-            };
+            return 0;
         }
     }
 
+
 onMounted(() => {
-
-
     getEndpointDetails();
     console.log(endpoint.value);
-    console.log(endpoint.value.messageTypes);
-    console.log(isLoading.value+","+loadedSuccessfully.value +","+endpoint.errorCount + "," + endpoint.isScMonitoringDisconnected + "," + endpoint.isStale + "," + endpoint.serviceControlId );
 });
 </script>
 
@@ -393,7 +404,7 @@ onMounted(() => {
                                              metric-suffix="MSGS"
                                              class="large-graph pull-left">
                                 </large-graph>
-
+                                <!--Queue Length-->
                                 <div class="col-xs-12 no-side-padding graph-values">
                                     <div class="queue-length-values">
                                         <div class="row">
@@ -404,7 +415,7 @@ onMounted(() => {
                                     </div>
                                     <div class="row metric-digest-value current">
                                         <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                           {{ formatGraphDecimal( endpoint.digest.metrics.queueLength.latest , 0)}} <span v-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span>
+                                            {{ formatGraphDecimal( endpoint.digest.metrics.queueLength.latest , 0)}} <span v-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span>
                                         </div>
                                         <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                     </div>
@@ -417,7 +428,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-
+                            <!--Throughput and retries-->
                             <div class="col-xs-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
                                 <!-- here goes diagram -->
                                 <large-graph ng-if="endpoint.metricDetails.metrics.throughput"
@@ -478,7 +489,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-
+                            <!--ProcessingTime and Critical Time-->
                             <div class="col-xs-4 no-side-padding list-section graph-area graph-critical-processing-times">
                                 <!-- here goes diagram -->
                                 <large-graph ng-if="endpoint.metricDetails.metrics.processingTime"
@@ -504,14 +515,14 @@ onMounted(() => {
                                         </div>
                                         <div class="row metric-digest-value current">
                                             <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                                {{formatGraphDuration(endpoint.digest.metrics.processingTime.latest)}}
+                                                {{formatGraphDuration(endpoint.digest.metrics.processingTime.latest).value}}
                                                 <span class="metric-digest-value-suffix">{{formatGraphDuration(endpoint.digest.metrics.processingTime.latest).unit}}</span>
                                             </div>
                                             <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                         </div>
                                         <div class="row metric-digest-value average">
                                             <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                                {{formatGraphDuration(endpoint.digest.metrics.processingTime.average)}}
+                                                {{formatGraphDuration(endpoint.digest.metrics.processingTime.average).value}}
                                                 <span class="metric-digest-value-suffix">{{formatGraphDuration(endpoint.digest.metrics.processingTime.average).unit}}</span>
                                             </div>
                                             <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
@@ -527,14 +538,14 @@ onMounted(() => {
                                         </div>
                                         <div class="row metric-digest-value current">
                                             <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.latest | durationValue) < 0}">  {{formatGraphDuration(endpoint.digest.metrics.criticalTime.latest)}}</span>
+                                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.latest | durationValue) < 0}">  {{formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value}}</span>
                                                 <span class="metric-digest-value-suffix">{{formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).unit}}</span>
                                             </div>
                                             <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                                         </div>
                                         <div class="row metric-digest-value average">
                                             <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.average | durationValue) < 0}">  {{formatGraphDuration(endpoint.digest.metrics.criticalTime.average)}}</span>
+                                                <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.average | durationValue) < 0}">  {{formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value}}</span>
                                                 <span class="metric-digest-value-suffix">{{formatGraphDuration(endpoint.digest.metrics.criticalTime.average).unit}} </span>
                                             </div>
                                             <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
@@ -543,7 +554,6 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -642,7 +652,7 @@ onMounted(() => {
                                                                 <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
                                                             </div>
                                                             <div class="no-side-padding sparkline-value">
-                                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" :  formatGraphDecimal(instance.metrics.throughput).value}}
+                                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" :  formatGraphDecimal(instance.metrics.throughput)}}
                                                                 <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" :title="`No metrics received or instance is not configured to send metrics`">?</strong>
                                                                 <strong v-if="instance.isScMonitoringDisconnected" :title="`Unable to connect to monitoring server`">?</strong>
                                                             </div>
@@ -654,7 +664,7 @@ onMounted(() => {
                                                                 <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
                                                             </div>
                                                             <div class="no-side-padding sparkline-value">
-                                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : formatGraphDecimal(instance.metrics.retries).value}}
+                                                                {{(instance.isStale == true || instance.isScMonitoringDisconnected == true) ? "" : formatGraphDecimal(instance.metrics.retries)}}
                                                                 <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" :title="`No metrics received or instance is not configured to send metrics`">?</strong>
                                                                 <strong v-if="instance.isScMonitoringDisconnected" :title="`Unable to connect to monitoring server`">?</strong>
                                                             </div>
@@ -691,7 +701,7 @@ onMounted(() => {
                                                         </div>
                                                     </div>
                                                     <!--remove endpoint-->
-                                                    <a ng-if="isRemovingEndpointEnabled" v-if="instance.isStale" class="remove-endpoint" ng-click="removeEndpoint(endpointName, instance)"><i class="fa fa-trash" :title="`Remove endpoint`"></i></a>
+                                                    <a ng-if="isRemovingEndpointEnabled" v-if="instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, id)"><i class="fa fa-trash" :title="`Remove endpoint`"></i></a>
                                                 </div>
                                             </div>
                                         </div>
@@ -789,7 +799,7 @@ onMounted(() => {
                                                                 <graph plot-data="messageType.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
                                                             </div>
                                                             <div class="no-side-padding sparkline-value">
-                                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" :  formatGraphDecimal(messageType.metrics.throughput, 2).value }}
+                                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" :  formatGraphDecimal(messageType.metrics.throughput, 2) }}
                                                                 <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
                                                                 <strong v-if="endpoint.isScMonitoringDisconnected" :title="`Unable to connect to monitoring server`">?</strong>
                                                             </div>
@@ -801,7 +811,7 @@ onMounted(() => {
                                                                 <graph plot-data="messageType.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
                                                             </div>
                                                             <div class="no-side-padding sparkline-value">
-                                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" :  formatGraphDecimal(messageType.metrics.retries, 2).value }}
+                                                                {{(endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" :  formatGraphDecimal(messageType.metrics.retries, 2) }}
                                                                 <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
                                                                 <strong v-if="endpoint.isScMonitoringDisconnected" :title="`Unable to connect to monitoring server`">?</strong>
                                                             </div>
@@ -1424,7 +1434,21 @@ button.btn.btn-default.ng-binding.ng-isolate-scope {
 	top: 17px;
 	right: 22px;
 }
+a.remove-endpoint {
+    margin-left: 7px;
+}
 
+a.remove-endpoint:hover {
+    cursor: pointer;
+}
+
+a.remove-endpoint i {
+    color: #00a3c4;
+}
+
+a.remove-endpoint:hover i {
+    color: #00729c;
+}
 .table-head-row {
 	font-size: 12px;
 	text-transform: uppercase;
