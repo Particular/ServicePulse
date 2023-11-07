@@ -5,7 +5,7 @@ import { useGetAllPeriods, saveSelectedPeriod, useGetDefaultPeriod, useHistoryPe
 
 const emit = defineEmits(["period-selected"]);
 const settings = defineProps({
-  period: { type: Object, default: undefined },
+  period: { type: Object, default: useGetDefaultPeriod() },
 });
 const route = useRoute();
 const router = useRouter();
