@@ -167,13 +167,13 @@ let refreshInterval = undefined;
         }
     }
 
-    function removeEndpoint (endpointName, instanceId) {
-        instance.busy = true;
-        return useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instanceId)
+    function removeEndpoint (endpointName, instance) {
+        return useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id)
             .then((response) => {
-                endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
-                if (endpoint.instances.length === 0) {
-                $window.location.hash = '#/monitoring';
+                endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
+                if (endpoint.value.instances.length === 0) {
+                    router.push({ name: "monitoring", query: { historyPeriod: selectedHistoryPeriod} });
+
                 }
             })
             .catch((err) => {
@@ -183,15 +183,6 @@ let refreshInterval = undefined;
                 };
                 return result;
             });
-        //monitoringService.removeEndpointInstance(endpointName, instance.id).then(() => {
-        //    $scope.endpoint.instances.splice($scope.endpoint.instances.indexOf(instance), 1);
-
-        //    if ($scope.endpoint.instances.length === 0) {
-        //        $window.location.hash = '#/monitoring';
-        //    }
-        //}, () => {
-        //    instance.busy = false;
-        //});
     };
 
 
@@ -697,7 +688,7 @@ onMounted(() => {
                                                         </div>
                                                     </div>
                                                     <!--remove endpoint-->
-                                                    <a  v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, id)"><i class="fa fa-trash" :title="`Remove endpoint`"></i></a>
+                                                    <a  v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)"><i class="fa fa-trash" :title="`Remove endpoint`"></i></a>
                                                 </div>
                                             </div>
                                         </div>
