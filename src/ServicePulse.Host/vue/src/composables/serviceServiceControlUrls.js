@@ -56,6 +56,13 @@ export function useDeleteFromMonitoring(suffix) {
     };
     return fetch(monitoringUrl.value + suffix, requestOptions);
 }
+
+export function useOptionsFromMonitoring() {
+    const requestOptions = {
+        method: "OPTIONS",
+    };
+    return fetch(monitoringUrl.value);
+}
 export function usePatchToServiceControl(suffix, payload) {
   const requestOptions = {
     method: "PATCH",

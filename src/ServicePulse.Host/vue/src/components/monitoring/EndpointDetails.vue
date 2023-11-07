@@ -6,7 +6,7 @@ import { monitoringConnectionState, connectionState } from "../../composables/se
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useRedirects } from "../../composables/serviceRedirects.js";
-import { useFetchFromMonitoring, useIsMonitoringDisabled,useDeleteFromMonitoring } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
 import { useGetExceptionGroupsForEndpoint } from "../../composables/serviceMessageGroup.js";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
@@ -193,25 +193,21 @@ let refreshInterval = undefined;
         //    instance.busy = false;
         //});
     };
-    //function isRemovingEndpointEnabled() {
-    //    return $http({
-    //        method: 'OPTIONS',
-    //        url: mu
-    //    }).then((response) => {
-    //        const headers = response.headers();
 
-    //        const allow = headers.allow;
-    //        const deleteAllowed = allow.indexOf('DELETE') >= 0;
 
-    //        return deleteAllowed;
-    //    }, function () {
-    //        return false;
-    //    });
-    //}
+    function isRemovingEndpointEnabled() {
 
-    //monitoringService.isRemovingEndpointEnabled().then(enabled => {
-    //    $scope.isRemovingEndpointEnabled = enabled;
-    //});
+        return useOptionsFromMonitoring()
+            .then((response) => {
+                const headers = response.headers();
+                const allow = headers.allow;
+                const deleteAllowed = allow.indexOf('DELETE') >= 0;
+                return deleteAllowed;
+            })
+            .catch((err) => {
+                return false;
+            });
+    };
     function getDisconnectedCount() {
 
         return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
@@ -701,7 +697,7 @@ onMounted(() => {
                                                         </div>
                                                     </div>
                                                     <!--remove endpoint-->
-                                                    <a ng-if="isRemovingEndpointEnabled" v-if="instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, id)"><i class="fa fa-trash" :title="`Remove endpoint`"></i></a>
+                                                    <a  v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, id)"><i class="fa fa-trash" :title="`Remove endpoint`"></i></a>
                                                 </div>
                                             </div>
                                         </div>
