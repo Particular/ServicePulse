@@ -107,17 +107,17 @@ let refreshInterval = undefined;
             //connectivityNotifier.reportSuccessfulConnection();
 
             //sorting
-            //endpoint.instances.sort(function (first, second) {
-            //    if (first.id < second.id) {
-            //        return -1;
-            //    }
+            endpoint.value.instances.sort(function (first, second) {
+                if (first.id < second.id) {
+                    return -1;
+                }
 
-            //    if (first.id > second.id) {
-            //        return 1;
-            //    }
+                if (first.id > second.id) {
+                    return 1;
+                }
 
-            //    return 0;
-            //});
+                return 0;
+            });
 
             processMessageTypes();
 
@@ -126,7 +126,7 @@ let refreshInterval = undefined;
             negativeCriticalTimeIsPresent.value = false;
 
             endpoint.value.instances.forEach(function (instance) {
-                fillDisplayValues(instance);
+                //fillDisplayValues(instance);
                 //get errror count by instance id
                 useGetExceptionGroupsForEndpoint("Endpoint Instance", instance.id).then((result) => {
                     if (result && result.length > 0) {
@@ -205,7 +205,19 @@ let refreshInterval = undefined;
 
 
     }
+    function checkDisconnectedCount() {
 
+        //var checkDisconnectedCount = function () {
+        //    monitoringService.getDisconnectedCount().then(result => {
+        //        notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
+        //    }, e => {
+        //        $log.debug('Error while getting disconnected endpoints count from monitoring:' + e);
+        //        clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
+        //    });
+        //};
+
+
+    }
     function  refreshMessageTypes() {
         if (endpoint.value.messageTypesAvailable) {
             endpoint.value.messageTypesAvailable.value = false;
@@ -222,16 +234,16 @@ let refreshInterval = undefined;
         endpoint.value.messageTypesTotalItems = endpoint.value.messageTypes.length;
 
         endpoint.value.messageTypes.forEach((messageType) => {
-            fillDisplayValues(messageType);
+          //  fillDisplayValues(messageType);
             messageType=parseTheMessageTypeData(messageType);
         });
     }
-    function fillDisplayValues(instance) {
-        //$filter('graphduration')(instance.metrics.processingTime);
-        //$filter('graphduration')(instance.metrics.criticalTime);
-        //$filter('graphdecimal')(instance.metrics.throughput, 2);
-        //$filter('graphdecimal')(instance.metrics.retries, 2);
-    }
+    //function fillDisplayValues(instance) {
+    //    //$filter('graphduration')(instance.metrics.processingTime);
+    //    //$filter('graphduration')(instance.metrics.criticalTime);
+    //    //$filter('graphdecimal')(instance.metrics.throughput, 2);
+    //    //$filter('graphdecimal')(instance.metrics.retries, 2);
+    //}
 
     function parseTheMessageTypeData(messageType) {
         if (!messageType.typeName)
@@ -324,7 +336,18 @@ let refreshInterval = undefined;
         }
     }
 
-
+    //var startService = function () {
+    //    notifier.subscribe($rootScope, (event, data) => {
+    //        if (data.isMonitoringConnected && isConnected == false) {
+    //            checkDisconnectedCount();
+    //            checkInterval = setInterval(checkDisconnectedCount, 20000);
+    //            isConnected = true;
+    //        } else if (!data.isMonitoringConnected && isConnected) {
+    //            isConnected = false;
+    //            clearInterval(checkInterval);
+    //        }
+    //    }, "MonitoringConnectionStatusChanged");
+    //};
 onMounted(() => {
     getEndpointDetails();
     console.log(endpoint.value);
@@ -704,7 +727,10 @@ onMounted(() => {
                         <div class="row">
                             <div class="col-xs-12 no-side-padding">
 
-                                <message-types-change-indicator refresh="endpoint.refreshMessageTypes" message-types-available="endpoint.messageTypesAvailable"></message-types-change-indicator>
+                                <div v-if="endpoint.messageTypesAvailable" class="alert alert-warning endpoint-data-changed">
+                                    <i class="fa fa-warning"></i> <strong>Warning:</strong> The number of available message types has changed.
+                                    <a @click="refreshMessageTypes()" class="alink">Click here to reload the view</a>
+                                </div>
 
                                 <!-- Breakdown by message type-->
                                 <!--headers-->
@@ -761,7 +787,7 @@ onMounted(() => {
                                                                 </div>
                                                             </div>
                                                             <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
-                                                                <span class="warning" v-if="messageType.metrics!=null && formatGraphDuration(messageType.metrics.criticalTime).value < 0" >
+                                                                <span class="warning" v-if="messageType.metrics!=null && formatGraphDuration(messageType.metrics.criticalTime).value < 0">
                                                                     <i class="fa pa-warning" :title="`Warning: message type currently has negative critical time, possibly because of a clock drift.`"></i>
                                                                 </span>
                                                                 <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
@@ -825,7 +851,7 @@ onMounted(() => {
                                                                 <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>
                                                             </div>
                                                             <div class="no-side-padding sparkline-value" ng-class="[messageType.metrics.criticalTime.displayValue.unit, {'negative':messageType.metrics.criticalTime.displayValue.value < 0}]">
-                                                               {{ (endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : formatGraphDuration(messageType.metrics.criticalTime).value}}
+                                                                {{ (endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true) ? "" : formatGraphDuration(messageType.metrics.criticalTime).value}}
                                                                 <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
                                                                 <strong v-if="endpoint.isScMonitoringDisconnected" :title="`Unable to connect to monitoring server`">?</strong>
                                                                 <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">
@@ -856,570 +882,570 @@ onMounted(() => {
 
 <style>
 .monitoring-head h1 {
-	margin-bottom: 10px;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	white-space: nowrap;
+    margin-bottom: 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .monitoring-head .msg-group-menu {
-	margin: 6px 0px 0 6px;
-	padding-right: 0;
+    margin: 6px 0px 0 6px;
+    padding-right: 0;
 }
 
 .monitoring-head .endpoint-status {
-	top: 4px;
+    top: 4px;
 }
 
 .monitoring-head .endpoint-status a {
-	top: 0;
+    top: 0;
 }
 
 .monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
-	top: -5px;
+    top: -5px;
 }
 
 .monitoring-head i.fa.fa-envelope {
-	font-size: 26px;
-	position: relative;
-	top: -4px;
-	left: 1px;
+    font-size: 26px;
+    position: relative;
+    top: -4px;
+    left: 1px;
 }
 
 .monitoring-head .endpoint-status .badge {
-	position: relative;
-	top: 4px;
-	left: -12px;
-	font-size: 10px;
+    position: relative;
+    top: 4px;
+    left: -12px;
+    font-size: 10px;
 }
 
 .pa-endpoint-lost.endpoint-details {
-	background-image: url('../../../a/img/endpoint-lost.svg');
-	background-position: center;
-	background-repeat: no-repeat;
+    background-image: url('../../../a/img/endpoint-lost.svg');
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .pa-monitoring-lost.endpoint-details {
-	background-image: url('../../../a/img/monitoring-lost.svg');
-	background-position: center;
-	background-repeat: no-repeat;
+    background-image: url('../../../a/img/monitoring-lost.svg');
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details,
 .monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
-	width: 32px;
-	height: 30px;
+    width: 32px;
+    height: 30px;
 }
 
 .endpoint-status .pa-endpoint-lost.endpoint-details,
 .endpoint-status .pa-monitoring-lost.endpoint-details,
 .endpoint-status .pa-endpoint-lost.endpoints-overview,
 .endpoint-status .pa-monitoring-lost.endpoints-overview {
-	width: 26px;
-	height: 26px;
-	left: 6px;
-	position: relative;
+    width: 26px;
+    height: 26px;
+    left: 6px;
+    position: relative;
 }
 
 i.fa.pa-endpoint-lost.endpoints-overview,
 i.fa.pa-monitoring-lost.endpoints-overview {
-	position: relative;
-	margin-right: 4px;
+    position: relative;
+    margin-right: 4px;
 }
 
 .filter-group.filter-monitoring {
-	width: 100%;
+    width: 100%;
 
 }
 
 .filter-group.filter-monitoring:before {
-	position: absolute;
-	top: 41px;
+    position: absolute;
+    top: 41px;
 }
 
 .filter-group.filter-monitoring input {
-	margin-top: 33px;
-	float: none;
+    margin-top: 33px;
+    float: none;
 }
 
 .monitoring-view .filter-group.filter-monitoring:before {
-	top: 41px;
+    top: 41px;
 }
 
 .monitoring-view .dropdown {
-	top: 33px;
-	margin-left: 25px;
-	width: 250px;
+    top: 33px;
+    margin-left: 25px;
+    width: 250px;
 }
 
 .monitoring-view .dropdown .dropdown-menu {
-	top: 36px;
-	margin-left: 72px;
+    top: 36px;
+    margin-left: 72px;
 }
 
 .pa-monitoring {
-	background-image: url('@/assets/monitoring.svg');
-	background-position: center;
-	background-repeat: no-repeat;
-	width: 16px;
-	height: 14px;
-	position: relative;
-	top: 2px;
+    background-image: url('@/assets/monitoring.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 16px;
+    height: 14px;
+    position: relative;
+    top: 2px;
 }
 
 .righ-side-ellipsis {
-	direction: rtl;
-	text-align: left;
+    direction: rtl;
+    text-align: left;
 }
 
 @supports (-ms-ime-align:auto) {
-	.righ-side-ellipsis {
-		direction: ltr;
-	}
+    .righ-side-ellipsis {
+        direction: ltr;
+    }
 }
 
 @media all and (-ms-high-contrast: none),
 (-ms-high-contrast: active) {
-	.righ-side-ellipsis {
-		direction: ltr;
-	}
+    .righ-side-ellipsis {
+        direction: ltr;
+    }
 }
 
 .no-side-padding {
-	padding-right: 0;
-	padding-left: 0;
+    padding-right: 0;
+    padding-left: 0;
 }
 
 
 .endpoint-status {
-	display: inline-block;
-	position: absolute;
-	top: 1px;
-	margin-left: 7px;
-	padding-left: 0;
+    display: inline-block;
+    position: absolute;
+    top: 1px;
+    margin-left: 7px;
+    padding-left: 0;
 }
 
 .endpoint-status i.fa-envelope,
 .endpoint-status i.fa-exclamation-triangle {
-	font-size: 20px;
-	color: #CE4844;
+    font-size: 20px;
+    color: #CE4844;
 }
 
 h1 .endpoint-status i.fa-envelope,
 .endpoint-status i.fa-exclamation-triangle {
-	font-size: 24px;
+    font-size: 24px;
 }
 
 .endpoint-status i.fa-envelope {
-	color: #777f7f;
+    color: #777f7f;
 }
 
 .endpoint-status i.fa-envelope:hover {
-	color: #23527c;
+    color: #23527c;
 }
 
 .overview-row-badge {
-	margin-left: 5px;
+    margin-left: 5px;
 }
 
 .endpoint-status .badge {
-	position: relative;
-	top: 8px;
-	font-size: 10px;
-	margin-right: 0;
-	left: -10px;
+    position: relative;
+    top: 8px;
+    font-size: 10px;
+    margin-right: 0;
+    left: -10px;
 }
 
 .endpoint-status i.fa-envelope,
 .endpoint-name i.fa-exclamation-triangle {
-	font-size: 20px;
-	margin-left: 6px;
+    font-size: 20px;
+    margin-left: 6px;
 }
 
 .endpoint-status a {
-	position: relative;
-	top: -8px;
-	padding-left: 0;
+    position: relative;
+    top: -8px;
+    padding-left: 0;
 }
 
 .endpoint-status a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 .endpoint-status a[ng-if="endpoint.errorCount"] {
-	top: -11px;
+    top: -11px;
 }
 
 .endpoint-status .badge {
-	position: relative;
-	top: 2px;
-	left: -9px;
-	font-size: 10px;
+    position: relative;
+    top: 2px;
+    left: -9px;
+    font-size: 10px;
 }
 
 .endpoint-message-types .endpoint-status {
-	margin-top: -8px;
+    margin-top: -8px;
 }
 
 .warning {
-	color: red;
+    color: red;
 }
 
 .warning i {
-	color: #BE0202;
+    color: #BE0202;
 }
 
 p.lead hard-wrap.ng-binding {
-	color: #777f7f;
+    color: #777f7f;
 }
 
 button.btn.btn-default.ng-binding.ng-isolate-scope {
-	margin-right: 4px !important;
+    margin-right: 4px !important;
 }
 
 
 .filter-group {
-	display: flex;
-	justify-content: flex-end;
-	width: 50%;
-	position: relative;
-	top: -3px;
-	margin-top: -26px;
-	float: right;
+    display: flex;
+    justify-content: flex-end;
+    width: 50%;
+    position: relative;
+    top: -3px;
+    margin-top: -26px;
+    float: right;
 }
 
 .filter-group:before {
-	width: 16px;
-	font-family: 'FontAwesome';
-	width: 20px;
-	content: "\f0b0";
-	color: #919E9E;
-	position: absolute;
-	top: 29px;
-	right: 250px;
+    width: 16px;
+    font-family: 'FontAwesome';
+    width: 20px;
+    content: "\f0b0";
+    color: #919E9E;
+    position: absolute;
+    top: 29px;
+    right: 250px;
 }
 
 .filter-group input {
-	display: inline-block;
-	width: 280px;
-	margin: 21px 0 0 15px;
-	padding-right: 10px;
-	padding-left: 30px;
-	border: 1px solid #aaa;
-	border-radius: 4px;
-	float: right;
+    display: inline-block;
+    width: 280px;
+    margin: 21px 0 0 15px;
+    padding-right: 10px;
+    padding-left: 30px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    float: right;
 }
 
 .filter-group.filter-monitoring {
-	width: 100%;
+    width: 100%;
 
 }
 
 .filter-group.filter-monitoring:before {
-	position: absolute;
-	top: 41px;
+    position: absolute;
+    top: 41px;
 }
 
 .filter-group.filter-monitoring input {
-	margin-top: 33px;
-	float: none;
+    margin-top: 33px;
+    float: none;
 }
 
 .large-graphs {
-	width: 100%;
-	background-color: white;
-	margin-bottom: 34px;
-	padding: 30px 0;
+    width: 100%;
+    background-color: white;
+    margin-bottom: 34px;
+    padding: 30px 0;
 }
 
 .large-graph {
-	width: 100%;
+    width: 100%;
 }
 
 .large-graph svg {
-	width: 100%
+    width: 100%
 }
 
 .no-side-padding {
-	padding-right: 0;
-	padding-left: 0;
+    padding-right: 0;
+    padding-left: 0;
 }
 
 .list-section {
-	margin-top: 14px;
+    margin-top: 14px;
 }
 
 @media (min-width: 768px) {
-	.navbar-nav>li.active>a {
-		background: transparent !important;
-		border-bottom: 5px solid #00A3C4;
-	}
+    .navbar-nav>li.active>a {
+        background: transparent !important;
+        border-bottom: 5px solid #00A3C4;
+    }
 
-	.navbar-nav>li>a {
-		padding-bottom: 15px;
-		padding-top: 20px;
-	}
+    .navbar-nav>li>a {
+        padding-bottom: 15px;
+        padding-top: 20px;
+    }
 
-	.graph-values .col-sm-6 {
-		width: 45%;
-	}
+    .graph-values .col-sm-6 {
+        width: 45%;
+    }
 }
 
 .large-graphs {
-	width: 100%;
-	background-color: white;
-	margin-bottom: 34px;
-	padding: 30px 0;
+    width: 100%;
+    background-color: white;
+    margin-bottom: 34px;
+    padding: 30px 0;
 }
 
 .large-graph {
-	width: 100%;
+    width: 100%;
 }
 
 .large-graph svg {
-	width: 100%
+    width: 100%
 }
 
 .graph {
-	width: 68%;
+    width: 68%;
 }
 
 .graph svg {
-	position: relative;
-	width: 100%;
-	height: 50px;
+    position: relative;
+    width: 100%;
+    height: 50px;
 }
 
 .graph * .graph-data-line {
-	stroke-width: 1.75px;
-	fill: none;
+    stroke-width: 1.75px;
+    fill: none;
 }
 
 .graph * .graph-data-fill {
-	opacity: 0.8;
+    opacity: 0.8;
 }
 
 .graph * .graph-avg-line {
-	stroke-width: 1px;
-	opacity: 0.5;
-	stroke-dasharray: 5, 5;
+    stroke-width: 1px;
+    opacity: 0.5;
+    stroke-dasharray: 5, 5;
 }
 
 .graph.queue-length * .graph-data-line {
-	stroke: #EA7E00;
+    stroke: #EA7E00;
 }
 
 .graph.queue-length * .graph-data-fill {
-	fill: #EADDCE;
-	stroke: #EADDCE;
+    fill: #EADDCE;
+    stroke: #EADDCE;
 }
 
 .graph.queue-length * .graph-avg-line {
-	stroke: #EA7E00;
+    stroke: #EA7E00;
 }
 
 .graph.throughput * .graph-data-line {
-	stroke: #176397;
+    stroke: #176397;
 }
 
 .graph.throughput * .graph-data-fill {
-	fill: #CADCE8;
-	stroke: #CADCE8;
+    fill: #CADCE8;
+    stroke: #CADCE8;
 }
 
 .graph.throughput * .graph-avg-line {
-	stroke: #176397;
+    stroke: #176397;
 }
 
 .graph.retries * .graph-data-line {
-	stroke: #CC1252;
+    stroke: #CC1252;
 }
 
 .graph.retries * .graph-data-fill {
-	fill: #E9C4D1;
-	stroke: #E9C4D1;
+    fill: #E9C4D1;
+    stroke: #E9C4D1;
 }
 
 .graph.retries * .graph-avg-line {
-	stroke: #CC1252;
+    stroke: #CC1252;
 }
 
 .graph.processing-time * .graph-data-line {
-	stroke: #258135;
+    stroke: #258135;
 }
 
 .graph.processing-time * .graph-data-fill {
-	fill: #BEE6C5;
-	stroke: #BEE6C5;
+    fill: #BEE6C5;
+    stroke: #BEE6C5;
 }
 
 .graph.processing-time * .graph-avg-line {
-	stroke: #258135;
+    stroke: #258135;
 }
 
 .graph.critical-time * .graph-data-line {
-	stroke: #2700CB;
+    stroke: #2700CB;
 }
 
 .graph.critical-time * .graph-data-fill {
-	fill: #C4BCE5;
-	stroke: #C4BCE5;
+    fill: #C4BCE5;
+    stroke: #C4BCE5;
 }
 
 .graph.critical-time * .graph-avg-line {
-	stroke: #2700CB;
+    stroke: #2700CB;
 }
 
 .graph-area {
-	width: 33%;
-	box-sizing: border-box;
+    width: 33%;
+    box-sizing: border-box;
 }
 
 .graph-values {
-	margin-left: 60px;
-	padding-top: 10px;
-	border-top: 3px solid #fff;
-	margin-top: -8.5px;
-	width: 93%;
+    margin-left: 60px;
+    padding-top: 10px;
+    border-top: 3px solid #fff;
+    margin-top: -8.5px;
+    width: 93%;
 }
 
 .graph-message-retries-throughputs,
 .graph-critical-processing-times {
-	margin-left: 0.5%;
+    margin-left: 0.5%;
 }
 
 .graph-queue-length .current,
 .graph-queue-length .average {
-	border-color: #EA7E00;
+    border-color: #EA7E00;
 }
 
 .queue-length-values {
-	display: inline-block;
+    display: inline-block;
 }
 
 .queue-length-values .metric-digest-header {
-	color: #EA7E00;
+    color: #EA7E00;
 }
 
 .metric-digest {
-	padding: 1em;
+    padding: 1em;
 }
 
 .metric-digest-header {
-	text-transform: uppercase;
-	display: inline-block;
-	font-size: 14px;
-	font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .throughput-values span.metric-digest-header {
-	color: #176397;
+    color: #176397;
 }
 
 .graph-queue-length .current,
 .graph-queue-length .average {
-	border-color: #EA7E00;
+    border-color: #EA7E00;
 }
 
 .throughput-values span.metric-digest-header {
-	color: #176397;
+    color: #176397;
 }
 
 .throughput-values .current,
 .throughput-values .average {
-	border-color: #176397;
+    border-color: #176397;
 }
 
 .scheduled-retries-rate-values span.metric-digest-header {
-	color: #CC1252;
+    color: #CC1252;
 }
 
 .scheduled-retries-rate-values .current,
 .scheduled-retries-rate-values .average {
-	border-color: #CC1252;
+    border-color: #CC1252;
 }
 
 .critical-time-values span.metric-digest-header {
-	color: #2700CB;
+    color: #2700CB;
 }
 
 .critical-time-values .current,
 .critical-time-values .average {
-	border-color: #2700CB;
+    border-color: #2700CB;
 }
 
 .processing-time-values span.metric-digest-header {
-	color: #279039;
+    color: #279039;
 }
 
 .processing-time-values .current,
 .processing-time-values .average {
-	border-color: #279039;
+    border-color: #279039;
 }
 
 .metric-digest-value {
-	font-weight: bold;
-	font-size: 22px;
+    font-weight: bold;
+    font-size: 22px;
 }
 
 .metric-digest-value div {
-	display: inline-block;
+    display: inline-block;
 }
 
 .metric-digest-value-suffix {
-	font-weight: normal;
-	font-size: 14px;
-	display: inline-block;
-	text-transform: uppercase;
+    font-weight: normal;
+    font-size: 14px;
+    display: inline-block;
+    text-transform: uppercase;
 }
 
 .metric-digest {
-	padding: 1em;
+    padding: 1em;
 }
 
 .metric-digest-value {
-	font-weight: bold;
-	font-size: 22px;
+    font-weight: bold;
+    font-size: 22px;
 }
 
 .metric-digest-value div {
-	display: inline-block;
+    display: inline-block;
 }
 
 
 .current,
 .average {
-	margin-top: 4px;
-	margin-bottom: 8px;
-	padding-left: 4px;
-	line-height: 20px;
-	height: 19px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    padding-left: 4px;
+    line-height: 20px;
+    height: 19px;
 }
 
 .current {
-	border-left: 2.5px solid;
+    border-left: 2.5px solid;
 }
 
 .average {
-	border-left: 1px dashed;
-	padding-left: 6px;
+    border-left: 1px dashed;
+    padding-left: 6px;
 }
 
 .toolbar-menus.endpoint-details {
-	display: flex;
-	margin-bottom: 5px;
-	justify-content: flex-end;
+    display: flex;
+    margin-bottom: 5px;
+    justify-content: flex-end;
 }
 
 .endpoint-row a.remove-endpoint {
-	display: none;
+    display: none;
 }
 
 .endpoint-row:hover a.remove-endpoint {
-	display: block;
-	position: absolute;
-	top: 17px;
-	right: 22px;
+    display: block;
+    position: absolute;
+    top: 17px;
+    right: 22px;
 }
 a.remove-endpoint {
     margin-left: 7px;
@@ -1437,75 +1463,100 @@ a.remove-endpoint:hover i {
     color: #00729c;
 }
 .table-head-row {
-	font-size: 12px;
-	text-transform: uppercase;
-	color: #181919;
-	padding-bottom: 5px;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #181919;
+    padding-bottom: 5px;
 }
 
 .table-head-row p {
-	font-size: 12px;
-	text-transform: uppercase;
-	color: #181919;
-	text-transform: initial;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #181919;
+    text-transform: initial;
 }
 
 .table-head-row span.table-header-unit {
-	color: #777f7f;
+    color: #777f7f;
 }
 
 .sparkline-value {
-	top: 16px;
-	left: -12px;
-	position: relative;
-	font-weight: normal;
-	float: right;
-	width: 25%;
+    top: 16px;
+    left: -12px;
+    position: relative;
+    font-weight: normal;
+    float: right;
+    width: 25%;
 }
 
 .sparkline-value span {
-	color: #777f7f;
-	text-transform: uppercase;
-	font-size: 11px;
+    color: #777f7f;
+    text-transform: uppercase;
+    font-size: 11px;
 }
 
 
 .sparkline-value.sec {
-	color: #0000FF;
+    color: #0000FF;
 }
 
 .sparkline-value.sec span {
-	color: #007AFF;
+    color: #007AFF;
 }
 
 .sparkline-value.min {
-	color: #8B00D0;
+    color: #8B00D0;
 }
 
 .sparkline-value.min span {
-	color: #B14AE4;
+    color: #B14AE4;
 }
 
 .sparkline-value.hr {
-	color: #D601DA;
+    color: #D601DA;
 }
 
 .sparkline-value.hr span {
-	color: #D764D9;
+    color: #D764D9;
 }
 
 .sparkline-value.d {
-	color: #AD0017;
+    color: #AD0017;
 }
 
 .sparkline-value.d span {
-	color: #FF0004;
+    color: #FF0004;
 }
 
 .graph-area {
-	width: 33%;
-	box-sizing: border-box;
+    width: 33%;
+    box-sizing: border-box;
 }
 
+.endpoint-data-changed {
+    text-align: center;
+    margin: 26px 0 0;
+}
+
+.endpoint-data-changed a {
+    text-decoration: underline;
+}
+
+.endpoint-data-changed a:hover {
+    cursor: pointer;
+}
+.alink
+{
+     text-decoration: underline;
+     color: #00a3c4;
+}
+.endpoint-data-changed.sticky {
+    position: fixed;
+    top: 50px;
+    width: 92%;
+    z-index: 999999;
+    box-shadow: 0 3px 20px rgba(0,0,0,0.15);
+    transition-duration: 0.5s;
+}
 
 </style>
