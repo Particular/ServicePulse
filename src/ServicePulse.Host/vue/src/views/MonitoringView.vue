@@ -1,12 +1,12 @@
 <script setup>
 // Composables
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
 import { useRedirects } from "../composables/serviceRedirects.js";
-import { useFetchFromMonitoring, useIsMonitoringDisabled } from "../composables/serviceServiceControlUrls";
-import { monitoringConnectionState } from "../composables/serviceServiceControl";
-import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
+import { useGetDefaultPeriod, useHistoryPeriodQueryString } from "../composables/serviceHistoryPeriods.js";
+import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 // Components
 import LicenseExpired from "../components/LicenseExpired.vue";
 import GroupBy from "../components/monitoring/MonitoringGroupBy.vue";
@@ -16,107 +16,95 @@ import EndpointList from "../components/monitoring/EndpointList.vue";
 import PeriodSelector from "../components/monitoring/MonitoringHistroyPeriod.vue";
 
 const redirectCount = ref(0);
-const endpoints = ref([]);
+const allEndpoints = ref([]);
+const filteredEndpoints = ref([]);
 const grouping = ref([]);
-const exceptionGroups = ref([]);
-const historyPeriod = 1;
-var hasData = ref(false);
-var supportsEndpointCount = ref();
+const route = useRoute();
+const router = useRouter();
+const historyPeriod = ref(useGetDefaultPeriod());
+const filterString = ref("");
+const isFiltered = ref(false);
+const isGrouped = ref(false);
 
-function getAllMonitoredEndpoints() {
-  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    return useFetchFromMonitoring(`${`monitored-endpoints`}?history=${historyPeriod}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        endpoints.value = [];
-        endpoints.value = data;
-        updateUI();
-        getEndpointsFromScSubscription();
-      });
-  } else {
-    getEndpointsFromScSubscription();
+// let refreshInterval = undefined;
+
+/* function startRefreshInterval() {
+  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
+
+  refreshInterval = setInterval(() => {
+    //getAllMonitoredEndpoints();
+    //updateUI();
+  }, 5000);
+} */
+
+/* function stopRefreshInterval() {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
   }
-}
+} */
 
-function getEndpointsFromScSubscription() {
-  return useGetExceptionGroups("Endpoint Name").then((result) => {
-    exceptionGroups.value = [];
-    exceptionGroups.value = result;
-    //Squash and add to existing monitored endpoints
+/* function changeRefreshInterval(milliseconds) {
+  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-    if (exceptionGroups.value.length > 0) {
-      //sort the exceptiongroup list by name - case sensitive
-      exceptionGroups.value.sort((a, b) => (a.title > b.title ? 1 : a.title < b.title ? -1 : 0)); //desc
-      exceptionGroups.value.forEach((failedMessageEndpoint) => {
-        if (failedMessageEndpoint.operation_status === "ArchiveCompleted") {
-          return;
-        }
-        var index = endpoints.value.findIndex(function (item) {
-          return item.name === failedMessageEndpoint.title;
-        });
-        if (index >= 0) {
-          endpoints.value[index].serviceControlId = failedMessageEndpoint.id;
-          endpoints.value[index].errorCount = failedMessageEndpoint.count;
-        } else {
-          endpoints.value.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true });
-        }
-      });
-    }
-  });
-}
-
-function updateUI() {
-  if (endpoints.value.length > 0) {
-    endpoints.value.forEach((endpoint) => {
-      hasData.value = !endpoint.empty;
-      supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, "connectedCount"); ////$scope.supportsEndpointCount = Object.prototype.hasOwnProperty.call(endpoint, 'connectedCount');
-      if (endpoint.empty) {
-        return;
-      }
-
-      if (endpoint.error) {
-        // connectivityNotifier.reportFailedConnection();
-        if (endpoints.value) {
-          endpoints.value.forEach((item) => (item.isScMonitoringDisconnected = true));
-        }
-      } else {
-        // connectivityNotifier.reportSuccessfulConnection();
-        var index = endpoints.value.findIndex(function (item) {
-          return item.name === endpoint.name;
-        });
-        endpoint.isScMonitoringDisconnected = false;
-        if (index >= 0) {
-          mergeIn(endpoints.value[index], endpoint);
-        } else {
-          endpoints.value.push(endpoint);
-        }
+  refreshInterval = setInterval(() => {
+    MonitoringEndpoints.getAllMonitoredEndpoints().then(() => {
+      if (isFiltered.value) {
+        //endpoints.value = useFilterEndpointsByName(endpoints.value, filterString.value);
+        //allEndpoints.value = MonitoringEndpoints.useFilterEndpointsByName(allEndpoints.value, filterString.value);
       }
     });
-
-    //sort the monitored endpoints by name - case sensitive
-    endpoints.value.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0));
-  }
-}
-
-function mergeIn(destination, source) {
-  for (var propName in source) {
-    if (Object.prototype.hasOwnProperty.call(source, propName)) {
-      destination[propName] = source[propName];
-    }
-  }
-}
+    //updateUI();
+  }, milliseconds);
+} */
 
 function updateGroupedEndpointList(endpointGrouping) {
-  grouping.value = endpointGrouping;
+  if (endpointGrouping.value.selectedGrouping === 0) {
+    grouping.value = ref([]);
+    isGrouped.value = false;
+  } else {
+    grouping.value = endpointGrouping.value;
+    isGrouped.value = true;
+  }
 }
 
-onMounted(() => {
-  useRedirects().then((result) => {
-    redirectCount.value = result.total;
-  });
-  getAllMonitoredEndpoints();
+function periodSelected(period) {
+  historyPeriod.value = period;
+  //changeRefreshInterval(period.refreshInterval);
+}
+
+watch(filterString, async (newValue) => {
+  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.value);
+  let queryParameters = { ...route.query };
+  if (newValue === "") {
+    isFiltered.value = false;
+    delete queryParameters.filter;
+    await router.push({ query: { ...queryParameters } }); // Remove filter query parameter from url
+  } else {
+    isFiltered.value = true;
+    await router.push({ query: { ...queryParameters, filter: newValue } }); // Update or add filter query parameter to url
+    filteredEndpoints.value = MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(allEndpoints, newValue);
+  }
+});
+
+function getUrlQueryStrings() {
+  const queryParameters = { ...route.query };
+  historyPeriod.value = useHistoryPeriodQueryString(route);
+
+  if (historyPeriod.value === undefined) {
+    historyPeriod.value = useGetDefaultPeriod();
+  }
+
+  if (queryParameters.filter !== undefined) {
+    filterString.value = queryParameters.filter;
+  }
+}
+
+onMounted(async () => {
+  getUrlQueryStrings();
+  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.value);
+  const result = await useRedirects();
+  redirectCount.value = result.total;
+  //startRefreshInterval();
 });
 </script>
 
@@ -133,20 +121,21 @@ onMounted(() => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
-              <PeriodSelector @period-selected="updateUI()"></PeriodSelector>
-              <GroupBy v-if="endpoints.length" :endpoints="endpoints" @group-selector="updateGroupedEndpointList" />
-              <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" />
+              <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
+              <GroupBy :endpoints="isFiltered ? filteredEndpoints : allEndpoints" @group-selector="updateGroupedEndpointList" :key="isFiltered ? filteredEndpoints : allEndpoints" />
+              <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" v-model="filterString" />
             </div>
           </div>
         </div>
         <!--List of endpoints-->
-        <EndpointList v-if="grouping.length === 0"></EndpointList>
+        <EndpointList v-if="!isGrouped" :endpoints="isFiltered ? filteredEndpoints : allEndpoints" :key="isFiltered ? filteredEndpoints : allEndpoints"></EndpointList>
         <!--Grouped list of endpoints-->
-        <EndpointListGrouped v-if="grouping.selectedGrouping !== undefined && grouping.selectedGrouping > 0" :grouping="grouping"></EndpointListGrouped>
+        <EndpointListGrouped v-if="isGrouped" :grouping="grouping" :key="grouping"></EndpointListGrouped>
       </template>
     </div>
   </template>
 </template>
+
 <style>
 .form-control-static {
   min-height: 34px;

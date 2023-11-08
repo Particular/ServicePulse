@@ -1,10 +1,11 @@
 <script setup>
-import { /* ref, */ computed } from "vue";
+import { ref } from "vue";
+
 const settings = defineProps({
   grouping: Object,
 });
 
-const grouping = computed(() => settings.grouping);
+const grouping = ref(settings.grouping);
 //const metricslargenumber = ref();
 </script>
 
