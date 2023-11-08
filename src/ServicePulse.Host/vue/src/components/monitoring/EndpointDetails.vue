@@ -13,7 +13,7 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
 import MonitoringNoData from "./MonitoringNoData.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
-import PeriodSelector from "./MonitoringHistroyPeriod.vue";
+import PeriodSelector from "./MonitoringHistoryPeriod.vue";
 import NoData from "../NoData.vue";
 
 let refreshInterval = undefined;
