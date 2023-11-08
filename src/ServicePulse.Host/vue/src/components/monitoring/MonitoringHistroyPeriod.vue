@@ -1,22 +1,45 @@
 <script setup>
-import { ref } from "vue";
-import { getAllPeriods, saveSelectedPeriod, useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
+import { ref, onMounted, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useGetAllPeriods, saveSelectedPeriod, useGetDefaultPeriod, useHistoryPeriodQueryString } from "../../composables/serviceHistoryPeriods.js";
 
 const emit = defineEmits(["period-selected"]);
-const allPeriods = getAllPeriods();
-const defaultPeriod = ref(useGetDefaultPeriod());
+const settings = defineProps({
+  period: { type: Object, default: useGetDefaultPeriod() },
+});
+const route = useRoute();
+const router = useRouter();
+const allPeriods = useGetAllPeriods();
+const defaultPeriod = ref(settings.period);
+
+watch(defaultPeriod, () => {
+  const queryParameters = { ...route.query };
+  router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.value } });
+});
 
 function selectHistoryPeriod(period) {
   saveSelectedPeriod(period);
   defaultPeriod.value = useGetDefaultPeriod();
-  emit("period-selected");
+  emit("period-selected", period);
 }
+
+onMounted(() => {
+  defaultPeriod.value = settings.period;
+  if (defaultPeriod.value === undefined) {
+    defaultPeriod.value = useHistoryPeriodQueryString(route);
+    if (defaultPeriod.value === undefined) {
+      defaultPeriod.value = useGetDefaultPeriod();
+    }
+  }
+  router.push({ query: { historyPeriod: defaultPeriod.value.value } });
+  selectHistoryPeriod(defaultPeriod.value);
+});
 </script>
 
 <template>
   <ul class="nav nav-pills period-selector" v-for="period in allPeriods" :key="period.value">
     <li role="presentation" :class="{ active: period.value === defaultPeriod.value, notselected: period.value !== defaultPeriod.value }">
-      <a :href="`#/monitoring?historyPeriod=` + period.value" @click="selectHistoryPeriod(period)">{{ period.text }}</a>
+      <a :href="`#`" @click.prevent="selectHistoryPeriod(period)">{{ period.text }}</a>
     </li>
   </ul>
 </template>
