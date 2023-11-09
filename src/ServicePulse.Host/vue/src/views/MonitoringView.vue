@@ -13,7 +13,7 @@ import GroupBy from "../components/monitoring/MonitoringGroupBy.vue";
 import EndpointListGrouped from "../components/monitoring/EndpointListGrouped.vue";
 import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
 import EndpointList from "../components/monitoring/EndpointList.vue";
-import PeriodSelector from "../components/monitoring/MonitoringHistroyPeriod.vue";
+import PeriodSelector from "../components/monitoring/MonitoringHistoryPeriod.vue";
 
 const redirectCount = ref(0);
 const allEndpoints = ref([]);
