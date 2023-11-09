@@ -50,7 +50,19 @@ export function useDeleteFromServiceControl(suffix) {
   };
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
+export function useDeleteFromMonitoring(suffix) {
+  const requestOptions = {
+    method: "DELETE",
+  };
+  return fetch(monitoringUrl.value + suffix, requestOptions);
+}
 
+export function useOptionsFromMonitoring() {
+  const requestOptions = {
+    method: "OPTIONS",
+  };
+  return fetch(monitoringUrl.value, requestOptions);
+}
 export function usePatchToServiceControl(suffix, payload) {
   const requestOptions = {
     method: "PATCH",

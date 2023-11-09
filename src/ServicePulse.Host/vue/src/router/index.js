@@ -28,7 +28,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/monitoring/endpoint/:name",
+      path: "/monitoring/endpoint/:endpointName",
       name: "endpoint-details",
       component: () => import("../components/monitoring/EndpointDetails.vue"),
       meta: {
