@@ -20,19 +20,19 @@ const grouping = ref(settings.grouping);
         <div class="row box-header">Endpoint name</div>
       </div>
       <div class="col-2 col-xl-1 no-side-padding">
-        <div class="row box-header" uib-tooltip="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length <span class="table-header-unit">(msgs)</span></div>
+        <div class="row box-header" v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length <span class="table-header-unit">(msgs)</span></div>
       </div>
       <div class="col-2 col-xl-1 no-side-padding">
-        <div class="row box-header" uib-tooltip="Throughput: The number of messages per second successfully processed by a receiving endpoint.">Throughput <span class="table-header-unit">(msgs/s)</span></div>
+        <div class="row box-header" v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint.">Throughput <span class="table-header-unit">(msgs/s)</span></div>
       </div>
       <div class="col-2 col-xl-1 no-side-padding">
-        <div class="row box-header" uib-tooltip="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
+        <div class="row box-header" v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
       </div>
       <div class="col-2 col-xl-1 no-side-padding">
-        <div class="row box-header" uib-tooltip="Processing time: The time taken for a receiving endpoint to successfully process a message.">Processing Time <span class="table-header-unit">(t)</span></div>
+        <div class="row box-header" v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message.">Processing Time <span class="table-header-unit">(t)</span></div>
       </div>
       <div class="col-2 col-xl-1 no-side-padding">
-        <div class="row box-header" uib-tooltip="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">Critical Time <span class="table-header-unit">(t)</span></div>
+        <div class="row box-header" v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">Critical Time <span class="table-header-unit">(t)</span></div>
       </div>
     </div>
 
@@ -49,20 +49,20 @@ const grouping = ref(settings.grouping);
                 <div class="col-2 col-xl-7 endpoint-name name-overview">
                   <div class="row box-header">
                     <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                      <!-- <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" uib-tooltip="{{endpoint.name}}">{{ endpointDescription.shortName }}</a> <span ng-if="endpoint.connectedCount || endpoint.disconnectedCount" uib-tooltip="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{ endpoint.connectedCount || 0 }})</span> -->
+                      <!-- <a ng-click="endpoint.isExpanded = !endpoint.isExpanded" ng-href="{{getDetailsUrl(endpoint)}}" v-tooltip title="{{endpoint.name}}">{{ endpointDescription.shortName }}</a> <span ng-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip title="Endpoint instance(s): {{endpoint.connectedCount || 0}}">({{ endpoint.connectedCount || 0 }})</span> -->
                       <a @click="endpointDescription.endpoint.isExpanded = !endpointDescription.endpoint.isExpanded">{{ endpointDescription.shortName }}</a>
                     </div>
                     <div class="col-5 no-side-padding endpoint-status">
                       <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue.value < 0">
-                        <i class="fa pa-warning" uib-tooltip="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                        <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
                       </span>
                       <span class="warning" ng-if="endpoint.isScMonitoringDisconnected">
-                        <i class="fa pa-monitoring-lost endpoints-overview" uib-tooltip="Unable to connect to monitoring server"></i>
+                        <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
                       </span>
-                      <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || !endpoint.connectedCount)" uib-tooltip="No data received from any instance">
+                      <span class="warning" ng-if="endpoint.isStale && (!supportsEndpointCount || !endpoint.connectedCount)" v-tooltip title="No data received from any instance">
                         <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
                       </span>
-                      <span class="warning" ng-if="endpoint.errorCount" uib-tooltip="{{endpointDescription.endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list.">
+                      <span class="warning" ng-if="endpoint.errorCount" v-tooltip title="{{endpointDescription.endpoint.errorCount | metricslargenumber}} failed messages associated with this endpoint. Click to see list.">
                         <a ng-if="endpoint.errorCount" class="warning btn" href="/#/failed-messages/group/{{endpoint.serviceControlId}}">
                           <i class="fa fa-envelope"></i>
                           <!-- <span class="badge badge-important ng-binding">{{ filter(endpointDescription.endpoint.errorCount, metricslargenumber) }}</span> -->
@@ -79,8 +79,8 @@ const grouping = ref(settings.grouping);
                     </div>
                     <div class="no-side-padding sparkline-value">
                       {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : endpoint.metrics.queueLength.displayValue }}
-                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                      <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                      <strong ng-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
                     </div>
                   </div>
                 </div>
@@ -91,8 +91,8 @@ const grouping = ref(settings.grouping);
                     </div>
                     <div class="no-side-padding sparkline-value">
                       {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : endpoint.metrics.throughput.displayValue }}
-                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                      <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                      <strong ng-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
                     </div>
                   </div>
                 </div>
@@ -103,8 +103,8 @@ const grouping = ref(settings.grouping);
                     </div>
                     <div class="no-side-padding sparkline-value">
                       {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : endpoint.metrics.retries.displayValue }}
-                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                      <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                      <strong ng-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
                     </div>
                   </div>
                 </div>
@@ -115,8 +115,8 @@ const grouping = ref(settings.grouping);
                     </div>
                     <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                       {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : endpoint.metrics.processingTime.displayValue.value }}
-                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                      <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                      <strong ng-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
                       <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{ endpoint.metrics.processingTime.displayValue.unit }}</span>
                     </div>
                   </div>
@@ -128,8 +128,8 @@ const grouping = ref(settings.grouping);
                     </div>
                     <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                       {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : endpoint.metrics.criticalTime.displayValue.value }}
-                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" uib-tooltip="No metrics received or endpoint is not configured to send metrics">?</strong>
-                      <strong ng-if="endpoint.isScMonitoringDisconnected" uib-tooltip="Unable to connect to monitoring server">?</strong>
+                      <strong ng-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                      <strong ng-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
                       <span ng-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{ endpoint.metrics.criticalTime.displayValue.unit }}</span>
                     </div>
                   </div>
