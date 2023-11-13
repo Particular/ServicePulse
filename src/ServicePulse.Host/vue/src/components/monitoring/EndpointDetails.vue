@@ -276,7 +276,7 @@ function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
     showInstancesBreakdown = isVisible;
     refreshMessageTypes();
     var breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
-      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod, tab: breakdownTabName, pageNo: breakdownPageNo } });
+      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: breakdownPageNo } });
   }
 }
 

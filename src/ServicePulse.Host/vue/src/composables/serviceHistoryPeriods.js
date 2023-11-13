@@ -15,7 +15,7 @@ const periods = [
  * @description - Saves a history period object to a cookie
  */
 export function saveSelectedPeriod(period) {
-  cookies.set(`history_period`, period.value);
+  cookies.set(`history_period`, period.pVal);
 }
 
 /**
@@ -26,7 +26,7 @@ export function useGetDefaultPeriod() {
   const storedPeriod =
     periods[
       periods.findIndex((period) => {
-        return period.value == storedPeriodValue;
+        return period.pVal == storedPeriodValue;
       })
     ];
 

@@ -14,7 +14,7 @@ const defaultPeriod = ref(settings.period);
 
 watch(defaultPeriod, () => {
   const queryParameters = { ...route.query };
-  router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.value } });
+  router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.pVal } });
 });
 
 function selectHistoryPeriod(period) {
@@ -31,14 +31,14 @@ onMounted(() => {
       defaultPeriod.value = useGetDefaultPeriod();
     }
   }
-  router.push({ query: { historyPeriod: defaultPeriod.value.value } });
+  router.push({ query: { historyPeriod: defaultPeriod.value.pVal } });
   selectHistoryPeriod(defaultPeriod.value);
 });
 </script>
 
 <template>
-  <ul class="nav nav-pills period-selector" v-for="period in allPeriods" :key="period.value">
-    <li role="presentation" data-bs-placement="top" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.value === defaultPeriod.value, notselected: period.value !== defaultPeriod.value }">
+  <ul class="nav nav-pills period-selector" v-for="period in allPeriods" :key="period.pVal">
+    <li role="presentation" data-bs-placement="top" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.pVal === defaultPeriod.pVal, notselected: period.pVal !== defaultPeriod.pVal }">
       <a :href="`#`" @click.prevent="selectHistoryPeriod(period)">{{ period.text }}</a>
     </li>
   </ul>
