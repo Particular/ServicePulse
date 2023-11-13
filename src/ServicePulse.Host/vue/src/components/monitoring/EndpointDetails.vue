@@ -45,7 +45,6 @@ function periodSelected(period) {
 }
 
 function getUrlQueryStrings() {
-  const queryParameters = { ...route.query };
   historyPeriod.value = useHistoryPeriodQueryString(route);
 
   if (historyPeriod.value === undefined) {
