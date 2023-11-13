@@ -24,22 +24,11 @@ if (route.query.tab != "" && route.query.tab != undefined) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
 
-
-
-
 var isLoading = ref(true);
 var loadedSuccessfully = ref(false);
 //$scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
 //$scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
 
-//$scope.periods = historyPeriodsService.getAllPeriods();
-//$scope.selectedPeriod = historyPeriodsService.getDefaultPeriod();
-
-//$scope.selectPeriod = function (period) {
-//    $scope.selectedPeriod = period;
-//    historyPeriodsService.saveSelectedPeriod(period);
-//    updateUI();
-//};
 const endpoint = ref({});
 var negativeCriticalTimeIsPresent = ref(false);
 endpoint.value.messageTypesPage = !showInstancesBreakdown ? route.query.pageNo : 1;
@@ -67,7 +56,6 @@ function getUrlQueryStrings() {
 function getEndpointDetails() {
   //get historyPeriod
     var selectedHistoryPeriod = historyPeriod.value.value;
-    //alert(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod.value}`);
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
       return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
       .then((response) => {
