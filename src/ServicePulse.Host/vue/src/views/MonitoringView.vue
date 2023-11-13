@@ -73,7 +73,7 @@ function periodSelected(period) {
 }
 
 watch(filterString, async (newValue) => {
-  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal;
+  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
   let queryParameters = { ...route.query };
   if (newValue === "") {
     isFiltered.value = false;
