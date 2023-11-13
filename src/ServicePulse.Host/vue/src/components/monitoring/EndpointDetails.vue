@@ -3,6 +3,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
+import { useGetDefaultPeriod, useHistoryPeriodQueryString } from "../../composables/serviceHistoryPeriods.js";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
@@ -23,7 +24,9 @@ if (route.query.tab != "" && route.query.tab != undefined) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
 
-var selectedHistoryPeriod = "1";
+
+
+
 var isLoading = ref(true);
 var loadedSuccessfully = ref(false);
 //$scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
@@ -46,9 +49,27 @@ endpoint.value.messageTypesAvailable = ref(false);
 endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
+const historyPeriod = ref(useGetDefaultPeriod());
+function periodSelected(period) {
+    historyPeriod.value = period;
+    //changeRefreshInterval(period.refreshInterval);
+}
+
+function getUrlQueryStrings() {
+  const queryParameters = { ...route.query };
+  historyPeriod.value = useHistoryPeriodQueryString(route);
+
+  if (historyPeriod.value === undefined) {
+    historyPeriod.value = useGetDefaultPeriod();
+  }
+}
+
 function getEndpointDetails() {
+  //get historyPeriod
+    var selectedHistoryPeriod = historyPeriod.value.value;
+    //alert(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod.value}`);
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
+      return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
       .then((response) => {
         if (response.status === 404) {
           endpoint.value = { notFound: true };
@@ -158,7 +179,7 @@ function removeEndpoint(endpointName, instance) {
       console.log(response);
       endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
       if (endpoint.value.instances.length === 0) {
-        router.push({ name: "monitoring", query: { historyPeriod: selectedHistoryPeriod } });
+          router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.value } });
       }
     })
     .catch((err) => {
@@ -269,7 +290,7 @@ function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
     showInstancesBreakdown = isVisible;
     refreshMessageTypes();
     var breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
-    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedHistoryPeriod, tab: breakdownTabName, pageNo: breakdownPageNo } });
+      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod, tab: breakdownTabName, pageNo: breakdownPageNo } });
   }
 }
 
@@ -314,9 +335,10 @@ function formatGraphDecimal(input, deci) {
 //    }, "MonitoringConnectionStatusChanged");
 //};
 onMounted(() => {
+    getUrlQueryStrings();
   getEndpointDetails();
   getDisconnectedCount(); // for refresh interval
-  console.log(endpoint.value);
+    console.log(endpoint.value);
 });
 </script>
 
@@ -359,7 +381,7 @@ onMounted(() => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
-              <PeriodSelector></PeriodSelector>
+                <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
             </div>
           </div>
         </div>
