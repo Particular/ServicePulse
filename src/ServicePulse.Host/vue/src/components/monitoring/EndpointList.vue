@@ -140,22 +140,22 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
                 <div class="row box-header">
                   <div class="col-lg-max-3 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                    <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" :title="`${endpoint.name}`">
+                    <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
                       {{ endpoint.name }}
                     </a>
                   </div>
-                  <span class="endpoint-count ng-binding ng-scope" v-if="endpoint.connectedCount || endpoint.disconnectedCount" :title="`Endpoint instance(s): ${endpoint.connectedCount || 0} `">({{ endpoint.connectedCount || 0 }})</span>
+                  <span class="endpoint-count ng-binding ng-scope" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):`+ endpoint.connectedCount || 0 ">({{ endpoint.connectedCount || 0 }})</span>
                   <div class="col-xs-5 no-side-padding endpoint-status">
-                    <span class="warning" ng-if="endpoint.metrics.criticalTime.displayValue < 0">
-                      <i class="fa pa-warning" :title="`Warning: endpoint currently has negative critical time, possibly because of a clock drift.`"></i>
+                    <span class="warning" v-if="endpoint.metrics!=null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
+                      <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
                     </span>
                     <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
-                      <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip :title="`Unable to connect to monitoring server`"></i>
+                      <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
                     </span>
-                    <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" :title="`No data received from any instance`">
+                    <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
                       <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
                     </span>
-                    <span class="warning" v-if="endpoint.errorCount" :title="`${endpoint.errorCount} failed messages associated with this endpoint. Click to see list.`">
+                    <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
                       <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
                         <i class="fa fa-envelope"></i>
                         <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount }}</span>
