@@ -171,7 +171,7 @@ function formatGraphDecimal(input, deci) {
                       <div class="col-xs-2 col-xl-1 no-side-padding">
                           <div class="box-header">
                               <div class="no-side-padding">
-                                  <EndpointListGraph></EndpointListGraph>
+                                  <EndpointListGraph :type="'queue-length'"></EndpointListGraph>
                               </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
@@ -184,7 +184,7 @@ function formatGraphDecimal(input, deci) {
                       <div class="col-xs-2 col-xl-1 no-side-padding">
                           <div class="box-header">
                               <div class="no-side-padding">
-                                <EndpointListGraph></EndpointListGraph>
+                                <EndpointListGraph :type="'throughput'"></EndpointListGraph>
                               </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
@@ -197,7 +197,7 @@ function formatGraphDecimal(input, deci) {
                       <div class="col-xs-2 col-xl-1 no-side-padding">
                           <div class="box-header">
                               <div class="no-side-padding">
-                                <EndpointListGraph></EndpointListGraph>
+                                <EndpointListGraph :type="'retries'"></EndpointListGraph>
                               </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
@@ -210,7 +210,7 @@ function formatGraphDecimal(input, deci) {
                       <div class="col-xs-2 col-xl-1 no-side-padding">
                           <div class="box-header">
                               <div class="no-side-padding">
-                                <EndpointListGraph></EndpointListGraph>
+                                <EndpointListGraph :type="'processing-time'"></EndpointListGraph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
@@ -224,7 +224,7 @@ function formatGraphDecimal(input, deci) {
                       <div class="col-xs-2 col-xl-1 no-side-padding">
                           <div class="box-header">
                               <div class="no-side-padding">
-                                <EndpointListGraph></EndpointListGraph>
+                                <EndpointListGraph :type="'critical-time'"></EndpointListGraph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                               {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
