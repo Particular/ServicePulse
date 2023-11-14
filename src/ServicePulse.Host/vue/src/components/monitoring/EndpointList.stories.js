@@ -1,5 +1,4 @@
 import EndpointList from "./EndpointList.vue";
-import { within } from "@storybook/testing-library";
 
 export default {
   component: EndpointList,
@@ -35,7 +34,7 @@ export const WithNoConnectivity = {
   },
 };
 
-export const WithEndpoints = {  
+export const WithEndpoints = {
   args: {
     supportsEndpointCount: false,
     hasData: false,
