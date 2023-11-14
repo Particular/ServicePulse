@@ -5,7 +5,7 @@ defineProps({
 </script>
 <template>
   <div class="box-header">
-    <button ng-click="vm.toggleSort()">      
+    <button ng-click="vm.toggleSort()">
       <span>
         <slot></slot>
       </span>

@@ -66,7 +66,7 @@ function navigateToMessageGroup($event, groupId) {
 function navigateToEndpointDetails($event, endpointName) {
   if ($event.target.localName !== "button") {
     //to do historyPeriod
-      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod } });
+    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod } });
   }
 }
 
@@ -115,130 +115,129 @@ function formatGraphDecimal(input, deci) {
       <div class="col-xs-2 col-xl-7">
         <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">        
-          <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length <span class="table-header-unit ng-scope">(MSGS)</span></endpoint-list-sortable-column>                
+      <div class="col-xs-2 col-xl-1 no-side-padding">
+        <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length <span class="table-header-unit ng-scope">(MSGS)</span></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">        
-          <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."> Throughput <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
+      <div class="col-xs-2 col-xl-1 no-side-padding">
+        <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."> Throughput <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">        
-          <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."> Scheduled retries <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
+      <div class="col-xs-2 col-xl-1 no-side-padding">
+        <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."> Scheduled retries <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">        
-          <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
+      <div class="col-xs-2 col-xl-1 no-side-padding">
+        <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">        
-          <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
+      <div class="col-xs-2 col-xl-1 no-side-padding">
+        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
       </div>
     </div>
 
     <!--endpointlist-->
     <div class="row">
-      <div class="col-xs-12 no-side-padding">          
-          <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
-          <div class="row box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
-              <div class="col-xs-12 no-side-padding">
-                  <div class="row">
-                      <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
-                          <div class="box-header">
-                              <div
-                                  class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                                  <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
-                                    {{ endpoint.name }}
-                                  </a>
-                              </div>
-                              <span class="endpoint-count ng-binding ng-scope" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
-                              <div class="col-xs-5 no-side-padding endpoint-status">
-                                <span class="warning" v-if="endpoint.metrics != null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
-                                  <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
-                                </span>
-                                <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
-                                  <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
-                                </span>
-                                <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
-                                  <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
-                                </span>
-                                <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-                                  <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
-                                    <i class="fa fa-envelope"></i>
-                                    <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount }}</span>
-                                  </a>
-                                </span>
-                              </div>
-                          </div>
-                      </div>
-                      <!--Queue Length-->
-                      <div class="col-xs-2 col-xl-1 no-side-padding">
-                          <div class="box-header">
-                              <div class="no-side-padding">
-                                  <EndpointListGraph :type="'queue-length'"></EndpointListGraph>
-                              </div>
-                              <div class="no-side-padding sparkline-value">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-                              </div>
-                          </div>
-                      </div>
-                      <!--Throughput-->
-                      <div class="col-xs-2 col-xl-1 no-side-padding">
-                          <div class="box-header">
-                              <div class="no-side-padding">
-                                <EndpointListGraph :type="'throughput'"></EndpointListGraph>
-                              </div>
-                              <div class="no-side-padding sparkline-value">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-                              </div>
-                          </div>
-                      </div>
-                      <!--Scheduled Retries-->
-                      <div class="col-xs-2 col-xl-1 no-side-padding">
-                          <div class="box-header">
-                              <div class="no-side-padding">
-                                <EndpointListGraph :type="'retries'"></EndpointListGraph>
-                              </div>
-                              <div class="no-side-padding sparkline-value">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-                              </div>
-                          </div>
-                      </div>
-                      <!--Processing Time-->
-                      <div class="col-xs-2 col-xl-1 no-side-padding">
-                          <div class="box-header">
-                              <div class="no-side-padding">
-                                <EndpointListGraph :type="'processing-time'"></EndpointListGraph>
-                              </div>
-                              <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-                                <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{ formatGraphDuration(endpoint.metrics.processingTime).unit }}</span>
-                              </div>
-                          </div>
-                      </div>
-                      <!--Critical Time-->
-                      <div class="col-xs-2 col-xl-1 no-side-padding">
-                          <div class="box-header">
-                              <div class="no-side-padding">
-                                <EndpointListGraph :type="'critical-time'"></EndpointListGraph>
-                              </div>
-                              <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
-                              {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
-                              <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" title="No metrics received or endpoint is not configured to send metrics">?</strong>
-                              <strong v-if="endpoint.isScMonitoringDisconnected" title="Unable to connect to monitoring server">?</strong>
-                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{ formatGraphDuration(endpoint.metrics.criticalTime).unit }}</span>
-                            </div>
-                          </div>
-                      </div>
+      <div class="col-xs-12 no-side-padding">
+        <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
+        <div class="row box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
+          <div class="col-xs-12 no-side-padding">
+            <div class="row">
+              <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
+                <div class="box-header">
+                  <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                    <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
+                      {{ endpoint.name }}
+                    </a>
                   </div>
+                  <span class="endpoint-count ng-binding ng-scope" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
+                  <div class="col-xs-5 no-side-padding endpoint-status">
+                    <span class="warning" v-if="endpoint.metrics != null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
+                      <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
+                    </span>
+                    <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
+                      <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
+                    </span>
+                    <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
+                      <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
+                    </span>
+                    <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
+                      <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
+                        <i class="fa fa-envelope"></i>
+                        <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount }}</span>
+                      </a>
+                    </span>
+                  </div>
+                </div>
               </div>
-          </div>          
+              <!--Queue Length-->
+              <div class="col-xs-2 col-xl-1 no-side-padding">
+                <div class="box-header">
+                  <div class="no-side-padding">
+                    <EndpointListGraph :type="'queue-length'"></EndpointListGraph>
+                  </div>
+                  <div class="no-side-padding sparkline-value">
+                    {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
+                    <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                    <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
+                  </div>
+                </div>
+              </div>
+              <!--Throughput-->
+              <div class="col-xs-2 col-xl-1 no-side-padding">
+                <div class="box-header">
+                  <div class="no-side-padding">
+                    <EndpointListGraph :type="'throughput'"></EndpointListGraph>
+                  </div>
+                  <div class="no-side-padding sparkline-value">
+                    {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
+                    <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                    <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
+                  </div>
+                </div>
+              </div>
+              <!--Scheduled Retries-->
+              <div class="col-xs-2 col-xl-1 no-side-padding">
+                <div class="box-header">
+                  <div class="no-side-padding">
+                    <EndpointListGraph :type="'retries'"></EndpointListGraph>
+                  </div>
+                  <div class="no-side-padding sparkline-value">
+                    {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
+                    <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                    <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
+                  </div>
+                </div>
+              </div>
+              <!--Processing Time-->
+              <div class="col-xs-2 col-xl-1 no-side-padding">
+                <div class="box-header">
+                  <div class="no-side-padding">
+                    <EndpointListGraph :type="'processing-time'"></EndpointListGraph>
+                  </div>
+                  <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
+                    {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
+                    <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                    <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
+                    <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{ formatGraphDuration(endpoint.metrics.processingTime).unit }}</span>
+                  </div>
+                </div>
+              </div>
+              <!--Critical Time-->
+              <div class="col-xs-2 col-xl-1 no-side-padding">
+                <div class="box-header">
+                  <div class="no-side-padding">
+                    <EndpointListGraph :type="'critical-time'"></EndpointListGraph>
+                  </div>
+                  <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
+                    {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
+                    <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" title="No metrics received or endpoint is not configured to send metrics">?</strong>
+                    <strong v-if="endpoint.isScMonitoringDisconnected" title="Unable to connect to monitoring server">?</strong>
+                    <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{ formatGraphDuration(endpoint.metrics.criticalTime).unit }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-  </div>
+    </div>
   </section>
 </template>
 
