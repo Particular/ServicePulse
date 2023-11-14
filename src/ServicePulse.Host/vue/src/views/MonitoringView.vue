@@ -73,7 +73,7 @@ function periodSelected(period) {
 }
 
 watch(filterString, async (newValue) => {
-  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.value);
+  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
   let queryParameters = { ...route.query };
   if (newValue === "") {
     isFiltered.value = false;
@@ -101,7 +101,7 @@ function getUrlQueryStrings() {
 
 onMounted(async () => {
   getUrlQueryStrings();
-  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.value);
+  allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
   const result = await useRedirects();
   redirectCount.value = result.total;
   //startRefreshInterval();

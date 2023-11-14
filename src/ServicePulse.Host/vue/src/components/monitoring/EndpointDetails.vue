@@ -54,7 +54,7 @@ function getUrlQueryStrings() {
 
 function getEndpointDetails() {
   //get historyPeriod
-    var selectedHistoryPeriod = historyPeriod.value.value;
+    var selectedHistoryPeriod = historyPeriod.value.pVal;
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
       return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
       .then((response) => {
@@ -162,11 +162,11 @@ function mergeIn(destination, source, propertiesToSkip) {
 
 function removeEndpoint(endpointName, instance) {
   return useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id)
-    .then((response) => {
+      .then((response) => {
       console.log(response);
       endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
       if (endpoint.value.instances.length === 0) {
-          router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.value } });
+          router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
       }
     })
     .catch((err) => {
@@ -277,7 +277,7 @@ function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
     showInstancesBreakdown = isVisible;
     refreshMessageTypes();
     var breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
-      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod, tab: breakdownTabName, pageNo: breakdownPageNo } });
+      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: breakdownPageNo } });
   }
 }
 
