@@ -1,5 +1,7 @@
 ﻿<script setup>
 import { ref } from "vue";
+import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
+import EndpointListGraph from "./EndpointListGraph.vue";
 import { useRouter } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import MonitoringNoData from "./MonitoringNoData.vue";
@@ -64,7 +66,7 @@ function navigateToMessageGroup($event, groupId) {
 function navigateToEndpointDetails($event, endpointName) {
   if ($event.target.localName !== "button") {
     //to do historyPeriod
-      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod } });
+    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod } });
   }
 }
 
@@ -111,42 +113,42 @@ function formatGraphDecimal(input, deci) {
     <!--Table headings-->
     <div v-if="endpoints && endpoints.length > 0" class="row box box-no-click table-head-row">
       <div class="col-xs-2 col-xl-7">
-        <sortable-column property="'name'" ref="order"> Endpoint name </sortable-column>
+        <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <sortable-column property="'metrics.queueLength.average'" ref="order" v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint."> Queue Length <span class="table-header-unit">(msgs)</span> </sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length <span class="table-header-unit ng-scope">(MSGS)</span></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <sortable-column property="'metrics.throughput.average'" ref="order" v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."> Throughput <span class="table-header-unit">(msgs/s)</span> </sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."> Throughput <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <sortable-column property="'metrics.retries.average'" ref="order" v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."> Scheduled retries <span class="table-header-unit">(msgs/s)</span> </sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."> Scheduled retries <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <sortable-column property="'metrics.processingTime.average'" ref="order" v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <span class="table-header-unit">(t)</span> </sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <sortable-column property="'metrics.criticalTime.average'" ref="order" v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <span class="table-header-unit">(t)</span> </sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
       </div>
     </div>
 
     <!--endpointlist-->
-    <div class="row" v-if="endpoints && endpoints.length > 0">
+    <div class="row">
       <div class="col-xs-12 no-side-padding">
+        <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
         <div class="row box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
           <div class="col-xs-12 no-side-padding">
             <div class="row">
-              <!--EndpointName-->
               <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
-                <div class="row box-header">
-                  <div class="col-lg-max-3 no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                <div class="box-header">
+                  <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
                     <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
                       {{ endpoint.name }}
                     </a>
                   </div>
-                  <span class="endpoint-count ng-binding ng-scope" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):`+ endpoint.connectedCount || 0 ">({{ endpoint.connectedCount || 0 }})</span>
+                  <span class="endpoint-count ng-binding ng-scope" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
                   <div class="col-xs-5 no-side-padding endpoint-status">
-                    <span class="warning" v-if="endpoint.metrics!=null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
+                    <span class="warning" v-if="endpoint.metrics != null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
                       <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
                     </span>
                     <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
@@ -164,12 +166,11 @@ function formatGraphDecimal(input, deci) {
                   </div>
                 </div>
               </div>
-
               <!--Queue Length-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
-                <div class="row box-header">
+                <div class="box-header">
                   <div class="no-side-padding">
-                    <graph plot-data="endpoint.metrics.queueLength" minimum-YAxis="smallGraphsMinimumYAxis.queueLength}}" avg-label-color="#EA7E00" metric-suffix="MSGS" class="graph queue-length pull-left"></graph>
+                    <EndpointListGraph :type="'queue-length'"></EndpointListGraph>
                   </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
@@ -180,9 +181,9 @@ function formatGraphDecimal(input, deci) {
               </div>
               <!--Throughput-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
-                <div class="row box-header">
+                <div class="box-header">
                   <div class="no-side-padding">
-                    <graph plot-data="endpoint.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
+                    <EndpointListGraph :type="'throughput'"></EndpointListGraph>
                   </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
@@ -193,9 +194,9 @@ function formatGraphDecimal(input, deci) {
               </div>
               <!--Scheduled Retries-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
-                <div class="row box-header">
+                <div class="box-header">
                   <div class="no-side-padding">
-                    <graph plot-data="endpoint.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
+                    <EndpointListGraph :type="'retries'"></EndpointListGraph>
                   </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
@@ -206,9 +207,9 @@ function formatGraphDecimal(input, deci) {
               </div>
               <!--Processing Time-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
-                <div class="row box-header">
+                <div class="box-header">
                   <div class="no-side-padding">
-                    <graph plot-data="endpoint.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>
+                    <EndpointListGraph :type="'processing-time'"></EndpointListGraph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
@@ -220,9 +221,9 @@ function formatGraphDecimal(input, deci) {
               </div>
               <!--Critical Time-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
-                <div class="row box-header">
+                <div class="box-header">
                   <div class="no-side-padding">
-                    <graph plot-data="endpoint.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>
+                    <EndpointListGraph :type="'critical-time'"></EndpointListGraph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
