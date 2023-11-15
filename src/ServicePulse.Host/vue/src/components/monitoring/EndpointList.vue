@@ -116,19 +116,19 @@ function formatGraphDecimal(input, deci) {
         <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length <span class="table-header-unit ng-scope">(MSGS)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length<template #unit>(MSGS)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."> Throughput <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint.">Throughput<template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."> Scheduled retries <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retries <template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
     </div>
 
