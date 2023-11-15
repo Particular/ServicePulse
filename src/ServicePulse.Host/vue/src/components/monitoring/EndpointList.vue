@@ -6,7 +6,7 @@ import { useRouter } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import MonitoringNoData from "./MonitoringNoData.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
-
+import D3Graph from "./D3Graph.vue";
 const endpoints = ref(settings.endpoints);
 const historyPeriod = 1;
 const router = useRouter();
@@ -16,7 +16,13 @@ const supportsEndpointCount = ref();
 const settings = defineProps({
   endpoints: Object,
 });
-
+   const smallGraphsMinimumYAxis = {
+       queueLength: 10,
+       throughput: 10,
+       retries: 10,
+       processingTime: 10,
+       criticalTime: 10
+   };
 /* function updateUI() {
   if (endpoints.value.length > 0) {
     endpoints.value.forEach((endpoint) => {
@@ -169,9 +175,10 @@ function formatGraphDecimal(input, deci) {
               <!--Queue Length-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
-                  <div class="no-side-padding">
-                    <EndpointListGraph :type="'queue-length'"></EndpointListGraph>
-                  </div>
+                    <div class="no-side-padding">
+                        <!--<EndpointListGraph :type="'queue-length'"></EndpointListGraph>-->
+                        <D3Graph :endpointname="endpoint.name" :colname="'queuelength'" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :csclass="'graph queue-length pull-left ng-isolate-scope'"></D3Graph>
+                    </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
                     <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
