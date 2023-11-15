@@ -1,7 +1,7 @@
-import EndpointListGraph from "./EndpointListGraph.vue";
+import EndpointGraph from "./EndpointGraph.vue";
 import { expect } from "@storybook/jest";
 export default {
-  component: EndpointListGraph,
+  component: EndpointGraph,
   title: "Monitoring/EndpointList/Graph",
   tags: ["autodocs"],
   //👇 Our events will be mapped in Storybook UI
