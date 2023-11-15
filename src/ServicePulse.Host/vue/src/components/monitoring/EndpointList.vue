@@ -1,7 +1,7 @@
 ﻿<script setup>
 import { ref } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
-import EndpointListGraph from "./EndpointListGraph.vue";
+import EndpointGraph from "./EndpointGraph.vue";
 import { useRouter } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import MonitoringNoData from "./MonitoringNoData.vue";
@@ -176,7 +176,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                     <div class="no-side-padding">
-                        <!--<EndpointListGraph :type="'queue-length'"></EndpointListGraph>-->
+                        <!--<EndpointGraph :type="'queue-length'"></EndpointGraph>-->
                         <D3Graph :endpointname="endpoint.name" :colname="'queuelength'" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :csclass="'graph queue-length pull-left ng-isolate-scope'"></D3Graph>
                     </div>
                   <div class="no-side-padding sparkline-value">
@@ -190,7 +190,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'throughput'"></EndpointListGraph>
+                    <EndpointGraph :type="'throughput'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
@@ -203,7 +203,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'retries'"></EndpointListGraph>
+                    <EndpointGraph :type="'retries'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
@@ -216,7 +216,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'processing-time'"></EndpointListGraph>
+                    <EndpointGraph :type="'processing-time'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
@@ -230,7 +230,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'critical-time'"></EndpointListGraph>
+                    <EndpointGraph :type="'critical-time'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}

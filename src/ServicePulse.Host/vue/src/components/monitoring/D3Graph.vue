@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-/*import * as d3 from "d3";*/
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import * as d3 from "d3";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 const props = defineProps({
   plotdata: Object,
@@ -19,11 +18,12 @@ const avgLabelSuffixDefault = "";
 
 
 // const svgelement = ref([]);
-const svgelement = ref(null);
+const root = ref(null)
 
 
 function displayGraphValues() {
-  var svg = svgelement.value;
+  var svg = root.value.getElementsByTagName("svg");
+  
   var width = svg.clientWidth;
   var height = svg.clientHeight;
   //HINT: This is workaround for Firefox
@@ -132,12 +132,12 @@ function displayGraphValues() {
 }
 onMounted(() => {
  displayGraphValues();
+ //root.value.innerHTML = '<h1>test</h1>';
 });
 </script>
 
 <template>
-    <div :class="[csclass]">
-        <svg ref="svgelement" width="142" height="50"></svg>
-
+    <div ref="root"> 
+      <svg wdith="2" height="50"></svg>      
     </div>
 </template>
