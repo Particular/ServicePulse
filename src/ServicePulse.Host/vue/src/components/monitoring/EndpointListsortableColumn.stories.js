@@ -1,36 +1,35 @@
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
 
 export default {
-  component: EndpointListSortableColumn,
-  title: "Sortable Column",
-  tags: ["autodocs"],
-  //👇 Our events will be mapped in Storybook UI
-  argTypes: {},
-};
-
-//stories
-export const WithoutUnit = {
-    args: {      
-    },
+    component: EndpointListSortableColumn,
+    title: "Sortable column",
+     tags: ["autodocs"],
     render: (args) => ({
-      components: {EndpointListSortableColumn},
+      components: { EndpointListSortableColumn },
       setup() {
-        //👇 The args will now be passed down to the template
         return { args };
       },
-      template: '<endpoint-list-sortable-column v-bind="args">Endpointname</endpoint-list-sortable-column>',
+      template: `
+        <EndpointListSortableColumn v-bind="args">
+          {{args.default}}
+          <template #unit>
+            {{args.unit}}
+          </template>
+        </EndpointListSortableColumn>
+      `,
     }),
   };
 
-  export const WithUnit = {
-    args: {      
+  export const WithoutUnit = {
+    args: {
+      default:'Endpoint name',
+      unit: '',
     },
-    render: (args) => ({
-      components: {EndpointListSortableColumn},
-      setup() {
-        //👇 The args will now be passed down to the template
-        return { args };
-      },
-      template: '<endpoint-list-sortable-column v-bind="args">Throughput<template #unit>msg</template></endpoint-list-sortable-column>',
-    }),
+  };
+
+  export const WithUnit = {
+    args: {
+      default:'Throughput',
+      unit: '(MSG)',
+    },
   };
