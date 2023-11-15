@@ -1943,7 +1943,7 @@ hr.top-separator {
       text-transform: initial;
   }
 
-.table-head-row span.table-header-unit {
+span.table-header-unit {
     color: #777f7f;
 }
 

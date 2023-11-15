@@ -2,10 +2,10 @@ import EndpointList from "./EndpointList.vue";
 
 export default {
   component: EndpointList,
-  title: "EndpointList",
+  title: "Monitoring/EndpointList/Endpoint List",
   tags: ["autodocs"],
   //👇 Our events will be mapped in Storybook UI
-  argTypes: {},
+  argTypes: {}
 };
 
 //stories
@@ -91,7 +91,7 @@ export const WithEndpoints = {
           },
           queueLength: {
             average: 0.0,
-            points: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            points: [0.0,0.0,0.0,3.0,1.0,1.0,1.0,2.0,1.0,0.0,2.0,1.0,1.0,1.0,1.0,1.0,2.0,1.0,1.0,1.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
           },
         },
         disconnectedCount: 0,

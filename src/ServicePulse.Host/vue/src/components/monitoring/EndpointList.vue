@@ -1,7 +1,7 @@
 ﻿<script setup>
 import { ref } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
-import EndpointListGraph from "./EndpointListGraph.vue";
+import EndpointGraph from "./EndpointGraph.vue";
 import { useRouter } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import MonitoringNoData from "./MonitoringNoData.vue";
@@ -122,19 +122,19 @@ function formatGraphDecimal(input, deci) {
         <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length <span class="table-header-unit ng-scope">(MSGS)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length<template #unit>(MSGS)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."> Throughput <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint.">Throughput<template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."> Scheduled retries <span class="table-header-unit">(msgs/s)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retries <template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
       <div class="col-xs-2 col-xl-1 no-side-padding">
-        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <span class="table-header-unit">(t)</span></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
     </div>
 
@@ -176,7 +176,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                     <div class="no-side-padding">
-                        <!--<EndpointListGraph :type="'queue-length'"></EndpointListGraph>-->
+                        <!--<EndpointGraph :type="'queue-length'"></EndpointGraph>-->
                         <D3Graph :endpointname="endpoint.name" :colname="'queuelength'" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :csclass="'graph queue-length pull-left ng-isolate-scope'"></D3Graph>
                     </div>
                   <div class="no-side-padding sparkline-value">
@@ -190,7 +190,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'throughput'"></EndpointListGraph>
+                    <EndpointGraph :type="'throughput'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
@@ -203,7 +203,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'retries'"></EndpointListGraph>
+                    <EndpointGraph :type="'retries'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
@@ -216,7 +216,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'processing-time'"></EndpointListGraph>
+                    <EndpointGraph :type="'processing-time'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
@@ -230,7 +230,7 @@ function formatGraphDecimal(input, deci) {
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
                   <div class="no-side-padding">
-                    <EndpointListGraph :type="'critical-time'"></EndpointListGraph>
+                    <EndpointGraph :type="'critical-time'"></EndpointGraph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
@@ -247,404 +247,3 @@ function formatGraphDecimal(input, deci) {
     </div>
   </section>
 </template>
-
-<style>
-.cursorpointer {
-  cursor: pointer;
-}
-.endpoint-row {
-  height: 61px; /*//61*/
-  position: relative;
-  padding: 2px 0 4px;
-}
-.endpoint-name {
-  margin-top: 15px;
-}
-
-.endpoint-name > div > div > a {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #00729c;
-  border-bottom: 1px dotted lightgrey;
-}
-
-.endpoint-name > div > div > a:first-child:hover {
-  border-bottom: 1px solid #00729c;
-  text-decoration: none !important;
-}
-
-i.fa.pa-endpoint-lost.endpoints-overview,
-i.fa.pa-monitoring-lost.endpoints-overview {
-  position: relative;
-  margin-right: 4px;
-}
-
-i.fa.pa-endpoint-lost.endpoints-overview {
-  top: 8px;
-}
-.lead.righ-side-ellipsis.endpoint-details-link {
-  color: #00729c !important;
-  cursor: pointer;
-}
-.righ-side-ellipsis {
-  direction: rtl;
-  text-align: left;
-}
-
-@supports (-ms-ime-align: auto) {
-  .righ-side-ellipsis {
-    direction: ltr;
-  }
-}
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  .righ-side-ellipsis {
-    direction: ltr;
-  }
-}
-
-.endpoint-count {
-  color: #777;
-  font-weight: normal;
-  margin-left: 3px;
-}
-
-.pa-monitoring-lost.endpoints-overview {
-  background-image: url("../../a/img/monitoring-lost.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.pa-warning {
-  background-image: url("../../../a/img/warning.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 20px;
-  height: 20px;
-  margin-left: 4px;
-  padding-top: 24px;
-}
-
-.warning {
-  color: red;
-}
-
-.warning i {
-  color: #be0202;
-}
-.ng-binding {
-  margin-right: 4px !important;
-}
-.monitoring-lost-link i {
-  top: 7px;
-}
-.pa-endpoint-lost.endpoints-overview {
-  background-image: url("../../a/img/endpoint-lost.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-}
-.endpoint-status {
-  display: inline-block;
-  position: absolute;
-  top: 1px;
-  margin-left: 7px;
-  padding-left: 0;
-}
-
-.endpoint-status i.fa-envelope,
-.endpoint-status i.fa-exclamation-triangle {
-  font-size: 20px;
-  color: #ce4844;
-}
-
-h1 .endpoint-status i.fa-envelope,
-.endpoint-status i.fa-exclamation-triangle {
-  font-size: 24px;
-}
-
-.endpoint-status i.fa-envelope {
-  color: #777f7f;
-}
-
-.endpoint-status i.fa-envelope:hover {
-  color: #23527c;
-}
-
-.endpoint-status .badge {
-  position: relative;
-  top: 8px;
-  font-size: 10px;
-  margin-right: 0;
-  left: -10px;
-}
-
-.endpoint-status i.fa-envelope,
-.endpoint-name i.fa-exclamation-triangle {
-  font-size: 20px;
-  margin-left: 6px;
-}
-
-.endpoint-status a {
-  position: relative;
-  top: -8px;
-  padding-left: 0;
-}
-
-.endpoint-status a:hover {
-  text-decoration: none;
-}
-
-.endpoint-status a[ng-if="endpoint.errorCount"] {
-  top: -11px;
-}
-
-.monitoring-head .endpoint-status {
-  top: 4px;
-}
-
-.monitoring-head .endpoint-status a {
-  top: 0;
-}
-
-.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
-  top: -5px;
-}
-
-.monitoring-head .endpoint-status {
-  top: 4px;
-}
-
-.monitoring-head .endpoint-status a {
-  top: 0;
-}
-
-.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
-  top: -5px;
-}
-
-.monitoring-head i.fa.fa-envelope {
-  font-size: 26px;
-  position: relative;
-  top: -4px;
-  left: 1px;
-}
-
-.monitoring-head .endpoint-status .badge {
-  position: relative;
-  top: 4px;
-  left: -12px;
-  font-size: 10px;
-}
-
-.endpoint-status .badge {
-  position: relative;
-  top: 2px;
-  left: -9px;
-  font-size: 10px;
-}
-
-.monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details,
-.monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
-  width: 32px;
-  height: 30px;
-}
-
-.endpoint-status .pa-endpoint-lost.endpoint-details,
-.endpoint-status .pa-monitoring-lost.endpoint-details,
-.endpoint-status .pa-endpoint-lost.endpoints-overview,
-.endpoint-status .pa-monitoring-lost.endpoints-overview {
-  width: 26px;
-  height: 26px;
-  left: 6px;
-  position: relative;
-}
-
-.endpoint-message-types .endpoint-status {
-  margin-top: -8px;
-}
-@media (min-width: 768px) {
-  .graph-values .col-sm-6 {
-    width: 45%;
-  }
-}
-.large-graphs {
-  width: 100%;
-  background-color: white;
-  margin-bottom: 34px;
-  padding: 30px 0;
-}
-
-.large-graph {
-  width: 100%;
-}
-
-.large-graph svg {
-  width: 100%;
-}
-
-.graph {
-  width: 68%;
-}
-
-.graph svg {
-  position: relative;
-  width: 100%;
-  height: 50px;
-}
-
-.graph * .graph-data-line {
-  stroke-width: 1.75px;
-  fill: none;
-}
-
-.graph * .graph-data-fill {
-  opacity: 0.8;
-}
-
-.graph * .graph-avg-line {
-  stroke-width: 1px;
-  opacity: 0.5;
-  stroke-dasharray: 5, 5;
-}
-
-.graph.queue-length * .graph-data-line {
-  stroke: #ea7e00;
-}
-
-.graph.queue-length * .graph-data-fill {
-  fill: #eaddce;
-  stroke: #eaddce;
-}
-
-.graph.queue-length * .graph-avg-line {
-  stroke: #ea7e00;
-}
-
-.graph.throughput * .graph-data-line {
-  stroke: #176397;
-}
-
-.graph.throughput * .graph-data-fill {
-  fill: #cadce8;
-  stroke: #cadce8;
-}
-
-.graph.throughput * .graph-avg-line {
-  stroke: #176397;
-}
-
-.graph.retries * .graph-data-line {
-  stroke: #cc1252;
-}
-
-.graph.retries * .graph-data-fill {
-  fill: #e9c4d1;
-  stroke: #e9c4d1;
-}
-
-.graph.retries * .graph-avg-line {
-  stroke: #cc1252;
-}
-
-.graph.processing-time * .graph-data-line {
-  stroke: #258135;
-}
-
-.graph.processing-time * .graph-data-fill {
-  fill: #bee6c5;
-  stroke: #bee6c5;
-}
-
-.graph.processing-time * .graph-avg-line {
-  stroke: #258135;
-}
-
-.graph.critical-time * .graph-data-line {
-  stroke: #2700cb;
-}
-
-.graph.critical-time * .graph-data-fill {
-  fill: #c4bce5;
-  stroke: #c4bce5;
-}
-
-.graph.critical-time * .graph-avg-line {
-  stroke: #2700cb;
-}
-.graph-area {
-  width: 33%;
-  box-sizing: border-box;
-}
-
-.graph-values {
-  margin-left: 60px;
-  padding-top: 10px;
-  border-top: 3px solid #fff;
-  margin-top: -8.5px;
-  width: 93%;
-}
-
-.graph-message-retries-throughputs,
-.graph-critical-processing-times {
-  margin-left: 0.5%;
-}
-.endpoint-row .graphicon {
-  top: 14px;
-  left: 120px;
-  position: absolute;
-  width: 94px;
-  padding-left: 36px;
-  display: block;
-}
-
-.endpoint-row .graphicon.graphicon-row-hover {
-  background-color: #edf6f7 !important;
-}
-
-.sparkline-value {
-  top: 16px;
-  left: -12px;
-  position: relative;
-  font-weight: normal;
-  float: right;
-  width: 25%;
-}
-
-.sparkline-value span {
-  color: #777f7f;
-  text-transform: uppercase;
-  font-size: 11px;
-}
-
-.sparkline-value.sec {
-  color: #0000ff;
-}
-
-.sparkline-value.sec span {
-  color: #007aff;
-}
-
-.sparkline-value.min {
-  color: #8b00d0;
-}
-
-.sparkline-value.min span {
-  color: #b14ae4;
-}
-
-.sparkline-value.hr {
-  color: #d601da;
-}
-
-.sparkline-value.hr span {
-  color: #d764d9;
-}
-
-.sparkline-value.d {
-  color: #ad0017;
-}
-
-.sparkline-value.d span {
-  color: #ff0004;
-}
-</style>

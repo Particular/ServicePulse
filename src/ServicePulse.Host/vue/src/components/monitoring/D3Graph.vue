@@ -19,11 +19,12 @@ const avgLabelSuffixDefault = "";
 
 
 // const svgelement = ref([]);
-const svgelement = ref(null);
+const root = ref(null)
 
 
 function displayGraphValues() {
-  var svg = svgelement.value;
+  var svg = root.value.getElementsByTagName("svg");
+  
   var width = svg.clientWidth;
   var height = svg.clientHeight;
   //HINT: This is workaround for Firefox
@@ -132,6 +133,7 @@ function displayGraphValues() {
 }
 onMounted(() => {
  displayGraphValues();
+ //root.value.innerHTML = '<h1>test</h1>';
 });
 </script>
 
