@@ -11,20 +11,16 @@ const props = defineProps({
   metricsuffix: String,
   csclass: String,
   endpointname: String,
-    colname: String
+  colname: String
 });
 const averageDecimalsDefault = 2;
 const avgLabelColorDefault = "#2700CB";
 const avgLabelSuffixDefault = "";
-
-
-// const svgelement = ref([]);
 const root = ref(null)
 
 
 function displayGraphValues() {
-  var svg = root.value.getElementsByTagName("svg");
-  
+  var svg = root.value.getElementsByTagName("svg")[0];
   var width = svg.clientWidth;
   var height = svg.clientHeight;
   //HINT: This is workaround for Firefox
@@ -62,8 +58,7 @@ function displayGraphValues() {
 
   var area = d3
     .area()
-    .x(function (d, i) {
-     // console.log("X" + ":" + d + "," + i + "," + scaleX(i));
+    .x(function ( i) {
       return scaleX(i);
     })
     .y(function (d) {
@@ -84,8 +79,8 @@ function displayGraphValues() {
     })
     .curve(d3.curveLinear);
 
-  d3.select("svg").selectAll("*").remove();
-  var chart = d3.select("svg").attr("width", width).attr("height", height);
+  d3.select(svg).selectAll("*").remove();
+  var chart = d3.select(svg).attr("width", width).attr("height", height);
   chart
     .append("rect")
     .attr("width", width - 2 * horizontalMargin)
@@ -133,13 +128,11 @@ function displayGraphValues() {
 }
 onMounted(() => {
  displayGraphValues();
- //root.value.innerHTML = '<h1>test</h1>';
 });
 </script>
 
 <template>
-    <div :class="[csclass]">
-        <svg ref="svgelement" width="142" height="50"></svg>
-
+    <div ref="root" :class="[csclass]">
+       <svg ref="svgelement" width="142" height="50"></svg>
     </div>
 </template>
