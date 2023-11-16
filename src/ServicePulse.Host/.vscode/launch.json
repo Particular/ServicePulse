@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Storybook Debug with Chrome",
+        "type": "node-terminal",
+        "request": "launch",
+        "command": "npm run storybook",
+        "cwd": "${workspaceFolder}/vue",
+        "internalConsoleOptions": "openOnFirstSessionStart",
+        "serverReadyAction": {
+          "pattern": "Local:.+(https?://[^:]+:[0-9]+)",
+          "uriFormat": "%s",
+          "action": "debugWithChrome"
+        }
+      },
+      {
+        "type": "chrome",
+        "request": "launch",
+        "name": "vuejs: chrome",
+        "url": "http://localhost:1331",
+        "webRoot": "${workspaceFolder}/vue",        
+        "sourceMapPathOverrides": {
+          "webpack:///vue/*": "${webRoot}/*"
+        }
+      },
+      {
+        "type": "firefox",
+        "request": "launch",
+        "name": "vuejs: firefox",
+        "url": "http://localhost:1331",
+        "webRoot": "${workspaceFolder}/vue",
+        "pathMappings": [{ "url": "webpack:///src/", "path": "${webRoot}/" }]
+      }
+    ]
+  }
