@@ -58,9 +58,12 @@ jobs:
         working-directory: src/ServicePulse.Host.Tests
       - name: Install Playwright
         run: npx playwright install --with-deps
+        working-directory: src/ServicePulse.Host/vue
       - name: Build Storybook
         run: npm build-storybook --quiet
+        working-directory: src/ServicePulse.Host/vue
       - name: Serve Storybook and run tests
+        working-directory: src/ServicePulse.Host/vue
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx http-server storybook-static --port 6006 --silent" \
