@@ -18,9 +18,9 @@ export const QueueLength = {
   args: {
     type: "queue-length",
   },
-  play: async ({ canvasElement }) => {    
+  play: async ({ canvasElement }) => {
     const firstPathstyle = getComputedStyle(canvasElement.getElementsByTagName("path")[0]);
-    await expect(firstPathstyle.fill).toBe("rgb(234, 221, 206)");    
+    await expect(firstPathstyle.fill).toBe("rgb(234, 221, 206)");
   },
 };
 export const Throughput = {

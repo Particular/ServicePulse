@@ -1,7 +1,7 @@
 <script setup>
 defineProps({ type: String });
 </script>
-<template>  
+<template>
   <div class="graph pull-left ng-isolate-scope" :class="[type]">
     <svg width="142" height="50">
       <rect width="138" height="38" transform="translate(2,6)" fill="#F2F6F7"></rect>
