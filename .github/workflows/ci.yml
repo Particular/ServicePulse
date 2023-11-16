@@ -60,7 +60,7 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: src/ServicePulse.Host/vue
       - name: Build Storybook
-        run: npm build-storybook --quiet
+        run: npm run build-storybook --quiet
         working-directory: src/ServicePulse.Host/vue
       - name: Serve Storybook and run tests
         working-directory: src/ServicePulse.Host/vue
