@@ -7,15 +7,18 @@ import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter
 import MonitoringNoData from "./MonitoringNoData.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 
+const settings = defineProps({
+  endpoints: Object,
+});
+
+
 const endpoints = ref(settings.endpoints);
 const historyPeriod = 1;
 const router = useRouter();
 const hasData = ref(false);
 const supportsEndpointCount = ref();
 
-const settings = defineProps({
-  endpoints: Object,
-});
+
 
 /* function updateUI() {
   if (endpoints.value.length > 0) {
