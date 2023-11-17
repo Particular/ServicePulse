@@ -4,7 +4,7 @@
       {
         "type": "chrome",
         "request": "launch",
-        "name": "Debug Vue on Docker Port",
+        "name": "Attach Vue on Docker Port",
         "url": "http://localhost:1331",
         "webRoot": "${workspaceFolder}/src",
         "sourceMapPathOverrides": {
@@ -19,7 +19,7 @@
       {
         "type": "chrome",
         "request": "launch",
-        "name": "Debug Vite App",
+        "name": "Attach Vite App",
         "url": "http://localhost:5173",
         "webRoot": "${workspaceFolder}/src",  
         "sourceMapPathOverrides": {
