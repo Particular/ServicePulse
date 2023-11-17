@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import * as d3 from "d3";
+/*import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";*/
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 const props = defineProps({
   plotdata: Object,
@@ -10,20 +11,15 @@ const props = defineProps({
   metricsuffix: String,
   csclass: String,
   endpointname: String,
-    colname: String
+  colname: String,
 });
 const averageDecimalsDefault = 2;
 const avgLabelColorDefault = "#2700CB";
 const avgLabelSuffixDefault = "";
-
-
-// const svgelement = ref([]);
-const root = ref(null)
-
+const root = ref(null);
 
 function displayGraphValues() {
-  var svg = root.value.getElementsByTagName("svg");
-  
+  var svg = root.value.getElementsByTagName("svg")[0];
   var width = svg.clientWidth;
   var height = svg.clientHeight;
   //HINT: This is workaround for Firefox
@@ -48,7 +44,6 @@ function displayGraphValues() {
   var minimumYaxis = !isNaN(props.minimumyaxis) ? Number(props.minimumyaxis) : 10;
   var max = points && points.length ? Math.max(average * 1.5, d3.max(points), minimumYaxis) : 1;
   var numberOfPoints = points && points.length ? points.length : 2;
-
   var scaleY = d3
     .scaleLinear()
     .domain([0, max])
@@ -61,30 +56,29 @@ function displayGraphValues() {
 
   var area = d3
     .area()
-    .x(function (d, i) {
-     // console.log("X" + ":" + d + "," + i + "," + scaleX(i));
+    .x(function (d,i) {
       return scaleX(i);
     })
-    .y(function (d) {
+    .y(function (d,i) {
       return scaleY(d);
     })
-    .y1(function () {
+    .y1(function (d) {
       return scaleY(0);
     })
     .curve(d3.curveLinear);
 
   var line = d3
     .line()
-    .x(function (i) {
+    .x(function (d,i) {
       return scaleX(i);
     })
-    .y(function (d) {
+    .y(function (d,i) {
       return scaleY(d);
     })
     .curve(d3.curveLinear);
 
-  d3.select("svg").selectAll("*").remove();
-  var chart = d3.select("svg").attr("width", width).attr("height", height);
+  d3.select(svg).selectAll("*").remove();
+  var chart = d3.select(svg).attr("width", width).attr("height", height);
   chart
     .append("rect")
     .attr("width", width - 2 * horizontalMargin)
@@ -92,25 +86,24 @@ function displayGraphValues() {
     .attr("transform", "translate(" + horizontalMargin + "," + verticalMargin + ")")
     .attr("fill", "#F2F6F7");
 
-    if (points) {
-        console.log(props.endpointname + ":" + props.colname + ":" + points.length);
-        chart.append("path").datum(points).attr("d", area).attr("class", "graph-data-fill");
+  if (points) {
+    //console.log(props.endpointname + ":" + props.colname + ":" + points.length);
+    chart.append("path").datum(points).attr("d", area).attr("class", "graph-data-fill");
 
-        chart.append("path").datum(points).attr("d", line).attr("class", "graph-data-line");
-    }
+    chart.append("path").datum(points).attr("d", line).attr("class", "graph-data-line");
+  }
   var averageLine = chart.append("path").datum(Array(numberOfPoints).fill(average)).attr("d", line).attr("class", "graph-avg-line");
+  var displayAverageLabel = function (averageLine, label, value, color, unit) {
+    if (label != null) {
+      var { x, y, width } = averageLine.node().getBoundingClientRect();
+      label.value(value, unit);
 
-    var displayAverageLabel = function (averageLine, label, value, color, unit) {
-        if (label != null) {
-            var { x, y, width } = averageLine.node().getBoundingClientRect();
-            label.value(value, unit);
-
-            if (label.pointingToTheLeft) {
-                label.displayAt({ x: x + width + window.pageXOffset, y: y + window.pageYOffset, color });
-            } else {
-                label.displayAt({ x: x + window.pageXOffset, y: y + window.pageYOffset, color });
-            }
-        }
+      if (label.pointingToTheLeft) {
+        label.displayAt({ x: x + width + window.pageXOffset, y: y + window.pageYOffset, color });
+      } else {
+        label.displayAt({ x: x + window.pageXOffset, y: y + window.pageYOffset, color });
+      }
+    }
   };
 
   chart
@@ -131,13 +124,12 @@ function displayGraphValues() {
     });
 }
 onMounted(() => {
- displayGraphValues();
- //root.value.innerHTML = '<h1>test</h1>';
+  displayGraphValues();
 });
 </script>
 
 <template>
-    <div ref="root"> 
-      <svg wdith="2" height="50"></svg>      
-    </div>
+  <div ref="root" :class="[csclass]">
+    <svg></svg>
+  </div>
 </template>

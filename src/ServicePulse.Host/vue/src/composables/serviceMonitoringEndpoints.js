@@ -7,7 +7,7 @@ import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
  * @returns the max number of segments in a array of endpoint object names
  */
 export function useFindEndpointSegments(endpoints) {
-  if (endpoints.value !== undefined) {
+    if (endpoints.value !== undefined ) {
     return endpoints.value.reduce(function (acc, cur) {
       return Math.max(acc, cur.name.split(".").length - 1);
     }, 0);
@@ -90,18 +90,18 @@ async function addEndpointsFromScSubscription(endpoints) {
         endpoints.value[index].serviceControlId = failedMessageEndpoint.id;
         endpoints.value[index].errorCount = failedMessageEndpoint.count;
       } else {
-          var defaultMetricData = {
-              points: [],
-              average: 0
-          };
-          var metricsToAdd = {
-              queueLength: defaultMetricData,
-              throughput: defaultMetricData,
-              retries: defaultMetricData,
-              processingTime: defaultMetricData,
-              criticalTime: defaultMetricData
-          };
-          endpoints.value.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true, metrics: metricsToAdd });
+        var defaultMetricData = {
+          points: [],
+          average: 0,
+        };
+        var metricsToAdd = {
+          queueLength: defaultMetricData,
+          throughput: defaultMetricData,
+          retries: defaultMetricData,
+          processingTime: defaultMetricData,
+          criticalTime: defaultMetricData,
+        };
+        endpoints.value.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true, metrics: metricsToAdd });
       }
     });
   }

@@ -26,37 +26,77 @@ const filterString = ref("");
 const isFiltered = ref(false);
 const isGrouped = ref(false);
 
-// let refreshInterval = undefined;
+ //let refreshInterval = undefined;
 
-/* function startRefreshInterval() {
-  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
+// function startRefreshInterval() {
+//  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
-    //getAllMonitoredEndpoints();
-    //updateUI();
-  }, 5000);
-} */
+//  refreshInterval = setInterval(() => {
+//      allEndpoints.value =  MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
+//    updateUI();
+//  }, 5000);
+//}
 
-/* function stopRefreshInterval() {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
-  }
-} */
+// function stopRefreshInterval() {
+//  if (typeof refreshInterval !== "undefined") {
+//    clearInterval(refreshInterval);
+//  }
+//}
 
-/* function changeRefreshInterval(milliseconds) {
-  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
+// function changeRefreshInterval(milliseconds) {
+//  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
-    MonitoringEndpoints.getAllMonitoredEndpoints().then(() => {
-      if (isFiltered.value) {
-        //endpoints.value = useFilterEndpointsByName(endpoints.value, filterString.value);
-        //allEndpoints.value = MonitoringEndpoints.useFilterEndpointsByName(allEndpoints.value, filterString.value);
-      }
-    });
-    //updateUI();
-  }, milliseconds);
-} */
+//  refreshInterval = setInterval(() => {
+//    MonitoringEndpoints.getAllMonitoredEndpoints().then(() => {
+//      if (isFiltered.value) {
+//        endpoints.value = useFilterEndpointsByName(endpoints.value, filterString.value);
+//        allEndpoints.value = MonitoringEndpoints.useFilterEndpointsByName(allEndpoints.value, filterString.value);
+//      }
+//    });
+//    updateUI();
+//  }, milliseconds);
+//}
 
+    //function updateUI() {
+    //    if (allEndpoints.value.length > 0) {
+    //        allEndpoints.value.forEach((endpoint) => {
+    //            hasData.value = !endpoint.empty;
+    //            supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, "connectedCount");
+    //            if (endpoint.empty) {
+    //                return;
+    //            }
+
+    //            if (endpoint.error) {
+    //                // connectivityNotifier.reportFailedConnection();
+    //                if (endpoints.value) {
+    //                    endpoints.value.forEach((item) => (item.isScMonitoringDisconnected = true));
+    //                }
+    //            } else {
+    //                // connectivityNotifier.reportSuccessfulConnection();
+    //                var index = endpoints.value.findIndex(function (item) {
+    //                    return item.name === endpoint.name;
+    //                });
+    //                endpoint.isScMonitoringDisconnected = false;
+    //                if (index >= 0) {
+    //                    mergeIn(endpoints.value[index], endpoint);
+    //                } else {
+    //                    endpoints.value.push(endpoint);
+    //                }
+    //            }
+    //        });
+
+    //        //sort the monitored endpoints by name - case sensitive
+    //        allEndpoints.value.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0));
+    //    }
+    //}
+
+    //function mergeIn(destination, source) {
+    //    for (var propName in source) {
+    //        if (Object.prototype.hasOwnProperty.call(source, propName)) {
+    //            destination[propName] = source[propName];
+    //        }
+    //    }
+    //}
 function updateGroupedEndpointList(endpointGrouping) {
   if (endpointGrouping.value.selectedGrouping === 0) {
     grouping.value = ref([]);

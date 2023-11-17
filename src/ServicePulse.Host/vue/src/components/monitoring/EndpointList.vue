@@ -1,7 +1,7 @@
 ﻿<script setup>
 import { ref } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
-import EndpointGraph from "./EndpointGraph.vue";
+/*import EndpointGraph from "./EndpointGraph.vue";*/
 import { useRouter } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import MonitoringNoData from "./MonitoringNoData.vue";
@@ -14,55 +14,17 @@ const hasData = ref(false);
 const supportsEndpointCount = ref();
 
 const settings = defineProps({
-  endpoints: Object,
+    endpoints: Object,
 });
-   const smallGraphsMinimumYAxis = {
-       queueLength: 10,
-       throughput: 10,
-       retries: 10,
-       processingTime: 10,
-       criticalTime: 10
-   };
-/* function updateUI() {
-  if (endpoints.value.length > 0) {
-    endpoints.value.forEach((endpoint) => {
-      hasData.value = !endpoint.empty;
-      supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, "connectedCount");
-      if (endpoint.empty) {
-        return;
-      }
+const smallGraphsMinimumYAxis = {
+  queueLength: 10,
+  throughput: 10,
+  retries: 10,
+  processingTime: 10,
+  criticalTime: 10,
+    };
 
-      if (endpoint.error) {
-        // connectivityNotifier.reportFailedConnection();
-        if (endpoints.value) {
-          endpoints.value.forEach((item) => (item.isScMonitoringDisconnected = true));
-        }
-      } else {
-        // connectivityNotifier.reportSuccessfulConnection();
-        var index = endpoints.value.findIndex(function (item) {
-          return item.name === endpoint.name;
-        });
-        endpoint.isScMonitoringDisconnected = false;
-        if (index >= 0) {
-          mergeIn(endpoints.value[index], endpoint);
-        } else {
-          endpoints.value.push(endpoint);
-        }
-      }
-    });
 
-    //sort the monitored endpoints by name - case sensitive
-    endpoints.value.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0));
-  }
-} */
-
-/* function mergeIn(destination, source) {
-  for (var propName in source) {
-    if (Object.prototype.hasOwnProperty.call(source, propName)) {
-      destination[propName] = source[propName];
-    }
-  }
-} */
 
 function navigateToMessageGroup($event, groupId) {
   if ($event.target.localName !== "button") {
@@ -175,10 +137,10 @@ function formatGraphDecimal(input, deci) {
               <!--Queue Length-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
-                    <div class="no-side-padding">
-                        <!--<EndpointGraph :type="'queue-length'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'queuelength'" :isdurationgraph="'false'" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :csclass="'graph queue-length pull-left ng-isolate-scope'"></D3Graph>
-                    </div>
+                  <div class="no-side-padding">
+                    <!--<EndpointGraph :type="'queue-length'"></EndpointGraph>-->
+                    <D3Graph :endpointname="endpoint.name" :colname="'queuelength'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :csclass="'graph queue-length pull-left ng-isolate-scope'"></D3Graph>
+                  </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
                     <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
@@ -189,10 +151,10 @@ function formatGraphDecimal(input, deci) {
               <!--Throughput-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
-                    <div class="no-side-padding">
-                        <!--<EndpointGraph :type="'throughput'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'throughput'" :isdurationgraph="'false'"  :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" :csclass="'graph throughput pull-left ng-isolate-scope'"></D3Graph>
-                    </div>
+                  <div class="no-side-padding">
+                    <!--<EndpointGraph :type="'throughput'"></EndpointGraph>-->
+                    <D3Graph :endpointname="endpoint.name" :colname="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" :csclass="'graph throughput pull-left ng-isolate-scope'"></D3Graph>
+                  </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
                     <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
@@ -203,10 +165,10 @@ function formatGraphDecimal(input, deci) {
               <!--Scheduled Retries-->
               <div class="col-xs-2 col-xl-1 no-side-padding">
                 <div class="box-header">
-                    <div class="no-side-padding">
-                        <!--<EndpointGraph :type="'retries'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'retries'" :isdurationgraph="'false'"  :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" :csclass="'graph retries pull-left  ng-isolate-scope'"></D3Graph>
-                    </div>
+                  <div class="no-side-padding">
+                    <!--<EndpointGraph :type="'retries'"></EndpointGraph>-->
+                    <D3Graph :endpointname="endpoint.name" :colname="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" :csclass="'graph retries pull-left  ng-isolate-scope'"></D3Graph>
+                  </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
                     <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
@@ -219,7 +181,7 @@ function formatGraphDecimal(input, deci) {
                 <div class="box-header">
                   <div class="no-side-padding">
                     <!--<EndpointGraph :type="'processing-time'"></EndpointGraph>-->
-                     <D3Graph  :endpointname="endpoint.name"  :colname="'processingtime'" :isdurationgraph="'true'" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'"  :csclass="'graph processing-time pull-left  ng-isolate-scope'"></D3Graph>
+                    <D3Graph :endpointname="endpoint.name" :colname="'processingtime'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" :csclass="'graph processing-time pull-left  ng-isolate-scope'"></D3Graph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
@@ -234,7 +196,7 @@ function formatGraphDecimal(input, deci) {
                 <div class="box-header">
                   <div class="no-side-padding">
                     <!--<EndpointGraph :type="'critical-time'"></EndpointGraph>-->
-                     <D3Graph  :endpointname="endpoint.name"   :colname="'criticaltime'" :isdurationgraph="'true'" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"  :csclass="'graph critical-time pull-left  ng-isolate-scope'"></D3Graph>
+                    <D3Graph :endpointname="endpoint.name" :colname="'criticaltime'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" :csclass="'graph critical-time pull-left  ng-isolate-scope'"></D3Graph>
                   </div>
                   <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
