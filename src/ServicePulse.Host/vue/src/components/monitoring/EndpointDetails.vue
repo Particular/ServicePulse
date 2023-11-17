@@ -40,8 +40,8 @@ endpoint.value.instances = [];
 
 const historyPeriod = ref(useGetDefaultPeriod());
 function periodSelected(period) {
-    historyPeriod.value = period;
-    //changeRefreshInterval(period.refreshInterval);
+  historyPeriod.value = period;
+  //changeRefreshInterval(period.refreshInterval);
 }
 
 function getUrlQueryStrings() {
@@ -54,9 +54,9 @@ function getUrlQueryStrings() {
 
 function getEndpointDetails() {
   //get historyPeriod
-    var selectedHistoryPeriod = historyPeriod.value.pVal;
+  var selectedHistoryPeriod = historyPeriod.value.pVal;
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-      return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
+    return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
       .then((response) => {
         if (response.status === 404) {
           endpoint.value = { notFound: true };
@@ -162,11 +162,11 @@ function mergeIn(destination, source, propertiesToSkip) {
 
 function removeEndpoint(endpointName, instance) {
   return useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id)
-      .then((response) => {
+    .then((response) => {
       console.log(response);
       endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
       if (endpoint.value.instances.length === 0) {
-          router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
+        router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
       }
     })
     .catch((err) => {
@@ -277,7 +277,7 @@ function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
     showInstancesBreakdown = isVisible;
     refreshMessageTypes();
     var breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
-      router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: breakdownPageNo } });
+    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: breakdownPageNo } });
   }
 }
 
@@ -322,10 +322,10 @@ function formatGraphDecimal(input, deci) {
 //    }, "MonitoringConnectionStatusChanged");
 //};
 onMounted(() => {
-    getUrlQueryStrings();
+  getUrlQueryStrings();
   getEndpointDetails();
   getDisconnectedCount(); // for refresh interval
-    console.log(endpoint.value);
+  console.log(endpoint.value);
 });
 </script>
 
@@ -349,7 +349,7 @@ onMounted(() => {
             </h1>
             <div class="endpoint-status col-xs-2">
               <span class="warning" v-if="negativeCriticalTimeIsPresent">
-                <i class="fa pa-warning"  v-tooltip :title="`Warning: endpoint currently has negative critical time, possibly because of a clock drift.`"></i>
+                <i class="fa pa-warning" v-tooltip :title="`Warning: endpoint currently has negative critical time, possibly because of a clock drift.`"></i>
               </span>
               <span v-if="endpoint.isStale" class="warning">
                 <i class="fa pa-endpoint-lost endpoint-details" v-tooltip :title="`Unable to connect to endpoint`"></i>
@@ -357,7 +357,7 @@ onMounted(() => {
               <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
                 <i class="fa pa-monitoring-lost endpoint-details" v-tooltip :title="`Unable to connect to monitoring server`"></i>
               </span>
-              <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount+` failed messages associated with this endpoint. Click to see list.`">
+              <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
                 <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
                   <i class="fa fa-envelope"></i>
                   <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
@@ -368,7 +368,7 @@ onMounted(() => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
-                <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
+              <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
             </div>
           </div>
         </div>
@@ -555,7 +555,7 @@ onMounted(() => {
                                 <span class="warning" v-if="instance.isStale">
                                   <i class="fa pa-endpoint-lost endpoint-details" v-tooltip :title="`Unable to connect to instance`"></i>
                                 </span>
-                                <span class="warning" v-if="instance.errorCount" v-tooltip :title="instance.errorCount+` failed messages associated with this endpoint. Click to see list.`">
+                                <span class="warning" v-if="instance.errorCount" v-tooltip :title="instance.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
                                   <a v-if="instance.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, instance.serviceControlId)">
                                     <i class="fa fa-envelope"></i>
                                     <span class="badge badge-important ng-binding cursorpointer"> {{ instance.errorCount }}</span>
@@ -655,7 +655,7 @@ onMounted(() => {
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">
                     <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding"  v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
+                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
                     </div>
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">

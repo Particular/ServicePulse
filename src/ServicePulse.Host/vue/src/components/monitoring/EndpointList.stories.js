@@ -5,7 +5,7 @@ export default {
   title: "Monitoring/EndpointList/Endpoint List",
   tags: ["autodocs"],
   //👇 Our events will be mapped in Storybook UI
-  argTypes: {}
+  argTypes: {},
 };
 
 //stories

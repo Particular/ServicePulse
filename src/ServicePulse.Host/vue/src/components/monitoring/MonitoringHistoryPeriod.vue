@@ -37,8 +37,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <ul class="nav nav-pills period-selector" v-for="period in allPeriods" :key="period.pVal">
-    <li role="presentation" data-bs-placement="top" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.pVal === defaultPeriod.pVal, notselected: period.pVal !== defaultPeriod.pVal }">
+  <ul class="nav nav-pills period-selector">
+    <li role="presentation" data-bs-placement="top" v-for="period in allPeriods" :key="period.pVal" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.pVal === defaultPeriod.pVal, notselected: period.pVal !== defaultPeriod.pVal }">
       <a :href="`#`" @click.prevent="selectHistoryPeriod(period)">{{ period.text }}</a>
     </li>
   </ul>
@@ -53,5 +53,13 @@ onMounted(() => {
   background-color: initial;
   border-bottom: 3px solid #000;
   padding-bottom: 10px;
+}
+
+.nav-pills.period-selector > li > a:hover {
+  text-decoration: none;
+}
+
+.nav-pills > li + li {
+  margin-left: 2px;
 }
 </style>
