@@ -16,15 +16,27 @@ const supportsEndpointCount = ref();
 const settings = defineProps({
     endpoints: Object,
 });
+
 const smallGraphsMinimumYAxis = {
-  queueLength: 10,
-  throughput: 10,
-  retries: 10,
-  processingTime: 10,
-  criticalTime: 10,
-    };
+    queueLength: 10,
+    throughput: 10,
+    retries: 10,
+    processingTime: 10,
+    criticalTime: 10
+};
 
+//function updateUI() {
+//    if (endpoints.value.length > 0) {
+//        endpoints.value.forEach((endpoint) => {
+//            hasData.value = !endpoint.empty;
+//            supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, "connectedCount");
+//            if (endpoint.empty) {
+//                return;
+//            }
+//        }
+//    }
 
+//}
 
 function navigateToMessageGroup($event, groupId) {
   if ($event.target.localName !== "button") {
@@ -54,12 +66,14 @@ function formatGraphDecimal(input, deci) {
       decimals = 2;
     }
     return useFormatLargeNumber(lastValue, deci || decimals);
-  } else {
+  } else
+  {
     input = {
       points: [],
       average: 0,
       displayValue: 0,
-    };
+      };
+      return input;
   }
 }
 </script>

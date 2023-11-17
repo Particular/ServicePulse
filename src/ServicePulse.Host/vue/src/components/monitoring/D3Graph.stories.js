@@ -1,11 +1,11 @@
 import D3Graph from "./D3Graph.vue";
 /*import { expect } from "@storybook/jest";*/
 export default {
-  component: D3Graph,
-  title: "Monitoring/EndpointList/D3Graph",
-  tags: ["autodocs"],
-  //👇 Our events will be mapped in Storybook UI
-  argTypes: {},
+    component: D3Graph,
+    title: "Monitoring/EndpointList/D3Graph",
+    tags: ["autodocs"],
+    //👇 Our events will be mapped in Storybook UI
+    argTypes: {},
 };
 
 //stories
@@ -29,7 +29,7 @@ export const Default = {
 export const NoDataPoints = {
     args: {
         plotdata: {
-      average: 0.0,
+            average: 0.0,
       points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         minimumyaxis: 10,
