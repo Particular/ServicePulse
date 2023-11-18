@@ -275,7 +275,7 @@ pre {
 }
 
 .loading {
-    background-image: url('../a/img/loader_spinner.gif');
+    background-image: url('../assets/loader_spinner.gif');
     background-position: center;
     background-repeat: no-repeat;
     height: 65px;
@@ -2395,7 +2395,7 @@ footer span.connection-failed.ng-scope {
 
 
 .pa-connection-establishing {
-    background-image: url('../a/img/loader_spinner.gif');
+    background-image: url('../assets/loader_spinner.gif');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -2674,7 +2674,7 @@ span.fa-exclamation-triangle.danger {
     width: 100%;
     height: 90vh;
     margin-top: -100px;
-    background-image: url('../a/img/sp-loader.gif');
+    background-image: url('../assets/sp-loader.gif');
     background-size: 150px 150px;
     background-position: center center;
     background-repeat: no-repeat;
