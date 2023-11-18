@@ -9,7 +9,8 @@
     "preview": "npm run lint && vite preview",
     "test:unit": "npm run lint && vitest --environment jsdom --root src/",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
-    "storybook": "storybook dev -p 6006",
+    "storybook": "storybook dev -p 6006",    
+    "storybook-dont-auto-open": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build",
     "test-storybook": "test-storybook"
   },
