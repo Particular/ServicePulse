@@ -1,31 +1,34 @@
 {
     "version": "0.2.0",
-    "configurations": [
+    "configurations": [     
       {
         "name": "Debug Vue on Docker Port - Edge",
         "type": "msedge",
         "request": "launch",
         "url": "http://localhost:1331",
-        "webRoot": "${workspaceFolder}/src",        
+        "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue/src",
       },
       {
         "name": "Debug Vue on Docker Port - Chrome",
         "type": "chrome",
         "request": "launch",
         "url": "http://localhost:1331",
-        "webRoot": "${workspaceFolder}/src",        
-      },      
+        "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue/src",
+      }, 
       {
         "name": "Storybook Debug with Edge",
         "type": "node-terminal",
         "request": "launch",
         "command": "npm run storybook-dont-auto-open",
-        "cwd": "${workspaceFolder}",        
-        "internalConsoleOptions": "openOnFirstSessionStart",
+        "cwd": "${workspaceFolder}/src/ServicePulse.Host/vue",        
+        "internalConsoleOptions": "openOnFirstSessionStart",        
+        "sourceMaps": true,        
         "serverReadyAction": {
           "pattern": "Local:.+(https?://[^:]+:[0-9]+)",
           "uriFormat": "%s",
-          "action": "debugWithEdge"
+          "action":"debugWithEdge",
+          "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue",
+          "killOnServerStop": true
         }
       },
       {
@@ -33,14 +36,14 @@
         "type": "node-terminal",
         "request": "launch",
         "command": "npm run storybook-dont-auto-open",
-        "cwd": "${workspaceFolder}",        
+        "cwd": "${workspaceFolder}/src/ServicePulse.Host/vue",        
         "internalConsoleOptions": "openOnFirstSessionStart",        
         "sourceMaps": true,        
         "serverReadyAction": {
           "pattern": "Local:.+(https?://[^:]+:[0-9]+)",
           "uriFormat": "%s",
           "action":"debugWithChrome",
-          "webRoot": "${workspaceFolder}",
+          "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue",
           "killOnServerStop": true
         }
       }
