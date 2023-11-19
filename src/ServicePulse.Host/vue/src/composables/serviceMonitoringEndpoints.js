@@ -90,7 +90,18 @@ async function addEndpointsFromScSubscription(endpoints) {
         endpoints.value[index].serviceControlId = failedMessageEndpoint.id;
         endpoints.value[index].errorCount = failedMessageEndpoint.count;
       } else {
-        endpoints.value.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true });
+          var defaultMetricData = {
+              points: [],
+              average: 0,
+          };
+          var metricsToAdd = {
+              queueLength: defaultMetricData,
+              throughput: defaultMetricData,
+              retries: defaultMetricData,
+              processingTime: defaultMetricData,
+              criticalTime: defaultMetricData,
+          };
+          endpoints.value.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true, metrics: metricsToAdd });
       }
     });
   }
