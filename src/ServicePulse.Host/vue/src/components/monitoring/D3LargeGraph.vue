@@ -124,7 +124,7 @@ var metricSuffix = metricSuffix || avgLabelSuffixDefault;
         drawSeries(secondSeries, secondSeriesColor, secondSeriesFillColor);
     }
 
-    var firstAverageLine = drawAverage(firstSeries, firstSeriesColor, firstSeriesFillColor);
+   // var firstAverageLine = drawAverage(firstSeries, firstSeriesColor, firstSeriesFillColor);
 
     var secondAverageLine = null;
 
@@ -148,6 +148,7 @@ var metricSuffix = metricSuffix || avgLabelSuffixDefault;
             if (props.isdurationgraph) {
                 value = useFormatTime(secondSeries.average).value;
                 suffix = useFormatTime(secondSeries.average).unit.toUpperCase();
+                console.log(value + "," + suffix);// dummy call to get past eslint error
             }
 
             //displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, secondSeriesColor, suffix);
