@@ -2,6 +2,8 @@
 // Composables
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import D3LargeGraph from "./D3LargeGraph.vue";
+import D3Graph from "./D3Graph.vue";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
 import { useGetDefaultPeriod, useHistoryPeriodQueryString } from "../../composables/serviceHistoryPeriods.js";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
@@ -26,9 +28,18 @@ if (route.query.tab != "" && route.query.tab != undefined) {
 
 var isLoading = ref(true);
 var loadedSuccessfully = ref(false);
-//$scope.largeGraphsMinimumYAxis = largeGraphsMinimumYAxis;
-//$scope.smallGraphsMinimumYAxis = smallGraphsMinimumYAxis;
-
+const smallGraphsMinimumYAxis = {
+    queueLength: 10,
+    throughputRetries: 10,
+    processingCritical: 10
+};
+const largeGraphsMinimumYAxis = {
+    queueLength: 10,
+    throughput: 10,
+    retries: 10,
+    processingTime: 10,
+    criticalTime: 10
+};
 const endpoint = ref({});
 var negativeCriticalTimeIsPresent = ref(false);
 endpoint.value.messageTypesPage = !showInstancesBreakdown ? route.query.pageNo : 1;
@@ -378,8 +389,9 @@ onMounted(() => {
             <div class="row">
               <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
                 <!-- here goes diagram -->
-                <large-graph ng-if="endpoint.metricDetails.metrics.queueLength" first-data-series="endpoint.metricDetails.metrics.queueLength" minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}" plot-width="750" plot-height="200" first-series-color="#EA7E00" first-series-fill-color="#EADDCE" avg-decimals="0" metric-suffix="MSGS" class="large-graph pull-left"> </large-graph>
-                <!--Queue Length-->
+                <!--<large-graph ng-if="endpoint.metricDetails.metrics.queueLength" first-data-series="endpoint.metricDetails.metrics.queueLength" minimum-YAxis="{{largeGraphsMinimumYAxis.queueLength}}" plot-width="750" plot-height="200" first-series-color="#EA7E00" first-series-fill-color="#EADDCE" avg-decimals="0" metric-suffix="MSGS" class="large-graph pull-left"> </large-graph>-->
+                <D3LargeGraph :endpointname="endpoint.name" :colname="'queuelength'" :isdurationgraph="false" :plotdata="endpoint.metricDetails.metrics.queueLength" :firstdataseries="endpoint.metricDetails.metrics.queueLength" :minimumyaxis="largeGraphsMinimumYAxis.queueLength"  :plotwidth="750" :plotheight="200" :firstseriescolor="'#EA7E00'" :firstseriesfillcolor="'#EADDCE'" :avgdecimals="0"  :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :csclass="'large-graph pull-left'"></D3LargeGraph>
+                  <!--Queue Length-->
                 <div class="col-xs-12 no-side-padding graph-values">
                   <div class="queue-length-values">
                     <div class="row">
@@ -399,89 +411,90 @@ onMounted(() => {
               </div>
               <!--Throughput and retries-->
               <div class="col-xs-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
-                <!-- here goes diagram -->
-                <large-graph ng-if="endpoint.metricDetails.metrics.throughput" first-data-series="endpoint.metricDetails.metrics.throughput" second-data-series="endpoint.metricDetails.metrics.retries" minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}" plot-width="750" plot-height="200" first-series-color="#176397" first-series-fill-color="#CADCE8" second-series-color="#CC1252" second-series-fill-color="#E9C4D1" metric-suffix="MSGS/S" class="large-graph pull-left"> </large-graph>
+                  <!-- here goes diagram -->
+                  <!--<large-graph ng-if="endpoint.metricDetails.metrics.throughput" first-data-series="endpoint.metricDetails.metrics.throughput" second-data-series="endpoint.metricDetails.metrics.retries" minimum-YAxis="{{largeGraphsMinimumYAxis.throughputRetries}}" plot-width="750" plot-height="200" first-series-color="#176397" first-series-fill-color="#CADCE8" second-series-color="#CC1252" second-series-fill-color="#E9C4D1" metric-suffix="MSGS/S" class="large-graph pull-left"> </large-graph>-->
+                  <D3LargeGraph :endpointname="endpoint.name" :colname="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metricDetails.metrics.throughput" :firstdataseries="endpoint.metricDetails.metrics.throughput" :seconddataseries="endpoint.metricDetails.metrics.retries" :minimumyaxis="largeGraphsMinimumYAxis.throughputRetries" :plotwidth="750" :plotheight="200" :firstseriescolor="'#176397'" :firstseriesfillcolor="'#CADCE8'" :secondseriescolor="'#CC1252'" :secondseriesfillcolor="'#E9C4D1'" :avgdecimals="0" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS/S'" :csclass="'large-graph pull-left'"></D3LargeGraph>
+                  <div class="col-xs-12 no-side-padding graph-values">
+                      <div class="col-xs-6 no-side-padding throughput-values">
+                          <div class="row">
+                              <span class="metric-digest-header" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`"> Throughput </span>
+                          </div>
+                          <div class="row metric-digest-value current">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                          </div>
+                          <div class="row metric-digest-value average">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                          </div>
+                      </div>
+                      <div class="col-xs-6 no-side-padding scheduled-retries-rate-values">
+                          <div class="row">
+                              <span class="metric-digest-header" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`"> Scheduled retries </span>
+                          </div>
 
-                <div class="col-xs-12 no-side-padding graph-values">
-                  <div class="col-xs-6 no-side-padding throughput-values">
-                    <div class="row">
-                      <span class="metric-digest-header" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`"> Throughput </span>
-                    </div>
-                    <div class="row metric-digest-value current">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                    </div>
-                    <div class="row metric-digest-value average">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                      <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
-                    </div>
+                          <div class="row metric-digest-value current">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.retries.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                          </div>
+                          <div class="row metric-digest-value average">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.retries.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                          </div>
+                      </div>
                   </div>
-                  <div class="col-xs-6 no-side-padding scheduled-retries-rate-values">
-                    <div class="row">
-                      <span class="metric-digest-header" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`"> Scheduled retries </span>
-                    </div>
-
-                    <div class="row metric-digest-value current">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.retries.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                    </div>
-                    <div class="row metric-digest-value average">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.retries.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                      <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
-                    </div>
-                  </div>
-                </div>
               </div>
               <!--ProcessingTime and Critical Time-->
               <div class="col-xs-4 no-side-padding list-section graph-area graph-critical-processing-times">
-                <!-- here goes diagram -->
-                <large-graph ng-if="endpoint.metricDetails.metrics.processingTime" first-data-series="endpoint.metricDetails.metrics.criticalTime" second-data-series="endpoint.metricDetails.metrics.processingTime" minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}" plot-width="750" plot-height="200" first-series-color="#2700CB" first-series-fill-color="#C4BCE5" second-series-color="#258135" second-series-fill-color="#BEE6C5" is-duration-graph="true" class="large-graph pull-left"> </large-graph>
+                  <!-- here goes diagram -->
+                  <!--<large-graph ng-if="endpoint.metricDetails.metrics.processingTime" first-data-series="endpoint.metricDetails.metrics.criticalTime" second-data-series="endpoint.metricDetails.metrics.processingTime" minimum-YAxis="{{largeGraphsMinimumYAxis.processingCritical}}" plot-width="750" plot-height="200" first-series-color="#2700CB" first-series-fill-color="#C4BCE5" second-series-color="#258135" second-series-fill-color="#BEE6C5" is-duration-graph="true" class="large-graph pull-left"> </large-graph>-->
+                  <D3LargeGraph :endpointname="endpoint.name" :colname="'queuelength'" :isdurationgraph="true" :plotdata="endpoint.metricDetails.metrics.criticalTime" :firstdataseries="endpoint.metricDetails.metrics.criticalTime"  :seconddataseries="endpoint.metricDetails.metrics.processingTime" :minimumyaxis="largeGraphsMinimumYAxis.processingCritical" :plotwidth="750" :plotheight="200" :firstseriescolor="'#2700CB'" :firstseriesfillcolor="'#C4BCE5'" :secondseriescolor="'#258135'" :secondseriesfillcolor="'#BEE6C5'" :avgdecimals="0" :avglabelcolor="'#EA7E00'" :csclass="'large-graph pull-left'"></D3LargeGraph>
 
-                <div class="col-xs-12 no-side-padding graph-values">
-                  <div class="col-xs-6 no-side-padding processing-time-values">
-                    <div class="row">
-                      <span class="metric-digest-header" v-tooltip :title="`Processing time: The time taken for a receiving endpoint to successfully process a message.`"> Processing Time </span>
-                    </div>
-                    <div class="row metric-digest-value current">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                        {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).value }}
-                        <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).unit }}</span>
+                  <div class="col-xs-12 no-side-padding graph-values">
+                      <div class="col-xs-6 no-side-padding processing-time-values">
+                          <div class="row">
+                              <span class="metric-digest-header" v-tooltip :title="`Processing time: The time taken for a receiving endpoint to successfully process a message.`"> Processing Time </span>
+                          </div>
+                          <div class="row metric-digest-value current">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                  {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).value }}
+                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).unit }}</span>
+                              </div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                          </div>
+                          <div class="row metric-digest-value average">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                  {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).value }}
+                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).unit }}</span>
+                              </div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                          </div>
                       </div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                    </div>
-                    <div class="row metric-digest-value average">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                        {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).value }}
-                        <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).unit }}</span>
-                      </div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                      <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
-                    </div>
-                  </div>
 
-                  <div class="col-xs-6 no-side-padding critical-time-values">
-                    <div class="row">
-                      <span class="metric-digest-header" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`"> Critical Time </span>
-                    </div>
-                    <div class="row metric-digest-value current">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                        <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.latest | durationValue) < 0}"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value }}</span>
-                        <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).unit }}</span>
+                      <div class="col-xs-6 no-side-padding critical-time-values">
+                          <div class="row">
+                              <span class="metric-digest-header" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`"> Critical Time </span>
+                          </div>
+                          <div class="row metric-digest-value current">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                  <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.latest | durationValue) < 0}"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value }}</span>
+                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).unit }}</span>
+                              </div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                          </div>
+                          <div class="row metric-digest-value average">
+                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                                  <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.average | durationValue) < 0}"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value }}</span>
+                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).unit }} </span>
+                              </div>
+                              <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
+                          </div>
                       </div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                    </div>
-                    <div class="row metric-digest-value average">
-                      <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
-                        <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.average | durationValue) < 0}"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value }}</span>
-                        <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).unit }} </span>
-                      </div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                      <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
-                    </div>
                   </div>
-                </div>
               </div>
             </div>
           </div>
@@ -567,7 +580,8 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
+                                <!--<graph plot-data="instance.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>-->
+                                <D3Graph :endpointname="endpoint.name" :colname="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" :csclass="'graph throughput pull-left'"></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.throughput) }}
@@ -578,9 +592,10 @@ onMounted(() => {
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                <graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
-                              </div>
+                                <div class="no-side-padding">
+                                    <!--<graph plot-data="instance.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>-->
+                                    <D3Graph :endpointname="endpoint.name" :colname="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" :csclass="'graph retries pull-left'"></D3Graph>
+                                </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.retries) }}
                                 <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
@@ -591,7 +606,8 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>
+                                <!--<graph plot-data="instance.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>-->
+                                <D3Graph :endpointname="endpoint.name" :colname="'processingtime'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" :csclass="'graph processing-time pull-left'"></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="instance.metrics.processingTime.displayValue.unit">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.processingTime).value }}
@@ -606,7 +622,8 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>
+                                <!--<graph plot-data="instance.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>-->
+                                <D3Graph :endpointname="endpoint.name" :colname="'criticaltime'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" :csclass="'graph critical-time pull-left'"></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="[instance.metrics.criticalTime.displayValue.unit, {'negative':instance.metrics.criticalTime.displayValue.value < 0}]">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.criticalTime).value }}
@@ -707,7 +724,8 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <graph plot-data="messageType.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>
+                                <!--<graph plot-data="messageType.metrics.throughput" minimum-YAxis="{{smallGraphsMinimumYAxis.throughput}}" avg-label-color="#176397" metric-suffix="MSGS/S" class="graph throughput pull-left"></graph>-->
+                                <D3Graph :endpointname="endpoint.name" :colname="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" :csclass="'graph throughput pull-left'"></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.throughput, 2) }}
@@ -718,9 +736,10 @@ onMounted(() => {
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                <graph plot-data="messageType.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>
-                              </div>
+                                <div class="no-side-padding">
+                                    <!--<graph plot-data="messageType.metrics.retries" minimum-YAxis="{{smallGraphsMinimumYAxis.retries}}" avg-label-color="#CC1252" metric-suffix="MSGS/S" class="graph retries pull-left"></graph>-->
+                                    <D3Graph :endpointname="endpoint.name" :colname="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" :csclass="'graph retries pull-left'"></D3Graph>
+                                </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.retries, 2) }}
                                 <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
@@ -730,9 +749,10 @@ onMounted(() => {
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                <graph plot-data="messageType.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>
-                              </div>
+                                <div class="no-side-padding">
+                                    <!--<graph plot-data="messageType.metrics.processingTime" minimum-YAxis="{{smallGraphsMinimumYAxis.processingTime}}" avg-label-color="#258135" is-duration-graph="true" class="graph processing-time pull-left"></graph>-->
+                                    <D3Graph :endpointname="endpoint.name" :colname="'processingtime'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" :csclass="'graph processing-time pull-left'"></D3Graph>
+                                </div>
                               <div class="no-side-padding sparkline-value" ng-class="messageType.metrics.processingTime.displayValue.unit">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.processingTime).value }}
                                 <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
@@ -746,7 +766,8 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>
+                                <!--<graph plot-data="messageType.metrics.criticalTime" minimum-YAxis="{{smallGraphsMinimumYAxis.criticalTime}}" avg-label-color="#2700CB" is-duration-graph="true" class="graph critical-time pull-left"></graph>-->
+                                 <D3Graph :endpointname="endpoint.name" :colname="'criticaltime'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" :csclass="'graph critical-time pull-left'"></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="[messageType.metrics.criticalTime.displayValue.unit, {'negative':messageType.metrics.criticalTime.displayValue.value < 0}]">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.criticalTime).value }}
