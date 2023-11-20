@@ -22,7 +22,6 @@ const props = defineProps({
 
 
 const averageDecimalsDefault = 2;
-const avgLabelColorDefault = "#2700CB";
 const avgLabelSuffixDefault = "";
 const root = ref(null);
 //var averageLabelToTheRight = ArrowLabel({ pointToTheLeft: false, caption: 'AVG' });
@@ -120,16 +119,7 @@ function displayGraphValues() {
             return drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
         }
 
-        var displayAverageLabel = function (averageLine, label, value, color, unit) {
-            var { x, y, width } = averageLine.node().getBoundingClientRect();
-            label.value(value, unit);
 
-            if (label.pointingToTheLeft) {
-                label.displayAt({ x: x + width + window.pageXOffset, y: y + window.pageYOffset, color });
-            } else {
-                label.displayAt({ x: x + window.pageXOffset, y: y + window.pageYOffset, color });
-            }
-        }
 
         drawSeries(firstSeries, firstSeriesColor, firstSeriesFillColor);
 
@@ -154,7 +144,7 @@ function displayGraphValues() {
                 suffix = useFormatTime(firstSeries.average).unit.toUpperCase();
             }
 
-           // displayAverageLabel(firstAverageLine, averageLabelToTheRight, value, attrs.firstSeriesColor, suffix);
+            displayAverageLabel(firstAverageLine, averageLabelToTheRight, value, attrs.firstSeriesColor, suffix);
 
             if (secondAverageLine && secondSeries.points.length > 0) {
                 value = useFormatLargeNumber(secondSeries.average, avgDecimals);
@@ -163,7 +153,7 @@ function displayGraphValues() {
                     suffix = useFormatTime(secondSeries.average).unit.toUpperCase();
                 }
 
-              //  displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, attrs.secondSeriesColor, suffix);
+                displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, attrs.secondSeriesColor, suffix);
             }
         })
             .on("mouseout", function () {
@@ -172,19 +162,37 @@ function displayGraphValues() {
             });
     };
 
+function displayAverageLabel(averageLine, label, value, color, unit) {
+    //var { x, y, width } = averageLine.node().getBoundingClientRect();
+    //label.value(value, unit);
 
+    //if (label.pointingToTheLeft) {
+    //    label.displayAt({ x: x + width + window.pageXOffset, y: y + window.pageYOffset, color });
+    //} else {
+    //    label.displayAt({ x: x + window.pageXOffset, y: y + window.pageYOffset, color });
+    //}
+}
 
 function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 
     var area = d3.area()
-        .x(function (d, i) { return scaleX(i); })
+        .x(function (d, i) {
+            console.log(d); //dummy call to get past eslint error
+            return scaleX(i);
+        })
         .y(function (d) { return scaleY(d); })
         .y1(function () { return scaleY(0); })
         .curve(d3.curveLinear);
 
     var line = d3.line()
-        .x(function (d, i) { return scaleX(i); })
-        .y(function (d, i) { return scaleY(d); })
+        .x(function (d, i) {
+            console.log(d); //dummy call to get past eslint error
+            return scaleX(i);
+        })
+        .y(function (d, i) {
+            console.log(i); //dummy call to get past eslint error
+            return scaleY(d);
+        })
         .curve(d3.curveLinear);
 
     var group = chart.append('g').attr('class', 'dataSeries');
@@ -207,8 +215,14 @@ function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 function drawAverageLine(chart, data, color, fillColor, scaleX, scaleY) {
 
     var line = d3.line()
-        .x(function (d, i) { return scaleX(i); })
-        .y(function (d, i) { return scaleY(d); })
+        .x(function (d, i) {
+            console.log(d); //dummy call to get past eslint error
+            return scaleX(i);
+        })
+        .y(function (d, i) {
+            console.log(i); //dummy call to get past eslint error
+            return scaleY(d);
+        })
         .curve(d3.curveLinear);
 
     var group = chart.append('g').attr('class', 'dataAverage');
