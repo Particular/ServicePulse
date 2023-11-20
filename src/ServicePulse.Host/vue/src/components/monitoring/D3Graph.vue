@@ -57,29 +57,25 @@ function displayGraphValues() {
 
     var area = d3
         .area()
-        .x(function (d, i) {
-            console.log(d); //dummy call to get past eslint error
-            return scaleX(i);
+        .x(function (, i) {
+            return scaleX(i); // Only the second argument is used.
         })
-        .y(function (d, i) {
-            console.log(i); //dummy call to get past eslint error
-            return scaleY(d);
+        .y(function (d, ) {
+            return scaleY(d);// Only the first argument is used.
         })
         .y1(function (d) {
-            console.log(d); //dummy call to get past eslint error
+            //console.log(d); //dummy call to get past eslint error
             return scaleY(0);
         })
         .curve(d3.curveLinear);
 
     var line = d3
         .line()
-        .x(function (d, i) {
-            console.log(d); //dummy call to get past eslint error
-            return scaleX(i);
+        .x(function (, i) {
+            return scaleX(i);// Only the second argument is used.
         })
-        .y(function (d, i) {
-            console.log(i); //dummy call to get past eslint error
-            return scaleY(d);
+        .y(function (d, ) {
+            return scaleY(d); // Only the first argument is used.
         })
         .curve(d3.curveLinear);
 
