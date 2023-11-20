@@ -68,7 +68,6 @@ export const NoDataPoints = {
         csclass: "graph queue-length pull-left",
         endpointname: "Test-Receiver",
         colname: "queuelength",
-        firstdataseries: Object,
         seconddataseries: Object,
         plotwidth: 750,
         plotheight: 200,
