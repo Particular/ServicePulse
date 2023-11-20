@@ -55,25 +55,3 @@ export const ThroughputRetries = {
         secondseriesfillcolor: "#E9C4D1",
     },
 };
-export const NoDataPoints = {
-    args: {
-        firstdataseries: {
-            average: 0.0,
-      points: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        minimumyaxis: 10,
-        avglabelcolor: "#EA7E00",
-        isdurationgraph: false,
-        metricsuffix: "MSGS",
-        csclass: "graph queue-length pull-left",
-        endpointname: "Test-Receiver",
-        colname: "queuelength",
-        seconddataseries: Object,
-        plotwidth: 750,
-        plotheight: 200,
-        firstseriescolor: "#EA7E00",
-        firstseriesfillcolor: "#EADDCE",
-        secondseriescolor: "",
-        secondseriesfillcolor: "",
-    },
-};
