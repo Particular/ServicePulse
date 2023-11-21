@@ -5,13 +5,14 @@ import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter
 import { getArrowLabel } from "../../composables/graphLabel.js";
 const props = defineProps({
 
-    avglabelcolor: String,
+    //avglabelcolor: String,
     isdurationgraph: Boolean,
     metricsuffix: String,
     csclass: String,
     firstdataseries: Object,
     seconddataseries: Object,
     minimumyaxis: Number,
+    avgdecimals: Number,
     plotwidth: Number,
     plotheight: Number,
     firstseriescolor: String,
@@ -29,8 +30,8 @@ var averageLabelToTheLeft = getArrowLabel( true, 'AVG' );
 
 
 function displayGraphValues() {
-var avgDecimals = avgDecimals || averageDecimalsDefault;
-var metricSuffix = metricSuffix || avgLabelSuffixDefault;
+var avgDecimals = props.avgdecimals || averageDecimalsDefault;
+var metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
 
     var svg = root.value.getElementsByTagName("svg")[0];
 
