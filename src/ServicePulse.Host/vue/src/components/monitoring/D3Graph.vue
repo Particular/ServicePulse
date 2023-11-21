@@ -1,8 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import * as d3 from "d3";
-/*import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";*/
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
+import { getArrowLabel } from "../../composables/graphLabel.js";
+
 const props = defineProps({
   plotdata: Object,
   minimumyaxis: Number,
@@ -17,6 +18,7 @@ const averageDecimalsDefault = 2;
 const avgLabelColorDefault = "#2700CB";
 const avgLabelSuffixDefault = "";
 const root = ref(null);
+var averageLabelToTheRight = getArrowLabel(false, 'AVG');
 
 function displayGraphValues() {
   var svg = root.value.getElementsByTagName("svg")[0];
@@ -93,7 +95,6 @@ function displayGraphValues() {
     .attr("fill", "#F2F6F7");
 
     if (points) {
-        //console.log(props.endpointname + ":" + props.colname + ":" + points.length);
         chart.append("path").datum(points).attr("d", area).attr("class", "graph-data-fill");
 
         chart.append("path").datum(points).attr("d", line).attr("class", "graph-data-line");
@@ -122,11 +123,10 @@ function displayGraphValues() {
         suffix = useFormatTime(average).unit.toUpperCase();
       }
 
-      // displayAverageLabel(averageLine, averageLabelToTheRight, value, avgLabelColor, suffix);
-      displayAverageLabel(averageLine, null, value, avgLabelColor, suffix);
+      displayAverageLabel(averageLine, averageLabelToTheRight, value, avgLabelColor, suffix);
     })
     .on("mouseout", function () {
-      // averageLabelToTheRight.hide();
+       averageLabelToTheRight.hide();
     });
 }
 onMounted(() => {
