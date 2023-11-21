@@ -31,31 +31,6 @@ export function useFormatTime(value) {
   }
 }
 
-//export function useFormatTimeOLD(value) {
-//    var duration = moment.duration(value);
-
-//    var time = { value: 0, unit: "" };
-//    if (duration >= dayDuration) {
-//      time.value = duration.format("D [d] h [hr]");
-//      return time;
-//    } else if (duration >= hourDuration) {
-//      time.value = moment.utc(duration.asMilliseconds()).format("HH:mm");
-//      time.unit = "hr";
-//      return time;
-//    } else if (duration >= minuteDuration) {
-//      time.value = duration.format("mm:ss");
-//      time.unit = "min";
-//      return time;
-//    } else if (duration >= secondDuration) {
-//      time.value = duration.format("ss");
-//      time.unit = "sec";
-//      return time;
-//    } else {
-//      time.value = duration.format("s,SSS");
-//      time.unit = "ms";
-//      return time;
-//    }
-//}
 export function useGetDayDiffFromToday(value) {
   if (!value) return undefined;
   var today = new Date();
