@@ -5,7 +5,6 @@ import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter
 import { getArrowLabel } from "../../composables/graphLabel.js";
 const props = defineProps({
 
-    //avglabelcolor: String,
     isdurationgraph: Boolean,
     metricsuffix: String,
     csclass: String,
