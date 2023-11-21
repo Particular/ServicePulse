@@ -8,7 +8,7 @@ const upgradeProtectionExpiring = '<div class="license-warning"><strong>Upgrade 
 const upgradeProtectionExpired = '<div class="license-warning"><strong>Upgrade protection expired</strong><div>Once upgrade protection expires, you\'ll no longer have access to support or new product versions</div><a href="#/configuration" class="btn btn-license-warning">View license details</a></div>';
 const trialExpiring = '<div class="license-warning"><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you\'ll need to extend your license.</div><a href="http://particular.net/extend-your-trial?p=servicepulse" class="btn btn-license-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="#/configuration" class="btn btn-license-warning-light">View license details</a></div>';
 
-export var license = reactive({
+export const license = reactive({
   edition: "",
   licenseEdition: "",
   expiration_date: undefined,
@@ -40,16 +40,19 @@ export const licenseStatus = reactive({
 });
 
 export function useLicense() {
-  watch(license, async (newValue, oldValue) => {
-    const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
-    if (checkForWarnings) {
-      displayWarningMessage(newValue.license_status);
+  watch(
+    () => license.license_status,
+    async (newValue, oldValue) => {
+      const checkForWarnings = oldValue !== null ? newValue && newValue != oldValue : newValue !== null;
+      if (checkForWarnings) {
+        displayWarningMessage(newValue);
+      }
     }
-  });
+  );
 
   return getLicense(license)
     .then((lic) => {
-      license = lic;
+      Object.assign(license, lic);
       license.licenseEdition = computed(() => {
         return license.license_type && license.edition ? ", " + license.edition : "";
       });
