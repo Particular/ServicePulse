@@ -2353,16 +2353,6 @@ div.alert.alert-warning strong {
   }
 }
 
-.license-warning,
-.license-warning h5 {
-    color: black;
-}
-
-.btn-license-warning {
-    color: #f89406;
-    background: black;
-}
-
 span.fa-exclamation-triangle.warning {
     color: #F3BC52;
     background: linear-gradient(black,black) center/20% 72% no-repeat;
@@ -2438,35 +2428,6 @@ span.fa-exclamation-triangle.danger {
 
 #toast-container > .toast-warning:after {
     background-color: rgba(0,0,0,0);
-}
-
-.toast-message a.btn.btn-license-warning {
-    margin-top: 16px;
-    color: #F3BC52;
-}
-
-.toast-message a.btn.btn-license-warning:hover, .toast-error a.btn.btn-default:hover {
-    opacity: 0.85;
-}
-
-.toast-error a.btn.btn-default {
-    color: #bd362f;
-    padding-right: 20px;
-    padding-left: 20px;
-    border: none;
-    margin-top: 16px;
-}
-
-.toast-message a.btn.btn-license-warning-light {
-    margin-top: 16px;
-    margin-left: 10px;
-    color: #000;
-    border: 1px solid #000;
-    background-color: rgba(0,0,0,0);
-}
-
-.toast-message a.btn.btn-license-warning-light:hover {
-    background-color: rgba(0,0,0,0.1);
 }
 
 .toast-warning .toast-close-button {
