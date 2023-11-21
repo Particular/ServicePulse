@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import * as d3 from "d3";
-/*import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";*/
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
+import { getArrowLabel } from "../../composables/graphLabel.js";
 const props = defineProps({
 
     avglabelcolor: String,
@@ -24,8 +24,9 @@ const props = defineProps({
 const averageDecimalsDefault = 2;
 const avgLabelSuffixDefault = "";
 const root = ref(null);
-//var averageLabelToTheRight = ArrowLabel({ pointToTheLeft: false, caption: 'AVG' });
-//var averageLabelToTheLeft = ArrowLabel({ pointToTheLeft: true, caption: 'AVG' });
+var averageLabelToTheRight = getArrowLabel( false, 'AVG' );
+var averageLabelToTheLeft = getArrowLabel( true, 'AVG' );
+
 
 function displayGraphValues() {
 var avgDecimals = avgDecimals || averageDecimalsDefault;
@@ -124,7 +125,7 @@ var metricSuffix = metricSuffix || avgLabelSuffixDefault;
         drawSeries(secondSeries, secondSeriesColor, secondSeriesFillColor);
     }
 
-   // var firstAverageLine = drawAverage(firstSeries, firstSeriesColor, firstSeriesFillColor);
+    var firstAverageLine = drawAverage(firstSeries, firstSeriesColor, firstSeriesFillColor);
 
     var secondAverageLine = null;
 
@@ -141,7 +142,7 @@ var metricSuffix = metricSuffix || avgLabelSuffixDefault;
             suffix = useFormatTime(firstSeries.average).unit.toUpperCase();
         }
 
-       // displayAverageLabel(firstAverageLine, averageLabelToTheRight, value, firstSeriesColor, suffix);
+        displayAverageLabel(firstAverageLine, averageLabelToTheRight, value, firstSeriesColor, suffix);
 
         if (secondAverageLine && secondSeries.points.length > 0) {
             value = useFormatLargeNumber(secondSeries.average, avgDecimals);
@@ -151,25 +152,25 @@ var metricSuffix = metricSuffix || avgLabelSuffixDefault;
                 console.log(value + "," + suffix);// dummy call to get past eslint error
             }
 
-            //displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, secondSeriesColor, suffix);
+            displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, secondSeriesColor, suffix);
         }
     })
         .on("mouseout", function () {
-            //averageLabelToTheRight.hide();
-            //averageLabelToTheLeft.hide();
+            averageLabelToTheRight.hide();
+            averageLabelToTheLeft.hide();
         });
 };
 
-//function displayAverageLabel(averageLine, label, value, color, unit) {
-    //var { x, y, width } = averageLine.node().getBoundingClientRect();
-    //label.value(value, unit);
+function displayAverageLabel(averageLine, label, value, color, unit) {
+    var { x, y, width } = averageLine.node().getBoundingClientRect();
+    label.value(value, unit);
 
-    //if (label.pointingToTheLeft) {
-    //    label.displayAt({ x: x + width + window.pageXOffset, y: y + window.pageYOffset, color });
-    //} else {
-    //    label.displayAt({ x: x + window.pageXOffset, y: y + window.pageYOffset, color });
-    //}
-//}
+    if (label.pointingToTheLeft) {
+        label.displayAt({ x: x + width + window.pageXOffset, y: y + window.pageYOffset, color });
+    } else {
+        label.displayAt({ x: x + window.pageXOffset, y: y + window.pageYOffset, color });
+    }
+}
 
 function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 
