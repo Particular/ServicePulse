@@ -9,7 +9,6 @@ const props = defineProps({
   avglabelcolor: String,
   isdurationgraph: Boolean,
   metricsuffix: String,
-  csclass: String,
   endpointname: String,
   type: String,
 });
