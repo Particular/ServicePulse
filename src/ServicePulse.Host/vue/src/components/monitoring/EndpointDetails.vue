@@ -174,7 +174,6 @@ function mergeIn(destination, source, propertiesToSkip) {
 function removeEndpoint(endpointName, instance) {
   return useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id)
     .then((response) => {
-      console.log(response);
       endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
       if (endpoint.value.instances.length === 0) {
         router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
