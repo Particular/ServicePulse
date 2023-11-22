@@ -11,7 +11,7 @@ const props = defineProps({
   metricsuffix: String,
   csclass: String,
   endpointname: String,
-  colname: String,
+  type: String,
 });
 const averageDecimalsDefault = 2;
 const avgLabelColorDefault = "#2700CB";
@@ -128,7 +128,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="root" :class="[csclass]">
+    <div ref="root" class="graph pull-left ng-isolate-scope"  :class="[type]">
      <svg></svg>
     </div>
 </template>
