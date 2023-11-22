@@ -58,15 +58,12 @@ function displayGraphValues() {
     var area = d3
         .area()
         .x(function (d, i) {
-            //console.log(d); //dummy call to get past eslint error
             return scaleX(i);
         })
         .y(function (d, i) {
-            //console.log(i); //dummy call to get past eslint error
             return scaleY(d);
         })
         .y1(function (d) {
-            //console.log(d); //dummy call to get past eslint error
             return scaleY(0);
         })
         .curve(d3.curveLinear);
@@ -74,11 +71,9 @@ function displayGraphValues() {
     var line = d3
         .line()
         .x(function (d, i) {
-            //console.log(d); //dummy call to get past eslint error
             return scaleX(i);
         })
         .y(function (d, i) {
-            //console.log(i); //dummy call to get past eslint error
             return scaleY(d);
         })
         .curve(d3.curveLinear);
