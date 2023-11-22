@@ -574,7 +574,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <D3Graph  :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" :csclass="'graph throughput pull-left'"></D3Graph>
+                                <D3Graph  :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" ></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.throughput) }}
@@ -586,7 +586,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                                 <div class="no-side-padding">
-                                    <D3Graph  :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" :csclass="'graph retries pull-left'"></D3Graph>
+                                    <D3Graph  :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
                                 </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.retries) }}
@@ -598,7 +598,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <D3Graph  :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" :csclass="'graph processing-time pull-left'"></D3Graph>
+                                <D3Graph  :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" ></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="instance.metrics.processingTime.displayValue.unit">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.processingTime).value }}
@@ -613,7 +613,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <D3Graph  :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" :csclass="'graph critical-time pull-left'"></D3Graph>
+                                <D3Graph  :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="[instance.metrics.criticalTime.displayValue.unit, {'negative':instance.metrics.criticalTime.displayValue.value < 0}]">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.criticalTime).value }}
@@ -714,7 +714,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <D3Graph  :type="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" :csclass="'graph throughput pull-left'"></D3Graph>
+                                <D3Graph  :type="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" ></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.throughput, 2) }}
@@ -726,7 +726,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                                 <div class="no-side-padding">
-                                    <D3Graph  :type="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" :csclass="'graph retries pull-left'"></D3Graph>
+                                    <D3Graph  :type="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" ></D3Graph>
                                 </div>
                               <div class="no-side-padding sparkline-value">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.retries, 2) }}
@@ -738,7 +738,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                                 <div class="no-side-padding">
-                                    <D3Graph  :type="'processing-time'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" :csclass="'graph processing-time pull-left'"></D3Graph>
+                                    <D3Graph  :type="'processing-time'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" ></D3Graph>
                                 </div>
                               <div class="no-side-padding sparkline-value" ng-class="messageType.metrics.processingTime.displayValue.unit">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.processingTime).value }}
@@ -753,7 +753,7 @@ onMounted(() => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                 <D3Graph  :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" :csclass="'graph critical-time pull-left'"></D3Graph>
+                                 <D3Graph  :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
                               </div>
                               <div class="no-side-padding sparkline-value" ng-class="[messageType.metrics.criticalTime.displayValue.unit, {'negative':messageType.metrics.criticalTime.displayValue.value < 0}]">
                                 {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.criticalTime).value }}
