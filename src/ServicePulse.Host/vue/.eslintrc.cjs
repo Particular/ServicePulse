@@ -14,6 +14,7 @@ module.exports = {
         endOfLine: "auto",
         printWidth: 999,
       },
-    ],
+      ],
+     "no-unused-vars": "off",
   },
 };

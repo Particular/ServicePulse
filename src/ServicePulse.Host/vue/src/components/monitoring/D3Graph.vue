@@ -3,7 +3,6 @@ import { ref, onMounted } from "vue";
 import * as d3 from "d3";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { getArrowLabel } from "../../composables/graphLabel.js";
-/*eslint no-unused-vars: "error"*/
 const props = defineProps({
   plotdata: Object,
   minimumyaxis: Number,
@@ -56,11 +55,10 @@ function displayGraphValues() {
     .scaleLinear()
     .domain([0, numberOfPoints - 1])
     .range([horizontalMargin, width - horizontalMargin]);
-
     var area = d3
         .area()
         .x(function (d, i) {
-            console.log(d); //dummy call to get past eslint error
+            //console.log(d); //dummy call to get past eslint error
             return scaleX(i);
         })
         .y(function (d, i) {
@@ -76,7 +74,7 @@ function displayGraphValues() {
     var line = d3
         .line()
         .x(function (d, i) {
-            console.log(d); //dummy call to get past eslint error
+            //console.log(d); //dummy call to get past eslint error
             return scaleX(i);
         })
         .y(function (d, i) {
