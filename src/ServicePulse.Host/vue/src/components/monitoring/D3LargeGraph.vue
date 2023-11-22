@@ -7,13 +7,10 @@ const props = defineProps({
 
     isdurationgraph: Boolean,
     metricsuffix: String,
-    csclass: String,
     firstdataseries: Object,
     seconddataseries: Object,
     minimumyaxis: Number,
     avgdecimals: Number,
-    plotwidth: Number,
-    plotheight: Number,
     firstseriescolor: String,
     firstseriesfillcolor: String,
     secondseriescolor: String,
@@ -39,13 +36,14 @@ var metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
     var topMargin = 10;
     var bottomMargin = 5;
     var leftMargin = 60;
-
-    var chart = d3.select(svg)
-        .attr('width', props.plotwidth)
-        .attr('height', props.plotheight);
-
     var width = svg.clientWidth;
     var height = svg.clientHeight;
+
+    var chart = d3.select(svg)
+        .attr('width', width)
+        .attr('height',height);
+
+  
 
     //HINT: This is workaround for Firefox
     if (width === 0) {
@@ -254,7 +252,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="root" :class="[csclass]">
-     <svg></svg>
+    <div ref="root" class="large-graph pull-left">
+     <svg width="750" height="200"></svg>
     </div>
 </template>
