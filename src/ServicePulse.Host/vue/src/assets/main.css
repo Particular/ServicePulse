@@ -3351,7 +3351,7 @@ g.error .node-text a:hover {
 div.avg-tooltip {
     position: absolute;
     text-align: left;
-    padding: .5rem;
+    padding: .3rem;
     line-height: 1;
     background: var(--avg-tooltip-background-color);
     color: #ffffff;
@@ -3566,19 +3566,19 @@ label {
   border-color: #1b809e;
 }
 
-.label-warning, 
+.label-warning,
 .badge-warning {
     background-color: #aa6708;
     border-color: #aa6708;
 }
 
-.label-important, 
+.label-important,
 .badge-important {
     background-color: #FA603D;
     border-color: #FA5833;
 }
 
-pre {    
+pre {
     display: block;
     padding: 9.5px;
     margin: 0 0 10px;
@@ -3755,7 +3755,7 @@ pre {
     margin-top: 20px;
 }
 
-.modal-msg-editor .row, 
+.modal-msg-editor .row,
 .modal-msg-editor .col-sm-12 {
     height: 100%;
 }
@@ -3931,11 +3931,11 @@ input.check-label {
 .metadata > .btn-sm > i {
     color: #00a3c4;
 }
-  
+
 .metadata:first-child {
     padding-left: 0;
 }
-  
+
 span.metadata {
     display: inline-block;
     padding: 0px 20px 2px 0;
@@ -3945,7 +3945,7 @@ span.metadata {
 span.metadata.metadata-link i.fa {
     color: #00a3c4;
 }
-  
+
 .metadata > .in-progress {
     font-style: italic;
     color: white;
@@ -3956,7 +3956,7 @@ span.metadata.metadata-link i.fa {
     position: relative;
     top: -1px;
 }
-  
+
 .metadata > .metadata-label {
     padding: 6px 10px;
 }
@@ -3973,12 +3973,12 @@ span.metadata.metadata-link i.fa {
     left: 11px;
     line-height: 1;
 }
-  
+
 .btn.btn-retry-dismiss {
     border-radius: 4px;
     padding: 8px 16px;
 }
-  
+
 .btn.btn-xs {
     font-size: 12px;
 }
