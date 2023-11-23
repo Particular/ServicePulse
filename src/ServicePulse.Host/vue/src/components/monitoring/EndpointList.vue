@@ -182,7 +182,7 @@ function formatGraphDecimal(input, deci) {
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'queue-length'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'queuelength'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :csclass="'graph queue-length pull-left ng-isolate-scope'"></D3Graph>
+                        <D3Graph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" ></D3Graph>
                     </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
@@ -196,7 +196,7 @@ function formatGraphDecimal(input, deci) {
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'throughput'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" :csclass="'graph throughput pull-left ng-isolate-scope'"></D3Graph>
+                        <D3Graph  :type="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" ></D3Graph>
                     </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
@@ -210,7 +210,7 @@ function formatGraphDecimal(input, deci) {
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'retries'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" :csclass="'graph retries pull-left ng-isolate-scope'"></D3Graph>
+                        <D3Graph :type="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
                     </div>
                   <div class="no-side-padding sparkline-value">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
@@ -224,7 +224,7 @@ function formatGraphDecimal(input, deci) {
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'processing-time'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'processingtime'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" :csclass="'graph processing-time pull-left ng-isolate-scope'"></D3Graph>
+                        <D3Graph  :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" ></D3Graph>
                     </div>
                   <div class="no-side-padding sparkline-value" ng-class="endpoint.metrics.processingTime.displayValue.unit">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
@@ -239,7 +239,7 @@ function formatGraphDecimal(input, deci) {
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'critical-time'"></EndpointGraph>-->
-                        <D3Graph :endpointname="endpoint.name" :colname="'criticaltime'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" :csclass="'graph critical-time pull-left ng-isolate-scope'"></D3Graph>
+                        <D3Graph  :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" ></D3Graph>
                     </div>
                   <div class="no-side-padding sparkline-value" ng-class="[endpoint.metrics.criticalTime.displayValue.unit, {'negative':endpoint.metrics.criticalTime.displayValue.value < 0}]">
                     {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
