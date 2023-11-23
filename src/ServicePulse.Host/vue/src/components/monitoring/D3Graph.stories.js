@@ -20,9 +20,7 @@ export const Default = {
     avglabelcolor: "#EA7E00",
     isdurationgraph: false,
     metricsuffix: "MSGS",
-    csclass: "graph queue-length pull-left ng-isolate-scope",
-    endpointname: "Test-Receiver",
-    colname: "queuelength",
+    type: "queue-length",
   },
 };
 
@@ -36,8 +34,6 @@ export const NoDataPoints = {
         avglabelcolor: "#EA7E00",
         isdurationgraph: false,
         metricsuffix: "MSGS",
-        csclass: "graph queue-length pull-left ng-isolate-scope",
-        endpointname: "Test-Receiver",
-        colname: "queuelength",
+        type: "queue-length",
     },
 };

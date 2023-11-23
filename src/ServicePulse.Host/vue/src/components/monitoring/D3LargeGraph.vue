@@ -7,13 +7,10 @@ const props = defineProps({
 
     isdurationgraph: Boolean,
     metricsuffix: String,
-    csclass: String,
     firstdataseries: Object,
     seconddataseries: Object,
     minimumyaxis: Number,
     avgdecimals: Number,
-    plotwidth: Number,
-    plotheight: Number,
     firstseriescolor: String,
     firstseriesfillcolor: String,
     secondseriescolor: String,
@@ -39,13 +36,14 @@ var metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
     var topMargin = 10;
     var bottomMargin = 5;
     var leftMargin = 60;
-
-    var chart = d3.select(svg)
-        .attr('width', props.plotwidth)
-        .attr('height', props.plotheight);
-
     var width = svg.clientWidth;
     var height = svg.clientHeight;
+
+    var chart = d3.select(svg)
+        .attr('width', width)
+        .attr('height',height);
+
+  
 
     //HINT: This is workaround for Firefox
     if (width === 0) {
@@ -149,7 +147,6 @@ var metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
             if (props.isdurationgraph) {
                 value = useFormatTime(secondSeries.average).value;
                 suffix = useFormatTime(secondSeries.average).unit.toUpperCase();
-                console.log(value + "," + suffix);// dummy call to get past eslint error
             }
 
             displayAverageLabel(secondAverageLine, averageLabelToTheLeft, value, secondSeriesColor, suffix);
@@ -176,7 +173,6 @@ function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 
     var area = d3.area()
         .x(function (d, i) {
-            console.log(d); //dummy call to get past eslint error
             return scaleX(i);
         })
         .y(function (d) { return scaleY(d); })
@@ -185,11 +181,9 @@ function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 
     var line = d3.line()
         .x(function (d, i) {
-            console.log(d); //dummy call to get past eslint error
             return scaleX(i);
         })
         .y(function (d, i) {
-            console.log(i); //dummy call to get past eslint error
             return scaleY(d);
         })
         .curve(d3.curveLinear);
@@ -215,11 +209,9 @@ function drawAverageLine(chart, data, color, fillColor, scaleX, scaleY) {
 
     var line = d3.line()
         .x(function (d, i) {
-            console.log(d); //dummy call to get past eslint error
             return scaleX(i);
         })
         .y(function (d, i) {
-            console.log(i); //dummy call to get past eslint error
             return scaleY(d);
         })
         .curve(d3.curveLinear);
@@ -260,7 +252,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div ref="root" :class="[csclass]">
-     <svg></svg>
+    <div ref="root" class="large-graph pull-left">
+     <svg width="750" height="200"></svg>
     </div>
 </template>

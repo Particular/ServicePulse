@@ -18,22 +18,22 @@ export function getArrowLabel(pointToTheLeft = false, caption = '') {
 
     return {
         displayAt: function ({ x, y, color }) {
-            var lableDimensions = getComputedStyle(div);
+            var labelDimensions = getComputedStyle(div);
             //align the label vertically.
-            div.style.top = `${Math.trunc(y - lableDimensions.height.replace('px', '') / 2)}px`;
+            div.style.top = `${Math.trunc(y - labelDimensions.height.replace('px', '') / 2)}px`;
 
             //align the label horizontally.
             //get the label tip dimensions. The label tip is composed by a roated square of the ::before pseudo-element.
             var labelTipWidth = getComputedStyle(div, ':before').width.replace('px', '');
             var labelTipHeight = getComputedStyle(div, ':before').height.replace('px', '');
-            var lalbeTipHypotenuse = Math.trunc(Math.hypot(labelTipWidth, labelTipHeight));
+            var labelTipHypotenuse = Math.trunc(Math.hypot(labelTipWidth, labelTipHeight));
 
             if (pointToTheLeft == false) {
                 div.style.left = 'inherit';
-                div.style.right = `calc(100% - ${x}px + ${lalbeTipHypotenuse / 2}px)`;
+                div.style.right = `calc(100% - ${x}px + ${labelTipHypotenuse / 2}px)`;
             } else {
                 div.style.right = 'inherit';
-                div.style.left = `${x + (lalbeTipHypotenuse / 2)}px`;
+                div.style.left = `${x + (labelTipHypotenuse / 2)}px`;
             }
 
             div.style.visibility = 'visible';

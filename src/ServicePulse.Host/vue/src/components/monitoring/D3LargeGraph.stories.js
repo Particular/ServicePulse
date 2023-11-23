@@ -16,14 +16,11 @@ export const Default = {
     avglabelcolor: "#EA7E00",
     isdurationgraph: false,
     metricsuffix: "MSGS",
-    csclass: "large-graph pull-left",
     args: {
         firstdataseries: {
             average: 0.8,
             points: [0.0, 0.0, 0.0, 3.0, 1.0, 1.0, 1.0, 2.0, 1.0, 0.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
         },
-    plotwidth: 750,
-    plotheight: 200,
     firstseriescolor: "#EA7E00",
     firstseriesfillcolor: "#EADDCE",
     secondseriescolor: "",
@@ -37,7 +34,6 @@ export const ThroughputRetries = {
     avglabelcolor: "#EA7E00",
     isdurationgraph: false,
     metricsuffix: "MSGS/S",
-    csclass: "large-graph pull-left",
     args: {
         firstdataseries: {
             average: 1.5,
@@ -47,8 +43,6 @@ export const ThroughputRetries = {
             average: 8.5,
             points: [7.0, 9.0, 5.0, 9.0, 1.0, 19.0, 1.0, 6.0, 1.0, 0.0, 12.0, 7.0, 11.0, 12.0, 1.0, 8.0, 9.0, 1.0, 1.0, 7.0, 1.0, 0.0, 7.0, 1.0, 1.0, 11.0, 1.0, 1.0, 5.0, 1.0, 1.0, 4.0, 5.0, 1.0, 1.0, 9.0, 5.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 5.0, 10.0, 1.0, 11.0, 1.0, 1.0, 12.0, 1.0, 1.0, 6.0, 7.0, 8.0],
         },
-        plotwidth: 750,
-        plotheight: 200,
         firstseriescolor: "#176397",
         firstseriesfillcolor: "#CADCE8",
         secondseriescolor: "#CC1252",
@@ -62,7 +56,6 @@ export const ProcessingCritical = {
     avgdecimals : 10 ,
     isdurationgraph: true,
     metricsuffix: "MSGS/S",
-    csclass: "large-graph pull-left",
     args: {
         firstdataseries: {
             average: 300.55,
@@ -197,8 +190,6 @@ export const ProcessingCritical = {
 
             ]
         },
-        plotwidth: 750,
-        plotheight: 200,
         firstseriescolor: "#2700CB",
         firstseriesfillcolor: "#C4BCE5",
         secondseriescolor: "#258135",
