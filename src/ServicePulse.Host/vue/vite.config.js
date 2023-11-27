@@ -8,6 +8,9 @@ const __dirname = path.dirname(__filename);
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  css:{
+    devSourcemap:true
+  },
   plugins: [
     vue(),
     {
