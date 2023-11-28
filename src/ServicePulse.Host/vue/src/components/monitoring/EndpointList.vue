@@ -146,9 +146,8 @@ function formatGraphDecimal(input, deci) {
     <!--endpointlist-->
     <div>
         <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
-        <div class="box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
-            <div class="row">
-              <div class="col-xl-7 endpoint-name name-overview">
+        <div class="endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
+              <div class="table-first-col endpoint-name name-overview">
                 <div class="box-header">
                   <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
                     <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
@@ -176,7 +175,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Queue Length-->
-              <div class="col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'queue-length'"></EndpointGraph>-->
@@ -190,7 +189,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Throughput-->
-              <div class="col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'throughput'"></EndpointGraph>-->
@@ -204,7 +203,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Scheduled Retries-->
-              <div class="col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'retries'"></EndpointGraph>-->
@@ -218,7 +217,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Processing Time-->
-              <div class="col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'processing-time'"></EndpointGraph>-->
@@ -233,7 +232,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Critical Time-->
-              <div class="col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'critical-time'"></EndpointGraph>-->
@@ -247,7 +246,7 @@ function formatGraphDecimal(input, deci) {
                   </div>
                 </div>
               </div>
-            </div>
+
 
         </div>
 

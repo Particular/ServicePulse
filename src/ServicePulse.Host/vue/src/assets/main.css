@@ -1704,12 +1704,6 @@ hr.top-separator {
     margin-left: 0.5%;
 }
 
-.endpoint-row {
-    height: 61px;
-    position: relative;
-    padding: 2px 0 4px;
-}
-
 .endpoint-row .graphicon {
     top: 14px;
     left: 120px;
@@ -4055,4 +4049,15 @@ div.alert.alert-warning strong {
     .table-col {
         width: 14%;
     }
+}
+.endpoint-row {
+    display: flex;
+    height: 61px;
+    position: relative;
+    padding: 2px 0 4px;
+    border-top: 1px solid #eee;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #eee;
+    border-left: 1px solid #fff;
+    background-color: #FFF;
 }
