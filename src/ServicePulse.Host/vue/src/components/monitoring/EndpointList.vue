@@ -122,23 +122,23 @@ function formatGraphDecimal(input, deci) {
     </div>
 
     <!--Table headings-->
-    <div v-if="endpoints && endpoints.length > 0" class="row box box-no-click table-head-row">
-      <div class="col-xl-7">
+    <div v-if="endpoints && endpoints.length > 0" class="table-head-row">
+      <div class="table-first-col">
         <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
-      <div class="col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length<template #unit>(MSGS)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint.">Throughput<template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retries <template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
     </div>
