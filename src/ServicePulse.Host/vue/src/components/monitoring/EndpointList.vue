@@ -144,11 +144,9 @@ function formatGraphDecimal(input, deci) {
     </div>
 
     <!--endpointlist-->
-    <div class="row">
-      <div class="col-xs-12 no-side-padding">
+    <div>
         <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
-        <div class="row box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
-          <div class="col-xs-12 no-side-padding">
+        <div class="box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
             <div class="row">
               <div class="col-xl-7 endpoint-name name-overview">
                 <div class="box-header">
@@ -250,9 +248,9 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
             </div>
-          </div>
+
         </div>
-      </div>
+
     </div>
   </section>
 </template>
