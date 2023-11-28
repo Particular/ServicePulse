@@ -4040,13 +4040,19 @@ div.alert.alert-warning strong {
     text-transform: uppercase;
     color: #181919;
 }
-
-.table-col {
-    width: 16%;
-}
-
 .table-first-col {
     width: 20%;
     padding-left: 15px;
     padding-right: 15px;
+}
+.table-col {
+    width: 16%;
+}
+@media only screen and (min-width: 1730px) {
+    .table-first-col {
+        width: 30%;
+    }
+    .table-col {
+        width: 14%;
+    }
 }
