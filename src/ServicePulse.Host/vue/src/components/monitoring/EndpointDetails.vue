@@ -312,7 +312,7 @@ function formatGraphDecimal(input, deci) {
     var decimals = 0;
     if (lastValue < 10 || input > 1000000) {
       decimals = 2;
-    }
+      }
     return useFormatLargeNumber(lastValue, deci || decimals);
   } else {
     return 0;
@@ -382,7 +382,7 @@ onMounted(() => {
           </div>
         </div>
         <!--large graphs-->
-        <div class="container large-graphs" v-if="loadedSuccessfully">
+        <div class="large-graphs" v-if="loadedSuccessfully">
           <div class="container">
             <div class="row">
               <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
@@ -396,13 +396,14 @@ onMounted(() => {
                     </div>
                   </div>
                   <div class="row metric-digest-value current">
-                    <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }} <span v-if="endpoint.isStale == false || endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix">MSGS</span></div>
+                    <div v-if="!endpoint.isStale  && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }}
+                      <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span></div>
                     <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                   </div>
                   <div class="row metric-digest-value average">
-                    <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.average, 0) }} <span class="metric-digest-value-suffix">MSGS</span></div>
+                    <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.average, 0) }}
+                      <span class="metric-digest-value-suffix">MSGS AVG</span></div>
                     <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                    <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                   </div>
                 </div>
               </div>
@@ -411,33 +412,33 @@ onMounted(() => {
                   <!-- large graph -->
                   <D3LargeGraph  v-if="endpoint.metricDetails.metrics.throughput" :isdurationgraph="false" :firstdataseries="endpoint.metricDetails.metrics.throughput" :seconddataseries="endpoint.metricDetails.metrics.retries" :minimumyaxis="largeGraphsMinimumYAxis.throughputRetries"  :firstseriescolor="'#176397'" :firstseriesfillcolor="'#CADCE8'" :secondseriescolor="'#CC1252'" :secondseriesfillcolor="'#E9C4D1'" :avgdecimals="0"  :metricsuffix="'MSGS/S'" ></D3LargeGraph>
                   <div class="col-xs-12 no-side-padding graph-values">
-                      <div class="col-xs-6 no-side-padding throughput-values">
-                          <div class="row">
+                      <div class="col-xs-6 no-side-padding throughput-values floatleft">
+                          <div>
                               <span class="metric-digest-header" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`"> Throughput </span>
                           </div>
-                          <div class="row metric-digest-value current">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                          <div class="row metric-digest-value current ">
+                              <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                           </div>
                           <div class="row metric-digest-value average">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                              <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.average, 2) }}
+                                  <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                           </div>
                       </div>
-                      <div class="col-xs-6 no-side-padding scheduled-retries-rate-values">
-                          <div class="row">
+                      <div class="col-xs-6 no-side-padding scheduled-retries-rate-values floatright">
+                          <div>
                               <span class="metric-digest-header" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`"> Scheduled retries </span>
                           </div>
 
                           <div class="row metric-digest-value current">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.retries.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                              <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.retries.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                           </div>
                           <div class="row metric-digest-value average">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">{{ formatGraphDecimal(endpoint.digest.metrics.retries.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+                              <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.retries.average, 2) }}
+                                  <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                           </div>
                       </div>
                   </div>
@@ -447,45 +448,43 @@ onMounted(() => {
                   <!-- large graph -->
                   <D3LargeGraph v-if="endpoint.metricDetails.metrics.criticalTime" :isdurationgraph="true"  :firstdataseries="endpoint.metricDetails.metrics.criticalTime"  :seconddataseries="endpoint.metricDetails.metrics.processingTime" :minimumyaxis="largeGraphsMinimumYAxis.processingCritical"  :firstseriescolor="'#2700CB'" :firstseriesfillcolor="'#C4BCE5'" :secondseriescolor="'#258135'" :secondseriesfillcolor="'#BEE6C5'" :avgdecimals="0"></D3LargeGraph>
                   <div class="col-xs-12 no-side-padding graph-values">
-                      <div class="col-xs-6 no-side-padding processing-time-values">
-                          <div class="row">
+                      <div class="col-xs-6 no-side-padding processing-time-values floatleft">
+                          <div class="">
                               <span class="metric-digest-header" v-tooltip :title="`Processing time: The time taken for a receiving endpoint to successfully process a message.`"> Processing Time </span>
                           </div>
                           <div class="row metric-digest-value current">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                              <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
                                   {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).value }}
-                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).unit }}</span>
+                                  <span class="metric-digest-value-suffix"> {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).unit }}</span>
                               </div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                           </div>
                           <div class="row metric-digest-value average">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                              <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
                                   {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).value }}
-                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).unit }}</span>
+                                  <span class="metric-digest-value-suffix"> {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).unit }} AVG</span>
                               </div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                           </div>
                       </div>
 
-                      <div class="col-xs-6 no-side-padding critical-time-values">
-                          <div class="row">
+                      <div class="col-xs-6 no-side-padding critical-time-values floatright ">
+                          <div class="">
                               <span class="metric-digest-header" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`"> Critical Time </span>
                           </div>
                           <div class="row metric-digest-value current">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                              <div v-if="!endpoint.isStale  && !endpoint.isScMonitoringDisconnected">
                                   <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.latest | durationValue) < 0}"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value }}</span>
-                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).unit }}</span>
+                                  <span class="metric-digest-value-suffix"> &nbsp;{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).unit }}</span>
                               </div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                           </div>
                           <div class="row metric-digest-value average">
-                              <div v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false">
+                              <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected ">
                                   <span ng-class="{'negative': (endpoint.digest.metrics.criticalTime.average | durationValue) < 0}"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value }}</span>
-                                  <span class="metric-digest-value-suffix">{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).unit }} </span>
+                                  <span class="metric-digest-value-suffix"> &nbsp;{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).unit }} AVG </span>
                               </div>
                               <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="metric-digest-value-suffix"> AVG</span>
                           </div>
                       </div>
                   </div>
@@ -495,13 +494,13 @@ onMounted(() => {
         </div>
 
         <!--Messagetypes and instances-->
-        <div class="container" v-if="loadedSuccessfully">
+        <div v-if="loadedSuccessfully">
           <!--tabs-->
           <div class="tabs">
-            <h5 ng-class="{active: !showInstancesBreakdown}">
+            <h5 :class="{active: !showInstancesBreakdown}">
               <a @click="navigateToEndpointUrl($event, false, endpoint.messageTypesPage)" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
             </h5>
-            <h5 ng-class="{active: showInstancesBreakdown}">
+            <h5 :class="{active: showInstancesBreakdown}">
               <a @click="navigateToEndpointUrl($event, true, 1)" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
             </h5>
           </div>
@@ -548,8 +547,8 @@ onMounted(() => {
                       <div class="col-xs-12 no-side-padding">
                         <div class="row">
                           <div class="col-xs-4 col-xl-8 endpoint-name">
-                            <div class="row box-header">
-                              <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis" v-tooltip :title="instance.name">
+                            <div class="row box-header" >
+                              <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis floatleft" v-tooltip :title="instance.name">
                                 {{ instance.name }}
                               </div>
                               <div class="col-lg-4 no-side-padding endpoint-status">
@@ -565,7 +564,7 @@ onMounted(() => {
                                 <span class="warning" v-if="instance.errorCount" v-tooltip :title="instance.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
                                   <a v-if="instance.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, instance.serviceControlId)">
                                     <i class="fa fa-envelope"></i>
-                                    <span class="badge badge-important ng-binding cursorpointer"> {{ instance.errorCount }}</span>
+                                    <span class="badge badge-important cursorpointer"> {{ instance.errorCount }}</span>
                                   </a>
                                 </span>
                               </div>
@@ -573,62 +572,66 @@ onMounted(() => {
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                <D3Graph  :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" ></D3Graph>
-                              </div>
-                              <div class="no-side-padding sparkline-value">
-                                {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.throughput) }}
-                                <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
-                                <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                              </div>
+                                <div class="no-side-padding">
+                                    <D3Graph :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'"></D3Graph>
+                                    <span class="no-side-padding sparkline-value">
+                                        {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.throughput) }}
+                                        <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
+                                        <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
+                                    </span>
+                                </div>
                             </div>
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                                 <div class="no-side-padding">
                                     <D3Graph  :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
-                                </div>
-                              <div class="no-side-padding sparkline-value">
+                              <span class="no-side-padding sparkline-value">
                                 {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.retries) }}
                                 <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
                                 <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                              </div>
+                              </span>
+                                </div>
                             </div>
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                <D3Graph  :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" ></D3Graph>
-                              </div>
-                              <div class="no-side-padding sparkline-value" ng-class="instance.metrics.processingTime.displayValue.unit">
-                                {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.processingTime).value }}
-                                <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
-                                <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                <span v-if="instance.isStale == false && !!instance.isScMonitoringDisconnected == false" class="unit">
-                                  {{ formatGraphDuration(instance.metrics.processingTime).unit }}
-                                </span>
-                              </div>
+                                <div class="no-side-padding">
+                                    <D3Graph :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'"></D3Graph>
+                                    <span class="no-side-padding sparkline-value" ng-class="instance.metrics.processingTime.displayValue.unit">
+                                        {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.processingTime).value }}
+                                        <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
+                                        <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
+                                        <span v-if="!instance.isStale && !instance.isScMonitoringDisconnected" class="unit">
+                                            {{ formatGraphDuration(instance.metrics.processingTime).unit }}
+                                        </span>
+                                    </span>
+                                </div>
                             </div>
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                <D3Graph  :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
-                              </div>
-                              <div class="no-side-padding sparkline-value" ng-class="[instance.metrics.criticalTime.displayValue.unit, {'negative':instance.metrics.criticalTime.displayValue.value < 0}]">
-                                {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.criticalTime).value }}
-                                <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
-                                <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                <span v-if="instance.isStale == false && !!instance.isScMonitoringDisconnected == false" class="unit">
-                                  {{ formatGraphDuration(instance.metrics.criticalTime).unit }}
-                                </span>
-                              </div>
+                                <div class="no-side-padding">
+                                    <D3Graph :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
+                                    <span class="no-side-padding sparkline-value" ng-class="[instance.metrics.criticalTime.displayValue.unit, {'negative':instance.metrics.criticalTime.displayValue.value < 0}]">
+                                        {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.criticalTime).value }}
+                                        <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
+                                        <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
+                                        <span v-if="!instance.isStale && !instance.isScMonitoringDisconnected" class="unit">
+                                            {{ formatGraphDuration(instance.metrics.criticalTime).unit }}
+                                        </span>
+                                    </span>
+                                </div>
                             </div>
                           </div>
+
                           <!--remove endpoint-->
-                          <a v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
-                            <i class="fa fa-trash" v-tooltip :title="`Remove endpoint`"></i>
-                          </a>
+                          <div class=" col-xs-2 col-xl-1 no-side-padding">
+                              <a ng-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
+                                  <i class="fa fa-trash" v-tooltip :title="`Remove endpoint`"></i>
+                              </a>
+                          </div>
+
                         </div>
                       </div>
                     </div>
@@ -713,56 +716,56 @@ onMounted(() => {
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                <D3Graph  :type="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" ></D3Graph>
-                              </div>
-                              <div class="no-side-padding sparkline-value">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.throughput, 2) }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                              </div>
+                                <div class="no-side-padding">
+                                    <D3Graph :type="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'"></D3Graph>
+                                    <span class="no-side-padding sparkline-value">
+                                        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.throughput, 2) }}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
+                                    </span>
+                                </div>
                             </div>
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                                 <div class="no-side-padding">
-                                    <D3Graph  :type="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" ></D3Graph>
+                                    <D3Graph :type="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
+                                    <span class="no-side-padding sparkline-value">
+                                        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.retries, 2) }}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
+                                    </span>
                                 </div>
-                              <div class="no-side-padding sparkline-value">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.retries, 2) }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                              </div>
                             </div>
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                                 <div class="no-side-padding">
-                                    <D3Graph  :type="'processing-time'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" ></D3Graph>
+                                    <D3Graph :type="'processing-time'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'"></D3Graph>
+                                    <span class="no-side-padding sparkline-value" ng-class="messageType.metrics.processingTime.displayValue.unit">
+                                        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.processingTime).value }}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
+                                        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected" class="unit">
+                                            {{ formatGraphDuration(messageType.metrics.processingTime).unit }}
+                                        </span>
+                                    </span>
                                 </div>
-                              <div class="no-side-padding sparkline-value" ng-class="messageType.metrics.processingTime.displayValue.unit">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.processingTime).value }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">
-                                  {{ formatGraphDuration(messageType.metrics.processingTime).unit }}
-                                </span>
-                              </div>
                             </div>
                           </div>
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
-                              <div class="no-side-padding">
-                                 <D3Graph  :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
-                              </div>
-                              <div class="no-side-padding sparkline-value" ng-class="[messageType.metrics.criticalTime.displayValue.unit, {'negative':messageType.metrics.criticalTime.displayValue.value < 0}]">
-                                {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.criticalTime).value }}
-                                <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
-                                <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit">
-                                  {{ formatGraphDuration(messageType.metrics.criticalTime).unit }}
-                                </span>
-                              </div>
+                                <div class="no-side-padding">
+                                    <D3Graph :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
+                                    <span class="no-side-padding sparkline-value" ng-class="[messageType.metrics.criticalTime.displayValue.unit, {'negative':messageType.metrics.criticalTime.displayValue.value < 0}]">
+                                        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.criticalTime).value }}
+                                        <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
+                                        <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
+                                        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected" class="unit">
+                                            {{ formatGraphDuration(messageType.metrics.criticalTime).unit }}
+                                        </span>
+                                    </span>
+                                </div>
                             </div>
                           </div>
                         </div>
@@ -782,7 +785,7 @@ onMounted(() => {
   </template>
 </template>
 
-<style>
+<!--<style>
 .monitoring-head h1 {
   margin-bottom: 10px;
   text-overflow: ellipsis;
@@ -1452,4 +1455,4 @@ a.remove-endpoint:hover i {
   box-shadow: 0 3px 20px rgba(0, 0, 0, 0.15);
   transition-duration: 0.5s;
 }
-</style>
+</style>-->
