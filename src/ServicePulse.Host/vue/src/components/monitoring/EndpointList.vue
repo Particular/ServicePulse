@@ -122,35 +122,32 @@ function formatGraphDecimal(input, deci) {
     </div>
 
     <!--Table headings-->
-    <div v-if="endpoints && endpoints.length > 0" class="row box box-no-click table-head-row">
-      <div class="col-xs-2 col-xl-7">
+    <div v-if="endpoints && endpoints.length > 0" class="table-head-row">
+      <div class="table-first-col">
         <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length<template #unit>(MSGS)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint.">Throughput<template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retries <template #unit>(msgs/s)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
-      <div class="col-xs-2 col-xl-1 no-side-padding">
+      <div class="table-col">
         <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
     </div>
 
     <!--endpointlist-->
-    <div class="row">
-      <div class="col-xs-12 no-side-padding">
+    <div>
         <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
-        <div class="row box endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
-          <div class="col-xs-12 no-side-padding">
-            <div class="row">
-              <div class="col-xs-2 col-xl-7 endpoint-name name-overview">
+        <div class="endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
+              <div class="table-first-col endpoint-name name-overview">
                 <div class="box-header">
                   <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
                     <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
@@ -178,7 +175,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Queue Length-->
-              <div class="col-xs-2 col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'queue-length'"></EndpointGraph>-->
@@ -192,7 +189,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Throughput-->
-              <div class="col-xs-2 col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'throughput'"></EndpointGraph>-->
@@ -206,7 +203,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Scheduled Retries-->
-              <div class="col-xs-2 col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'retries'"></EndpointGraph>-->
@@ -220,7 +217,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Processing Time-->
-              <div class="col-xs-2 col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'processing-time'"></EndpointGraph>-->
@@ -235,7 +232,7 @@ function formatGraphDecimal(input, deci) {
                 </div>
               </div>
               <!--Critical Time-->
-              <div class="col-xs-2 col-xl-1 no-side-padding">
+              <div class="table-col">
                 <div class="box-header">
                     <div class="no-side-padding">
                         <!--<EndpointGraph :type="'critical-time'"></EndpointGraph>-->
@@ -249,10 +246,10 @@ function formatGraphDecimal(input, deci) {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+
+
         </div>
-      </div>
+
     </div>
   </section>
 </template>
