@@ -1828,7 +1828,6 @@ p.col-sort-active {
 
 .endpoint-status {
     display: inline-block;
-    position: absolute;
     top: 1px;
     margin-left: 7px;
     padding-left: 0;
