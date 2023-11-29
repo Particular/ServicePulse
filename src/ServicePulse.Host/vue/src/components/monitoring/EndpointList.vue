@@ -1,5 +1,5 @@
 ﻿<script setup>
-import { ref, watchEffect } from "vue";
+import { ref } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
 /*import EndpointGraph from "./EndpointGraph.vue";*/
 import D3Graph from "./D3Graph.vue";
@@ -8,12 +8,12 @@ import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter
 import MonitoringNoData from "./MonitoringNoData.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 
-const props = defineProps({
-  endpoints: Array,
+const settings = defineProps({
+  endpoints: Object,
 });
 
 
-const endpoints = ref([]);
+const endpoints = ref(settings.endpoints);
 const historyPeriod = 1;
 const router = useRouter();
 const hasData = ref(false);
@@ -26,9 +26,6 @@ const smallGraphsMinimumYAxis = {
     criticalTime: 10
 };
 
-watchEffect(()=> {
-  endpoints.value = props.endpoints || [];
-})
 
 /* function updateUI() {
   if (endpoints.value.length > 0) {
