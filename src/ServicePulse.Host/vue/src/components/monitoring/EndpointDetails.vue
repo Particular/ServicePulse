@@ -376,7 +376,7 @@ onMounted(() => {
           </div>
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
-            <div class="filter-group filter-monitoring">
+            <div class="filter-group-details filter-monitoring">
               <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
             </div>
           </div>
