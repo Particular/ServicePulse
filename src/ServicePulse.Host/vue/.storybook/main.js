@@ -5,6 +5,7 @@ const config = {
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
+    "storybook-vue3-router",
   ],
   framework: {
     name: "@storybook/vue3-vite",
