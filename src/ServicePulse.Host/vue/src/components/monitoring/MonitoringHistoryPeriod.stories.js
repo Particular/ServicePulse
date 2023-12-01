@@ -214,3 +214,37 @@ export const CookieSetTo10QueryHistoryPeriod60 = {
     },
   },
 };
+
+export const CookieSetTo10QueryHistoryPeriod45 = {
+  args: {
+    cookie: { set: true, cVal: 10 },
+    path: "/monitoring?historyPeriod=45",
+    query: {
+      historyPeriod: 45,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "This story shows the selected history period if there is a cookie saved with 'history_period' set to 10, but the 'history_period' query string is set incorrectly to 45",
+      },
+    },
+  },
+};
+
+export const NoCookieQueryHistoryPeriod45 = {
+  args: {
+    cookie: { set: false, cVal: undefined },
+    path: "/monitoring?historyPeriod=45",
+    query: {
+      historyPeriod: 45,
+    },
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "This story shows the selected history period if there are no cookies saved and the 'history_period' query string is set incorrectly to 45",
+      },
+    },
+  },
+};
