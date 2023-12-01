@@ -33,6 +33,12 @@ onMounted(() => {
 </template>
 
 <style>
+.nav-pills.period-selector {
+  display: inline-flex;
+  position: relative;
+  top: 30px;
+}
+
 .nav-pills.period-selector > li.active > a,
 .nav-pills.period-selector > li.active > a:hover,
 .nav-pills.period-selector > li.active > a:focus {

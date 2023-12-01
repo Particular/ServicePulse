@@ -117,7 +117,7 @@ onMounted(async () => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group filter-monitoring">
-              <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
+              <PeriodSelector @period-selected="periodSelected"></PeriodSelector>
               <GroupBy :endpoints="isFiltered ? filteredEndpoints : allEndpoints" @group-selector="updateGroupedEndpointList" :key="isFiltered ? filteredEndpoints : allEndpoints" />
               <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" v-model="filterString" />
             </div>
@@ -186,12 +186,6 @@ onMounted(async () => {
   padding-left: 0;
   margin-bottom: 0;
   list-style: none;
-}
-
-.nav.nav-pills.period-selector {
-  display: inline-block;
-  position: relative;
-  top: 30px;
 }
 
 .nav > li {
