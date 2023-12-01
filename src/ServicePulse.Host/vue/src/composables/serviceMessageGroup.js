@@ -15,17 +15,17 @@ export function useGetExceptionGroups(classifier) {
 }
 
 export function useGetExceptionGroupsForEndpoint(classifier, classiferFilter) {
-    return useFetchFromServiceControl("recoverability/groups/" + classifier + "?classifierFilter=" + classiferFilter)
-        .then((response) => {
-            return response.json();
-        })
-        .catch((err) => {
-            console.log(err);
-            var result = {
-                message: "error",
-            };
-            return result;
-        });
+  return useFetchFromServiceControl("recoverability/groups/" + classifier + "?classifierFilter=" + classiferFilter)
+    .then((response) => {
+      return response.json();
+    })
+    .catch((err) => {
+      console.log(err);
+      var result = {
+        message: "error",
+      };
+      return result;
+    });
 }
 
 //get all deleted message groups
