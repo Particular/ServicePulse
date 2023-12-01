@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
 import { useRedirects } from "../composables/serviceRedirects.js";
-import { useGetDefaultPeriod, useHistoryPeriodQueryString } from "../composables/serviceHistoryPeriods.js";
+import { useGetDefaultPeriod } from "../composables/serviceHistoryPeriods.js";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 // Components
 import LicenseExpired from "../components/LicenseExpired.vue";
@@ -21,7 +21,7 @@ const filteredEndpoints = ref([]);
 const grouping = ref([]);
 const route = useRoute();
 const router = useRouter();
-const historyPeriod = ref(useGetDefaultPeriod());
+const historyPeriod = ref(useGetDefaultPeriod(route));
 const filterString = ref("");
 const isFiltered = ref(false);
 const isGrouped = ref(false);
@@ -88,11 +88,7 @@ watch(filterString, async (newValue) => {
 
 function getUrlQueryStrings() {
   const queryParameters = { ...route.query };
-  historyPeriod.value = useHistoryPeriodQueryString(route);
-
-  if (historyPeriod.value === undefined) {
-    historyPeriod.value = useGetDefaultPeriod();
-  }
+  historyPeriod.value = useGetDefaultPeriod(route);
 
   if (queryParameters.filter !== undefined) {
     filterString.value = queryParameters.filter;

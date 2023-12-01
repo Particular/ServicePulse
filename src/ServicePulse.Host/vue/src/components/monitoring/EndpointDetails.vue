@@ -5,7 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import D3LargeGraph from "./D3LargeGraph.vue";
 import D3Graph from "./D3Graph.vue";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
-import { useGetDefaultPeriod, useHistoryPeriodQueryString } from "../../composables/serviceHistoryPeriods.js";
+import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
@@ -49,18 +49,14 @@ endpoint.value.messageTypesAvailable = ref(false);
 endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
-const historyPeriod = ref(useGetDefaultPeriod());
+const historyPeriod = ref(useGetDefaultPeriod(route));
 function periodSelected(period) {
   historyPeriod.value = period;
   //changeRefreshInterval(period.refreshInterval);
 }
 
 function getUrlQueryStrings() {
-  historyPeriod.value = useHistoryPeriodQueryString(route);
-
-  if (historyPeriod.value === undefined) {
-    historyPeriod.value = useGetDefaultPeriod();
-  }
+  historyPeriod.value = useGetDefaultPeriod(route);
 }
 
 function getEndpointDetails() {
