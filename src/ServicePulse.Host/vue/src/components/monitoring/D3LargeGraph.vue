@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import * as d3 from "d3";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { getArrowLabel } from "../../composables/graphLabel.js";
@@ -24,6 +24,7 @@ const root = ref(null);
 var averageLabelToTheRight = getArrowLabel( false, 'AVG' );
 var averageLabelToTheLeft = getArrowLabel( true, 'AVG' );
 
+watchEffect(displayGraphValues, { flush: 'post' });
 
 function displayGraphValues() {
 var avgDecimals = props.avgdecimals || averageDecimalsDefault;
