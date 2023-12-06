@@ -2175,12 +2175,6 @@ i.fa.pa-endpoint-lost.endpoints-overview {
     justify-content: flex-end;
 }
 
-.nav.nav-pills.period-selector {
-    display: inline-block;
-    position: relative;
-    top: 30px;
-}
-
 .nav.nav-pills.period-selector.endpoint-details {
     top: 5px;
 }

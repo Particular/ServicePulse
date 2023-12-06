@@ -1,11 +1,41 @@
 import EndpointList from "./EndpointList.vue";
+import { vueRouter } from "storybook-vue3-router";
+import { useRouter } from "vue-router";
+
+const storyRoutes = [
+  {
+    path: "/",
+    name: "Root",
+    component: EndpointList,
+  },
+  {
+    path: "/monitoring",
+    name: "monitoring",
+    component: EndpointList,
+  },
+];
 
 export default {
   component: EndpointList,
   title: "Monitoring/EndpointList/Endpoint List",
   tags: ["autodocs"],
+  decorators: [vueRouter(storyRoutes)],
   //👇 Our events will be mapped in Storybook UI
   argTypes: {},
+  render: (args) => ({
+    components: { EndpointList },
+    setup() {
+      const router = useRouter();
+
+      router.currentRoute.value.fullPath = args.path || "/";
+      router.currentRoute.value.query = args.query || {};
+
+      return {
+        router, // expose the custom router object to the Vue component
+        args,
+      };
+    },
+  }),
 };
 
 //stories

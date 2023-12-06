@@ -1,36 +1,24 @@
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useGetAllPeriods, saveSelectedPeriod, useGetDefaultPeriod, useHistoryPeriodQueryString } from "../../composables/serviceHistoryPeriods.js";
+import { useGetAllPeriods, saveSelectedPeriod, useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
 
 const emit = defineEmits(["period-selected"]);
-const settings = defineProps({
-  period: { type: Object, default: useGetDefaultPeriod() },
-});
+
 const route = useRoute();
 const router = useRouter();
 const allPeriods = useGetAllPeriods();
-const defaultPeriod = ref(settings.period);
-
-watch(defaultPeriod, () => {
-  const queryParameters = { ...route.query };
-  router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.pVal } });
-});
+const defaultPeriod = ref(useGetDefaultPeriod(route));
 
 function selectHistoryPeriod(period) {
   saveSelectedPeriod(period);
-  defaultPeriod.value = useGetDefaultPeriod();
+  defaultPeriod.value = period;
+  const queryParameters = { ...route.query };
+  router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.pVal } });
   emit("period-selected", period);
 }
 
 onMounted(() => {
-  defaultPeriod.value = settings.period;
-  if (defaultPeriod.value === undefined) {
-    defaultPeriod.value = useHistoryPeriodQueryString(route);
-    if (defaultPeriod.value === undefined) {
-      defaultPeriod.value = useGetDefaultPeriod();
-    }
-  }
   router.push({ query: { historyPeriod: defaultPeriod.value.pVal } });
   selectHistoryPeriod(defaultPeriod.value);
 });
@@ -45,6 +33,12 @@ onMounted(() => {
 </template>
 
 <style>
+.nav-pills.period-selector {
+  display: inline-flex;
+  position: relative;
+  top: 30px;
+}
+
 .nav-pills.period-selector > li.active > a,
 .nav-pills.period-selector > li.active > a:hover,
 .nav-pills.period-selector > li.active > a:focus {
