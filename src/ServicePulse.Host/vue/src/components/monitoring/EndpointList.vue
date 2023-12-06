@@ -2,17 +2,18 @@
 import { ref, watchEffect } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
 import D3Graph from "./D3Graph.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import MonitoringNoData from "./MonitoringNoData.vue";
 import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
+import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
 
 const props = defineProps({
   endpoints: Array,
 });
-
+const route = useRoute();
 const endpoints = ref([]);
-const historyPeriod = 1;
+const historyPeriod = ref(useGetDefaultPeriod(route));
 const router = useRouter();
 const hasData = ref(false);
 const supportsEndpointCount = ref();
