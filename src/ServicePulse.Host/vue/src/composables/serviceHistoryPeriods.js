@@ -19,42 +19,48 @@ export function saveSelectedPeriod(period) {
 }
 
 /**
- * @returns - The saved cookie period object or the default period object (1m)
+ * @returns - An array of all the history period objects
  */
-export function useGetDefaultPeriod() {
-  const storedPeriodValue = cookies.get("history_period");
-  const storedPeriod =
-    periods[
-      periods.findIndex((period) => {
-        return period.pVal == storedPeriodValue;
-      })
-    ];
-
-  if (typeof storedPeriodValue !== "undefined" && typeof storedPeriod !== "undefined") {
-    return storedPeriod;
-  }
-
-  return periods[0];
+export function useGetAllPeriods() {
+  return periods;
 }
 
-export function useHistoryPeriodQueryString(route) {
+/**
+ * @param {Object} route - The route object by using useRoute() from the vue-router dependency
+ * @returns - The saved cookie period object or the default period object (1m)
+ */
+export function useGetDefaultPeriod(route) {
+  let defaultPeriod = useHistoryPeriodQueryString(route);
+  if (defaultPeriod === undefined) {
+    const storedPeriodValue = cookies.get("history_period");
+    const storedPeriod =
+      periods[
+        periods.findIndex((period) => {
+          return period.pVal == storedPeriodValue;
+        })
+      ];
+
+    if (typeof storedPeriodValue !== "undefined" && typeof storedPeriod !== "undefined") {
+      defaultPeriod = storedPeriod;
+    } else {
+      defaultPeriod = periods[0];
+    }
+  }
+
+  return defaultPeriod;
+}
+
+function useHistoryPeriodQueryString(route) {
   const queryParameters = { ...route.query };
 
   if (queryParameters.historyPeriod !== undefined && !isNaN(queryParameters.historyPeriod)) {
     const historyPeriodParam = parseInt(route.query.historyPeriod);
     const foundHistoryPeriod = periods.find((period) => {
-      return period.value === historyPeriodParam;
+      return period.pVal === historyPeriodParam;
     });
     if (foundHistoryPeriod !== undefined) {
       return foundHistoryPeriod;
     }
   }
   return undefined;
-}
-
-/**
- * @returns - An array of all the history period objects
- */
-export function useGetAllPeriods() {
-  return periods;
 }
