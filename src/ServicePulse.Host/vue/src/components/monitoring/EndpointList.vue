@@ -77,8 +77,7 @@ function navigateToMessageGroup($event, groupId) {
 }
 function navigateToEndpointDetails($event, endpointName) {
   if ($event.target.localName !== "button") {
-    //to do historyPeriod
-    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod } });
+    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal} });
   }
 }
 
