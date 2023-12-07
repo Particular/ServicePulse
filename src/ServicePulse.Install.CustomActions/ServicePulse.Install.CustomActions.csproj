@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="WixToolset.Dtf.CustomAction" Version="4.0.0" />
+    <PackageReference Include="WixToolset.Dtf.CustomAction" Version="4.0.3" />
   </ItemGroup>
 
    <ItemGroup>
