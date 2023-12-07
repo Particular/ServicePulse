@@ -7,9 +7,9 @@ const monitoringUrl = ref(configuredMonitoringUrl.value);
 <template>
   <div class="row">
     <div class="col-sm-12">
-      <div class="row box box-no-click">
+      <div class="row">
         <div class="col-sm-12">
-          <div class="row box-header">
+          <div class="row">
             <div class="col-sm-12">
               <div class="text-center monitoring-no-data" >
                 <h1>No monitoring connectivity</h1>
