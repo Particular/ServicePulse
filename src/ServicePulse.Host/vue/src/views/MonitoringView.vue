@@ -68,7 +68,7 @@ function updateGroupedEndpointList(endpointGrouping) {
 }
 
 function periodSelected(period) {
-  historyPeriod.value = period;
+    historyPeriod.value = period;
   //changeRefreshInterval(period.refreshInterval);
 }
 

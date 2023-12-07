@@ -1,6 +1,6 @@
 ﻿<script setup>
 // Composables
-import { ref, onMounted } from "vue";
+import { ref, onMounted,onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import D3LargeGraph from "./D3LargeGraph.vue";
 import D3Graph from "./D3Graph.vue";
@@ -20,8 +20,10 @@ import NoData from "../NoData.vue";
 const route = useRoute();
 const router = useRouter();
 const endpointName = route.params.endpointName;
-
 var showInstancesBreakdown = false;
+let refreshInterval = undefined;
+var disconnectedCount = 0;
+
 if (route.query.tab != "" && route.query.tab != undefined) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
@@ -50,9 +52,10 @@ endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
 const historyPeriod = ref(useGetDefaultPeriod(route));
+
 function periodSelected(period) {
   historyPeriod.value = period;
-  //changeRefreshInterval(period.refreshInterval);
+  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
 }
 
 function getUrlQueryStrings() {
@@ -91,7 +94,6 @@ function updateUI() {
   isLoading.value = false;
 
   if (endpoint.value.error) {
-    //connectivityNotifier.reportFailedConnection();
     if (endpoint.value && endpoint.value.instances) {
       endpoint.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
     }
@@ -105,8 +107,6 @@ function updateUI() {
     } else {
       mergeIn(endpoint.value, endpoint.value);
     }
-
-    //connectivityNotifier.reportSuccessfulConnection();
 
     //sorting
     endpoint.value.instances.sort(function (first, second) {
@@ -199,6 +199,16 @@ function isRemovingEndpointEnabled() {
 }
 
 function getDisconnectedCount() {
+    var checkInterval;
+    return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
+        .then((response) => {
+            console.log(response);
+            disconnectedCount = response.data;
+        })
+        .catch((err) => {
+            console.log('Error while getting disconnected endpoints count from monitoring:' + err);
+            clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
+        });
   //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
   //var checkDisconnectedCount = function () {
   //    monitoringService.getDisconnectedCount().then(result => {
@@ -327,10 +337,24 @@ function formatGraphDecimal(input, deci) {
 //        }
 //    }, "MonitoringConnectionStatusChanged");
 //};
+function changeRefreshInterval(milliseconds) {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+  refreshInterval = setInterval(() => {
+    getEndpointDetails();
+  }, milliseconds);
+}
+onUnmounted(() => {
+    if (typeof refreshInterval !== "undefined") {
+        clearInterval(refreshInterval);
+    }
+});
 onMounted(() => {
   getUrlQueryStrings();
   getEndpointDetails();
-  //getDisconnectedCount(); // for refresh interval
+  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
+  getDisconnectedCount(); // for refresh interval
 });
 </script>
 
