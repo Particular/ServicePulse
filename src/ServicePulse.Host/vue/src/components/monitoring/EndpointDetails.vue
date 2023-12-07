@@ -199,7 +199,7 @@ function isRemovingEndpointEnabled() {
 }
 
 function getDisconnectedCount() {
-  return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
+  //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
   //var checkDisconnectedCount = function () {
   //    monitoringService.getDisconnectedCount().then(result => {
   //        notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
@@ -330,7 +330,7 @@ function formatGraphDecimal(input, deci) {
 onMounted(() => {
   getUrlQueryStrings();
   getEndpointDetails();
-  getDisconnectedCount(); // for refresh interval
+  //getDisconnectedCount(); // for refresh interval
 });
 </script>
 
@@ -343,7 +343,7 @@ onMounted(() => {
         <!--MonitoringNotAvailable-->
         <div class="row">
           <div class="col-sm-12">
-            <MonitoringNotAvailable v-if="!isLoading && !loadedSuccessfully"></MonitoringNotAvailable>
+            <MonitoringNotAvailable  v-if="monitoringConnectionState.unableToConnect || useIsMonitoringDisabled()"></MonitoringNotAvailable>
           </div>
         </div>
         <!--Header-->
