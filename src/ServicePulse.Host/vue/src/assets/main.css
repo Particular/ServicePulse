@@ -1727,6 +1727,16 @@ hr.top-separator {
     font-size: 30px;
 }
 
+.monitoring-no-data-content {
+    width: 80%;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 3px;
+}
+.monitoring-no-data-list {
+    text-align: left;
+    list-style-type: circle;
+}
 .monitoring-no-data p {
     font-size: 16px;
     margin-bottom: 20px;
