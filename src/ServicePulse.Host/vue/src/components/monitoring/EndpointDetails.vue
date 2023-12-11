@@ -370,7 +370,7 @@ onMounted(() => {
         <!--MonitoringNotAvailable-->
         <div class="row">
           <div class="col-sm-12">
-            <MonitoringNotAvailable  v-if="monitoringConnectionState.unableToConnect || useIsMonitoringDisabled()"></MonitoringNotAvailable>
+            <MonitoringNotAvailable v-if="monitoringConnectionState.unableToConnect || useIsMonitoringDisabled()"></MonitoringNotAvailable>
           </div>
         </div>
         <!--Header-->
