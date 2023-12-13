@@ -27,34 +27,6 @@ const isFiltered = ref(false);
 const isGrouped = ref(false);
 
 let refreshInterval = undefined;
-/* function startRefreshInterval() {
-  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
-
-  refreshInterval = setInterval(() => {
-    //getAllMonitoredEndpoints();
-    //updateUI();
-  }, 5000);
-} */
-
-/* function stopRefreshInterval() {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
-  }
-} */
-
-/* function changeRefreshInterval(milliseconds) {
-  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
-
-  refreshInterval = setInterval(() => {
-    MonitoringEndpoints.getAllMonitoredEndpoints().then(() => {
-      if (isFiltered.value) {
-        //endpoints.value = useFilterEndpointsByName(endpoints.value, filterString.value);
-        //allEndpoints.value = MonitoringEndpoints.useFilterEndpointsByName(allEndpoints.value, filterString.value);
-      }
-    });
-    //updateUI();
-  }, milliseconds);
-} */
 
 function updateGroupedEndpointList(endpointGrouping) {
   if (endpointGrouping.value.selectedGrouping === 0) {
@@ -114,7 +86,6 @@ onMounted(async () => {
   const result = await useRedirects();
   redirectCount.value = result.total;
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
-  //startRefreshInterval();
 });
 </script>
 
