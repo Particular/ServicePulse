@@ -1,6 +1,6 @@
 <script setup>
 // Composables
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
@@ -26,8 +26,7 @@ const filterString = ref("");
 const isFiltered = ref(false);
 const isGrouped = ref(false);
 
-// let refreshInterval = undefined;
-
+let refreshInterval = undefined;
 /* function startRefreshInterval() {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
@@ -68,8 +67,8 @@ function updateGroupedEndpointList(endpointGrouping) {
 }
 
 function periodSelected(period) {
-    historyPeriod.value = period;
-  //changeRefreshInterval(period.refreshInterval);
+  historyPeriod.value = period;
+  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
 }
 
 watch(filterString, async (newValue) => {
@@ -82,7 +81,7 @@ watch(filterString, async (newValue) => {
   } else {
     isFiltered.value = true;
     await router.push({ query: { ...queryParameters, filter: newValue } }); // Update or add filter query parameter to url
-    filteredEndpoints.value = MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(allEndpoints, newValue);
+    filteredEndpoints.value = await MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(allEndpoints, newValue);
   }
 });
 
@@ -95,11 +94,26 @@ function getUrlQueryStrings() {
   }
 }
 
+function changeRefreshInterval(milliseconds) {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+  refreshInterval = setInterval(async () => {
+    allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
+  }, milliseconds);
+}
+onUnmounted(() => {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+});
+
 onMounted(async () => {
   getUrlQueryStrings();
   allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
   const result = await useRedirects();
   redirectCount.value = result.total;
+  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
   //startRefreshInterval();
 });
 </script>

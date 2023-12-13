@@ -7,6 +7,7 @@ import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
  * @returns the max number of segments in a array of endpoint object names
  */
 export function useFindEndpointSegments(endpoints) {
+    console.log(endpoints.value);
   if (endpoints.value !== undefined) {
     return endpoints.value.reduce(function (acc, cur) {
       return Math.max(acc, cur.name.split(".").length - 1);
