@@ -76,9 +76,9 @@ function navigateToMessageGroup($event, groupId) {
   }
 }
 function navigateToEndpointDetails($event, endpointName) {
-    if ($event.target.localName !== "button") {
-        var selectedPeriod = ref(useGetDefaultPeriod(route));
-        router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal} });
+  if ($event.target.localName !== "button") {
+    var selectedPeriod = ref(useGetDefaultPeriod(route));
+    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
   }
 }
 

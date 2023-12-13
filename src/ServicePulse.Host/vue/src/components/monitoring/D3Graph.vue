@@ -18,7 +18,7 @@ const avgLabelSuffixDefault = "";
 const root = ref(null);
 var averageLabelToTheRight = getArrowLabel(false, "AVG");
 
-watchEffect(displayGraphValues, { flush: 'post' });
+watchEffect(displayGraphValues, { flush: "post" });
 
 function displayGraphValues() {
   var svg = root.value.getElementsByTagName("svg")[0];

@@ -1,6 +1,6 @@
 ﻿<script setup>
 // Composables
-import { ref, onMounted,onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import D3LargeGraph from "./D3LargeGraph.vue";
 import D3Graph from "./D3Graph.vue";
@@ -199,16 +199,16 @@ function isRemovingEndpointEnabled() {
 }
 
 function getDisconnectedCount() {
-    var checkInterval;
-    return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
-        .then((response) => {
-            console.log(response);
-            disconnectedCount = response.data;
-        })
-        .catch((err) => {
-            console.log('Error while getting disconnected endpoints count from monitoring:' + err);
-            clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
-        });
+  var checkInterval;
+  return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
+    .then((response) => {
+      console.log(response);
+      disconnectedCount = response.data;
+    })
+    .catch((err) => {
+      console.log("Error while getting disconnected endpoints count from monitoring:" + err);
+      clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
+    });
   //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
   //var checkDisconnectedCount = function () {
   //    monitoringService.getDisconnectedCount().then(result => {
@@ -346,9 +346,9 @@ function changeRefreshInterval(milliseconds) {
   }, milliseconds);
 }
 onUnmounted(() => {
-    if (typeof refreshInterval !== "undefined") {
-        clearInterval(refreshInterval);
-    }
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
 });
 onMounted(() => {
   getUrlQueryStrings();
@@ -367,7 +367,7 @@ onMounted(() => {
         <!--MonitoringNotAvailable-->
         <div class="row">
           <div class="col-sm-12">
-            <MonitoringNotAvailable  v-if="monitoringConnectionState.unableToConnect || useIsMonitoringDisabled()"></MonitoringNotAvailable>
+            <MonitoringNotAvailable v-if="monitoringConnectionState.unableToConnect || useIsMonitoringDisabled()"></MonitoringNotAvailable>
           </div>
         </div>
         <!--Header-->
