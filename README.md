@@ -1,9 +1,10 @@
 # ServicePulse ![Current Version](https://img.shields.io/github/release/particular/servicepulse.svg?style=flat&label=current%20version)
 
-## Production monitoring for distributed systems
-Real-time monitoring customized to fit distributed applications in general, and your application's specific needs in particular.
+ServicePulse provides real-time production monitoring customized to fit distributed applications in general, and your application's specific needs in particular. Keep track of the health of your system's endpoints, monitor for any processing errors, send failed messages for reprocessing, and make sure your specific environment's needs are met, all in one consolidated dashboard.
 
-Keep track of the health of your system's endpoints, monitor for any processing errors, send failed messages for reprocessing and make sure your specific environment's needs are met, all in one consolidated dashboard.
+ServicePulse is part of the [Particular Service Platform](https://particular.net/service-platform), which includes [NServiceBus](https://particular.net/nservicebus) and tools to build, monitor, and debug distributed systems.
+
+See the [ServicePulse documentation](https://docs.particular.net/servicepulse/) for more information.
 
 ## Setting up the project for development
 
