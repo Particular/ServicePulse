@@ -6,7 +6,7 @@ import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
 import { useRedirects } from "../composables/serviceRedirects.js";
 import { useGetDefaultPeriod } from "../composables/serviceHistoryPeriods.js";
-import { useEndpointStore } from "../stores/EndpointStore";
+import { useMonitoringStore } from "../stores/MonitoringStore";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 // Components
 import LicenseExpired from "../components/LicenseExpired.vue";
@@ -18,7 +18,7 @@ import PeriodSelector from "../components/monitoring/MonitoringHistoryPeriod.vue
 import MonitoringNoData from "../components/monitoring/MonitoringNoData.vue";
 
 const redirectCount = ref(0);
-const endpointStore = useEndpointStore();
+const monitoringStore = useMonitoringStore();
 const allEndpoints = ref([]);
 const filteredEndpoints = ref([]);
 const grouping = ref([]);
@@ -85,8 +85,8 @@ onUnmounted(() => {
 });
 onMounted(async () => {
   getUrlQueryStrings();
-  await endpointStore.fill(historyPeriod.value.pVal);
-  allEndpoints.value = endpointStore.endpointList;
+  await monitoringStore.updateEndpointList(historyPeriod.value.pVal);
+  allEndpoints.value = monitoringStore.endpointList;
   const result = await useRedirects();
   redirectCount.value = result.total;
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
@@ -99,8 +99,8 @@ onMounted(async () => {
     <div class="container monitoring-view">
       <ServiceControlNotAvailable />
       <template v-if="connectionState.connected">
-        <MonitoringNoData v-if="endpointStore.isEmpty"></MonitoringNoData>
-        <div v-if="!endpointStore.isEmpty" class="row monitoring-head">
+        <MonitoringNoData v-if="monitoringStore.isEndpointListEmpty"></MonitoringNoData>
+        <div v-if="!monitoringStore.isEndpointListEmpty" class="row monitoring-head">
           <div class="col-sm-4 no-side-padding list-section">
             <h1>Endpoints overview</h1>
           </div>
