@@ -1,6 +1,6 @@
 <script setup>
 // Composables
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch,onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
@@ -26,36 +26,7 @@ const filterString = ref("");
 const isFiltered = ref(false);
 const isGrouped = ref(false);
 
-// let refreshInterval = undefined;
-
-/* function startRefreshInterval() {
-  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
-
-  refreshInterval = setInterval(() => {
-    //getAllMonitoredEndpoints();
-    //updateUI();
-  }, 5000);
-} */
-
-/* function stopRefreshInterval() {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
-  }
-} */
-
-/* function changeRefreshInterval(milliseconds) {
-  stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
-
-  refreshInterval = setInterval(() => {
-    MonitoringEndpoints.getAllMonitoredEndpoints().then(() => {
-      if (isFiltered.value) {
-        //endpoints.value = useFilterEndpointsByName(endpoints.value, filterString.value);
-        //allEndpoints.value = MonitoringEndpoints.useFilterEndpointsByName(allEndpoints.value, filterString.value);
-      }
-    });
-    //updateUI();
-  }, milliseconds);
-} */
+let refreshInterval = undefined;
 
 function updateGroupedEndpointList(endpointGrouping) {
   if (endpointGrouping.value.selectedGrouping === 0) {
@@ -69,7 +40,7 @@ function updateGroupedEndpointList(endpointGrouping) {
 
 function periodSelected(period) {
   historyPeriod.value = period;
-  //changeRefreshInterval(period.refreshInterval);
+  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
 }
 
 watch(filterString, async (newValue) => {
@@ -82,7 +53,7 @@ watch(filterString, async (newValue) => {
   } else {
     isFiltered.value = true;
     await router.push({ query: { ...queryParameters, filter: newValue } }); // Update or add filter query parameter to url
-    filteredEndpoints.value = MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(allEndpoints, newValue);
+    filteredEndpoints.value = await MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(allEndpoints, newValue);
   }
 });
 
@@ -95,12 +66,26 @@ function getUrlQueryStrings() {
   }
 }
 
+function changeRefreshInterval(milliseconds) {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+  refreshInterval = setInterval(async () => {
+    allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
+  }, milliseconds);
+}
+
+onUnmounted(() => {
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
+});
 onMounted(async () => {
   getUrlQueryStrings();
   allEndpoints.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriod.value.pVal);
   const result = await useRedirects();
   redirectCount.value = result.total;
-  //startRefreshInterval();
+  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
 });
 </script>
 
