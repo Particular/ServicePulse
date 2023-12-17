@@ -19,10 +19,10 @@ const props = defineProps({
 const averageDecimalsDefault = 2;
 const avgLabelSuffixDefault = "";
 const root = ref(null);
-var averageLabelToTheRight = getArrowLabel( false, 'AVG' );
-var averageLabelToTheLeft = getArrowLabel( true, 'AVG' );
+var averageLabelToTheRight = getArrowLabel(false, "AVG");
+var averageLabelToTheLeft = getArrowLabel(true, "AVG");
 
-watchEffect(displayGraphValues, { flush: 'post' });
+watchEffect(displayGraphValues, { flush: "post" });
 
 function displayGraphValues() {
   var avgDecimals = props.avgdecimals || averageDecimalsDefault;

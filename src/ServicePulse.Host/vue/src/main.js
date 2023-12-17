@@ -1,16 +1,14 @@
 import { createApp } from "vue";
+import { Tooltip } from "bootstrap";
+import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
+import SimpleTypeahead from "vue3-simple-typeahead";
 import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import SimpleTypeahead from "vue3-simple-typeahead";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 import "./assets/main.css";
-import { Tooltip } from "bootstrap";
 
-const app = createApp(App);
-
-app.use(router);
 const toastOptions = {
   position: POSITION.BOTTOM_RIGHT,
   timeout: 5000,
@@ -20,14 +18,16 @@ const toastOptions = {
   toastClassName: "vue-toast",
   closeButtonClassName: "toast-close-button",
 };
-app.use(Toast, toastOptions);
-app.use(SimpleTypeahead);
 
-// make v-tooltip available in all components
-app.directive("tooltip", {
-  mounted: (element) => {
-    new Tooltip(element);
-  },
-});
-
-app.mount("#app");
+createApp(App)
+  .use(router)
+  .use(Toast, toastOptions)
+  .use(SimpleTypeahead)
+  .use(createPinia())
+  // make v-tooltip available in all components
+  .directive("tooltip", {
+    mounted: (element) => {
+      new Tooltip(element);
+    },
+  })
+  .mount("#app");
