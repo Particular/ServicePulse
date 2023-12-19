@@ -10,6 +10,7 @@ import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
 import { useGetExceptionGroupsForEndpoint } from "../../composables/serviceMessageGroup.js";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -23,6 +24,8 @@ const endpointName = route.params.endpointName;
 var showInstancesBreakdown = false;
 let refreshInterval = undefined;
 var disconnectedCount = 0;
+
+const monitoringStore = useMonitoringStore();
 
 if (route.query.tab != "" && route.query.tab != undefined) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
@@ -62,31 +65,48 @@ function getUrlQueryStrings() {
   historyPeriod.value = useGetDefaultPeriod(route);
 }
 
-function getEndpointDetails() {
+async function getEndpointDetails() {
   //get historyPeriod
   var selectedHistoryPeriod = historyPeriod.value.pVal;
-  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
-      .then((response) => {
-        if (response.status === 404) {
-          endpoint.value = { notFound: true };
-        } else if (response.status !== 200) {
-          endpoint.value = { error: true };
-        }
-        return response.json();
-      })
-      .then((data) => {
+    if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
+    await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
+        var response = monitoringStore.endpointDetails;
+    if (response.status === 404) {
+      endpoint.value = { notFound: true };
+    } else if (response.status !== 200) {
+      endpoint.value = { error: true };
+    } else {
+      var data = response.json();
+      if (!data) {
         filterOutSystemMessage(data);
         var endpointDetails = data;
         endpointDetails.isScMonitoringDisconnected = false;
         endpointDetails.isStale = true;
         Object.assign(endpoint.value, endpointDetails);
-        return updateUI();
-      })
-      .catch((err) => {
-        console.log(err);
-        return { error: err };
-      });
+        updateUI();
+      }
+    }
+    //return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
+    //.then((response) => {
+    //  if (response.status === 404) {
+    //    endpoint.value = { notFound: true };
+    //  } else if (response.status !== 200) {
+    //    endpoint.value = { error: true };
+    //  }
+    //  return response.json();
+    //})
+    //.then((data) => {
+    //  filterOutSystemMessage(data);
+    //  var endpointDetails = data;
+    //  endpointDetails.isScMonitoringDisconnected = false;
+    //  endpointDetails.isStale = true;
+    //  Object.assign(endpoint.value, endpointDetails);
+    //  return updateUI();
+    //})
+    //.catch((err) => {
+    //  console.log(err);
+    //  return { error: err };
+    //});
   }
 }
 
@@ -107,7 +127,6 @@ function updateUI() {
     } else {
       mergeIn(endpoint.value, endpoint.value);
     }
-
 
     //sorting
     endpoint.value.instances.sort(function (first, second) {
@@ -199,18 +218,17 @@ function isRemovingEndpointEnabled() {
     });
 }
 
-
 function getDisconnectedCount() {
-    var checkInterval;
-    return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
-        .then((response) => {
-            console.log(response);
-            disconnectedCount = response.data;
-        })
-        .catch((err) => {
-            console.log('Error while getting disconnected endpoints count from monitoring:' + err);
-            clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
-        });
+  var checkInterval;
+  return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
+    .then((response) => {
+      //console.log(response);
+      disconnectedCount = response.data;
+    })
+    .catch((err) => {
+      console.log("Error while getting disconnected endpoints count from monitoring:" + err);
+      clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
+    });
   //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
   //var checkDisconnectedCount = function () {
   //    monitoringService.getDisconnectedCount().then(result => {
@@ -348,9 +366,9 @@ function changeRefreshInterval(milliseconds) {
   }, milliseconds);
 }
 onUnmounted(() => {
-    if (typeof refreshInterval !== "undefined") {
-        clearInterval(refreshInterval);
-    }
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
 });
 
 onMounted(() => {
