@@ -142,8 +142,8 @@ ServicePulse is supported on the following desktop browser versions:
 
 - Chrome [latest major version](https://chromereleases.googleblog.com/)
 - Edge with EdgeHTML v17+
-- Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/organizations/)
-- Safari [latest major version](https://developer.apple.com/safari/download/)
+- Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/enterprise/)
+- Safari [latest major version](https://developer.apple.com/safari/)
 
 ## Docker image deployment
 
