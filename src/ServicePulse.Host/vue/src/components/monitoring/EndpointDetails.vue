@@ -11,6 +11,7 @@ import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
 import { useGetExceptionGroupsForEndpoint } from "../../composables/serviceMessageGroup.js";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { useFailedMessageStore } from "../../stores/FailedMessageStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -26,6 +27,7 @@ let refreshInterval = undefined;
 var disconnectedCount = 0;
 
 const monitoringStore = useMonitoringStore();
+const failedMessageStore = useFailedMessageStore();
 
 if (route.query.tab != "" && route.query.tab != undefined) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
@@ -119,15 +121,15 @@ function updateUI() {
     endpoint.value.isScMonitoringDisconnected = false;
     negativeCriticalTimeIsPresent.value = false;
 
-    endpoint.value.instances.forEach(function (instance) {
+    endpoint.value.instances.forEach(async function (instance) {
       //get errror count by instance id
-      useGetExceptionGroupsForEndpoint("Endpoint Instance", instance.id).then((result) => {
-        if (result && result.length > 0) {
-          instance.serviceControlId = result[0].id;
-          instance.errorCount = result[0].count;
-          instance.isScMonitoringDisconnected = false;
+
+        await failedMessageStore.getFailedMessagesList(instance.id);
+        if (!failedMessageStore.isFailedMessagesEmpty) {
+            instance.serviceControlId = failedMessageStore.serviceControlId;
+            instance.errorCount = failedMessageStore.errorCount;
+            instance.isScMonitoringDisconnected = false;
         }
-      });
       endpoint.value.isStale = endpoint.value.isStale && instance.isStale;
       negativeCriticalTimeIsPresent.value |= formatGraphDuration(instance.metrics.criticalTime).value < 0;
     });
