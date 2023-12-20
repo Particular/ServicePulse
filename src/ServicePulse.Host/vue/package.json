@@ -15,7 +15,6 @@
     "test-storybook": "test-storybook"
   },
   "dependencies": {
-    "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.10.3",
     "d3": "^7.6.1",
