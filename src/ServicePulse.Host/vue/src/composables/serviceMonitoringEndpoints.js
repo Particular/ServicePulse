@@ -98,12 +98,12 @@ export async function useGetDisconnectedEndpointCount() {
     var disconnectedCount = 0;
         try {
             const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-            disconnectedCount = response.data
+            disconnectedCount = response.data;
         } catch (error) {
             console.error(error);
         }
-    
-    return endpointDetails.value;
+
+    return disconnectedCount;
 }
 async function addEndpointsFromScSubscription(endpoints) {
   const exceptionGroups = await useGetExceptionGroups("Endpoint Name");
