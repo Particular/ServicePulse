@@ -8,9 +8,9 @@ export const useFailedMessageStore = defineStore("FailedMessageStore", {
     };
   },
   actions: {
-      async getFailedMessagesList(instanceId) {
-          this.failedMessagesList = await useGetExceptionGroupsForEndpoint("Endpoint Instance", instanceId);
-    }
+      async getFailedMessagesList(classifier, classiferFilter) {
+          this.failedMessagesList = await useGetExceptionGroupsForEndpoint(classifier, classiferFilter);
+      },
   },
   getters: {
       serviceControlId: (state) => state.failedMessagesList[0].id,

@@ -9,7 +9,7 @@ import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js"
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
-import { useGetExceptionGroupsForEndpoint } from "../../composables/serviceMessageGroup.js";
+//stores
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { useFailedMessageStore } from "../../stores/FailedMessageStore";
 // Components
@@ -84,7 +84,7 @@ async function getEndpointDetails() {
   }
 }
 
-function updateUI() {
+async function updateUI() {
   isLoading.value = false;
 
   if (endpoint.value.error) {
@@ -123,8 +123,7 @@ function updateUI() {
 
     endpoint.value.instances.forEach(async function (instance) {
       //get errror count by instance id
-
-        await failedMessageStore.getFailedMessagesList(instance.id);
+        await failedMessageStore.getFailedMessagesList("Endpoint Instance",instance.id);
         if (!failedMessageStore.isFailedMessagesEmpty) {
             instance.serviceControlId = failedMessageStore.serviceControlId;
             instance.errorCount = failedMessageStore.errorCount;
@@ -137,12 +136,12 @@ function updateUI() {
     loadedSuccessfully.value = true;
   }
   //get errror count by endpoint name
-  useGetExceptionGroupsForEndpoint("Endpoint Name", endpointName).then((result) => {
-    if (result.length > 0) {
-      endpoint.value.serviceControlId = result[0].id;
-      endpoint.value.errorCount = result[0].count;
+    await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
+    if (!failedMessageStore.isFailedMessagesEmpty) {
+        endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
+        endpoint.value.errorCount = failedMessageStore.errorCount;
     }
-  });
+
 }
 
 function filterOutSystemMessage(data) {
@@ -196,7 +195,6 @@ function getDisconnectedCount() {
   var checkInterval;
   return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
     .then((response) => {
-      //console.log(response);
       disconnectedCount = response.data;
     })
     .catch((err) => {

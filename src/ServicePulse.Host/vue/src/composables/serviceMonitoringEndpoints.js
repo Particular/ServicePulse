@@ -90,6 +90,21 @@ export async function useGetEndpointDetails(endpointName, historyPeriod=1) {
     }
     return endpointDetails.value;
 }
+
+/**
+ * @returns {Number} - The count of disconnected endpoint
+ */
+export async function useGetDisconnectedEndpointCount() {
+    var disconnectedCount = 0;
+        try {
+            const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
+            disconnectedCount = response.data
+        } catch (error) {
+            console.error(error);
+        }
+    
+    return endpointDetails.value;
+}
 async function addEndpointsFromScSubscription(endpoints) {
   const exceptionGroups = await useGetExceptionGroups("Endpoint Name");
 
