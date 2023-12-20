@@ -72,6 +72,24 @@ export function useGroupEndpoints(endpoints, numberOfSegments) {
   return [...groups.values()];
 }
 
+/**
+ * @param {string}  - the endpoint name whose details is needed
+ * @param {Number} - The history period value.  The default is (1)
+ * @returns {object} - The details of the endpoint
+ */
+export async function useGetEndpointDetails(endpointName, historyPeriod=1) {
+    const endpointDetails = ref({});
+    if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
+        try {
+            const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
+            const data = await response.json();
+            endpointDetails.value = data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    return endpointDetails.value;
+}
 async function addEndpointsFromScSubscription(endpoints) {
   const exceptionGroups = await useGetExceptionGroups("Endpoint Name");
 

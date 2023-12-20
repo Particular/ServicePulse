@@ -70,43 +70,15 @@ async function getEndpointDetails() {
   var selectedHistoryPeriod = historyPeriod.value.pVal;
     if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
     await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
-        var response = monitoringStore.endpointDetails;
-    if (response.status === 404) {
-      endpoint.value = { notFound: true };
-    } else if (response.status !== 200) {
-      endpoint.value = { error: true };
-    } else {
-      var data = response.json();
-      if (!data) {
-        filterOutSystemMessage(data);
-        var endpointDetails = data;
+    var responseData = monitoringStore.endpointDetails;
+    if (responseData !=null ) {
+        filterOutSystemMessage(responseData);
+        var endpointDetails = responseData;
         endpointDetails.isScMonitoringDisconnected = false;
         endpointDetails.isStale = true;
         Object.assign(endpoint.value, endpointDetails);
         updateUI();
-      }
     }
-    //return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
-    //.then((response) => {
-    //  if (response.status === 404) {
-    //    endpoint.value = { notFound: true };
-    //  } else if (response.status !== 200) {
-    //    endpoint.value = { error: true };
-    //  }
-    //  return response.json();
-    //})
-    //.then((data) => {
-    //  filterOutSystemMessage(data);
-    //  var endpointDetails = data;
-    //  endpointDetails.isScMonitoringDisconnected = false;
-    //  endpointDetails.isStale = true;
-    //  Object.assign(endpoint.value, endpointDetails);
-    //  return updateUI();
-    //})
-    //.catch((err) => {
-    //  console.log(err);
-    //  return { error: err };
-    //});
   }
 }
 

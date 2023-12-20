@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { useGetAllMonitoredEndpoints } from "../composables/serviceMonitoringEndpoints";
-import { useFetchFromMonitoring } from "../composables/serviceServiceControlUrls";
+import { useGetAllMonitoredEndpoints, useGetEndpointDetails } from "../composables/serviceMonitoringEndpoints";
+
 
 export const useMonitoringStore = defineStore("MonitoringStore", {
   state: () => {
@@ -11,10 +11,10 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
   },
   actions: {
     async updateEndpointList(historyPeriod) {
-      this.endpointList = await useGetAllMonitoredEndpoints(historyPeriod);
+          this.endpointList = await useGetAllMonitoredEndpoints(historyPeriod);
     },
     async getEndpointDetails(endpointName, historyPeriod) {
-        this.endpointDetails = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
+        this.endpointDetails = await useGetEndpointDetails(endpointName, historyPeriod);
     },
   },
   getters: {
