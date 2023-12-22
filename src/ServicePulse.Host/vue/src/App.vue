@@ -5,7 +5,6 @@ import { useServiceControlVersion, useServiceControl } from "./composables/servi
 import { useLicense } from "./composables/serviceLicense.js";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
-import "@popperjs/core";
 import "bootstrap";
 
 useServiceControlUrls();
