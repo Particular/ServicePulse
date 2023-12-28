@@ -546,6 +546,7 @@ onMounted(() => {
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">Critical Time <span class="table-header-unit">(t)</span></div>
                     </div>
                   </div>
+                  <div class="table-col col-tiny"></div>
                 </div>
 
                 <NoData v-if="endpoint.instances.length == 0" title="No messages" message="No messages processed in this period of time"></NoData>
@@ -635,7 +636,7 @@ onMounted(() => {
                           </div>
 
                           <!--remove endpoint-->
-                          <div class="table-col col-small" style="width: 0;">
+                          <div class="table-col col-tiny">
                             <a v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
                               <i class="fa fa-trash" v-tooltip :title="`Remove endpoint`"></i>
                             </a>

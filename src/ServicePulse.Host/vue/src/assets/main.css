@@ -2795,24 +2795,6 @@ ul.dropdown-menu li a span {
     color: #aaa;
 }
 
-.endpoint-row a.remove-endpoint {
-    display: block;
-    position: absolute;
-    top: 17px;
-    right: 22px;
-}
-
-.endpoint-row:hover a.remove-endpoint {
-    display: block;
-    position: absolute;
-    top: 17px;
-    right: 22px;
-}
-
-a.remove-endpoint {
-    margin-left: 7px;
-}
-
 a.remove-endpoint:hover {
     cursor: pointer;
 }
@@ -4039,10 +4021,15 @@ div.alert.alert-warning strong {
     width: 16%;
 }
 .col-wide {
-    width: 36%;
+    width: 34%;
 }
 .col-small {
     width: 16%;
+}
+.col-tiny {
+    width: 0;
+    display: flex;
+    align-items: center;
 }
 @media only screen and (min-width: 1730px) {
     .table-first-col {
@@ -4052,10 +4039,13 @@ div.alert.alert-warning strong {
         width: 14%;
     }
     .col-wide {
-        width: 44%;
+        width: 42%;
     }
     .col-small {
         width: 14%;
+    }
+    .col-tiny {
+        width: 0;
     }
 }
 .endpoint-row {
