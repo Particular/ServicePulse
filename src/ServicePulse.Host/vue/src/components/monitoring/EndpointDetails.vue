@@ -516,33 +516,33 @@ onMounted(() => {
 
           <!--showInstancesBreakdown-->
           <section v-if="showInstancesBreakdown" class="endpoint-instances">
-            <div class="row">
-              <div class="col-xs-12 no-side-padding">
+            <div>
+              
                 <!-- Breakdown by instance-->
                 <!--headers-->
-                <div v-if="loadedSuccessfully" class="row box box-no-click table-head-row">
-                  <div class="col-xs-4 col-xl-8">
-                    <div class="row box-header">
+                <div v-if="loadedSuccessfully" class="table-head-row">
+                  <div class="table-first-col col-wide">
+                    <div class="box-header">
                       <div class="col-xs-12">Instance Name</div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`">Throughput <span class="table-header-unit">(msgs/s)</span></div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Processing time: The time taken for a receiving endpoint to successfully process a message.`">Processing Time <span class="table-header-unit">(t)</span></div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">Critical Time <span class="table-header-unit">(t)</span></div>
                     </div>
                   </div>
@@ -550,17 +550,18 @@ onMounted(() => {
 
                 <NoData v-if="endpoint.instances.length == 0" title="No messages" message="No messages processed in this period of time"></NoData>
 
-                <div class="row endpoint-instances">
-                  <div class="col-xs-12 no-side-padding">
-                    <div class="row box endpoint-row" v-for="(instance, id) in endpoint.instances" :key="id">
-                      <div class="col-xs-12 no-side-padding">
-                        <div class="row">
-                          <div class="col-xs-4 col-xl-8 endpoint-name">
-                            <div class="row box-header">
-                              <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis floatleft" v-tooltip :title="instance.name">
+                <div class="endpoint-instances">
+                  
+                    <div class="endpoint-row" v-for="(instance, id) in endpoint.instances" :key="id">
+                      
+                        
+                          <div class="table-first-col endpoint-name col-wide">
+                            <div class="endpoint-name_wrapper">
+                              <div class="" v-tooltip :title="instance.name">
                                 {{ instance.name }}
                               </div>
-                              <div class="col-lg-4 no-side-padding endpoint-status">
+                            </div>
+                            <div class="endpoint-status">
                                 <span class="warning" v-if="formatGraphDuration(instance.metrics.criticalTime).value < 0">
                                   <i class="fa pa-warning" v-tooltip :title="`Warning: instance currently has negative critical time, possibly because of a clock drift.`"></i>
                                 </span>
@@ -577,9 +578,8 @@ onMounted(() => {
                                   </a>
                                 </span>
                               </div>
-                            </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'"></D3Graph>
@@ -591,7 +591,7 @@ onMounted(() => {
                               </div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
@@ -603,7 +603,7 @@ onMounted(() => {
                               </div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'"></D3Graph>
@@ -618,7 +618,7 @@ onMounted(() => {
                               </div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
@@ -635,17 +635,17 @@ onMounted(() => {
                           </div>
 
                           <!--remove endpoint-->
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small" style="width: 0;">
                             <a v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
                               <i class="fa fa-trash" v-tooltip :title="`Remove endpoint`"></i>
                             </a>
                           </div>
-                        </div>
-                      </div>
+                        
+                      
                     </div>
-                  </div>
+                  
                 </div>
-              </div>
+              
             </div>
           </section>
 
@@ -660,29 +660,29 @@ onMounted(() => {
 
                 <!-- Breakdown by message type-->
                 <!--headers-->
-                <div v-if="loadedSuccessfully" class="row box box-no-click table-head-row">
-                  <div class="col-xs-4 col-xl-8">
-                    <div class="row box-header">
+                <div v-if="loadedSuccessfully" class="table-head-row">
+                  <div class="table-first-col col-wide">
+                    <div class="box-header">
                       <div class="col-xs-12">Message type name</div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`">Throughput <span class="table-header-unit">(msgs/s)</span></div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Processing time: The time taken for a receiving endpoint to successfully process a message.`">Processing Time <span class="table-header-unit">(t)</span></div>
                     </div>
                   </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
+                  <div class="table-col col-small">
+                    <div class="box-header">
                       <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">Critical Time <span class="table-header-unit">(t)</span></div>
                     </div>
                   </div>
@@ -690,14 +690,14 @@ onMounted(() => {
 
                 <no-data v-if="endpoint.messageTypes.length == 0" message="No messages processed in this period of time."></no-data>
 
-                <div class="row">
-                  <div class="col-xs-12 no-side-padding">
-                    <div class="row box endpoint-row" v-for="(messageType, id) in endpoint.messageTypes" :key="id" ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage">
-                      <div class="col-xs-12 no-side-padding">
-                        <div class="row">
-                          <div class="col-xs-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
-                            <div class="row box-header">
-                              <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
+                
+                  
+                    <div class="endpoint-row" v-for="(messageType, id) in endpoint.messageTypes" :key="id" ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage">
+                      
+                        
+                          <div class="table-first-col col-wide endpoint-name vertical" uib-tooltip-html="messageType.tooltipText">
+                            <div class="endpoint-name_wrapper">
+                              <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis">
                                 <div class="lead">
                                   {{ messageType.shortName ? messageType.shortName : "Unknown" }}
                                 </div>
@@ -711,7 +711,7 @@ onMounted(() => {
                                 </span>
                               </div>
                             </div>
-                            <div class="row message-type-properties">
+                            <div class="message-type-properties">
                               <div v-if="messageType.typeName && messageType.typeName != 'null' && !messageType.containsTypeHierarchy" class="message-type-part">
                                 {{ messageType.assemblyName + "-" + messageType.assemblyVersion }}
                               </div>
@@ -722,7 +722,7 @@ onMounted(() => {
                               <div v-if="messageType.publicKeyToken && messageType.publicKeyToken != 'null'" class="message-type-part">{{ "PublicKeyToken=" + messageType.publicKeyToken }}</div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'"></D3Graph>
@@ -734,7 +734,7 @@ onMounted(() => {
                               </div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
@@ -746,7 +746,7 @@ onMounted(() => {
                               </div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'processing-time'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'"></D3Graph>
@@ -761,7 +761,7 @@ onMounted(() => {
                               </div>
                             </div>
                           </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
+                          <div class="table-col col-small">
                             <div class="row box-header">
                               <div class="no-side-padding">
                                 <D3Graph :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
@@ -776,11 +776,11 @@ onMounted(() => {
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
+                        
+                      
                     </div>
-                  </div>
-                </div>
+                  
+                
                 <div class="row list-pagination">
                   <ul uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10" boundary-link-numbers="true" ng-change="updateUrl()"></ul>
                 </div>

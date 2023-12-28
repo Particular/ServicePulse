@@ -2007,10 +2007,6 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     text-transform: uppercase;
 }
 
-.message-type-label {
-    margin-top: -8px;
-}
-
 .message-type-part {
     margin-right: 24px;
     color: #8C8C8C;
@@ -4051,11 +4047,23 @@ div.alert.alert-warning strong {
 .table-col {
     width: 16%;
 }
+.col-wide {
+    width: 36%;
+}
+.col-small {
+    width: 16%;
+}
 @media only screen and (min-width: 1730px) {
     .table-first-col {
         width: 30%;
     }
     .table-col {
+        width: 14%;
+    }
+    .col-wide {
+        width: 44%;
+    }
+    .col-small {
         width: 14%;
     }
 }
@@ -4076,6 +4084,12 @@ div.alert.alert-warning strong {
 .endpoint-name {
     display: flex;
     align-items: center;
+}
+
+.vertical {
+    flex-direction: column;
+    align-items: normal;
+    justify-content: center;
 }
 
 .endpoint-name_wrapper {
