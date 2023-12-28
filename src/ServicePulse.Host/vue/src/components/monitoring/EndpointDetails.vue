@@ -369,7 +369,7 @@ onMounted(() => {
             <h1 class="righ-side-ellipsis col-lg-max-10" v-tooltip :title="endpointName">
               {{ endpointName }}
             </h1>
-            <div class="endpoint-status col-xs-2">
+            <div class="endpoint-status">
               <span class="warning" v-if="negativeCriticalTimeIsPresent">
                 <i class="fa pa-warning" v-tooltip :title="`Warning: endpoint currently has negative critical time, possibly because of a clock drift.`"></i>
               </span>
