@@ -350,7 +350,7 @@ body {
     color: #181919 !important;
     font-size: 14px !important;
     font-weight: bold;
-    margin-bottom: 3px;
+    margin-bottom: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1836,12 +1836,6 @@ p.col-sort-active {
     max-width: 600px;
 }
 
-.endpoint-status {
-    display: inline-block;
-    top: 1px;
-    margin-left: 7px;
-    padding-left: 0;
-}
 .floatleft {
     float: left;
     width: auto;
@@ -1863,7 +1857,7 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     color: #777f7f;
 }
 
-.endpoint-status i.fa-envelope:hover {
+.endpoint-status a:hover .fa {
     color: #23527c;
 }
 
@@ -1871,23 +1865,17 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
     margin-left: 5px;
 }
 
-.endpoint-status .badge {
-    position: relative;
-    top: 8px;
-    font-size: 10px;
-    margin-right: 0;
-    left: -10px;
-}
-
 .endpoint-status i.fa-envelope, .endpoint-name i.fa-exclamation-triangle {
     font-size: 20px;
-    margin-left: 6px;
 }
 
 .endpoint-status a {
+    display: block;
     position: relative;
-    top: -4px;
-    padding-left: 5px;
+    margin-left: 15px;
+    padding-right: 13px;
+    padding-bottom: 3px;
+    padding-top: 3px;
 }
 
 .endpoint-status a:hover {
@@ -1918,16 +1906,16 @@ h1 .endpoint-status i.fa-envelope, .endpoint-status i.fa-exclamation-triangle {
 }
 
 .monitoring-head .endpoint-status .badge {
-    position: relative;
-    top: 4px;
-    left: -12px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
     font-size: 10px;
 }
 
 .endpoint-status .badge {
-    position: relative;
-    top: 2px;
-    left: -9px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
     font-size: 10px;
 }
 
@@ -2163,18 +2151,21 @@ i.fa.pa-endpoint-lost.endpoints-overview {
 }
 
 .endpoint-name {
-    margin-top: 15px;
+    display: flex;
+    align-items: center;
 }
 
-.endpoint-name > div > div > a {
+.endpoint-name_text {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
     color: #00729C;
     border-bottom: 1px dotted lightgrey;
+    cursor: pointer;
 }
 
-.endpoint-name > div > div > a:first-child:hover {
+.endpoint-name_text:hover {
+    color: #00729C;
     border-bottom: 1px solid #00729C;
     text-decoration: none !important;
 }
@@ -2333,10 +2324,6 @@ div.alert.alert-warning strong {
 .alert.alert-warning {
     font-size: 16px;
     margin: 20px 0 0;
-}
-
-.lead.endpoint-details-link.righ-side-ellipsis {
-    color: #00729C !important;
 }
 
 .pre-wrap {
@@ -2855,7 +2842,7 @@ a.remove-endpoint:hover i {
     justify-content: flex-end;
     width: 50%;
     position: relative;
-    top: -3px;
+    top: 0;
     margin-top: -26px;
     float:right;
 }
@@ -2864,7 +2851,7 @@ a.remove-endpoint:hover i {
     justify-content: flex-end;
     width: 50%;
     position: relative;
-    top: -3px;
+    top: 0;
     margin-top: -26px;
     float: right;
 }
@@ -2970,6 +2957,7 @@ a.remove-endpoint:hover i {
     color: #777;
     font-weight: normal;
     margin-left: 3px;
+    cursor: default;
 }
 
 .monitoring-lost-link i {
@@ -4073,12 +4061,36 @@ div.alert.alert-warning strong {
 }
 .endpoint-row {
     display: flex;
-    height: 61px;
     position: relative;
-    padding: 2px 0 4px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     border-top: 1px solid #eee;
     border-right: 1px solid #fff;
     border-bottom: 1px solid #eee;
     border-left: 1px solid #fff;
     background-color: #FFF;
+}
+
+/* Endpoint name*/
+
+.endpoint-name {
+    display: flex;
+    align-items: center;
+}
+
+.endpoint-name_wrapper {
+    max-width: 66%;
+    color: #181919 !important;
+    font-size: 14px !important;
+    font-weight: bold;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    direction: rtl;
+}
+
+.cursorpointer {
+    cursor: pointer;
 }

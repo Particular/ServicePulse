@@ -150,14 +150,14 @@ function formatGraphDecimal(input, deci) {
       <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
       <div class="endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
         <div class="table-first-col endpoint-name name-overview">
-          <div class="box-header">
-            <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-              <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
+          
+            <div class="endpoint-name_wrapper">
+              <a @click="navigateToEndpointDetails($event, endpoint.name)" class="endpoint-name_text" v-tooltip :title="endpoint.name">
                 {{ endpoint.name }}
               </a>
               <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
             </div>
-            <div class="col-xs-5 no-side-padding endpoint-status">
+            <div class="endpoint-status">
               <span class="warning" v-if="endpoint.metrics != null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
                 <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
               </span>
@@ -174,7 +174,7 @@ function formatGraphDecimal(input, deci) {
                 </a>
               </span>
             </div>
-          </div>
+
         </div>
         <!--Queue Length-->
         <div class="table-col">
