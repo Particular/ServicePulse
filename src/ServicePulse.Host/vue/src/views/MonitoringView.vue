@@ -1,6 +1,6 @@
 <script setup>
 // Composables
-import { ref, onMounted, watch,onUnmounted } from "vue";
+import { ref, onMounted, watch, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";

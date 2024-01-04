@@ -108,7 +108,6 @@ function updateUI() {
       mergeIn(endpoint.value, endpoint.value);
     }
 
-
     //sorting
     endpoint.value.instances.sort(function (first, second) {
       if (first.id < second.id) {
@@ -199,18 +198,17 @@ function isRemovingEndpointEnabled() {
     });
 }
 
-
 function getDisconnectedCount() {
-    var checkInterval;
-    return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
-        .then((response) => {
-            console.log(response);
-            disconnectedCount = response.data;
-        })
-        .catch((err) => {
-            console.log('Error while getting disconnected endpoints count from monitoring:' + err);
-            clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
-        });
+  var checkInterval;
+  return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
+    .then((response) => {
+      console.log(response);
+      disconnectedCount = response.data;
+    })
+    .catch((err) => {
+      console.log("Error while getting disconnected endpoints count from monitoring:" + err);
+      clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
+    });
   //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
   //var checkDisconnectedCount = function () {
   //    monitoringService.getDisconnectedCount().then(result => {
@@ -348,9 +346,9 @@ function changeRefreshInterval(milliseconds) {
   }, milliseconds);
 }
 onUnmounted(() => {
-    if (typeof refreshInterval !== "undefined") {
-        clearInterval(refreshInterval);
-    }
+  if (typeof refreshInterval !== "undefined") {
+    clearInterval(refreshInterval);
+  }
 });
 
 onMounted(() => {
