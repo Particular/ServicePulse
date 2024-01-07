@@ -79,7 +79,7 @@ async function getEndpointDetails() {
         endpointDetails.isScMonitoringDisconnected = false;
         endpointDetails.isStale = true;
         Object.assign(endpoint.value, endpointDetails);
-        updateUI();
+       await updateUI();
     }
   }
 }
