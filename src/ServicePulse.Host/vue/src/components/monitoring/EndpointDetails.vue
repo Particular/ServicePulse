@@ -9,7 +9,9 @@ import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js"
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
-import { useGetExceptionGroupsForEndpoint } from "../../composables/serviceMessageGroup.js";
+//stores
+import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { useFailedMessageStore } from "../../stores/FailedMessageStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -23,6 +25,9 @@ const endpointName = route.params.endpointName;
 var showInstancesBreakdown = false;
 let refreshInterval = undefined;
 var disconnectedCount = 0;
+
+const monitoringStore = useMonitoringStore();
+const failedMessageStore = useFailedMessageStore();
 
 if (route.query.tab != "" && route.query.tab != undefined) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
@@ -62,35 +67,24 @@ function getUrlQueryStrings() {
   historyPeriod.value = useGetDefaultPeriod(route);
 }
 
-function getEndpointDetails() {
+async function getEndpointDetails() {
   //get historyPeriod
   var selectedHistoryPeriod = historyPeriod.value.pVal;
-  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    return useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${selectedHistoryPeriod}`)
-      .then((response) => {
-        if (response.status === 404) {
-          endpoint.value = { notFound: true };
-        } else if (response.status !== 200) {
-          endpoint.value = { error: true };
-        }
-        return response.json();
-      })
-      .then((data) => {
-        filterOutSystemMessage(data);
-        var endpointDetails = data;
+    if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
+    await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
+    var responseData = monitoringStore.endpointDetails;
+    if (responseData !=null ) {
+        filterOutSystemMessage(responseData);
+        var endpointDetails = responseData;
         endpointDetails.isScMonitoringDisconnected = false;
         endpointDetails.isStale = true;
         Object.assign(endpoint.value, endpointDetails);
-        return updateUI();
-      })
-      .catch((err) => {
-        console.log(err);
-        return { error: err };
-      });
+       await updateUI();
+    }
   }
 }
 
-function updateUI() {
+async function updateUI() {
   isLoading.value = false;
 
   if (endpoint.value.error) {
@@ -127,15 +121,14 @@ function updateUI() {
     endpoint.value.isScMonitoringDisconnected = false;
     negativeCriticalTimeIsPresent.value = false;
 
-    endpoint.value.instances.forEach(function (instance) {
+    endpoint.value.instances.forEach(async function (instance) {
       //get errror count by instance id
-      useGetExceptionGroupsForEndpoint("Endpoint Instance", instance.id).then((result) => {
-        if (result && result.length > 0) {
-          instance.serviceControlId = result[0].id;
-          instance.errorCount = result[0].count;
-          instance.isScMonitoringDisconnected = false;
+        await failedMessageStore.getFailedMessagesList("Endpoint Instance",instance.id);
+        if (!failedMessageStore.isFailedMessagesEmpty) {
+            instance.serviceControlId = failedMessageStore.serviceControlId;
+            instance.errorCount = failedMessageStore.errorCount;
+            instance.isScMonitoringDisconnected = false;
         }
-      });
       endpoint.value.isStale = endpoint.value.isStale && instance.isStale;
       negativeCriticalTimeIsPresent.value |= formatGraphDuration(instance.metrics.criticalTime).value < 0;
     });
@@ -143,12 +136,12 @@ function updateUI() {
     loadedSuccessfully.value = true;
   }
   //get errror count by endpoint name
-  useGetExceptionGroupsForEndpoint("Endpoint Name", endpointName).then((result) => {
-    if (result.length > 0) {
-      endpoint.value.serviceControlId = result[0].id;
-      endpoint.value.errorCount = result[0].count;
+    await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
+    if (!failedMessageStore.isFailedMessagesEmpty) {
+        endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
+        endpoint.value.errorCount = failedMessageStore.errorCount;
     }
-  });
+
 }
 
 function filterOutSystemMessage(data) {
@@ -202,7 +195,6 @@ function getDisconnectedCount() {
   var checkInterval;
   return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
     .then((response) => {
-      console.log(response);
       disconnectedCount = response.data;
     })
     .catch((err) => {
