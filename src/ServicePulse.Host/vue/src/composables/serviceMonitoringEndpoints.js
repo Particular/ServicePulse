@@ -7,8 +7,8 @@ import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
  * @returns the max number of segments in a array of endpoint object names
  */
 export function useFindEndpointSegments(endpoints) {
-  if (endpoints.value !== undefined) {
-    return endpoints.value.reduce(function (acc, cur) {
+  if (endpoints !== undefined) {
+    return endpoints.reduce(function (acc, cur) {
       return Math.max(acc, cur.name.split(".").length - 1);
     }, 0);
   }
@@ -44,7 +44,7 @@ export function useFilterAllMonitoredEndpointsByName(endpoints, filterString) {
   if (filterString === "") {
     return endpoints.value;
   }
-  const filteredEndpoints = endpoints.value.filter((endpoint) => endpoint.name.includes(filterString));
+  const filteredEndpoints = endpoints.filter((endpoint) => endpoint.name.includes(filterString));
   return filteredEndpoints;
 }
 
@@ -55,8 +55,8 @@ export function useFilterAllMonitoredEndpointsByName(endpoints, filterString) {
  */
 export function useGroupEndpoints(endpoints, numberOfSegments) {
   let groups = new Map();
-  if (endpoints.value === undefined) return;
-  endpoints.value.forEach(function (element) {
+  if (endpoints === undefined) return;
+  endpoints.forEach(function (element) {
     const grouping = parseEndpoint(element, numberOfSegments);
 
     let resultGroup = groups.get(grouping.groupName);
