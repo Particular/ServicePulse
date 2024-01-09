@@ -1,26 +1,15 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useCookies } from "vue3-cookies";
-import { useFindEndpointSegments, useGroupEndpoints } from "../../composables/serviceMonitoringEndpoints";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 
-const emit = defineEmits(["group-selector"]);
-const settings = defineProps({
-  endpoints: Object,
-});
-
+const monitoringStore = useMonitoringStore();
 const cookies = useCookies().cookies;
-const endpoints = ref(settings.endpoints);
-const grouping = ref({
-  groupedEndpoints: [],
-  groupSegments: useFindEndpointSegments(endpoints),
-  selectedGrouping: 0,
-});
+const grouping = ref(monitoringStore.grouping);
 
 function selectGroup(groupSize) {
-  grouping.value.selectedGrouping = groupSize;
   saveSelectedGroup(groupSize);
-  grouping.value.groupedEndpoints = useGroupEndpoints(endpoints, groupSize);
-  emit("group-selector", grouping);
+  monitoringStore.updateSelectedGrouping(groupSize);
 }
 
 function saveSelectedGroup(groupSize) {
@@ -29,7 +18,7 @@ function saveSelectedGroup(groupSize) {
 
 function getDefaultSelectedGroup() {
   const storedGroupSelection = cookies.get("selected_group_size");
-  if (storedGroupSelection !== "undefined" && !isNaN(storedGroupSelection)) {
+  if (storedGroupSelection != undefined && !isNaN(parseInt(storedGroupSelection))) {
     selectGroup(parseInt(storedGroupSelection));
   } else {
     selectGroup(0);
