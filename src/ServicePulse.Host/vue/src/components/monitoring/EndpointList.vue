@@ -1,21 +1,19 @@
 ﻿<script setup>
-import { ref, watchEffect } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
+import { storeToRefs } from "pinia";
 import D3Graph from "./D3Graph.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
-import MonitoringNoData from "./MonitoringNoData.vue";
-import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 
-const props = defineProps({
-  endpoints: Array,
-});
+const monitoringStore = useMonitoringStore();
 const route = useRoute();
-const endpoints = ref([]);
-const historyPeriod = ref(useGetDefaultPeriod(route));
+const allEndpoints = computed(() => monitoringStore.endpointList);
+const filteredEndpoints = computed(() => monitoringStore.filteredEndpointList);
+const endpoints = ref();
 const router = useRouter();
-const hasData = ref(false);
 const supportsEndpointCount = ref();
 const smallGraphsMinimumYAxis = {
   queueLength: 10,
@@ -25,8 +23,20 @@ const smallGraphsMinimumYAxis = {
   criticalTime: 10,
 };
 
-watchEffect(() => {
-  endpoints.value = props.endpoints || [];
+watch([allEndpoints, filteredEndpoints], () => {
+  if (monitoringStore.isEndpointListFiltered) {
+    endpoints.value = filteredEndpoints.value;
+  } else {
+    endpoints.value = allEndpoints.value;
+  }
+});
+
+onMounted(() => {
+  if (monitoringStore.isEndpointListFiltered) {
+    endpoints.value = filteredEndpoints.value;
+  } else {
+    endpoints.value = allEndpoints.value;
+  }
 });
 
 /* function updateUI() {
@@ -110,21 +120,9 @@ function formatGraphDecimal(input, deci) {
 </script>
 
 <template>
-  <section ng-if="grouping.selectedGrouping == 0">
-    <div class="row">
-      <div class="col-sm-12">
-        <MonitoringNoData v-if="!endpoints && endpoints.length === 0 && !hasData"></MonitoringNoData>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12">
-        <MonitoringNotAvailable v-if="!endpoints && endpoints.length === 0 && hasData"></MonitoringNotAvailable>
-      </div>
-    </div>
-
+  <section>
     <!--Table headings-->
-    <div v-if="endpoints && endpoints.length > 0" class="table-head-row">
+    <div class="table-head-row">
       <div class="table-first-col">
         <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
