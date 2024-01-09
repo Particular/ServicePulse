@@ -1,25 +1,32 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useGetAllPeriods, saveSelectedPeriod, useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
+import { useGetAllPeriods } from "../../composables/serviceHistoryPeriods.js";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 
 const emit = defineEmits(["period-selected"]);
 
+const monitoringStore = useMonitoringStore();
 const route = useRoute();
 const router = useRouter();
 const allPeriods = useGetAllPeriods();
-const defaultPeriod = ref(useGetDefaultPeriod(route));
+const defaultPeriod = ref(monitoringStore.historyPeriod);
 
-function selectHistoryPeriod(period) {
-  saveSelectedPeriod(period);
-  defaultPeriod.value = period;
-  const queryParameters = { ...route.query };
-  router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.pVal } });
+async function selectHistoryPeriod(period) {
+  monitoringStore.updateHistoryPeriod(period);
+  defaultPeriod.value = monitoringStore.historyPeriod;
+  await updateQueryParameters();
   emit("period-selected", period);
 }
 
-onMounted(() => {
-  router.push({ query: { historyPeriod: defaultPeriod.value.pVal } });
+async function updateQueryParameters() {
+  const queryParameters = { ...route.query };
+  await router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.pVal } });
+}
+
+onMounted(async () => {
+  monitoringStore.updateHistoryPeriod(defaultPeriod.value);
+  await updateQueryParameters();
   selectHistoryPeriod(defaultPeriod.value);
 });
 </script>
