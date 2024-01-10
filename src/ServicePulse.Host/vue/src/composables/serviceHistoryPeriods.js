@@ -29,7 +29,7 @@ export function useGetAllPeriods() {
  * @param {Object} route - The route object by using useRoute() from the vue-router dependency
  * @returns - The saved cookie period object or the default period object (1m)
  */
-export function useGetDefaultPeriod(route) {
+export function useGetDefaultPeriod(route = "") {
   let defaultPeriod = useHistoryPeriodQueryString(route);
   if (defaultPeriod === undefined) {
     const storedPeriodValue = cookies.get("history_period");
