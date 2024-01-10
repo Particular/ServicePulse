@@ -1,16 +1,17 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 
-const settings = defineProps({
-  grouping: Object,
-});
+const monitoringStore = useMonitoringStore();
+const grouping = ref(monitoringStore.grouping);
 
-const grouping = ref(settings.grouping);
+const groupedEndpoints = computed(() => grouping.value.groupedEndpoints);
+const selectedGrouping = computed(() => grouping.value.selectedGrouping);
 //const metricslargenumber = ref();
 </script>
 
 <template>
-  <section v-if="grouping.selectedGrouping > 0">
+  <section v-if="selectedGrouping > 0">
     <!-- <div class="sp-loader" ng-if="loading"></div>
     <div ng-include="'modules/monitoring/views/monitoring_not_available.html'" ng-show="!endpoints.length && !loading && hasData"></div>
     <div ng-include="'modules/monitoring/views/monitoring_no_data.html'" ng-show="!endpoints.length && !loading && !hasData"></div> -->
@@ -38,7 +39,7 @@ const grouping = ref(settings.grouping);
 
     <div class="row">
       <div class="col-12 no-side-padding">
-        <div class="row" v-for="endpointGroup in grouping.groupedEndpoints" :key="endpointGroup">
+        <div class="row" v-for="endpointGroup in groupedEndpoints" :key="endpointGroup">
           <div class="endpoint-group-title">
             {{ endpointGroup.group }}
           </div>
