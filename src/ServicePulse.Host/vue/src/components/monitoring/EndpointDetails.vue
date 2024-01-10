@@ -70,16 +70,16 @@ function getUrlQueryStrings() {
 async function getEndpointDetails() {
   //get historyPeriod
   var selectedHistoryPeriod = historyPeriod.value.pVal;
-    if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
+  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
     await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
     var responseData = monitoringStore.endpointDetails;
-    if (responseData !=null ) {
-        filterOutSystemMessage(responseData);
-        var endpointDetails = responseData;
-        endpointDetails.isScMonitoringDisconnected = false;
-        endpointDetails.isStale = true;
-        Object.assign(endpoint.value, endpointDetails);
-       await updateUI();
+    if (responseData != null) {
+      filterOutSystemMessage(responseData);
+      var endpointDetails = responseData;
+      endpointDetails.isScMonitoringDisconnected = false;
+      endpointDetails.isStale = true;
+      Object.assign(endpoint.value, endpointDetails);
+      await updateUI();
     }
   }
 }
@@ -123,12 +123,12 @@ async function updateUI() {
 
     endpoint.value.instances.forEach(async function (instance) {
       //get errror count by instance id
-        await failedMessageStore.getFailedMessagesList("Endpoint Instance",instance.id);
-        if (!failedMessageStore.isFailedMessagesEmpty) {
-            instance.serviceControlId = failedMessageStore.serviceControlId;
-            instance.errorCount = failedMessageStore.errorCount;
-            instance.isScMonitoringDisconnected = false;
-        }
+      await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
+      if (!failedMessageStore.isFailedMessagesEmpty) {
+        instance.serviceControlId = failedMessageStore.serviceControlId;
+        instance.errorCount = failedMessageStore.errorCount;
+        instance.isScMonitoringDisconnected = false;
+      }
       endpoint.value.isStale = endpoint.value.isStale && instance.isStale;
       negativeCriticalTimeIsPresent.value |= formatGraphDuration(instance.metrics.criticalTime).value < 0;
     });
@@ -136,12 +136,11 @@ async function updateUI() {
     loadedSuccessfully.value = true;
   }
   //get errror count by endpoint name
-    await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
-    if (!failedMessageStore.isFailedMessagesEmpty) {
-        endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
-        endpoint.value.errorCount = failedMessageStore.errorCount;
-    }
-
+  await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
+  if (!failedMessageStore.isFailedMessagesEmpty) {
+    endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
+    endpoint.value.errorCount = failedMessageStore.errorCount;
+  }
 }
 
 function filterOutSystemMessage(data) {

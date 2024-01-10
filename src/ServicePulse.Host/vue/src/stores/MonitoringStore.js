@@ -6,8 +6,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
   state: () => {
     return {
       endpointList: [],
-        endpointDetails: {},
-        disconnectedEndpointCount: 0,
+      endpointDetails: {},
+      disconnectedEndpointCount: 0,
       filteredEndpointList: [],
       isEndpointListFiltered: false,
       filterString: "",

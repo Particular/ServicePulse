@@ -8,13 +8,13 @@ export const useFailedMessageStore = defineStore("FailedMessageStore", {
     };
   },
   actions: {
-      async getFailedMessagesList(classifier, classiferFilter) {
-          this.failedMessagesList = await useGetExceptionGroupsForEndpoint(classifier, classiferFilter);
-      },
+    async getFailedMessagesList(classifier, classiferFilter) {
+      this.failedMessagesList = await useGetExceptionGroupsForEndpoint(classifier, classiferFilter);
+    },
   },
   getters: {
-      serviceControlId: (state) => state.failedMessagesList[0].id,
-      errorCount: (state) => state.failedMessagesList[0].count,
-      isFailedMessagesEmpty: (state) => state.errorCount === 0,
+    serviceControlId: (state) => state.failedMessagesList[0].id,
+    errorCount: (state) => state.failedMessagesList[0].count,
+    isFailedMessagesEmpty: (state) => state.errorCount === 0,
   },
 });
