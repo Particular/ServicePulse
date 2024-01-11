@@ -1,21 +1,20 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted } from "vue";
 import { licenseStatus } from "../composables/serviceLicense";
 import { useGetEventLogItems } from "../composables/serviceEventLogItems";
 import TimeSince from "../components/TimeSince.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
+import AutoRefresh from "../components/AutoRefresh.vue";
 
 const eventLogItems = ref([]);
 const eventLogItemsPerPage = ref(25);
 
-function getEventLogItems() {
-  return useGetEventLogItems().then((result) => {
-    eventLogItems.value = result;
-  });
+async function getEventLogItems() {
+  const result = await useGetEventLogItems();
+  eventLogItems.value = result;
 }
 
 /* TODO: Wire up onClick events */
-/* TODO: Wire up auto-refresh */
 
 onMounted(() => {
   getEventLogItems();
@@ -25,12 +24,13 @@ onMounted(() => {
 <template>
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
+    <auto-refresh @tick="getEventLogItems" :isActive="true" :interval="5000"></auto-refresh>
     <div class="events events-view">
       <div class="row">
         <div class="col-sm-12">
           <h1>Events</h1>
 
-          <div class="row box box-event-item" v-for="eventLogItem in eventLogItems">
+          <div class="row box box-event-item" v-for="eventLogItem in eventLogItems" v-bind:key="eventLogItem.id">
             <div class="col-x2-12">
               <div class="row events-list">
                 <div class="col-icon">
