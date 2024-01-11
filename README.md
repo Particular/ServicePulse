@@ -49,6 +49,7 @@ Install the following dependencies if you don't have them installed yet
  - [Node.js](https://nodejs.org/en/download/)
  - [Git for Windows](https://gitforwindows.org/)
  - [Docker](https://docs.docker.com/get-docker/)
+   - Note that, if running docker for windows, the current user needs to be in the docker-users local group. If your windows account is different to the installation (admin) account, then you will need to manually add your user to the group. See https://docs.docker.com/desktop/faqs/windowsfaqs/#why-do-i-see-the-docker-desktop-access-denied-error-message-when-i-try-to-start-docker-desktop
  - Chutzpah
    - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
    - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
