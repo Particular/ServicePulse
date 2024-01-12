@@ -13,7 +13,7 @@ const router = useRouter();
 
 async function getEventLogItems() {
   const result = await useGetEventLogItems();
-  eventLogItems.value = result;
+  eventLogItems.value = result.sort((a, b) => new Date(a.raised_at) - new Date(b.raised_at));
 }
 
 onMounted(() => {
