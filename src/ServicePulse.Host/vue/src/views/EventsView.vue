@@ -14,11 +14,40 @@ async function getEventLogItems() {
   eventLogItems.value = result;
 }
 
-/* TODO: Wire up onClick events */
-
 onMounted(() => {
   getEventLogItems();
 });
+
+function navigateToEvent(eventLogItem) {
+  switch (eventLogItem.category) {
+    case "Endpoints":
+      router.push("/configuration/endpoint-connection");
+      break;
+    case "HeartbeatMonitoring":
+      window.location = "/a/#/endpoints";
+      break;
+    case "CustomChecks":
+      window.location = "/a/#/custom-checks";
+      break;
+    case "EndpointControl":
+      window.location = "/a/#/endpoints";
+      break;
+    case "MessageFailures":
+      var newlocation = "/failed-messages";
+      if (eventLogItem.related_to && eventLogItem.related_to.length > 0 && eventLogItem.related_to[0].search("message") > 0) {
+        newlocation = "/failed-messages" + eventLogItem.related_to[0];
+      }
+      router.push(newlocation);
+      break;
+    case "Recoverability":
+      router.push("/failed-messages");
+      break;
+    case "MessageRedirects":
+      router.push("/configuration/retry-redirects");
+      break;
+    default:
+  }
+}
 </script>
 
 <template>
@@ -30,7 +59,7 @@ onMounted(() => {
         <div class="col-sm-12">
           <h1>Events</h1>
 
-          <div class="row box box-event-item" v-for="eventLogItem in eventLogItems" v-bind:key="eventLogItem.id">
+          <div class="row box box-event-item" v-for="eventLogItem in eventLogItems" v-bind:key="eventLogItem.id" @click="navigateToEvent(eventLogItem)">
             <div class="col-x2-12">
               <div class="row events-list">
                 <div class="col-icon">
