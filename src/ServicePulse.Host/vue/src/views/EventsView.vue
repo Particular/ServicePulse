@@ -8,11 +8,12 @@ import LicenseExpired from "../components/LicenseExpired.vue";
 import AutoRefresh from "../components/AutoRefresh.vue";
 
 const eventLogItems = ref([]);
-const eventLogItemsPerPage = ref(25);
+const eventLogItemsPerPage = ref(20);
+const eventLogItemsPage = ref(1);
 const router = useRouter();
 
 async function getEventLogItems() {
-  const result = await useGetEventLogItems();
+  const result = await useGetEventLogItems(eventLogItemsPage.value, eventLogItemsPerPage.value);
   eventLogItems.value = result.sort((a, b) => new Date(a.raised_at) - new Date(b.raised_at));
 }
 
@@ -111,7 +112,7 @@ function navigateToEvent(eventLogItem) {
         <div class="row">
           <div class="pagination col-md-2">
             <label class="control-label">Items Per Page:</label>
-            <button type="button" class="btn btn-default dropdown-toggle sp=btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <!-- TODO: Wire up items per page -->
               {{ eventLogItemsPerPage }}
               <span class="caret"></span>
@@ -211,4 +212,18 @@ function navigateToEvent(eventLogItem) {
 .box-event-item .fa-stack {
   height: 1em;
 }
+
+ul.dropdown-menu li a span {
+    color: #aaa;
+}
+
+.btn.sp-btn-menu:active, .btn-default.sp-btn-menu:active, .btn-default.sp-btn-menu.active, .open > .dropdown-toggle.btn-default.sp-btn-menu {
+    background: none;
+    border: none;
+    color: #00a3c4;
+    text-decoration: underline;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
 </style>
