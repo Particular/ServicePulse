@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { licenseStatus } from "../composables/serviceLicense";
 import { useGetEventLogItems } from "../composables/serviceEventLogItems";
 import TimeSince from "../components/TimeSince.vue";
@@ -8,6 +9,7 @@ import AutoRefresh from "../components/AutoRefresh.vue";
 
 const eventLogItems = ref([]);
 const eventLogItemsPerPage = ref(25);
+const router = useRouter();
 
 async function getEventLogItems() {
   const result = await useGetEventLogItems();
