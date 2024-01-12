@@ -26,5 +26,13 @@ export default {
 </script>
 
 <template>
-    <!-- AutoRefresh -->
+    <span class="auto-refresh"></span>
 </template>
+
+<style>
+
+.auto-refresh {
+    display: none;
+}
+
+</style>
