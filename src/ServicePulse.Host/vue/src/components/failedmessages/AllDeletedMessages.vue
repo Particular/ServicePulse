@@ -61,29 +61,31 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
   if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
   if (typeof endDate === "undefined") endDate = new Date().toISOString();
   let dateRange = startDate + "..." + endDate;
-  let loadGroupDetails;
+  let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
-    loadGroupDetails = useFetchFromServiceControl(`archive/groups/id/${groupId}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        groupName.value = data.title;
-      });
+    async function loadGroupDetails() {
+      const response = await useFetchFromServiceControl(`archive/groups/id/${groupId}`);
+      const data = await response.json();
+      groupName.value = data.title;
+    }
+
+    loadGroupDetailsPromise = loadGroupDetails();
   }
 
-  const loadDelMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`)
-    .then((response) => {
+  async function loadDelMessages() {
+    try {
+      const response = await useFetchFromServiceControl(
+        `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
+      );
+
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
 
-      return response.json();
-    })
-    .then((response) => {
-      if (messages.value.length && response.length) {
+      const data = await response.json();
+      if (messages.value.length && data.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
-          const receivedMessage = response.find((m) => m.id === previousMessage.id);
+          const receivedMessage = data.find((m) => m.id === previousMessage.id);
           if (receivedMessage) {
             if (previousMessage.last_modified == receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
@@ -94,22 +96,23 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
           }
         });
       }
-
-      messages.value = updateMessagesScheduledDeletionDate(response);
-    })
-    .catch((err) => {
+      messages.value = updateMessagesScheduledDeletionDate(data);
+    } catch (err) {
       console.log(err);
       var result = {
         message: "error",
       };
       return result;
-    });
-
-  if (loadGroupDetails) {
-    return Promise.all([loadGroupDetails, loadDelMessages]);
+    }
   }
 
-  return loadDelMessages;
+  const loadDelMessagesPromise = loadDelMessages();
+
+  if (loadGroupDetailsPromise) {
+    return Promise.all([loadGroupDetailsPromise, loadDelMessagesPromise]);
+  }
+
+  return loadDelMessagesPromise;
 }
 
 function updateMessagesScheduledDeletionDate(messages) {
@@ -160,18 +163,17 @@ function setPage(page) {
   loadMessages();
 }
 
-function restoreSelectedMessages() {
+async function restoreSelectedMessages() {
   changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast("info", "Info", "restoring " + selectedMessages.length + " messages...");
 
-  usePatchToServiceControl(
+  await usePatchToServiceControl(
     "errors/unarchive",
     selectedMessages.map((m) => m.id)
-  ).then(() => {
-    messageList.value.deselectAll();
-  });
+  );
+  messageList.value.deselectAll();
 }
 
 function periodChanged(period) {
@@ -181,15 +183,10 @@ function periodChanged(period) {
   loadMessages();
 }
 
-function getConfiguration() {
-  return useFetchFromServiceControl("configuration")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      configuration.value = data;
-      return;
-    });
+async function getConfiguration() {
+  const response = await useFetchFromServiceControl("configuration");
+  const data = await response.json();
+  configuration.value = data;
 }
 
 function isRestoreInProgress() {
@@ -262,7 +259,9 @@ onMounted(() => {
             <div class="btn-toolbar">
               <button type="button" class="btn btn-default select-all" @click="selectAll" v-if="!isAnythingSelected()">Select all</button>
               <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
-              <button type="button" class="btn btn-default" @click="showConfirmRestore = true" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Restore {{ numberSelected() }} selected</button>
+              <button type="button" class="btn btn-default" @click="showConfirmRestore = true" :disabled="!isAnythingSelected()">
+                <i class="fa fa-repeat"></i> Restore {{ numberSelected() }} selected
+              </button>
             </div>
           </div>
           <div class="col-3">

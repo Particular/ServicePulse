@@ -7,15 +7,12 @@ import TimeSince from "../TimeSince.vue";
 const historicOperations = ref([]);
 const showHistoricRetries = ref(false);
 
-function getHistoricOperations() {
-  return useFetchFromServiceControl("recoverability/history")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      historicOperations.value = [];
-      historicOperations.value = data.historic_operations;
-    });
+async function getHistoricOperations() {
+  const response = await useFetchFromServiceControl("recoverability/history");
+  const data = await response.json();
+  // TODO: Check why this is here. It probably does not work as expected.
+  historicOperations.value = [];
+  historicOperations.value = data.historic_operations;
 }
 
 onMounted(() => {

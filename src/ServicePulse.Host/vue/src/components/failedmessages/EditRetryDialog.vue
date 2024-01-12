@@ -86,18 +86,16 @@ function removeHeadersMarkedAsRemoved() {
   });
 }
 
-function retryEditedMessage() {
+async function retryEditedMessage() {
   removeHeadersMarkedAsRemoved();
-  return useRetryEditedMessage([id.value], localMessage)
-    .then(() => {
-      localMessage.value.retried = true;
-      return emit("retried", settings);
-    })
-    .catch(() => {
-      showEditAndRetryConfirmation.value = false;
-      showEditRetryGenericError.value = true;
-      return;
-    });
+  try {
+    await useRetryEditedMessage([id.value], message);
+    message.value.retried = true;
+    return emit("retried", settings);
+  } catch {
+    showEditAndRetryConfirmation.value = false;
+    showEditRetryGenericError.value = true;
+  }
 }
 
 function initializeMessageBodyAndHeaders() {

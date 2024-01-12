@@ -23,10 +23,9 @@ let i = 0,
   svg,
   parentSvg;
 
-function getConversation(conversationId) {
-  return useFetchFromServiceControl(`conversations/${conversationId}`).then(function (response) {
-    return response.json();
-  });
+async function getConversation(conversationId) {
+  const response = await useFetchFromServiceControl(`conversations/${conversationId}`);
+  return response.json();
 }
 
 function mapMessage(message) {
@@ -315,22 +314,16 @@ onUnmounted(() => {
   window.__routerReferenceForDynamicAnchorTags = undefined;
 });
 
-onMounted(() => {
+onMounted(async () => {
   // This is needed to expose the router to the dynamic HTML that's created as part of the rendering
   // Without this a full page refresh is required
   // I'm so sorry for this :(
   window.__routerReferenceForDynamicAnchorTags = useRouter();
 
-  getConversation(props.conversationId)
-    .then((messages) => {
-      return messages.map(mapMessage);
-    })
-    .then((mappedMessages) => {
-      return createTreeStructure(mappedMessages);
-    })
-    .then((nodes) => {
-      return drawTree(nodes[0]);
-    });
+  const messages = await getConversation(props.conversationId);
+  const mappedMessages = messages.map(mapMessage);
+  const nodes = createTreeStructure(mappedMessages);
+  return drawTree(nodes[0]);
 });
 </script>
 

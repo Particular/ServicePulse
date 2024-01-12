@@ -61,14 +61,10 @@ const sortOptions = [
   },
 ];
 
-function getGroupingClassifiers() {
-  return useFetchFromServiceControl("recoverability/classifiers")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      classifiers.value = data;
-    });
+async function getGroupingClassifiers() {
+  const response = await useFetchFromServiceControl("recoverability/classifiers");
+  const data = await response.json();
+  classifiers.value = data;
 }
 
 function saveDefaultGroupingClassifier(classifier) {
@@ -93,17 +89,16 @@ function loadDefaultGroupingClassifier() {
   return null;
 }
 
-onMounted(() => {
-  getGroupingClassifiers().then(() => {
-    let savedClassifier = loadDefaultGroupingClassifier();
+onMounted(async () => {
+  await getGroupingClassifiers();
+  let savedClassifier = loadDefaultGroupingClassifier();
 
-    if (!savedClassifier) {
-      savedClassifier = classifiers.value[0];
-    }
+  if (!savedClassifier) {
+    savedClassifier = classifiers.value[0];
+  }
 
-    selectedClassifier.value = savedClassifier;
-    messageGroupList.value.loadFailedMessageGroups(savedClassifier);
-  });
+  selectedClassifier.value = savedClassifier;
+  messageGroupList.value.loadFailedMessageGroups(savedClassifier);
 });
 </script>
 

@@ -2,7 +2,12 @@
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl, useIsMonitoringDisabled } from "./../../composables/serviceServiceControlUrls.js";
+import {
+  updateServiceControlUrls,
+  serviceControlUrl as configuredServiceControlUrl,
+  monitoringUrl as configuredMonitoringUrl,
+  useIsMonitoringDisabled,
+} from "./../../composables/serviceServiceControlUrls.js";
 import { connectionState, monitoringConnectionState } from "../../composables/serviceServiceControl";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
@@ -24,23 +29,21 @@ const monitoringValid = ref(null);
 
 const connectionSaved = ref(null);
 
-function testServiceControlUrl(event) {
+async function testServiceControlUrl(event) {
   if (event) {
     testingServiceControl.value = true;
-    return fetch(serviceControlUrl.value)
-      .then((response) => {
-        serviceControlValid.value = response.ok && response.headers.has("X-Particular-Version");
-      })
-      .catch(() => {
-        serviceControlValid.value = false;
-      })
-      .finally(() => {
-        testingServiceControl.value = false;
-      });
+    try {
+      const response = await fetch(serviceControlUrl.value);
+      serviceControlValid.value = response.ok && response.headers.has("X-Particular-Version");
+    } catch {
+      serviceControlValid.value = false;
+    } finally {
+      testingServiceControl.value = false;
+    }
   }
 }
 
-function testMonitoringUrl(event) {
+async function testMonitoringUrl(event) {
   if (event) {
     testingMonitoring.value = true;
 
@@ -48,16 +51,14 @@ function testMonitoringUrl(event) {
       monitoringUrl.value += "/";
     }
 
-    return fetch(monitoringUrl.value + "monitored-endpoints")
-      .then((response) => {
-        monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
-      })
-      .catch(() => {
-        monitoringValid.value = false;
-      })
-      .finally(() => {
-        testingMonitoring.value = false;
-      });
+    try {
+      const response = await fetch(monitoringUrl.value + "monitored-endpoints");
+      monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
+    } catch {
+      monitoringValid.value = false;
+    } finally {
+      testingMonitoring.value = false;
+    }
   }
 }
 
@@ -115,7 +116,15 @@ function saveConnections(event) {
                 </div>
 
                 <div class="col-5 no-side-padding">
-                  <button class="btn btn-default btn-secondary btn-connection-test" :class="{ disabled: !isMonitoringUrlSpecified() }" type="button" @click="testMonitoringUrl" :disabled="!isMonitoringUrlSpecified()">Test</button>
+                  <button
+                    class="btn btn-default btn-secondary btn-connection-test"
+                    :class="{ disabled: !isMonitoringUrlSpecified() }"
+                    type="button"
+                    @click="testMonitoringUrl"
+                    :disabled="!isMonitoringUrlSpecified()"
+                  >
+                    Test
+                  </button>
                   <span class="connection-test connection-testing" v-if="testingMonitoring"> <i class="glyphicon glyphicon-refresh rotate"></i>Testing </span>
                   <span class="connection-test connection-successful" v-if="monitoringValid === true && !testingMonitoring"> <i class="fa fa-check"></i> Connection successful </span>
                   <span class="connection-test connection-failed" v-if="monitoringValid === false && !testingMonitoring"> <i class="fa fa-exclamation-triangle"></i> Connection failed </span>
@@ -124,7 +133,9 @@ function saveConnections(event) {
 
               <button class="btn btn-primary" type="button" @click="saveConnections">Save</button>
               <span class="connection-test connection-successful hide save-connection" v-show="connectionSaved"> <i class="fa fa-check"></i>Connection saved </span>
-              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved !== null && !connectionSaved"> <i class="fa fa-exclamation-triangle"></i> Unable to save </span>
+              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved !== null && !connectionSaved">
+                <i class="fa fa-exclamation-triangle"></i> Unable to save
+              </span>
             </form>
           </div>
         </div>

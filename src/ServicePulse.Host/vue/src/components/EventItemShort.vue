@@ -7,11 +7,10 @@ import TimeSince from "./TimeSince.vue";
 const router = useRouter();
 const eventLogItems = ref([]);
 const eventCount = ref(0);
-onMounted(() => {
-  getEventLogItems().then((data) => {
-    eventCount.value = data.length;
-    eventLogItems.value = data.slice(0, 10);
-  });
+onMounted(async () => {
+  const data = await getEventLogItems();
+  eventCount.value = data.length;
+  eventLogItems.value = data.slice(0, 10);
 });
 
 function iconClasses(eventItem) {
