@@ -270,7 +270,7 @@ async function fetchWithErrorHandling(fetchFunction, connectionState, action) {
 
     try {
       const response = await fetchFunction();
-      const result = action(result);
+      const result = action(response);
       connectionState.unableToConnect = false;
       connectionState.connectedRecently = true;
       connectionState.connected = true;
