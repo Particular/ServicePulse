@@ -693,3 +693,13 @@ div.alert.alert-warning strong {
   margin: 25px 0 0;
   height: unset;
 }
+
+/* TODO: why do these have to be !important? */
+.fake-link {
+  color: #00a3c4 !important;
+  text-decoration: none !important;
+}
+
+.sp-blue {
+  color: #00a3c4;
+}

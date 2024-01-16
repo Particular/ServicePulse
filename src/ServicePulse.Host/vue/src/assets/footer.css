@@ -45,7 +45,7 @@ footer span.connection-failed.ng-scope {
 
 footer span {
   color: #777f7f;
-  display: inline-block !important;
+  display: inline-block;
   padding: 0 8px;
 }
 
@@ -89,4 +89,14 @@ footer a:hover {
 
 .connectivity-status .pa-connection-success {
   background: #00c468;
+}
+
+.connectivity-status .secondary {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .connectivity-status .secondary {
+    display: inline-block;
+  }
 }
