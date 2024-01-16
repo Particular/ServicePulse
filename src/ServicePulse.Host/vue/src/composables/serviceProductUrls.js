@@ -1,18 +1,19 @@
-export function useServiceProductUrls() {
+async function getData(url) {
+  const response = await fetch(url);
+  const data = await response.json();
+  return data;
+}
+
+export async function useServiceProductUrls() {
   const spURL = "https://platformupdate.particular.net/servicepulse.txt";
   const scURL = "https://platformupdate.particular.net/servicecontrol.txt";
 
-  const servicePulse = fetch(spURL).then((response) => {
-    return response.json();
-  });
-  const serviceControl = fetch(scURL).then((response) => {
-    return response.json();
-  });
+  const servicePulse = getData(spURL);
+  const serviceControl = getData(scURL);
 
-  return Promise.all([servicePulse, serviceControl]).then(([sp, sc]) => {
-    var latestSP = sp[0];
-    var latestSC = sc[0];
+  const [sp, sc] = await Promise.all([servicePulse, serviceControl]);
+  var latestSP = sp[0];
+  var latestSC = sc[0];
 
-    return { latestSP, latestSC };
-  });
+  return { latestSP, latestSC };
 }
