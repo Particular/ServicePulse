@@ -18,7 +18,7 @@ async function getEmailNotifications() {
     return data;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       enabled: false,
       enable_tls: false,
     };
@@ -29,7 +29,7 @@ async function getEmailNotifications() {
 export async function useUpdateEmailNotifications(settings) {
   try {
     const response = await usePostToServiceControl("notifications/email", settings);
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -38,7 +38,7 @@ export async function useUpdateEmailNotifications(settings) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -48,7 +48,7 @@ export async function useUpdateEmailNotifications(settings) {
 export async function useTestEmailNotifications() {
   try {
     const response = await usePostToServiceControl("notifications/email/test", {});
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -57,7 +57,7 @@ export async function useTestEmailNotifications() {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -69,7 +69,7 @@ export async function useToggleEmailNotifications(enabled) {
     const response = await usePostToServiceControl("notifications/email/toggle", {
       enabled: enabled,
     });
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -78,7 +78,7 @@ export async function useToggleEmailNotifications(enabled) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;

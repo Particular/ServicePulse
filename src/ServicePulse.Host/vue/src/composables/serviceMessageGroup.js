@@ -32,7 +32,7 @@ export async function useGetArchiveGroups(classifier) {
 export async function useDeleteNote(groupId) {
   try {
     const response = await useDeleteFromServiceControl("recoverability/groups/" + groupId + "/comment");
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -41,7 +41,7 @@ export async function useDeleteNote(groupId) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -52,7 +52,7 @@ export async function useDeleteNote(groupId) {
 export async function useEditOrCreateNote(groupId, comment) {
   try {
     const response = await usePostToServiceControl("recoverability/groups/" + groupId + "/comment?comment=" + comment);
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -61,7 +61,7 @@ export async function useEditOrCreateNote(groupId, comment) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -72,7 +72,7 @@ export async function useEditOrCreateNote(groupId, comment) {
 export async function useArchiveExceptionGroup(groupId) {
   try {
     const response = await usePostToServiceControl("recoverability/groups/" + groupId + "/errors/archive");
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -81,7 +81,7 @@ export async function useArchiveExceptionGroup(groupId) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -92,7 +92,7 @@ export async function useArchiveExceptionGroup(groupId) {
 export async function useRestoreGroup(groupId) {
   try {
     const response = usePostToServiceControl("recoverability/groups/" + groupId + "/errors/unarchive");
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -101,7 +101,7 @@ export async function useRestoreGroup(groupId) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -113,7 +113,7 @@ export async function useRestoreGroup(groupId) {
 export async function useRetryExceptionGroup(groupId) {
   try {
     const response = await usePostToServiceControl("recoverability/groups/" + groupId + "/errors/retry");
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -122,7 +122,7 @@ export async function useRetryExceptionGroup(groupId) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -133,7 +133,7 @@ export async function useRetryExceptionGroup(groupId) {
 export async function useAcknowledgeArchiveGroup(groupId) {
   try {
     const response = await useDeleteFromServiceControl("recoverability/unacknowledgedgroups/" + groupId);
-    var result = {
+    const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
       statusText: response.statusText,
@@ -142,7 +142,7 @@ export async function useAcknowledgeArchiveGroup(groupId) {
     return result;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
