@@ -155,7 +155,7 @@ async function downloadBody() {
 
   if (response.headers.get("content-type") == "application/json") {
     try {
-      const jsonBody = await response.json();
+      let jsonBody = await response.json();
       jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
 
       failedMessage.value.messageBody = formatJson(jsonBody);
