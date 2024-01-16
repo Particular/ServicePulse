@@ -41,13 +41,19 @@
   display: block;
   padding: 10px 15px 15px 10px;
   color: var(--bs-link-color);
+  text-decoration: none;
+}
+
+.nav > li > a:hover,
+.nav > li > a:focus {
+  color: #fff;
 }
 
 .navbar-nav > li > a > span.no-margin {
   margin: 0;
 }
 
-.navbar-toggle {
+.nav > li > a .navbar-toggle {
   margin-top: 13px;
 }
 
@@ -80,6 +86,11 @@ a.btn-feedback:focus {
   padding: 6px 16px !important;
   margin: 14px 0 0 0;
   border-radius: 3px;
+  font-weight: bold;
+}
+
+a.btn-feedback:hover {
+  background-color: hsl(194, 95%, 61%) !important;
   font-weight: bold;
 }
 
