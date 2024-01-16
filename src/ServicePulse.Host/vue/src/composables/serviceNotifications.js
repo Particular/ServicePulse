@@ -4,7 +4,7 @@ export async function useEmailNotifications() {
   const emailNotificationResults = getEmailNotifications();
 
   try {
-    [emailNotifications] = await Promise.all([emailNotificationResults]);
+    const [emailNotifications] = await Promise.all([emailNotificationResults]);
     return emailNotifications;
   } catch (err) {
     console.log(err);
