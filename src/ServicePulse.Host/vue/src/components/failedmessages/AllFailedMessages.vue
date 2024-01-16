@@ -54,6 +54,12 @@ function loadMessages() {
   loadPagedMessages(groupId.value, pageNumber.value, sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir);
 }
 
+async function loadGroupDetails(groupId) {
+  const response = await useFetchFromServiceControl(`recoverability/groups/id/${groupId}`);
+  const data = await response.json();
+  groupName.value = data.title;
+}
+
 async function loadPagedMessages(groupId, page, sortBy, direction) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
@@ -61,12 +67,7 @@ async function loadPagedMessages(groupId, page, sortBy, direction) {
 
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
-    async function loadGroupDetails() {
-      const response = await useFetchFromServiceControl(`recoverability/groups/id/${groupId}`);
-      const data = await response.json();
-      groupName.value = data.title;
-    }
-    loadGroupDetailsPromise = loadGroupDetails();
+    loadGroupDetailsPromise = loadGroupDetails(groupId);
   }
 
   async function loadMessages() {

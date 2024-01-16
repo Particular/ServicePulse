@@ -54,6 +54,12 @@ function loadMessages() {
   return loadPagedMessages(groupId.value, pageNumber.value, "", "", startDate.toISOString(), endDate.toISOString());
 }
 
+async function loadGroupDetails(groupId) {
+  const response = await useFetchFromServiceControl(`archive/groups/id/${groupId}`);
+  const data = await response.json();
+  groupName.value = data.title;
+}
+
 function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate) {
   if (typeof sortBy === "undefined") sortBy = "modified";
   if (typeof direction === "undefined") direction = "desc";
@@ -63,13 +69,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
   let dateRange = startDate + "..." + endDate;
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
-    async function loadGroupDetails() {
-      const response = await useFetchFromServiceControl(`archive/groups/id/${groupId}`);
-      const data = await response.json();
-      groupName.value = data.title;
-    }
-
-    loadGroupDetailsPromise = loadGroupDetails();
+    loadGroupDetailsPromise = loadGroupDetails(groupId);
   }
 
   async function loadDelMessages() {
