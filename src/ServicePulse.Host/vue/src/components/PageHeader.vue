@@ -48,7 +48,7 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
-          <li :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
+          <li v-if="useIsMonitoringEnabled()" :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
             <a :href="`${baseUrl}a/#/monitoring`">
               <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
               <span class="navbar-label">Monitoring</span>
