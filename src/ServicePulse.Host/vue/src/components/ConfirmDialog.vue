@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
 
 const emit = defineEmits(["confirm", "cancel"]);

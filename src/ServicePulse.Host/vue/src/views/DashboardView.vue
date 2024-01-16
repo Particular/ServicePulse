@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import DashboardItem from "../components/DashboardItem.vue";
 import EventItemShort from "../components/EventItemShort.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";

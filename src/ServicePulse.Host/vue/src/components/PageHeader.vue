@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { RouterLink, useRoute } from "vue-router";
 import { computed } from "vue";
 import { stats, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";

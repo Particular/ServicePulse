@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
@@ -150,7 +150,7 @@ function retrySelectedMessages() {
   useShowToast("info", "Info", "Selected messages were submitted for retry...");
   return usePostToServiceControl(
     "pendingretries/retry",
-    selectedMessages.map((m) => m.id)
+    selectedMessages.map((m) => m.id),
   ).then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.submittedForRetrial = true));

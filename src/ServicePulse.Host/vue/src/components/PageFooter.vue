@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { environment, newVersions, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";
 import { serviceControlUrl, monitoringUrl } from "../composables/serviceServiceControlUrls.js";

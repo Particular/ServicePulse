@@ -1,0 +1,1 @@
+find . -iname "*.js" -exec bash -c 'mv "$0" "${0%\.js}.ts"' {} \;

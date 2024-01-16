@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { select, hierarchy, zoom, tree } from "d3";

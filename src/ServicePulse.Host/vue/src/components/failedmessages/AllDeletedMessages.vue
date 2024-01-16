@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
@@ -168,7 +168,7 @@ function restoreSelectedMessages() {
 
   usePatchToServiceControl(
     "errors/unarchive",
-    selectedMessages.map((m) => m.id)
+    selectedMessages.map((m) => m.id),
   ).then(() => {
     messageList.value.deselectAll();
   });

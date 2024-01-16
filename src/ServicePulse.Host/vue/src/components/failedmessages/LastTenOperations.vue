@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import NoData from "../NoData.vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";

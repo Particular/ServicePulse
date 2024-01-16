@@ -1,4 +1,4 @@
-﻿<script setup>
+﻿<script setup lang="ts">
 import { connectionState } from "./../composables/serviceServiceControl";
 import { serviceControlUrl } from "./../composables/serviceServiceControlUrls";
 </script>

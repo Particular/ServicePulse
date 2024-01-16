@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "../../composables/serviceLicense.js";
@@ -201,12 +201,12 @@ var acknowledgeGroup = function (dismissedGroup) {
     undismissedRestoreGroups.value.findIndex((group) => {
       return group.id === dismissedGroup.id;
     }),
-    1
+    1,
   );
 
   archiveGroups.value.splice(
     archiveGroups.value.findIndex((group) => group.id === dismissedGroup.id),
-    1
+    1,
   );
 };
 

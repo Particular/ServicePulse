@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
