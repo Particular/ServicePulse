@@ -251,14 +251,16 @@ async function getMonitoringVersion() {
   }
 }
 
-function fetchWithErrorHandling(fetchFunction, connectionState, action) {
+async function fetchWithErrorHandling(fetchFunction, connectionState, action) {
   if (connectionState.connecting) {
     //Skip the connection state checking
-    return fetchFunction()
-      .then((response) => action(response))
-      .catch((err) => {
-        console.log(err);
-      });
+    try {
+      const response = await fetchFunction();
+      return action(response);
+    } catch (err) {
+      console.log(err);
+      return;
+    }
   }
   try {
     if (!connectionState.connected) {
@@ -266,22 +268,21 @@ function fetchWithErrorHandling(fetchFunction, connectionState, action) {
       connectionState.connected = false;
     }
 
-    return fetchFunction()
-      .then((response) => action(response))
-      .then((response) => {
-        connectionState.unableToConnect = false;
-        connectionState.connectedRecently = true;
-        connectionState.connected = true;
-        connectionState.connecting = false;
-        return response;
-      })
-      .catch((err) => {
-        connectionState.connected = false;
-        connectionState.unableToConnect = true;
-        connectionState.connectedRecently = false;
-        connectionState.connecting = false;
-        console.log(err);
-      });
+    try {
+      const response = await fetchFunction();
+      const result = action(result);
+      connectionState.unableToConnect = false;
+      connectionState.connectedRecently = true;
+      connectionState.connected = true;
+      connectionState.connecting = false;
+      return result;
+    } catch (err) {
+      connectionState.connected = false;
+      connectionState.unableToConnect = true;
+      connectionState.connectedRecently = false;
+      connectionState.connecting = false;
+      console.log(err);
+    }
   } catch (err) {
     connectionState.connecting = false;
     connectionState.connected = false;
@@ -292,10 +293,9 @@ function getFailedHeartBeatsCount() {
   return fetchWithErrorHandling(
     () => useFetchFromServiceControl("heartbeats/stats"),
     connectionState,
-    (response) => {
-      return response.json().then((data) => {
-        return parseInt(data.failing);
-      });
+    async (response) => {
+      const data = await response.json();
+      return parseInt(data.failing);
     }
   );
 }
