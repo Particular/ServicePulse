@@ -116,53 +116,48 @@ export function useServiceControl() {
   }
 }
 
-export function useServiceControlStats() {
+export async function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
   const archivedMessagesResult = getArchivedMessagesCount();
   const pendingRetriesResult = getPendingRetriesCount();
 
-  return Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult, pendingRetriesResult])
-    .then(([failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages, pendingRetries]) => {
-      stats.failing_endpoints = failedHeartbeats;
-      stats.number_of_failed_messages = failedMessages;
-      stats.number_of_failed_checks = failedCustomChecks;
-      stats.number_of_failed_heartbeats = failedHeartbeats;
-      stats.number_of_archived_messages = archivedMessages;
-      stats.number_of_pending_retries = pendingRetries;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  try {
+    const [failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages, pendingRetries] = await Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult, pendingRetriesResult]);
+    stats.failing_endpoints = failedHeartbeats;
+    stats.number_of_failed_messages = failedMessages;
+    stats.number_of_failed_checks = failedCustomChecks;
+    stats.number_of_failed_heartbeats = failedHeartbeats;
+    stats.number_of_archived_messages = archivedMessages;
+    stats.number_of_pending_retries = pendingRetries;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-export function useServiceControlMonitoringStats() {
+export async function useServiceControlMonitoringStats() {
   const monitoredEndpointsResult = getMonitoredEndpoints();
   const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
-  return Promise.all([monitoredEndpointsResult, disconnectedEndpointsCountResult]).then(([, disconnectedEndpoints]) => {
-    //Do something here with the argument to the callback in the future if we are using them
-    stats.number_of_disconnected_endpoints = disconnectedEndpoints;
-  });
+  const [, disconnectedEndpoints] = await Promise.all([monitoredEndpointsResult, disconnectedEndpointsCountResult]);
+  //Do something here with the argument to the callback in the future if we are using them
+  stats.number_of_disconnected_endpoints = disconnectedEndpoints;
 }
 
-export function useServiceControlConnections() {
+export async function useServiceControlConnections() {
   const scConnectionResult = getSCConnection();
   const monitoringConnectionResult = getMonitoringConnection();
 
-  return Promise.all([scConnectionResult, monitoringConnectionResult]).then(([scConnection, mConnection]) => {
-    if (scConnection) {
-      connections.serviceControl.settings = scConnection.settings;
-      connections.serviceControl.errors = scConnection.errors;
-    }
-
-    if (mConnection) {
-      connections.monitoring.settings = mConnection.Metrics;
-    }
-
-    return connections;
-  });
+  const [scConnection, mConnection] = await Promise.all([scConnectionResult, monitoringConnectionResult]);
+  if (scConnection) {
+    connections.serviceControl.settings = scConnection.settings;
+    connections.serviceControl.errors = scConnection.errors;
+  }
+  if (mConnection) {
+    connections.monitoring.settings = mConnection.Metrics;
+  }
+  return connections;
 }
 
 export function useServiceControlVersion() {
@@ -180,88 +175,80 @@ export function useServiceControlVersion() {
   });
 }
 
-function getServiceControlVersion() {
+async function getServiceControlVersion() {
   const productsResult = useServiceProductUrls();
   const scResult = getSCVersion();
   const mResult = getMonitoringVersion();
 
-  return Promise.all([productsResult, scResult, mResult]).then(([products, scVer]) => {
-    if (scVer) {
-      environment.supportsArchiveGroups = scVer.archived_groups_url && scVer.archived_groups_url.length > 0;
-      environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version);
-      environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
-      environment.known_endpoints_url = scVer && scVer.known_endpoints_url;
-      environment.endpoints_message_search_url = scVer.endpoints_message_search_url;
-      environment.endpoints_messages_url = scVer.endpoints_messages_url;
-      environment.endpoints_url = scVer.endpoints_url;
-      environment.errors_url = scVer.errors_url;
-      environment.configuration = scVer.configuration;
-      environment.message_search_url = scVer.message_search_url;
-      environment.sagas_url = scVer.sagas_url;
-    }
-
-    if (products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
-      newVersions.newSPVersion.newspversion = true;
-      newVersions.newSPVersion.newspversionlink = products.latestSP.release;
-      newVersions.newSPVersion.newspversionnumber = products.latestSP.tag;
-    }
-
-    if (products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
-      newVersions.newSCVersion.newscversion = true;
-      newVersions.newSCVersion.newscversionlink = products.latestSC.release;
-      newVersions.newSCVersion.newscversionnumber = products.latestSC.tag;
-    }
-
-    if (products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
-      newVersions.newMVersion.newmversion = true;
-      newVersions.newMVersion.newmversionlink = products.latestSC.release;
-      newVersions.newMVersion.newmversionnumber = products.latestSC.tag;
-    }
-  });
+  const [products, scVer] = await Promise.all([productsResult, scResult, mResult]);
+  if (scVer) {
+    environment.supportsArchiveGroups = scVer.archived_groups_url && scVer.archived_groups_url.length > 0;
+    environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version);
+    environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
+    environment.known_endpoints_url = scVer && scVer.known_endpoints_url;
+    environment.endpoints_message_search_url = scVer.endpoints_message_search_url;
+    environment.endpoints_messages_url = scVer.endpoints_messages_url;
+    environment.endpoints_url = scVer.endpoints_url;
+    environment.errors_url = scVer.errors_url;
+    environment.configuration = scVer.configuration;
+    environment.message_search_url = scVer.message_search_url;
+    environment.sagas_url = scVer.sagas_url;
+  }
+  if (products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
+    newVersions.newSPVersion.newspversion = true;
+    newVersions.newSPVersion.newspversionlink = products.latestSP.release;
+    newVersions.newSPVersion.newspversionnumber = products.latestSP.tag;
+  }
+  if (products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
+    newVersions.newSCVersion.newscversion = true;
+    newVersions.newSCVersion.newscversionlink = products.latestSC.release;
+    newVersions.newSCVersion.newscversionnumber = products.latestSC.tag;
+  }
+  if (products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
+    newVersions.newMVersion.newmversion = true;
+    newVersions.newMVersion.newmversionlink = products.latestSC.release;
+    newVersions.newMVersion.newmversionnumber = products.latestSC.tag;
+  }
 }
 
-function getSCConnection() {
-  return useFetchFromServiceControl("connection")
-    .then((response) => {
-      return response.json();
-    })
-    .catch(() => {
-      connections.serviceControl.errors = ["Error reaching ServiceControl at " + serviceControlUrl.value + "connection"];
-      return {};
-    });
+async function getSCConnection() {
+  try {
+    const response = await useFetchFromServiceControl("connection");
+    return await response.json();
+  } catch {
+    connections.serviceControl.errors = ["Error reaching ServiceControl at " + serviceControlUrl.value + "connection"];
+    return {};
+  }
 }
 
-function getMonitoringConnection() {
-  return useFetchFromMonitoring("connection")
-    .then((response) => {
-      return response.json();
-    })
-    .catch(() => {
-      connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
-      return {};
-    });
+async function getMonitoringConnection() {
+  try {
+    const response = await useFetchFromMonitoring("connection");
+    return response.json();
+  } catch {
+    connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
+    return {};
+  }
 }
 
-function getSCVersion() {
-  return useFetchFromServiceControl("")
-    .then((response) => {
-      environment.sc_version = response.headers.get("X-Particular-Version");
-      return response.json();
-    })
-    .catch(() => {
-      return null;
-    });
+async function getSCVersion() {
+  try {
+    const response = await useFetchFromServiceControl("");
+    environment.sc_version = response.headers.get("X-Particular-Version");
+    return await response.json();
+  } catch {
+    return null;
+  }
 }
 
-function getMonitoringVersion() {
-  return useFetchFromMonitoring("")
-    .then((response) => {
-      environment.monitoring_version = response.headers.get("X-Particular-Version");
-      return response.json();
-    })
-    .catch(() => {
-      return null;
-    });
+async function getMonitoringVersion() {
+  try {
+    const response = await useFetchFromMonitoring("");
+    environment.monitoring_version = response.headers.get("X-Particular-Version");
+    return response.json();
+  } catch {
+    return null;
+  }
 }
 
 function fetchWithErrorHandling(fetchFunction, connectionState, action) {
