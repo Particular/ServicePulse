@@ -21,14 +21,15 @@ const scMonitoringAddressTooltip = computed(() => {
     <div class="container">
       <div class="row">
         <div class="connectivity-status">
-          <span>
-            <i class="fa fa-plus sp-blue"></i>
+          <span class="secondary">
+            <font-awesome-icon icon="fa-solid fa-plus" class="sp-blue" />
             <RouterLink :to="{ name: 'endpoint-connection' }">Connect new endpoint</RouterLink>
           </span>
 
           <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
           <span v-if="newVersions.newSPVersion.newspversion && environment.sp_version">
-            ServicePulse v{{ environment.sp_version }} (<i v-if="newVersions.newSPVersion.newspversionnumber" class="fa fa-level-up fake-link"></i> <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
+            ServicePulse v{{ environment.sp_version }} (<font-awesome-icon v-if="newVersions.newSPVersion.newspversionnumber" icon="fa-solid fa-level-up" class="fake-link" />
+            <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
           </span>
           <span :title="scAddressTooltip">
             Service Control:
@@ -37,11 +38,12 @@ const scMonitoringAddressTooltip = computed(() => {
               <span v-if="!environment.sc_version">Connected</span>
               <span v-if="environment.sc_version" class="versionnumber">v{{ environment.sc_version }}</span>
               <span v-if="newVersions.newSCVersion.newscversion" class="newscversion"
-                >(<i class="fa fa-level-up fake-link"></i> <a :href="newVersions.newSCVersion.newscversionlink" target="_blank">v{{ newVersions.newSCVersion.newscversionnumber }} available</a>)</span
+                >(<font-awesome-icon icon="fa-solid fa-level-up" class="fake-link" />
+                <a :href="newVersions.newSCVersion.newscversionlink" target="_blank">v{{ newVersions.newSCVersion.newscversionnumber }} available</a>)</span
               >
             </span>
             <span v-if="!connectionState.connected && !connectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
-            <span v-if="connectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
+            <span v-if="connectionState.connecting" class="connection-establishing"> <i class="pa-connection-establishing"></i> Connecting </span>
           </span>
 
           <template v-if="isMonitoringEnabled">
@@ -55,7 +57,7 @@ const scMonitoringAddressTooltip = computed(() => {
                 >
               </span>
               <span v-if="!monitoringConnectionState.connected && !monitoringConnectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
-              <span v-if="monitoringConnectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
+              <span v-if="monitoringConnectionState.connecting" class="connection-establishing"> <i class="pa-connection-establishing"></i> Connecting </span>
             </span>
           </template>
         </div>

@@ -11,6 +11,10 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-regular-svg-icons": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/vue-fontawesome": "^3.0.5",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.10.3",
     "d3": "^7.6.1",

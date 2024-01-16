@@ -6,10 +6,17 @@ import "vue-toastification/dist/index.css";
 import SimpleTypeahead from "vue3-simple-typeahead";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 import "./assets/main.css";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faPlus, faLevelUp } from "@fortawesome/free-solid-svg-icons";
+
+//Add font-awesome icons that will be used in the solution
+library.add(faPlus, faLevelUp);
 
 const app = createApp(App);
 
 app.use(router);
+app.component("font-awesome-icon", FontAwesomeIcon);
 const toastOptions = {
   position: POSITION.BOTTOM_RIGHT,
   timeout: 5000,
