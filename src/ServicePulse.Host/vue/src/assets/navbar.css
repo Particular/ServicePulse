@@ -116,10 +116,6 @@ a.btn-feedback:focus {
 }
 
 @media (max-width: 1199px) {
-  .navbar-label {
-    display: none;
-  }
-
   .navbar-header {
     float: none;
   }
@@ -164,6 +160,12 @@ a.btn-feedback:focus {
 
   .collapsing {
     overflow: hidden !important;
+  }
+}
+
+@media (max-width: 1300px) {
+  .navbar-label {
+    display: none;
   }
 }
 
