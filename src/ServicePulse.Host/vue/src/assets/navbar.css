@@ -89,7 +89,8 @@ a.btn-feedback:focus {
   font-weight: bold;
 }
 
-a.btn-feedback:hover {
+a.btn-feedback:hover,
+a.btn-feedback:focus {
   background-color: hsl(194, 95%, 61%) !important;
   font-weight: bold;
 }
@@ -178,6 +179,20 @@ a.btn-feedback:hover {
   .navbar-label {
     display: none;
   }
+
+  .nav > li > a .icon-white {
+    color: #929e9e;
+  }
+
+  .nav > li > a:hover .icon-white,
+  .nav > li > a:focus .icon-white {
+    color: #fff;
+  }
+
+  .nav > li > a:hover .pa-monitoring,
+  .nav > li > a:focus .pa-monitoring {
+    background-color: #fff;
+  }
 }
 
 @media (max-width: 1439px) {
@@ -235,7 +250,8 @@ a.btn-feedback:hover {
 }
 
 .pa-monitoring {
-  background-image: url("@/assets/monitoring.svg");
+  mask-image: url("@/assets/monitoring.svg");
+  background-color: #929e9e;
   background-position: center;
   background-repeat: no-repeat;
   width: 16px;
