@@ -1,74 +1,74 @@
 .dropdown-menu {
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 100;
-    text-align: left;
-    list-style: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 100;
+  text-align: left;
+  list-style: none;
 }
 
 .dropdown-menu > span > li > button {
-    border: none;
-    background: none;
+  border: none;
+  background: none;
 }
 
 .dropdown-menu > span > li > button,
 .dropdown-menu > li > button,
 .dropdown-menu > li > a,
 .dropdown-menu > span > li > a {
-    display: block;
-    padding: 3px 20px;
-    clear: both;
-    font-weight: 400;
-    line-height: 1.42857143;
-    color: #333333;
-    white-space: nowrap;
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #333333;
+  white-space: nowrap;
 }
 
 ul.dropdown-menu > span > li > a > span {
-    color: #aaa;
+  color: #aaa;
 }
 
 .dropdown-menu > span > li > a:hover,
 .dropdown-menu > span > li > a:focus,
 .dropdown-menu > li > a:hover,
 .dropdown-menu > li > a:focus {
-    color: #262626;
-    text-decoration: none;
-    background-color: #f5f5f5;
+  color: #262626;
+  text-decoration: none;
+  background-color: #f5f5f5;
 }
 
 .msg-list-dropdown {
-    margin: 1px 0 0 0 !important;
-    padding-right: 0;
+  margin: 1px 0 0 0 !important;
+  padding-right: 0;
 }
 
 .msg-group-menu {
-    margin: 21px 0px 0 6px;
-    float: right;
-    padding-top: 12px;
+  margin: 21px 0px 0 6px;
+  float: right;
+  padding-top: 12px;
 }
 
 .msg-group-menu > .control-label {
-    float: none;
+  float: none;
 }
 
 .btn.sp-btn-menu {
-    padding-left: 16px;
-    background: none;
-    border: none;
-    color: #00a3c4;
-    padding-right: 0;
+  padding-left: 16px;
+  background: none;
+  border: none;
+  color: #00a3c4;
+  padding-right: 0;
 }
-  
-  .sp-btn-menu:hover {
-    background: none;
-    border: none;
-    color: #00a3c4;
-    text-decoration: underline;
+
+.sp-btn-menu:hover {
+  background: none;
+  border: none;
+  color: #00a3c4;
+  text-decoration: underline;
 }
-  
-  .btn-toolbar > .btn-default:hover {
-    color: #333;
-    background-color: #e6e6e6;
-    border-color: #adadad;
+
+.btn-toolbar > .btn-default:hover {
+  color: #333;
+  background-color: #e6e6e6;
+  border-color: #adadad;
 }

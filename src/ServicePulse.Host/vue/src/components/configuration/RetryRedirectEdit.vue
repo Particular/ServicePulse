@@ -97,7 +97,19 @@ function close() {
                   <i class="fa fa-info-circle"></i>
                 </span>
                 <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
-                  <vue3-simple-typeahead id="targetQueue" name="targetQueue" :defaultItem="model.to_physical_address" v-model="targetQueue" @selectItem="selectToAddress" class="form-control" required placeholder="Start writing..." :items="model.queues" :minInputLength="1"> </vue3-simple-typeahead>
+                  <vue3-simple-typeahead
+                    id="targetQueue"
+                    name="targetQueue"
+                    :defaultItem="model.to_physical_address"
+                    v-model="targetQueue"
+                    @selectItem="selectToAddress"
+                    class="form-control"
+                    required
+                    placeholder="Start writing..."
+                    :items="model.queues"
+                    :minInputLength="1"
+                  >
+                  </vue3-simple-typeahead>
 
                   <template v-if="noKnownQueues">
                     <div :class="{ 'has-error': noKnownQueues }">

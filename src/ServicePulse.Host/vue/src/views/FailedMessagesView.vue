@@ -182,6 +182,6 @@ ul.retry-request-progress li > div {
 
 .metadata.danger,
 .metadata.danger > .danger {
-    font-weight: normal !important;
+  font-weight: normal !important;
 }
 </style>

@@ -165,10 +165,15 @@ onMounted(() => {
                   <div class="row msg-editor-content">
                     <div class="col-sm-12 no-side-padding">
                       <div class="row alert alert-warning" v-if="message?.isEvent">
-                        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in altering the system behavior.</div>
+                        <div class="col-sm-12">
+                          <i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
+                          altering the system behavior.
+                        </div>
                       </div>
                       <div class="row alert alert-warning" v-if="!message?.isContentTypeSupported || message.bodyUnavailable">
-                        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ message?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.</div>
+                        <div class="col-sm-12">
+                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ message?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.
+                        </div>
                       </div>
                       <div class="row alert alert-danger" v-if="showEditRetryGenericError">
                         <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>

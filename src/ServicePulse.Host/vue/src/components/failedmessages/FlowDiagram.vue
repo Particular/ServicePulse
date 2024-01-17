@@ -104,7 +104,19 @@ function drawTree(treeData) {
       svg.attr("transform", event.transform);
     });
 
-  svg.append("defs").append("marker").attr("id", "end-arrow").attr("viewBox", "0 -5 10 10").attr("refX", 0).attr("refY", 0).attr("markerWidth", 6).attr("markerHeight", 6).attr("orient", "auto").attr("class", "arrow").append("path").attr("d", "M10,-5L0,0L10,5");
+  svg
+    .append("defs")
+    .append("marker")
+    .attr("id", "end-arrow")
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 0)
+    .attr("refY", 0)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+    .attr("class", "arrow")
+    .append("path")
+    .attr("d", "M10,-5L0,0L10,5");
 
   // declares a tree layout and assigns the size
   treemap = tree().nodeSize([rectNode.width + 20, rectNode.height]);
@@ -176,7 +188,27 @@ function update(source) {
     .append("xhtml")
     .html((d) => {
       const m = moment.utc(d.data.timeSent);
-      return '<div style="width:' + (rectNode.width - rectNode.textMargin * 2) + " px; height:" + (rectNode.height - rectNode.textMargin * 2) + ' px;" class="node-text wordwrap">' + (d.data.isError ? '<i class="fa pa-flow-failed"></i>' : "") + '<i class="fa ' + (d.data.type === "Timeout message" ? "pa-flow-timeout" : d.data.type === "Event message" ? "pa-flow-event" : "pa-flow-command") + '" title="' + d.data.type + '"></i><div class="lead righ-side-ellipsis" title="' + d.data.nodeName + '"><strong>' + (d.data.isError ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" + d.data.id + "\" })' href='javascript:void(0)'>" + d.data.nodeName + "</a>" : d.data.nodeName) + "</strong></div>" + '<span class="time-sent">' + `<span class="time-since">${m.fromNow()}</span></span>` + (d.data.sagaName ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' + d.data.sagaName + '">' + d.data.sagaName + "</div>" : "") + "</div>";
+      return (
+        '<div style="width:' +
+        (rectNode.width - rectNode.textMargin * 2) +
+        " px; height:" +
+        (rectNode.height - rectNode.textMargin * 2) +
+        ' px;" class="node-text wordwrap">' +
+        (d.data.isError ? '<i class="fa pa-flow-failed"></i>' : "") +
+        '<i class="fa ' +
+        (d.data.type === "Timeout message" ? "pa-flow-timeout" : d.data.type === "Event message" ? "pa-flow-event" : "pa-flow-command") +
+        '" title="' +
+        d.data.type +
+        '"></i><div class="lead righ-side-ellipsis" title="' +
+        d.data.nodeName +
+        '"><strong>' +
+        (d.data.isError ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" + d.data.id + "\" })' href='javascript:void(0)'>" + d.data.nodeName + "</a>" : d.data.nodeName) +
+        "</strong></div>" +
+        '<span class="time-sent">' +
+        `<span class="time-since">${m.fromNow()}</span></span>` +
+        (d.data.sagaName ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' + d.data.sagaName + '">' + d.data.sagaName + "</div>" : "") +
+        "</div>"
+      );
     });
 
   // UPDATE
@@ -260,7 +292,9 @@ function update(source) {
   });
 
   function straight(s, d) {
-    return "M " + (s.x + rectNode.width / 2) + " " + s.y + " C " + (s.x + rectNode.width / 2) + " " + s.y + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22) + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22);
+    return (
+      "M " + (s.x + rectNode.width / 2) + " " + s.y + " C " + (s.x + rectNode.width / 2) + " " + s.y + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22) + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22)
+    );
   }
 
   // Toggle children on click.

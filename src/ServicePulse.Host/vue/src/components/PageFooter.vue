@@ -28,7 +28,8 @@ const scMonitoringAddressTooltip = computed(() => {
 
           <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
           <span v-if="newVersions.newSPVersion.newspversion && environment.sp_version">
-            ServicePulse v{{ environment.sp_version }} (<i v-if="newVersions.newSPVersion.newspversionnumber" class="fa fa-level-up fake-link"></i> <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
+            ServicePulse v{{ environment.sp_version }} (<i v-if="newVersions.newSPVersion.newspversionnumber" class="fa fa-level-up fake-link"></i>
+            <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
           </span>
           <span :title="scAddressTooltip">
             Service Control:
