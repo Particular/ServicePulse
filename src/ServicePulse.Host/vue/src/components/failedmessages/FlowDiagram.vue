@@ -479,4 +479,15 @@ g.error .node-text a:hover {
   height: 15px;
   width: 15px;
 }
+
+path.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+.righ-side-ellipsis {
+  direction: rtl;
+  text-align: left;
+}
 </style>
