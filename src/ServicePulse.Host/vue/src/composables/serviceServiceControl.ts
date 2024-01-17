@@ -234,7 +234,7 @@ export function useServiceControlVersion() {
           "You are using Service Control version " +
             newValue.sc_version +
             ". Please, upgrade to version " +
-            newValue.minimum_supported_sc_version.value +
+            newValue.minimum_supported_sc_version +
             " or higher to unlock new functionality in ServicePulse.",
         );
       }

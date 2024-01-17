@@ -121,7 +121,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || "ServicePulse";
+  document.title = `${to.meta.title} || "ServicePulse"`;
   next();
 });
 
