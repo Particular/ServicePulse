@@ -1,16 +1,16 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense";
 import {
   stats,
   connectionState,
-} from "../../composables/serviceServiceControl.js";
-import { useShowToast } from "../../composables/toast.js";
+} from "../../composables/serviceServiceControl";
+import { useShowToast } from "../../composables/toast";
 import {
   useGetArchiveGroups,
   useRestoreGroup,
-} from "../../composables/serviceMessageGroup.js";
+} from "../../composables/serviceMessageGroup";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";

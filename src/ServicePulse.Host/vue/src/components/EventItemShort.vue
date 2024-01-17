@@ -1,7 +1,7 @@
 ﻿<script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { getEventLogItems } from "../composables/eventLogItems.js";
+import { getEventLogItems } from "../composables/eventLogItems";
 import TimeSince from "./TimeSince.vue";
 
 const router = useRouter();

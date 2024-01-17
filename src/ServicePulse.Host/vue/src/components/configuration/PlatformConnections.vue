@@ -1,13 +1,13 @@
 <script setup>
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense";
 import {
   updateServiceControlUrls,
   serviceControlUrl as configuredServiceControlUrl,
   monitoringUrl as configuredMonitoringUrl,
   useIsMonitoringDisabled,
-} from "./../../composables/serviceServiceControlUrls.js";
+} from "./../../composables/serviceServiceControlUrls";
 import {
   connectionState,
   monitoringConnectionState,

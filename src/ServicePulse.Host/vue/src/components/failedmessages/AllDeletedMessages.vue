@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onBeforeMount, onMounted, onUnmounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { connectionState } from "../../composables/serviceServiceControl.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState } from "../../composables/serviceServiceControl";
 import {
   useFetchFromServiceControl,
   usePatchToServiceControl,
-} from "../../composables/serviceServiceControlUrls.js";
-import { useShowToast } from "../../composables/toast.js";
+} from "../../composables/serviceServiceControlUrls";
+import { useShowToast } from "../../composables/toast";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";

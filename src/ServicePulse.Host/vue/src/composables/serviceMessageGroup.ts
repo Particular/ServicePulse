@@ -2,7 +2,7 @@ import {
   useDeleteFromServiceControl,
   usePostToServiceControl,
   useFetchFromServiceControl,
-} from "./serviceServiceControlUrls.js";
+} from "./serviceServiceControlUrls";
 
 export function useGetExceptionGroups(classifier) {
   return useFetchFromServiceControl(

@@ -2,11 +2,11 @@
 import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense";
 import {
   useServiceControlConnections,
   connectionState,
-} from "../../composables/serviceServiceControl.js";
+} from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";

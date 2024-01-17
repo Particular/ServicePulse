@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
-import { stats } from "../../composables/serviceServiceControl.js";
-import { useShowToast } from "../../composables/toast.js";
+import { stats } from "../../composables/serviceServiceControl";
+import { useShowToast } from "../../composables/toast";
 import {
   useDeleteNote,
   useEditOrCreateNote,
@@ -10,7 +10,7 @@ import {
   useArchiveExceptionGroup,
   useAcknowledgeArchiveGroup,
   useRetryExceptionGroup,
-} from "../../composables/serviceMessageGroup.js";
+} from "../../composables/serviceMessageGroup";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";

@@ -3,7 +3,7 @@ import {
   useDeleteFromServiceControl,
   usePutToServiceControl,
   usePostToServiceControl,
-} from "./serviceServiceControlUrls.js";
+} from "./serviceServiceControlUrls";
 
 const redirects = {
   data: [],

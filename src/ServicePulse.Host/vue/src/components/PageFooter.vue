@@ -5,11 +5,11 @@ import {
   newVersions,
   connectionState,
   monitoringConnectionState,
-} from "../composables/serviceServiceControl.js";
+} from "../composables/serviceServiceControl";
 import {
   serviceControlUrl,
   monitoringUrl,
-} from "../composables/serviceServiceControlUrls.js";
+} from "../composables/serviceServiceControlUrls";
 
 const isMonitoringEnabled = computed(() => {
   return (

@@ -1,12 +1,12 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { connectionState } from "../../composables/serviceServiceControl.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState } from "../../composables/serviceServiceControl";
 import {
   useFetchFromServiceControl,
   usePatchToServiceControl,
-} from "../../composables/serviceServiceControlUrls.js";
-import { useShowToast } from "../../composables/toast.js";
+} from "../../composables/serviceServiceControlUrls";
+import { useShowToast } from "../../composables/toast";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
