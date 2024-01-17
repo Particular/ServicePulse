@@ -1,10 +1,8 @@
 import { useFetchFromServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
 
 export async function useEmailNotifications() {
-  const emailNotificationResults = getEmailNotifications();
-
   try {
-    const [emailNotifications] = await Promise.all([emailNotificationResults]);
+    const emailNotifications = await getEmailNotifications();
     return emailNotifications;
   } catch (err) {
     console.log(err);
