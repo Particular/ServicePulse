@@ -10,8 +10,8 @@ export function useServiceProductUrls() {
   });
 
   return Promise.all([servicePulse, serviceControl]).then(([sp, sc]) => {
-    var latestSP = sp[0];
-    var latestSC = sc[0];
+    const latestSP = sp[0];
+    const latestSC = sc[0];
 
     return { latestSP, latestSC };
   });

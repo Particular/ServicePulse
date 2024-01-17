@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted } from "vue";
 import { useCookies } from "vue3-cookies";
 
@@ -19,19 +19,33 @@ function getSortOptions() {
 }
 
 function saveSortOption(sortCriteria, sortDirection) {
-  cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`, sortCriteria);
-  cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`, sortDirection);
+  cookies.set(
+    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`,
+    sortCriteria,
+  );
+  cookies.set(
+    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`,
+    sortDirection,
+  );
 }
 
 function loadSavedSortOption() {
-  let criteria = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`);
-  let direction = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`);
+  let criteria = cookies.get(
+    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`,
+  );
+  let direction = cookies.get(
+    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`,
+  );
 
   if (criteria && direction) {
     var sortBy = getSortOptions().find((sort) => {
       return sort.description.toLowerCase() === criteria.toLowerCase();
     });
-    return { sort: getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy.description };
+    return {
+      sort: getSortFunction(sortBy.selector, direction),
+      dir: direction,
+      description: sortBy.description,
+    };
   }
 
   return props.sortOptions[0];
@@ -48,7 +62,8 @@ function getSortFunction(selector, dir) {
 }
 
 function sortUpdated(sort) {
-  selectedSort.value = sort.description + (sort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value =
+    sort.description + (sort.dir == "desc" ? " (Descending)" : "");
   saveSortOption(sort.description, sort.dir);
 
   sort.sort = getSortFunction(sort.selector, sort.dir);
@@ -58,7 +73,8 @@ function sortUpdated(sort) {
 
 function setSortOptions(isInitialLoad) {
   const savedSort = loadSavedSortOption();
-  selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value =
+    savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
 
   emit("sortUpdated", savedSort, isInitialLoad);
 }
@@ -75,17 +91,44 @@ onMounted(() => {
 <template>
   <div class="msg-group-menu dropdown" v-show="!props.hideSort">
     <label class="control-label">Sort by:</label>
-    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button
+      type="button"
+      class="btn btn-default dropdown-toggle sp-btn-menu"
+      data-bs-toggle="dropdown"
+      aria-haspopup="true"
+      aria-expanded="false"
+    >
       {{ selectedSort }}
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu">
       <span v-for="(sort, index) in getSortOptions()" :key="index">
         <li>
-          <button @click="sortUpdated({ selector: sort.selector, dir: 'asc', description: sort.description })"><i class="bi" :class="`${sort.icon}up`"></i>{{ sort.description }}</button>
+          <button
+            @click="
+              sortUpdated({
+                selector: sort.selector,
+                dir: 'asc',
+                description: sort.description,
+              })
+            "
+          >
+            <i class="bi" :class="`${sort.icon}up`"></i>{{ sort.description }}
+          </button>
         </li>
         <li>
-          <button @click="sortUpdated({ selector: sort.selector, dir: 'desc', description: sort.description })"><i class="bi" :class="`${sort.icon}down`"></i>{{ sort.description }}<span> (Descending)</span></button>
+          <button
+            @click="
+              sortUpdated({
+                selector: sort.selector,
+                dir: 'desc',
+                description: sort.description,
+              })
+            "
+          >
+            <i class="bi" :class="`${sort.icon}down`"></i>{{ sort.description
+            }}<span> (Descending)</span>
+          </button>
         </li>
       </span>
     </ul>

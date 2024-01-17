@@ -14,7 +14,10 @@ export default defineConfig({
       name: "app-constants-js-cache-busting",
       transformIndexHtml(html) {
         const cachebuster = Math.round(new Date().getTime() / 1000);
-        return html.replace(/app.constants.js/, "app.constants.js?" + cachebuster);
+        return html.replace(
+          /app.constants.js/,
+          "app.constants.js?" + cachebuster,
+        );
       },
     },
   ],

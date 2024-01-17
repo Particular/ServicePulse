@@ -1,13 +1,19 @@
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
+import {
+  useFetchFromServiceControl,
+  usePatchToServiceControl,
+} from "../../composables/serviceServiceControlUrls.js";
 import { useShowToast } from "../../composables/toast.js";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
-import { useArchiveExceptionGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
+import {
+  useArchiveExceptionGroup,
+  useRetryExceptionGroup,
+} from "../../composables/serviceMessageGroup";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import OrderBy from "./OrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -51,7 +57,12 @@ function sortGroups(sort) {
 }
 
 function loadMessages() {
-  loadPagedMessages(groupId.value, pageNumber.value, sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir);
+  loadPagedMessages(
+    groupId.value,
+    pageNumber.value,
+    sortMethod.description.replaceAll(" ", "_").toLowerCase(),
+    sortMethod.dir,
+  );
 }
 
 function loadPagedMessages(groupId, page, sortBy, direction) {
@@ -61,7 +72,9 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
 
   let loadGroupDetails;
   if (groupId && !groupName.value) {
-    loadGroupDetails = useFetchFromServiceControl(`recoverability/groups/id/${groupId}`)
+    loadGroupDetails = useFetchFromServiceControl(
+      `recoverability/groups/id/${groupId}`,
+    )
       .then((response) => {
         return response.json();
       })
@@ -70,7 +83,9 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
       });
   }
 
-  const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
+  const loadMessages = useFetchFromServiceControl(
+    `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`,
+  )
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -81,11 +96,16 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
       if (messages.value.length && response.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
-          const receivedMessage = response.find((m) => m.id === previousMessage.id);
+          const receivedMessage = response.find(
+            (m) => m.id === previousMessage.id,
+          );
           if (receivedMessage) {
-            if (previousMessage.last_modified == receivedMessage.last_modified) {
+            if (
+              previousMessage.last_modified == receivedMessage.last_modified
+            ) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
-              receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
+              receivedMessage.deleteInProgress =
+                previousMessage.deleteInProgress;
             }
 
             receivedMessage.selected = previousMessage.selected;
@@ -125,7 +145,11 @@ function retryRequested(id) {
 function retrySelected() {
   changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
-  useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
+  useShowToast(
+    "info",
+    "Info",
+    "Retrying " + selectedMessages.length + " messages...",
+  );
   return useRetryMessages(selectedMessages.map((m) => m.id)).then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.retryInProgress = true));
@@ -155,7 +179,12 @@ function exportSelected() {
         d = Object.assign(d, newD);
       }
       return d;
-    } else if (type == "number" || type == "string" || type == "boolean" || type == "null") {
+    } else if (
+      type == "number" ||
+      type == "string" ||
+      type == "boolean" ||
+      type == "null"
+    ) {
       const endPath = path.substr(0, path.length - 1);
       if (propertiesToSkip && propertiesToSkip.includes(endPath)) {
         return d;
@@ -168,11 +197,21 @@ function exportSelected() {
   }
 
   const selectedMessages = messageList.value.getSelectedMessages();
-  const propertiesToSkip = ["hover", "selected", "hover2", "$$hashKey", "panel", "edit_of", "edited"];
+  const propertiesToSkip = [
+    "hover",
+    "selected",
+    "hover2",
+    "$$hashKey",
+    "panel",
+    "edit_of",
+    "edited",
+  ];
 
   var preparedMessagesForExport = [];
   for (var i = 0; i < selectedMessages.length; i++) {
-    preparedMessagesForExport.push(parseObject(selectedMessages[i], propertiesToSkip));
+    preparedMessagesForExport.push(
+      parseObject(selectedMessages[i], propertiesToSkip),
+    );
   }
 
   var csvStr = toCSV(preparedMessagesForExport);
@@ -199,7 +238,11 @@ function deleteSelectedMessages() {
   changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
 
-  useShowToast("info", "Info", "Deleting " + selectedMessages.length + " messages...");
+  useShowToast(
+    "info",
+    "Info",
+    "Deleting " + selectedMessages.length + " messages...",
+  );
   usePatchToServiceControl(
     "errors/archive",
     selectedMessages.map((m) => m.id),
@@ -247,7 +290,10 @@ function calculatePageNumbers() {
     endIndex = numberOfPages.value;
   }
 
-  return Array.from(Array(endIndex - startIndex), (_, index) => index + startIndex + 1);
+  return Array.from(
+    Array(endIndex - startIndex),
+    (_, index) => index + startIndex + 1,
+  );
 }
 
 function retryGroup() {
@@ -319,50 +365,137 @@ onMounted(() => {
             <h1 v-if="groupName" class="active break group-title">
               {{ groupName }}
             </h1>
-            <h3 class="active group-title group-message-count">{{ totalCount }} messages in group</h3>
+            <h3 class="active group-title group-message-count">
+              {{ totalCount }} messages in group
+            </h3>
           </div>
         </div>
         <div class="row">
           <div class="col-9">
             <div class="btn-toolbar">
-              <button type="button" class="btn btn-default select-all" @click="selectAll" v-if="!isAnythingSelected()">Select all</button>
-              <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
-              <button type="button" class="btn btn-default" @click="retrySelected()" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Retry {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" @click="showDelete = true" :disabled="!isAnythingSelected()"><i class="fa fa-trash"></i> Delete {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" @click="exportSelected()" :disabled="!isAnythingSelected()"><i class="fa fa-download"></i> Export {{ numberSelected() }} selected</button>
-              <button type="button" class="btn btn-default" v-if="groupId" @click="showConfirmRetryAll = true"><i class="fa fa-repeat"></i> Retry all</button>
-              <button type="button" class="btn btn-default" v-if="groupId" @click="showConfirmDeleteAll = true"><i class="fa fa-trash"></i> Delete all</button>
+              <button
+                type="button"
+                class="btn btn-default select-all"
+                @click="selectAll"
+                v-if="!isAnythingSelected()"
+              >
+                Select all
+              </button>
+              <button
+                type="button"
+                class="btn btn-default select-all"
+                @click="deselectAll"
+                v-if="isAnythingSelected()"
+              >
+                Clear selection
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                @click="retrySelected()"
+                :disabled="!isAnythingSelected()"
+              >
+                <i class="fa fa-repeat"></i> Retry
+                {{ numberSelected() }} selected
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                @click="showDelete = true"
+                :disabled="!isAnythingSelected()"
+              >
+                <i class="fa fa-trash"></i> Delete
+                {{ numberSelected() }} selected
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                @click="exportSelected()"
+                :disabled="!isAnythingSelected()"
+              >
+                <i class="fa fa-download"></i> Export
+                {{ numberSelected() }} selected
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                v-if="groupId"
+                @click="showConfirmRetryAll = true"
+              >
+                <i class="fa fa-repeat"></i> Retry all
+              </button>
+              <button
+                type="button"
+                class="btn btn-default"
+                v-if="groupId"
+                @click="showConfirmDeleteAll = true"
+              >
+                <i class="fa fa-trash"></i> Delete all
+              </button>
             </div>
           </div>
           <div class="col-3">
-            <OrderBy @sort-updated="sortGroups" :sortOptions="sortOptions" sortSavePrefix="all_failed_"></OrderBy>
+            <OrderBy
+              @sort-updated="sortGroups"
+              :sortOptions="sortOptions"
+              sortSavePrefix="all_failed_"
+            ></OrderBy>
           </div>
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" :showRequestRetry="true" @retry-requested="retryRequested" ref="messageList"></MessageList>
+            <MessageList
+              :messages="messages"
+              :showRequestRetry="true"
+              @retry-requested="retryRequested"
+              ref="messageList"
+            ></MessageList>
           </div>
         </div>
         <div class="row">
           <div class="col align-self-center">
             <ul class="pagination justify-content-center">
               <li class="page-item" :class="{ disabled: pageNumber == 1 }">
-                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
+                <a class="page-link" href="#" @click.prevent="previousPage"
+                  >Previous</a
+                >
               </li>
               <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
                 <a @click.prevent="setPage(1)" class="page-link" href="#">1</a>
               </li>
               <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
-                <a @click.prevent="setPage(pageNumber - 5)" class="page-link" href="#">...</a>
+                <a
+                  @click.prevent="setPage(pageNumber - 5)"
+                  class="page-link"
+                  href="#"
+                  >...</a
+                >
               </li>
-              <li v-for="n in calculatePageNumbers()" class="page-item" :class="{ active: pageNumber == n }" :key="n">
-                <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
+              <li
+                v-for="n in calculatePageNumbers()"
+                class="page-item"
+                :class="{ active: pageNumber == n }"
+                :key="n"
+              >
+                <a @click.prevent="setPage(n)" class="page-link" href="#">{{
+                  n
+                }}</a>
               </li>
               <li v-if="numberOfPages - pageNumber > 5" class="page-item">
-                <a @click.prevent="setPage(pageNumber + 5)" class="page-link" href="#">...</a>
+                <a
+                  @click.prevent="setPage(pageNumber + 5)"
+                  class="page-link"
+                  href="#"
+                  >...</a
+                >
               </li>
               <li v-if="numberOfPages - pageNumber > 5" class="page-item">
-                <a @click.prevent="setPage(numberOfPages)" class="page-link" href="#">{{ numberOfPages }}</a>
+                <a
+                  @click.prevent="setPage(numberOfPages)"
+                  class="page-link"
+                  href="#"
+                  >{{ numberOfPages }}</a
+                >
               </li>
               <li class="page-item">
                 <a class="page-link" href="#" @click.prevent="nextPage">Next</a>

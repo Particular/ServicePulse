@@ -1,4 +1,9 @@
-import { useFetchFromServiceControl, useDeleteFromServiceControl, usePutToServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls.js";
+import {
+  useFetchFromServiceControl,
+  useDeleteFromServiceControl,
+  usePutToServiceControl,
+  usePostToServiceControl,
+} from "./serviceServiceControlUrls.js";
 
 const redirects = {
   data: [],
@@ -45,7 +50,7 @@ function getRedirects() {
 export function useRetryPendingMessagesForQueue(queueName) {
   return usePostToServiceControl("errors/queues/" + queueName + "/retry")
     .then((response) => {
-      var result = {
+      const result = {
         message: response.ok ? "success" : "error:" + response.statusText,
         status: response.status,
         statusText: response.statusText,
@@ -54,7 +59,7 @@ export function useRetryPendingMessagesForQueue(queueName) {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -68,7 +73,7 @@ export function useUpdateRedirects(redirectId, sourceEndpoint, targetEndpoint) {
     tophysicaladdress: targetEndpoint,
   })
     .then((response) => {
-      var result = {
+      const result = {
         message: response.ok ? "success" : "error:" + response.statusText,
         status: response.status,
         statusText: response.statusText,
@@ -78,7 +83,7 @@ export function useUpdateRedirects(redirectId, sourceEndpoint, targetEndpoint) {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -91,7 +96,7 @@ export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
     tophysicaladdress: targetEndpoint,
   })
     .then((response) => {
-      var result = {
+      const result = {
         message: response.ok ? "success" : "error:" + response.statusText,
         status: response.status,
         statusText: response.statusText,
@@ -101,7 +106,7 @@ export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -111,7 +116,7 @@ export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
 export function useDeleteRedirects(redirectId) {
   return useDeleteFromServiceControl("redirects/" + redirectId)
     .then((response) => {
-      var result = {
+      const result = {
         message: response.ok ? "success" : "error:" + response.statusText,
         status: response.status,
         statusText: response.statusText,
@@ -121,7 +126,7 @@ export function useDeleteRedirects(redirectId) {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;

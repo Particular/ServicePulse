@@ -1,4 +1,7 @@
-import { usePatchToServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
+import {
+  usePatchToServiceControl,
+  usePostToServiceControl,
+} from "./serviceServiceControlUrls";
 
 export function useUnarchiveMessage(ids) {
   return usePatchToServiceControl("errors/unarchive/", ids)
@@ -6,7 +9,7 @@ export function useUnarchiveMessage(ids) {
       if (response.ok === false) {
         throw response.statusText;
       }
-      var result = {
+      const result = {
         status: response.status,
         statusText: response.statusText,
         data: response,
@@ -14,7 +17,12 @@ export function useUnarchiveMessage(ids) {
       return result;
     })
     .catch((error) => {
-      console.error("There was an error trying to unarchive messages with the provided id(s): ", ids, "\n", error);
+      console.error(
+        "There was an error trying to unarchive messages with the provided id(s): ",
+        ids,
+        "\n",
+        error,
+      );
       return;
     });
 }
@@ -25,7 +33,7 @@ export function useArchiveMessage(ids) {
       if (response.ok === false) {
         throw response.statusText;
       }
-      var result = {
+      const result = {
         status: response.status,
         statusText: response.statusText,
         data: response,
@@ -33,20 +41,33 @@ export function useArchiveMessage(ids) {
       return result;
     })
     .catch((error) => {
-      console.error("There was an error trying to unarchive messages with the provided id(s): ", ids, "\n", error);
+      console.error(
+        "There was an error trying to unarchive messages with the provided id(s): ",
+        ids,
+        "\n",
+        error,
+      );
       return;
     });
 }
 
 export function useRetryMessages(ids) {
   return usePostToServiceControl("errors/retry", ids).catch((error) => {
-    console.error("There was an error trying to retry messages with the provided id(s): ", ids, "\n", error);
+    console.error(
+      "There was an error trying to retry messages with the provided id(s): ",
+      ids,
+      "\n",
+      error,
+    );
     return;
   });
 }
 
 export function useRetryEditedMessage(ids, editedMessage) {
-  var payload = { message_body: editedMessage.value.messageBody, message_headers: editedMessage.value.headers };
+  const payload = {
+    message_body: editedMessage.value.messageBody,
+    message_headers: editedMessage.value.headers,
+  };
   return usePostToServiceControl("edit/" + ids, payload)
     .then(async (response) => {
       if (!response.ok) {
@@ -55,7 +76,12 @@ export function useRetryEditedMessage(ids, editedMessage) {
       return response;
     })
     .catch((error) => {
-      console.error("There was an error trying to retry message with the provided id: ", ids, "\n", error);
+      console.error(
+        "There was an error trying to retry message with the provided id: ",
+        ids,
+        "\n",
+        error,
+      );
       throw error;
     });
 }

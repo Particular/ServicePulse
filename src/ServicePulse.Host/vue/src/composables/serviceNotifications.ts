@@ -1,4 +1,7 @@
-import { useFetchFromServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
+import {
+  useFetchFromServiceControl,
+  usePostToServiceControl,
+} from "./serviceServiceControlUrls";
 
 export function useEmailNotifications() {
   const emailNotificationResults = getEmailNotifications();
@@ -22,7 +25,7 @@ function getEmailNotifications() {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         enabled: false,
         enable_tls: false,
       };
@@ -33,7 +36,7 @@ function getEmailNotifications() {
 export function useUpdateEmailNotifications(settings) {
   return usePostToServiceControl("notifications/email", settings)
     .then((response) => {
-      var result = {
+      const result = {
         message: response.ok ? "success" : "error:" + response.statusText,
         status: response.status,
         statusText: response.statusText,
@@ -43,7 +46,7 @@ export function useUpdateEmailNotifications(settings) {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -53,7 +56,7 @@ export function useUpdateEmailNotifications(settings) {
 export function useTestEmailNotifications() {
   return usePostToServiceControl("notifications/email/test", {})
     .then((response) => {
-      var result = {
+      const result = {
         message: response.ok ? "success" : "error:" + response.statusText,
         status: response.status,
         statusText: response.statusText,
@@ -63,7 +66,7 @@ export function useTestEmailNotifications() {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -75,7 +78,7 @@ export function useToggleEmailNotifications(enabled) {
     enabled: enabled,
   })
     .then((response) => {
-      var result = {
+      const result = {
         message: response.ok ? "success" : "error:" + response.statusText,
         status: response.status,
         statusText: response.statusText,
@@ -85,7 +88,7 @@ export function useToggleEmailNotifications(enabled) {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;

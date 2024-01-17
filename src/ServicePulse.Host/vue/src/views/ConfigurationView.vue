@@ -1,7 +1,10 @@
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted } from "vue";
 import { licenseStatus } from "../composables/serviceLicense.js";
-import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
+import {
+  connectionState,
+  monitoringConnectionState,
+} from "../composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
 import { useRedirects } from "../composables/serviceRedirects.js";
 import ExclamationMark from "../components/ExclamationMark.vue";
@@ -33,26 +36,77 @@ onMounted(() => {
     <div class="row">
       <div class="col-sm-12">
         <div class="nav tabs">
-          <h5 :class="{ active: subIsActive('configuration'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
+          <h5
+            :class="{
+              active: subIsActive('configuration'),
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedRecently,
+            }"
+            class="nav-item"
+          >
             <RouterLink :to="{ name: 'license' }">License</RouterLink>
             <exclamation-mark :type="licenseStatus.warningLevel" />
           </h5>
-          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('health-check-notifications'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <RouterLink :to="{ name: 'health-check-notifications' }">Health Check Notifications</RouterLink>
+          <h5
+            v-if="!licenseStatus.isExpired"
+            :class="{
+              active: subIsActive('health-check-notifications'),
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedRecently,
+            }"
+            class="nav-item"
+          >
+            <RouterLink :to="{ name: 'health-check-notifications' }"
+              >Health Check Notifications</RouterLink
+            >
           </h5>
-          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('retry-redirects'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <RouterLink :to="{ name: 'retry-redirects' }">Retry Redirects ({{ redirectCount }})</RouterLink>
+          <h5
+            v-if="!licenseStatus.isExpired"
+            :class="{
+              active: subIsActive('retry-redirects'),
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedRecently,
+            }"
+            class="nav-item"
+          >
+            <RouterLink :to="{ name: 'retry-redirects' }"
+              >Retry Redirects ({{ redirectCount }})</RouterLink
+            >
           </h5>
-          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('connections') }" class="nav-item">
+          <h5
+            v-if="!licenseStatus.isExpired"
+            :class="{ active: subIsActive('connections') }"
+            class="nav-item"
+          >
             <RouterLink :to="{ name: 'connections' }">
               Connections
-              <template v-if="connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled())">
+              <template
+                v-if="
+                  connectionState.unableToConnect ||
+                  (monitoringConnectionState.unableToConnect &&
+                    useIsMonitoringEnabled())
+                "
+              >
                 <span><i class="fa fa-exclamation-triangle"></i></span>
               </template>
             </RouterLink>
           </h5>
-          <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('endpoint-connection'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <RouterLink :to="{ name: 'endpoint-connection' }">Endpoint Connection</RouterLink>
+          <h5
+            v-if="!licenseStatus.isExpired"
+            :class="{
+              active: subIsActive('endpoint-connection'),
+              disabled:
+                !connectionState.connected &&
+                !connectionState.connectedRecently,
+            }"
+            class="nav-item"
+          >
+            <RouterLink :to="{ name: 'endpoint-connection' }"
+              >Endpoint Connection</RouterLink
+            >
           </h5>
         </div>
       </div>

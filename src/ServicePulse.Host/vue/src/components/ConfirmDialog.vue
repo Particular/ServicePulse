@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { onMounted, onUnmounted } from "vue";
 
 const emit = defineEmits(["confirm", "cancel"]);
@@ -40,11 +40,17 @@ onMounted(() => {
         </div>
         <div class="modal-body">
           <p>{{ body }}</p>
-          <p v-if="secondParagraph && secondParagraph.length">{{ secondParagraph }}</p>
+          <p v-if="secondParagraph && secondParagraph.length">
+            {{ secondParagraph }}
+          </p>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" @click="confirm">{{ hideCancel ? "Ok" : "Yes" }}</button>
-          <button v-if="!hideCancel" class="btn btn-default" @click="close">No</button>
+          <button class="btn btn-primary" @click="confirm">
+            {{ hideCancel ? "Ok" : "Yes" }}
+          </button>
+          <button v-if="!hideCancel" class="btn btn-default" @click="close">
+            No
+          </button>
         </div>
       </div>
     </div>

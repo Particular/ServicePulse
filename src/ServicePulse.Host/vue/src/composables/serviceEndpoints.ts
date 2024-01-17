@@ -2,8 +2,10 @@
 
 export class useEndpoints {
   getQueueNames() {
-    return useFetchFromServiceControl("errors/queues/addresses").then((response) => {
-      return response.json();
-    });
+    return useFetchFromServiceControl("errors/queues/addresses").then(
+      (response) => {
+        return response.json();
+      },
+    );
   }
 }

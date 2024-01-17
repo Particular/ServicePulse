@@ -1,9 +1,16 @@
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import { stats } from "../../composables/serviceServiceControl.js";
 import { useShowToast } from "../../composables/toast.js";
-import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
+import {
+  useDeleteNote,
+  useEditOrCreateNote,
+  useGetExceptionGroups,
+  useArchiveExceptionGroup,
+  useAcknowledgeArchiveGroup,
+  useRetryExceptionGroup,
+} from "../../composables/serviceMessageGroup.js";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
@@ -65,17 +72,25 @@ function getExceptionGroups(classifier) {
       }
     }
 
-    groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
+    groupsWithNotesAdded = groupsWithNotesAdded.filter(
+      (note) => !note.alreadySaved,
+    );
   });
 }
 function initializeGroupState(group, index) {
   group.index = index;
 
-  var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
+  var operationStatus =
+    (group.operation_status ? group.operation_status.toLowerCase() : null) ||
+    "none";
   if (operationStatus === "preparing" && group.operation_progress === 1) {
     operationStatus = "queued";
   }
-  group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
+  group.workflow_state = createWorkflowState(
+    operationStatus,
+    group.operation_progress,
+    group.operation_failed,
+  );
   return group;
 }
 
@@ -156,7 +171,12 @@ function editNote(group) {
 }
 
 //delete a group
-var statusesForArchiveOperation = ["archivestarted", "archiveprogressing", "archivefinalizing", "archivecompleted"];
+var statusesForArchiveOperation = [
+  "archivestarted",
+  "archiveprogressing",
+  "archivefinalizing",
+  "archivecompleted",
+];
 function deleteGroup(group) {
   groupDeleteSuccessful.value = null;
   selectedGroup.value.groupid = group.id;
@@ -165,7 +185,10 @@ function deleteGroup(group) {
 
 function saveDeleteGroup(group) {
   showDeleteGroupModal.value = false;
-  group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
+  group.workflow_state = {
+    status: "archivestarted",
+    message: "Delete request initiated...",
+  };
 
   // We've started a delete, so increase the polling frequency
   changeRefreshInterval(1000);
@@ -177,7 +200,11 @@ function saveDeleteGroup(group) {
       useShowToast("info", "info", "Group delete started...");
     } else {
       groupDeleteSuccessful.value = false;
-      useShowToast("error", "Error", "Failed to delete the group:" + result.message);
+      useShowToast(
+        "error",
+        "Error",
+        "Failed to delete the group:" + result.message,
+      );
     }
   });
 }
@@ -209,7 +236,10 @@ function retryGroup(group) {
 
 function saveRetryGroup(group) {
   showRetryGroupModal.value = false;
-  group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
+  group.workflow_state = {
+    status: "waiting",
+    message: "Retry Group Request Enqueued...",
+  };
 
   // We've started a retry, so increase the polling frequency
   changeRefreshInterval(1000);
@@ -220,12 +250,21 @@ function saveRetryGroup(group) {
       groupRetrySuccessful.value = true;
     } else {
       groupRetrySuccessful.value = false;
-      useShowToast("error", "Error", "Failed to retry the group:" + result.message);
+      useShowToast(
+        "error",
+        "Error",
+        "Failed to retry the group:" + result.message,
+      );
     }
   });
 }
 
-var statusesForRetryOperation = ["waiting", "preparing", "queued", "forwarding"];
+var statusesForRetryOperation = [
+  "waiting",
+  "preparing",
+  "queued",
+  "forwarding",
+];
 function getClassesForRetryOperation(stepStatus, currentStatus) {
   if (currentStatus === "queued") {
     currentStatus = "forwarding";
@@ -256,17 +295,31 @@ var acknowledgeGroup = function (group) {
       }
       loadFailedMessageGroups(); //reload the groups
     } else {
-      useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
+      useShowToast(
+        "error",
+        "Error",
+        "Acknowledging Group Failed':" + result.message,
+      );
     }
   });
 };
 
 function isBeingArchived(status) {
-  return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
+  return (
+    status === "archivestarted" ||
+    status === "archiveprogressing" ||
+    status === "archivefinalizing" ||
+    status === "archivecompleted"
+  );
 }
 
 function isBeingRetried(group) {
-  return group.workflow_state.status !== "none" && (group.workflow_state.status !== "completed" || group.need_user_acknowledgement === true) && !isBeingArchived(group.workflow_state.status);
+  return (
+    group.workflow_state.status !== "none" &&
+    (group.workflow_state.status !== "completed" ||
+      group.need_user_acknowledgement === true) &&
+    !isBeingArchived(group.workflow_state.status)
+  );
 }
 
 function clearInMemoryData() {
@@ -280,7 +333,12 @@ function navigateToGroup($event, groupId) {
 }
 
 function isRetryOrDeleteOperationInProgress() {
-  return exceptionGroups.value.some((group) => group.operation_status !== "None" && group.operation_status !== "ArchiveCompleted" && group.operation_status !== "Completed");
+  return exceptionGroups.value.some(
+    (group) =>
+      group.operation_status !== "None" &&
+      group.operation_status !== "ArchiveCompleted" &&
+      group.operation_status !== "Completed",
+  );
 }
 
 function changeRefreshInterval(milliseconds) {
@@ -324,7 +382,11 @@ defineExpose({
   <div class="messagegrouplist">
     <div class="row">
       <div class="col-sm-12">
-        <no-data v-if="exceptionGroups.length === 0 && !loadingData" title="message groups" message="There are currently no grouped message failures"></no-data>
+        <no-data
+          v-if="exceptionGroups.length === 0 && !loadingData"
+          title="message groups"
+          message="There are currently no grouped message failures"
+        ></no-data>
       </div>
     </div>
 
@@ -345,12 +407,31 @@ defineExpose({
                 <div class="col-sm-12 no-side-padding">
                   <div class="row box-header">
                     <div class="col-sm-12 no-side-padding">
-                      <p class="lead break" :class="{ 'msg-type-hover': group.hover2, 'msg-type-hover-off': group.hover3 }">{{ group.title }}</p>
-                      <p class="metadata" v-if="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
+                      <p
+                        class="lead break"
+                        :class="{
+                          'msg-type-hover': group.hover2,
+                          'msg-type-hover-off': group.hover3,
+                        }"
+                      >
+                        {{ group.title }}
+                      </p>
+                      <p
+                        class="metadata"
+                        v-if="
+                          !isBeingRetried(group) &&
+                          !isBeingArchived(group.workflow_state.status)
+                        "
+                      >
                         <span class="metadata">
                           <i aria-hidden="true" class="fa fa-envelope"></i>
-                          {{ group.count }} message<span v-if="group.count > 1">s</span>
-                          <span v-if="group.operation_remaining_count > 0"> (currently retrying {{ group.operation_remaining_count }} </span>
+                          {{ group.count }} message<span v-if="group.count > 1"
+                            >s</span
+                          >
+                          <span v-if="group.operation_remaining_count > 0">
+                            (currently retrying
+                            {{ group.operation_remaining_count }}
+                          </span>
                         </span>
 
                         <span class="metadata">
@@ -360,26 +441,44 @@ defineExpose({
                         </span>
 
                         <span class="metadata">
-                          <i aria-hidden="true" class="fa fa-clock-o"></i> Last failed:
+                          <i aria-hidden="true" class="fa fa-clock-o"></i> Last
+                          failed:
                           <time-since :date-utc="group.last"></time-since>
                         </span>
 
                         <span class="metadata">
-                          <i aria-hidden="true" class="fa fa-repeat"></i> Last retried:
-                          <time-since :date-utc="group.operation_completion_time"></time-since>
+                          <i aria-hidden="true" class="fa fa-repeat"></i> Last
+                          retried:
+                          <time-since
+                            :date-utc="group.operation_completion_time"
+                          ></time-since>
                         </span>
                       </p>
                     </div>
                   </div>
 
-                  <div class="row" v-if="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
+                  <div
+                    class="row"
+                    v-if="
+                      !isBeingRetried(group) &&
+                      !isBeingArchived(group.workflow_state.status)
+                    "
+                  >
                     <div class="col-sm-12 no-side-padding">
                       <div class="note" v-if="group.comment">
-                        <span> <strong>NOTE:</strong> {{ group.comment }} </span>
+                        <span>
+                          <strong>NOTE:</strong> {{ group.comment }}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  <div class="row" v-if="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
+                  <div
+                    class="row"
+                    v-if="
+                      !isBeingRetried(group) &&
+                      !isBeingArchived(group.workflow_state.status)
+                    "
+                  >
                     <div class="col-sm-12 no-side-padding">
                       <button
                         type="button"
@@ -390,7 +489,15 @@ defineExpose({
                         v-if="exceptionGroups.length > 0"
                         @click="retryGroup(group)"
                       >
+<<<<<<< master
                         <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
+=======
+                        <i
+                          aria-hidden="true"
+                          class="fa fa-repeat no-link-underline"
+                          >&nbsp;</i
+                        >Request retry
+>>>>>>> More required packages
                       </button>
 
                       <button
@@ -402,11 +509,56 @@ defineExpose({
                         v-if="exceptionGroups.length > 0"
                         @click="deleteGroup(group)"
                       >
+<<<<<<< master
                         <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp;</i>Delete group
                       </button>
                       <button type="button" class="btn btn-link btn-sm" v-if="!group.comment" @click="editNote(group)"><i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note</button>
                       <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="editNote(group)"><i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note</button>
                       <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="deleteNote(group)"><i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp;</i>Remove note</button>
+=======
+                        <i
+                          aria-hidden="true"
+                          class="fa fa-trash no-link-underline"
+                          >&nbsp;</i
+                        >Delete group
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm"
+                        v-if="!group.comment"
+                        @click="editNote(group)"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa fa-sticky-note no-link-underline"
+                          >&nbsp;</i
+                        >Add note
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm"
+                        v-if="group.comment"
+                        @click="editNote(group)"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa fa-pencil no-link-underline"
+                          >&nbsp;</i
+                        >Edit note
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm"
+                        v-if="group.comment"
+                        @click="deleteNote(group)"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa fa-eraser no-link-underline"
+                          >&nbsp;</i
+                        >Remove note
+                      </button>
+>>>>>>> More required packages
                     </div>
                   </div>
 
@@ -416,24 +568,63 @@ defineExpose({
                       <div class="panel panel-default panel-retry">
                         <div class="panel-body">
                           <ul class="retry-request-progress">
-                            <li v-if="group.workflow_state.status !== 'completed'" v-bind:class="getClassesForRetryOperation('waiting', group.workflow_state.status)">
-                              <div class="bulk-retry-progress-status">Initialize retry request...</div>
+                            <li
+                              v-if="group.workflow_state.status !== 'completed'"
+                              v-bind:class="
+                                getClassesForRetryOperation(
+                                  'waiting',
+                                  group.workflow_state.status,
+                                )
+                              "
+                            >
+                              <div class="bulk-retry-progress-status">
+                                Initialize retry request...
+                              </div>
                             </li>
-                            <li v-if="group.workflow_state.status !== 'completed'" v-bind:class="getClassesForRetryOperation('preparing', group.workflow_state.status)">
+                            <li
+                              v-if="group.workflow_state.status !== 'completed'"
+                              v-bind:class="
+                                getClassesForRetryOperation(
+                                  'preparing',
+                                  group.workflow_state.status,
+                                )
+                              "
+                            >
                               <div class="row">
-                                <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
-                                  <div class="bulk-retry-progress-status">Prepare messages...</div>
+                                <div
+                                  class="col-xs-12 col-sm-4 col-md-3 no-side-padding"
+                                >
+                                  <div class="bulk-retry-progress-status">
+                                    Prepare messages...
+                                  </div>
                                 </div>
 
                                 <div class="col-xs-12 col-sm-6">
+<<<<<<< master
                                   <div class="progress bulk-retry-progress" v-if="group.workflow_state.status === 'preparing'">
+=======
+                                  <div
+                                    class="progress bulk-retry-progress"
+                                    v-if="
+                                      group.workflow_state.status ===
+                                      'preparing'
+                                    "
+                                  >
+>>>>>>> More required packages
                                     <div
                                       class="progress-bar progress-bar-striped active"
                                       role="progressbar"
                                       aria-valuenow="{{group.workflow_state.total}}"
                                       aria-valuemin="0"
                                       aria-valuemax="100"
+<<<<<<< master
                                       :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }"
+=======
+                                      :style="{
+                                        'min-width': '2em',
+                                        width: group.workflow_state.total + '%',
+                                      }"
+>>>>>>> More required packages
                                     >
                                       {{ group.workflow_state.total }}%
                                     </div>
@@ -441,21 +632,57 @@ defineExpose({
                                 </div>
                               </div>
                             </li>
-                            <li v-if="group.workflow_state.status !== 'completed'" v-bind:class="getClassesForRetryOperation('forwarding', group.workflow_state.status)">
+                            <li
+                              v-if="group.workflow_state.status !== 'completed'"
+                              v-bind:class="
+                                getClassesForRetryOperation(
+                                  'forwarding',
+                                  group.workflow_state.status,
+                                )
+                              "
+                            >
                               <div class="row">
-                                <div class="col-xs-9 col-sm-4 col-md-3 no-side-padding">
-                                  <div class="bulk-retry-progress-status">Send messages to retry...</div>
+                                <div
+                                  class="col-xs-9 col-sm-4 col-md-3 no-side-padding"
+                                >
+                                  <div class="bulk-retry-progress-status">
+                                    Send messages to retry...
+                                  </div>
                                 </div>
-                                <div class="col-xs-3 col-sm-3 retry-op-queued" v-if="group.workflow_state.status === 'queued'">(Queued)</div>
+                                <div
+                                  class="col-xs-3 col-sm-3 retry-op-queued"
+                                  v-if="
+                                    group.workflow_state.status === 'queued'
+                                  "
+                                >
+                                  (Queued)
+                                </div>
                                 <div class="col-xs-12 col-sm-6">
+<<<<<<< master
                                   <div class="progress bulk-retry-progress" v-if="group.workflow_state.status === 'forwarding'">
+=======
+                                  <div
+                                    class="progress bulk-retry-progress"
+                                    v-if="
+                                      group.workflow_state.status ===
+                                      'forwarding'
+                                    "
+                                  >
+>>>>>>> More required packages
                                     <div
                                       class="progress-bar progress-bar-striped active"
                                       role="progressbar"
                                       aria-valuenow="{{group.workflow_state.total}}"
                                       aria-valuemin="0"
                                       aria-valuemax="100"
+<<<<<<< master
                                       :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }"
+=======
+                                      :style="{
+                                        'min-width': '2em',
+                                        width: group.workflow_state.total + '%',
+                                      }"
+>>>>>>> More required packages
                                     >
                                       {{ group.workflow_state.total }}%
                                     </div>
@@ -463,23 +690,83 @@ defineExpose({
                                 </div>
                               </div>
                             </li>
+<<<<<<< master
                             <li v-if="group.workflow_state.status === 'completed'">
                               <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
                               <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
                               <div class="danger sc-restart-warning" v-if="group.workflow_state.failed">
                                 <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining
                                 messages.
+=======
+                            <li
+                              v-if="group.workflow_state.status === 'completed'"
+                            >
+                              <div
+                                class="retry-completed bulk-retry-progress-status"
+                              >
+                                Retry request completed
+                              </div>
+                              <button
+                                type="button"
+                                class="btn btn-default btn-primary btn-xs btn-retry-dismiss"
+                                v-if="group.need_user_acknowledgement == true"
+                                @click="acknowledgeGroup(group)"
+                              >
+                                Dismiss
+                              </button>
+                              <div
+                                class="danger sc-restart-warning"
+                                v-if="group.workflow_state.failed"
+                              >
+                                <i
+                                  aria-hidden="true"
+                                  class="fa fa-exclamation-triangle danger"
+                                ></i>
+                                <strong>WARNING: </strong>Not all messages will
+                                be retried because ServiceControl had to
+                                restart. You need to request retrying the
+                                remaining messages.
+>>>>>>> More required packages
                               </div>
                             </li>
                           </ul>
 
                           <div class="op-metadata">
+<<<<<<< master
                             <span class="metadata">
                               <i aria-hidden="true" class="fa fa-envelope"></i> {{ group.workflow_state.status === "completed" ? "Messages sent:" : "Messages to send:" }} {{ group.operation_remaining_count || group.count }}
                             </span>
                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <time-since :date-utc="group.operation_start_time"></time-since></span>
                             <span class="metadata" v-if="group.workflow_state.status === 'completed'"
                               ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <time-since :date-utc="group.operation_completion_time"></time-since
+=======
+                            <span class="metadata"
+                              ><i aria-hidden="true" class="fa fa-envelope"></i>
+                              {{
+                                group.workflow_state.status === "completed"
+                                  ? "Messages sent:"
+                                  : "Messages to send:"
+                              }}
+                              {{
+                                group.operation_remaining_count || group.count
+                              }}</span
+                            >
+                            <span class="metadata"
+                              ><i aria-hidden="true" class="fa fa-clock-o"></i>
+                              Retry request started:
+                              <time-since
+                                :date-utc="group.operation_start_time"
+                              ></time-since
+                            ></span>
+                            <span
+                              class="metadata"
+                              v-if="group.workflow_state.status === 'completed'"
+                              ><i aria-hidden="true" class="fa fa-clock-o"></i>
+                              Retry request completed:
+                              <time-since
+                                :date-utc="group.operation_completion_time"
+                              ></time-since
+>>>>>>> More required packages
                             ></span>
                           </div>
                         </div>
@@ -488,28 +775,76 @@ defineExpose({
                   </div>
 
                   <!--isBeingArchived-->
-                  <div class="row" v-if="isBeingArchived(group.workflow_state.status)">
+                  <div
+                    class="row"
+                    v-if="isBeingArchived(group.workflow_state.status)"
+                  >
                     <div class="col-sm-12 no-side-padding">
                       <div class="panel panel-default panel-retry">
                         <div class="panel-body">
                           <ul class="retry-request-progress">
-                            <li v-if="group.workflow_state.status !== 'archivecompleted'" v-bind:class="getClassesForArchiveOperation('archivestarted', group.workflow_state.status)">
-                              <div class="bulk-retry-progress-status">Initialize delete request...</div>
+                            <li
+                              v-if="
+                                group.workflow_state.status !==
+                                'archivecompleted'
+                              "
+                              v-bind:class="
+                                getClassesForArchiveOperation(
+                                  'archivestarted',
+                                  group.workflow_state.status,
+                                )
+                              "
+                            >
+                              <div class="bulk-retry-progress-status">
+                                Initialize delete request...
+                              </div>
                             </li>
-                            <li v-if="group.workflow_state.status !== 'archivecompleted'" v-bind:class="getClassesForArchiveOperation('archiveprogressing', group.workflow_state.status)">
+                            <li
+                              v-if="
+                                group.workflow_state.status !==
+                                'archivecompleted'
+                              "
+                              v-bind:class="
+                                getClassesForArchiveOperation(
+                                  'archiveprogressing',
+                                  group.workflow_state.status,
+                                )
+                              "
+                            >
                               <div class="row">
-                                <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
-                                  <div class="bulk-retry-progress-status">Delete request in progress...</div>
+                                <div
+                                  class="col-xs-12 col-sm-4 col-md-3 no-side-padding"
+                                >
+                                  <div class="bulk-retry-progress-status">
+                                    Delete request in progress...
+                                  </div>
                                 </div>
                                 <div class="col-xs-12 col-sm-6">
+<<<<<<< master
                                   <div class="progress bulk-retry-progress" v-if="group.workflow_state.status === 'archiveprogressing'">
+=======
+                                  <div
+                                    class="progress bulk-retry-progress"
+                                    v-if="
+                                      group.workflow_state.status ===
+                                      'archiveprogressing'
+                                    "
+                                  >
+>>>>>>> More required packages
                                     <div
                                       class="progress-bar progress-bar-striped active"
                                       role="progressbar"
                                       aria-valuenow="{{group.workflow_state.total}}"
                                       aria-valuemin="0"
                                       aria-valuemax="100"
+<<<<<<< master
                                       :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }"
+=======
+                                      :style="{
+                                        'min-width': '2em',
+                                        width: group.workflow_state.total + '%',
+                                      }"
+>>>>>>> More required packages
                                     >
                                       {{ group.workflow_state.total }} %
                                     </div>
@@ -517,23 +852,57 @@ defineExpose({
                                 </div>
                               </div>
                             </li>
-                            <li v-if="group.workflow_state.status !== 'archivecompleted'" v-bind:class="getClassesForArchiveOperation('archivefinalizing', group.workflow_state.status)">
+                            <li
+                              v-if="
+                                group.workflow_state.status !==
+                                'archivecompleted'
+                              "
+                              v-bind:class="
+                                getClassesForArchiveOperation(
+                                  'archivefinalizing',
+                                  group.workflow_state.status,
+                                )
+                              "
+                            >
                               <div class="row">
-                                <div class="col-xs-12 col-sm-4 col-md-3 no-side-padding">
-                                  <div class="bulk-retry-progress-status">Cleaning up...</div>
+                                <div
+                                  class="col-xs-12 col-sm-4 col-md-3 no-side-padding"
+                                >
+                                  <div class="bulk-retry-progress-status">
+                                    Cleaning up...
+                                  </div>
                                 </div>
                               </div>
                             </li>
-                            <li v-if="group.workflow_state.status === 'archivecompleted'">
-                              <div class="retry-completed bulk-retry-progress-status">Delete request completed</div>
-                              <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
+                            <li
+                              v-if="
+                                group.workflow_state.status ===
+                                'archivecompleted'
+                              "
+                            >
+                              <div
+                                class="retry-completed bulk-retry-progress-status"
+                              >
+                                Delete request completed
+                              </div>
+                              <button
+                                type="button"
+                                class="btn btn-default btn-primary btn-xs btn-retry-dismiss"
+                                v-if="group.need_user_acknowledgement == true"
+                                @click="acknowledgeGroup(group)"
+                              >
+                                Dismiss
+                              </button>
                             </li>
                           </ul>
 
                           <div class="op-metadata">
                             <span class="metadata">
                               <i aria-hidden="true" class="fa fa-clock-o"></i>
-                              Delete request started: <time-since :date-utc="group.operation_start_time"></time-since>
+                              Delete request started:
+                              <time-since
+                                :date-utc="group.operation_start_time"
+                              ></time-since>
                             </span>
                             <span class="metadata">
                               <i aria-hidden="true" class="fa fa-envelope"></i>
@@ -543,7 +912,9 @@ defineExpose({
                             <span class="metadata">
                               <i aria-hidden="true" class="fa fa-envelope"></i>
                               Messages deleted:
-                              {{ group.operation_messages_completed_count || 0 }}
+                              {{
+                                group.operation_messages_completed_count || 0
+                              }}
                             </span>
                           </div>
                         </div>

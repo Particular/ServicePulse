@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { connectionState } from "../../composables/serviceServiceControl.js";
@@ -17,7 +17,8 @@ const orderBy = ref();
 const sortMethod = ref(() => {});
 
 function sortGroups(sort) {
-  sortMethod.value = sort.sort ?? orderBy.value.getSortFunction(sort.selector, "asc");
+  sortMethod.value =
+    sort.sort ?? orderBy.value.getSortFunction(sort.selector, "asc");
 
   // force a re-render of the messagegroup list
   messageGroupList.value.loadFailedMessageGroups();
@@ -121,17 +122,29 @@ onMounted(() => {
           <div class="col-6 toolbar-menus no-side-padding">
             <div class="msg-group-menu dropdown">
               <label class="control-label">Group by:</label>
-              <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button
+                type="button"
+                class="btn btn-default dropdown-toggle sp-btn-menu"
+                data-bs-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
                 {{ selectedClassifier }}
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu">
                 <li v-for="(classifier, index) in classifiers" :key="index">
-                  <a @click.prevent="classifierChanged(classifier)">{{ classifier }}</a>
+                  <a @click.prevent="classifierChanged(classifier)">{{
+                    classifier
+                  }}</a>
                 </li>
               </ul>
             </div>
-            <OrderBy @sort-updated="sortGroups" :sortOptions="sortOptions" ref="orderBy"></OrderBy>
+            <OrderBy
+              @sort-updated="sortGroups"
+              :sortOptions="sortOptions"
+              ref="orderBy"
+            ></OrderBy>
           </div>
         </div>
         <div class="box-container">
@@ -139,7 +152,10 @@ onMounted(() => {
             <div class="col-12">
               <div class="list-section">
                 <div class="col-12 form-group">
-                  <MessageGroupList :sortFunction="sortMethod" ref="messageGroupList"></MessageGroupList>
+                  <MessageGroupList
+                    :sortFunction="sortMethod"
+                    ref="messageGroupList"
+                  ></MessageGroupList>
                 </div>
               </div>
             </div>

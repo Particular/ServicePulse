@@ -12,7 +12,7 @@ const upgradeProtectionExpired =
 const trialExpiring =
   '<div class="license-warning"><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you\'ll need to extend your license.</div><a href="http://particular.net/extend-your-trial?p=servicepulse" class="btn btn-license-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="#/configuration" class="btn btn-license-warning-light">View license details</a></div>';
 
-export var license = reactive({
+export const license = reactive({
   edition: "",
   licenseEdition: "",
   expiration_date: undefined,
@@ -45,7 +45,10 @@ export const licenseStatus = reactive({
 
 export function useLicense() {
   watch(license, async (newValue, oldValue) => {
-    const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
+    const checkForWarnings =
+      oldValue !== null
+        ? newValue && newValue.license_status != oldValue.license_status
+        : newValue !== null;
     if (checkForWarnings) {
       displayWarningMessage(newValue.license_status);
     }
@@ -55,50 +58,91 @@ export function useLicense() {
     .then((lic) => {
       license = lic;
       license.licenseEdition = computed(() => {
-        return license.license_type && license.edition ? ", " + license.edition : "";
-      });
+        return license.license_type && license.edition
+          ? ", " + license.edition
+          : "";
+      }).value;
       license.formattedInstanceName = computed(() => {
-        return license.instance_name || "Upgrade ServiceControl to v3.4.0+ to see more information about this license";
-      });
+        return (
+          license.instance_name ||
+          "Upgrade ServiceControl to v3.4.0+ to see more information about this license"
+        );
+      }).value;
       license.formattedExpirationDate = computed(() => {
-        return license.expiration_date ? new Date(license.expiration_date.replace("Z", "")).toLocaleDateString() : "";
-      });
-      license.formattedUpgradeProtectionExpiration = computed(() => {
-        return license.upgrade_protection_expiration ? new Date(license.upgrade_protection_expiration.replace("Z", "")).toLocaleDateString() : "";
+        return license.expiration_date
+          ? new Date(
+              license.expiration_date.replace("Z", ""),
+            ).toLocaleDateString()
+          : "";
+      }).value;
+      license.formattedUpgradeProtectionExpiration = computed<string>(() => {
+        return license.upgrade_protection_expiration
+          ? new Date(
+              license.upgrade_protection_expiration.replace("Z", ""),
+            ).toLocaleDateString()
+          : "";
       });
       return license;
     })
     .then((lic) => {
       licenseStatus.isSubscriptionLicense = isSubscriptionLicense(lic);
-      licenseStatus.isUpgradeProtectionLicense = isUpgradeProtectionLicense(lic);
+      licenseStatus.isUpgradeProtectionLicense =
+        isUpgradeProtectionLicense(lic);
       licenseStatus.isTrialLicense = lic.trial_license;
-      licenseStatus.isPlatformExpired = lic.license_status === "InvalidDueToExpiredSubscription";
-      licenseStatus.isPlatformTrialExpiring = lic.license_status === "ValidWithExpiringTrial";
-      licenseStatus.isPlatformTrialExpired = lic.license_status === "InvalidDueToExpiredTrial";
-      licenseStatus.isInvalidDueToUpgradeProtectionExpired = lic.license_status === "InvalidDueToExpiredUpgradeProtection";
-      licenseStatus.isValidWithExpiredUpgradeProtection = lic.license_status === "ValidWithExpiredUpgradeProtection";
-      licenseStatus.isValidWithExpiringUpgradeProtection = lic.license_status === "ValidWithExpiringUpgradeProtection";
+      licenseStatus.isPlatformExpired =
+        lic.license_status === "InvalidDueToExpiredSubscription";
+      licenseStatus.isPlatformTrialExpiring =
+        lic.license_status === "ValidWithExpiringTrial";
+      licenseStatus.isPlatformTrialExpired =
+        lic.license_status === "InvalidDueToExpiredTrial";
+      licenseStatus.isInvalidDueToUpgradeProtectionExpired =
+        lic.license_status === "InvalidDueToExpiredUpgradeProtection";
+      licenseStatus.isValidWithExpiredUpgradeProtection =
+        lic.license_status === "ValidWithExpiredUpgradeProtection";
+      licenseStatus.isValidWithExpiringUpgradeProtection =
+        lic.license_status === "ValidWithExpiringUpgradeProtection";
       licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft(lic);
       licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft(lic);
       licenseStatus.trialDaysLeft = getTrialDaysLeft(lic);
       licenseStatus.warningLevel = getLicenseWarningLevel(lic.license_status);
-      licenseStatus.isExpired = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isInvalidDueToUpgradeProtectionExpired;
+      licenseStatus.isExpired =
+        licenseStatus.isPlatformExpired ||
+        licenseStatus.isPlatformTrialExpired ||
+        licenseStatus.isInvalidDueToUpgradeProtectionExpired;
       return lic;
     });
 }
 
 function getLicenseWarningLevel(licenseStatus) {
-  if (licenseStatus === "InvalidDueToExpiredTrial" || licenseStatus === "InvalidDueToExpiredSubscription" || licenseStatus === "InvalidDueToExpiredUpgradeProtection") return "danger";
-  else if (licenseStatus === "ValidWithExpiringUpgradeProtection" || licenseStatus === "ValidWithExpiringTrial" || licenseStatus === "ValidWithExpiredUpgradeProtection" || licenseStatus === "ValidWithExpiringSubscription") return "warning";
+  if (
+    licenseStatus === "InvalidDueToExpiredTrial" ||
+    licenseStatus === "InvalidDueToExpiredSubscription" ||
+    licenseStatus === "InvalidDueToExpiredUpgradeProtection"
+  )
+    return "danger";
+  else if (
+    licenseStatus === "ValidWithExpiringUpgradeProtection" ||
+    licenseStatus === "ValidWithExpiringTrial" ||
+    licenseStatus === "ValidWithExpiredUpgradeProtection" ||
+    licenseStatus === "ValidWithExpiringSubscription"
+  )
+    return "warning";
   return "";
 }
 
 function isUpgradeProtectionLicense(license) {
-  return license.upgrade_protection_expiration !== undefined && license.upgrade_protection_expiration !== "";
+  return (
+    license.upgrade_protection_expiration !== undefined &&
+    license.upgrade_protection_expiration !== ""
+  );
 }
 
 function isSubscriptionLicense(license) {
-  return license.expiration_date !== undefined && license.expiration_date !== "" && !license.trial_license;
+  return (
+    license.expiration_date !== undefined &&
+    license.expiration_date !== "" &&
+    !license.trial_license
+  );
 }
 
 function displayWarningMessage(licenseStatus) {
@@ -122,13 +166,19 @@ function displayWarningMessage(licenseStatus) {
     case "InvalidDueToExpiredTrial":
     case "InvalidDueToExpiredSubscription":
     case "InvalidDueToExpiredUpgradeProtection":
-      useShowToast("error", "Error", 'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>', true);
+      useShowToast(
+        "error",
+        "Error",
+        'Your license has expired. Please contact Particular Software support at: <a href="http://particular.net/support">http://particular.net/support</a>',
+        true,
+      );
       break;
   }
 }
 
 function getSubscriptionDaysLeft(license) {
-  if (license.license_status === "InvalidDueToExpiredSubscription") return " - expired";
+  if (license.license_status === "InvalidDueToExpiredSubscription")
+    return " - expired";
 
   const isExpiring = license.license_status === "ValidWithExpiringSubscription";
 
@@ -140,7 +190,8 @@ function getSubscriptionDaysLeft(license) {
 }
 
 function getTrialDaysLeft(license) {
-  if (license.license_status === "InvalidDueToExpiredTrial") return " - expired";
+  if (license.license_status === "InvalidDueToExpiredTrial")
+    return " - expired";
 
   const isExpiring = license.license_status === "ValidWithExpiringTrial";
 
@@ -152,9 +203,12 @@ function getTrialDaysLeft(license) {
 }
 
 function getUpgradeDaysLeft(license) {
-  if (license.license_status === "InvalidDueToExpiredUpgradeProtection") return " - expired";
+  if (license.license_status === "InvalidDueToExpiredUpgradeProtection")
+    return " - expired";
 
-  const expiringIn = useGetDayDiffFromToday(license.upgrade_protection_expiration);
+  const expiringIn = useGetDayDiffFromToday(
+    license.upgrade_protection_expiration,
+  );
   if (expiringIn <= 0) return " - expired";
   if (expiringIn === 0) return " - expiring today";
   if (expiringIn === 1) return " - 1 day left";

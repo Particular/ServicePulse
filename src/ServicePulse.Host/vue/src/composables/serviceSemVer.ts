@@ -1,8 +1,9 @@
-const reSemver = /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?(?:\+([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?$/;
+const reSemver =
+  /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?(?:\+([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?$/;
 
 export function useIsUpgradeAvailable(currentVersion, latestVersion) {
-  var latest = parse(latestVersion.split("-")[0]);
-  var current = parse(currentVersion.split("-")[0]);
+  const latest = parse(latestVersion.split("-")[0]);
+  const current = parse(currentVersion.split("-")[0]);
 
   if (latest == null) return false;
   if (current == null) return false;
@@ -21,8 +22,8 @@ export function useIsUpgradeAvailable(currentVersion, latestVersion) {
 }
 
 export function useIsSupported(currentVersion, minSupportedVersion) {
-  var minSupported = parse(minSupportedVersion);
-  var current = parse(currentVersion);
+  const minSupported = parse(minSupportedVersion);
+  const current = parse(currentVersion);
 
   if (current == null) return false;
 
@@ -44,7 +45,8 @@ function SemVer(obj) {
     return;
   }
 
-  var me = this;
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const me = this;
 
   Object.keys(obj).forEach(function (key) {
     me[key] = obj[key];
@@ -56,15 +58,15 @@ function parse(version) {
   // https://github.com/mojombo/semver/issues/32
   // https://github.com/isaacs/node-semver/issues/10
   // optional v
-  var m = reSemver.exec(version) || [];
+  const m = reSemver.exec(version) || [];
 
   function defaultToZero(num) {
-    var n = parseInt(num, 10);
+    const n = parseInt(num, 10);
 
     return isNaN(n) ? 0 : n;
   }
 
-  var ver = new SemVer({
+  let ver = new SemVer({
     semver: m[0],
     version: m[1],
     major: defaultToZero(m[2]),
