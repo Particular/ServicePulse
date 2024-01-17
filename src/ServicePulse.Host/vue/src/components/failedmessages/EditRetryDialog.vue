@@ -12,6 +12,7 @@ const settings = defineProps({
 });
 
 let panel = ref();
+// eslint-disable-next-line vue/no-dupe-keys
 let message = ref();
 let origMessageBody = undefined;
 
