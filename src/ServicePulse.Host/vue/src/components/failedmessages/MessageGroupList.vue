@@ -474,9 +474,9 @@ defineExpose({
                           </ul>
 
                           <div class="op-metadata">
-                            <span class="metadata"
-                              ><i aria-hidden="true" class="fa fa-envelope"></i> {{ group.workflow_state.status === "completed" ? "Messages sent:" : "Messages to send:" }} {{ group.operation_remaining_count || group.count }}</span
-                            >
+                            <span class="metadata">
+                              <i aria-hidden="true" class="fa fa-envelope"></i> {{ group.workflow_state.status === "completed" ? "Messages sent:" : "Messages to send:" }} {{ group.operation_remaining_count || group.count }}
+                            </span>
                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <time-since :date-utc="group.operation_start_time"></time-since></span>
                             <span class="metadata" v-if="group.workflow_state.status === 'completed'"
                               ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <time-since :date-utc="group.operation_completion_time"></time-since
