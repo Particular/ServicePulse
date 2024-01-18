@@ -7,7 +7,7 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "composite": true,
+    "composite": false,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
