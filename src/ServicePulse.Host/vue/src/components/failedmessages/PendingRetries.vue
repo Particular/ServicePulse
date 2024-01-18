@@ -161,7 +161,9 @@ function resolveSelectedMessages() {
   const selectedMessages = messageList.value.getSelectedMessages();
 
   useShowToast("info", "Info", "Selected messages were marked as resolved.");
-  return usePatchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) }).then(() => {
+  return usePatchToServiceControl("pendingretries/resolve", {
+    uniquemessageids: selectedMessages.map((m) => m.id),
+  }).then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.resolved = true));
   });
@@ -169,7 +171,10 @@ function resolveSelectedMessages() {
 
 function resolveAllMessages() {
   useShowToast("info", "Info", "All filtered messages were marked as resolved.");
-  return usePatchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() }).then(() => {
+  return usePatchToServiceControl("pendingretries/resolve", {
+    from: new Date(0).toISOString(),
+    to: new Date().toISOString(),
+  }).then(() => {
     messageList.value.deselectAll();
     messageList.value.forEach((m) => (m.resolved = true));
   });
@@ -271,7 +276,11 @@ onMounted(() => {
       <section name="pending_retries">
         <div class="row">
           <div class="col-12">
-            <div class="alert alert-info"><i class="fa fa-info-circle"></i> To check if a retried message was also processed successfully, enable <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank">message auditing</a> <i class="fa fa-external-link fake-link"></i></div>
+            <div class="alert alert-info">
+              <i class="fa fa-info-circle"></i> To check if a retried message was also processed successfully, enable
+              <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank">message auditing</a>
+              <i class="fa fa-external-link fake-link"></i>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -281,10 +290,14 @@ onMounted(() => {
                 <label class="input-group-text"><i class="fa fa-filter" aria-hidden="true"></i> <span class="hidden-xs">Filter</span></label>
                 <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true;" @change="loadPendingRetryMessages()" v-model="selectedQueue">
                   <option selected disabled hidden class="placeholder" value="empty">Select a queue...</option>
-                  <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">{{ endpoint }}</option>
+                  <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">
+                    {{ endpoint }}
+                  </option>
                 </select>
                 <span class="input-group-btn">
-                  <button type="button" @click="clearSelectedQueue()" class="btn btn-default"><i class="fa fa-times" aria-hidden="true"></i></button>
+                  <button type="button" @click="clearSelectedQueue()" class="btn btn-default">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                  </button>
                 </span>
               </div>
             </div>
@@ -309,9 +322,15 @@ onMounted(() => {
           <div class="col-6 col-xs-12 toolbar-menus">
             <div class="action-btns">
               <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmRetry = true"><i class="fa fa-repeat"></i> <span>Retry</span> ({{ numberSelected() }})</button>
-              <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmResolve = true"><i class="fa fa-check-square-o"></i> <span>Mark as resolved</span> ({{ numberSelected() }})</button>
+              <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmResolve = true">
+                <i class="fa fa-check-square-o"></i>
+                <span>Mark as resolved</span> ({{ numberSelected() }})
+              </button>
               <button type="button" class="btn btn-default" :disabled="!isAnythingDisplayed()" @click="retryAllClicked()"><i class="fa fa-repeat"></i> <span>Retry all</span></button>
-              <button type="button" class="btn btn-default" @click="showConfirmResolveAll = true"><i class="fa fa-check-square-o"></i> <span>Mark all as resolved</span></button>
+              <button type="button" class="btn btn-default" @click="showConfirmResolveAll = true">
+                <i class="fa fa-check-square-o"></i>
+                <span>Mark all as resolved</span>
+              </button>
             </div>
           </div>
         </div>
@@ -370,7 +389,14 @@ onMounted(() => {
             :body="`Are you sure you want to mark all ${numberDisplayed()} messages as resolved? If you do they will not be available for Retry.`"
           ></ConfirmDialog>
 
-          <ConfirmDialog v-if="showCantRetryAll === true" @cancel="showCantRetryAll = false" @confirm="showCantRetryAll = false" :hide-cancel="true" :heading="'Select a queue first'" :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"></ConfirmDialog>
+          <ConfirmDialog
+            v-if="showCantRetryAll === true"
+            @cancel="showCantRetryAll = false"
+            @confirm="showCantRetryAll = false"
+            :hide-cancel="true"
+            :heading="'Select a queue first'"
+            :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"
+          ></ConfirmDialog>
 
           <ConfirmDialog
             v-if="showRetryAllConfirm === true"

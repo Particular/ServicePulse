@@ -8,12 +8,6 @@ module.exports = {
     ecmaVersion: "latest",
   },
   rules: {
-    "prettier/prettier": [
-      "warn",
-      {
-        endOfLine: "auto",
-        printWidth: 999,
-      },
-    ],
+    "prettier/prettier": "error",
   },
 };

@@ -101,7 +101,9 @@ defineExpose({
 
                 <span v-if="message.deleteInProgress" :title="'Message is being deleted'" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Scheduled for deletion</span>
                 <span v-if="message.archived" :title="'Message is being deleted'" class="label sidebar-label label-info metadata-label metadata in-progress"><i class="bi-trash"></i> Deleted</span>
-                <span v-if="message.number_of_processing_attempts > 1" :title="`This message has already failed ${message.number_of_processing_attempts} times`" class="label sidebar-label label-important metadata-label">{{ message.number_of_processing_attempts === 10 ? "9+" : message.number_of_processing_attempts }} Retry Failures</span>
+                <span v-if="message.number_of_processing_attempts > 1" :title="`This message has already failed ${message.number_of_processing_attempts} times`" class="label sidebar-label label-important metadata-label"
+                  >{{ message.number_of_processing_attempts === 10 ? "9+" : message.number_of_processing_attempts }} Retry Failures</span
+                >
                 <span v-if="message.restoreInProgress" tooltip="Message is being restored" class="label sidebar-label label-warning metadata-label metadata in-progress"><i class="bi-recycle"></i> Restore in progress</span>
                 <span v-if="message.edited" :title="'Message was edited'" class="label sidebar-label label-info metadata-label">Edited</span>
 
@@ -114,7 +116,9 @@ defineExpose({
                 <span class="metadata danger" v-if="message.status == 'archived' && message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
                 <span class="metadata danger" v-if="message.status == 'archived' && !message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: <time-since class="danger" :date-utc="message.deleted_in"></time-since> </span>
 
-                <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
+                <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)">
+                  <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
+                </button>
               </p>
 
               <pre class="stacktrace-preview">{{ message.exception.message }}</pre>
