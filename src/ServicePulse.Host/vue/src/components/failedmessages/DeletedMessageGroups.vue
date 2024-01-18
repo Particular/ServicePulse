@@ -305,7 +305,15 @@ onMounted(() => {
               <div class="row">
                 <div class="col-sm-12 no-mobile-side-padding">
                   <div v-if="archiveGroups.length > 0">
-                    <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in archiveGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false" @click="navigateToGroup($event, group.id)">
+                    <div
+                      class="row box box-group wf-{{group.workflow_state.status}} repeat-modify"
+                      v-for="(group, index) in archiveGroups"
+                      :key="index"
+                      :disabled="group.count == 0"
+                      @mouseenter="group.hover2 = true"
+                      @mouseleave="group.hover2 = false"
+                      @click="navigateToGroup($event, group.id)"
+                    >
                       <div class="col-sm-12 no-mobile-side-padding">
                         <div class="row">
                           <div class="col-sm-12 no-side-padding">
@@ -340,7 +348,17 @@ onMounted(() => {
 
                             <div class="row" v-if="!isBeingRestored(group.workflow_state.status)">
                               <div class="col-sm-12 no-side-padding">
-                                <button type="button" class="btn btn-link btn-sm" :disabled="group.count == 0 || isBeingRestored(group.workflow_state.status)" @mouseenter="group.hover3 = true" @mouseleave="group.hover3 = false" v-if="archiveGroups.length > 0" @click="showRestoreGroupDialog(group)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Restore group</button>
+                                <button
+                                  type="button"
+                                  class="btn btn-link btn-sm"
+                                  :disabled="group.count == 0 || isBeingRestored(group.workflow_state.status)"
+                                  @mouseenter="group.hover3 = true"
+                                  @mouseleave="group.hover3 = false"
+                                  v-if="archiveGroups.length > 0"
+                                  @click="showRestoreGroupDialog(group)"
+                                >
+                                  <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Restore group
+                                </button>
                               </div>
                             </div>
 

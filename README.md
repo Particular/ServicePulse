@@ -56,6 +56,11 @@ Install the following dependencies if you don't have them installed yet
 
 ### Set development environment
 
+#### Step 0 - Using a suitable IDE for frontend development
+
+Even though Visual Studio or Rider seem to be adequate IDE for frontend development, they don't tend to do a good job with the latest frontend frameworks, linting and formatting.
+Because of that, we have [extra recommendations](/docs/frontend/frontend-ide.md) for you to be even more successful at frontend development.
+
 #### Step 1 - run Nginx reverse proxy
   
 Open a command window and navigate to `ServicePulse\src\ServicePulse.Host` path (NOTE: ensure [cmd](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cmd) is being used, not [PowerShell](https://learn.microsoft.com/en-us/powershell/)). Run `nginx` that is a reverse proxy for AngularJS and Vue.js applications:
@@ -90,7 +95,7 @@ After doing the above steps, navigate to `http://localhost:1331` to see the Serv
 
  - `dev` - runs `vite` that starts development server doing hot reload over source files
  - `build` - runs build script that outputs files to `..\app` folder
- - `lint` - checks with eslint all js files
+ - `lint` - checks with eslint all vue, ts and js files
  - `preview` - runs `build` and starts static http server that enables smoketesting production build
 
 #### AngularJS
