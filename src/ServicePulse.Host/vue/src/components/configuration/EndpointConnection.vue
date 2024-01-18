@@ -3,10 +3,7 @@ import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { licenseStatus } from "../../composables/serviceLicense";
-import {
-  useServiceControlConnections,
-  connectionState,
-} from "../../composables/serviceServiceControl";
+import { useServiceControlConnections, connectionState } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
@@ -52,12 +49,8 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
     inlineSnippet.value = snippetTemplate.replace("<json>", jsonText);
 
     queryErrors.value = [];
-    queryErrors.value = queryErrors.value.concat(
-      connections.serviceControl.errors || [],
-    );
-    queryErrors.value = queryErrors.value.concat(
-      connections.monitoring.errors || [],
-    );
+    queryErrors.value = queryErrors.value.concat(connections.serviceControl.errors || []);
+    queryErrors.value = queryErrors.value.concat(connections.monitoring.errors || []);
 
     loading.value = false;
   });
@@ -93,18 +86,12 @@ function switchJsonTab() {
               <ol>
                 <li>
                   Add the
-                  <a
-                    href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/"
-                    >NServiceBus.ServicePlatform.Connector</a
-                  >
+                  <a href="https://www.nuget.org/packages/NServiceBus.ServicePlatform.Connector/">NServiceBus.ServicePlatform.Connector</a>
                   NuGet package to the endpoint project.
                 </li>
                 <li>
-                  Copy-paste the code from one of the options below. For
-                  additional options, refer to the
-                  <a href="https://docs.particular.net/platform/connecting"
-                    >documentation</a
-                  >
+                  Copy-paste the code from one of the options below. For additional options, refer to the
+                  <a href="https://docs.particular.net/platform/connecting">documentation</a>
                 </li>
               </ol>
             </div>
@@ -116,22 +103,15 @@ function switchJsonTab() {
               <!-- Nav tabs -->
               <div v-if="!loading" class="tabs" role="tablist">
                 <h5 :class="{ active: showCodeOnlyTab }">
-                  <a @click="switchCodeOnlyTab()" class="ng-binding"
-                    >Endpoint configuration only</a
-                  >
+                  <a @click="switchCodeOnlyTab()" class="ng-binding">Endpoint configuration only</a>
                 </h5>
                 <h5 :class="{ active: !showCodeOnlyTab }">
                   <a @click="switchJsonTab()" class="ng-binding">JSON file</a>
                 </h5>
               </div>
 
-              <div
-                v-if="queryErrors.length > 0 && !loading"
-                class="alert alert-warning"
-                role="alert"
-              >
-                There were problems reaching some ServiceControl instances and
-                the configuration does not contain all connectivity information.
+              <div v-if="queryErrors.length > 0 && !loading" class="alert alert-warning" role="alert">
+                There were problems reaching some ServiceControl instances and the configuration does not contain all connectivity information.
                 <ul>
                   <li v-for="error in queryErrors" :key="error">
                     {{ error }}
@@ -142,16 +122,7 @@ function switchJsonTab() {
               <section v-if="showCodeOnlyTab && !loading">
                 <div class="row">
                   <div class="col-12 h-100">
-                    <HighCode
-                      :codeValue="inlineSnippet"
-                      lang="csharp"
-                      :fontSize="'12px'"
-                      :width="'100%'"
-                      :height="'100%'"
-                      :borderRadius="'0px'"
-                      :nameShow="false"
-                      :copy="true"
-                    ></HighCode>
+                    <HighCode :codeValue="inlineSnippet" lang="csharp" :fontSize="'12px'" :width="'100%'" :height="'100%'" :borderRadius="'0px'" :nameShow="false" :copy="true"></HighCode>
                   </div>
                 </div>
               </section>
@@ -159,34 +130,13 @@ function switchJsonTab() {
               <section v-if="!showCodeOnlyTab && !loading">
                 <div class="row">
                   <div class="col-12 h-100">
-                    <p>
-                      Note that when using JSON for configuration, you also need
-                      to change the endpoint configuration as shown below.
-                    </p>
+                    <p>Note that when using JSON for configuration, you also need to change the endpoint configuration as shown below.</p>
                     <p><strong>Endpoint configuration:</strong></p>
-                    <HighCode
-                      :codeValue="jsonSnippet"
-                      lang="csharp"
-                      :fontSize="'12px'"
-                      :width="'100%'"
-                      :height="'100%'"
-                      :nameShow="false"
-                      :borderRadius="'0px'"
-                      :copy="true"
-                    ></HighCode>
+                    <HighCode :codeValue="jsonSnippet" lang="csharp" :fontSize="'12px'" :width="'100%'" :height="'100%'" :nameShow="false" :borderRadius="'0px'" :copy="true"></HighCode>
                     <p style="margin-top: 15px">
                       <strong>JSON configuration file:</strong>
                     </p>
-                    <HighCode
-                      :codeValue="jsonConfig"
-                      lang="json"
-                      :fontSize="'12px'"
-                      :width="'100%'"
-                      :height="'100%'"
-                      :nameShow="false"
-                      :borderRadius="'0px'"
-                      :copy="true"
-                    ></HighCode>
+                    <HighCode :codeValue="jsonConfig" lang="json" :fontSize="'12px'" :width="'100%'" :height="'100%'" :nameShow="false" :borderRadius="'0px'" :copy="true"></HighCode>
                   </div>
                 </div>
               </section>

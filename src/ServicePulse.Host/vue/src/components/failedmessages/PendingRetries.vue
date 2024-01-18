@@ -1,14 +1,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense";
-import { connectionState } from "../../composables/serviceServiceControl";
+import { licenseStatus } from "../../composables/serviceLicense.js";
+import { connectionState } from "../../composables/serviceServiceControl.js";
 import { useEndpoints } from "../../composables/serviceEndpoints";
-import {
-  useFetchFromServiceControl,
-  usePostToServiceControl,
-  usePatchToServiceControl,
-} from "../../composables/serviceServiceControlUrls";
-import { useShowToast } from "../../composables/toast";
+import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
+import { useShowToast } from "../../composables/toast.js";
 import { useCookies } from "vue3-cookies";
 import OrderBy from "./OrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
@@ -55,12 +51,7 @@ const sortOptions = [
     icon: "bi-sort-",
   },
 ];
-const periodOptions = [
-  "All Pending Retries",
-  "Retried in the last 2 Hours",
-  "Retried in the last 1 Day",
-  "Retried in the last 7 Days",
-];
+const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"];
 
 function loadEndpoints() {
   const loader = new useEndpoints();
@@ -95,35 +86,18 @@ function loadPendingRetryMessages() {
       break;
   }
 
-  return loadPagedPendingRetryMessages(
-    pageNumber.value,
-    sortMethod.description.replaceAll(" ", "_").toLowerCase(),
-    sortMethod.dir,
-    selectedQueue.value,
-    startDate.toISOString(),
-    endDate.toISOString(),
-  );
+  return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value, startDate.toISOString(), endDate.toISOString());
 }
 
-function loadPagedPendingRetryMessages(
-  page,
-  sortBy,
-  direction,
-  searchPhrase,
-  startDate,
-  endDate,
-) {
+function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, startDate, endDate) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
-  if (typeof searchPhrase === "undefined" || searchPhrase === "empty")
-    searchPhrase = "";
+  if (typeof searchPhrase === "undefined" || searchPhrase === "empty") searchPhrase = "";
   if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
   if (typeof endDate === "undefined") endDate = new Date().toISOString();
 
-  return useFetchFromServiceControl(
-    `errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`,
-  )
+  return useFetchFromServiceControl(`errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -132,13 +106,10 @@ function loadPagedPendingRetryMessages(
     })
     .then((response) => {
       messages.value.forEach((previousMessage) => {
-        const receivedMessage = response.find(
-          (m) => m.id === previousMessage.id,
-        );
+        const receivedMessage = response.find((m) => m.id === previousMessage.id);
         if (receivedMessage) {
           if (previousMessage.last_modified == receivedMessage.last_modified) {
-            receivedMessage.submittedForRetrial =
-              previousMessage.submittedForRetrial;
+            receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
             receivedMessage.resolved = previousMessage.resolved;
           }
 
@@ -179,7 +150,7 @@ function retrySelectedMessages() {
   useShowToast("info", "Info", "Selected messages were submitted for retry...");
   return usePostToServiceControl(
     "pendingretries/retry",
-    selectedMessages.map((m) => m.id),
+    selectedMessages.map((m) => m.id)
   ).then(() => {
     messageList.value.deselectAll();
     selectedMessages.forEach((m) => (m.submittedForRetrial = true));
@@ -199,15 +170,7 @@ function resolveSelectedMessages() {
 }
 
 function resolveAllMessages() {
-<<<<<<< master
   useShowToast("info", "Info", "All filtered messages were marked as resolved.");
-=======
-  useShowToast(
-    "info",
-    "Info",
-    "All filtered messages were marked as resolved.",
-  );
->>>>>>> More required packages
   return usePatchToServiceControl("pendingretries/resolve", {
     from: new Date(0).toISOString(),
     to: new Date().toISOString(),
@@ -314,18 +277,8 @@ onMounted(() => {
         <div class="row">
           <div class="col-12">
             <div class="alert alert-info">
-<<<<<<< master
               <i class="fa fa-info-circle"></i> To check if a retried message was also processed successfully, enable
               <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank">message auditing</a>
-=======
-              <i class="fa fa-info-circle"></i> To check if a retried message
-              was also processed successfully, enable
-              <a
-                href="https://docs.particular.net/nservicebus/operations/auditing"
-                target="_blank"
-                >message auditing</a
-              >
->>>>>>> More required packages
               <i class="fa fa-external-link fake-link"></i>
             </div>
           </div>
@@ -334,51 +287,15 @@ onMounted(() => {
           <div class="col-6">
             <div class="filter-input">
               <div class="input-group mb-3">
-<<<<<<< master
                 <label class="input-group-text"><i class="fa fa-filter" aria-hidden="true"></i> <span class="hidden-xs">Filter</span></label>
                 <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true;" @change="loadPendingRetryMessages()" v-model="selectedQueue">
                   <option selected disabled hidden class="placeholder" value="empty">Select a queue...</option>
                   <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">
-=======
-                <label class="input-group-text"
-                  ><i class="fa fa-filter" aria-hidden="true"></i>
-                  <span class="hidden-xs">Filter</span></label
-                >
-                <select
-                  class="form-select"
-                  id="inputGroupSelect01"
-                  onchange="this.dataset.chosen = true;"
-                  @change="loadPendingRetryMessages()"
-                  v-model="selectedQueue"
-                >
-                  <option
-                    selected
-                    disabled
-                    hidden
-                    class="placeholder"
-                    value="empty"
-                  >
-                    Select a queue...
-                  </option>
-                  <option
-                    v-for="(endpoint, index) in endpoints"
-                    :key="index"
-                    :value="endpoint"
-                  >
->>>>>>> More required packages
                     {{ endpoint }}
                   </option>
                 </select>
                 <span class="input-group-btn">
-<<<<<<< master
                   <button type="button" @click="clearSelectedQueue()" class="btn btn-default">
-=======
-                  <button
-                    type="button"
-                    @click="clearSelectedQueue()"
-                    class="btn btn-default"
-                  >
->>>>>>> More required packages
                     <i class="fa fa-times" aria-hidden="true"></i>
                   </button>
                 </span>
@@ -388,13 +305,7 @@ onMounted(() => {
           <div class="col-6">
             <div class="msg-group-menu dropdown">
               <label class="control-label">Period:</label>
-              <button
-                type="button"
-                class="btn btn-default dropdown-toggle sp-btn-menu"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
+              <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{ selectedPeriod }}
                 <span class="caret"></span>
               </button>
@@ -404,18 +315,12 @@ onMounted(() => {
                 </li>
               </ul>
             </div>
-            <OrderBy
-              @sort-updated="sortGroups"
-              :hideGroupBy="true"
-              :sortOptions="sortOptions"
-              sortSavePrefix="pending_retries"
-            ></OrderBy>
+            <OrderBy @sort-updated="sortGroups" :hideGroupBy="true" :sortOptions="sortOptions" sortSavePrefix="pending_retries"></OrderBy>
           </div>
         </div>
         <div class="row">
           <div class="col-6 col-xs-12 toolbar-menus">
             <div class="action-btns">
-<<<<<<< master
               <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmRetry = true"><i class="fa fa-repeat"></i> <span>Retry</span> ({{ numberSelected() }})</button>
               <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmResolve = true">
                 <i class="fa fa-check-square-o"></i>
@@ -423,40 +328,6 @@ onMounted(() => {
               </button>
               <button type="button" class="btn btn-default" :disabled="!isAnythingDisplayed()" @click="retryAllClicked()"><i class="fa fa-repeat"></i> <span>Retry all</span></button>
               <button type="button" class="btn btn-default" @click="showConfirmResolveAll = true">
-=======
-              <button
-                type="button"
-                class="btn btn-default"
-                :disabled="!isAnythingSelected()"
-                @click="showConfirmRetry = true"
-              >
-                <i class="fa fa-repeat"></i> <span>Retry</span> ({{
-                  numberSelected()
-                }})
-              </button>
-              <button
-                type="button"
-                class="btn btn-default"
-                :disabled="!isAnythingSelected()"
-                @click="showConfirmResolve = true"
-              >
-                <i class="fa fa-check-square-o"></i>
-                <span>Mark as resolved</span> ({{ numberSelected() }})
-              </button>
-              <button
-                type="button"
-                class="btn btn-default"
-                :disabled="!isAnythingDisplayed()"
-                @click="retryAllClicked()"
-              >
-                <i class="fa fa-repeat"></i> <span>Retry all</span>
-              </button>
-              <button
-                type="button"
-                class="btn btn-default"
-                @click="showConfirmResolveAll = true"
-              >
->>>>>>> More required packages
                 <i class="fa fa-check-square-o"></i>
                 <span>Mark all as resolved</span>
               </button>
@@ -472,28 +343,13 @@ onMounted(() => {
           <div class="col align-self-center">
             <ul class="pagination justify-content-center">
               <li class="page-item" :class="{ disabled: pageNumber == 1 }">
-                <a class="page-link" href="#" @click.prevent="previousPage"
-                  >Previous</a
-                >
+                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
               </li>
-              <li
-                v-for="n in numberOfPages"
-                class="page-item"
-                :class="{ active: pageNumber == n }"
-                :key="n"
-              >
-                <a @click.prevent="setPage(n)" class="page-link" href="#">{{
-                  n
-                }}</a>
+              <li v-for="n in numberOfPages" class="page-item" :class="{ active: pageNumber == n }" :key="n">
+                <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
               </li>
               <li class="page-item">
-                <a
-                  class="page-link"
-                  href="#"
-                  @click.prevent="nextPage"
-                  :class="{ disabled: pageNumber >= numberOfPages }"
-                  >Next</a
-                >
+                <a class="page-link" href="#" @click.prevent="nextPage" :class="{ disabled: pageNumber >= numberOfPages }">Next</a>
               </li>
             </ul>
           </div>

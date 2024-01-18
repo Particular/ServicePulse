@@ -27,28 +27,13 @@ import { licenseStatus } from "./../composables/serviceLicense";
               <div class="col-12">
                 <div class="row">
                   <div class="col-4">
-                    <DashboardItem
-                      :counter="stats.number_of_failed_heartbeats"
-                      :url="'/a/#/endpoints'"
-                      :iconClass="'fa-heartbeat'"
-                      >Heartbeats</DashboardItem
-                    >
+                    <DashboardItem :counter="stats.number_of_failed_heartbeats" :url="'/a/#/endpoints'" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
                   </div>
                   <div class="col-4">
-                    <DashboardItem
-                      :counter="stats.number_of_failed_messages"
-                      :url="'#/failed-messages'"
-                      :iconClass="'fa-envelope'"
-                      >Failed Messages</DashboardItem
-                    >
+                    <DashboardItem :counter="stats.number_of_failed_messages" :url="'#/failed-messages'" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
                   </div>
                   <div class="col-4">
-                    <DashboardItem
-                      :counter="stats.number_of_failed_checks"
-                      :url="'/a/#/custom-checks'"
-                      :iconClass="'fa-check'"
-                      >Custom Checks</DashboardItem
-                    >
+                    <DashboardItem :counter="stats.number_of_failed_checks" :url="'/a/#/custom-checks'" :iconClass="'fa-check'">Custom Checks</DashboardItem>
                   </div>
                 </div>
               </div>

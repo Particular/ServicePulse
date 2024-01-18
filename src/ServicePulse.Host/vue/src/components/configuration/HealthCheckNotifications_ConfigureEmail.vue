@@ -20,8 +20,7 @@ const enable_tls = ref(settings.enable_tls);
 const from = ref(settings.from);
 const to = ref(settings.to);
 
-const emailRe =
-  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const emailRe = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const smtpServerIsValid = computed(() => {
   return smtp_server.value ? true : false;
@@ -33,17 +32,10 @@ const fromIsValid = computed(() => {
   return from.value && emailRe.test(from.value) ? true : false;
 });
 const toIsValid = computed(() => {
-  return to.value && validateMultipleEmailsCommaSeparated(to.value)
-    ? true
-    : false;
+  return to.value && validateMultipleEmailsCommaSeparated(to.value) ? true : false;
 });
 const formIsValid = computed(() => {
-  return (
-    smtpServerIsValid.value &&
-    smtpPortIsValid.value &&
-    fromIsValid.value &&
-    toIsValid.value
-  );
+  return smtpServerIsValid.value && smtpPortIsValid.value && fromIsValid.value && toIsValid.value;
 });
 
 function validateMultipleEmailsCommaSeparated(value) {
@@ -80,108 +72,45 @@ function close() {
         <form name="notificationsForm" novalidate @submit.prevent="save">
           <div class="modal-body">
             <div class="row">
-              <div
-                class="form-group"
-                :class="{ 'has-error': !smtpServerIsValid }"
-              >
+              <div class="form-group" :class="{ 'has-error': !smtpServerIsValid }">
                 <label for="smtpServerAddress">SMTP server address</label>
-                <input
-                  type="text"
-                  id="smtpServerAddress"
-                  name="smtpServerAddress"
-                  v-model="smtp_server"
-                  class="form-control"
-                  required
-                />
+                <input type="text" id="smtpServerAddress" name="smtpServerAddress" v-model="smtp_server" class="form-control" required />
               </div>
               <div class="row"></div>
-              <div
-                class="form-group"
-                :class="{ 'has-error': !smtpPortIsValid }"
-              >
+              <div class="form-group" :class="{ 'has-error': !smtpPortIsValid }">
                 <label for="smtpServerPort">SMTP server port</label>
-                <input
-                  type="number"
-                  id="smtpServerPort"
-                  name="smtpServerPort"
-                  v-model="smtp_port"
-                  class="form-control"
-                  required
-                />
+                <input type="number" id="smtpServerPort" name="smtpServerPort" v-model="smtp_port" class="form-control" required />
               </div>
               <div class="row"></div>
               <div class="form-group">
                 <label for="account">Authentication account</label>
-                <input
-                  type="text"
-                  id="account"
-                  name="account"
-                  v-model="authentication_account"
-                  class="form-control"
-                />
+                <input type="text" id="account" name="account" v-model="authentication_account" class="form-control" />
               </div>
               <div class="row"></div>
               <div class="form-group">
                 <label for="password">Authentication password</label>
-                <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  v-model="authentication_password"
-                  class="form-control"
-                />
+                <input type="password" id="password" name="password" v-model="authentication_password" class="form-control" />
               </div>
               <div class="row"></div>
               <div class="form-group">
-                <input
-                  type="checkbox"
-                  id="enableTLS"
-                  name="enableTLS"
-                  v-model="enable_tls"
-                  class="check-label"
-                />
+                <input type="checkbox" id="enableTLS" name="enableTLS" v-model="enable_tls" class="check-label" />
                 <label for="enableTLS">Use TLS</label>
               </div>
               <div class="row"></div>
               <div class="form-group" :class="{ 'has-error': !fromIsValid }">
                 <label for="from">From address</label>
-                <input
-                  type="email"
-                  id="from"
-                  name="from"
-                  v-model="from"
-                  class="form-control"
-                  required
-                />
+                <input type="email" id="from" name="from" v-model="from" class="form-control" required />
               </div>
               <div class="row"></div>
               <div class="form-group" :class="{ 'has-error': !toIsValid }">
-                <label for="to"
-                  >To address <br />(Separate multiple email address with a
-                  comma. E.g. testing@test.com,testing2@test.com)</label
-                >
-                <input
-                  type="email"
-                  id="to"
-                  name="to"
-                  v-model="to"
-                  class="form-control"
-                  required
-                />
+                <label for="to">To address <br />(Separate multiple email address with a comma. E.g. testing@test.com,testing2@test.com)</label>
+                <input type="email" id="to" name="to" v-model="to" class="form-control" required />
               </div>
             </div>
           </div>
           <div class="modal-footer">
-            <button
-              class="btn btn-primary"
-              type="submit"
-              :disabled="!formIsValid"
-            >
-              Save
-            </button>
-            <button type="button" class="btn btn-default" @click="close">
-              Cancel
-            </button>
+            <button class="btn btn-primary" type="submit" :disabled="!formIsValid">Save</button>
+            <button type="button" class="btn btn-default" @click="close">Cancel</button>
           </div>
         </form>
       </div>

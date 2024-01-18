@@ -2,10 +2,7 @@
 import { ref, onBeforeMount, onMounted, onUnmounted } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import {
-  useFetchFromServiceControl,
-  usePatchToServiceControl,
-} from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 import { useCookies } from "vue3-cookies";
@@ -30,12 +27,7 @@ const selectedPeriod = ref("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
 const messageList = ref();
 const messages = ref([]);
-const periodOptions = [
-  "All Deleted",
-  "Deleted in the last 2 Hours",
-  "Deleted in the last 1 Day",
-  "Deleted in the last 7 days",
-];
+const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
 function loadMessages() {
   let startDate = new Date(0);
@@ -59,24 +51,10 @@ function loadMessages() {
       startDate.setHours(startDate.getHours() - 24 * 7);
       break;
   }
-  return loadPagedMessages(
-    groupId.value,
-    pageNumber.value,
-    "",
-    "",
-    startDate.toISOString(),
-    endDate.toISOString(),
-  );
+  return loadPagedMessages(groupId.value, pageNumber.value, "", "", startDate.toISOString(), endDate.toISOString());
 }
 
-function loadPagedMessages(
-  groupId,
-  page,
-  sortBy,
-  direction,
-  startDate,
-  endDate,
-) {
+function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate) {
   if (typeof sortBy === "undefined") sortBy = "modified";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
@@ -85,9 +63,7 @@ function loadPagedMessages(
   let dateRange = startDate + "..." + endDate;
   let loadGroupDetails;
   if (groupId && !groupName.value) {
-    loadGroupDetails = useFetchFromServiceControl(
-      `archive/groups/id/${groupId}`,
-    )
+    loadGroupDetails = useFetchFromServiceControl(`archive/groups/id/${groupId}`)
       .then((response) => {
         return response.json();
       })
@@ -96,9 +72,7 @@ function loadPagedMessages(
       });
   }
 
-  const loadDelMessages = useFetchFromServiceControl(
-    `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`,
-  )
+  const loadDelMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`)
     .then((response) => {
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -109,16 +83,11 @@ function loadPagedMessages(
       if (messages.value.length && response.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
-          const receivedMessage = response.find(
-            (m) => m.id === previousMessage.id,
-          );
+          const receivedMessage = response.find((m) => m.id === previousMessage.id);
           if (receivedMessage) {
-            if (
-              previousMessage.last_modified == receivedMessage.last_modified
-            ) {
+            if (previousMessage.last_modified == receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
-              receivedMessage.deleteInProgress =
-                previousMessage.deleteInProgress;
+              receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
             }
 
             receivedMessage.selected = previousMessage.selected;
@@ -146,13 +115,8 @@ function loadPagedMessages(
 function updateMessagesScheduledDeletionDate(messages) {
   //check deletion time
   messages.forEach((message) => {
-    message.error_retention_period = moment
-      .duration(configuration.value.data_retention.error_retention_period)
-      .asHours();
-    var countdown = moment(message.last_modified).add(
-      message.error_retention_period,
-      "hours",
-    );
+    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+    var countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
     message.delete_soon = countdown < moment();
     message.deleted_in = countdown.format();
   });
@@ -200,15 +164,11 @@ function restoreSelectedMessages() {
   changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
-  useShowToast(
-    "info",
-    "Info",
-    "restoring " + selectedMessages.length + " messages...",
-  );
+  useShowToast("info", "Info", "restoring " + selectedMessages.length + " messages...");
 
   usePatchToServiceControl(
     "errors/unarchive",
-    selectedMessages.map((m) => m.id),
+    selectedMessages.map((m) => m.id)
   ).then(() => {
     messageList.value.deselectAll();
   });
@@ -294,51 +254,21 @@ onMounted(() => {
             <h1 v-if="groupName" class="active break group-title">
               {{ groupName }}
             </h1>
-            <h3 class="active group-title group-message-count">
-              {{ totalCount }} messages in group
-            </h3>
+            <h3 class="active group-title group-message-count">{{ totalCount }} messages in group</h3>
           </div>
         </div>
         <div class="row">
           <div class="col-9">
             <div class="btn-toolbar">
-              <button
-                type="button"
-                class="btn btn-default select-all"
-                @click="selectAll"
-                v-if="!isAnythingSelected()"
-              >
-                Select all
-              </button>
-              <button
-                type="button"
-                class="btn btn-default select-all"
-                @click="deselectAll"
-                v-if="isAnythingSelected()"
-              >
-                Clear selection
-              </button>
-              <button
-                type="button"
-                class="btn btn-default"
-                @click="showConfirmRestore = true"
-                :disabled="!isAnythingSelected()"
-              >
-                <i class="fa fa-repeat"></i> Restore
-                {{ numberSelected() }} selected
-              </button>
+              <button type="button" class="btn btn-default select-all" @click="selectAll" v-if="!isAnythingSelected()">Select all</button>
+              <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
+              <button type="button" class="btn btn-default" @click="showConfirmRestore = true" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Restore {{ numberSelected() }} selected</button>
             </div>
           </div>
           <div class="col-3">
             <div class="msg-group-menu dropdown">
               <label class="control-label">Show:</label>
-              <button
-                type="button"
-                class="btn btn-default dropdown-toggle sp-btn-menu"
-                data-bs-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-              >
+              <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{ selectedPeriod }}
                 <span class="caret"></span>
               </button>
@@ -352,30 +282,17 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList
-              :messages="messages"
-              :showRequestRetry="false"
-              ref="messageList"
-            ></MessageList>
+            <MessageList :messages="messages" :showRequestRetry="false" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row" v-if="messages.length > 0">
           <div class="col align-self-center">
             <ul class="pagination justify-content-center">
               <li class="page-item" :class="{ disabled: pageNumber == 1 }">
-                <a class="page-link" href="#" @click.prevent="previousPage"
-                  >Previous</a
-                >
+                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
               </li>
-              <li
-                v-for="n in numberOfPages"
-                class="page-item"
-                :class="{ active: pageNumber == n }"
-                :key="n"
-              >
-                <a @click.prevent="setPage(n)" class="page-link" href="#">{{
-                  n
-                }}</a>
+              <li v-for="n in numberOfPages" class="page-item" :class="{ active: pageNumber == n }" :key="n">
+                <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
               </li>
               <li class="page-item">
                 <a class="page-link" href="#" @click.prevent="nextPage">Next</a>

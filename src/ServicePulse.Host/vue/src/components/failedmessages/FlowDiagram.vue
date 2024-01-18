@@ -24,26 +24,20 @@ let i = 0,
   parentSvg;
 
 function getConversation(conversationId) {
-  return useFetchFromServiceControl(`conversations/${conversationId}`).then(
-    function (response) {
-      return response.json();
-    },
-  );
+  return useFetchFromServiceControl(`conversations/${conversationId}`).then(function (response) {
+    return response.json();
+  });
 }
 
 function mapMessage(message) {
   let parentid = "",
     saga = "";
-  let header = message.headers.find(
-    (header) => header.key === "NServiceBus.RelatedTo",
-  );
+  let header = message.headers.find((header) => header.key === "NServiceBus.RelatedTo");
   if (header) {
     parentid = header.value;
   }
 
-  let sagaHeader = message.headers.find(
-    (header) => header.key === "NServiceBus.OriginatingSagaType",
-  );
+  let sagaHeader = message.headers.find((header) => header.key === "NServiceBus.OriginatingSagaType");
   if (sagaHeader) {
     saga = sagaHeader.value.split(", ")[0];
   }
@@ -53,16 +47,7 @@ function mapMessage(message) {
     id: message.id,
     messageId: message.message_id,
     parentId: parentid,
-    type:
-      message.headers.findIndex(
-        (header) => header.key === "NServiceBus.DeliverAt",
-      ) > -1
-        ? "Timeout message"
-        : message.headers.find(
-              (header) => header.key === "NServiceBus.MessageIntent",
-            ).value === "Publish"
-          ? "Event message"
-          : "Command message",
+    type: message.headers.findIndex((header) => header.key === "NServiceBus.DeliverAt") > -1 ? "Timeout message" : message.headers.find((header) => header.key === "NServiceBus.MessageIntent").value === "Publish" ? "Event message" : "Command message",
     isError:
       message.headers.findIndex(function (x) {
         return x.key === "NServiceBus.ExceptionInfo.ExceptionType";
@@ -109,9 +94,7 @@ function drawTree(treeData) {
   // append the svg object to the body of the page
   // appends a 'group' element to 'svg'
   // moves the 'group' element to the top left margin
-  parentSvg = select("#tree-container")
-    .append("svg")
-    .attr("viewBox", "-1000 -10 2000 2000");
+  parentSvg = select("#tree-container").append("svg").attr("viewBox", "-1000 -10 2000 2000");
 
   svg = parentSvg.append("g").attr("transform", "scale(.7,.7)");
 
@@ -171,14 +154,7 @@ function update(source) {
     .enter()
     .append("g")
     .attr("class", (d) => {
-      return (
-        "node " +
-        d.data.type.toLowerCase() +
-        " " +
-        (d.data.isError ? "error" : "") +
-        " " +
-        (d.data.id === props.messageId ? "current-message" : "")
-      );
+      return "node " + d.data.type.toLowerCase() + " " + (d.data.isError ? "error" : "") + " " + (d.data.id === props.messageId ? "current-message" : "");
     })
     .on("click", click);
 
@@ -200,18 +176,14 @@ function update(source) {
     .attr("x", rectNode.textMargin)
     .attr("y", rectNode.textMargin)
     .attr("width", function () {
-      return rectNode.width - rectNode.textMargin * 2 < 0
-        ? 0
-        : rectNode.width - rectNode.textMargin * 2;
+      return rectNode.width - rectNode.textMargin * 2 < 0 ? 0 : rectNode.width - rectNode.textMargin * 2;
     })
     .attr("height", function (d) {
       var height = rectNode.height;
       if (!d.data.sagaName) {
         height -= 10;
       }
-      return height - rectNode.textMargin * 2 < 0
-        ? 0
-        : height - rectNode.textMargin * 2;
+      return height - rectNode.textMargin * 2 < 0 ? 0 : height - rectNode.textMargin * 2;
     })
     .append("xhtml")
     .html((d) => {
@@ -224,45 +196,17 @@ function update(source) {
         ' px;" class="node-text wordwrap">' +
         (d.data.isError ? '<i class="fa pa-flow-failed"></i>' : "") +
         '<i class="fa ' +
-<<<<<<< master
         (d.data.type === "Timeout message" ? "pa-flow-timeout" : d.data.type === "Event message" ? "pa-flow-event" : "pa-flow-command") +
-=======
-        (d.data.type === "Timeout message"
-          ? "pa-flow-timeout"
-          : d.data.type === "Event message"
-            ? "pa-flow-event"
-            : "pa-flow-command") +
->>>>>>> More required packages
         '" title="' +
         d.data.type +
         '"></i><div class="lead righ-side-ellipsis" title="' +
         d.data.nodeName +
         '"><strong>' +
-<<<<<<< master
         (d.data.isError ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" + d.data.id + "\" })' href='javascript:void(0)'>" + d.data.nodeName + "</a>" : d.data.nodeName) +
         "</strong></div>" +
         '<span class="time-sent">' +
         `<span class="time-since">${m.fromNow()}</span></span>` +
         (d.data.sagaName ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' + d.data.sagaName + '">' + d.data.sagaName + "</div>" : "") +
-=======
-        (d.data.isError
-          ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" +
-            d.data.id +
-            "\" })' href='javascript:void(0)'>" +
-            d.data.nodeName +
-            "</a>"
-          : d.data.nodeName) +
-        "</strong></div>" +
-        '<span class="time-sent">' +
-        `<span class="time-since">${m.fromNow()}</span></span>` +
-        (d.data.sagaName
-          ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' +
-            d.data.sagaName +
-            '">' +
-            d.data.sagaName +
-            "</div>"
-          : "") +
->>>>>>> More required packages
         "</div>"
       );
     });
@@ -349,26 +293,7 @@ function update(source) {
 
   function straight(s, d) {
     return (
-<<<<<<< master
       "M " + (s.x + rectNode.width / 2) + " " + s.y + " C " + (s.x + rectNode.width / 2) + " " + s.y + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22) + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22)
-=======
-      "M " +
-      (s.x + rectNode.width / 2) +
-      " " +
-      s.y +
-      " C " +
-      (s.x + rectNode.width / 2) +
-      " " +
-      s.y +
-      " ," +
-      (d.x + rectNode.width / 2) +
-      " " +
-      (d.y + rectNode.height - 22) +
-      " ," +
-      (d.x + rectNode.width / 2) +
-      " " +
-      (d.y + rectNode.height - 22)
->>>>>>> More required packages
     );
   }
 
@@ -445,8 +370,7 @@ onMounted(() => {
   position: relative;
   top: -1px;
   margin-right: 5px;
-  filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%)
-    hue-rotate(346deg) brightness(104%) contrast(104%);
+  filter: brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(346deg) brightness(104%) contrast(104%);
 }
 
 .node-text .lead {
@@ -477,14 +401,12 @@ g.current-message .node-text .lead {
 }
 
 g.error .node-text i:not(.pa-flow-saga) {
-  filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(4493%)
-    hue-rotate(317deg) brightness(81%) contrast(82%);
+  filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(4493%) hue-rotate(317deg) brightness(81%) contrast(82%);
 }
 
 g.current-message.error .node-text i {
   color: #fff;
-  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7475%)
-    hue-rotate(21deg) brightness(100%) contrast(106%);
+  filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7475%) hue-rotate(21deg) brightness(100%) contrast(106%);
 }
 
 g.current-message.error .node-text strong {

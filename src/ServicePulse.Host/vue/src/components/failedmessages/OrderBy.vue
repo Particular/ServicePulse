@@ -19,23 +19,13 @@ function getSortOptions() {
 }
 
 function saveSortOption(sortCriteria, sortDirection) {
-  cookies.set(
-    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`,
-    sortCriteria,
-  );
-  cookies.set(
-    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`,
-    sortDirection,
-  );
+  cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`, sortCriteria);
+  cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`, sortDirection);
 }
 
 function loadSavedSortOption() {
-  let criteria = cookies.get(
-    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`,
-  );
-  let direction = cookies.get(
-    `${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`,
-  );
+  let criteria = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`);
+  let direction = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`);
 
   if (criteria && direction) {
     var sortBy = getSortOptions().find((sort) => {
@@ -62,8 +52,7 @@ function getSortFunction(selector, dir) {
 }
 
 function sortUpdated(sort) {
-  selectedSort.value =
-    sort.description + (sort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value = sort.description + (sort.dir == "desc" ? " (Descending)" : "");
   saveSortOption(sort.description, sort.dir);
 
   sort.sort = getSortFunction(sort.selector, sort.dir);
@@ -73,8 +62,7 @@ function sortUpdated(sort) {
 
 function setSortOptions(isInitialLoad) {
   const savedSort = loadSavedSortOption();
-  selectedSort.value =
-    savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
 
   emit("sortUpdated", savedSort, isInitialLoad);
 }
@@ -91,13 +79,7 @@ onMounted(() => {
 <template>
   <div class="msg-group-menu dropdown" v-show="!props.hideSort">
     <label class="control-label">Sort by:</label>
-    <button
-      type="button"
-      class="btn btn-default dropdown-toggle sp-btn-menu"
-      data-bs-toggle="dropdown"
-      aria-haspopup="true"
-      aria-expanded="false"
-    >
+    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ selectedSort }}
       <span class="caret"></span>
     </button>
@@ -126,8 +108,7 @@ onMounted(() => {
               })
             "
           >
-            <i class="bi" :class="`${sort.icon}down`"></i>{{ sort.description
-            }}<span> (Descending)</span>
+            <i class="bi" :class="`${sort.icon}down`"></i>{{ sort.description }}<span> (Descending)</span>
           </button>
         </li>
       </span>

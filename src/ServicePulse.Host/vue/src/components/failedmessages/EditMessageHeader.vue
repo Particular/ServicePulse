@@ -31,23 +31,14 @@ onMounted(() => {
 
 <template>
   <td nowrap="nowrap">
-    <span :class="{ 'header-removed': header.isMarkedAsRemoved }">{{
-      settings.header.key
-    }}</span>
+    <span :class="{ 'header-removed': header.isMarkedAsRemoved }">{{ settings.header.key }}</span>
     <span v-if="header.isLocked">
       &nbsp;
       <i class="fa fa-lock" tooltip="Protected system header"></i>
     </span>
-    <span
-      v-if="
-        (header.isChanged || header.isMarkedAsRemoved) && header.isSensitive
-      "
-    >
+    <span v-if="(header.isChanged || header.isMarkedAsRemoved) && header.isSensitive">
       &nbsp;
-      <i
-        class="fa fa-exclamation-triangle"
-        uib-tooltip="This is a sensitive message header that if changed can the system behavior. Proceed with caution."
-      ></i>
+      <i class="fa fa-exclamation-triangle" uib-tooltip="This is a sensitive message header that if changed can the system behavior. Proceed with caution."></i>
     </span>
     <span v-if="header.isChanged">
       &nbsp;
@@ -55,19 +46,10 @@ onMounted(() => {
     </span>
   </td>
   <td>
-    <input
-      :class="{ 'header-removed': header.isMarkedAsRemoved }"
-      class="form-control"
-      :disabled="header.isLocked"
-      v-model="header.value"
-    />
+    <input :class="{ 'header-removed': header.isMarkedAsRemoved }" class="form-control" :disabled="header.isLocked" v-model="header.value" />
   </td>
   <td>
-    <a
-      v-if="!header.isLocked && !header.isMarkedAsRemoved"
-      href="#"
-      @click="markHeaderAsRemoved()"
-    >
+    <a v-if="!header.isLocked && !header.isMarkedAsRemoved" href="#" @click="markHeaderAsRemoved()">
       <i class="fa fa-trash" tooltip="Protected system header"></i>
     </a>
     <a v-if="header.isChanged" href="#" @click="resetHeaderChanges()">

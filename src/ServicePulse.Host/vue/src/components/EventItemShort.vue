@@ -18,41 +18,20 @@ function iconClasses(eventItem) {
   return {
     normal: eventItem.severity === "info",
     danger: eventItem.severity === "error",
-    "fa-heartbeat":
-      eventItem.category === "Endpoints" ||
-      eventItem.category === "EndpointControl" ||
-      eventItem.category === "HeartbeatMonitoring",
+    "fa-heartbeat": eventItem.category === "Endpoints" || eventItem.category === "EndpointControl" || eventItem.category === "HeartbeatMonitoring",
     "fa-check": eventItem.category === "CustomChecks",
-    "fa-envelope":
-      eventItem.category === "MessageFailures" ||
-      eventItem.category === "Recoverability",
-    "pa-redirect-source pa-redirect-large":
-      eventItem.category === "MessageRedirects",
+    "fa-envelope": eventItem.category === "MessageFailures" || eventItem.category === "Recoverability",
+    "pa-redirect-source pa-redirect-large": eventItem.category === "MessageRedirects",
     "fa-exclamation": eventItem.category === "ExternalIntegrations",
   };
 }
 
 function iconSubClasses(eventItem) {
   return {
-    "fa-times fa-error":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.severity === "error",
-    "fa-pencil":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.category === "MessageRedirects" &&
-      eventItem.event_type === "MessageRedirectChanged",
-    "fa-plus":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.category === "MessageRedirects" &&
-      eventItem.event_type === "MessageRedirectCreated",
-    "fa-trash":
-      (eventItem.severity === "error" ||
-        eventItem.category === "MessageRedirects") &&
-      eventItem.category === "MessageRedirects" &&
-      eventItem.event_type === "MessageRedirectRemoved",
+    "fa-times fa-error": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.severity === "error",
+    "fa-pencil": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectChanged",
+    "fa-plus": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectCreated",
+    "fa-trash": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectRemoved",
   };
 }
 
@@ -72,11 +51,7 @@ function navigateToEvent(eventLogItem) {
       break;
     case "MessageFailures":
       var newlocation = "/failed-messages";
-      if (
-        eventLogItem.related_to &&
-        eventLogItem.related_to.length > 0 &&
-        eventLogItem.related_to[0].search("message") > 0
-      ) {
+      if (eventLogItem.related_to && eventLogItem.related_to.length > 0 && eventLogItem.related_to[0].search("message") > 0) {
         newlocation = "/failed-messages" + eventLogItem.related_to[0];
       }
       router.push(newlocation);
@@ -97,27 +72,13 @@ function navigateToEvent(eventLogItem) {
     <div class="col-12">
       <h6>Last 10 events</h6>
 
-      <div
-        class="row box box-event-item"
-        v-for="eventLogItem in eventLogItems"
-        :key="eventLogItem.id"
-      >
+      <div class="row box box-event-item" v-for="eventLogItem in eventLogItems" :key="eventLogItem.id">
         <div class="col-12" @click="navigateToEvent(eventLogItem)">
           <div class="row">
             <div class="col-1">
               <span class="fa-stack fa-lg">
-                <i
-                  class="fa fa-stack-2x"
-                  :class="iconClasses(eventLogItem)"
-                ></i>
-                <i
-                  v-if="
-                    eventLogItem.severity === 'error' ||
-                    eventLogItem.category === 'MessageRedirects'
-                  "
-                  class="fa fa-o fa-stack-1x fa-inverse"
-                  :class="iconSubClasses(eventLogItem)"
-                ></i>
+                <i class="fa fa-stack-2x" :class="iconClasses(eventLogItem)"></i>
+                <i v-if="eventLogItem.severity === 'error' || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse" :class="iconSubClasses(eventLogItem)"></i>
               </span>
             </div>
 
@@ -140,12 +101,7 @@ function navigateToEvent(eventLogItem) {
 
       <div class="row text-center">
         <div class="col-12">
-          <a
-            v-if="eventCount > 10"
-            class="btn btn-default btn-secondary btn-all-events"
-            href="/a/#/events"
-            >View all events</a
-          >
+          <a v-if="eventCount > 10" class="btn btn-default btn-secondary btn-all-events" href="/a/#/events">View all events</a>
         </div>
       </div>
     </div>

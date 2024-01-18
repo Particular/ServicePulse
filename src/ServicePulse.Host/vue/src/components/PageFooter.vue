@@ -1,23 +1,10 @@
 <script setup>
 import { computed } from "vue";
-import {
-  environment,
-  newVersions,
-  connectionState,
-  monitoringConnectionState,
-} from "../composables/serviceServiceControl";
-import {
-  serviceControlUrl,
-  monitoringUrl,
-} from "../composables/serviceServiceControlUrls";
+import { environment, newVersions, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";
+import { serviceControlUrl, monitoringUrl } from "../composables/serviceServiceControlUrls.js";
 
 const isMonitoringEnabled = computed(() => {
-  return (
-    monitoringUrl.value !== "!" &&
-    monitoringUrl.value !== "" &&
-    monitoringUrl.value !== null &&
-    monitoringUrl.value !== undefined
-  );
+  return monitoringUrl.value !== "!" && monitoringUrl.value !== "" && monitoringUrl.value !== null && monitoringUrl.value !== undefined;
 });
 
 const scAddressTooltip = computed(() => {
@@ -36,121 +23,40 @@ const scMonitoringAddressTooltip = computed(() => {
         <div class="connectivity-status">
           <span>
             <i class="fa fa-plus sp-blue"></i>
-            <RouterLink :to="{ name: 'endpoint-connection' }"
-              >Connect new endpoint</RouterLink
-            >
+            <RouterLink :to="{ name: 'endpoint-connection' }">Connect new endpoint</RouterLink>
           </span>
 
-<<<<<<< master
           <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
           <span v-if="newVersions.newSPVersion.newspversion && environment.sp_version">
             ServicePulse v{{ environment.sp_version }} (<i v-if="newVersions.newSPVersion.newspversionnumber" class="fa fa-level-up fake-link"></i>
             <a :href="newVersions.newSPVersion.newspversionlink" target="_blank">v{{ newVersions.newSPVersion.newspversionnumber }} available</a>)
-=======
-          <span
-            v-if="
-              !newVersions.newSPVersion.newspversion && environment.sp_version
-            "
-          >
-            ServicePulse v{{ environment.sp_version }}
-          </span>
-          <span
-            v-if="
-              newVersions.newSPVersion.newspversion && environment.sp_version
-            "
-          >
-            ServicePulse v{{ environment.sp_version }} (<i
-              v-if="newVersions.newSPVersion.newspversionnumber"
-              class="fa fa-level-up fake-link"
-            ></i>
-            <a :href="newVersions.newSPVersion.newspversionlink" target="_blank"
-              >v{{ newVersions.newSPVersion.newspversionnumber }} available</a
-            >)
->>>>>>> More required packages
           </span>
           <span :title="scAddressTooltip">
             Service Control:
-            <span
-              class="connected-status"
-              v-if="connectionState.connected && !connectionState.connecting"
-            >
+            <span class="connected-status" v-if="connectionState.connected && !connectionState.connecting">
               <div class="fa pa-connection-success"></div>
               <span v-if="!environment.sc_version">Connected</span>
-              <span v-if="environment.sc_version" class="versionnumber"
-                >v{{ environment.sc_version }}</span
-              >
-              <span
-                v-if="newVersions.newSCVersion.newscversion"
-                class="newscversion"
-                >(<i class="fa fa-level-up fake-link"></i>
-                <a
-                  :href="newVersions.newSCVersion.newscversionlink"
-                  target="_blank"
-                  >v{{
-                    newVersions.newSCVersion.newscversionnumber
-                  }}
-                  available</a
-                >)</span
+              <span v-if="environment.sc_version" class="versionnumber">v{{ environment.sc_version }}</span>
+              <span v-if="newVersions.newSCVersion.newscversion" class="newscversion"
+                >(<i class="fa fa-level-up fake-link"></i> <a :href="newVersions.newSCVersion.newscversionlink" target="_blank">v{{ newVersions.newSCVersion.newscversionnumber }} available</a>)</span
               >
             </span>
-            <span
-              v-if="!connectionState.connected && !connectionState.connecting"
-              class="connection-failed"
-            >
-              <i class="fa pa-connection-failed"></i> Not connected
-            </span>
-            <span
-              v-if="connectionState.connecting"
-              class="connection-establishing"
-            >
-              <i class="fa pa-connection-establishing"></i> Connecting
-            </span>
+            <span v-if="!connectionState.connected && !connectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
+            <span v-if="connectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
           </span>
 
           <template v-if="isMonitoringEnabled">
-            <span
-              class="monitoring-connected"
-              :title="scMonitoringAddressTooltip"
-            >
+            <span class="monitoring-connected" :title="scMonitoringAddressTooltip">
               SC Monitoring:
-              <span
-                class="connected-status"
-                v-if="
-                  monitoringConnectionState.connected &&
-                  !monitoringConnectionState.connecting
-                "
-              >
+              <span class="connected-status" v-if="monitoringConnectionState.connected && !monitoringConnectionState.connecting">
                 <div class="fa pa-connection-success"></div>
-                <span v-if="environment.monitoring_version">
-                  v{{ environment.monitoring_version }}</span
-                >
+                <span v-if="environment.monitoring_version"> v{{ environment.monitoring_version }}</span>
                 <span v-if="newVersions.newMVersion.newmversion"
-                  >(<i class="fa fa-level-up fake-link"></i>
-                  <a
-                    :href="newVersions.newMVersion.newmversionlink"
-                    target="_blank"
-                    >v{{
-                      newVersions.newMVersion.newmversionnumber
-                    }}
-                    available</a
-                  >)</span
+                  >(<i class="fa fa-level-up fake-link"></i> <a :href="newVersions.newMVersion.newmversionlink" target="_blank">v{{ newVersions.newMVersion.newmversionnumber }} available</a>)</span
                 >
               </span>
-              <span
-                v-if="
-                  !monitoringConnectionState.connected &&
-                  !monitoringConnectionState.connecting
-                "
-                class="connection-failed"
-              >
-                <i class="fa pa-connection-failed"></i> Not connected
-              </span>
-              <span
-                v-if="monitoringConnectionState.connecting"
-                class="connection-establishing"
-              >
-                <i class="fa pa-connection-establishing"></i> Connecting
-              </span>
+              <span v-if="!monitoringConnectionState.connected && !monitoringConnectionState.connecting" class="connection-failed"> <i class="fa pa-connection-failed"></i> Not connected </span>
+              <span v-if="monitoringConnectionState.connecting" class="connection-establishing"> <i class="fa pa-connection-establishing"></i> Connecting </span>
             </span>
           </template>
         </div>

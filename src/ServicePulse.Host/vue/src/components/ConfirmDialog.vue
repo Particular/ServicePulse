@@ -48,9 +48,7 @@ onMounted(() => {
           <button class="btn btn-primary" @click="confirm">
             {{ hideCancel ? "Ok" : "Yes" }}
           </button>
-          <button v-if="!hideCancel" class="btn btn-default" @click="close">
-            No
-          </button>
+          <button v-if="!hideCancel" class="btn btn-default" @click="close">No</button>
         </div>
       </div>
     </div>
