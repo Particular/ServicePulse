@@ -57,7 +57,8 @@ Install the following dependencies if you don't have them installed yet
 ### Set development environment
 
 #### Step 0 - Using a suitable IDE for frontend development
-Even though Visual Studio or Rider seem to be adequate IDE for frontend development, they don't tend to do a good job with the latest frontend frameworks, lints and prettier.
+
+Even though Visual Studio or Rider seem to be adequate IDE for frontend development, they don't tend to do a good job with the latest frontend frameworks, linting and formatting.
 Because of that, we have [extra recommendations](/docs/frontend/frontend-ide.md) for you to be even more successful at frontend development.
 
 #### Step 1 - run Nginx reverse proxy
