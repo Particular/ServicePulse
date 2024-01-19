@@ -364,26 +364,13 @@ onMounted(async () => {
                                       </li>
                                       <li v-if="group.workflow_state.status === 'restorecompleted'">
                                         <div class="retry-completed bulk-retry-progress-status">Restore request completed</div>
-                                        <button
-                                          type="button"
-                                          class="btn btn-default btn-primary btn-xs btn-retry-dismiss"
-                                          v-if="group.need_user_acknowledgement == true"
-                                          @click="acknowledgeGroup(group)"
-                                        >
-                                          Dismiss
-                                        </button>
+                                        <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
                                       </li>
                                     </ul>
                                     <div class="op-metadata">
-                                      <span class="metadata"
-                                        ><i aria-hidden="true" class="fa fa-clock-o"></i> Restore request started:<time-since :date-utc="group.operation_start_time"></time-since
-                                      ></span>
-                                      <span class="metadata" v-if="group.workflow_state.status === 'restorecompleted'"
-                                        ><i aria-hidden="true" class="fa fa-envelope"></i> Messages restored: {{ group.count }}</span
-                                      >
-                                      <span class="metadata" v-if="group.workflow_state.status !== 'restorecompleted'"
-                                        ><i aria-hidden="true" class="fa fa-envelope"></i> Messages being restored: {{ group.count }}</span
-                                      >
+                                      <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Restore request started:<time-since :date-utc="group.operation_start_time"></time-since></span>
+                                      <span class="metadata" v-if="group.workflow_state.status === 'restorecompleted'"><i aria-hidden="true" class="fa fa-envelope"></i> Messages restored: {{ group.count }}</span>
+                                      <span class="metadata" v-if="group.workflow_state.status !== 'restorecompleted'"><i aria-hidden="true" class="fa fa-envelope"></i> Messages being restored: {{ group.count }}</span>
                                     </div>
                                   </div>
                                 </div>

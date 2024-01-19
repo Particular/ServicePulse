@@ -72,11 +72,7 @@ async function saveEditedRedirect(redirect) {
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === "409" || result.status === 409) {
-      useShowToast(
-        "error",
-        "Error",
-        "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect."
-      );
+      useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
     } else {
       useShowToast("error", "Error", result.message);
     }

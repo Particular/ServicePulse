@@ -142,9 +142,7 @@ onMounted(() => {
                             <button class="btn btn-link btn-sm" type="button" @click="editEmailNotifications"><i class="fa fa-edit"></i>Configure</button>
                           </p>
                           <p class="endpoint-metadata">
-                            <button class="btn btn-link btn-sm" type="button" @click="testEmailNotifications" :disabled="emailTestInProgress">
-                              <i class="fa fa-envelope"></i>Send test notification
-                            </button>
+                            <button class="btn btn-link btn-sm" type="button" @click="testEmailNotifications" :disabled="emailTestInProgress"><i class="fa fa-envelope"></i>Send test notification</button>
                             <span class="connection-test connection-testing">
                               <template v-if="emailTestInProgress">
                                 <i class="glyphicon glyphicon-refresh rotate"></i>
@@ -180,8 +178,7 @@ onMounted(() => {
 
       <Teleport to="#modalDisplay">
         <!-- use the modal component, pass in the prop -->
-        <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications">
-        </HealthCheckNotifications_EmailConfiguration>
+        <HealthCheckNotifications_EmailConfiguration v-if="showEmailConfiguration === true" v-bind="emailNotifications" @cancel="showEmailConfiguration = false" @save="saveEditedEmailNotifications"> </HealthCheckNotifications_EmailConfiguration>
       </Teleport>
     </section>
   </template>

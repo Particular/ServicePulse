@@ -2,12 +2,7 @@
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import {
-  updateServiceControlUrls,
-  serviceControlUrl as configuredServiceControlUrl,
-  monitoringUrl as configuredMonitoringUrl,
-  useIsMonitoringDisabled,
-} from "./../../composables/serviceServiceControlUrls.js";
+import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl, useIsMonitoringDisabled } from "./../../composables/serviceServiceControlUrls.js";
 import { connectionState, monitoringConnectionState } from "../../composables/serviceServiceControl";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
@@ -116,15 +111,7 @@ function saveConnections(event) {
                 </div>
 
                 <div class="col-5 no-side-padding">
-                  <button
-                    class="btn btn-default btn-secondary btn-connection-test"
-                    :class="{ disabled: !isMonitoringUrlSpecified() }"
-                    type="button"
-                    @click="testMonitoringUrl"
-                    :disabled="!isMonitoringUrlSpecified()"
-                  >
-                    Test
-                  </button>
+                  <button class="btn btn-default btn-secondary btn-connection-test" :class="{ disabled: !isMonitoringUrlSpecified() }" type="button" @click="testMonitoringUrl" :disabled="!isMonitoringUrlSpecified()">Test</button>
                   <span class="connection-test connection-testing" v-if="testingMonitoring"> <i class="glyphicon glyphicon-refresh rotate"></i>Testing </span>
                   <span class="connection-test connection-successful" v-if="monitoringValid === true && !testingMonitoring"> <i class="fa fa-check"></i> Connection successful </span>
                   <span class="connection-test connection-failed" v-if="monitoringValid === false && !testingMonitoring"> <i class="fa fa-exclamation-triangle"></i> Connection failed </span>
@@ -133,9 +120,7 @@ function saveConnections(event) {
 
               <button class="btn btn-primary" type="button" @click="saveConnections">Save</button>
               <span class="connection-test connection-successful hide save-connection" v-show="connectionSaved"> <i class="fa fa-check"></i>Connection saved </span>
-              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved !== null && !connectionSaved">
-                <i class="fa fa-exclamation-triangle"></i> Unable to save
-              </span>
+              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved !== null && !connectionSaved"> <i class="fa fa-exclamation-triangle"></i> Unable to save </span>
             </form>
           </div>
         </div>

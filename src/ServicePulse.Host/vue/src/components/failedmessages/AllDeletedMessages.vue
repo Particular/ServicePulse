@@ -74,9 +74,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
 
   async function loadDelMessages() {
     try {
-      const response = await useFetchFromServiceControl(
-        `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
-      );
+      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`);
 
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
@@ -259,9 +257,7 @@ onMounted(() => {
             <div class="btn-toolbar">
               <button type="button" class="btn btn-default select-all" @click="selectAll" v-if="!isAnythingSelected()">Select all</button>
               <button type="button" class="btn btn-default select-all" @click="deselectAll" v-if="isAnythingSelected()">Clear selection</button>
-              <button type="button" class="btn btn-default" @click="showConfirmRestore = true" :disabled="!isAnythingSelected()">
-                <i class="fa fa-repeat"></i> Restore {{ numberSelected() }} selected
-              </button>
+              <button type="button" class="btn btn-default" @click="showConfirmRestore = true" :disabled="!isAnythingSelected()"><i class="fa fa-repeat"></i> Restore {{ numberSelected() }} selected</button>
             </div>
           </div>
           <div class="col-3">
