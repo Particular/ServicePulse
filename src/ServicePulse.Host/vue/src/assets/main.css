@@ -20,7 +20,13 @@ body {
   font-size: 14px;
   line-height: 1.42857143;
   background-color: #f2f6f7 !important;
-  overflow-y: scroll;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 640px;
 }
 
 .fa {
@@ -57,6 +63,8 @@ body {
 #main-content {
   padding-top: 40px;
   padding-bottom: 40px;
+  overflow: auto;
+  flex: 1;
 }
 
 h1 {
@@ -684,4 +692,14 @@ div.alert.alert-warning strong {
   font-size: 16px;
   margin: 25px 0 0;
   height: unset;
+}
+
+/* TODO: why do these have to be !important? */
+.fake-link {
+  color: #00a3c4 !important;
+  text-decoration: none !important;
+}
+
+.sp-blue {
+  color: #00a3c4;
 }

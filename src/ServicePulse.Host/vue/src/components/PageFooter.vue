@@ -21,7 +21,7 @@ const scMonitoringAddressTooltip = computed(() => {
     <div class="container">
       <div class="row">
         <div class="connectivity-status">
-          <span>
+          <span class="secondary">
             <i class="fa fa-plus sp-blue"></i>
             <RouterLink :to="{ name: 'endpoint-connection' }">Connect new endpoint</RouterLink>
           </span>
