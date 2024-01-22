@@ -8,9 +8,10 @@
     "build": "npm run lint && vite build",
     "preview": "npm run lint && vite preview",
     "test:unit": "npm run lint && vitest --environment jsdom --root src/",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs",
+    "test:component": "vitest run ./src"
   },
-  "dependencies": {    
+  "dependencies": {
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.10.3",
     "d3": "^7.6.1",
