@@ -221,7 +221,7 @@
         }
 
         function dismissCustomChecks(customCheck) {
-            var url = uri.join(scu, 'customchecks', customCheck.id);
+            var url = uri.join(scu,  customCheck.id);
 
             $http.delete(url);
         }
