@@ -60,7 +60,7 @@ async function loadGroupDetails(groupId) {
   groupName.value = data.title;
 }
 
-async function loadPagedMessages(groupId, page, sortBy, direction) {
+function loadPagedMessages(groupId, page, sortBy, direction) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;

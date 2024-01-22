@@ -9,7 +9,7 @@ let origHeaderValue = undefined;
 const header = ref(settings.header);
 
 const headerValue = computed(() => settings.header.value);
-watch(headerValue, async (newValue) => {
+watch(headerValue, (newValue) => {
   header.value.isChanged = newValue !== origHeaderValue;
 });
 

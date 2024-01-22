@@ -90,7 +90,7 @@ export function useServiceControl() {
   const scConnectionFailure = computed(() => connectionState.unableToConnect);
   const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
 
-  watch(scConnectionFailure, async (newValue, oldValue) => {
+  watch(scConnectionFailure, (newValue, oldValue) => {
     //NOTE to eliminate success msg showing everytime the screen is refreshed
     if (newValue != oldValue && !(oldValue === null && newValue === false)) {
       if (newValue) {
@@ -103,7 +103,7 @@ export function useServiceControl() {
 
   // Only watch the state change if monitoring is enabled
   if (!useIsMonitoringDisabled()) {
-    watch(monitoringConnectionFailure, async (newValue, oldValue) => {
+    watch(monitoringConnectionFailure, (newValue, oldValue) => {
       //NOTE to eliminate success msg showing everytime the screen is refreshed
       if (newValue != oldValue && !(oldValue === null && newValue === false)) {
         if (newValue) {
@@ -166,7 +166,7 @@ export function useServiceControlVersion() {
     setInterval(() => getServiceControlVersion(), 60000);
   });
 
-  watch(environment, async (newValue, oldValue) => {
+  watch(environment, (newValue, oldValue) => {
     if (newValue.is_compatible_with_sc != oldValue.is_compatible_with_sc) {
       if (!newValue.is_compatible_with_sc) {
         useShowToast("error", "Error", "You are using Service Control version " + newValue.sc_version + ". Please, upgrade to version " + newValue.minimum_supported_sc_version.value + " or higher to unlock new functionality in ServicePulse.");

@@ -44,7 +44,7 @@ export const licenseStatus = reactive({
 });
 
 export async function useLicense() {
-  watch(license, async (newValue, oldValue) => {
+  watch(license, (newValue, oldValue) => {
     const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
     if (checkForWarnings) {
       displayWarningMessage(newValue.license_status);

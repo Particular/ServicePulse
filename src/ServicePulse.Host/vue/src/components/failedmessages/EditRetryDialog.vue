@@ -22,7 +22,7 @@ let showEditRetryGenericError = ref(false);
 const id = computed(() => settings.id);
 const messageBody = computed(() => settings.message.messageBody);
 
-watch(messageBody, async (newValue) => {
+watch(messageBody, (newValue) => {
   if (newValue !== origMessageBody) {
     localMessage.value.isBodyChanged = true;
   }

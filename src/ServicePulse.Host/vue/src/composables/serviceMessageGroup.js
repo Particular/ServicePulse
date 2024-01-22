@@ -91,7 +91,7 @@ export async function useArchiveExceptionGroup(groupId) {
 //restore group by group id
 export async function useRestoreGroup(groupId) {
   try {
-    const response = usePostToServiceControl("recoverability/groups/" + groupId + "/errors/unarchive");
+    const response = await usePostToServiceControl("recoverability/groups/" + groupId + "/errors/unarchive");
     const result = {
       message: response.ok ? "success" : "error:" + response.statusText,
       status: response.status,
