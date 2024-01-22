@@ -10,5 +10,6 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "require-await": "error",
+    "no-await-in-loop": "error",
   },
 };
