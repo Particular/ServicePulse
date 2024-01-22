@@ -37,7 +37,7 @@ const redirectSaveSuccessful = ref(null);
 async function getRedirect() {
   loadingData.value = true;
   const result = await useRedirects();
-  if (redirects.total != result.total) {
+  if (redirects.total !== result.total) {
     emit("redirectCountUpdated", result.total);
   }
   redirects.total = result.total;
