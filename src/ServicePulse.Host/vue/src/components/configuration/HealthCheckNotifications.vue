@@ -98,8 +98,8 @@ async function getEmailNotifications() {
   emailNotifications.value.to = result.to ? result.to : "";
 }
 
-onMounted(() => {
-  getEmailNotifications();
+onMounted(async () => {
+  await getEmailNotifications();
 });
 </script>
 

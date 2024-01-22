@@ -239,7 +239,7 @@ onUnmounted(() => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
   let cookiePeriod = cookies.get("pending_retries_period");
   if (!cookiePeriod) {
     cookiePeriod = periodOptions[0]; //default All Pending Retries
@@ -247,7 +247,7 @@ onMounted(() => {
 
   selectedPeriod.value = cookiePeriod;
 
-  loadEndpoints();
+  await loadEndpoints();
 
   loadPendingRetryMessages();
 

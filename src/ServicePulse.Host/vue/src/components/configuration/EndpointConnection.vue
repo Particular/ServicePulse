@@ -55,8 +55,8 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
   loading.value = false;
 }
 
-onMounted(() => {
-  getCode();
+onMounted(async () => {
+  await getCode();
 });
 
 function switchCodeOnlyTab() {

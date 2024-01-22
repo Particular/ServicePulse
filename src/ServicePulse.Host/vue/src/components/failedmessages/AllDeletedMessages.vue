@@ -216,8 +216,8 @@ onBeforeRouteLeave(() => {
   groupName.value = undefined;
 });
 
-onBeforeMount(() => {
-  getConfiguration();
+onBeforeMount(async () => {
+  await getConfiguration();
 });
 
 onUnmounted(() => {

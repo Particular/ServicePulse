@@ -109,7 +109,7 @@ async function saveDeleteNote(group, hideToastMessage) {
       useShowToast("info", "Info", "Note deleted succesfully");
     }
 
-    loadFailedMessageGroups(); //reload the groups
+    await loadFailedMessageGroups(); //reload the groups
   } else {
     noteSaveSuccessful.value = false;
     if (!hideToastMessage) {
@@ -129,19 +129,19 @@ async function saveNote(group) {
   if (result.message === "success") {
     noteSaveSuccessful.value = true;
     useShowToast("info", "Info", "Note updated successfully");
-    loadFailedMessageGroups(); //reload the groups
+    await loadFailedMessageGroups(); //reload the groups
   } else {
     noteSaveSuccessful.value = false;
     useShowToast("error", "Error", "Failed to update Note:" + result.message);
   }
 }
 
-function saveCreatedNote(group) {
-  saveNote(group);
+async function saveCreatedNote(group) {
+  await saveNote(group);
 }
 
-function saveEditedNote(group) {
-  saveNote(group);
+async function saveEditedNote(group) {
+  await saveNote(group);
 }
 
 function editNote(group) {
@@ -166,7 +166,7 @@ async function saveDeleteGroup(group) {
   // We've started a delete, so increase the polling frequency
   changeRefreshInterval(1000);
 
-  saveDeleteNote(group, true); // delete comment note when group is archived
+  await saveDeleteNote(group, true); // delete comment note when group is archived
   const result = await useArchiveExceptionGroup(group.groupid);
   if (result.message === "success") {
     groupDeleteSuccessful.value = true;
@@ -209,7 +209,7 @@ async function saveRetryGroup(group) {
   // We've started a retry, so increase the polling frequency
   changeRefreshInterval(1000);
 
-  saveDeleteNote(group, true);
+  await saveDeleteNote(group, true);
   const result = await useRetryExceptionGroup(group.groupid);
   if (result.message === "success") {
     groupRetrySuccessful.value = true;
@@ -248,7 +248,7 @@ var acknowledgeGroup = async function (group) {
     } else {
       useShowToast("info", "Info", "Group retried succesfully");
     }
-    loadFailedMessageGroups(); //reload the groups
+    await loadFailedMessageGroups(); //reload the groups
   } else {
     useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
   }
@@ -281,7 +281,7 @@ function changeRefreshInterval(milliseconds) {
     clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = setInterval(async () => {
     // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
       changeRefreshInterval(1000);
@@ -292,7 +292,7 @@ function changeRefreshInterval(milliseconds) {
       pollingFaster = false;
     }
 
-    loadFailedMessageGroups();
+    await loadFailedMessageGroups();
   }, milliseconds);
 }
 

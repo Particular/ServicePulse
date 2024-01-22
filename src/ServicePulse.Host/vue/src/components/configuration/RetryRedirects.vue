@@ -68,7 +68,7 @@ async function saveEditedRedirect(redirect) {
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast("info", "Info", "Redirect updated successfully");
-    getRedirect();
+    await getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === "409" || result.status === 409) {
@@ -91,7 +91,7 @@ async function saveCreatedRedirect(redirect) {
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast("info", "Info", "Redirect created successfully");
-    getRedirect();
+    await getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
     if ((result.status === "409" || result.status === 409) && result.statusText === "Duplicate") {
@@ -114,15 +114,15 @@ async function saveDeleteRedirect() {
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
     useShowToast("info", "Info", "Redirect deleted");
-    getRedirect();
+    await getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
     useShowToast("error", "Error", result.message);
   }
 }
 
-onMounted(() => {
-  getRedirect();
+onMounted(async () => {
+  await getRedirect();
 });
 </script>
 

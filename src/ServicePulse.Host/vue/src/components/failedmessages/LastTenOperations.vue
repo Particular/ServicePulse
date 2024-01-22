@@ -15,8 +15,8 @@ async function getHistoricOperations() {
   historicOperations.value = data.historic_operations;
 }
 
-onMounted(() => {
-  getHistoricOperations();
+onMounted(async () => {
+  await getHistoricOperations();
 });
 </script>
 

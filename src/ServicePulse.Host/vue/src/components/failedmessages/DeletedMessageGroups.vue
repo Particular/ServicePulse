@@ -222,7 +222,7 @@ function changeRefreshInterval(milliseconds) {
     clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = setInterval(async () => {
     // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRestoreInProgress()) {
       changeRefreshInterval(1000);
@@ -233,7 +233,7 @@ function changeRefreshInterval(milliseconds) {
       pollingFaster = false;
     }
 
-    loadArchivedMessageGroups();
+    await loadArchivedMessageGroups();
   }, milliseconds);
 }
 

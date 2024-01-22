@@ -79,9 +79,9 @@ export const connections = reactive({
 });
 
 export function useServiceControl() {
-  onMounted(() => {
-    useServiceControlStats();
-    useServiceControlMonitoringStats();
+  onMounted(async () => {
+    await useServiceControlStats();
+    await useServiceControlMonitoringStats();
   });
 
   setInterval(() => useServiceControlStats(), 5000); //NOTE is 5 seconds too often?
@@ -161,8 +161,8 @@ export async function useServiceControlConnections() {
 }
 
 export function useServiceControlVersion() {
-  onMounted(() => {
-    getServiceControlVersion();
+  onMounted(async () => {
+    await getServiceControlVersion();
     setInterval(() => getServiceControlVersion(), 60000);
   });
 

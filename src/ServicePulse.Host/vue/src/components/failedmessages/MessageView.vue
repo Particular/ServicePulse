@@ -307,9 +307,9 @@ function showEditAndRetryModal() {
   return stopRefreshInterval();
 }
 
-function cancelEditAndRetry() {
+async function cancelEditAndRetry() {
   showEditRetryModal.value = false;
-  loadFailedMessage(); // Reset the message object when canceling the edit & retry modal
+  await loadFailedMessage(); // Reset the message object when canceling the edit & retry modal
   return startRefreshInterval();
 }
 
@@ -322,8 +322,8 @@ function confirmEditAndRetry() {
 function startRefreshInterval() {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
-    loadFailedMessage();
+  refreshInterval = setInterval(async () => {
+    await loadFailedMessage();
   }, 5000);
 }
 
@@ -340,7 +340,7 @@ function isRetryOrArchiveOperationInProgress() {
 function changeRefreshInterval(milliseconds) {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = setInterval(async () => {
     // If we're currently polling at the default interval of 5 seconds and there is a retry, delete, or restore in progress, then change the polling interval
     if (!pollingFaster && isRetryOrArchiveOperationInProgress()) {
       changeRefreshInterval(milliseconds);
@@ -350,7 +350,7 @@ function changeRefreshInterval(milliseconds) {
       changeRefreshInterval(5000);
       pollingFaster = false;
     }
-    loadFailedMessage();
+    await loadFailedMessage();
   }, milliseconds);
 }
 
@@ -359,7 +359,7 @@ onMounted(async () => {
 
   await getConfiguration();
   startRefreshInterval();
-  loadFailedMessage();
+  await loadFailedMessage();
 });
 
 onUnmounted(() => {
