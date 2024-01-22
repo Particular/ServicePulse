@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+        "strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"@application-test-utils": ["../drivers/playwright/driver.ts"]
+		}
+	}
+}

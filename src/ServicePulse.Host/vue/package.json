@@ -9,7 +9,8 @@
     "preview": "npm run lint && vite preview",
     "test:unit": "npm run lint && vitest --environment jsdom --root src/",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs",
-    "test:component": "vitest run ./src"
+    "test:component": "vitest run ./src",
+    "test:application:playwright": "npx playwright test"
   },
   "dependencies": {
     "bootstrap": "^5.2.0",
@@ -25,11 +26,13 @@
     "vue3-simple-typeahead": "^1.0.11"
   },
   "devDependencies": {
+    "@playwright/test": "^1.41.1",
     "@rushstack/eslint-patch": "^1.7.0",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.2.1",
     "@testing-library/user-event": "^14.5.2",
     "@testing-library/vue": "^8.0.1",
+    "@types/node": "^20.11.5",
     "@vitejs/plugin-vue": "^3.1.2",
     "@vitest/coverage-v8": "^1.2.1",
     "@vue/eslint-config-prettier": "^9.0.0",
