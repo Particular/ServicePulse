@@ -1,7 +1,12 @@
 import { defineConfig } from "vitest/config";
 import viteConfig from "./vite.config.js";
 export default defineConfig({
-	...viteConfig,	
+	...viteConfig,
+	resolve: {
+		alias: {			
+			"@application-test-utils": "/test/drivers/vitest/driver.ts"			
+		},
+	},
 	test: {
 		clearMocks: true,
 		css: true,
