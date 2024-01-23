@@ -1,5 +1,3 @@
-import { createApp } from "vue";
-import App from "./App.vue";
 import makeRouter from "./router";
 import { mount } from "./mount";
 import Toast, { POSITION } from "vue-toastification";
@@ -8,7 +6,7 @@ import SimpleTypeahead from "vue3-simple-typeahead";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 import "./assets/main.css";
 
-mount({ router: makeRouter() });
+const app = mount({ router: makeRouter() });
 
 const toastOptions = {
   position: POSITION.BOTTOM_RIGHT,
