@@ -1,4 +1,10 @@
-import userEvent from "@testing-library/user-event";
-export { render, screen } from "@testing-library/vue";
-export { expect, it } from "vitest";
+import { makeMockEndpoint } from './mock-endpoint';
+import userEvent from '@testing-library/user-event';
+
+import { mockServer } from './mock-server';
+
+export { render, screen } from '@testing-library/vue';
+export { expect, it } from 'vitest';
 export { userEvent };
+
+export const mockEndpoint = makeMockEndpoint({ mockServer });

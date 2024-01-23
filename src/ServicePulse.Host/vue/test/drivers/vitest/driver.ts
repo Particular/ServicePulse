@@ -8,10 +8,10 @@ import type {
   AssertionsNot,
   Driver,
   Interactions,
-  ItCallback,
 } from '../../driver';
 import { mount } from '../../../src/mount';
-import makeRouter from '../../../src/router';
+import  makeRouter from '../../../src/router';
+import { mockEndpoint } from '../../utils';
 
 type ElementResolver = () => Promise<HTMLElement | HTMLElement[]>;
 
@@ -136,27 +136,26 @@ const makeDriver = ({ user }: { user: UserEvent }): Driver => ({
   },
   findAllByText(text) {
     return makeAssertions(() => screen.findAllByText(text));
-  },  
+  },
+  mockEndpoint,
+  setUp(factory) {
+    return factory({ driver: this });
+  },
   queryByText(text) {
     return makeAssertionsNot(async () => screen.queryByText(text));
   },
 });
 
-function wrapItCallback(func: ItCallback) {
-  return async () => {
+const it = itVitest.extend<{ driver: Driver }>({
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  driver: async ({ task }, use) => {
     const context: {
       user: UserEvent;
     } = {
       user: userEvent.setup(),
     };
-    const driver = makeDriver(context);
-    await func({ driver });
-  };
-}
-
-const it = (description: string, func: ItCallback) =>
-  itVitest(description, wrapItCallback(func));
-it.only = (description: string, func: ItCallback) =>
-  itVitest.only(description, wrapItCallback(func));
+    await use(makeDriver(context));
+  },
+});
 
 export { it };

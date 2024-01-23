@@ -5,7 +5,6 @@ import type {
   AssertionsNot,
   Driver,
   Interactions,
-  ItCallback,
 } from '../../driver';
 
 type LocatorResolver = () => Locator;
@@ -15,7 +14,7 @@ function makeAssertions(elementResolver: LocatorResolver): Assertions {
     shouldHaveAttribute: async (attribute, value) => {
       await expect(elementResolver()).toHaveAttribute(attribute, value || /.*/);
     },
-    shouldBeVisible: async () => {      
+    shouldBeVisible: async () => {
       await expect(elementResolver()).toBeVisible();
     },
   };
@@ -57,7 +56,7 @@ function makeAssertionsInteractions(
 
 const makeDriver = ({ page }: { page: Page }): Driver => ({
   async goTo(path) {
-    await page.goto(`#/${path}`);    
+    await page.goto(`#/${path}`);
   },
   findByLabelText(text) {
     return makeAssertionsInteractions(() => page.getByLabel(text));
@@ -70,22 +69,32 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
   },
   findAllByText(text) {
     return makeAssertions(() => page.getByText(text));
-  },  
+  },
+  mockEndpoint(path, { body, method = 'get', status = 200 }) {
+    page.route(path, (route) => {
+      if (route.request().method() !== method.toUpperCase()) {
+        route.continue();
+        return;
+      }
+
+      route.fulfill({
+        status,
+        body: JSON.stringify(body),
+      });
+    });
+  },
+  setUp(factory) {
+    return factory({ driver: this });
+  },
   queryByText(text) {
     return makeAssertionsNot(() => page.getByText(text));
   },
 });
 
-function wrapItCallback(func: ItCallback) {
-  return ({ page }: { page: Page }) => {    
-    const driver = makeDriver({ page });
-    return func({ driver });
-  };
-}
-
-const it = (description: string, func: ItCallback) =>
-  itPlaywright(description, wrapItCallback(func));
-it.only = (description: string, func: ItCallback) =>
-  itPlaywright.only(description, wrapItCallback(func));
+const it = itPlaywright.extend<{ driver: Driver }>({
+  driver: async ({ page }, use) => {
+    await use(makeDriver({ page }));
+  },
+});
 
 export { it };

@@ -1,7 +1,19 @@
 import * as matchers from "@testing-library/jest-dom/matchers";
-import { afterEach, expect } from "vitest";
+import { afterAll, afterEach, beforeAll, expect } from "vitest";
+import { mockServer } from "../../mock-server";
+
 expect.extend(matchers);
+
+beforeAll(() =>
+  mockServer.listen({
+    onUnhandledRequest: (request) => {
+      console.log("Unhandled %s %s", request.method, request.url);
+    },
+  })
+);
+afterAll(() => mockServer.close());
 afterEach(() => {
-	localStorage.clear();
-	sessionStorage.clear();
+  mockServer.resetHandlers();
+  localStorage.clear();
+  sessionStorage.clear();
 });
