@@ -1,4 +1,3 @@
-@@ -0,0 +1,77 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**

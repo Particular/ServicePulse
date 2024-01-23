@@ -10,7 +10,10 @@
     "test:unit": "npm run lint && vitest --environment jsdom --root src/",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs",
     "test:component": "vitest run ./src",
-    "test:application:playwright": "npx playwright test"
+    "test:coverage": "vitest run --coverage",
+    "test:application:playwright": "npx playwright test",        
+    "test:application:vitest": "npx vitest run ./test/specs",
+    "test:application": "npm run test:application:vitest"
   },
   "dependencies": {
     "bootstrap": "^5.2.0",

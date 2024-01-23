@@ -6,7 +6,7 @@ import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import ExclamationMark from "./ExclamationMark.vue";
 
-const baseUrl = window.defaultConfig.base_url;
+const baseUrl = `/`;
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];
@@ -29,7 +29,7 @@ const displayDanger = computed(() => {
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="/">
-          <img alt="Service Pulse" src="@/assets/logo.svg" />
+          <!-- <img alt="Service Pulse" src="@/assets/logo.svg" /> -->
         </a>
       </div>
 

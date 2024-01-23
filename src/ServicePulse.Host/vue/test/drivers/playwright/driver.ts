@@ -15,7 +15,7 @@ function makeAssertions(elementResolver: LocatorResolver): Assertions {
     shouldHaveAttribute: async (attribute, value) => {
       await expect(elementResolver()).toHaveAttribute(attribute, value || /.*/);
     },
-    shouldBeVisible: async () => {
+    shouldBeVisible: async () => {      
       await expect(elementResolver()).toBeVisible();
     },
   };
@@ -57,7 +57,7 @@ function makeAssertionsInteractions(
 
 const makeDriver = ({ page }: { page: Page }): Driver => ({
   async goTo(path) {
-    await page.goto(path);
+    await page.goto(`#/${path}`);    
   },
   findByLabelText(text) {
     return makeAssertionsInteractions(() => page.getByLabel(text));
@@ -77,7 +77,7 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
 });
 
 function wrapItCallback(func: ItCallback) {
-  return ({ page }: { page: Page }) => {
+  return ({ page }: { page: Page }) => {    
     const driver = makeDriver({ page });
     return func({ driver });
   };

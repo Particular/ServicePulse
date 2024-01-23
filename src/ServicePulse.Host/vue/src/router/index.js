@@ -2,8 +2,13 @@ import { createRouter, createWebHashHistory } from "vue-router";
 import DashboardView from "../views/DashboardView.vue";
 import FailedMessagesView from "../views/FailedMessagesView.vue";
 import ConfigurationView from "../views/ConfigurationView.vue";
+import TestingDriversCheckView from "../views/TestingDriversCheck.vue";
 
 const routes = {
+  testingDrivers: {
+    path: `/checking-testing-drivers-implementations`,
+    component: TestingDriversCheckView,
+  },
   dashboard: {
     path: "/dashboard",
     name: "dashboard",
