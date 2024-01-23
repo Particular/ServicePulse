@@ -1,15 +1,15 @@
 import { createApp } from "vue";
 import App from "./App.vue";
-import router from "./router";
+import makeRouter from "./router";
+import { mount } from "./mount";
 import Toast, { POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import SimpleTypeahead from "vue3-simple-typeahead";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 import "./assets/main.css";
 
-const app = createApp(App);
+mount({ router: makeRouter() });
 
-app.use(router);
 const toastOptions = {
   position: POSITION.BOTTOM_RIGHT,
   timeout: 5000,
@@ -21,5 +21,3 @@ const toastOptions = {
 };
 app.use(Toast, toastOptions);
 app.use(SimpleTypeahead);
-
-app.mount("#app");
