@@ -6,7 +6,7 @@ import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import ExclamationMark from "./ExclamationMark.vue";
 
-const baseUrl = `/`;
+const baseUrl = window.defaultConfig.base_url;
 
 function subIsActive(input, exact) {
   const paths = Array.isArray(input) ? input : [input];

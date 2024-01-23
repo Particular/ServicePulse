@@ -1,4 +1,4 @@
-import { expect, it as itVitest } from 'vitest';
+import { expect, it as itVitest, describe } from 'vitest';
 import { screen, waitForElementToBeRemoved } from '@testing-library/dom';
 import type { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
 import userEvent from '@testing-library/user-event';
@@ -158,4 +158,4 @@ const it = itVitest.extend<{ driver: Driver }>({
   },
 });
 
-export { it };
+export { it, describe };

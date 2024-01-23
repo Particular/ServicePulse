@@ -97,4 +97,6 @@ const it = itPlaywright.extend<{ driver: Driver }>({
   },
 });
 
-export { it };
+const describe = it.describe;
+
+export { it, describe };
