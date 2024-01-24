@@ -36,11 +36,12 @@ export async function useArchiveMessage(ids) {
   }
 }
 
-export function useRetryMessages(ids) {
-  return usePostToServiceControl("errors/retry", ids).catch((error) => {
+export async function useRetryMessages(ids) {
+  try {
+    await usePostToServiceControl("errors/retry", ids);
+  } catch (error) {
     console.error("There was an error trying to retry messages with the provided id(s): ", ids, "\n", error);
-    return;
-  });
+  }
 }
 
 export async function useRetryEditedMessage(ids, editedMessage) {
