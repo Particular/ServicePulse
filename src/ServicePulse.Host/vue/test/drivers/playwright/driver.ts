@@ -70,7 +70,7 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
   findAllByText(text) {
     return makeAssertions(() => page.getByText(text));
   },
-  mockEndpoint(path, { body, method = 'get', status = 200 }) {
+  mockEndpoint(path, { body, method = 'get', status = 200, headers = {} }) {
     page.route(path, (route) => {
       if (route.request().method() !== method.toUpperCase()) {
         route.continue();
@@ -80,6 +80,7 @@ const makeDriver = ({ page }: { page: Page }): Driver => ({
       route.fulfill({
         status,
         body: JSON.stringify(body),
+        headers: headers
       });
     });
   },

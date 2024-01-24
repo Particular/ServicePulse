@@ -16,16 +16,13 @@ export type Interactions = {
 
 type FindByLabelText = (text: string) => Interactions & Assertions;
 
-type Role = 'button' | 'link' | 'option' | 'tab';
+type Role = "button" | "link" | "option" | "tab";
 
 type FindByRoleOptions = {
   name: string;
 };
 
-type FindByRole = (
-  role: Role,
-  options: FindByRoleOptions,
-) => Interactions & Assertions;
+type FindByRole = (role: Role, options: FindByRoleOptions) => Interactions & Assertions;
 
 type FindByTextOptions = {
   withinTestId?: string;
@@ -38,15 +35,16 @@ type FindAllByText = (text: string, options?: FindByTextOptions) => Assertions;
 type QueryByText = (text: string, options?: FindByTextOptions) => AssertionsNot;
 
 type GoToOptions = {
-  device?: 'desktop' | 'mobile';
+  device?: "desktop" | "mobile";
 };
 
 type GoTo = (path: string, options?: GoToOptions) => Promise<void>;
 
 type MockEndpointOptions = {
   body: string | unknown[] | Record<string | number, unknown>;
-  method?: 'get' | 'post' | 'patch' | 'put' | 'delete';
+  method?: "get" | "post" | "patch" | "put" | "delete";
   status?: number;
+  headers?: { [key: string]: string };
 };
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
@@ -62,9 +60,7 @@ export type SetupFactoryOptions = {
 
 type SetupFactory = ({ context, driver }: SetupFactoryOptions) => any;
 
-type SetUp = <Factory extends SetupFactory>(
-  factory: Factory,
-) => Promise<ReturnType<Factory>>;
+type SetUp = <Factory extends SetupFactory>(factory: Factory) => Promise<ReturnType<Factory>>;
 
 export type Driver = {
   findAllByText: FindAllByText;

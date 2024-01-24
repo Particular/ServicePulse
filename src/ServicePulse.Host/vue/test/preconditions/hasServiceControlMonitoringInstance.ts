@@ -1,9 +1,10 @@
-import serviceControlMonitoringInstanceApiResponse from "../mocks/service-control-monitoring-instance.json";
+import content from "../mocks/service-control-monitoring-instance.json";
 import {SetupFactoryOptions} from '../driver'
 
 export const hasServiceControlMonitoringInstance = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`http://localhost:33633`, {
-    body: serviceControlMonitoringInstanceApiResponse,
+    body: content,
+    headers: {'X-Particular-Version':'5.0.4'}  
   });
-  return serviceControlMonitoringInstanceApiResponse;
+  return content;
 };

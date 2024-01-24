@@ -1,9 +1,9 @@
-import activeLicense from "../mocks/active-license-response.json";
+import content from "../mocks/active-license-response.json";
 import {SetupFactoryOptions} from '../driver'
 
 export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`http://localhost:33333/api/license`, {
-    body: activeLicense,
+    body: content,
   });
-  return activeLicense;
+  return content;
 };
