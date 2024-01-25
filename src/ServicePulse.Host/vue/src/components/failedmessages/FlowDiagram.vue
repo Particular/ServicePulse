@@ -1,8 +1,6 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { select, hierarchy, zoom, tree } from "d3";
-import { useRouter } from "vue-router";
 import moment from "moment";
 import { VueFlow, useVueFlow, MarkerType } from "@vue-flow/core";
 
@@ -10,19 +8,6 @@ const props = defineProps({
   conversationId: String,
   messageId: String,
 });
-
-// Set the dimensions and margins of the diagram
-const margin = { top: 20, right: 90, bottom: 30, left: 90 },
-  width = 3600 - margin.left - margin.right;
-
-const rectNode = { width: 250, height: 90, textMargin: 5 };
-
-let i = 0,
-  duration = 750,
-  root,
-  treemap,
-  svg,
-  parentSvg;
 
 function getConversation(conversationId) {
   return useFetchFromServiceControl(`conversations/${conversationId}`).then(function (response) {
@@ -136,11 +121,14 @@ function constructEdges(mappedMessages) {
       source: `${message.parentId}##${message.parentEndpoint}`,
       target: `${message.messageId}##${message.receivingEndpoint}`,
       markerEnd: MarkerType.ArrowClosed,
+      style: {
+        "stroke-dasharray": message.type === "Event message" && "5, 3",
+      },
     }));
 }
 
 const elements = ref([]);
-const { onPaneReady, onNodeDragStop, onConnect, addEdges, setTransform, toObject } = useVueFlow();
+const { onPaneReady, fitView } = useVueFlow();
 
 onMounted(async () => {
   const messages = await getConversation(props.conversationId);
@@ -158,6 +146,9 @@ onMounted(async () => {
   for (const root of mappedMessages.filter((message) => !message.parentId)) assignDescendantLevelsAndWidth(root);
 
   elements.value = [...constructNodes(mappedMessages), ...constructEdges(mappedMessages)];
+  //TODO: if doing fitView on next Vue onUpdated() then it doesn't appear the elements
+  // are actually drawn yet. See if we can determine a better event to use this on rather than relying on setTimeout
+  setTimeout(() => fitView(), 50);
 });
 
 onPaneReady(({ fitView }) => {
@@ -179,7 +170,7 @@ function typeIcon(type) {
 
 <template>
   <div id="tree-container">
-    <VueFlow v-model="elements">
+    <VueFlow v-model="elements" :min-zoom="0.1">
       <template #node-message="nodeProps">
         <div class="node" :class="[nodeProps.data.type, nodeProps.data.isError && 'error', nodeProps.data.id === props.messageId && 'current-message']">
           <div class="node-text wordwrap">
@@ -208,8 +199,8 @@ function typeIcon(type) {
 @import "@vue-flow/core/dist/theme-default.css";
 
 #tree-container {
-  width: 2000px;
-  height: 2000px;
+  width: 90vw;
+  height: 60vh;
 }
 
 .node {
@@ -227,14 +218,6 @@ function typeIcon(type) {
   text-align: left;
 }
 
-.link {
-  fill: none;
-  stroke: #ccc;
-  stroke-width: 2px;
-}
-.link.event {
-  stroke-dasharray: 5, 3;
-}
 .righ-side-ellipsis {
   direction: rtl;
   text-align: left;
