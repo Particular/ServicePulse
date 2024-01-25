@@ -67,288 +67,9 @@ function mapMessage(message) {
   };
 }
 
-function createTreeStructure(messages) {
-  let map = {},
-    node,
-    roots = [],
-    i;
-
-  for (i = 0; i < messages.length; i += 1) {
-    map[messages[i].messageId] = i; // initialize the map
-    messages[i].children = []; // initialize the children
-  }
-
-  for (i = 0; i < messages.length; i += 1) {
-    node = messages[i];
-    if (node.parentId && map[node.parentId]) {
-      // if you have dangling branches check that map[node.parentId] exists
-      messages[map[node.parentId]].children.push(node);
-    } else {
-      roots.push(node);
-    }
-  }
-
-  return roots;
-}
-
-function drawTree(treeData) {
-  // Assigns parent, children, height, depth
-  root = hierarchy(treeData, function (d) {
-    return d.children;
-  });
-
-  // append the svg object to the body of the page
-  // appends a 'group' element to 'svg'
-  // moves the 'group' element to the top left margin
-  parentSvg = select("#tree-container").append("svg").attr("viewBox", "-1000 -10 2000 2000");
-
-  svg = parentSvg.append("g").attr("transform", "scale(.7,.7)");
-
-  var zoomElement = zoom()
-    .scaleExtent([1 / 2, 8])
-    .on("zoom", (event) => {
-      svg.attr("transform", event.transform);
-    });
-
-  svg
-    .append("defs")
-    .append("marker")
-    .attr("id", "end-arrow")
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", 0)
-    .attr("refY", 0)
-    .attr("markerWidth", 6)
-    .attr("markerHeight", 6)
-    .attr("orient", "auto")
-    .attr("class", "arrow")
-    .append("path")
-    .attr("d", "M10,-5L0,0L10,5");
-
-  // declares a tree layout and assigns the size
-  treemap = tree().nodeSize([rectNode.width + 20, rectNode.height]);
-
-  root.x0 = width / 2;
-  root.y0 = 0;
-
-  parentSvg.call(zoomElement);
-
-  update(root);
-}
-
-function update(source) {
-  // Assigns the x and y position for the nodes
-  var treeData = treemap(root);
-
-  // Compute the new tree layout.
-  var nodes = treeData.descendants(),
-    links = treeData.descendants().slice(1);
-
-  // Normalize for fixed-depth.
-  nodes.forEach(function (d) {
-    d.y = d.depth * 180;
-  });
-
-  // ****************** Nodes section ***************************
-
-  // Update the nodes...
-  var node = svg.selectAll("g.node").data(nodes, function (d) {
-    return d.id || (d.id = ++i);
-  });
-
-  // Enter any new nodes at the parent's previous position.
-  var nodeEnter = node
-    .enter()
-    .append("g")
-    .attr("class", (d) => {
-      return "node " + d.data.type.toLowerCase() + " " + (d.data.isError ? "error" : "") + " " + (d.data.id === props.messageId ? "current-message" : "");
-    })
-    .on("click", click);
-
-  // Add rectangle for the nodes
-  nodeEnter
-    .append("rect")
-    .attr("rx", 6)
-    .attr("ry", 6)
-    .attr("width", rectNode.width)
-    .attr("height", function (d) {
-      return !d.data.sagaName ? rectNode.height - 22 : rectNode.height;
-    })
-    .style("fill", function (d) {
-      return d._children ? "lightsteelblue" : "#fff";
-    });
-
-  nodeEnter
-    .append("foreignObject")
-    .attr("x", rectNode.textMargin)
-    .attr("y", rectNode.textMargin)
-    .attr("width", function () {
-      return rectNode.width - rectNode.textMargin * 2 < 0 ? 0 : rectNode.width - rectNode.textMargin * 2;
-    })
-    .attr("height", function (d) {
-      var height = rectNode.height;
-      if (!d.data.sagaName) {
-        height -= 10;
-      }
-      return height - rectNode.textMargin * 2 < 0 ? 0 : height - rectNode.textMargin * 2;
-    })
-    .append("xhtml")
-    .html((d) => {
-      const m = moment.utc(d.data.timeSent);
-      return (
-        '<div style="width:' +
-        (rectNode.width - rectNode.textMargin * 2) +
-        " px; height:" +
-        (rectNode.height - rectNode.textMargin * 2) +
-        ' px;" class="node-text wordwrap">' +
-        (d.data.isError ? '<i class="fa pa-flow-failed"></i>' : "") +
-        '<i class="fa ' +
-        (d.data.type === "Timeout message" ? "pa-flow-timeout" : d.data.type === "Event message" ? "pa-flow-event" : "pa-flow-command") +
-        '" title="' +
-        d.data.type +
-        '"></i><div class="lead righ-side-ellipsis" title="' +
-        d.data.nodeName +
-        '"><strong>' +
-        (d.data.isError ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" + d.data.id + "\" })' href='javascript:void(0)'>" + d.data.nodeName + "</a>" : d.data.nodeName) +
-        "</strong></div>" +
-        '<span class="time-sent">' +
-        `<span class="time-since">${m.fromNow()}</span></span>` +
-        (d.data.sagaName ? '<i class="fa pa-flow-saga"></i><div class="saga lead righ-side-ellipsis" title="' + d.data.sagaName + '">' + d.data.sagaName + "</div>" : "") +
-        "</div>"
-      );
-    });
-
-  // UPDATE
-  var nodeUpdate = nodeEnter.merge(node);
-
-  // Transition to the proper position for the node
-  nodeUpdate
-    .transition()
-    .duration(duration)
-    .attr("transform", (d) => {
-      return "translate(" + d.x + "," + d.y + ")";
-    });
-
-  // Update the node attributes and style
-  nodeUpdate
-    .select("rect.node")
-    .attr("r", 10)
-    .style("fill", (d) => {
-      return d._children ? "lightsteelblue" : "#fff";
-    })
-    .attr("cursor", "pointer");
-
-  // Remove any exiting nodes
-  var nodeExit = node
-    .exit()
-    .transition()
-    .duration(duration)
-    .attr("transform", () => {
-      return "translate(" + source.x + "," + source.y + ")";
-    })
-    .remove();
-
-  // On exit reduce the opacity of text labels
-  nodeExit.select("text").style("fill-opacity", 1e-6);
-
-  // ****************** links section ***************************
-
-  // Update the links...
-  var link = svg.selectAll("path.link").data(links, (d) => d.id);
-
-  // Enter any new links at the parent's previous position.
-  var linkEnter = link
-    .enter()
-    .insert("path", "g")
-    .attr("class", (d) => {
-      if (d.data.type === "Event") return "link event";
-      else return "link command";
-    })
-    .attr("marker-start", "url(#end-arrow)")
-    .attr("d", () => {
-      var o = { x: source.x0, y: source.y0 };
-      return straight(o, o);
-    });
-
-  // UPDATE
-  var linkUpdate = linkEnter.merge(link);
-
-  // Transition back to the parent element position
-  linkUpdate
-    .transition()
-    .duration(duration)
-    .attr("d", (d) => {
-      return straight(d, d.parent);
-    });
-
-  // Remove any exiting links
-  link
-    .exit()
-    .transition()
-    .duration(duration)
-    .attr("d", () => {
-      var o = { x: source.x, y: source.y };
-      return straight(o, o);
-    })
-    .remove();
-
-  // Store the old positions for transition.
-  nodes.forEach((d) => {
-    d.x0 = d.x;
-    d.y0 = d.y;
-  });
-
-  function straight(s, d) {
-    return (
-      "M " + (s.x + rectNode.width / 2) + " " + s.y + " C " + (s.x + rectNode.width / 2) + " " + s.y + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22) + " ," + (d.x + rectNode.width / 2) + " " + (d.y + rectNode.height - 22)
-    );
-  }
-
-  // Toggle children on click.
-  function click(d) {
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-      d.children = d._children;
-      d._children = null;
-    }
-    update(d);
-  }
-}
-
-onUnmounted(() => {
-  // dereference the router
-  window.__routerReferenceForDynamicAnchorTags = undefined;
-});
-const elements = ref([]);
-const { onPaneReady, onNodeDragStop, onConnect, addEdges, setTransform, toObject } = useVueFlow();
-
-onMounted(async () => {
-  // This is needed to expose the router to the dynamic HTML that's created as part of the rendering
-  // Without this a full page refresh is required
-  // I'm so sorry for this :(
-  window.__routerReferenceForDynamicAnchorTags = useRouter();
-
-  const messages = await getConversation(props.conversationId);
-  const mappedMessages = messages.map(mapMessage);
-  const assignDescendantLevelsAndWidth = (message, level = 0) => {
-    message.level = level;
-    const children = mappedMessages.filter((mm) => mm.parentId === message.messageId && mm.parentEndpoint === message.receivingEndpoint);
-    message.width =
-      children.length === 0
-        ? 1 //leaf node
-        : children.map((child) => (child.width == null ? assignDescendantLevelsAndWidth(child, level + 1) : child)).reduce((sum, { width }) => sum + width, 0);
-    return message;
-  };
-
-  //for (const message of mappedMessages) assignMaxDescendantWidth(message);
-  for (const root of mappedMessages.filter((message) => !message.parentId)) assignDescendantLevelsAndWidth(root);
-
-  console.log(mappedMessages);
-  const flowDiagramWidth = mappedMessages.filter((message) => !message.parentId).reduce((sum, message) => sum + message.width, 0);
-
-  elements.value = [
-    ...mappedMessages
+function constructNodes(mappedMessages) {
+  return (
+    mappedMessages
       //group by level
       .reduce((groups, message) => {
         groups[message.level] = [...(groups[message.level] ?? []), message];
@@ -368,6 +89,15 @@ onMounted(async () => {
         const previousLevel = level > 0 ? messagesByLevel[level - 1] : null;
         return group.reduce(
           ({ result, currentWidth }, message) => {
+            //TODO: this prefix space isn't giving what I want
+            // i.e.
+            //          node1
+            //    node11      node12
+            //           node121    node122   //works for this level
+            //    node1211           node1221 //doesn't work for this level: we want these nodes directly under their parents
+            //              node12211         //also doesn't work for this level: we want this node directly under node1221
+            //    node122111                  //even worse
+            //TODO investigate https://vueflow.dev/typedocs/interfaces/Node.html#parentnode, does this help us?
             const prefixSpace =
               previousLevel == null
                 ? 0
@@ -383,8 +113,10 @@ onMounted(async () => {
                 ...result,
                 {
                   id: `${message.messageId}##${message.receivingEndpoint}`,
+                  type: "message",
+                  data: message,
                   label: message.nodeName,
-                  position: { x: prefixSpace + (currentWidth + message.width / 2) * 300, y: message.level * 100 },
+                  position: { x: prefixSpace + (currentWidth + message.width / 2) * 300, y: message.level * 200 },
                 },
               ],
               currentWidth: currentWidth + message.width,
@@ -392,30 +124,82 @@ onMounted(async () => {
           },
           { result: [], currentWidth: 0 }
         ).result;
-      }),
-    ...mappedMessages
-      .filter((message) => message.parentId)
-      .map((message) => ({
-        id: `${message.parentId}##${message.messageId}`,
-        source: `${message.parentId}##${message.parentEndpoint}`,
-        target: `${message.messageId}##${message.receivingEndpoint}`,
-        markerEnd: MarkerType.ArrowClosed,
-      })),
-  ];
-  console.log(elements.value);
-  //const nodes = createTreeStructure(mappedMessages);
+      })
+  );
+}
 
-  //return drawTree(nodes[0]);
+function constructEdges(mappedMessages) {
+  return mappedMessages
+    .filter((message) => message.parentId)
+    .map((message) => ({
+      id: `${message.parentId}##${message.messageId}`,
+      source: `${message.parentId}##${message.parentEndpoint}`,
+      target: `${message.messageId}##${message.receivingEndpoint}`,
+      markerEnd: MarkerType.ArrowClosed,
+    }));
+}
+
+const elements = ref([]);
+const { onPaneReady, onNodeDragStop, onConnect, addEdges, setTransform, toObject } = useVueFlow();
+
+onMounted(async () => {
+  const messages = await getConversation(props.conversationId);
+  const mappedMessages = messages.map(mapMessage);
+
+  const assignDescendantLevelsAndWidth = (message, level = 0) => {
+    message.level = level;
+    const children = mappedMessages.filter((mm) => mm.parentId === message.messageId && mm.parentEndpoint === message.receivingEndpoint);
+    message.width =
+      children.length === 0
+        ? 1 //leaf node
+        : children.map((child) => (child.width == null ? assignDescendantLevelsAndWidth(child, level + 1) : child)).reduce((sum, { width }) => sum + width, 0);
+    return message;
+  };
+  for (const root of mappedMessages.filter((message) => !message.parentId)) assignDescendantLevelsAndWidth(root);
+
+  elements.value = [...constructNodes(mappedMessages), ...constructEdges(mappedMessages)];
 });
 
 onPaneReady(({ fitView }) => {
   fitView();
 });
+
+function typeIcon(type) {
+  //TODO can this be done without the type magic strings?
+  switch (type) {
+    case "Timeout message":
+      return "pa-flow-timeout";
+    case "Event message":
+      return "pa-flow-event";
+    default:
+      return "pa-flow-command";
+  }
+}
 </script>
 
 <template>
   <div id="tree-container">
-    <VueFlow v-model="elements" />
+    <VueFlow v-model="elements">
+      <template #node-message="nodeProps">
+        <div class="node" :class="[nodeProps.data.type, nodeProps.data.isError && 'error', nodeProps.data.id === props.messageId && 'current-message']">
+          <div class="node-text wordwrap">
+            <i v-if="nodeProps.data.isError" class="fa pa-flow-failed" />
+            <i class="fa" :class="typeIcon(nodeProps.data.type)" :title="nodeProps.data.type" />
+            <div class="lead righ-side-ellipsis" :title="nodeProps.data.nodeName">
+              <!-- TODO (d.data.isError ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" + d.data.id + "\" })' href='javascript:void(0)'>" + d.data.nodeName + "</a>" : d.data.nodeName) + -->
+              <strong>{{ nodeProps.data.nodeName }}</strong>
+            </div>
+            <span class="time-sent">
+              <span class="time-since">{{ moment.utc(nodeProps.data.timeSent).fromNow() }}</span>
+            </span>
+            <template v-if="nodeProps.data.sagaName">
+              <i class="fa pa-flow-saga" />
+              <div class="saga lead righ-side-ellipsis" :title="nodeProps.data.sagaName">{{ nodeProps.data.sagaName }}</div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </VueFlow>
   </div>
 </template>
 
@@ -426,6 +210,21 @@ onPaneReady(({ fitView }) => {
 #tree-container {
   width: 2000px;
   height: 2000px;
+}
+
+.node {
+  --vf-handle: var(--vf-node-color, #1a192b);
+  --vf-box-shadow: var(--vf-node-color, #1a192b);
+  background: var(--vf-node-bg);
+  border-color: var(--vf-node-color, #1a192b);
+  padding: 10px;
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+  color: var(--vf-node-text);
+  text-align: left;
 }
 
 .link {
@@ -441,14 +240,14 @@ onPaneReady(({ fitView }) => {
   text-align: left;
 }
 
-.node rect {
-  fill: #fff;
-  stroke: #cccbcc;
-  stroke-width: 3px;
+.node {
+  background-color: #fff;
+  border-color: #cccbcc;
+  border-width: 3px;
 }
 
-.node rect.error {
-  stroke: red;
+.node .error {
+  border-color: red;
 }
 
 .node text {
@@ -482,8 +281,8 @@ onPaneReady(({ fitView }) => {
   top: 4px;
 }
 
-g.error .node-text .lead,
-g.current-message.error .node-text .lead {
+.error .node-text .lead,
+.current-message.error .node-text .lead {
   width: 184px;
 }
 
@@ -492,59 +291,59 @@ g.current-message.error .node-text .lead {
   width: 182px;
 }
 
-g.current-message.error rect {
-  stroke: #be514a;
-  fill: #be514a !important;
+.current-message.error {
+  border-color: #be514a;
+  background-color: #be514a !important;
 }
 
-g.current-message.error .node-text,
-g.current-message .node-text .lead {
+.current-message.error .node-text,
+.current-message .node-text .lead {
   color: #fff !important;
 }
 
-g.error .node-text i:not(.pa-flow-saga) {
+.error .node-text i:not(.pa-flow-saga) {
   filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(4493%) hue-rotate(317deg) brightness(81%) contrast(82%);
 }
 
-g.current-message.error .node-text i {
+.current-message.error .node-text i {
   color: #fff;
   filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(7475%) hue-rotate(21deg) brightness(100%) contrast(106%);
 }
 
-g.current-message.error .node-text strong {
+.current-message.error .node-text strong {
   color: #fff;
 }
 
-g.current-message.error .node-text .time-sent .time-since {
+.current-message.error .node-text .time-sent .time-since {
   color: #ffcecb !important;
 }
 
-g.error rect {
-  stroke: #be514a;
+.error {
+  border-color: #be514a;
 }
 
-g.current-message.error .node-text a {
+.current-message.error .node-text a {
   color: #fff;
 }
 
-g.current-message.error .node-text a:hover {
+.current-message.error .node-text a:hover {
   cursor: text;
   text-decoration: none;
 }
 
-g.error .node-text a {
+.error .node-text a {
   color: #be514a;
 }
 
-g.error .node-text .time-sent .time-since {
+.error .node-text .time-sent .time-since {
   color: #be514a;
 }
 
-g.error .node-text .lead.saga {
+.error .node-text .lead.saga {
   color: #be514a;
 }
 
-g.error .node-text a:hover {
+.error .node-text a:hover {
   text-decoration: underline;
 }
 
