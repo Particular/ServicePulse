@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { select, hierarchy, zoom, tree } from "d3";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import { VueFlow, useVueFlow, MarkerType } from "@vue-flow/core";
 
 const props = defineProps({
   conversationId: String,
@@ -30,29 +31,34 @@ function getConversation(conversationId) {
 }
 
 function mapMessage(message) {
-  let parentid = "",
-    saga = "";
+  let parentId = "",
+    parentEndpoint = "",
+    sagaName = "";
   let header = message.headers.find((header) => header.key === "NServiceBus.RelatedTo");
   if (header) {
-    parentid = header.value;
+    parentId = header.value;
+    parentEndpoint = message.headers.find((h) => h.key === "NServiceBus.OriginatingEndpoint")?.value;
   }
 
   let sagaHeader = message.headers.find((header) => header.key === "NServiceBus.OriginatingSagaType");
   if (sagaHeader) {
-    saga = sagaHeader.value.split(", ")[0];
+    sagaName = sagaHeader.value.split(", ")[0];
   }
 
   return {
     nodeName: message.message_type,
     id: message.id,
     messageId: message.message_id,
-    parentId: parentid,
+    sendingEndpoint: message.sending_endpoint?.name,
+    receivingEndpoint: message.receiving_endpoint?.name,
+    parentId,
+    parentEndpoint,
     type: message.headers.findIndex((header) => header.key === "NServiceBus.DeliverAt") > -1 ? "Timeout message" : message.headers.find((header) => header.key === "NServiceBus.MessageIntent").value === "Publish" ? "Event message" : "Command message",
     isError:
       message.headers.findIndex(function (x) {
         return x.key === "NServiceBus.ExceptionInfo.ExceptionType";
       }) > -1,
-    sagaName: saga,
+    sagaName,
     link: {
       name: `Link ${message.id}`,
       nodeName: message.id,
@@ -314,31 +320,127 @@ onUnmounted(() => {
   // dereference the router
   window.__routerReferenceForDynamicAnchorTags = undefined;
 });
+const elements = ref([]);
+const { onPaneReady, onNodeDragStop, onConnect, addEdges, setTransform, toObject } = useVueFlow();
 
-onMounted(() => {
+onMounted(async () => {
   // This is needed to expose the router to the dynamic HTML that's created as part of the rendering
   // Without this a full page refresh is required
   // I'm so sorry for this :(
   window.__routerReferenceForDynamicAnchorTags = useRouter();
 
-  getConversation(props.conversationId)
-    .then((messages) => {
-      return messages.map(mapMessage);
-    })
-    .then((mappedMessages) => {
-      return createTreeStructure(mappedMessages);
-    })
-    .then((nodes) => {
-      return drawTree(nodes[0]);
-    });
+  const messages = await getConversation(props.conversationId);
+  const mappedMessages = messages.map(mapMessage);
+  const assignDescendantLevelsAndWidth = (message, level = 0) => {
+    message.level = level;
+    const children = mappedMessages.filter((mm) => mm.parentId === message.messageId && mm.parentEndpoint === message.receivingEndpoint);
+    message.width =
+      children.length === 0
+        ? 1 //leaf node
+        : children.map((child) => (child.width == null ? assignDescendantLevelsAndWidth(child, level + 1) : child)).reduce((sum, { width }) => sum + width, 0);
+    return message;
+  };
+
+  //for (const message of mappedMessages) assignMaxDescendantWidth(message);
+  for (const root of mappedMessages.filter((message) => !message.parentId)) assignDescendantLevelsAndWidth(root);
+
+  console.log(mappedMessages);
+  const flowDiagramWidth = mappedMessages.filter((message) => !message.parentId).reduce((sum, message) => sum + message.width, 0);
+
+  elements.value = [
+    ...mappedMessages
+      //group by level
+      .reduce((groups, message) => {
+        groups[message.level] = [...(groups[message.level] ?? []), message];
+        return groups;
+      }, [])
+      //ensure each level has their items in the same "grouped" order as the level above
+      .map((group, level, messagesByLevel) => {
+        const previousLevel = level > 0 ? messagesByLevel[level - 1] : null;
+        return group.sort(
+          (a, b) =>
+            (previousLevel?.findIndex((plMessage) => a.parentId === plMessage.messageId && a.parentEndpoint === plMessage.receivingEndpoint) ?? 1) -
+            (previousLevel?.findIndex((plMessage) => b.parentId === plMessage.messageId && b.parentEndpoint === plMessage.receivingEndpoint) ?? 1)
+        );
+      })
+      //flatten to actual flow diagram nodes, with positioning based on parent node/level
+      .flatMap((group, level, messagesByLevel) => {
+        const previousLevel = level > 0 ? messagesByLevel[level - 1] : null;
+        return group.reduce(
+          ({ result, currentWidth }, message) => {
+            const prefixSpace =
+              previousLevel == null
+                ? 0
+                : (() => {
+                    let width = 0;
+                    for (const plMessage of previousLevel) {
+                      if (message.parentId === plMessage.messageId && message.parentEndpoint === plMessage.receivingEndpoint) return width * 300;
+                      width += plMessage.width;
+                    }
+                  })();
+            return {
+              result: [
+                ...result,
+                {
+                  id: `${message.messageId}##${message.receivingEndpoint}`,
+                  label: message.nodeName,
+                  position: { x: prefixSpace + (currentWidth + message.width / 2) * 300, y: message.level * 100 },
+                },
+              ],
+              currentWidth: currentWidth + message.width,
+            };
+          },
+          { result: [], currentWidth: 0 }
+        ).result;
+      }),
+    ...mappedMessages
+      .filter((message) => message.parentId)
+      .map((message) => ({
+        id: `${message.parentId}##${message.messageId}`,
+        source: `${message.parentId}##${message.parentEndpoint}`,
+        target: `${message.messageId}##${message.receivingEndpoint}`,
+        markerEnd: MarkerType.ArrowClosed,
+      })),
+  ];
+  console.log(elements.value);
+  //const nodes = createTreeStructure(mappedMessages);
+
+  //return drawTree(nodes[0]);
+});
+
+onPaneReady(({ fitView }) => {
+  fitView();
 });
 </script>
 
 <template>
-  <div id="tree-container"></div>
+  <div id="tree-container">
+    <VueFlow v-model="elements" />
+  </div>
 </template>
 
 <style>
+@import "@vue-flow/core/dist/style.css";
+@import "@vue-flow/core/dist/theme-default.css";
+
+#tree-container {
+  width: 2000px;
+  height: 2000px;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+.link.event {
+  stroke-dasharray: 5, 3;
+}
+.righ-side-ellipsis {
+  direction: rtl;
+  text-align: left;
+}
+
 .node rect {
   fill: #fff;
   stroke: #cccbcc;

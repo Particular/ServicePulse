@@ -11,6 +11,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs"
   },
   "dependencies": {
+    "@vue-flow/core": "^1.29.1",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.10.3",
     "d3": "^7.6.1",
