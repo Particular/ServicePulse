@@ -19,13 +19,16 @@ export const makeMockEndpoint =
     },
   ) => {
     mockServer.use(
-      http[method](endpoint, ()=>
-        new Response(JSON.stringify(body), {
+      http[method](endpoint, ()=> {
+        //console.log('Responding to ', `${endpoint}`)
+        return new Response(JSON.stringify(body), {
             status: status,
             headers: {
               ...headers,'Content-Type': 'application/json',
             },
           })
+        }
+          
       ),
     );
   };

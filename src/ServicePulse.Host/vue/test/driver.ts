@@ -28,7 +28,7 @@ type FindByTextOptions = {
   withinTestId?: string;
 };
 
-type FindByText = (text: string, options?: FindByTextOptions) => Assertions;
+type FindByText = (text: string | RegExp, options?: FindByTextOptions) => Assertions;
 
 type FindAllByText = (text: string, options?: FindByTextOptions) => Assertions;
 
@@ -49,26 +49,18 @@ type MockEndpointOptions = {
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
 
-type Context = {
-  localStorage: Storage;
-};
-
-export type SetupFactoryOptions = {
-  context: Context;
+export type SetupFactoryOptions = {  
   driver: Driver;
 };
 
-type SetupFactory = ({ context, driver }: SetupFactoryOptions) => any;
+type SetupFactory = ({ driver }: SetupFactoryOptions) => any;
 
 type SetUp = <Factory extends SetupFactory>(factory: Factory) => Promise<ReturnType<Factory>>;
 
-export type Driver = {
-  findAllByText: FindAllByText;
-  findByLabelText: FindByLabelText;
-  findByRole: FindByRole;
-  findByText: FindByText;
+import {getQueriesForElement} from '@testing-library/dom'
+
+export type Driver = {    
   goTo: GoTo;
   mockEndpoint: MockEndpoint;
   setUp: SetUp;
-  queryByText: QueryByText;
-};
+} & typeof getQueriesForElement;

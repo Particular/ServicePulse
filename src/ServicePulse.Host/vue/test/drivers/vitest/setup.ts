@@ -1,8 +1,7 @@
-import * as matchers from "@testing-library/jest-dom/matchers";
 import { afterAll, afterEach, beforeAll, expect, vi } from "vitest";
 import { mockServer } from "../../mock-server";
+import '@testing-library/jest-dom/vitest';
 
-expect.extend(matchers);
 
 const defaultConfig = {
   default_route: "/dashboard",
@@ -17,13 +16,14 @@ vi.stubGlobal("defaultConfig", defaultConfig);
 
 beforeAll(() => {
   mockServer.listen({
-    
     onUnhandledRequest: (request) => {
       console.log("Unhandled %s %s", request.method, request.url);
     },
   });
 });
-afterAll(() => mockServer.close());
+afterAll(() => {
+  mockServer.close();
+});
 afterEach(() => {
   mockServer.resetHandlers();
   localStorage.clear();

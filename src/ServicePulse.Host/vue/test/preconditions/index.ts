@@ -4,6 +4,7 @@ export { hasServiceControlMonitoringInstance } from "../preconditions/hasService
 export { hasUpToDateServiceControl } from "../preconditions/hasUpToDateServiceControl";
 export { hasUpToDateServicePulse } from "../preconditions/hasUpToDateServicePulse";
 export { hasFiveActiveOneFailingHeartbeats } from "../preconditions/hasFiveActiveOneFailingHeartbeats";
+export { hasFourActiveTwoFailingHeartbeats } from "../preconditions/hasFourActiveTwoFailingHeartbeats";
 export { hasNoErrors } from "../preconditions/hasNoErrors";
 export { hasNoFailingCustomChecks } from "../preconditions/hasNoFailingCustomChecks";
 export { hasNoDisconnectedEndpoints } from "../preconditions/hasNoDisconnectedEndpoints";
