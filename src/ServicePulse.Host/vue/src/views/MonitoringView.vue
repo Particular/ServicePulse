@@ -27,14 +27,15 @@ watch(filterString, async (newValue) => {
   filterString.value = monitoringStore.filterString;
 });
 
-watch(monitoringStore.historyPeriod, (newValue) => {
-  changeRefreshInterval(newValue.refreshIntervalVal);
+watch(monitoringStore.historyPeriod, async (newValue) => {
+  await changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
-function changeRefreshInterval(milliseconds) {
+async function changeRefreshInterval(milliseconds) {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
+  await monitoringStore.updateEndpointList();
   refreshInterval = setInterval(async () => {
     await monitoringStore.updateEndpointList();
   }, milliseconds);
@@ -49,7 +50,7 @@ onUnmounted(() => {
 onMounted(async () => {
   await monitoringStore.initializeStore();
   filterString.value = monitoringStore.filterString;
-  changeRefreshInterval(monitoringStore.historyPeriod.refreshIntervalVal);
+  await changeRefreshInterval(monitoringStore.historyPeriod.refreshIntervalVal);
 });
 </script>
 
