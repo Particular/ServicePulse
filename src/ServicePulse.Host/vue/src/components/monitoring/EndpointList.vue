@@ -1,7 +1,6 @@
 ﻿<script setup>
 import { ref, watch, onMounted, computed } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
-import { storeToRefs } from "pinia";
 import D3Graph from "./D3Graph.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
@@ -142,7 +141,7 @@ function formatGraphDecimal(input, deci) {
       </div>
     </div>
 
-    <!--endpointlist-->
+    <!--Endpoint list-->
     <div>
       <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
       <div class="endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">

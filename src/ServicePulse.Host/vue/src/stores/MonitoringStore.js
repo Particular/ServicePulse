@@ -40,9 +40,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
   actions: {
     async initializeStore() {
       await this.setHistoryPeriod();
-      const queryParameters = { ...this.route.query };
-      if (queryParameters.filter !== undefined) {
-        this.filterString = queryParameters.filter;
+      if (this.route.query.filter !== undefined) {
+        this.filterString = this.route.query.filter;
         this.isEndpointListFiltered = true;
         await this.filterEndpointList(this.filterString);
       }
@@ -109,6 +108,11 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     async getDisconnectedEndpointCount() {
       this.disconnectedEndpointCount = await MonitoringEndpoints.useGetDisconnectedEndpointCount();
     },
+    /**
+     * 
+     * @param {String} period - The history period value
+     * @description Sets the history period based on, in order of importance, a passed parameter, the url query string, saved cookie, or default value
+     */
     async setHistoryPeriod(period = undefined) {
       if (period === undefined) {
         period = this.route.query.historyPeriod; // Get url query string
@@ -116,7 +120,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
           period = cookies.get("history_period"); // Get cookie
         }
       }
-      if (typeof period !== "undefined" && !isNaN(period)) {
+      if (typeof period !== "undefined") {
         this.historyPeriod =
           periods[
             periods.findIndex((index) => {
@@ -125,8 +129,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
           ];
       }
       cookies.set(`history_period`, this.historyPeriod.pVal);
-      const queryParameters = { ...this.route.query };
-      await this.router.push({ query: { ...queryParameters, historyPeriod: this.historyPeriod.pVal } });
+      await this.router.push({ query: { ...this.route.query, historyPeriod: this.historyPeriod.pVal } });
     },
   },
   getters: {
