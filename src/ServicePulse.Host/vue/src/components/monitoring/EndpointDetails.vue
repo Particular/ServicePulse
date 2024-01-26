@@ -1,11 +1,10 @@
 ﻿<script setup>
 // Composables
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import D3LargeGraph from "./D3LargeGraph.vue";
 import D3Graph from "./D3Graph.vue";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
-import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
@@ -56,16 +55,11 @@ endpoint.value.messageTypesAvailable = ref(false);
 endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
-const historyPeriod = ref(useGetDefaultPeriod(route));
+const historyPeriod = ref(monitoringStore.historyPeriod);
 
-function periodSelected(period) {
-  historyPeriod.value = period;
-  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
-}
-
-function getUrlQueryStrings() {
-  historyPeriod.value = useGetDefaultPeriod(route);
-}
+watch(monitoringStore.historyPeriod, (newValue) => {
+  changeRefreshInterval(newValue.refreshIntervalVal);
+});
 
 async function getEndpointDetails() {
   //get historyPeriod
@@ -343,7 +337,6 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  getUrlQueryStrings();
   getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
   getDisconnectedCount(); // for refresh interval
@@ -389,7 +382,7 @@ onMounted(() => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group-details filter-monitoring">
-              <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
+              <PeriodSelector />
             </div>
           </div>
         </div>
