@@ -64,13 +64,17 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     },
     async filterEndpointList(filterString) {
       this.filterString = filterString;
+      let queryParameters = { ...this.route.query };
 
       if (filterString === "") {
         this.isEndpointListFiltered = false;
+        delete queryParameters.filter;
+        await this.router.push({ query: { ...queryParameters } });
         await this.updateEndpointList();
         return;
       }
 
+      await this.router.push({ query: { ...queryParameters, filter: filterString } }); // Update or add filter query parameter to url
       await this.updateEndpointList();
 
       if (this.noMonitoringData) {

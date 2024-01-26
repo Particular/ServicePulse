@@ -1,8 +1,6 @@
 <script setup>
 // Composables
 import { ref, onMounted, watch, onUnmounted, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
 import { useRedirects } from "../composables/serviceRedirects.js";
@@ -17,29 +15,19 @@ import PeriodSelector from "../components/monitoring/MonitoringHistoryPeriod.vue
 import MonitoringNoData from "../components/monitoring/MonitoringNoData.vue";
 
 const monitoringStore = useMonitoringStore();
-const { isInitialized, noMonitoringData, isEndpointListGrouped, historyPeriod } = storeToRefs(monitoringStore);
-const route = useRoute();
-const router = useRouter();
-const noData = computed(() => noMonitoringData.value);
-const isGrouped = computed(() => isEndpointListGrouped.value);
+const noData = computed(() => monitoringStore.noMonitoringData);
+const isGrouped = computed(() => monitoringStore.isEndpointListGrouped);
 const filterString = ref("");
 let refreshInterval = undefined;
 
 //const redirectCount = ref(0);
 
 watch(filterString, async (newValue) => {
-  let queryParameters = { ...route.query };
-  if (newValue === "") {
-    delete queryParameters.filter;
-    await router.push({ query: { ...queryParameters } }); // Remove filter query parameter from url
-  } else {
-    await router.push({ query: { ...queryParameters, filter: newValue } }); // Update or add filter query parameter to url
-  }
   await monitoringStore.filterEndpointList(newValue);
   filterString.value = monitoringStore.filterString;
 });
 
-watch(historyPeriod, (newValue) => {
+watch(monitoringStore.historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
@@ -70,7 +58,7 @@ onMounted(async () => {
   <template v-if="!licenseStatus.isExpired">
     <div class="container monitoring-view">
       <ServiceControlNotAvailable />
-      <template v-if="connectionState.connected && isInitialized">
+      <template v-if="connectionState.connected && monitoringStore.isInitialized">
         <MonitoringNoData v-if="noData"></MonitoringNoData>
         <template v-if="!noData">
           <div class="row monitoring-head">
