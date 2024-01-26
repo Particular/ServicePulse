@@ -5,7 +5,6 @@ import { storeToRefs } from "pinia";
 import D3Graph from "./D3Graph.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
-import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 
 const monitoringStore = useMonitoringStore();
@@ -87,7 +86,7 @@ function navigateToMessageGroup($event, groupId) {
 }
 function navigateToEndpointDetails($event, endpointName) {
   if ($event.target.localName !== "button") {
-    var selectedPeriod = ref(useGetDefaultPeriod(route));
+    var selectedPeriod = ref(monitoringStore.historyPeriod);
     router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
   }
 }

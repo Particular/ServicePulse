@@ -1,6 +1,17 @@
 import { defineStore } from "pinia";
+import { useCookies } from "vue3-cookies";
+import { useRoute, useRouter } from "vue-router";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
-import { useGetDefaultPeriod, saveSelectedPeriod } from "../composables/serviceHistoryPeriods.js";
+
+const cookies = useCookies().cookies;
+const periods = [
+  { pVal: 1, text: "1m", refreshIntervalVal: 1 * 1000, refreshIntervalText: "Show data from the last minute. Refreshes every 1 second" },
+  { pVal: 5, text: "5m", refreshIntervalVal: 5 * 1000, refreshIntervalText: "Show data from the last 5 minutes. Refreshes every 5 seconds" },
+  { pVal: 10, text: "10m", refreshIntervalVal: 10 * 1000, refreshIntervalText: "Show data from the last 10 minutes. Refreshes every 10 seconds" },
+  { pVal: 15, text: "15m", refreshIntervalVal: 15 * 1000, refreshIntervalText: "Show data from the last 15 minutes. Refreshes every 15 seconds" },
+  { pVal: 30, text: "30m", refreshIntervalVal: 30 * 1000, refreshIntervalText: "Show data from the last 30 minutes. Refreshes every 30 seconds" },
+  { pVal: 60, text: "1h", refreshIntervalVal: 60 * 1000, refreshIntervalText: "Show data from the last hour. Refreshes every 1 minute" },
+];
 
 export const useMonitoringStore = defineStore("MonitoringStore", {
   state: () => {
@@ -11,9 +22,12 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       filteredEndpointList: [],
       isEndpointListFiltered: false,
       filterString: "",
-      historyPeriod: useGetDefaultPeriod(),
-      noData: false,
+      allPeriods: periods,
+      historyPeriod: periods[0],
+      noMonitoringData: false,
       isInitialized: false,
+      route: useRoute(),
+      router: useRouter(),
       selectedGrouping: 0,
       isEndpointListGrouped: false,
       grouping: {
@@ -24,23 +38,23 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     };
   },
   actions: {
-    async initializeStore(route) {
-      this.historyPeriod = useGetDefaultPeriod(route);
-      const queryParameters = { ...route.query };
+    async initializeStore() {
+      await this.setHistoryPeriod();
+      const queryParameters = { ...this.route.query };
       if (queryParameters.filter !== undefined) {
         this.filterString = queryParameters.filter;
         this.isEndpointListFiltered = true;
         await this.filterEndpointList(this.filterString);
       }
       await this.updateEndpointList();
-      this.noData = this.isEndpointListEmpty ? true : false;
+      this.noMonitoringData = this.isEndpointListEmpty ? true : false;
       this.isInitialized = true;
       return;
     },
     async updateEndpointList() {
       this.endpointList = await MonitoringEndpoints.useGetAllMonitoredEndpoints(this.historyPeriod.pVal);
-      this.noData = this.isEndpointListEmpty ? true : false;
-      if (this.noData) {
+      this.noMonitoringData = this.isEndpointListEmpty ? true : false;
+      if (this.noMonitoringData) {
         return;
       }
       this.updateGroupSegments();
@@ -59,7 +73,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
 
       await this.updateEndpointList();
 
-      if (this.noData) {
+      if (this.noMonitoringData) {
         return;
       }
 
@@ -69,10 +83,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       if (this.isEndpointListGrouped) {
         this.updateGroupedEndpoints();
       }
-    },
-    updateHistoryPeriod(historyPeriod) {
-      saveSelectedPeriod(historyPeriod);
-      this.historyPeriod = historyPeriod;
     },
     updateSelectedGrouping(groupSize) {
       this.grouping.selectedGrouping = groupSize;
@@ -95,11 +105,28 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     async getDisconnectedEndpointCount() {
       this.disconnectedEndpointCount = await MonitoringEndpoints.useGetDisconnectedEndpointCount();
     },
+    async setHistoryPeriod(period = undefined) {
+      if (period === undefined) {
+        period = this.route.query.historyPeriod; // Get url query string
+        if (typeof period === "undefined") {
+          period = cookies.get("history_period"); // Get cookie
+        }
+      }
+      if (typeof period !== "undefined" && !isNaN(period)) {
+        this.historyPeriod =
+          periods[
+            periods.findIndex((index) => {
+              return index.pVal == period;
+            })
+          ];
+      }
+      cookies.set(`history_period`, this.historyPeriod.pVal);
+      const queryParameters = { ...this.route.query };
+      await this.router.push({ query: { ...queryParameters, historyPeriod: this.historyPeriod.pVal } });
+    },
   },
   getters: {
     endpointListCount: (state) => state.endpointList.length,
     isEndpointListEmpty: (state) => state.endpointListCount === 0,
-    noMonitoringData: (state) => state.noData,
-    isStoreInitialized: (state) => state.isInitialized,
   },
 });

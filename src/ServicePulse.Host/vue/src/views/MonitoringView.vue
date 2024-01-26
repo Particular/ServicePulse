@@ -17,7 +17,7 @@ import PeriodSelector from "../components/monitoring/MonitoringHistoryPeriod.vue
 import MonitoringNoData from "../components/monitoring/MonitoringNoData.vue";
 
 const monitoringStore = useMonitoringStore();
-const { isInitialized, noMonitoringData, isEndpointListGrouped } = storeToRefs(monitoringStore);
+const { isInitialized, noMonitoringData, isEndpointListGrouped, historyPeriod } = storeToRefs(monitoringStore);
 const route = useRoute();
 const router = useRouter();
 const noData = computed(() => noMonitoringData.value);
@@ -26,11 +26,6 @@ const filterString = ref("");
 let refreshInterval = undefined;
 
 //const redirectCount = ref(0);
-
-function periodSelected(period) {
-  monitoringStore.updateHistoryPeriod(period.pVal);
-  changeRefreshInterval(monitoringStore.historyPeriod.refreshIntervalVal);
-}
 
 watch(filterString, async (newValue) => {
   let queryParameters = { ...route.query };
@@ -42,6 +37,10 @@ watch(filterString, async (newValue) => {
   }
   await monitoringStore.filterEndpointList(newValue);
   filterString.value = monitoringStore.filterString;
+});
+
+watch(historyPeriod, (newValue) => {
+  changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
 function changeRefreshInterval(milliseconds) {
@@ -60,7 +59,7 @@ onUnmounted(() => {
 });
 
 onMounted(async () => {
-  await monitoringStore.initializeStore(route);
+  await monitoringStore.initializeStore();
   filterString.value = monitoringStore.filterString;
   changeRefreshInterval(monitoringStore.historyPeriod.refreshIntervalVal);
 });
@@ -81,7 +80,7 @@ onMounted(async () => {
             <!--filters-->
             <div class="col-sm-8 no-side-padding toolbar-menus">
               <div class="filter-group filter-monitoring">
-                <PeriodSelector @period-selected="periodSelected"></PeriodSelector>
+                <PeriodSelector />
                 <GroupBy />
                 <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" v-model="filterString" />
               </div>
