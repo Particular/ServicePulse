@@ -7,9 +7,9 @@ const monitoringStore = useMonitoringStore();
 const cookies = useCookies().cookies;
 const grouping = ref(monitoringStore.grouping);
 
-function selectGroup(groupSize) {
+async function selectGroup(groupSize) {
   saveSelectedGroup(groupSize);
-  monitoringStore.updateSelectedGrouping(groupSize);
+  await monitoringStore.updateSelectedGrouping(groupSize);
 }
 
 function saveSelectedGroup(groupSize) {

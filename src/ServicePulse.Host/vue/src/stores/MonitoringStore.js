@@ -19,7 +19,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       endpointList: [],
       endpointDetails: {},
       disconnectedEndpointCount: 0,
-      filteredEndpointList: [],
       filterString: "",
       allPeriods: periods,
       historyPeriod: periods[0],
@@ -71,7 +70,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     },
     updateGroupedEndpoints() {
       if (this.isEndpointListFiltered) {
-        this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(this.filteredEndpointList, this.grouping.selectedGrouping);
+        this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(this.getFilteredEndpointList, this.grouping.selectedGrouping);
       } else {
         this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(this.endpointList, this.grouping.selectedGrouping);
       }
@@ -109,8 +108,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     endpointListCount: (state) => state.endpointList.length,
     isEndpointListEmpty: (state) => state.endpointListCount === 0,
     isEndpointListFiltered: (state) => state.filterString !== "",
-    getFilteredEndpointList: async (state) => {
-      return state.filterString !== "" ? await MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(state.endpointList, state.filterString) : state.endpointList;
+    getFilteredEndpointList: (state) => {
+      return state.filterString !== "" ? MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(state.endpointList, state.filterString) : state.endpointList;
     },
   },
 });
