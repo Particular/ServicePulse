@@ -16,7 +16,7 @@ export function useFindEndpointSegments(endpoints) {
 }
 
 /**
- * @param {Number} - The history period value.  The default is (1)
+ * @param {Number} historyPeriod - The history period value.  The default is (1)
  * @returns A array of monitoring endpoint objects
  */
 export async function useGetAllMonitoredEndpoints(historyPeriod = 1) {

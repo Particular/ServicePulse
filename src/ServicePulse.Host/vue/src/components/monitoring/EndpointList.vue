@@ -1,15 +1,14 @@
 ﻿<script setup>
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watch, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
 import D3Graph from "./D3Graph.vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 
 const monitoringStore = useMonitoringStore();
-const route = useRoute();
-const allEndpoints = computed(() => monitoringStore.endpointList);
-const filteredEndpoints = computed(() => monitoringStore.filteredEndpointList);
+const { endpointList, filterString } = storeToRefs(monitoringStore);
 const endpoints = ref();
 const router = useRouter();
 const supportsEndpointCount = ref();
@@ -21,19 +20,19 @@ const smallGraphsMinimumYAxis = {
   criticalTime: 10,
 };
 
-watch([allEndpoints, filteredEndpoints], () => {
-  if (monitoringStore.isEndpointListFiltered) {
-    endpoints.value = filteredEndpoints.value;
-  } else {
-    endpoints.value = allEndpoints.value;
+watch([endpointList, filterString], async () => {
+  if (filterString.value !== "") {
+    endpoints.value = await monitoringStore.getFilteredEndpointList;
+    return;
   }
+  endpoints.value = endpointList.value;
 });
 
-onMounted(() => {
+onMounted(async () => {
   if (monitoringStore.isEndpointListFiltered) {
-    endpoints.value = filteredEndpoints.value;
+    endpoints.value = await monitoringStore.getFilteredEndpointList;
   } else {
-    endpoints.value = allEndpoints.value;
+    endpoints.value = endpointList.value;
   }
 });
 
@@ -176,7 +175,7 @@ function formatGraphDecimal(input, deci) {
         <div class="table-col">
           <div class="box-header">
             <div class="no-side-padding">
-              <D3Graph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'"></D3Graph>
+              <D3Graph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :key="endpoints"></D3Graph>
             </div>
             <div class="no-side-padding sparkline-value">
               {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}

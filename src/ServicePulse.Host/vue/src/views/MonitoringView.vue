@@ -1,6 +1,7 @@
 <script setup>
 // Composables
 import { ref, onMounted, watch, onUnmounted, computed } from "vue";
+import { storeToRefs } from "pinia";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
 import { useRedirects } from "../composables/serviceRedirects.js";
@@ -15,7 +16,8 @@ import PeriodSelector from "../components/monitoring/MonitoringHistoryPeriod.vue
 import MonitoringNoData from "../components/monitoring/MonitoringNoData.vue";
 
 const monitoringStore = useMonitoringStore();
-const noData = computed(() => monitoringStore.noMonitoringData);
+const { historyPeriod } = storeToRefs(monitoringStore);
+const noData = computed(() => monitoringStore.isEndpointListEmpty);
 const isGrouped = computed(() => monitoringStore.isEndpointListGrouped);
 const filterString = ref("");
 let refreshInterval = undefined;
@@ -23,11 +25,11 @@ let refreshInterval = undefined;
 //const redirectCount = ref(0);
 
 watch(filterString, async (newValue) => {
-  await monitoringStore.filterEndpointList(newValue);
+  await monitoringStore.updateFilterString(newValue);
   filterString.value = monitoringStore.filterString;
 });
 
-watch(monitoringStore.historyPeriod, async (newValue) => {
+watch(historyPeriod, async (newValue) => {
   await changeRefreshInterval(newValue.refreshIntervalVal);
 });
 

@@ -20,11 +20,9 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       endpointDetails: {},
       disconnectedEndpointCount: 0,
       filteredEndpointList: [],
-      isEndpointListFiltered: false,
       filterString: "",
       allPeriods: periods,
       historyPeriod: periods[0],
-      noMonitoringData: false,
       isInitialized: false,
       route: useRoute(),
       router: useRouter(),
@@ -40,52 +38,28 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
   actions: {
     async initializeStore() {
       await this.setHistoryPeriod();
-      if (this.route.query.filter !== undefined) {
-        this.filterString = this.route.query.filter;
-        this.isEndpointListFiltered = true;
-        await this.filterEndpointList(this.filterString);
-      }
+      await this.updateFilterString();
       await this.updateEndpointList();
-      this.noMonitoringData = this.isEndpointListEmpty ? true : false;
       this.isInitialized = true;
       return;
     },
+    async updateFilterString(filter = null) {
+      this.filterString = filter ?? this.route.query.filter ?? "";
+      if (this.filterString === "") {
+        delete this.route.query.filter;
+      }
+      await this.router.push({ query: { ...this.route.query, filter: filter } }); // Update or add filter query parameter to url
+      await this.updateEndpointList();
+    },
     async updateEndpointList() {
       this.endpointList = await MonitoringEndpoints.useGetAllMonitoredEndpoints(this.historyPeriod.pVal);
-      this.noMonitoringData = this.isEndpointListEmpty ? true : false;
-      if (this.noMonitoringData) {
-        return;
+      if (!this.isEndpointListEmpty) {
+        this.updateGroupSegments();
+        if (this.isEndpointListGrouped) {
+          this.updateGroupedEndpoints();
+        }
       }
-      this.updateGroupSegments();
-      if (this.isEndpointListGrouped) {
-        this.updateGroupedEndpoints();
-      }
-    },
-    async filterEndpointList(filterString) {
-      this.filterString = filterString;
-      let queryParameters = { ...this.route.query };
-
-      if (filterString === "") {
-        this.isEndpointListFiltered = false;
-        delete queryParameters.filter;
-        await this.router.push({ query: { ...queryParameters } });
-        await this.updateEndpointList();
-        return;
-      }
-
-      await this.router.push({ query: { ...queryParameters, filter: filterString } }); // Update or add filter query parameter to url
-      await this.updateEndpointList();
-
-      if (this.noMonitoringData) {
-        return;
-      }
-
-      this.filteredEndpointList = await MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(this.endpointList, filterString);
-      this.isEndpointListFiltered = true;
-
-      if (this.isEndpointListGrouped) {
-        this.updateGroupedEndpoints();
-      }
+      return;
     },
     updateSelectedGrouping(groupSize) {
       this.grouping.selectedGrouping = groupSize;
@@ -109,18 +83,17 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       this.disconnectedEndpointCount = await MonitoringEndpoints.useGetDisconnectedEndpointCount();
     },
     /**
-     * 
      * @param {String} period - The history period value
      * @description Sets the history period based on, in order of importance, a passed parameter, the url query string, saved cookie, or default value
      */
-    async setHistoryPeriod(period = undefined) {
-      if (period === undefined) {
+    async setHistoryPeriod(period = null) {
+      if (period == null) {
         period = this.route.query.historyPeriod; // Get url query string
-        if (typeof period === "undefined") {
+        if (period == null) {
           period = cookies.get("history_period"); // Get cookie
         }
       }
-      if (typeof period !== "undefined") {
+      if (period != null) {
         this.historyPeriod =
           periods[
             periods.findIndex((index) => {
@@ -135,5 +108,9 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
   getters: {
     endpointListCount: (state) => state.endpointList.length,
     isEndpointListEmpty: (state) => state.endpointListCount === 0,
+    isEndpointListFiltered: (state) => state.filterString !== "",
+    getFilteredEndpointList: async (state) => {
+      return state.filterString !== "" ? await MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(state.endpointList, state.filterString) : state.endpointList;
+    },
   },
 });
