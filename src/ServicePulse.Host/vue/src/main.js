@@ -26,8 +26,12 @@ createApp(App)
   .use(createPinia())
   // make v-tooltip available in all components
   .directive("tooltip", {
-    mounted: (element) => {
-      new Tooltip(element);
+    mounted: (el) => {
+      const tooltip = new Tooltip(el, { trigger: "hover" });
+      el.tooltip = tooltip;
+    },
+    beforeUnmount: (el) => {
+      el.tooltip.hide();
     },
   })
   .mount("#app");

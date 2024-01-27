@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watchEffect } from "vue";
+import { ref, onMounted, onBeforeUnmount, watchEffect } from "vue";
 import * as d3 from "d3";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { getArrowLabel } from "../../composables/graphLabel.js";
@@ -125,6 +125,11 @@ function displayGraphValues() {
 }
 onMounted(() => {
   displayGraphValues();
+});
+onBeforeUnmount(() => {
+  if (averageLabelToTheRight) {
+    averageLabelToTheRight.hide();
+  }
 });
 </script>
 
