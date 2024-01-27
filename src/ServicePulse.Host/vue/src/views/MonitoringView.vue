@@ -9,7 +9,6 @@ import { useMonitoringStore } from "../stores/MonitoringStore";
 // Components
 import LicenseExpired from "../components/LicenseExpired.vue";
 import GroupBy from "../components/monitoring/MonitoringGroupBy.vue";
-import EndpointListGrouped from "../components/monitoring/EndpointListGrouped.vue";
 import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
 import EndpointList from "../components/monitoring/EndpointList.vue";
 import PeriodSelector from "../components/monitoring/MonitoringHistoryPeriod.vue";
@@ -17,8 +16,7 @@ import MonitoringNoData from "../components/monitoring/MonitoringNoData.vue";
 
 const monitoringStore = useMonitoringStore();
 const { historyPeriod } = storeToRefs(monitoringStore);
-const noData = computed(() => monitoringStore.isEndpointListEmpty);
-const isGrouped = computed(() => monitoringStore.isEndpointListGrouped);
+const noData = computed(() => monitoringStore.endpointListIsEmpty);
 const filterString = ref("");
 let refreshInterval = undefined;
 
@@ -68,7 +66,6 @@ onMounted(async () => {
             <div class="col-sm-4 no-side-padding list-section">
               <h1>Endpoints overview</h1>
             </div>
-            <!--filters-->
             <div class="col-sm-8 no-side-padding toolbar-menus">
               <div class="filter-group filter-monitoring">
                 <PeriodSelector />
@@ -77,9 +74,7 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <!--List of endpoints-->
-          <EndpointList v-if="!isGrouped"></EndpointList>
-          <EndpointListGrouped v-if="isGrouped"></EndpointListGrouped>
+          <EndpointList />
         </template>
       </template>
     </div>

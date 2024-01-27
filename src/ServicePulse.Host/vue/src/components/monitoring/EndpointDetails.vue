@@ -116,7 +116,7 @@ async function updateUI() {
     negativeCriticalTimeIsPresent.value = false;
 
     endpoint.value.instances.forEach(async function (instance) {
-      //get errror count by instance id
+      //get error count by instance id
       await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
       if (!failedMessageStore.isFailedMessagesEmpty) {
         instance.serviceControlId = failedMessageStore.serviceControlId;
@@ -129,7 +129,7 @@ async function updateUI() {
 
     loadedSuccessfully.value = true;
   }
-  //get errror count by endpoint name
+  //get error count by endpoint name
   await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
   if (!failedMessageStore.isFailedMessagesEmpty) {
     endpoint.value.serviceControlId = failedMessageStore.serviceControlId;

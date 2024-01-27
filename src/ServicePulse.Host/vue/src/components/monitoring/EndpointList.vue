@@ -1,119 +1,28 @@
 ﻿<script setup>
 import { ref, watch, onMounted } from "vue";
-import { storeToRefs } from "pinia";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
-import D3Graph from "./D3Graph.vue";
-import { useRouter } from "vue-router";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
+import EndpointListRow from "./EndpointListRow.vue";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 
 const monitoringStore = useMonitoringStore();
-const { endpointList, filterString } = storeToRefs(monitoringStore);
 const endpoints = ref();
-const router = useRouter();
-const supportsEndpointCount = ref();
-const smallGraphsMinimumYAxis = {
-  queueLength: 10,
-  throughput: 10,
-  retries: 10,
-  processingTime: 10,
-  criticalTime: 10,
-};
+const isGrouped = computed(() => monitoringStore.endpointListIsGrouped);
 
-watch([endpointList, filterString], async () => {
-  if (filterString.value !== "") {
+watch([() => monitoringStore.endpointList, () => monitoringStore.filterString], async () => {
+  if (monitoringStore.endpointListIsFiltered) {
     endpoints.value = await monitoringStore.getFilteredEndpointList;
     return;
   }
-  endpoints.value = endpointList.value;
+  endpoints.value = monitoringStore.endpointList;
 });
 
 onMounted(async () => {
-  if (monitoringStore.isEndpointListFiltered) {
+  if (monitoringStore.endpointListIsFiltered) {
     endpoints.value = await monitoringStore.getFilteredEndpointList;
   } else {
-    endpoints.value = endpointList.value;
+    endpoints.value = monitoringStore.endpointList;
   }
 });
-
-/* function updateUI() {
-  if (endpoints.value.length > 0) {
-    endpoints.value.forEach((endpoint) => {
-      hasData.value = !endpoint.empty;
-      supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, "connectedCount");
-      if (endpoint.empty) {
-        return;
-      }
-
-      if (endpoint.error) {
-        // connectivityNotifier.reportFailedConnection();
-        if (endpoints.value) {
-          endpoints.value.forEach((item) => (item.isScMonitoringDisconnected = true));
-        }
-      } else {
-        // connectivityNotifier.reportSuccessfulConnection();
-        var index = endpoints.value.findIndex(function (item) {
-          return item.name === endpoint.name;
-        });
-        endpoint.isScMonitoringDisconnected = false;
-        if (index >= 0) {
-          mergeIn(endpoints.value[index], endpoint);
-        } else {
-          endpoints.value.push(endpoint);
-        }
-      }
-    });
-
-    //sort the monitored endpoints by name - case sensitive
-    endpoints.value.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0));
-  }
-} */
-
-/* function mergeIn(destination, source) {
-  for (var propName in source) {
-    if (Object.prototype.hasOwnProperty.call(source, propName)) {
-      destination[propName] = source[propName];
-    }
-  }
-} */
-
-function navigateToMessageGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push({ name: "message-groups", params: { groupId: groupId } });
-  }
-}
-function navigateToEndpointDetails($event, endpointName) {
-  if ($event.target.localName !== "button") {
-    var selectedPeriod = ref(monitoringStore.historyPeriod);
-    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
-  }
-}
-
-function formatGraphDuration(input) {
-  if (input) {
-    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    var formatLastValue = useFormatTime(lastValue);
-    return formatLastValue;
-  }
-  return input;
-}
-function formatGraphDecimal(input, deci) {
-  if (input) {
-    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    var decimals = 0;
-    if (lastValue < 10 || input > 1000000) {
-      decimals = 2;
-    }
-    return useFormatLargeNumber(lastValue, deci || decimals);
-  } else {
-    input = {
-      points: [],
-      average: 0,
-      displayValue: 0,
-    };
-    return input;
-  }
-}
 </script>
 
 <template>
@@ -139,8 +48,6 @@ function formatGraphDecimal(input, deci) {
         <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
     </div>
-
-    <!--Endpoint list-->
     <div>
       <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
       <div class="endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">

@@ -23,10 +23,10 @@ const preview = {
 setup((app) => {  
   app.use(pinia);
   app.directive("tooltip", {
-  mounted: (element) => {
-    new Tooltip(element);
-  },
-});
+    mounted: (element) => {
+      new Tooltip(element);
+    },
+  });
 });
 
 export default preview;
