@@ -1,32 +1,20 @@
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useGetAllPeriods, saveSelectedPeriod, useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
+import { ref } from "vue";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 
-const emit = defineEmits(["period-selected"]);
+const monitoringStore = useMonitoringStore();
+const allPeriods = monitoringStore.allPeriods;
+const selectedPeriod = ref(monitoringStore.historyPeriod);
 
-const route = useRoute();
-const router = useRouter();
-const allPeriods = useGetAllPeriods();
-const defaultPeriod = ref(useGetDefaultPeriod(route));
-
-function selectHistoryPeriod(period) {
-  saveSelectedPeriod(period);
-  defaultPeriod.value = period;
-  const queryParameters = { ...route.query };
-  router.push({ query: { ...queryParameters, historyPeriod: defaultPeriod.value.pVal } });
-  emit("period-selected", period);
+async function selectHistoryPeriod(period) {
+  await monitoringStore.setHistoryPeriod(period.pVal);
+  selectedPeriod.value = monitoringStore.historyPeriod;
 }
-
-onMounted(() => {
-  router.push({ query: { historyPeriod: defaultPeriod.value.pVal } });
-  selectHistoryPeriod(defaultPeriod.value);
-});
 </script>
 
 <template>
   <ul class="nav nav-pills period-selector">
-    <li role="presentation" data-bs-placement="top" v-for="period in allPeriods" :key="period.pVal" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.pVal === defaultPeriod.pVal, notselected: period.pVal !== defaultPeriod.pVal }">
+    <li role="presentation" data-bs-placement="top" v-for="period in allPeriods" :key="period.pVal" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.pVal === selectedPeriod.pVal, notselected: period.pVal !== selectedPeriod.pVal }">
       <a :href="`#`" @click.prevent="selectHistoryPeriod(period)">{{ period.text }}</a>
     </li>
   </ul>

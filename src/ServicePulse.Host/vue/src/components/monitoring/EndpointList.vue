@@ -1,130 +1,34 @@
 ﻿<script setup>
-import { ref, watchEffect } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
-import D3Graph from "./D3Graph.vue";
-import { useRouter, useRoute } from "vue-router";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
-import MonitoringNoData from "./MonitoringNoData.vue";
-import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
-import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
+import EndpointListRow from "./EndpointListRow.vue";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 
-const props = defineProps({
-  endpoints: Array,
-});
-const route = useRoute();
-const endpoints = ref([]);
-const historyPeriod = ref(useGetDefaultPeriod(route));
-const router = useRouter();
-const hasData = ref(false);
-const supportsEndpointCount = ref();
-const smallGraphsMinimumYAxis = {
-  queueLength: 10,
-  throughput: 10,
-  retries: 10,
-  processingTime: 10,
-  criticalTime: 10,
-};
+const monitoringStore = useMonitoringStore();
+const endpoints = ref();
+const isGrouped = computed(() => monitoringStore.endpointListIsGrouped);
 
-watchEffect(() => {
-  endpoints.value = props.endpoints || [];
+watch([() => monitoringStore.endpointList, () => monitoringStore.filterString], async () => {
+  if (monitoringStore.endpointListIsFiltered) {
+    endpoints.value = await monitoringStore.getFilteredEndpointList;
+    return;
+  }
+  endpoints.value = monitoringStore.endpointList;
 });
 
-/* function updateUI() {
-  if (endpoints.value.length > 0) {
-    endpoints.value.forEach((endpoint) => {
-      hasData.value = !endpoint.empty;
-      supportsEndpointCount.value = Object.prototype.hasOwnProperty.call(endpoint, "connectedCount");
-      if (endpoint.empty) {
-        return;
-      }
-
-      if (endpoint.error) {
-        // connectivityNotifier.reportFailedConnection();
-        if (endpoints.value) {
-          endpoints.value.forEach((item) => (item.isScMonitoringDisconnected = true));
-        }
-      } else {
-        // connectivityNotifier.reportSuccessfulConnection();
-        var index = endpoints.value.findIndex(function (item) {
-          return item.name === endpoint.name;
-        });
-        endpoint.isScMonitoringDisconnected = false;
-        if (index >= 0) {
-          mergeIn(endpoints.value[index], endpoint);
-        } else {
-          endpoints.value.push(endpoint);
-        }
-      }
-    });
-
-    //sort the monitored endpoints by name - case sensitive
-    endpoints.value.sort((a, b) => (a.name < b.name ? 1 : a.name > b.name ? -1 : 0));
-  }
-} */
-
-/* function mergeIn(destination, source) {
-  for (var propName in source) {
-    if (Object.prototype.hasOwnProperty.call(source, propName)) {
-      destination[propName] = source[propName];
-    }
-  }
-} */
-
-function navigateToMessageGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push({ name: "message-groups", params: { groupId: groupId } });
-  }
-}
-function navigateToEndpointDetails($event, endpointName) {
-  if ($event.target.localName !== "button") {
-    var selectedPeriod = ref(useGetDefaultPeriod(route));
-    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
-  }
-}
-
-function formatGraphDuration(input) {
-  if (input) {
-    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    var formatLastValue = useFormatTime(lastValue);
-    return formatLastValue;
-  }
-  return input;
-}
-function formatGraphDecimal(input, deci) {
-  if (input) {
-    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    var decimals = 0;
-    if (lastValue < 10 || input > 1000000) {
-      decimals = 2;
-    }
-    return useFormatLargeNumber(lastValue, deci || decimals);
+onMounted(async () => {
+  if (monitoringStore.endpointListIsFiltered) {
+    endpoints.value = await monitoringStore.getFilteredEndpointList;
   } else {
-    input = {
-      points: [],
-      average: 0,
-      displayValue: 0,
-    };
-    return input;
+    endpoints.value = monitoringStore.endpointList;
   }
-}
+});
 </script>
 
 <template>
-  <section ng-if="grouping.selectedGrouping == 0">
-    <div class="row">
-      <div class="col-sm-12">
-        <MonitoringNoData v-if="!endpoints && endpoints.length === 0 && !hasData"></MonitoringNoData>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-12">
-        <MonitoringNotAvailable v-if="!endpoints && endpoints.length === 0 && hasData"></MonitoringNotAvailable>
-      </div>
-    </div>
-
+  <section>
     <!--Table headings-->
-    <div v-if="endpoints && endpoints.length > 0" class="table-head-row">
+    <div class="table-head-row">
       <div class="table-first-col">
         <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
       </div>
@@ -144,104 +48,20 @@ function formatGraphDecimal(input, deci) {
         <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
     </div>
-
-    <!--endpointlist-->
     <div>
-      <!-- end ngRepeat: endpoint in endpoints | filter: filter | orderBy: order.expression -->
-      <div class="endpoint-row" v-for="(endpoint, index) in endpoints" :key="index" v-show="endpoints.length" v-on:mouseenter="endpoint.hover1 = true" v-on:mouseleave="endpoint.hover1 = false">
-        <div class="table-first-col endpoint-name name-overview">
-          <div class="box-header">
-            <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
-              <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
-                {{ endpoint.name }}
-              </a>
-              <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
-            </div>
-            <div class="col-xs-5 no-side-padding endpoint-status">
-              <span class="warning" v-if="endpoint.metrics != null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
-                <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
-              </span>
-              <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
-                <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
-              </span>
-              <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
-                <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
-              </span>
-              <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-                <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
-                  <i class="fa fa-envelope"></i>
-                  <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount }}</span>
-                </a>
-              </span>
-            </div>
+      <div v-if="isGrouped">
+        <div class="row" v-for="(endpointGroup, index) in monitoringStore.grouping.groupedEndpoints" :key="index">
+          <div class="endpoint-group-title">
+            {{ endpointGroup.group }}
+          </div>
+          <div class="row box endpoint-row" v-for="(groupedEndpoint, index) in endpointGroup.endpoints" :key="index">
+            <EndpointListRow :endpoint="groupedEndpoint.endpoint" />
           </div>
         </div>
-        <!--Queue Length-->
-        <div class="table-col">
-          <div class="box-header">
-            <div class="no-side-padding">
-              <D3Graph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'"></D3Graph>
-            </div>
-            <div class="no-side-padding sparkline-value">
-              {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
-              <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-              <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-            </div>
-          </div>
-        </div>
-        <!--Throughput-->
-        <div class="table-col">
-          <div class="box-header">
-            <div class="no-side-padding">
-              <D3Graph :type="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'"></D3Graph>
-            </div>
-            <div class="no-side-padding sparkline-value">
-              {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
-              <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-              <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-            </div>
-          </div>
-        </div>
-        <!--Scheduled Retries-->
-        <div class="table-col">
-          <div class="box-header">
-            <div class="no-side-padding">
-              <D3Graph :type="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
-            </div>
-            <div class="no-side-padding sparkline-value">
-              {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
-              <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-              <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-            </div>
-          </div>
-        </div>
-        <!--Processing Time-->
-        <div class="table-col">
-          <div class="box-header">
-            <div class="no-side-padding">
-              <D3Graph :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'"></D3Graph>
-            </div>
-            <div class="no-side-padding sparkline-value">
-              {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
-              <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
-              <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{ formatGraphDuration(endpoint.metrics.processingTime).unit }}</span>
-            </div>
-          </div>
-        </div>
-        <!--Critical Time-->
-        <div class="table-col">
-          <div class="box-header">
-            <div class="no-side-padding">
-              <D3Graph :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
-            </div>
-            <div class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(endpoint.metrics.criticalTime).value < 0 }">
-              {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
-              <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" title="No metrics received or endpoint is not configured to send metrics">?</strong>
-              <strong v-if="endpoint.isScMonitoringDisconnected" title="Unable to connect to monitoring server">?</strong>
-              <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{ formatGraphDuration(endpoint.metrics.criticalTime).unit }}</span>
-            </div>
-          </div>
+      </div>
+      <div v-else>
+        <div class="endpoint-row" v-for="(endpoint, index) in endpoints" :key="index">
+          <EndpointListRow :endpoint="endpoint" />
         </div>
       </div>
     </div>

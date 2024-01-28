@@ -1,11 +1,10 @@
 ﻿<script setup>
 // Composables
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import D3LargeGraph from "./D3LargeGraph.vue";
 import D3Graph from "./D3Graph.vue";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
-import { useGetDefaultPeriod } from "../../composables/serviceHistoryPeriods.js";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
 import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
@@ -56,30 +55,25 @@ endpoint.value.messageTypesAvailable = ref(false);
 endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
-const historyPeriod = ref(useGetDefaultPeriod(route));
+const historyPeriod = ref(monitoringStore.historyPeriod);
 
-function periodSelected(period) {
-  historyPeriod.value = period;
-  changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
-}
-
-function getUrlQueryStrings() {
-  historyPeriod.value = useGetDefaultPeriod(route);
-}
+watch(monitoringStore.historyPeriod, (newValue) => {
+  changeRefreshInterval(newValue.refreshIntervalVal);
+});
 
 async function getEndpointDetails() {
   //get historyPeriod
   var selectedHistoryPeriod = historyPeriod.value.pVal;
-    if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
+  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
     await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
     var responseData = monitoringStore.endpointDetails;
-    if (responseData !=null ) {
-        filterOutSystemMessage(responseData);
-        var endpointDetails = responseData;
-        endpointDetails.isScMonitoringDisconnected = false;
-        endpointDetails.isStale = true;
-        Object.assign(endpoint.value, endpointDetails);
-       await updateUI();
+    if (responseData != null) {
+      filterOutSystemMessage(responseData);
+      var endpointDetails = responseData;
+      endpointDetails.isScMonitoringDisconnected = false;
+      endpointDetails.isStale = true;
+      Object.assign(endpoint.value, endpointDetails);
+      await updateUI();
     }
   }
 }
@@ -122,26 +116,25 @@ async function updateUI() {
     negativeCriticalTimeIsPresent.value = false;
 
     endpoint.value.instances.forEach(async function (instance) {
-      //get errror count by instance id
-        await failedMessageStore.getFailedMessagesList("Endpoint Instance",instance.id);
-        if (!failedMessageStore.isFailedMessagesEmpty) {
-            instance.serviceControlId = failedMessageStore.serviceControlId;
-            instance.errorCount = failedMessageStore.errorCount;
-            instance.isScMonitoringDisconnected = false;
-        }
+      //get error count by instance id
+      await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
+      if (!failedMessageStore.isFailedMessagesEmpty) {
+        instance.serviceControlId = failedMessageStore.serviceControlId;
+        instance.errorCount = failedMessageStore.errorCount;
+        instance.isScMonitoringDisconnected = false;
+      }
       endpoint.value.isStale = endpoint.value.isStale && instance.isStale;
       negativeCriticalTimeIsPresent.value |= formatGraphDuration(instance.metrics.criticalTime).value < 0;
     });
 
     loadedSuccessfully.value = true;
   }
-  //get errror count by endpoint name
-    await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
-    if (!failedMessageStore.isFailedMessagesEmpty) {
-        endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
-        endpoint.value.errorCount = failedMessageStore.errorCount;
-    }
-
+  //get error count by endpoint name
+  await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
+  if (!failedMessageStore.isFailedMessagesEmpty) {
+    endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
+    endpoint.value.errorCount = failedMessageStore.errorCount;
+  }
 }
 
 function filterOutSystemMessage(data) {
@@ -344,7 +337,6 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  getUrlQueryStrings();
   getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
   getDisconnectedCount(); // for refresh interval
@@ -390,7 +382,7 @@ onMounted(() => {
           <!--filters-->
           <div class="col-sm-8 no-side-padding toolbar-menus">
             <div class="filter-group-details filter-monitoring">
-              <PeriodSelector :period="historyPeriod" @period-selected="periodSelected"></PeriodSelector>
+              <PeriodSelector />
             </div>
           </div>
         </div>

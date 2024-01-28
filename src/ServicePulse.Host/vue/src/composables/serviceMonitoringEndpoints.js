@@ -7,8 +7,8 @@ import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
  * @returns the max number of segments in a array of endpoint object names
  */
 export function useFindEndpointSegments(endpoints) {
-  if (endpoints.value !== undefined) {
-    return endpoints.value.reduce(function (acc, cur) {
+  if (endpoints !== undefined) {
+    return endpoints.reduce(function (acc, cur) {
       return Math.max(acc, cur.name.split(".").length - 1);
     }, 0);
   }
@@ -16,7 +16,7 @@ export function useFindEndpointSegments(endpoints) {
 }
 
 /**
- * @param {Number} - The history period value.  The default is (1)
+ * @param {Number} historyPeriod - The history period value.  The default is (1)
  * @returns A array of monitoring endpoint objects
  */
 export async function useGetAllMonitoredEndpoints(historyPeriod = 1) {
@@ -44,7 +44,7 @@ export function useFilterAllMonitoredEndpointsByName(endpoints, filterString) {
   if (filterString === "") {
     return endpoints.value;
   }
-  const filteredEndpoints = endpoints.value.filter((endpoint) => endpoint.name.includes(filterString));
+  const filteredEndpoints = endpoints.filter((endpoint) => endpoint.name.includes(filterString));
   return filteredEndpoints;
 }
 
@@ -55,8 +55,8 @@ export function useFilterAllMonitoredEndpointsByName(endpoints, filterString) {
  */
 export function useGroupEndpoints(endpoints, numberOfSegments) {
   let groups = new Map();
-  if (endpoints.value === undefined) return;
-  endpoints.value.forEach(function (element) {
+  if (endpoints === undefined) return;
+  endpoints.forEach(function (element) {
     const grouping = parseEndpoint(element, numberOfSegments);
 
     let resultGroup = groups.get(grouping.groupName);
@@ -77,33 +77,33 @@ export function useGroupEndpoints(endpoints, numberOfSegments) {
  * @param {Number} - The history period value.  The default is (1)
  * @returns {object} - The details of the endpoint
  */
-export async function useGetEndpointDetails(endpointName, historyPeriod=1) {
-    const endpointDetails = ref({});
-    if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-        try {
-            const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
-            const data = await response.json();
-            endpointDetails.value = data;
-        } catch (error) {
-            console.error(error);
-        }
+export async function useGetEndpointDetails(endpointName, historyPeriod = 1) {
+  const endpointDetails = ref({});
+  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
+    try {
+      const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
+      const data = await response.json();
+      endpointDetails.value = data;
+    } catch (error) {
+      console.error(error);
     }
-    return endpointDetails.value;
+  }
+  return endpointDetails.value;
 }
 
 /**
  * @returns {Number} - The count of disconnected endpoint
  */
 export async function useGetDisconnectedEndpointCount() {
-    var disconnectedCount = 0;
-        try {
-            const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-            disconnectedCount = response.data;
-        } catch (error) {
-            console.error(error);
-        }
+  var disconnectedCount = 0;
+  try {
+    const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
+    disconnectedCount = response.data;
+  } catch (error) {
+    console.error(error);
+  }
 
-    return disconnectedCount;
+  return disconnectedCount;
 }
 async function addEndpointsFromScSubscription(endpoints) {
   const exceptionGroups = await useGetExceptionGroups("Endpoint Name");
