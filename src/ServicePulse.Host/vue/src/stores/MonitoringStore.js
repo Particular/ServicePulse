@@ -80,7 +80,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
      * @description Sets the history period based on, in order of importance, a passed parameter, the url query string, saved cookie, or default value
      */
     async setHistoryPeriod(period = null) {
-      period = period || this.route.query.historyPeriod || cookies.get("history_period") || this.allPeriods[0];
+      period = period || this.route.query.historyPeriod || cookies.get("history_period") || this.allPeriods[0].pVal;
 
       if (period) {
         this.historyPeriod = this.allPeriods.find((index) => index.pVal == period);
