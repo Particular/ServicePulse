@@ -23,8 +23,12 @@ const preview = {
 setup((app) => {  
   app.use(pinia);
   app.directive("tooltip", {
-    mounted: (element) => {
-      new Tooltip(element);
+    mounted: (el) => {
+      const tooltip = new Tooltip(el, { trigger: "hover" });
+      el.tooltip = tooltip;
+    },
+    beforeUnmount: (el) => {
+      el.tooltip.hide();
     },
   });
 });
