@@ -1,13 +1,22 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import moment from "moment";
 import { VueFlow, useVueFlow, MarkerType } from "@vue-flow/core";
+import TimeSince from "../TimeSince.vue";
 
 const props = defineProps({
   conversationId: String,
   messageId: String,
 });
+
+const messageType = Object.freeze({
+  Event: "Event message",
+  Timeout: "Timeout message",
+  Command: "Command message",
+});
+
+const nodeSpacingX = 300;
+const nodeSpacingY = 200;
 
 function getConversation(conversationId) {
   return useFetchFromServiceControl(`conversations/${conversationId}`).then(function (response) {
@@ -31,9 +40,9 @@ function mapMessage(message) {
   }
 
   const type = (() => {
-    if (message.headers.find((header) => header.key === "NServiceBus.MessageIntent").value === "Publish") return "Event message";
-    else if (message.headers.find((header) => header.key === "NServiceBus.IsSagaTimeoutMessage")?.value?.toLowerCase() === "true") return "Timeout message";
-    return "Command message";
+    if (message.headers.find((header) => header.key === "NServiceBus.MessageIntent").value === "Publish") return messageType.Event;
+    else if (message.headers.find((header) => header.key === "NServiceBus.IsSagaTimeoutMessage")?.value?.toLowerCase() === "true") return messageType.Timeout;
+    return messageType.Command;
   })();
 
   return {
@@ -54,7 +63,7 @@ function mapMessage(message) {
       name: `Link ${message.id}`,
       nodeName: message.id,
     },
-    timeSent: new Date(message.time_sent),
+    timeSent: message.time_sent,
   };
 }
 
@@ -95,7 +104,7 @@ function constructNodes(mappedMessages) {
                   type: "message",
                   data: message,
                   label: message.nodeName,
-                  position: { x: message.XPos * 300, y: message.level * 200 },
+                  position: { x: message.XPos * nodeSpacingX, y: message.level * nodeSpacingY },
                 },
               ],
               currentWidth: currentParentWidth + message.width,
@@ -117,7 +126,7 @@ function constructEdges(mappedMessages) {
       target: `${message.messageId}##${message.receivingEndpoint}`,
       markerEnd: MarkerType.ArrowClosed,
       style: {
-        "stroke-dasharray": message.type === "Event message" && "5, 3",
+        "stroke-dasharray": message.type === messageType.Event && "5, 3",
       },
     }));
 }
@@ -151,11 +160,10 @@ onPaneReady(({ fitView }) => {
 });
 
 function typeIcon(type) {
-  //TODO can this be done without the type magic strings?
   switch (type) {
-    case "Timeout message":
+    case messageType.Timeout:
       return "pa-flow-timeout";
-    case "Event message":
+    case messageType.Event:
       return "pa-flow-event";
     default:
       return "pa-flow-command";
@@ -167,7 +175,7 @@ function typeIcon(type) {
   <div id="tree-container">
     <VueFlow v-model="elements" :min-zoom="0.1">
       <template #node-message="nodeProps">
-        <div class="node" :class="[nodeProps.data.type, nodeProps.data.isError && 'error', nodeProps.data.id === props.messageId && 'current-message']">
+        <div class="node" :class="[nodeProps.data.isError && 'error', nodeProps.data.id === props.messageId && 'current-message']">
           <div class="node-text wordwrap">
             <i v-if="nodeProps.data.isError" class="fa pa-flow-failed" />
             <i class="fa" :class="typeIcon(nodeProps.data.type)" :title="nodeProps.data.type" />
@@ -178,7 +186,7 @@ function typeIcon(type) {
               </strong>
             </div>
             <span class="time-sent">
-              <span class="time-since">{{ moment.utc(nodeProps.data.timeSent).fromNow() }}</span>
+              <time-since class="time-since" :date-utc="nodeProps.data.timeSent" />
             </span>
             <template v-if="nodeProps.data.sagaName">
               <i class="fa pa-flow-saga" />
