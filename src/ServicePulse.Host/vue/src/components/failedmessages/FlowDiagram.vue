@@ -172,8 +172,10 @@ function typeIcon(type) {
             <i v-if="nodeProps.data.isError" class="fa pa-flow-failed" />
             <i class="fa" :class="typeIcon(nodeProps.data.type)" :title="nodeProps.data.type" />
             <div class="lead righ-side-ellipsis" :title="nodeProps.data.nodeName">
-              <!-- TODO (d.data.isError ? "<a onclick='__routerReferenceForDynamicAnchorTags.push( { path: \"/failed-messages/message/" + d.data.id + "\" })' href='javascript:void(0)'>" + d.data.nodeName + "</a>" : d.data.nodeName) + -->
-              <strong>{{ nodeProps.data.nodeName }}</strong>
+              <strong>
+                <a v-if="nodeProps.data.isError" @click="() => $router.push({ path: `/failed-messages/message/${nodeProps.data.id}` })" href="javascript:void(0)">{{ nodeProps.data.nodeName }}</a>
+                <span v-else>{{ nodeProps.data.nodeName }}</span>
+              </strong>
             </div>
             <span class="time-sent">
               <span class="time-since">{{ moment.utc(nodeProps.data.timeSent).fromNow() }}</span>
