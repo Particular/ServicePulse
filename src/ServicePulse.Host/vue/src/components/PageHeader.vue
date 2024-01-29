@@ -29,7 +29,7 @@ const displayDanger = computed(() => {
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="/">
-          <img alt="Service Pulse" src="@/assets/logo.svg" />
+          <!-- <img alt="Service Pulse" src="@/assets/logo.svg" /> -->
         </a>
       </div>
 
