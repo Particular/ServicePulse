@@ -79,26 +79,14 @@ function constructNodes(mappedMessages) {
       .flatMap((group, level, messagesByLevel) => {
         const previousLevel = level > 0 ? messagesByLevel[level - 1] : null;
         return group.reduce(
-          ({ result, currentWidth }, message) => {
-            //TODO: this prefix space isn't giving what I want
-            // i.e.
-            //          node1
-            //    node11      node12
-            //           node121    node122   //works for this level
-            //    node1211           node1221 //doesn't work for this level: we want these nodes directly under their parents
-            //              node12211         //also doesn't work for this level: we want this node directly under node1221
-            //    node122111                  //even worse
-            //TODO investigate https://vueflow.dev/typedocs/interfaces/Node.html#parentnode, does this help us?
-            const prefixSpace =
-              previousLevel == null
-                ? 0
-                : (() => {
-                    let width = 0;
-                    for (const plMessage of previousLevel) {
-                      if (message.parentId === plMessage.messageId && message.parentEndpoint === plMessage.receivingEndpoint) return width * 300;
-                      width += plMessage.width;
-                    }
-                  })();
+          ({ result, currentWidth, previousParent }, message) => {
+            //position on current level needs to be based on parent Node, so see if one exists
+            const parentMessage = previousLevel?.find((plMessage) => message.parentId === plMessage.messageId && message.parentEndpoint === plMessage.receivingEndpoint);
+            //if the current parent node is the same as the previous parent node, then the current position needs to be to the right of siblings
+            const currentParentWidth = previousParent === parentMessage ? currentWidth : 0;
+            const startX = parentMessage == null ? 0 : parentMessage.XPos - parentMessage.width / 2;
+            //store the position of the node against the message, so child nodes can use it to determine their start position
+            message.XPos = startX + (currentParentWidth + message.width / 2);
             return {
               result: [
                 ...result,
@@ -107,13 +95,14 @@ function constructNodes(mappedMessages) {
                   type: "message",
                   data: message,
                   label: message.nodeName,
-                  position: { x: prefixSpace + (currentWidth + message.width / 2) * 300, y: message.level * 200 },
+                  position: { x: message.XPos * 300, y: message.level * 200 },
                 },
               ],
-              currentWidth: currentWidth + message.width,
+              currentWidth: currentParentWidth + message.width,
+              previousParent: parentMessage,
             };
           },
-          { result: [], currentWidth: 0 }
+          { result: [], currentWidth: 0, previousParent: null }
         ).result;
       })
   );
