@@ -5,7 +5,7 @@ import { screen, within } from '@testing-library/dom';
 
 import * as precondition from "../preconditions";
 
-it.only("Example: One endpoint heartbeat failing", async ({ driver }) => {
+it("Example: One endpoint heartbeat failing", async ({ driver }) => {
 
   //Service control requests minimum setup. Todo: encapsulate for reuse.
   await driver.setUp(precondition.hasActiveLicense);
