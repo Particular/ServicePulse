@@ -30,6 +30,12 @@ function mapMessage(message) {
     sagaName = sagaHeader.value.split(", ")[0];
   }
 
+  const type = (() => {
+    if (message.headers.find((header) => header.key === "NServiceBus.MessageIntent").value === "Publish") return "Event message";
+    else if (message.headers.find((header) => header.key === "NServiceBus.IsSagaTimeoutMessage")?.value?.toLowerCase() === "true") return "Timeout message";
+    return "Command message";
+  })();
+
   return {
     nodeName: message.message_type,
     id: message.id,
@@ -38,7 +44,7 @@ function mapMessage(message) {
     receivingEndpoint: message.receiving_endpoint?.name,
     parentId,
     parentEndpoint,
-    type: message.headers.findIndex((header) => header.key === "NServiceBus.DeliverAt") > -1 ? "Timeout message" : message.headers.find((header) => header.key === "NServiceBus.MessageIntent").value === "Publish" ? "Event message" : "Command message",
+    type,
     isError:
       message.headers.findIndex(function (x) {
         return x.key === "NServiceBus.ExceptionInfo.ExceptionType";
