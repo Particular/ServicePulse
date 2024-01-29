@@ -2,7 +2,7 @@
 import { useRouter } from "vue-router";
 import TimeSince from "../components/TimeSince.vue";
 
-const props = defineProps({
+defineProps({
   eventLogItem: Object,
 });
 const router = useRouter();
@@ -62,7 +62,7 @@ function iconSubClasses(eventItem) {
 
 <template>
   <div class="row box box-event-item">
-    <div class="col-12" @click.native="navigateToEvent(eventLogItem)">
+    <div class="col-12" @click="navigateToEvent(eventLogItem)">
       <div class="row">
         <div class="col-1">
           <span class="fa-stack fa-lg">

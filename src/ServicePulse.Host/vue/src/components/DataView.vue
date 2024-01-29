@@ -10,7 +10,7 @@ const props = defineProps({
   },
   itemsPerPageOptions: {
     type: Array,
-    default: [],
+    default: () => [],
   },
   itemsPerPage: {
     type: Number,
@@ -20,6 +20,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  showPagination: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const refreshTimer = ref();
@@ -28,12 +32,13 @@ const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
 const totalCount = ref(0);
 const showPagination = computed(() => {
-  return numberOfPages.value > 1;
+  return props.showPagination && numberOfPages.value > 1;
 });
 
 const numberOfPages = computed(() => {
   return Math.ceil(totalCount.value / itemsPerPage.value);
 });
+
 const showItemsPerPage = props.itemsPerPageOptions.length > 1;
 
 function changeItemsPerPage(value) {
@@ -96,17 +101,14 @@ async function loadData() {
 }
 
 function startRefreshTimer() {
-  console.log("starting timer");
   if (props.autoRefresh > 0) {
     refreshTimer.value = setInterval(() => {
-      console.log("tick");
       loadData();
     }, props.autoRefresh);
   }
 }
 
 function stopRefreshTimer() {
-  console.log("stopping timer");
   if (refreshTimer.value) {
     clearInterval(refreshTimer.value);
   }
@@ -130,8 +132,8 @@ onUnmounted(() => {
       <slot name="item" v-bind="item" v-for="item in items" :key="item[itemKey]"></slot>
     </div>
   </div>
-  <div v-if="showItemsPerPage" class="row">
-    <div class="pagination col-md-2">
+  <div class="row">
+    <div v-if="showItemsPerPage" class="pagination col-md-2">
       <div class="dropdown">
         <label class="control-label">Items Per Page:</label>
         <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -139,7 +141,7 @@ onUnmounted(() => {
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-          <li v-for="option in props.itemsPerPageOptions">
+          <li v-for="option in props.itemsPerPageOptions" :key="option">
             <a @click.prevent="changeItemsPerPage(option)" href="#">{{ option }}</a>
           </li>
         </ul>
@@ -171,4 +173,5 @@ onUnmounted(() => {
       </ul>
     </div>
   </div>
+  <slot name="footer" :count="totalCount"></slot>
 </template>
