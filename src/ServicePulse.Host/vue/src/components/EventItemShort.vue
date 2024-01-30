@@ -9,7 +9,7 @@ import EventLogItem from "../components/EventLogItem.vue";
       <template #data="items">
         <div class="col-12">
           <h6>Last 10 events</h6>
-          <EventLogItem v-for="item in items" :eventLogItem="item" />
+          <EventLogItem v-for="item in items" :eventLogItem="item" :key="item.id" />
         </div>
       </template>
       <template #footer="{ count }">
