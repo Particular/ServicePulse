@@ -4,7 +4,7 @@ import EventLogItem from "../components/EventLogItem.vue";
 </script>
 
 <template>
-  <div class="row events">
+  <div class="events">
     <DataView api-url="eventlogitems" :auto-refresh="5000" :itemsPerPage="10" :show-pagination="false">
       <template #data="items">
         <div class="col-12">
