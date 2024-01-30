@@ -117,7 +117,6 @@ function stopRefreshTimer() {
 }
 
 onMounted(() => {
-  stopRefreshTimer();
   startRefreshTimer();
   loadData();
 });
