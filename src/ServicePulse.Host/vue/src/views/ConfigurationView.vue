@@ -16,10 +16,9 @@ function subIsActive(subPath) {
   return window.location.hash.endsWith(subPath);
 }
 
-onMounted(() => {
-  useRedirects().then((result) => {
-    redirectCount.value = result.total;
-  });
+onMounted(async () => {
+  const result = await useRedirects();
+  redirectCount.value = result.total;
 });
 </script>
 

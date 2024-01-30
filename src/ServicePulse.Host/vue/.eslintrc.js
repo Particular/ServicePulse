@@ -7,7 +7,11 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
+  plugins: ["github"],
   rules: {
     "prettier/prettier": "error",
+    "require-await": "error",
+    "no-await-in-loop": "error",
+    "github/no-then": "error",
   },
 };

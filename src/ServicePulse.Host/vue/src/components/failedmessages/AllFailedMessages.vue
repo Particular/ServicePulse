@@ -54,34 +54,32 @@ function loadMessages() {
   loadPagedMessages(groupId.value, pageNumber.value, sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir);
 }
 
+async function loadGroupDetails(groupId) {
+  const response = await useFetchFromServiceControl(`recoverability/groups/id/${groupId}`);
+  const data = await response.json();
+  groupName.value = data.title;
+}
+
 function loadPagedMessages(groupId, page, sortBy, direction) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
 
-  let loadGroupDetails;
+  let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
-    loadGroupDetails = useFetchFromServiceControl(`recoverability/groups/id/${groupId}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        groupName.value = data.title;
-      });
+    loadGroupDetailsPromise = loadGroupDetails(groupId);
   }
 
-  const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
-    .then((response) => {
+  async function loadMessages() {
+    try {
+      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`);
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       numberOfPages.value = Math.ceil(totalCount.value / 50);
-
-      return response.json();
-    })
-    .then((response) => {
-      if (messages.value.length && response.length) {
+      const data = await response.json();
+      if (messages.value.length && data.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
-          const receivedMessage = response.find((m) => m.id === previousMessage.id);
+          const receivedMessage = data.find((m) => m.id === previousMessage.id);
           if (receivedMessage) {
             if (previousMessage.last_modified == receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
@@ -92,44 +90,43 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
           }
         });
       }
-
-      messages.value = response;
-    })
-    .catch((err) => {
+      messages.value = data;
+    } catch (err) {
       console.log(err);
       var result = {
         message: "error",
       };
       return result;
-    });
-
-  if (loadGroupDetails) {
-    return Promise.all([loadGroupDetails, loadMessages]);
+    }
   }
 
-  return loadMessages;
+  const loadMessagesPromise = loadMessages();
+
+  if (loadGroupDetailsPromise) {
+    return Promise.all([loadGroupDetailsPromise, loadMessagesPromise]);
+  }
+
+  return loadMessagesPromise;
 }
 
-function retryRequested(id) {
+async function retryRequested(id) {
   changeRefreshInterval(1000);
   useShowToast("info", "Info", "Message retry requested...");
-  return useRetryMessages([id]).then(() => {
-    const message = messages.value.find((m) => m.id == id);
-    if (message) {
-      message.retryInProgress = true;
-      message.selected = false;
-    }
-  });
+  await useRetryMessages([id]);
+  const message = messages.value.find((m) => m.id == id);
+  if (message) {
+    message.retryInProgress = true;
+    message.selected = false;
+  }
 }
 
-function retrySelected() {
+async function retrySelected() {
   changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
   useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
-  return useRetryMessages(selectedMessages.map((m) => m.id)).then(() => {
-    messageList.value.deselectAll();
-    selectedMessages.forEach((m) => (m.retryInProgress = true));
-  });
+  await useRetryMessages(selectedMessages.map((m) => m.id));
+  messageList.value.deselectAll();
+  selectedMessages.forEach((m) => (m.retryInProgress = true));
 }
 
 function exportSelected() {
@@ -195,18 +192,17 @@ function isAnythingSelected() {
   return messageList?.value?.isAnythingSelected();
 }
 
-function deleteSelectedMessages() {
+async function deleteSelectedMessages() {
   changeRefreshInterval(1000);
   const selectedMessages = messageList.value.getSelectedMessages();
 
   useShowToast("info", "Info", "Deleting " + selectedMessages.length + " messages...");
-  usePatchToServiceControl(
+  await usePatchToServiceControl(
     "errors/archive",
     selectedMessages.map((m) => m.id)
-  ).then(() => {
-    messageList.value.deselectAll();
-    selectedMessages.forEach((m) => (m.deleteInProgress = true));
-  });
+  );
+  messageList.value.deselectAll();
+  selectedMessages.forEach((m) => (m.deleteInProgress = true));
 }
 
 function nextPage() {
@@ -250,18 +246,16 @@ function calculatePageNumbers() {
   return Array.from(Array(endIndex - startIndex), (_, index) => index + startIndex + 1);
 }
 
-function retryGroup() {
+async function retryGroup() {
   useShowToast("info", "Info", "Retrying all messages...");
-  useRetryExceptionGroup(groupId.value).then(() => {
-    messages.value.forEach((m) => (m.retryInProgress = true));
-  });
+  await useRetryExceptionGroup(groupId.value);
+  messages.value.forEach((m) => (m.retryInProgress = true));
 }
 
-function deleteGroup() {
+async function deleteGroup() {
   useShowToast("info", "Info", "Deleting all messages...");
-  useArchiveExceptionGroup(groupId.value).then(() => {
-    messages.value.forEach((m) => (m.deleteInProgress = true));
-  });
+  await useArchiveExceptionGroup(groupId.value);
+  messages.value.forEach((m) => (m.deleteInProgress = true));
 }
 
 function isRetryOrDeleteOperationInProgress() {

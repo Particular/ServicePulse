@@ -24,23 +24,21 @@ const monitoringValid = ref(null);
 
 const connectionSaved = ref(null);
 
-function testServiceControlUrl(event) {
+async function testServiceControlUrl(event) {
   if (event) {
     testingServiceControl.value = true;
-    return fetch(serviceControlUrl.value)
-      .then((response) => {
-        serviceControlValid.value = response.ok && response.headers.has("X-Particular-Version");
-      })
-      .catch(() => {
-        serviceControlValid.value = false;
-      })
-      .finally(() => {
-        testingServiceControl.value = false;
-      });
+    try {
+      const response = await fetch(serviceControlUrl.value);
+      serviceControlValid.value = response.ok && response.headers.has("X-Particular-Version");
+    } catch {
+      serviceControlValid.value = false;
+    } finally {
+      testingServiceControl.value = false;
+    }
   }
 }
 
-function testMonitoringUrl(event) {
+async function testMonitoringUrl(event) {
   if (event) {
     testingMonitoring.value = true;
 
@@ -48,16 +46,14 @@ function testMonitoringUrl(event) {
       monitoringUrl.value += "/";
     }
 
-    return fetch(monitoringUrl.value + "monitored-endpoints")
-      .then((response) => {
-        monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
-      })
-      .catch(() => {
-        monitoringValid.value = false;
-      })
-      .finally(() => {
-        testingMonitoring.value = false;
-      });
+    try {
+      const response = await fetch(monitoringUrl.value + "monitored-endpoints");
+      monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
+    } catch {
+      monitoringValid.value = false;
+    } finally {
+      testingMonitoring.value = false;
+    }
   }
 }
 

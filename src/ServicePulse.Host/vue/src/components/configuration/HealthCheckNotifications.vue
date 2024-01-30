@@ -32,18 +32,17 @@ const emailNotifications = ref({
   to: "",
 });
 
-function toggleEmailNotifications() {
+async function toggleEmailNotifications() {
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
-  useToggleEmailNotifications(emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled).then((result) => {
-    if (result.message === "success") {
-      emailToggleSucessful.value = true;
-    } else {
-      emailToggleSucessful.value = false;
-      //set it back to what it was
-      emailNotifications.value.enabled = !emailNotifications.value.enabled;
-    }
-  });
+  const result = await useToggleEmailNotifications(emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled);
+  if (result.message === "success") {
+    emailToggleSucessful.value = true;
+  } else {
+    emailToggleSucessful.value = false;
+    //set it back to what it was
+    emailNotifications.value.enabled = !emailNotifications.value.enabled;
+  }
 }
 
 function editEmailNotifications() {
@@ -53,53 +52,50 @@ function editEmailNotifications() {
   showEmailConfiguration.value = true;
 }
 
-function saveEditedEmailNotifications(newSettings) {
+async function saveEditedEmailNotifications(newSettings) {
   emailUpdateSuccessful.value = null;
   showEmailConfiguration.value = false;
-  useUpdateEmailNotifications(newSettings).then((result) => {
-    if (result.message === "success") {
-      emailUpdateSuccessful.value = true;
-      useShowToast("info", "Info", "Email settings updated.");
-      emailNotifications.value.enable_tls = newSettings.enable_tls;
-      emailNotifications.value.smtp_server = newSettings.smtp_server;
-      emailNotifications.value.smtp_port = newSettings.smtp_port;
-      emailNotifications.value.authentication_account = newSettings.authorization_account;
-      emailNotifications.value.authentication_password = newSettings.authorization_password;
-      emailNotifications.value.from = newSettings.from;
-      emailNotifications.value.to = newSettings.to;
-    } else {
-      emailUpdateSuccessful.value = false;
-      useShowToast("Error", "Error", "Failed to update the email settings.");
-    }
-  });
+  const result = await useUpdateEmailNotifications(newSettings);
+  if (result.message === "success") {
+    emailUpdateSuccessful.value = true;
+    useShowToast("info", "Info", "Email settings updated.");
+    emailNotifications.value.enable_tls = newSettings.enable_tls;
+    emailNotifications.value.smtp_server = newSettings.smtp_server;
+    emailNotifications.value.smtp_port = newSettings.smtp_port;
+    emailNotifications.value.authentication_account = newSettings.authorization_account;
+    emailNotifications.value.authentication_password = newSettings.authorization_password;
+    emailNotifications.value.from = newSettings.from;
+    emailNotifications.value.to = newSettings.to;
+  } else {
+    emailUpdateSuccessful.value = false;
+    useShowToast("Error", "Error", "Failed to update the email settings.");
+  }
 }
 
-function testEmailNotifications() {
+async function testEmailNotifications() {
   emailTestInProgress.value = true;
   emailToggleSucessful.value = null;
   emailUpdateSuccessful.value = null;
-  useTestEmailNotifications().then((result) => {
-    if (result.message === "success") {
-      emailTestSuccessful.value = true;
-    } else {
-      emailTestSuccessful.value = false;
-    }
-    emailTestInProgress.value = false;
-  });
+  const result = await useTestEmailNotifications();
+  if (result.message === "success") {
+    emailTestSuccessful.value = true;
+  } else {
+    emailTestSuccessful.value = false;
+  }
+  emailTestInProgress.value = false;
 }
 
-function getEmailNotifications() {
+async function getEmailNotifications() {
   showEmailConfiguration.value = false;
-  useEmailNotifications().then((result) => {
-    emailNotifications.value.enabled = result.enabled;
-    emailNotifications.value.enable_tls = result.enable_tls;
-    emailNotifications.value.smtp_server = result.smtp_server ? result.smtp_server : "";
-    emailNotifications.value.smtp_port = result.smtp_port ? result.smtp_port : undefined;
-    emailNotifications.value.authentication_account = result.authentication_account ? result.authentication_account : "";
-    emailNotifications.value.authentication_password = result.authentication_password ? result.authentication_password : "";
-    emailNotifications.value.from = result.from ? result.from : "";
-    emailNotifications.value.to = result.to ? result.to : "";
-  });
+  const result = await useEmailNotifications();
+  emailNotifications.value.enabled = result.enabled;
+  emailNotifications.value.enable_tls = result.enable_tls;
+  emailNotifications.value.smtp_server = result.smtp_server ? result.smtp_server : "";
+  emailNotifications.value.smtp_port = result.smtp_port ? result.smtp_port : undefined;
+  emailNotifications.value.authentication_account = result.authentication_account ? result.authentication_account : "";
+  emailNotifications.value.authentication_password = result.authentication_password ? result.authentication_password : "";
+  emailNotifications.value.from = result.from ? result.from : "";
+  emailNotifications.value.to = result.to ? result.to : "";
 }
 
 onMounted(() => {

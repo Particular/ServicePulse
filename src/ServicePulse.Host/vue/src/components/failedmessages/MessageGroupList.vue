@@ -37,36 +37,35 @@ const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
-function getExceptionGroups(classifier) {
-  return useGetExceptionGroups(classifier).then((result) => {
-    if (props.sortFunction) {
-      result.sort(props.sortFunction);
-    }
+async function getExceptionGroups(classifier) {
+  const result = await useGetExceptionGroups(classifier);
+  if (props.sortFunction) {
+    result.sort(props.sortFunction);
+  }
 
-    groupsWithNotesAdded.forEach((note) => {
-      const groupFromSC = result.find((group) => {
-        return group.id === note.groupId;
-      });
-      if (!groupFromSC.comment) {
-        groupFromSC.comment = note.comment;
-      } else {
-        note.alreadySaved = true;
-      }
+  groupsWithNotesAdded.forEach((note) => {
+    const groupFromSC = result.find((group) => {
+      return group.id === note.groupId;
     });
-
-    exceptionGroups.value = result;
-    if (result.length > 0) {
-      // need a map in some ui state for controlling animations
-      exceptionGroups.value = result.map(initializeGroupState);
-
-      if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
-        stats.number_of_exception_groups = exceptionGroups.value.length;
-        emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
-      }
+    if (!groupFromSC.comment) {
+      groupFromSC.comment = note.comment;
+    } else {
+      note.alreadySaved = true;
     }
-
-    groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
   });
+
+  exceptionGroups.value = result;
+  if (result.length > 0) {
+    // need a map in some ui state for controlling animations
+    exceptionGroups.value = result.map(initializeGroupState);
+
+    if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
+      stats.number_of_exception_groups = exceptionGroups.value.length;
+      emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
+    }
+  }
+
+  groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
 }
 function initializeGroupState(group, index) {
   group.index = index;
@@ -79,19 +78,18 @@ function initializeGroupState(group, index) {
   return group;
 }
 
-function loadFailedMessageGroups(groupBy) {
+async function loadFailedMessageGroups(groupBy) {
   loadingData.value = true;
 
   if (groupBy) {
     savedGroupBy = groupBy;
   }
 
-  getExceptionGroups(savedGroupBy).then(() => {
-    loadingData.value = false;
-    initialLoadComplete.value = true;
+  await getExceptionGroups(savedGroupBy);
+  loadingData.value = false;
+  initialLoadComplete.value = true;
 
-    emit("InitialLoadComplete");
-  });
+  emit("InitialLoadComplete");
 }
 
 //delete comment note
@@ -101,43 +99,41 @@ function deleteNote(group) {
   showDeleteNoteModal.value = true;
 }
 
-function saveDeleteNote(group, hideToastMessage) {
+async function saveDeleteNote(group, hideToastMessage) {
   showDeleteNoteModal.value = false;
 
-  useDeleteNote(group.groupid).then((result) => {
-    if (result.message === "success") {
-      noteSaveSuccessful.value = true;
-      if (!hideToastMessage) {
-        useShowToast("info", "Info", "Note deleted succesfully");
-      }
-
-      loadFailedMessageGroups(); //reload the groups
-    } else {
-      noteSaveSuccessful.value = false;
-      if (!hideToastMessage) {
-        useShowToast("error", "Error", "Failed to delete a Note:");
-      }
+  const result = await useDeleteNote(group.groupid);
+  if (result.message === "success") {
+    noteSaveSuccessful.value = true;
+    if (!hideToastMessage) {
+      useShowToast("info", "Info", "Note deleted succesfully");
     }
-  });
+
+    loadFailedMessageGroups(); //reload the groups
+  } else {
+    noteSaveSuccessful.value = false;
+    if (!hideToastMessage) {
+      useShowToast("error", "Error", "Failed to delete a Note:");
+    }
+  }
 }
 
 // create comment note
-function saveNote(group) {
+async function saveNote(group) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
 
   groupsWithNotesAdded.push({ groupId: group.groupid, comment: group.comment });
 
-  useEditOrCreateNote(group.groupid, group.comment).then((result) => {
-    if (result.message === "success") {
-      noteSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Note updated successfully");
-      loadFailedMessageGroups(); //reload the groups
-    } else {
-      noteSaveSuccessful.value = false;
-      useShowToast("error", "Error", "Failed to update Note:" + result.message);
-    }
-  });
+  const result = await useEditOrCreateNote(group.groupid, group.comment);
+  if (result.message === "success") {
+    noteSaveSuccessful.value = true;
+    useShowToast("info", "Info", "Note updated successfully");
+    loadFailedMessageGroups(); //reload the groups
+  } else {
+    noteSaveSuccessful.value = false;
+    useShowToast("error", "Error", "Failed to update Note:" + result.message);
+  }
 }
 
 function saveCreatedNote(group) {
@@ -163,7 +159,7 @@ function deleteGroup(group) {
   showDeleteGroupModal.value = true;
 }
 
-function saveDeleteGroup(group) {
+async function saveDeleteGroup(group) {
   showDeleteGroupModal.value = false;
   group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
 
@@ -171,15 +167,14 @@ function saveDeleteGroup(group) {
   changeRefreshInterval(1000);
 
   saveDeleteNote(group, true); // delete comment note when group is archived
-  useArchiveExceptionGroup(group.groupid).then((result) => {
-    if (result.message === "success") {
-      groupDeleteSuccessful.value = true;
-      useShowToast("info", "info", "Group delete started...");
-    } else {
-      groupDeleteSuccessful.value = false;
-      useShowToast("error", "Error", "Failed to delete the group:" + result.message);
-    }
-  });
+  const result = await useArchiveExceptionGroup(group.groupid);
+  if (result.message === "success") {
+    groupDeleteSuccessful.value = true;
+    useShowToast("info", "info", "Group delete started...");
+  } else {
+    groupDeleteSuccessful.value = false;
+    useShowToast("error", "Error", "Failed to delete the group:" + result.message);
+  }
 }
 
 //create workflow state
@@ -207,7 +202,7 @@ function retryGroup(group) {
   showRetryGroupModal.value = true;
 }
 
-function saveRetryGroup(group) {
+async function saveRetryGroup(group) {
   showRetryGroupModal.value = false;
   group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
 
@@ -215,14 +210,13 @@ function saveRetryGroup(group) {
   changeRefreshInterval(1000);
 
   saveDeleteNote(group, true);
-  useRetryExceptionGroup(group.groupid).then((result) => {
-    if (result.message === "success") {
-      groupRetrySuccessful.value = true;
-    } else {
-      groupRetrySuccessful.value = false;
-      useShowToast("error", "Error", "Failed to retry the group:" + result.message);
-    }
-  });
+  const result = await useRetryExceptionGroup(group.groupid);
+  if (result.message === "success") {
+    groupRetrySuccessful.value = true;
+  } else {
+    groupRetrySuccessful.value = false;
+    useShowToast("error", "Error", "Failed to retry the group:" + result.message);
+  }
 }
 
 var statusesForRetryOperation = ["waiting", "preparing", "queued", "forwarding"];
@@ -246,19 +240,18 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
   }
 };
 
-var acknowledgeGroup = function (group) {
-  useAcknowledgeArchiveGroup(group.id).then((result) => {
-    if (result.message === "success") {
-      if (group.operation_status === "ArchiveCompleted") {
-        useShowToast("info", "Info", "Group deleted succesfully");
-      } else {
-        useShowToast("info", "Info", "Group retried succesfully");
-      }
-      loadFailedMessageGroups(); //reload the groups
+var acknowledgeGroup = async function (group) {
+  const result = await useAcknowledgeArchiveGroup(group.id);
+  if (result.message === "success") {
+    if (group.operation_status === "ArchiveCompleted") {
+      useShowToast("info", "Info", "Group deleted succesfully");
     } else {
-      useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
+      useShowToast("info", "Info", "Group retried succesfully");
     }
-  });
+    loadFailedMessageGroups(); //reload the groups
+  } else {
+    useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
+  }
 };
 
 function isBeingArchived(status) {

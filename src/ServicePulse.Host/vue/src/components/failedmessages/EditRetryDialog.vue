@@ -22,7 +22,7 @@ let showEditRetryGenericError = ref(false);
 const id = computed(() => settings.id);
 const messageBody = computed(() => settings.message.messageBody);
 
-watch(messageBody, async (newValue) => {
+watch(messageBody, (newValue) => {
   if (newValue !== origMessageBody) {
     localMessage.value.isBodyChanged = true;
   }
@@ -86,18 +86,16 @@ function removeHeadersMarkedAsRemoved() {
   });
 }
 
-function retryEditedMessage() {
+async function retryEditedMessage() {
   removeHeadersMarkedAsRemoved();
-  return useRetryEditedMessage([id.value], localMessage)
-    .then(() => {
-      localMessage.value.retried = true;
-      return emit("retried", settings);
-    })
-    .catch(() => {
-      showEditAndRetryConfirmation.value = false;
-      showEditRetryGenericError.value = true;
-      return;
-    });
+  try {
+    await useRetryEditedMessage([id.value], localMessage);
+    localMessage.value.retried = true;
+    return emit("retried", settings);
+  } catch {
+    showEditAndRetryConfirmation.value = false;
+    showEditRetryGenericError.value = true;
+  }
 }
 
 function initializeMessageBodyAndHeaders() {

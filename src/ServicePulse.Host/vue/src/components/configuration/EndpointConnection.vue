@@ -23,7 +23,7 @@ const inlineSnippet = ref("");
 const jsonConfig = ref("");
 const queryErrors = ref([]);
 
-function getCode() {
+async function getCode() {
   loading.value = true;
 
   var snippetTemplate = `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
@@ -35,25 +35,24 @@ function getCode() {
 var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(json);
 endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
-  useServiceControlConnections().then((connections) => {
-    const config = {
-      heartbeats: connections.serviceControl.settings.Heartbeats,
-      customChecks: connections.serviceControl.settings.CustomChecks,
-      errorQueue: connections.serviceControl.settings.ErrorQueue,
-      metrics: connections.monitoring.settings,
-    };
-    var jsonText = JSON.stringify(config, null, 4);
-    jsonConfig.value = jsonText;
+  const connections = await useServiceControlConnections();
+  const config = {
+    heartbeats: connections.serviceControl.settings.Heartbeats,
+    customChecks: connections.serviceControl.settings.CustomChecks,
+    errorQueue: connections.serviceControl.settings.ErrorQueue,
+    metrics: connections.monitoring.settings,
+  };
+  var jsonText = JSON.stringify(config, null, 4);
+  jsonConfig.value = jsonText;
 
-    jsonText = jsonText.replaceAll('"', '""');
-    inlineSnippet.value = snippetTemplate.replace("<json>", jsonText);
+  jsonText = jsonText.replaceAll('"', '""');
+  inlineSnippet.value = snippetTemplate.replace("<json>", jsonText);
 
-    queryErrors.value = [];
-    queryErrors.value = queryErrors.value.concat(connections.serviceControl.errors || []);
-    queryErrors.value = queryErrors.value.concat(connections.monitoring.errors || []);
+  queryErrors.value = [];
+  queryErrors.value = queryErrors.value.concat(connections.serviceControl.errors || []);
+  queryErrors.value = queryErrors.value.concat(connections.monitoring.errors || []);
 
-    loading.value = false;
-  });
+  loading.value = false;
 }
 
 onMounted(() => {
