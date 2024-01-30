@@ -9,7 +9,7 @@ import EventLogItem from "../components/EventLogItem.vue";
   <LicenseExpired />
   <template v-if="!licenseStatus.isExpired">
     <div class="events events-view">
-      <DataView api-url="eventlogitems" :auto-refresh="5000" :items-per-page-options="[20, 35, 50, 75]" :items-per-page="20">
+      <DataView api-url="eventlogitems" :auto-refresh="5000" :show-items-per-page="true" :items-per-page="20">
         <template #data="items">
           <div class="row">
             <div class="col-sm-12">

@@ -6,7 +6,7 @@ const props = defineProps({
   apiUrl: String,
   itemsPerPageOptions: {
     type: Array,
-    default: () => [],
+    default: () => [20, 35, 50, 75],
   },
   itemsPerPage: {
     type: Number,
@@ -19,6 +19,10 @@ const props = defineProps({
   showPagination: {
     type: Boolean,
     default: true,
+  },
+  showItemsPerPage: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -35,7 +39,9 @@ const numberOfPages = computed(() => {
   return Math.ceil(totalCount.value / itemsPerPage.value);
 });
 
-const showItemsPerPage = props.itemsPerPageOptions.length > 1;
+const showItemsPerPage = computed(() => {
+  return props.showItemsPerPage;
+});
 
 function changeItemsPerPage(value) {
   itemsPerPage.value = value;
