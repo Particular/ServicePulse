@@ -4,10 +4,6 @@ import { useFetchFromServiceControl } from "../composables/serviceServiceControl
 
 const props = defineProps({
   apiUrl: String,
-  itemKey: {
-    type: String,
-    default: "id",
-  },
   itemsPerPageOptions: {
     type: Array,
     default: () => [],
@@ -126,12 +122,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="row">
-    <div class="col-sm-12">
-      <slot name="header"></slot>
-      <slot name="item" v-bind="item" v-for="item in items" :key="item[itemKey]"></slot>
-    </div>
-  </div>
+  <slot name="data" v-bind="items"></slot>
   <div class="row">
     <div v-if="showItemsPerPage" class="pagination col-md-2">
       <div class="dropdown">

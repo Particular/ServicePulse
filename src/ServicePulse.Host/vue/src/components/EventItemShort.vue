@@ -6,9 +6,11 @@ import EventLogItem from "../components/EventLogItem.vue";
 <template>
   <div class="row events">
     <DataView api-url="eventlogitems" :auto-refresh="5000" :itemsPerPage="10" :show-pagination="false">
-      <template #header><h6>Last 10 events</h6></template>
-      <template #item="item">
-        <EventLogItem :eventLogItem="item" />
+      <template #data="items">
+        <div class="col-12">
+          <h6>Last 10 events</h6>
+          <EventLogItem v-for="item in items" :eventLogItem="item" />
+        </div>
       </template>
       <template #footer="{ count }">
         <div v-if="count > 10" class="row text-center">
