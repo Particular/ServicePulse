@@ -90,7 +90,7 @@ export function useServiceControl() {
   const scConnectionFailure = computed(() => connectionState.unableToConnect);
   const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
 
-  watch(scConnectionFailure, async (newValue, oldValue) => {
+  watch(scConnectionFailure, (newValue, oldValue) => {
     //NOTE to eliminate success msg showing everytime the screen is refreshed
     if (newValue != oldValue && !(oldValue === null && newValue === false)) {
       if (newValue) {
@@ -103,7 +103,7 @@ export function useServiceControl() {
 
   // Only watch the state change if monitoring is enabled
   if (!useIsMonitoringDisabled()) {
-    watch(monitoringConnectionFailure, async (newValue, oldValue) => {
+    watch(monitoringConnectionFailure, (newValue, oldValue) => {
       //NOTE to eliminate success msg showing everytime the screen is refreshed
       if (newValue != oldValue && !(oldValue === null && newValue === false)) {
         if (newValue) {
@@ -116,53 +116,48 @@ export function useServiceControl() {
   }
 }
 
-export function useServiceControlStats() {
+export async function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
   const archivedMessagesResult = getArchivedMessagesCount();
   const pendingRetriesResult = getPendingRetriesCount();
 
-  return Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult, pendingRetriesResult])
-    .then(([failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages, pendingRetries]) => {
-      stats.failing_endpoints = failedHeartbeats;
-      stats.number_of_failed_messages = failedMessages;
-      stats.number_of_failed_checks = failedCustomChecks;
-      stats.number_of_failed_heartbeats = failedHeartbeats;
-      stats.number_of_archived_messages = archivedMessages;
-      stats.number_of_pending_retries = pendingRetries;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  try {
+    const [failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages, pendingRetries] = await Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult, pendingRetriesResult]);
+    stats.failing_endpoints = failedHeartbeats;
+    stats.number_of_failed_messages = failedMessages;
+    stats.number_of_failed_checks = failedCustomChecks;
+    stats.number_of_failed_heartbeats = failedHeartbeats;
+    stats.number_of_archived_messages = archivedMessages;
+    stats.number_of_pending_retries = pendingRetries;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-export function useServiceControlMonitoringStats() {
+export async function useServiceControlMonitoringStats() {
   const monitoredEndpointsResult = getMonitoredEndpoints();
   const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
-  return Promise.all([monitoredEndpointsResult, disconnectedEndpointsCountResult]).then(([, disconnectedEndpoints]) => {
-    //Do something here with the argument to the callback in the future if we are using them
-    stats.number_of_disconnected_endpoints = disconnectedEndpoints;
-  });
+  const [, disconnectedEndpoints] = await Promise.all([monitoredEndpointsResult, disconnectedEndpointsCountResult]);
+  //Do something here with the argument to the callback in the future if we are using them
+  stats.number_of_disconnected_endpoints = disconnectedEndpoints;
 }
 
-export function useServiceControlConnections() {
+export async function useServiceControlConnections() {
   const scConnectionResult = getSCConnection();
   const monitoringConnectionResult = getMonitoringConnection();
 
-  return Promise.all([scConnectionResult, monitoringConnectionResult]).then(([scConnection, mConnection]) => {
-    if (scConnection) {
-      connections.serviceControl.settings = scConnection.settings;
-      connections.serviceControl.errors = scConnection.errors;
-    }
-
-    if (mConnection) {
-      connections.monitoring.settings = mConnection.Metrics;
-    }
-
-    return connections;
-  });
+  const [scConnection, mConnection] = await Promise.all([scConnectionResult, monitoringConnectionResult]);
+  if (scConnection) {
+    connections.serviceControl.settings = scConnection.settings;
+    connections.serviceControl.errors = scConnection.errors;
+  }
+  if (mConnection) {
+    connections.monitoring.settings = mConnection.Metrics;
+  }
+  return connections;
 }
 
 export function useServiceControlVersion() {
@@ -171,7 +166,7 @@ export function useServiceControlVersion() {
     setInterval(() => getServiceControlVersion(), 60000);
   });
 
-  watch(environment, async (newValue, oldValue) => {
+  watch(environment, (newValue, oldValue) => {
     if (newValue.is_compatible_with_sc != oldValue.is_compatible_with_sc) {
       if (!newValue.is_compatible_with_sc) {
         useShowToast("error", "Error", "You are using Service Control version " + newValue.sc_version + ". Please, upgrade to version " + newValue.minimum_supported_sc_version.value + " or higher to unlock new functionality in ServicePulse.");
@@ -180,98 +175,92 @@ export function useServiceControlVersion() {
   });
 }
 
-function getServiceControlVersion() {
+async function getServiceControlVersion() {
   const productsResult = useServiceProductUrls();
   const scResult = getSCVersion();
   const mResult = getMonitoringVersion();
 
-  return Promise.all([productsResult, scResult, mResult]).then(([products, scVer]) => {
-    if (scVer) {
-      environment.supportsArchiveGroups = scVer.archived_groups_url && scVer.archived_groups_url.length > 0;
-      environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version);
-      environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
-      environment.known_endpoints_url = scVer && scVer.known_endpoints_url;
-      environment.endpoints_message_search_url = scVer.endpoints_message_search_url;
-      environment.endpoints_messages_url = scVer.endpoints_messages_url;
-      environment.endpoints_url = scVer.endpoints_url;
-      environment.errors_url = scVer.errors_url;
-      environment.configuration = scVer.configuration;
-      environment.message_search_url = scVer.message_search_url;
-      environment.sagas_url = scVer.sagas_url;
-    }
-
-    if (products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
-      newVersions.newSPVersion.newspversion = true;
-      newVersions.newSPVersion.newspversionlink = products.latestSP.release;
-      newVersions.newSPVersion.newspversionnumber = products.latestSP.tag;
-    }
-
-    if (products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
-      newVersions.newSCVersion.newscversion = true;
-      newVersions.newSCVersion.newscversionlink = products.latestSC.release;
-      newVersions.newSCVersion.newscversionnumber = products.latestSC.tag;
-    }
-
-    if (products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
-      newVersions.newMVersion.newmversion = true;
-      newVersions.newMVersion.newmversionlink = products.latestSC.release;
-      newVersions.newMVersion.newmversionnumber = products.latestSC.tag;
-    }
-  });
+  const [products, scVer] = await Promise.all([productsResult, scResult, mResult]);
+  if (scVer) {
+    environment.supportsArchiveGroups = scVer.archived_groups_url && scVer.archived_groups_url.length > 0;
+    environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version);
+    environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
+    environment.known_endpoints_url = scVer && scVer.known_endpoints_url;
+    environment.endpoints_message_search_url = scVer.endpoints_message_search_url;
+    environment.endpoints_messages_url = scVer.endpoints_messages_url;
+    environment.endpoints_url = scVer.endpoints_url;
+    environment.errors_url = scVer.errors_url;
+    environment.configuration = scVer.configuration;
+    environment.message_search_url = scVer.message_search_url;
+    environment.sagas_url = scVer.sagas_url;
+  }
+  if (products.latestSP && useIsUpgradeAvailable(environment.sp_version, products.latestSP.tag)) {
+    newVersions.newSPVersion.newspversion = true;
+    newVersions.newSPVersion.newspversionlink = products.latestSP.release;
+    newVersions.newSPVersion.newspversionnumber = products.latestSP.tag;
+  }
+  if (products.latestSC && useIsUpgradeAvailable(environment.sc_version, products.latestSC.tag)) {
+    newVersions.newSCVersion.newscversion = true;
+    newVersions.newSCVersion.newscversionlink = products.latestSC.release;
+    newVersions.newSCVersion.newscversionnumber = products.latestSC.tag;
+  }
+  if (products.latestSC && useIsUpgradeAvailable(environment.monitoring_version, products.latestSC.tag)) {
+    newVersions.newMVersion.newmversion = true;
+    newVersions.newMVersion.newmversionlink = products.latestSC.release;
+    newVersions.newMVersion.newmversionnumber = products.latestSC.tag;
+  }
 }
 
-function getSCConnection() {
-  return useFetchFromServiceControl("connection")
-    .then((response) => {
-      return response.json();
-    })
-    .catch(() => {
-      connections.serviceControl.errors = ["Error reaching ServiceControl at " + serviceControlUrl.value + "connection"];
-      return {};
-    });
+async function getSCConnection() {
+  try {
+    const response = await useFetchFromServiceControl("connection");
+    return await response.json();
+  } catch {
+    connections.serviceControl.errors = ["Error reaching ServiceControl at " + serviceControlUrl.value + "connection"];
+    return {};
+  }
 }
 
-function getMonitoringConnection() {
-  return useFetchFromMonitoring("connection")
-    .then((response) => {
-      return response.json();
-    })
-    .catch(() => {
-      connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
-      return {};
-    });
+async function getMonitoringConnection() {
+  try {
+    const response = await useFetchFromMonitoring("connection");
+    return response.json();
+  } catch {
+    connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
+    return {};
+  }
 }
 
-function getSCVersion() {
-  return useFetchFromServiceControl("")
-    .then((response) => {
-      environment.sc_version = response.headers.get("X-Particular-Version");
-      return response.json();
-    })
-    .catch(() => {
-      return null;
-    });
+async function getSCVersion() {
+  try {
+    const response = await useFetchFromServiceControl("");
+    environment.sc_version = response.headers.get("X-Particular-Version");
+    return await response.json();
+  } catch {
+    return null;
+  }
 }
 
-function getMonitoringVersion() {
-  return useFetchFromMonitoring("")
-    .then((response) => {
-      environment.monitoring_version = response.headers.get("X-Particular-Version");
-      return response.json();
-    })
-    .catch(() => {
-      return null;
-    });
+async function getMonitoringVersion() {
+  try {
+    const response = await useFetchFromMonitoring("");
+    environment.monitoring_version = response.headers.get("X-Particular-Version");
+    return response.json();
+  } catch {
+    return null;
+  }
 }
 
-function fetchWithErrorHandling(fetchFunction, connectionState, action) {
+async function fetchWithErrorHandling(fetchFunction, connectionState, action) {
   if (connectionState.connecting) {
     //Skip the connection state checking
-    return fetchFunction()
-      .then((response) => action(response))
-      .catch((err) => {
-        console.log(err);
-      });
+    try {
+      const response = await fetchFunction();
+      return action(response);
+    } catch (err) {
+      console.log(err);
+      return;
+    }
   }
   try {
     if (!connectionState.connected) {
@@ -279,22 +268,21 @@ function fetchWithErrorHandling(fetchFunction, connectionState, action) {
       connectionState.connected = false;
     }
 
-    return fetchFunction()
-      .then((response) => action(response))
-      .then((response) => {
-        connectionState.unableToConnect = false;
-        connectionState.connectedRecently = true;
-        connectionState.connected = true;
-        connectionState.connecting = false;
-        return response;
-      })
-      .catch((err) => {
-        connectionState.connected = false;
-        connectionState.unableToConnect = true;
-        connectionState.connectedRecently = false;
-        connectionState.connecting = false;
-        console.log(err);
-      });
+    try {
+      const response = await fetchFunction();
+      const result = action(response);
+      connectionState.unableToConnect = false;
+      connectionState.connectedRecently = true;
+      connectionState.connected = true;
+      connectionState.connecting = false;
+      return result;
+    } catch (err) {
+      connectionState.connected = false;
+      connectionState.unableToConnect = true;
+      connectionState.connectedRecently = false;
+      connectionState.connecting = false;
+      console.log(err);
+    }
   } catch (err) {
     connectionState.connecting = false;
     connectionState.connected = false;
@@ -305,10 +293,9 @@ function getFailedHeartBeatsCount() {
   return fetchWithErrorHandling(
     () => useFetchFromServiceControl("heartbeats/stats"),
     connectionState,
-    (response) => {
-      return response.json().then((data) => {
-        return parseInt(data.failing);
-      });
+    async (response) => {
+      const data = await response.json();
+      return parseInt(data.failing);
     }
   );
 }

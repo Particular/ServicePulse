@@ -108,7 +108,7 @@ pre {
 
     footer span {
         color: #777f7f;
-        display: inline-block !important;
+        display: inline-block;
         padding: 0 8px
     }
 
@@ -1517,7 +1517,7 @@ span.metadata.danger, i.fa.fa-trash-o.danger, sp-moment.danger {
     }
 
     a.btn-feedback {
-        width: 130px !important;
+        /*width: 130px !important;*/
         margin: 10px 15px 22px !important;
         padding-left: 20px !important;
     }
@@ -2406,6 +2406,16 @@ footer span.connection-failed.ng-scope {
     background: #00C468;
 }
 
+.connectivity-status .secondary {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .connectivity-status .secondary {
+    display: inline-block;
+  }
+}
+
 @media (min-width: 0px) {
     .container {
         width: 92%;
@@ -2463,13 +2473,28 @@ div.alert.alert-warning strong {
     white-space: pre-wrap;
 }
 
-@media (max-width: 1439px) {
-    html, body, nav {
-        min-width: 1440px !important;
-    }
+@media (max-width: 1300px) {
+  .navbar-label {
+    display: none;
+  }
 
+  .nav > li > a .icon-white {
+    color: #929e9e;
+  }
+
+  .nav > li > a:hover .icon-white,
+  .nav > li > a:focus .icon-white {
+    color: #fff;
+  }
+
+  .nav > li > a:hover .pa-monitoring,
+  .nav > li > a:focus .pa-monitoring {
+    background-color: #fff;
+  }
+}
+
+@media (max-width: 1439px) {
     nav.navbar {
-        width: 1440px;
         position: sticky;
         margin-top: -100px;
         margin-bottom: 50px;
@@ -2481,17 +2506,12 @@ div.alert.alert-warning strong {
 
     ul.navbar-nav {
         margin: 0 8px 0 0;
-        padding-right: 16px;
         display: block;
     }
 
     .navbar-nav > li > a {
         padding-top: 18px;
         padding-bottom: 17px;
-    }
-
-    .navbar-label {
-        display: inline !important;
     }
 
     .navbar-collapse.collapse {
@@ -3213,7 +3233,8 @@ a.remove-endpoint:hover i {
 }
 
 .pa-monitoring {
-    background-image: url('../img/monitoring.svg');
+    mask-image: url('../img/monitoring.svg');
+	background-color: #929e9e;
     background-position: center;
     background-repeat: no-repeat;
     width: 16px;

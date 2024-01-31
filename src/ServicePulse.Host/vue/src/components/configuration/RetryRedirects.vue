@@ -34,17 +34,16 @@ const selectedRedirect = ref({
 
 const redirectSaveSuccessful = ref(null);
 
-function getRedirect() {
+async function getRedirect() {
   loadingData.value = true;
-  useRedirects().then((result) => {
-    if (redirects.total != result.total) {
-      emit("redirectCountUpdated", result.total);
-    }
-    redirects.total = result.total;
-    redirects.data = result.data;
-    selectedRedirect.value.queues = result.queues;
-    loadingData.value = false;
-  });
+  const result = await useRedirects();
+  if (redirects.total !== result.total) {
+    emit("redirectCountUpdated", result.total);
+  }
+  redirects.total = result.total;
+  redirects.data = result.data;
+  selectedRedirect.value.queues = result.queues;
+  loadingData.value = false;
 }
 
 function createRedirect() {
@@ -62,53 +61,47 @@ function editRedirect(redirect) {
   showEdit.value = true;
 }
 
-function saveEditedRedirect(redirect) {
+async function saveEditedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  useUpdateRedirects(redirect.redirectId, redirect.sourceQueue, redirect.targetQueue)
-    .then((result) => {
-      if (result.message === "success") {
-        redirectSaveSuccessful.value = true;
-        useShowToast("info", "Info", "Redirect updated successfully");
-        getRedirect();
-      } else {
-        redirectSaveSuccessful.value = false;
-        if (result.status === "409" || result.status === 409) {
-          useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
-        } else {
-          useShowToast("error", "Error", result.message);
-        }
-      }
-      return result;
-    })
-    .then((result) => {
-      if (result.message === "success" && redirect.immediatelyRetry) {
-        return useRetryPendingMessagesForQueue(redirect.sourceQueue);
-      } else {
-        return result;
-      }
-    });
+  const result = await useUpdateRedirects(redirect.redirectId, redirect.sourceQueue, redirect.targetQueue);
+  if (result.message === "success") {
+    redirectSaveSuccessful.value = true;
+    useShowToast("info", "Info", "Redirect updated successfully");
+    getRedirect();
+  } else {
+    redirectSaveSuccessful.value = false;
+    if (result.status === "409" || result.status === 409) {
+      useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
+    } else {
+      useShowToast("error", "Error", result.message);
+    }
+  }
+  if (result.message === "success" && redirect.immediatelyRetry) {
+    return useRetryPendingMessagesForQueue(redirect.sourceQueue);
+  } else {
+    return result;
+  }
 }
 
-function saveCreatedRedirect(redirect) {
+async function saveCreatedRedirect(redirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
-  useCreateRedirects(redirect.sourceQueue, redirect.targetQueue).then((result) => {
-    if (result.message === "success") {
-      redirectSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Redirect created successfully");
-      getRedirect();
+  const result = await useCreateRedirects(redirect.sourceQueue, redirect.targetQueue);
+  if (result.message === "success") {
+    redirectSaveSuccessful.value = true;
+    useShowToast("info", "Info", "Redirect created successfully");
+    getRedirect();
+  } else {
+    redirectSaveSuccessful.value = false;
+    if ((result.status === "409" || result.status === 409) && result.statusText === "Duplicate") {
+      useShowToast("error", "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
+    } else if ((result.status === "409" || result.status === 409) && result.statusText === "Dependents") {
+      useShowToast("error", "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
     } else {
-      redirectSaveSuccessful.value = false;
-      if ((result.status === "409" || result.status === 409) && result.statusText === "Duplicate") {
-        useShowToast("error", "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
-      } else if ((result.status === "409" || result.status === 409) && result.statusText === "Dependents") {
-        useShowToast("error", "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
-      } else {
-        useShowToast("error", "Error", result.message);
-      }
+      useShowToast("error", "Error", result.message);
     }
-  });
+  }
 }
 
 function deleteRedirect(redirect) {
@@ -116,17 +109,16 @@ function deleteRedirect(redirect) {
   (selectedRedirect.value.message_redirect_id = redirect.message_redirect_id), (showDelete.value = true);
 }
 
-function saveDeleteRedirect() {
-  useDeleteRedirects(selectedRedirect.value.message_redirect_id).then((result) => {
-    if (result.message === "success") {
-      redirectSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Redirect deleted");
-      getRedirect();
-    } else {
-      redirectSaveSuccessful.value = false;
-      useShowToast("error", "Error", result.message);
-    }
-  });
+async function saveDeleteRedirect() {
+  const result = await useDeleteRedirects(selectedRedirect.value.message_redirect_id);
+  if (result.message === "success") {
+    redirectSaveSuccessful.value = true;
+    useShowToast("info", "Info", "Redirect deleted");
+    getRedirect();
+  } else {
+    redirectSaveSuccessful.value = false;
+    useShowToast("error", "Error", result.message);
+  }
 }
 
 onMounted(() => {

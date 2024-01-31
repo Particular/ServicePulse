@@ -18,10 +18,9 @@ const messageType = Object.freeze({
 const nodeSpacingX = 300;
 const nodeSpacingY = 200;
 
-function getConversation(conversationId) {
-  return useFetchFromServiceControl(`conversations/${conversationId}`).then(function (response) {
-    return response.json();
-  });
+async function getConversation(conversationId) {
+  const response = await useFetchFromServiceControl(`conversations/${conversationId}`);
+  return response.json();
 }
 
 function mapMessage(message) {
@@ -374,5 +373,16 @@ function typeIcon(type) {
   background-repeat: no-repeat;
   height: 15px;
   width: 15px;
+}
+
+path.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
+
+.righ-side-ellipsis {
+  direction: rtl;
+  text-align: left;
 }
 </style>

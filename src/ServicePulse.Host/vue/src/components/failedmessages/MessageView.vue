@@ -28,64 +28,53 @@ const showRestoreConfirm = ref(false);
 const showRetryConfirm = ref(false);
 const showEditRetryModal = ref(false);
 
-function loadFailedMessage() {
-  return useFetchFromServiceControl("errors/last/" + id.value)
-    .then((response) => {
-      if (response.status === 404) {
-        failedMessage.value = { notFound: true };
-      } else if (response.status !== 200) {
-        failedMessage.value = { error: true };
-      }
-      return response.json();
-    })
-    .then((data) => {
-      var message = data;
-      message.archived = message.status === "archived";
-      message.resolved = message.status === "resolved";
-      message.retried = message.status === "retryIssued";
-      message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-      message.isEditAndRetryEnabled = configuration.value.edit.enabled;
+async function loadFailedMessage() {
+  try {
+    const response = await useFetchFromServiceControl("errors/last/" + id.value);
+    if (response.status === 404) {
+      failedMessage.value = { notFound: true };
+    } else if (response.status !== 200) {
+      failedMessage.value = { error: true };
+    }
+    const data = await response.json();
+    var message = data;
+    message.archived = message.status === "archived";
+    message.resolved = message.status === "resolved";
+    message.retried = message.status === "retryIssued";
+    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+    message.isEditAndRetryEnabled = configuration.value.edit.enabled;
 
-      // Maintain the mutations of the message in memory until the api returns a newer modified message
-      if (failedMessage.value.last_modified === message.last_modified) {
-        message.retried = failedMessage.value.retried;
-        message.archiving = failedMessage.value.archiving;
-        message.restoring = failedMessage.value.restoring;
-      } else {
-        message.archiving = false;
-        message.restoring = false;
-      }
+    // Maintain the mutations of the message in memory until the api returns a newer modified message
+    if (failedMessage.value.last_modified === message.last_modified) {
+      message.retried = failedMessage.value.retried;
+      message.archiving = failedMessage.value.archiving;
+      message.restoring = failedMessage.value.restoring;
+    } else {
+      message.archiving = false;
+      message.restoring = false;
+    }
 
-      Object.assign(failedMessage.value, message);
-      updateMessageDeleteDate();
-      return downloadHeadersAndBody();
-    })
-    .catch((err) => {
-      console.log(err);
-      return;
-    });
+    Object.assign(failedMessage.value, message);
+    updateMessageDeleteDate();
+    return downloadHeadersAndBody();
+  } catch (err) {
+    console.log(err);
+    return;
+  }
 }
 
-function getConfiguration() {
-  return useFetchFromServiceControl("configuration")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      configuration.value = data;
-      return getEditAndRetryConfig();
-    });
+async function getConfiguration() {
+  const response = await useFetchFromServiceControl("configuration");
+  const data = await response.json();
+  configuration.value = data;
+  return getEditAndRetryConfig();
 }
 
-function getEditAndRetryConfig() {
-  return useFetchFromServiceControl("edit/config")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      configuration.value.edit = data;
-      return;
-    });
+async function getEditAndRetryConfig() {
+  const response = await useFetchFromServiceControl("edit/config");
+  const data = await response.json();
+  configuration.value.edit = data;
+  return;
 }
 
 function updateMessageDeleteDate() {
@@ -94,109 +83,98 @@ function updateMessageDeleteDate() {
   failedMessage.value.deleted_in = countdown.format();
 }
 
-function archiveMessage() {
+async function archiveMessage() {
   useShowToast("info", "Info", `Deleting the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
-  return useArchiveMessage([id.value])
-    .then((response) => {
-      if (response !== undefined) {
-        failedMessage.value.archiving = true;
-        return;
-      }
-      return false;
-    })
-    .catch((err) => {
-      console.log(err);
-      return false;
-    });
+  try {
+    const response = await useArchiveMessage([id.value]);
+    if (response !== undefined) {
+      failedMessage.value.archiving = true;
+      return;
+    }
+    return false;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 }
 
-function unarchiveMessage() {
+async function unarchiveMessage() {
   changeRefreshInterval(1000); // We've started an unarchive, so increase the polling frequency
-  return useUnarchiveMessage([id.value])
-    .then((response) => {
-      if (response !== undefined) {
-        failedMessage.value.restoring = true;
-      }
-      return false;
-    })
-    .catch((err) => {
-      console.log(err);
-      return false;
-    });
+  try {
+    const response = await useUnarchiveMessage([id.value]);
+
+    if (response !== undefined) {
+      failedMessage.value.restoring = true;
+    }
+    return false;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 }
 
-function retryMessage() {
+async function retryMessage() {
   useShowToast("info", "Info", `Retrying the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started a retry, so increase the polling frequency
-  return useRetryMessages([id.value])
-    .then(() => {
-      failedMessage.value.retried = true;
-    })
-    .catch((err) => {
-      console.log(err);
-      return false;
-    });
+  try {
+    await useRetryMessages([id.value]);
+    failedMessage.value.retried = true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 }
 
-function downloadHeadersAndBody() {
-  return useFetchFromServiceControl("messages/search/" + failedMessage.value.message_id)
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      if (data[0] === undefined) {
-        failedMessage.value.headersNotFound = true;
-        failedMessage.value.messageBodyNotFound = true;
-        return;
-      }
-
-      var message = data[0];
-      failedMessage.value.headers = message.headers;
-      failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
-
-      return downloadBody();
-    })
-    .catch((err) => {
-      console.log(err);
-      return;
-    });
-}
-
-function downloadBody() {
-  return useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body").then((response) => {
-    if (response.status === 404) {
+async function downloadHeadersAndBody() {
+  try {
+    const response = await useFetchFromServiceControl("messages/search/" + failedMessage.value.message_id);
+    const data = await response.json();
+    if (data[0] === undefined) {
+      failedMessage.value.headersNotFound = true;
       failedMessage.value.messageBodyNotFound = true;
+      return;
     }
 
-    if (response.headers.get("content-type") == "application/json") {
-      return response
-        .json()
-        .then((jsonBody) => {
-          jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
+    var message = data[0];
+    failedMessage.value.headers = message.headers;
+    failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
 
-          failedMessage.value.messageBody = formatJson(jsonBody);
-        })
-        .catch(() => {
-          failedMessage.value.bodyUnavailable = true;
-        });
+    return downloadBody();
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+
+async function downloadBody() {
+  const response = await useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body");
+  if (response.status === 404) {
+    failedMessage.value.messageBodyNotFound = true;
+  }
+
+  if (response.headers.get("content-type") == "application/json") {
+    try {
+      let jsonBody = await response.json();
+      jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
+
+      failedMessage.value.messageBody = formatJson(jsonBody);
+    } catch {
+      failedMessage.value.bodyUnavailable = true;
     }
+  }
 
-    if (response.headers.get("content-type") == "text/xml") {
-      return response
-        .text()
-        .then((xmlBody) => {
-          failedMessage.value.messageBody = formatXml(xmlBody);
-        })
-        .catch(() => {
-          failedMessage.value.bodyUnavailable = true;
-        });
+  if (response.headers.get("content-type") == "text/xml") {
+    try {
+      const xmlBody = await response.text();
+      failedMessage.value.messageBody = formatXml(xmlBody);
+    } catch {
+      failedMessage.value.bodyUnavailable = true;
     }
+  }
 
-    return response.text().then((textBody) => {
-      failedMessage.value.messageBody = textBody;
-    });
-  });
+  const textBody = await response.text();
+  failedMessage.value.messageBody = textBody;
 }
 
 // taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js
@@ -376,13 +354,12 @@ function changeRefreshInterval(milliseconds) {
   }, milliseconds);
 }
 
-onMounted(() => {
+onMounted(async () => {
   togglePanel(1);
 
-  getConfiguration().then(() => {
-    startRefreshInterval();
-    return loadFailedMessage();
-  });
+  await getConfiguration();
+  startRefreshInterval();
+  loadFailedMessage();
 });
 
 onUnmounted(() => {
