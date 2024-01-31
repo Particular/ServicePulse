@@ -27,7 +27,7 @@
         {
             flag = false;
             testOptions.Parse(new[] { "-test" });
-            Assert.IsTrue(flag, "-test did not parse as a valid option");
+            Assert.That(flag, Is.True, "-test did not parse as a valid option");
         }
 
         [Test]
@@ -35,7 +35,7 @@
         {
             flag = false;
             testOptions.Parse(new[] { "-Test" });
-            Assert.IsTrue(flag, "-Test did not parse as a valid option");
+            Assert.That(flag, Is.True, "-Test did not parse as a valid option");
         }
 
         [Test]
@@ -43,7 +43,7 @@
         {
             flag = false;
             testOptions.Parse(new[] { "-TEST" });
-            Assert.IsTrue(flag, "-TEST did not parse as a valid option");
+            Assert.That(flag, Is.True, "-TEST did not parse as a valid option");
         }
 
         [Test]
@@ -51,7 +51,7 @@
         {
             flag = false;
             testOptions.Parse(new[] { "-t" });
-            Assert.IsTrue(flag, "-TEST did not parse as a valid option");
+            Assert.That(flag, Is.True, "-TEST did not parse as a valid option");
         }
 
         [Test]
@@ -59,7 +59,7 @@
         {
             flag = false;
             testOptions.Parse(new[] { "-x" });
-            Assert.IsFalse(flag, "-x should not parse as a valid option");
+            Assert.That(flag, Is.False, "-x should not parse as a valid option");
         }
 
         [Test]
@@ -133,9 +133,9 @@
 
 
             installOptions.Parse(args);
-            Assert.IsTrue(executionMode == ExecutionMode.Run);
+            Assert.That(executionMode == ExecutionMode.Run, Is.True);
             extractOptions.Parse(args);
-            Assert.IsTrue(executionMode == ExecutionMode.Extract);
+            Assert.That(executionMode == ExecutionMode.Extract, Is.True);
         }
 
 
@@ -143,8 +143,8 @@
         public void ReturnsUnknownArguments()
         {
             var unknownArgs = testOptions.Parse(new[] { "-test", "-unknown" });
-            Assert.IsTrue(unknownArgs.Count == 1, "Unknown argument was not detected");
-            Assert.IsTrue(unknownArgs[0].Equals("-unknown"), "Unknown argument was not returned");
+            Assert.That(unknownArgs.Count == 1, Is.True, "Unknown argument was not detected");
+            Assert.That(unknownArgs[0].Equals("-unknown"), Is.True, "Unknown argument was not returned");
         }
     }
 }

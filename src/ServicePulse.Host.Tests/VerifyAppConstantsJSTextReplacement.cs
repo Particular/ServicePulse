@@ -18,15 +18,15 @@
         public void App_constants_js_validation()
         {
             var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app.constants.js");
-            Assert.IsTrue(File.Exists(pathToConfig), "app.constants.js does not exist - this will break installation code");
+            Assert.That(File.Exists(pathToConfig), Is.True, "app.constants.js does not exist - this will break installation code");
 
             var config = File.ReadAllText(pathToConfig);
             var matchUrl = sc_url_regex.Match(config);
-            Assert.IsTrue(matchUrl.Success, "regex failed to match app.constant.js for SC URI update");
+            Assert.That(matchUrl.Success, Is.True, "regex failed to match app.constant.js for SC URI update");
 
-            Assert.IsTrue(Uri.TryCreate(matchUrl.Groups[2].Value, UriKind.Absolute, out _), "regex match found in app.constants.js is not a valid URI");
+            Assert.That(Uri.TryCreate(matchUrl.Groups[2].Value, UriKind.Absolute, out _), Is.True, "regex match found in app.constants.js is not a valid URI");
             var matchVersion = version_regex.Match(config);
-            Assert.IsTrue(matchVersion.Success, "regex failed to match app.constant.js for the version string");
+            Assert.That(matchVersion.Success, Is.True, "regex failed to match app.constant.js for the version string");
         }
 
         [Test]
@@ -79,8 +79,8 @@
                 var text = config.Value.ConfigSnippet;
 
                 var match = config.Value.VersionRegex.Match(text);
-                Assert.IsTrue(match.Success, "regex failed to match version string");
-                Assert.IsTrue(match.Groups[2].Value.Equals(expectedResult), string.Format("Version regex did not return expected value which was {0}", expectedResult));
+                Assert.That(match.Success, Is.True, "regex failed to match version string");
+                Assert.That(match.Groups[2].Value.Equals(expectedResult), Is.True, string.Format("Version regex did not return expected value which was {0}", expectedResult));
             }
         }
 
@@ -153,8 +153,8 @@
             {
                 var config = configVariations[i];
                 var match = sc_url_regex.Match(config);
-                Assert.IsTrue(match.Success, string.Format("regex failed on config variation {0} ", i));
-                Assert.IsTrue(Uri.TryCreate(match.Groups[2].Value, UriKind.Absolute, out _), string.Format("regex match in did not return a URI in config variation {0}", i));
+                Assert.That(match.Success, Is.True, string.Format("regex failed on config variation {0} ", i));
+                Assert.That(Uri.TryCreate(match.Groups[2].Value, UriKind.Absolute, out _), Is.True, string.Format("regex match in did not return a URI in config variation {0}", i));
             }
         }
     }
