@@ -26,7 +26,7 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual("application/javascript", context.Response.ContentType);
+            Assert.That(context.Response.ContentType, Is.EqualTo("application/javascript"));
         }
 
         [Test]
@@ -42,8 +42,8 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual(null, context.Response.ContentLength);
-            Assert.AreEqual(null, context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.Null);
+            Assert.That(context.Response.ContentType, Is.Null);
         }
 
         [TestCase("HEAD")]
@@ -64,8 +64,8 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.IsNotNull(context.Response.ContentLength);
-            Assert.IsNotEmpty(context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.Not.Null);
+            Assert.That(context.Response.ContentType, Is.Not.Empty);
         }
 
         [Test]
@@ -86,8 +86,8 @@
             };
             await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
-            Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
-            Assert.AreEqual("text/html", context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
+            Assert.That(context.Response.ContentType, Is.EqualTo("text/html"));
         }
 
         [Test]
@@ -108,8 +108,8 @@
             };
             await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
-            Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
-            Assert.AreEqual("text/html", context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
+            Assert.That(context.Response.ContentType, Is.EqualTo("text/html"));
         }
 
 
@@ -131,8 +131,8 @@
             };
             await middleware.Invoke(context);
             const long sizeOfEmbeddedHtmlFile = 8586; // this is the messageEditorModal.controller.js file embedded into ServicePulse.Host.exe
-            Assert.AreEqual(sizeOfEmbeddedHtmlFile, context.Response.ContentLength);
-            Assert.AreEqual("application/javascript", context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
+            Assert.That(context.Response.ContentType, Is.EqualTo("application/javascript"));
         }
 
         [Test]
@@ -153,8 +153,8 @@
             };
             await middleware.Invoke(context);
             const long sizeOfFileOnDisk = 231; // this is the /app/js/app.constants.js file
-            Assert.AreEqual(sizeOfFileOnDisk, context.Response.ContentLength);
-            Assert.AreEqual("application/javascript", context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfFileOnDisk));
+            Assert.That(context.Response.ContentType, Is.EqualTo("application/javascript"));
         }
 
         [Test]
@@ -170,8 +170,8 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual(null, context.Response.ContentLength);
-            Assert.AreEqual(null, context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.Null);
+            Assert.That(context.Response.ContentType, Is.Null);
 
             context = new OwinContext
             {
@@ -182,8 +182,8 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual(null, context.Response.ContentLength);
-            Assert.AreEqual(null, context.Response.ContentType);
+            Assert.That(context.Response.ContentLength, Is.Null);
+            Assert.That(context.Response.ContentType, Is.Null);
         }
 
         public class DummyNext : OwinMiddleware

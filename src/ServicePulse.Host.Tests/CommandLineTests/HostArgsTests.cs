@@ -19,7 +19,7 @@
                 "--foobar"
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsTrue(hostArgs.Help, "Unknown argument did not set help flag");
+            Assert.That(hostArgs.Help, Is.True, "Unknown argument did not set help flag");
         }
 
         [Test]
@@ -28,8 +28,8 @@
             // No Arguments
             args = new string[] { };
             var hostArgs = new HostArguments(args);
-            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Run, "With no args execution mode should be run");
-            Assert.IsFalse(hostArgs.Help, "With no args help should not be triggered");
+            Assert.That(hostArgs.executionMode == ExecutionMode.Run, Is.True, "With no args execution mode should be run");
+            Assert.That(hostArgs.Help, Is.False, "With no args help should not be triggered");
         }
 
         [Test]
@@ -41,9 +41,9 @@
             };
 
             var hostArgs = new HostArguments(args);
-            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Run, "With only valid url args execution mode should be run");
-            Assert.IsFalse(hostArgs.Help, "With only valid url arguments help should not be triggered");
-            Assert.IsTrue(hostArgs.Url.Equals(validUrl, StringComparison.Ordinal), "Valid url argument was not parsed correctly");
+            Assert.That(hostArgs.executionMode == ExecutionMode.Run, Is.True, "With only valid url args execution mode should be run");
+            Assert.That(hostArgs.Help, Is.False, "With only valid url arguments help should not be triggered");
+            Assert.That(hostArgs.Url.Equals(validUrl, StringComparison.Ordinal), Is.True, "Valid url argument was not parsed correctly");
         }
 
         [Test]
@@ -55,7 +55,7 @@
                 $"--url={invalidUrl}"
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsTrue(hostArgs.Help, "With invalid url argument help should be triggered");
+            Assert.That(hostArgs.Help, Is.True, "With invalid url argument help should be triggered");
         }
 
         [Test]
@@ -68,7 +68,7 @@
                 $"--serviceControlUrl={validUrl}"    //ServiceControl URL isn't valid in run mode. Needs to be manually set
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsTrue(hostArgs.Help, "With extra arguments help should be triggered");
+            Assert.That(hostArgs.Help, Is.True, "With extra arguments help should be triggered");
         }
 
         [Test]
@@ -79,8 +79,8 @@
                 "-extract"
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
-            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Extract, "extract argument did not parse to correct execution mode");
+            Assert.That(hostArgs.Help, Is.False, "extract argument should not show help");
+            Assert.That(hostArgs.executionMode == ExecutionMode.Extract, Is.True, "extract argument did not parse to correct execution mode");
         }
 
         [Test]
@@ -92,9 +92,9 @@
                 $"--serviceControlUrl={validUrl}"
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
-            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Extract, "extract argument did not parse to correct execution mode");
-            Assert.IsTrue(hostArgs.ServiceControlUrl.Equals(validUrl, StringComparison.Ordinal), "ServiceControlUrl argument was not parsed correctly");
+            Assert.That(hostArgs.Help, Is.False, "extract argument should not show help");
+            Assert.That(hostArgs.executionMode == ExecutionMode.Extract, Is.True, "extract argument did not parse to correct execution mode");
+            Assert.That(hostArgs.ServiceControlUrl.Equals(validUrl, StringComparison.Ordinal), Is.True, "ServiceControlUrl argument was not parsed correctly");
         }
 
         [Test]
@@ -106,9 +106,9 @@
                 $"--serviceControlMonitoringUrl={validUrl}"
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
-            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Extract, "extract argument did not parse to correct execution mode");
-            Assert.IsTrue(hostArgs.ServiceControlMonitoringUrl.Equals(validUrl, StringComparison.Ordinal), "ServiceControlMonitoringUrl argument was not parsed correctly");
+            Assert.That(hostArgs.Help, Is.False, "extract argument should not show help");
+            Assert.That(hostArgs.executionMode == ExecutionMode.Extract, Is.True, "extract argument did not parse to correct execution mode");
+            Assert.That(hostArgs.ServiceControlMonitoringUrl.Equals(validUrl, StringComparison.Ordinal), Is.True, "ServiceControlMonitoringUrl argument was not parsed correctly");
         }
 
         [Test]
@@ -121,9 +121,9 @@
                 $"--outPath={path}"
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Extract, "extract argument did not parse to correct execution mode");
-            Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
-            Assert.IsTrue(hostArgs.OutputPath.Equals(path, StringComparison.Ordinal), "outpath argument was not parsed correctly");
+            Assert.That(hostArgs.executionMode == ExecutionMode.Extract, Is.True, "extract argument did not parse to correct execution mode");
+            Assert.That(hostArgs.Help, Is.False, "extract argument should not show help");
+            Assert.That(hostArgs.OutputPath.Equals(path, StringComparison.Ordinal), Is.True, "outpath argument was not parsed correctly");
         }
 
         [Test]
@@ -139,11 +139,11 @@
 
             };
             var hostArgs = new HostArguments(args);
-            Assert.IsTrue(hostArgs.executionMode == ExecutionMode.Extract, "extract argument did not parse to correct execution mode");
-            Assert.IsFalse(hostArgs.Help, "extract argument should not show help");
-            Assert.IsTrue(hostArgs.OutputPath.Equals(path, StringComparison.Ordinal), "outpath argument was not parsed correctly");
-            Assert.IsTrue(hostArgs.ServiceControlUrl.Equals(validUrl, StringComparison.Ordinal), "ServiceControlUrl argument was not parsed correctly");
-            Assert.IsTrue(hostArgs.ServiceControlMonitoringUrl.Equals(validUrl, StringComparison.Ordinal), "ServiceControlMonitoringUrl argument was not parsed correctly");
+            Assert.That(hostArgs.executionMode == ExecutionMode.Extract, Is.True, "extract argument did not parse to correct execution mode");
+            Assert.That(hostArgs.Help, Is.False, "extract argument should not show help");
+            Assert.That(hostArgs.OutputPath.Equals(path, StringComparison.Ordinal), Is.True, "outpath argument was not parsed correctly");
+            Assert.That(hostArgs.ServiceControlUrl.Equals(validUrl, StringComparison.Ordinal), Is.True, "ServiceControlUrl argument was not parsed correctly");
+            Assert.That(hostArgs.ServiceControlMonitoringUrl.Equals(validUrl, StringComparison.Ordinal), Is.True, "ServiceControlMonitoringUrl argument was not parsed correctly");
         }
     }
 }
