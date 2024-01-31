@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -21,7 +21,7 @@ const showCodeOnlyTab = ref(true);
 const jsonSnippet = ref("");
 const inlineSnippet = ref("");
 const jsonConfig = ref("");
-const queryErrors = ref([]);
+const queryErrors = ref<string[]>([]);
 
 function getCode() {
   loading.value = true;

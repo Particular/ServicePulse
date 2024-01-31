@@ -72,7 +72,7 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
 
   const loadMessages = useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&sort=${sortBy}&direction=${direction}`)
     .then((response) => {
-      totalCount.value = parseInt(response.headers.get("Total-Count"));
+      totalCount.value = parseInt(response.headers.get("Total-Count") || "0");
       numberOfPages.value = Math.ceil(totalCount.value / 50);
 
       return response.json();
@@ -97,7 +97,7 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
     })
     .catch((err) => {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -150,7 +150,7 @@ function exportSelected() {
     let d = {};
 
     if (type == "array" || type == "object") {
-      for (let i in obj) {
+      for (const i in obj) {
         const newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
         d = Object.assign(d, newD);
       }
@@ -170,12 +170,12 @@ function exportSelected() {
   const selectedMessages = messageList.value.getSelectedMessages();
   const propertiesToSkip = ["hover", "selected", "hover2", "$$hashKey", "panel", "edit_of", "edited"];
 
-  var preparedMessagesForExport = [];
-  for (var i = 0; i < selectedMessages.length; i++) {
+  const preparedMessagesForExport = [];
+  for (let i = 0; i < selectedMessages.length; i++) {
     preparedMessagesForExport.push(parseObject(selectedMessages[i], propertiesToSkip));
   }
 
-  var csvStr = toCSV(preparedMessagesForExport);
+  const csvStr = toCSV(preparedMessagesForExport);
   useDownloadFile(csvStr, "text/csv", "failedMessages.csv");
 }
 

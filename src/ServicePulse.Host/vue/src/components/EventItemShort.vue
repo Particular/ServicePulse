@@ -1,11 +1,11 @@
-﻿<script setup>
+﻿<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { getEventLogItems } from "../composables/eventLogItems";
+import { type EventLogItem, getEventLogItems } from "../composables/eventLogItems";
 import TimeSince from "./TimeSince.vue";
 
 const router = useRouter();
-const eventLogItems = ref([]);
+const eventLogItems = ref<EventLogItem[]>([]);
 const eventCount = ref(0);
 onMounted(() => {
   getEventLogItems().then((data) => {
@@ -14,7 +14,7 @@ onMounted(() => {
   });
 });
 
-function iconClasses(eventItem) {
+function iconClasses(eventItem: EventLogItem) {
   return {
     normal: eventItem.severity === "info",
     danger: eventItem.severity === "error",
@@ -26,7 +26,7 @@ function iconClasses(eventItem) {
   };
 }
 
-function iconSubClasses(eventItem) {
+function iconSubClasses(eventItem: EventLogItem) {
   return {
     "fa-times fa-error": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.severity === "error",
     "fa-pencil": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectChanged",
@@ -35,19 +35,19 @@ function iconSubClasses(eventItem) {
   };
 }
 
-function navigateToEvent(eventLogItem) {
+function navigateToEvent(eventLogItem: EventLogItem) {
   switch (eventLogItem.category) {
     case "Endpoints":
       router.push("/configuration/endpoint-connection");
       break;
     case "HeartbeatMonitoring":
-      window.location = "/a/#/endpoints";
+      window.location.assign("/a/#/endpoints");
       break;
     case "CustomChecks":
-      window.location = "/a/#/custom-checks";
+      window.location.assign("/a/#/custom-checks");
       break;
     case "EndpointControl":
-      window.location = "/a/#/endpoints";
+      window.location.assign("/a/#/endpoints");
       break;
     case "MessageFailures": {
       let newlocation = "/failed-messages";

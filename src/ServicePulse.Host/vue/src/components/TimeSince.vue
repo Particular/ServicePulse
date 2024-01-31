@@ -1,4 +1,4 @@
-﻿<script setup>
+﻿<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import moment from "moment";
 
@@ -9,7 +9,7 @@ const props = defineProps({
   },
 });
 
-let interval = null;
+let interval: number | undefined = undefined;
 
 const title = ref(),
   text = ref();
