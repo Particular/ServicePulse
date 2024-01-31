@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
-import Toast, { POSITION } from "vue-toastification";
+import Toast, { type PluginOptions, POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import SimpleTypeahead from "vue3-simple-typeahead";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
@@ -10,7 +10,7 @@ import "./assets/main.css";
 const app = createApp(App);
 
 app.use(router);
-const toastOptions = {
+const toastOptions: PluginOptions = {
   position: POSITION.BOTTOM_RIGHT,
   timeout: 5000,
   transition: "Vue-Toastification__fade",

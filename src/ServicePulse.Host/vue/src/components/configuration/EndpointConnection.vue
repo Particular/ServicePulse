@@ -26,7 +26,7 @@ const queryErrors = ref([]);
 function getCode() {
   loading.value = true;
 
-  var snippetTemplate = `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
+  const snippetTemplate = `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
 
     endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
     `;
@@ -42,7 +42,7 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
       errorQueue: connections.serviceControl.settings.ErrorQueue,
       metrics: connections.monitoring.settings,
     };
-    var jsonText = JSON.stringify(config, null, 4);
+    let jsonText = JSON.stringify(config, null, 4);
     jsonConfig.value = jsonText;
 
     jsonText = jsonText.replaceAll('"', '""');

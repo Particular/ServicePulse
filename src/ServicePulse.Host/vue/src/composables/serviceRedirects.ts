@@ -1,67 +1,75 @@
-import { useFetchFromServiceControl, useDeleteFromServiceControl, usePutToServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
+import { useDeleteFromServiceControl, useFetchFromServiceControl2, usePostToServiceControl, usePutToServiceControl } from "./serviceServiceControlUrls";
 
-const redirects = {
+interface Redirects {
+  data: Redirect[];
+  queues: string[];
+  total: number;
+}
+
+const redirects: Redirects = {
   data: [],
   queues: [],
   total: 0,
 };
-export function useRedirects() {
-  return getRedirects()
-    .then(() => getKnownQueues())
-    .then(() => {
-      return redirects;
-    });
+
+export async function useRedirects() {
+  await getRedirects();
+  await getKnownQueues();
+
+  return redirects;
 }
 
-function getKnownQueues() {
-  return useFetchFromServiceControl(`errors/queues/addresses`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      if (data) {
-        redirects.queues = data.map((x) => x.physical_address);
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+interface QueueAddress {
+  physical_address: string;
+  FailedMessageCount: number;
+}
+async function getKnownQueues() {
+  try {
+    const [_, data] = await useFetchFromServiceControl2<QueueAddress[]>(`errors/queues/addresses`);
+    if (data) {
+      redirects.queues = data.map((x) => x.physical_address);
+    }
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-function getRedirects() {
-  return useFetchFromServiceControl("redirects")
-    .then((response) => {
-      redirects.total = parseInt(response.headers.get("Total-Count"));
-      return response.json();
-    })
-    .then((data) => {
-      redirects.data = data;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+interface Redirect {
+  MessageRedirectId: string;
+  FromPhysicalAddress: string;
+  ToPhysicalAddress: string;
+  LastModified: string;
 }
 
-export function useRetryPendingMessagesForQueue(queueName) {
-  return usePostToServiceControl("errors/queues/" + queueName + "/retry")
-    .then((response) => {
-      const result = {
-        message: response.ok ? "success" : "error:" + response.statusText,
-        status: response.status,
-        statusText: response.statusText,
-      };
-      return result;
-    })
-    .catch((err) => {
-      console.log(err);
-      const result = {
-        message: "error",
-      };
-      return result;
-    });
+async function getRedirects() {
+  try {
+    let [response, data] = await useFetchFromServiceControl2<Redirect[]>("redirects");
+    redirects.total = parseInt(response.headers.get("Total-Count") || "0");
+    redirects.data = data;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-export function useUpdateRedirects(redirectId, sourceEndpoint, targetEndpoint) {
+export async function useRetryPendingMessagesForQueue(queueName: string) {
+  try {
+    let response = await usePostToServiceControl("errors/queues/" + queueName + "/retry");
+    const result = {
+      message: response.ok ? "success" : "error:" + response.statusText,
+      status: response.status,
+      statusText: response.statusText,
+    };
+    return result;
+  } catch (err) {
+    console.log(err);
+    const result = {
+      message: "error",
+    };
+    return result;
+  }
+}
+
+export function useUpdateRedirects(redirectId: string, sourceEndpoint: string, targetEndpoint: string) {
   return usePutToServiceControl("redirects/" + redirectId, {
     id: redirectId,
     fromphysicaladdress: sourceEndpoint,
@@ -85,7 +93,7 @@ export function useUpdateRedirects(redirectId, sourceEndpoint, targetEndpoint) {
     });
 }
 
-export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
+export function useCreateRedirects(sourceEndpoint: string, targetEndpoint: string) {
   return usePostToServiceControl("redirects", {
     fromphysicaladdress: sourceEndpoint,
     tophysicaladdress: targetEndpoint,
@@ -108,7 +116,7 @@ export function useCreateRedirects(sourceEndpoint, targetEndpoint) {
     });
 }
 
-export function useDeleteRedirects(redirectId) {
+export function useDeleteRedirects(redirectId: string) {
   return useDeleteFromServiceControl("redirects/" + redirectId)
     .then((response) => {
       const result = {

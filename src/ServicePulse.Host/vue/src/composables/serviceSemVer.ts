@@ -1,6 +1,6 @@
 const reSemver = /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?(?:\+([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?$/;
 
-export function useIsUpgradeAvailable(currentVersion, latestVersion) {
+export function useIsUpgradeAvailable(currentVersion: string, latestVersion: string) {
   const latest = parse(latestVersion.split("-")[0]);
   const current = parse(currentVersion.split("-")[0]);
 
@@ -20,11 +20,12 @@ export function useIsUpgradeAvailable(currentVersion, latestVersion) {
   return false;
 }
 
-export function useIsSupported(currentVersion, minSupportedVersion) {
+export function useIsSupported(currentVersion: string, minSupportedVersion: string) {
   const minSupported = parse(minSupportedVersion);
   const current = parse(currentVersion);
 
   if (current == null) return false;
+  if (minSupported == null) return true;
 
   if (minSupported.major !== current.major) {
     return minSupported.major <= current.major;
@@ -39,44 +40,38 @@ export function useIsSupported(currentVersion, minSupportedVersion) {
   return true;
 }
 
-function SemVer(obj) {
-  if (!obj) {
-    return;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const me = this;
-
-  Object.keys(obj).forEach(function (key) {
-    me[key] = obj[key];
-  });
+interface SemVer {
+  semver: string | undefined;
+  version: string;
+  major: number;
+  minor: number;
+  patch: number;
+  release: string;
+  build: string;
 }
 
-function parse(version) {
+function parse(version: string): SemVer | null {
   // semver, major, minor, patch
   // https://github.com/mojombo/semver/issues/32
   // https://github.com/isaacs/node-semver/issues/10
   // optional v
   const m = reSemver.exec(version) || [];
 
-  function defaultToZero(num) {
+  function defaultToZero(num: string) {
     const n = parseInt(num, 10);
 
     return isNaN(n) ? 0 : n;
   }
 
-  let ver = new SemVer({
-    semver: m[0],
-    version: m[1],
-    major: defaultToZero(m[2]),
-    minor: defaultToZero(m[3]),
-    patch: defaultToZero(m[4]),
-    release: m[5],
-    build: m[6],
-  });
-  if (0 === m.length) {
-    ver = null;
-  }
-
-  return ver;
+  return 0 === m.length
+    ? null
+    : {
+        semver: m[0],
+        version: m[1],
+        major: defaultToZero(m[2]),
+        minor: defaultToZero(m[3]),
+        patch: defaultToZero(m[4]),
+        release: m[5],
+        build: m[6],
+      };
 }

@@ -18,5 +18,9 @@ module.exports = {
   },
   rules: {
     "prettier/prettier": "error",
+    "prefer-rest-params": "warn",
+    "prefer-spread": "warn",
+    "no-var": "warn",
+    "prefer-const": "warn",
   },
 };

@@ -30,7 +30,7 @@ function getEmailNotifications() {
     });
 }
 
-export function useUpdateEmailNotifications(settings) {
+export function useUpdateEmailNotifications(settings: object) {
   return usePostToServiceControl("notifications/email", settings)
     .then((response) => {
       const result = {
@@ -70,7 +70,7 @@ export function useTestEmailNotifications() {
     });
 }
 
-export function useToggleEmailNotifications(enabled) {
+export function useToggleEmailNotifications(enabled: boolean) {
   return usePostToServiceControl("notifications/email/toggle", {
     enabled: enabled,
   })

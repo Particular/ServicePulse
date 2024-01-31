@@ -1,6 +1,6 @@
 import { useDeleteFromServiceControl, usePostToServiceControl, useFetchFromServiceControl } from "./serviceServiceControlUrls";
 
-export function useGetExceptionGroups(classifier) {
+export function useGetExceptionGroups(classifier: string | undefined) {
   return useFetchFromServiceControl(`recoverability/groups/${classifier ? classifier : ""}`)
     .then((response) => {
       return response.json();
@@ -15,7 +15,7 @@ export function useGetExceptionGroups(classifier) {
 }
 
 //get all deleted message groups
-export function useGetArchiveGroups(classifier) {
+export function useGetArchiveGroups(classifier: string | undefined) {
   return useFetchFromServiceControl(`errors/groups/${classifier ? classifier : ""}`)
     .then((response) => {
       return response.json();
@@ -29,7 +29,7 @@ export function useGetArchiveGroups(classifier) {
     });
 }
 //delete note by group id
-export function useDeleteNote(groupId) {
+export function useDeleteNote(groupId: string) {
   return useDeleteFromServiceControl("recoverability/groups/" + groupId + "/comment")
     .then((response) => {
       const result = {
@@ -50,7 +50,7 @@ export function useDeleteNote(groupId) {
 }
 
 //edit or create note by group id
-export function useEditOrCreateNote(groupId, comment) {
+export function useEditOrCreateNote(groupId: string, comment: string) {
   return usePostToServiceControl("recoverability/groups/" + groupId + "/comment?comment=" + comment)
     .then((response) => {
       const result = {
@@ -71,7 +71,7 @@ export function useEditOrCreateNote(groupId, comment) {
 }
 //archive exception group by group id
 //archiveGroup
-export function useArchiveExceptionGroup(groupId) {
+export function useArchiveExceptionGroup(groupId: string) {
   return usePostToServiceControl("recoverability/groups/" + groupId + "/errors/archive")
     .then((response) => {
       const result = {
@@ -92,7 +92,7 @@ export function useArchiveExceptionGroup(groupId) {
 }
 
 //restore group by group id
-export function useRestoreGroup(groupId) {
+export function useRestoreGroup(groupId: string) {
   return usePostToServiceControl("recoverability/groups/" + groupId + "/errors/unarchive")
     .then((response) => {
       const result = {
@@ -114,7 +114,7 @@ export function useRestoreGroup(groupId) {
 
 //retry exception group by group id
 //retryGroup
-export function useRetryExceptionGroup(groupId) {
+export function useRetryExceptionGroup(groupId: string) {
   return usePostToServiceControl("recoverability/groups/" + groupId + "/errors/retry")
     .then((response) => {
       const result = {
@@ -135,7 +135,7 @@ export function useRetryExceptionGroup(groupId) {
 }
 
 //acknowledge archive exception group by group id
-export function useAcknowledgeArchiveGroup(groupId) {
+export function useAcknowledgeArchiveGroup(groupId: string) {
   return useDeleteFromServiceControl("recoverability/unacknowledgedgroups/" + groupId)
     .then((response) => {
       const result = {

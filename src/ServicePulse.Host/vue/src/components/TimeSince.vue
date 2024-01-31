@@ -9,7 +9,7 @@ const props = defineProps({
   },
 });
 
-var interval = null;
+let interval = null;
 
 const title = ref(),
   text = ref();

@@ -88,7 +88,7 @@ function removeHeadersMarkedAsRemoved() {
 
 function retryEditedMessage() {
   removeHeadersMarkedAsRemoved();
-  return useRetryEditedMessage([id.value], localMessage)
+  return useRetryEditedMessage(id.value, localMessage)
     .then(() => {
       localMessage.value.retried = true;
       return emit("retried", settings);

@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "../../composables/serviceLicense";
-import { updateServiceControlUrls, serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl, useIsMonitoringDisabled } from "./../../composables/serviceServiceControlUrls";
+import { serviceControlUrl as configuredServiceControlUrl, monitoringUrl as configuredMonitoringUrl, useIsMonitoringDisabled } from "./../../composables/serviceServiceControlUrls";
 import { connectionState, monitoringConnectionState } from "../../composables/serviceServiceControl";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
@@ -23,6 +23,28 @@ const testingMonitoring = ref(false);
 const monitoringValid = ref(null);
 
 const connectionSaved = ref(null);
+
+function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl) {
+  if (!newServiceControlUrl.value) {
+    throw "ServiceControl URL is mandatory";
+  } else if (!newServiceControlUrl.value.endsWith("/")) {
+    newServiceControlUrl.value += "/";
+  }
+
+  if (!newMonitoringUrl.value) {
+    newMonitoringUrl.value = "!"; //disabled
+  } else if (!newMonitoringUrl.value.endsWith("/") && newMonitoringUrl.value !== "!") {
+    newMonitoringUrl.value += "/";
+  }
+
+  //values have changed. They'll be reset after page reloads
+  window.localStorage.removeItem("scu");
+  window.localStorage.removeItem("mu");
+
+  const newSearch = "?scu=" + newServiceControlUrl.value + "&mu=" + newMonitoringUrl.value;
+  console.debug("updateConnections - new query string: ", newSearch);
+  window.location.search = newSearch;
+}
 
 function testServiceControlUrl(event) {
   if (event) {

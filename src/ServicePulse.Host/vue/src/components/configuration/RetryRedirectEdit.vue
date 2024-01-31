@@ -1,240 +1,170 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
-import { useRetryEditedMessage } from "../../composables/serviceFailedMessage";
-import MessageHeader from "./EditMessageHeader.vue";
+import { ref, computed } from "vue";
 
-const emit = defineEmits(["cancel", "retried"]);
+const emit = defineEmits(["create", "edit", "cancel"]);
 
-const settings = defineProps({
-  id: String,
-  message: Object,
-  configuration: Object,
+const model = defineProps({
+  message_redirect_id: String,
+  from_physical_address: String,
+  to_physical_address: String,
+  immediately_Retry: Boolean,
+  queues: Array,
 });
 
-let panel = ref();
-let localMessage = ref();
-let origMessageBody = undefined;
+const sourceQueue = ref(model.from_physical_address);
+const targetQueue = ref(model.to_physical_address);
+const immediatelyRetry = ref(model.immediately_Retry);
 
-let showEditAndRetryConfirmation = ref(false);
-let showCancelConfirmation = ref(false);
-let showEditRetryGenericError = ref(false);
-
-const id = computed(() => settings.id);
-const messageBody = computed(() => settings.message.messageBody);
-
-watch(messageBody, async (newValue) => {
-  if (newValue !== origMessageBody) {
-    localMessage.value.isBodyChanged = true;
-  }
-  if (newValue === "") {
-    localMessage.value.isBodyEmpty = true;
-  } else {
-    localMessage.value.isBodyEmpty = false;
-  }
+const sourceQueueIsValid = computed(() => {
+  return sourceQueue.value ? true : false;
 });
+const targetQueueIsValid = computed(() => {
+  return targetQueue.value && targetQueue.value != sourceQueue.value;
+});
+
+const formIsValid = computed(() => {
+  return sourceQueueIsValid.value && targetQueueIsValid.value;
+});
+
+const notKnownQueue = computed(() => {
+  return !model.queues.includes(targetQueue.value);
+});
+
+const noKnownQueues = computed(() => {
+  return model.queues.length == 0;
+});
+
+const sourceQueueTooltip = "Choose a queue that is known to Service Control";
+const targetQueueTooltip = "Choose a queue that is known to Service Control or provide a custom queue";
+
+function selectToAddress(item) {
+  targetQueue.value = item;
+}
+
+function create() {
+  const redirect = {
+    sourceQueue: sourceQueue.value,
+    targetQueue: targetQueue.value,
+    immediatelyRetry: immediatelyRetry.value,
+  };
+  emit("create", redirect);
+}
+
+function edit() {
+  const redirect = {
+    redirectId: model.message_redirect_id,
+    sourceQueue: sourceQueue.value,
+    targetQueue: targetQueue.value,
+    immediatelyRetry: immediatelyRetry.value,
+  };
+  emit("edit", redirect);
+}
 
 function close() {
   emit("cancel");
 }
-
-function confirmEditAndRetry() {
-  showEditAndRetryConfirmation.value = true;
-}
-
-function confirmCancel() {
-  if (localMessage.value.isBodyChanged) {
-    showCancelConfirmation.value = true;
-    return;
-  }
-
-  if (localMessage.value.headers.some((header) => header.isChanged)) {
-    showCancelConfirmation.value = true;
-    return;
-  }
-
-  close();
-}
-
-function resetBodyChanges() {
-  localMessage.value.messageBody = origMessageBody;
-  localMessage.value.isBodyChanged = false;
-}
-
-function findHeadersByKey(key) {
-  return localMessage.value.headers.find((header) => header.key === key);
-}
-
-function getContentType() {
-  var header = findHeadersByKey("NServiceBus.ContentType");
-  return header?.value;
-}
-
-function isContentTypeSupported(contentType) {
-  return contentType === "application/json" || contentType === "text/xml";
-}
-
-function getMessageIntent() {
-  var intent = findHeadersByKey("NServiceBus.MessageIntent");
-  return intent?.value;
-}
-
-function removeHeadersMarkedAsRemoved() {
-  localMessage.value.headers.forEach((header, index, object) => {
-    if (header.isMarkedAsRemoved) {
-      object.splice(index, 1);
-    }
-  });
-}
-
-function retryEditedMessage() {
-  removeHeadersMarkedAsRemoved();
-  return useRetryEditedMessage([id.value], localMessage)
-    .then(() => {
-      localMessage.value.retried = true;
-      return emit("retried", settings);
-    })
-    .catch(() => {
-      showEditAndRetryConfirmation.value = false;
-      showEditRetryGenericError.value = true;
-      return;
-    });
-}
-
-function initializeMessageBodyAndHeaders() {
-  origMessageBody = settings.message.messageBody;
-  localMessage.value = settings.message;
-  localMessage.value.isBodyEmpty = false;
-  localMessage.value.isBodyChanged = false;
-
-  var contentType = getContentType();
-  localMessage.value.bodyContentType = contentType;
-  localMessage.value.isContentTypeSupported = isContentTypeSupported(contentType);
-
-  var messageIntent = getMessageIntent();
-  localMessage.value.isEvent = messageIntent.value === "Publish";
-
-  settings.message.headers.forEach((header, index) => {
-    header.isLocked = false;
-    header.isSensitive = false;
-    header.isMarkedAsRemoved = false;
-    header.isChanged = false;
-
-    if (settings.configuration.locked_headers.includes(header.key)) {
-      header.isLocked = true;
-    } else if (settings.configuration.sensitive_headers.includes(header.key)) {
-      header.isSensitive = true;
-    }
-
-    localMessage.value.headers[index] = header;
-  });
-}
-
-function togglePanel(panelNum) {
-  panel.value = panelNum;
-  return false;
-}
-
-onMounted(() => {
-  togglePanel(1);
-  initializeMessageBodyAndHeaders();
-});
 </script>
 
 <template>
-  <section name="failed_message_editor">
-    <div class="model modal-msg-editor" style="z-index: 1050; display: block">
-      <div class="modal-mask">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="modal-title">
-                <h3>Edit and retry message</h3>
-              </div>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-sm-12">
-                  <div class="row msg-editor-tabs">
-                    <div class="col-sm-12 no-side-padding">
-                      <div class="tabs msg-tabs">
-                        <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="javascript:void(0)">Headers</a></h5>
-                        <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="javascript:void(0)">Message body</a></h5>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row msg-editor-content">
-                    <div class="col-sm-12 no-side-padding">
-                      <div class="row alert alert-warning" v-if="localMessage?.isEvent">
-                        <div class="col-sm-12">
-                          <i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
-                          altering the system behavior.
-                        </div>
-                      </div>
-                      <div class="row alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage.bodyUnavailable">
-                        <div class="col-sm-12">
-                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ localMessage?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.
-                        </div>
-                      </div>
-                      <div class="row alert alert-danger" v-if="showEditRetryGenericError">
-                        <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
-                      </div>
-                      <table class="table" v-if="panel === 1">
-                        <tbody>
-                          <tr class="interactiveList" v-for="(header, index) in localMessage.headers" :key="index">
-                            <MessageHeader :header="header"></MessageHeader>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <div v-if="panel === 2 && !localMessage.bodyUnavailable" style="height: calc(100% - 260px)">
-                        <textarea class="form-control" :disabled="!localMessage.isContentTypeSupported" v-model="localMessage.messageBody"></textarea>
-                        <span class="empty-error" v-if="localMessage.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
-                        <span class="reset-body" v-if="localMessage.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
-                        <div class="alert alert-info" v-if="localMessage.panel === 2 && localMessage.bodyUnavailable">
-                          {{ localMessage.bodyUnavailable }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+  <div class="modal-mask">
+    <div class="modal-wrapper">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3 class="modal-title" v-if="model.message_redirect_id">Modify redirect</h3>
+          <h3 class="modal-title" v-if="!model.message_redirect_id">Create redirect</h3>
+        </div>
+
+        <form name="redirectForm" novalidate @submit.prevent="save">
+          <div class="modal-body">
+            <div class="row">
+              <div class="form-group">
+                <label for="sourceQueue">From physical address</label>
+                <span :title="sourceQueueTooltip">
+                  <i class="fa fa-info-circle"></i>
+                </span>
+                <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
+                  <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-select" required :disabled="model.message_redirect_id">
+                    <option v-for="option in model.queues" :value="option" :key="option">
+                      {{ option }}
+                    </option>
+                  </select>
                 </div>
               </div>
-            </div>
-            <div class="modal-footer" v-if="!showEditAndRetryConfirmation && !showCancelConfirmation">
-              <button class="btn btn-default" @click="confirmCancel()">Cancel</button>
-              <button class="btn btn-primary" :disabled="localMessage?.isBodyEmpty || localMessage?.bodyUnavailable" @click="confirmEditAndRetry()">Retry</button>
-            </div>
-            <div class="modal-footer cancel-confirmation" v-if="showCancelConfirmation">
-              <div>Are you sure you want to cancel? Any changes you made will be lost.</div>
-              <button class="btn btn-default" @click="close()">Yes</button>
-              <button class="btn btn-primary" @click="showCancelConfirmation = false">No</button>
-            </div>
-            <div class="modal-footer edit-retry-confirmation" v-if="showEditAndRetryConfirmation">
-              <div>Are you sure you want to continue? If you edited the message, it may cause unexpected consequences in the system.</div>
-              <button class="btn btn-default" @click="retryEditedMessage()">Yes</button>
-              <button class="btn btn-primary" @click="showEditAndRetryConfirmation = false">No</button>
+              <div class="row"></div>
+              <div class="form-group">
+                <label for="targetQueue">To physical address</label>
+                <span :title="targetQueueTooltip">
+                  <i class="fa fa-info-circle"></i>
+                </span>
+                <div :class="{ 'has-error': !targetQueueIsValid, 'has-success': targetQueueIsValid }">
+                  <vue3-simple-typeahead
+                    id="targetQueue"
+                    name="targetQueue"
+                    :defaultItem="model.to_physical_address"
+                    v-model="targetQueue"
+                    @selectItem="selectToAddress"
+                    class="form-control"
+                    required
+                    placeholder="Start writing..."
+                    :items="model.queues"
+                    :minInputLength="1"
+                  >
+                  </vue3-simple-typeahead>
+
+                  <template v-if="noKnownQueues">
+                    <div :class="{ 'has-error': noKnownQueues }">
+                      <p class="control-label">No known queues found. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.</p>
+                    </div>
+                  </template>
+                  <template v-if="notKnownQueue">
+                    <div :class="{ 'has-error': notKnownQueue }">
+                      <p class="control-label">Target queue does not match any known queue. You can provide a non-audited queue name, but if you don't provide a valid address, the redirected message will be lost.</p>
+                    </div>
+                  </template>
+                </div>
+              </div>
+              <div class="form-group">
+                <input type="checkbox" v-model="immediatelyRetry" class="check-label" id="immediatelyRetry" />
+                <label for="immediatelyRetry">Immediately retry any matching failed messages</label>
+              </div>
             </div>
           </div>
-        </div>
+          <div class="modal-footer">
+            <button v-if="model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="edit">Modify</button>
+            <button v-if="!model.message_redirect_id" class="btn btn-primary" :disabled="!formIsValid" @click="create">Create</button>
+            <button class="btn btn-default" @click="close">Cancel</button>
+          </div>
+        </form>
       </div>
     </div>
-  </section>
+  </div>
 </template>
 
 <style>
-.cancel-confirmation,
-.edit-retry-confirmation {
-  background: #181919;
-  color: #fff;
-  border-bottom-right-radius: 6px;
-  border-bottom-left-radius: 6px;
+.modal-mask {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: table;
+  transition: opacity 0.3s ease;
 }
 
-.cancel-confirmation div,
-.edit-retry-confirmation div {
-  display: inline-block;
-  font-weight: bold;
-  font-size: 14px;
-  position: relative;
-  top: 1px;
-  margin-right: 20px;
+.modal-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.modal-container {
+  width: 400px;
+  margin: 0px auto;
+  padding: 20px 30px;
+  background-color: #fff;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
 }
 </style>
