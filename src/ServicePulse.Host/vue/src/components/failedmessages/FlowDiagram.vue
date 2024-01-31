@@ -181,7 +181,7 @@ function typeIcon(type) {
             <i class="fa" :class="typeIcon(nodeProps.data.type)" :title="nodeProps.data.type" />
             <div class="lead righ-side-ellipsis" :title="nodeProps.data.nodeName">
               <strong>
-                <a v-if="nodeProps.data.isError" @click="() => $router.push({ path: `/failed-messages/message/${nodeProps.data.id}` })" href="javascript:void(0)">{{ nodeProps.data.nodeName }}</a>
+                <RouterLink v-if="nodeProps.data.isError" :to="{ name: 'message', params: { id: nodeProps.data.id } }">{{ nodeProps.data.nodeName }}</RouterLink>
                 <span v-else>{{ nodeProps.data.nodeName }}</span>
               </strong>
             </div>
