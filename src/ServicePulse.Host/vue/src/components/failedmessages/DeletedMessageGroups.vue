@@ -34,14 +34,10 @@ const groupRestoreSuccessful = ref(null);
 const selectedClassifier = ref(null);
 const classifiers = ref([]);
 
-function getGroupingClassifiers() {
-  return useFetchFromServiceControl("recoverability/classifiers")
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      classifiers.value = data;
-    });
+async function getGroupingClassifiers() {
+  const response = await useFetchFromServiceControl("recoverability/classifiers");
+  const data = await response.json();
+  classifiers.value = data;
 }
 
 function saveDefaultGroupingClassifier(classifier) {
@@ -57,47 +53,46 @@ function classifierChanged(classifier) {
   messageGroupList.value = loadArchivedMessageGroups(classifier);
 }
 
-function getArchiveGroups(classifier) {
-  return useGetArchiveGroups(classifier).then((result) => {
-    if (result.length === 0 && undismissedRestoreGroups.value.length > 0) {
-      undismissedRestoreGroups.value.forEach((deletedGroup) => {
-        deletedGroup.need_user_acknowledgement = true;
-        deletedGroup.workflow_state.status = "restorecompleted";
-      });
-    }
-
-    let maxIndex = archiveGroups.value.reduce((currentMax, currentGroup) => Math.max(currentMax, currentGroup.index), 0);
-
-    result.forEach((serverGroup) => {
-      let previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id == serverGroup.id);
-
-      if (previousGroup) {
-        serverGroup.index = previousGroup.index;
-      } else {
-        serverGroup.index = ++maxIndex;
-      }
-    });
-
+async function getArchiveGroups(classifier) {
+  const result = await useGetArchiveGroups(classifier);
+  if (result.length === 0 && undismissedRestoreGroups.value.length > 0) {
     undismissedRestoreGroups.value.forEach((deletedGroup) => {
-      if (!result.find((group) => group.id === deletedGroup.id)) {
-        deletedGroup.need_user_acknowledgement = true;
-        deletedGroup.workflow_state.status = "restorecompleted";
-      }
+      deletedGroup.need_user_acknowledgement = true;
+      deletedGroup.workflow_state.status = "restorecompleted";
     });
+  }
 
-    // need a map in some ui state for controlling animations
-    archiveGroups.value = result
-      .filter((group) => !undismissedRestoreGroups.value.find((deletedGroup) => deletedGroup.id === group.id))
-      .map(initializeGroupState)
-      .concat(undismissedRestoreGroups.value)
-      .sort((group1, group2) => {
-        return group1.index - group2.index;
-      });
+  let maxIndex = archiveGroups.value.reduce((currentMax, currentGroup) => Math.max(currentMax, currentGroup.index), 0);
 
-    if (archiveGroups.value.length !== stats.number_of_archive_groups) {
-      stats.number_of_archive_groups = archiveGroups.value.length;
+  result.forEach((serverGroup) => {
+    let previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id == serverGroup.id);
+
+    if (previousGroup) {
+      serverGroup.index = previousGroup.index;
+    } else {
+      serverGroup.index = ++maxIndex;
     }
   });
+
+  undismissedRestoreGroups.value.forEach((deletedGroup) => {
+    if (!result.find((group) => group.id === deletedGroup.id)) {
+      deletedGroup.need_user_acknowledgement = true;
+      deletedGroup.workflow_state.status = "restorecompleted";
+    }
+  });
+
+  // need a map in some ui state for controlling animations
+  archiveGroups.value = result
+    .filter((group) => !undismissedRestoreGroups.value.find((deletedGroup) => deletedGroup.id === group.id))
+    .map(initializeGroupState)
+    .concat(undismissedRestoreGroups.value)
+    .sort((group1, group2) => {
+      return group1.index - group2.index;
+    });
+
+  if (archiveGroups.value.length !== stats.number_of_archive_groups) {
+    stats.number_of_archive_groups = archiveGroups.value.length;
+  }
 }
 
 function initializeGroupState(group) {
@@ -121,18 +116,17 @@ function loadDefaultGroupingClassifier() {
   return null;
 }
 
-function loadArchivedMessageGroups(groupBy) {
+async function loadArchivedMessageGroups(groupBy) {
   loadingData.value = true;
   if (!initialLoadComplete.value || !groupBy) {
     groupBy = loadDefaultGroupingClassifier();
   }
 
-  getArchiveGroups(groupBy ?? route.query.deletedGroupBy).then(() => {
-    loadingData.value = false;
-    initialLoadComplete.value = true;
+  await getArchiveGroups(groupBy ?? route.query.deletedGroupBy);
+  loadingData.value = false;
+  initialLoadComplete.value = true;
 
-    emit("InitialLoadComplete");
-  });
+  emit("InitialLoadComplete");
 }
 
 //create workflow state
@@ -155,7 +149,7 @@ function showRestoreGroupDialog(group) {
   showRestoreGroupModal.value = true;
 }
 
-function restoreGroup() {
+async function restoreGroup() {
   // We're starting a restore, poll more frequently
   changeRefreshInterval(1000);
 
@@ -167,15 +161,14 @@ function restoreGroup() {
   group.workflow_state = { status: "restorestarted", message: "Restore request initiated..." };
   group.operation_start_time = new Date().toUTCString();
 
-  useRestoreGroup(group.id).then((result) => {
-    if (result.message === "success") {
-      groupRestoreSuccessful.value = true;
-      useShowToast("info", "Info", "Group restore started...");
-    } else {
-      groupRestoreSuccessful.value = false;
-      useShowToast("error", "Error", "Failed to restore the group:" + result.message);
-    }
-  });
+  const result = await useRestoreGroup(group.id);
+  if (result.message === "success") {
+    groupRestoreSuccessful.value = true;
+    useShowToast("info", "Info", "Group restore started...");
+  } else {
+    groupRestoreSuccessful.value = false;
+    useShowToast("error", "Error", "Failed to restore the group:" + result.message);
+  }
 }
 
 var statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"];
@@ -250,17 +243,15 @@ onUnmounted(() => {
   }
 });
 
-onMounted(() => {
-  getGroupingClassifiers()
-    .then(() => {
-      let savedClassifier = loadDefaultGroupingClassifier();
-      if (!savedClassifier) {
-        savedClassifier = classifiers.value[0];
-      }
+onMounted(async () => {
+  await getGroupingClassifiers();
+  let savedClassifier = loadDefaultGroupingClassifier();
+  if (!savedClassifier) {
+    savedClassifier = classifiers.value[0];
+  }
 
-      selectedClassifier.value = savedClassifier;
-    })
-    .then(loadArchivedMessageGroups);
+  selectedClassifier.value = savedClassifier;
+  await loadArchivedMessageGroups();
 
   changeRefreshInterval(5000);
 });
@@ -305,7 +296,15 @@ onMounted(() => {
               <div class="row">
                 <div class="col-sm-12 no-mobile-side-padding">
                   <div v-if="archiveGroups.length > 0">
-                    <div class="row box box-group wf-{{group.workflow_state.status}} repeat-modify" v-for="(group, index) in archiveGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false" @click="navigateToGroup($event, group.id)">
+                    <div
+                      class="row box box-group wf-{{group.workflow_state.status}} repeat-modify"
+                      v-for="(group, index) in archiveGroups"
+                      :key="index"
+                      :disabled="group.count == 0"
+                      @mouseenter="group.hover2 = true"
+                      @mouseleave="group.hover2 = false"
+                      @click="navigateToGroup($event, group.id)"
+                    >
                       <div class="col-sm-12 no-mobile-side-padding">
                         <div class="row">
                           <div class="col-sm-12 no-side-padding">
@@ -340,7 +339,17 @@ onMounted(() => {
 
                             <div class="row" v-if="!isBeingRestored(group.workflow_state.status)">
                               <div class="col-sm-12 no-side-padding">
-                                <button type="button" class="btn btn-link btn-sm" :disabled="group.count == 0 || isBeingRestored(group.workflow_state.status)" @mouseenter="group.hover3 = true" @mouseleave="group.hover3 = false" v-if="archiveGroups.length > 0" @click="showRestoreGroupDialog(group)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Restore group</button>
+                                <button
+                                  type="button"
+                                  class="btn btn-link btn-sm"
+                                  :disabled="group.count == 0 || isBeingRestored(group.workflow_state.status)"
+                                  @mouseenter="group.hover3 = true"
+                                  @mouseleave="group.hover3 = false"
+                                  v-if="archiveGroups.length > 0"
+                                  @click="showRestoreGroupDialog(group)"
+                                >
+                                  <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Restore group
+                                </button>
                               </div>
                             </div>
 

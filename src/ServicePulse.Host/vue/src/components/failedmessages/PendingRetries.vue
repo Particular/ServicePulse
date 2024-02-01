@@ -53,11 +53,10 @@ const sortOptions = [
 ];
 const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"];
 
-function loadEndpoints() {
+async function loadEndpoints() {
   const loader = new useEndpoints();
-  loader.getQueueNames().then((queues) => {
-    endpoints.value = queues.map((endpoint) => endpoint.physical_address);
-  });
+  const queues = await loader.getQueueNames();
+  endpoints.value = queues.map((endpoint) => endpoint.physical_address);
 }
 
 function clearSelectedQueue() {
@@ -89,7 +88,7 @@ function loadPendingRetryMessages() {
   return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value, startDate.toISOString(), endDate.toISOString());
 }
 
-function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, startDate, endDate) {
+async function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, startDate, endDate) {
   if (typeof sortBy === "undefined") sortBy = "time_of_failure";
   if (typeof direction === "undefined") direction = "desc";
   if (typeof page === "undefined") page = 1;
@@ -97,35 +96,33 @@ function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, st
   if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
   if (typeof endDate === "undefined") endDate = new Date().toISOString();
 
-  return useFetchFromServiceControl(`errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`)
-    .then((response) => {
-      totalCount.value = parseInt(response.headers.get("Total-Count"));
-      numberOfPages.value = Math.ceil(totalCount.value / 50);
+  try {
+    const response = await useFetchFromServiceControl(`errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`);
+    totalCount.value = parseInt(response.headers.get("Total-Count"));
+    numberOfPages.value = Math.ceil(totalCount.value / 50);
 
-      return response.json();
-    })
-    .then((response) => {
-      messages.value.forEach((previousMessage) => {
-        const receivedMessage = response.find((m) => m.id === previousMessage.id);
-        if (receivedMessage) {
-          if (previousMessage.last_modified == receivedMessage.last_modified) {
-            receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
-            receivedMessage.resolved = previousMessage.resolved;
-          }
+    const data = await response.json();
 
-          receivedMessage.selected = previousMessage.selected;
+    messages.value.forEach((previousMessage) => {
+      const receivedMessage = data.find((m) => m.id === previousMessage.id);
+      if (receivedMessage) {
+        if (previousMessage.last_modified == receivedMessage.last_modified) {
+          receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
+          receivedMessage.resolved = previousMessage.resolved;
         }
-      });
 
-      messages.value = response;
-    })
-    .catch((err) => {
-      console.log(err);
-      var result = {
-        message: "error",
-      };
-      return result;
+        receivedMessage.selected = previousMessage.selected;
+      }
     });
+
+    messages.value = data;
+  } catch (err) {
+    console.log(err);
+    var result = {
+      message: "error",
+    };
+    return result;
+  }
 }
 
 function numberDisplayed() {
@@ -144,38 +141,36 @@ function numberSelected() {
   return messageList?.value?.getSelectedMessages()?.length ?? 0;
 }
 
-function retrySelectedMessages() {
+async function retrySelectedMessages() {
   const selectedMessages = messageList.value.getSelectedMessages();
 
   useShowToast("info", "Info", "Selected messages were submitted for retry...");
-  return usePostToServiceControl(
+  await usePostToServiceControl(
     "pendingretries/retry",
     selectedMessages.map((m) => m.id)
-  ).then(() => {
-    messageList.value.deselectAll();
-    selectedMessages.forEach((m) => (m.submittedForRetrial = true));
-  });
+  );
+
+  messageList.value.deselectAll();
+  selectedMessages.forEach((m) => (m.submittedForRetrial = true));
 }
 
-function resolveSelectedMessages() {
+async function resolveSelectedMessages() {
   const selectedMessages = messageList.value.getSelectedMessages();
 
   useShowToast("info", "Info", "Selected messages were marked as resolved.");
-  return usePatchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) }).then(() => {
-    messageList.value.deselectAll();
-    selectedMessages.forEach((m) => (m.resolved = true));
-  });
+  await usePatchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) });
+  messageList.value.deselectAll();
+  selectedMessages.forEach((m) => (m.resolved = true));
 }
 
-function resolveAllMessages() {
+async function resolveAllMessages() {
   useShowToast("info", "Info", "All filtered messages were marked as resolved.");
-  return usePatchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() }).then(() => {
-    messageList.value.deselectAll();
-    messageList.value.forEach((m) => (m.resolved = true));
-  });
+  await usePatchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
+  messageList.value.deselectAll();
+  messageList.value.forEach((m) => (m.resolved = true));
 }
 
-function retryAllMessages() {
+async function retryAllMessages() {
   let url = "pendingretries/retry";
   const data = {};
   if (selectedQueue.value !== "empty") {
@@ -186,12 +181,11 @@ function retryAllMessages() {
   data.from = new Date(0).toISOString();
   data.to = new Date().toISOString();
 
-  return usePostToServiceControl(url, data).then(() => {
-    messages.value.forEach((message) => {
-      message.selected = false;
-      message.submittedForRetrial = true;
-      message.retried = false;
-    });
+  await usePostToServiceControl(url, data);
+  messages.value.forEach((message) => {
+    message.selected = false;
+    message.submittedForRetrial = true;
+    message.retried = false;
   });
 }
 
@@ -271,7 +265,11 @@ onMounted(() => {
       <section name="pending_retries">
         <div class="row">
           <div class="col-12">
-            <div class="alert alert-info"><i class="fa fa-info-circle"></i> To check if a retried message was also processed successfully, enable <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank">message auditing</a> <i class="fa fa-external-link fake-link"></i></div>
+            <div class="alert alert-info">
+              <i class="fa fa-info-circle"></i> To check if a retried message was also processed successfully, enable
+              <a href="https://docs.particular.net/nservicebus/operations/auditing" target="_blank">message auditing</a>
+              <i class="fa fa-external-link fake-link"></i>
+            </div>
           </div>
         </div>
         <div class="row">
@@ -281,10 +279,14 @@ onMounted(() => {
                 <label class="input-group-text"><i class="fa fa-filter" aria-hidden="true"></i> <span class="hidden-xs">Filter</span></label>
                 <select class="form-select" id="inputGroupSelect01" onchange="this.dataset.chosen = true;" @change="loadPendingRetryMessages()" v-model="selectedQueue">
                   <option selected disabled hidden class="placeholder" value="empty">Select a queue...</option>
-                  <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">{{ endpoint }}</option>
+                  <option v-for="(endpoint, index) in endpoints" :key="index" :value="endpoint">
+                    {{ endpoint }}
+                  </option>
                 </select>
                 <span class="input-group-btn">
-                  <button type="button" @click="clearSelectedQueue()" class="btn btn-default"><i class="fa fa-times" aria-hidden="true"></i></button>
+                  <button type="button" @click="clearSelectedQueue()" class="btn btn-default">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                  </button>
                 </span>
               </div>
             </div>
@@ -309,9 +311,15 @@ onMounted(() => {
           <div class="col-6 col-xs-12 toolbar-menus">
             <div class="action-btns">
               <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmRetry = true"><i class="fa fa-repeat"></i> <span>Retry</span> ({{ numberSelected() }})</button>
-              <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmResolve = true"><i class="fa fa-check-square-o"></i> <span>Mark as resolved</span> ({{ numberSelected() }})</button>
+              <button type="button" class="btn btn-default" :disabled="!isAnythingSelected()" @click="showConfirmResolve = true">
+                <i class="fa fa-check-square-o"></i>
+                <span>Mark as resolved</span> ({{ numberSelected() }})
+              </button>
               <button type="button" class="btn btn-default" :disabled="!isAnythingDisplayed()" @click="retryAllClicked()"><i class="fa fa-repeat"></i> <span>Retry all</span></button>
-              <button type="button" class="btn btn-default" @click="showConfirmResolveAll = true"><i class="fa fa-check-square-o"></i> <span>Mark all as resolved</span></button>
+              <button type="button" class="btn btn-default" @click="showConfirmResolveAll = true">
+                <i class="fa fa-check-square-o"></i>
+                <span>Mark all as resolved</span>
+              </button>
             </div>
           </div>
         </div>
@@ -370,7 +378,14 @@ onMounted(() => {
             :body="`Are you sure you want to mark all ${numberDisplayed()} messages as resolved? If you do they will not be available for Retry.`"
           ></ConfirmDialog>
 
-          <ConfirmDialog v-if="showCantRetryAll === true" @cancel="showCantRetryAll = false" @confirm="showCantRetryAll = false" :hide-cancel="true" :heading="'Select a queue first'" :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"></ConfirmDialog>
+          <ConfirmDialog
+            v-if="showCantRetryAll === true"
+            @cancel="showCantRetryAll = false"
+            @confirm="showCantRetryAll = false"
+            :hide-cancel="true"
+            :heading="'Select a queue first'"
+            :body="'Bulk retry of messages can only be done for one queue at the time to avoid producing unwanted message duplicates.'"
+          ></ConfirmDialog>
 
           <ConfirmDialog
             v-if="showRetryAllConfirm === true"

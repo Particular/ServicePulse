@@ -61,10 +61,10 @@ function displayGraphValues() {
     .x(function (d, i) {
       return scaleX(i);
     })
-    .y(function (d, i) {
+    .y(function (d) {
       return scaleY(d);
     })
-    .y1(function (d) {
+    .y1(function () {
       return scaleY(0);
     })
     .curve(d3.curveLinear);
@@ -74,7 +74,7 @@ function displayGraphValues() {
     .x(function (d, i) {
       return scaleX(i);
     })
-    .y(function (d, i) {
+    .y(function (d) {
       return scaleY(d);
     })
     .curve(d3.curveLinear);

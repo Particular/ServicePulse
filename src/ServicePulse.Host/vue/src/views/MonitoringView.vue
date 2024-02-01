@@ -4,7 +4,6 @@ import { ref, onMounted, watch, onUnmounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { licenseStatus } from "./../composables/serviceLicense.js";
 import { connectionState } from "../composables/serviceServiceControl";
-import { useRedirects } from "../composables/serviceRedirects.js";
 import { useMonitoringStore } from "../stores/MonitoringStore";
 // Components
 import LicenseExpired from "../components/LicenseExpired.vue";

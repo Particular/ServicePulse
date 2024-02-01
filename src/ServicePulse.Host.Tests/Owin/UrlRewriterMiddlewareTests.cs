@@ -21,7 +21,7 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual("/index.html", context.Request.Path.Value);
+            Assert.That(context.Request.Path.Value, Is.EqualTo("/index.html"));
         }
 
         [Test]
@@ -37,7 +37,7 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual("/js/app.constants.js", context.Request.Path.Value);
+            Assert.That(context.Request.Path.Value, Is.EqualTo("/js/app.constants.js"));
         }
 
         [Test]
@@ -53,7 +53,7 @@
                 }
             };
             await middleware.Invoke(context);
-            Assert.AreEqual("/index.html", context.Request.Path.Value);
+            Assert.That(context.Request.Path.Value, Is.EqualTo("/index.html"));
         }
 
         public class DummyNext : OwinMiddleware

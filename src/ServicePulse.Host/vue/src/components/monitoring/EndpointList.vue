@@ -45,7 +45,9 @@ onMounted(async () => {
         <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <template #unit>(t)</template></endpoint-list-sortable-column>
       </div>
       <div class="table-col">
-        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."> Critical Time <template #unit>(t)</template></endpoint-list-sortable-column>
+        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
+          Critical Time <template #unit>(t)</template></endpoint-list-sortable-column
+        >
       </div>
     </div>
     <div>

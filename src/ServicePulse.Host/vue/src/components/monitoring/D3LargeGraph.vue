@@ -190,7 +190,7 @@ function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
     .x(function (d, i) {
       return scaleX(i);
     })
-    .y(function (d, i) {
+    .y(function (d) {
       return scaleY(d);
     })
     .curve(d3.curveLinear);
@@ -208,7 +208,7 @@ function drawAverageLine(chart, data, color, fillColor, scaleX, scaleY) {
     .x(function (d, i) {
       return scaleX(i);
     })
-    .y(function (d, i) {
+    .y(function (d) {
       return scaleY(d);
     })
     .curve(d3.curveLinear);

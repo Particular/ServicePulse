@@ -14,7 +14,15 @@ async function selectHistoryPeriod(period) {
 
 <template>
   <ul class="nav nav-pills period-selector">
-    <li role="presentation" data-bs-placement="top" v-for="period in allPeriods" :key="period.pVal" v-tooltip :title="period.refreshIntervalText" :class="{ active: period.pVal === selectedPeriod.pVal, notselected: period.pVal !== selectedPeriod.pVal }">
+    <li
+      role="presentation"
+      data-bs-placement="top"
+      v-for="period in allPeriods"
+      :key="period.pVal"
+      v-tooltip
+      :title="period.refreshIntervalText"
+      :class="{ active: period.pVal === selectedPeriod.pVal, notselected: period.pVal !== selectedPeriod.pVal }"
+    >
       <a :href="`#`" @click.prevent="selectHistoryPeriod(period)">{{ period.text }}</a>
     </li>
   </ul>

@@ -220,9 +220,11 @@
             });
         }
 
-        function dismissCustomChecks(customCheck) {
-            var url = uri.join(scu, 'customchecks', customCheck.id);
-
+      function dismissCustomChecks(customCheck) {       
+        var url = uri.join(scu, 'customchecks', customCheck.id);
+        if (customCheck.id.toLowerCase().startsWith("customcheck")) {
+          url = uri.join(scu, customCheck.id);
+        }
             $http.delete(url);
         }
 

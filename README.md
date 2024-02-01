@@ -1,9 +1,10 @@
 # ServicePulse ![Current Version](https://img.shields.io/github/release/particular/servicepulse.svg?style=flat&label=current%20version)
 
-## Production monitoring for distributed systems
-Real-time monitoring customized to fit distributed applications in general, and your application's specific needs in particular.
+ServicePulse provides real-time production monitoring for distributed applications. It keeps track of the health of a system's endpoints, monitors for any processing errors, sends failed messages for reprocessing, and makes sure the specific environment's needs are met, all in one consolidated dashboard.
 
-Keep track of the health of your system's endpoints, monitor for any processing errors, send failed messages for reprocessing and make sure your specific environment's needs are met, all in one consolidated dashboard.
+ServicePulse is part of the [Particular Service Platform](https://particular.net/service-platform), which includes [NServiceBus](https://particular.net/nservicebus) and tools to build, monitor, and debug distributed systems.
+
+See the [ServicePulse documentation](https://docs.particular.net/servicepulse/) for more information.
 
 ## Setting up the project for development
 
@@ -33,53 +34,60 @@ graph LR
 ```
 ### Setting up ServiceControl Main and ServiceControl Monitoring instances
 
-ServicePulse mostly presents data provided by [ServiceControl](http://github.com/Particular/ServiceControl) and [ServiceControl Monitoring](https://github.com/Particular/ServiceControl.Monitoring) instances.
+ServicePulse mostly presents data provided by [ServiceControl](https://docs.particular.net/servicecontrol) and [ServiceControl Monitoring](https://docs.particular.net/servicecontrol/monitoring-instances/) instances.
 
 The URLs for both services can be set in `ServicePulse.Host/vue/public/app/js/app.constants.js` under the constant `scConfig`.
 
-
 ### Setting up package manager
 
-ServicePulse uses npm and bower as package managers. For the solution to work dependencies needs to be downloaded before opening the ServicePulse website.
+ServicePulse uses [npm](https://www.npmjs.com/) and [Bower](https://bower.io/) as package managers. For the solution to work, dependencies needs to be downloaded before opening the ServicePulse website.
 
 #### Install dependencies
 
 Install the following dependencies if you don't have them installed yet
 
  - [Node.js](https://nodejs.org/en/download/)
- - [Git for Windows](https://git-for-windows.github.io/)
+ - [Git for Windows](https://gitforwindows.org/)
  - [Docker](https://docs.docker.com/get-docker/)
+   - Note that, if running docker for windows, the current user needs to be in the docker-users local group. If your windows account is different to the installation (admin) account, then you will need to manually add your user to the group. See https://docs.docker.com/desktop/faqs/windowsfaqs/#why-do-i-see-the-docker-desktop-access-denied-error-message-when-i-try-to-start-docker-desktop
  - Chutzpah
    - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
    - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
 
 ### Set development environment
 
+#### Step 0 - Using a suitable IDE for frontend development
+
+Even though Visual Studio or Rider seem to be adequate IDE for frontend development, they don't tend to do a good job with the latest frontend frameworks, linting and formatting.
+Because of that, we have [extra recommendations](/docs/frontend/frontend-ide.md) for you to be even more successful at frontend development.
+
 #### Step 1 - run Nginx reverse proxy
   
-Open a command window and navigate into `ServicePulse\src\ServicePulse.Host` path (NOTE: ensure using cmd, not PowerShell). Run `nginx` that is a reverse proxy for AngularJS and Vue.js applications:
+Open a command window and navigate to `ServicePulse\src\ServicePulse.Host` path (NOTE: ensure [cmd](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cmd) is being used, not [PowerShell](https://learn.microsoft.com/en-us/powershell/)). Run `nginx` that is a reverse proxy for AngularJS and Vue.js applications:
+
 ```cmd
 docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
 ```
+
 #### Step 2 - run AngularJS development server 
 
 Navigate to `ServicePulse\src\ServicePulse.Host\angular` and:
   - run `npm install` to install all the npm dependencies
   - run the following command `npm run dev`. This will host a dev server on port 5174 and start watching for changes in `/angular` directory
 
-_Note: If you receive an error similar to `Error: error:0308010C:digital envelope routines::unsupported` when Webpack attempts to execute `LoadRunner.js` it means that you need to configure Node to use a legacy SSL provider. You can do this by setting an environment variable called `NODE_OPTIONS` to the value `--openssl-legacy-provider`. E.g. Run `export NODE_OPTIONS=--openssl-legacy-provider` from a bash shell.
+_Note: If you receive an error similar to `Error: error:0308010C:digital envelope routines::unsupported` when Webpack attempts to execute `LoadRunner.js`, it means that you need to configure Node to use a legacy SSL provider. You can do this by setting an environment variable called `NODE_OPTIONS` to the value `--openssl-legacy-provider`. E.g. Run `export NODE_OPTIONS=--openssl-legacy-provider` from a bash shell.
  
 #### Step 3 - run Vue.js development server 
 
 Navigate to `ServicePulse\src\ServicePulse.Host\vue` and:
   - run `npm install` to install all the npm dependencies
-  - run the following command `npm run dev`. This will host a dev server on port 5173 and start watching for changes in `/vue` directory
+  - run the following command `npm run dev` (this will host a dev server on port 5173 and start watching for changes in `/vue` directory)
 
 In case `npm run dev` fails with an error related to git submodule not properly configured, run the `npm install` command again to ensure all required dependencies are available, and then run `npm run dev`.
 
 #### Step 4 - open the browser
 
-After doing the above steps one can open `http://localhost:1331` to see ServicePulse application.
+After doing the above steps, navigate to `http://localhost:1331` to see the ServicePulse application.
 
 ### Provided npm scripts 
 
@@ -87,7 +95,7 @@ After doing the above steps one can open `http://localhost:1331` to see ServiceP
 
  - `dev` - runs `vite` that starts development server doing hot reload over source files
  - `build` - runs build script that outputs files to `..\app` folder
- - `lint` - checks with eslint all js files
+ - `lint` - checks with eslint all vue, ts and js files
  - `preview` - runs `build` and starts static http server that enables smoketesting production build
 
 #### AngularJS
@@ -134,15 +142,14 @@ NOTE: It might be necessary to change PowerShell execution policy using `Set-Exe
 
 In the Ide, Build and run `ServicePulse.Host` project.
 
-
 ## Supported browser versions
 
 ServicePulse is supported on the following desktop browser versions:
 
 - Chrome [latest major version](https://chromereleases.googleblog.com/)
 - Edge with EdgeHTML v17+
-- Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/organizations/)
-- Safari [latest major version](https://developer.apple.com/safari/download/)
+- Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/enterprise/)
+- Safari [latest major version](https://developer.apple.com/safari/)
 
 ## Docker image deployment
 

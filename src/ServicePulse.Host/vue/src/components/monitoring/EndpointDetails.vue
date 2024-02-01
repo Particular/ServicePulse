@@ -7,7 +7,7 @@ import D3Graph from "./D3Graph.vue";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { licenseStatus } from "../../composables/serviceLicense.js";
-import { useFetchFromMonitoring, useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
+import { useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
 //stores
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { useFailedMessageStore } from "../../stores/FailedMessageStore";
@@ -23,7 +23,7 @@ const router = useRouter();
 const endpointName = route.params.endpointName;
 var showInstancesBreakdown = false;
 let refreshInterval = undefined;
-var disconnectedCount = 0;
+//var disconnectedCount = 0;
 
 const monitoringStore = useMonitoringStore();
 const failedMessageStore = useFailedMessageStore();
@@ -153,57 +153,54 @@ function mergeIn(destination, source, propertiesToSkip) {
   }
 }
 
-function removeEndpoint(endpointName, instance) {
-  return useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id)
-    .then((response) => {
-      endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
-      if (endpoint.value.instances.length === 0) {
-        router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-      var result = {
-        message: "error",
-      };
-      return result;
-    });
+async function removeEndpoint(endpointName, instance) {
+  try {
+    await useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id);
+    endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
+    if (endpoint.value.instances.length === 0) {
+      router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
+    }
+  } catch (err) {
+    console.log(err);
+    var result = {
+      message: "error",
+    };
+    return result;
+  }
 }
 
-function isRemovingEndpointEnabled() {
-  return useOptionsFromMonitoring()
-    .then((response) => {
-      const headers = response.headers();
-      const allow = headers.allow;
-      const deleteAllowed = allow.indexOf("DELETE") >= 0;
-      return deleteAllowed;
-    })
-    .catch((err) => {
-      console.log(err);
-      return false;
-    });
+async function isRemovingEndpointEnabled() {
+  try {
+    const response = await useOptionsFromMonitoring();
+    const headers = response.headers();
+    const allow = headers.allow;
+    const deleteAllowed = allow.indexOf("DELETE") >= 0;
+    return deleteAllowed;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
 }
 
-function getDisconnectedCount() {
-  var checkInterval;
-  return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`)
-    .then((response) => {
-      disconnectedCount = response.data;
-    })
-    .catch((err) => {
-      console.log("Error while getting disconnected endpoints count from monitoring:" + err);
-      clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
-    });
-  //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-  //var checkDisconnectedCount = function () {
-  //    monitoringService.getDisconnectedCount().then(result => {
-  //        notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
-  //    }, e => {
-  //        $log.debug('Error while getting disconnected endpoints count from monitoring:' + e);
-  //        clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
-  //    });
-  //};
-}
+// async function getDisconnectedCount() {
+//   var checkInterval;
+//   try {
+//     const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
+//     disconnectedCount = response.data;
+//   } catch (err) {
+//     console.log("Error while getting disconnected endpoints count from monitoring:" + err);
+//     clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
+//   }
+//   //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
+//   //var checkDisconnectedCount = function () {
+//   //    monitoringService.getDisconnectedCount().then(result => {
+//   //        notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
+//   //    }, e => {
+//   //        $log.debug('Error while getting disconnected endpoints count from monitoring:' + e);
+//   //        clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
+//   //    });
+//   //};
+// }
 function refreshMessageTypes() {
   if (endpoint.value.messageTypesAvailable) {
     endpoint.value.messageTypesAvailable.value = false;
@@ -245,7 +242,10 @@ function parseTheMessageTypeData(messageType) {
     messageType.typeName = messageTypeHierarchy.map((item) => item.typeName).join(", ");
     messageType.shortName = messageTypeHierarchy.map((item) => shortenTypeName(item.typeName)).join(", ");
     messageType.containsTypeHierarchy = true;
-    messageType.tooltipText = messageTypeHierarchy.reduce((sum, item) => (sum ? `${sum}<br> ` : "") + `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : "") + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ""), "");
+    messageType.tooltipText = messageTypeHierarchy.reduce(
+      (sum, item) => (sum ? `${sum}<br> ` : "") + `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : "") + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ""),
+      ""
+    );
   } else {
     //Get the name without the namespace
     messageType.shortName = shortenTypeName(messageType.typeName);
@@ -339,7 +339,7 @@ onUnmounted(() => {
 onMounted(() => {
   getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
-  getDisconnectedCount(); // for refresh interval
+  //getDisconnectedCount(); // for refresh interval
 });
 </script>
 
@@ -392,7 +392,16 @@ onMounted(() => {
             <div class="row">
               <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
                 <!-- large graph -->
-                <D3LargeGraph v-if="endpoint.metricDetails.metrics.queueLength" :isdurationgraph="false" :firstdataseries="endpoint.metricDetails.metrics.queueLength" :minimumyaxis="largeGraphsMinimumYAxis.queueLength" :firstseriescolor="'#EA7E00'" :firstseriesfillcolor="'#EADDCE'" :avgdecimals="0" :metricsuffix="'MSGS'"></D3LargeGraph>
+                <D3LargeGraph
+                  v-if="endpoint.metricDetails.metrics.queueLength"
+                  :isdurationgraph="false"
+                  :firstdataseries="endpoint.metricDetails.metrics.queueLength"
+                  :minimumyaxis="largeGraphsMinimumYAxis.queueLength"
+                  :firstseriescolor="'#EA7E00'"
+                  :firstseriesfillcolor="'#EADDCE'"
+                  :avgdecimals="0"
+                  :metricsuffix="'MSGS'"
+                ></D3LargeGraph>
                 <!--Queue Length-->
                 <div class="col-xs-12 no-side-padding graph-values">
                   <div class="queue-length-values">
@@ -401,7 +410,9 @@ onMounted(() => {
                     </div>
                   </div>
                   <div class="row metric-digest-value current">
-                    <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }} <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span></div>
+                    <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
+                      {{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }} <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span>
+                    </div>
                     <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                   </div>
                   <div class="row metric-digest-value average">
@@ -413,7 +424,19 @@ onMounted(() => {
               <!--Throughput and retries-->
               <div class="col-xs-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
                 <!-- large graph -->
-                <D3LargeGraph v-if="endpoint.metricDetails.metrics.throughput" :isdurationgraph="false" :firstdataseries="endpoint.metricDetails.metrics.throughput" :seconddataseries="endpoint.metricDetails.metrics.retries" :minimumyaxis="largeGraphsMinimumYAxis.throughputRetries" :firstseriescolor="'#176397'" :firstseriesfillcolor="'#CADCE8'" :secondseriescolor="'#CC1252'" :secondseriesfillcolor="'#E9C4D1'" :avgdecimals="0" :metricsuffix="'MSGS/S'"></D3LargeGraph>
+                <D3LargeGraph
+                  v-if="endpoint.metricDetails.metrics.throughput"
+                  :isdurationgraph="false"
+                  :firstdataseries="endpoint.metricDetails.metrics.throughput"
+                  :seconddataseries="endpoint.metricDetails.metrics.retries"
+                  :minimumyaxis="largeGraphsMinimumYAxis.throughputRetries"
+                  :firstseriescolor="'#176397'"
+                  :firstseriesfillcolor="'#CADCE8'"
+                  :secondseriescolor="'#CC1252'"
+                  :secondseriesfillcolor="'#E9C4D1'"
+                  :avgdecimals="0"
+                  :metricsuffix="'MSGS/S'"
+                ></D3LargeGraph>
                 <div class="col-xs-12 no-side-padding graph-values">
                   <div class="col-xs-6 no-side-padding throughput-values floatleft">
                     <div>
@@ -447,7 +470,18 @@ onMounted(() => {
               <!--ProcessingTime and Critical Time-->
               <div class="col-xs-4 no-side-padding list-section graph-area graph-critical-processing-times">
                 <!-- large graph -->
-                <D3LargeGraph v-if="endpoint.metricDetails.metrics.criticalTime" :isdurationgraph="true" :firstdataseries="endpoint.metricDetails.metrics.criticalTime" :seconddataseries="endpoint.metricDetails.metrics.processingTime" :minimumyaxis="largeGraphsMinimumYAxis.processingCritical" :firstseriescolor="'#2700CB'" :firstseriesfillcolor="'#C4BCE5'" :secondseriescolor="'#258135'" :secondseriesfillcolor="'#BEE6C5'" :avgdecimals="0"></D3LargeGraph>
+                <D3LargeGraph
+                  v-if="endpoint.metricDetails.metrics.criticalTime"
+                  :isdurationgraph="true"
+                  :firstdataseries="endpoint.metricDetails.metrics.criticalTime"
+                  :seconddataseries="endpoint.metricDetails.metrics.processingTime"
+                  :minimumyaxis="largeGraphsMinimumYAxis.processingCritical"
+                  :firstseriescolor="'#2700CB'"
+                  :firstseriesfillcolor="'#C4BCE5'"
+                  :secondseriescolor="'#258135'"
+                  :secondseriesfillcolor="'#BEE6C5'"
+                  :avgdecimals="0"
+                ></D3LargeGraph>
                 <div class="col-xs-12 no-side-padding graph-values">
                   <div class="col-xs-6 no-side-padding processing-time-values floatleft">
                     <div class="">
@@ -525,7 +559,9 @@ onMounted(() => {
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">
                     <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
+                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">
+                        Scheduled retries <span class="table-header-unit">(msgs/s)</span>
+                      </div>
                     </div>
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">
@@ -535,7 +571,9 @@ onMounted(() => {
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">
                     <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">Critical Time <span class="table-header-unit">(t)</span></div>
+                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">
+                        Critical Time <span class="table-header-unit">(t)</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -665,7 +703,9 @@ onMounted(() => {
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">
                     <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">Scheduled retries <span class="table-header-unit">(msgs/s)</span></div>
+                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">
+                        Scheduled retries <span class="table-header-unit">(msgs/s)</span>
+                      </div>
                     </div>
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">
@@ -675,7 +715,9 @@ onMounted(() => {
                   </div>
                   <div class="col-xs-2 col-xl-1 no-side-padding">
                     <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">Critical Time <span class="table-header-unit">(t)</span></div>
+                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">
+                        Critical Time <span class="table-header-unit">(t)</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -684,7 +726,12 @@ onMounted(() => {
 
                 <div class="row">
                   <div class="col-xs-12 no-side-padding">
-                    <div class="row box endpoint-row" v-for="(messageType, id) in endpoint.messageTypes" :key="id" ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage">
+                    <div
+                      class="row box endpoint-row"
+                      v-for="(messageType, id) in endpoint.messageTypes"
+                      :key="id"
+                      ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage"
+                    >
                       <div class="col-xs-12 no-side-padding">
                         <div class="row">
                           <div class="col-xs-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
@@ -774,7 +821,16 @@ onMounted(() => {
                   </div>
                 </div>
                 <div class="row list-pagination">
-                  <ul uib-pagination ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage" total-items="endpoint.messageTypesTotalItems" ng-model="endpoint.messageTypesPage" items-per-page="endpoint.messageTypesItemsPerPage" max-size="10" boundary-link-numbers="true" ng-change="updateUrl()"></ul>
+                  <ul
+                    uib-pagination
+                    ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage"
+                    total-items="endpoint.messageTypesTotalItems"
+                    ng-model="endpoint.messageTypesPage"
+                    items-per-page="endpoint.messageTypesItemsPerPage"
+                    max-size="10"
+                    boundary-link-numbers="true"
+                    ng-change="updateUrl()"
+                  ></ul>
                 </div>
               </div>
             </div>

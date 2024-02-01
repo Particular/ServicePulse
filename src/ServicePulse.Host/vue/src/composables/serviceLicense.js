@@ -3,10 +3,14 @@ import { useGetDayDiffFromToday } from "./formatter";
 import { useFetchFromServiceControl } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast.js";
 
-const subscriptionExpiring = '<div><strong>Platform license expires soon</strong><div>Once the license expires you\'ll no longer be able to continue using the Particular Service Platform.</div><a href="#/configuration" class="btn btn-warning">View license details</a></div>';
-const upgradeProtectionExpiring = '<div><strong>Upgrade protection expires soon</strong><div>Once upgrade protection expires, you\'ll no longer have access to support or new product versions</div><a href="#/configuration" class="btn btn-warning">View license details</a></div>';
-const upgradeProtectionExpired = '<div><strong>Upgrade protection expired</strong><div>Once upgrade protection expires, you\'ll no longer have access to support or new product versions</div><a href="#/configuration" class="btn btn-warning">View license details</a></div>';
-const trialExpiring = '<div ><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you\'ll need to extend your license.</div><a href="http://particular.net/extend-your-trial?p=servicepulse" class="btn btn-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="#/configuration" class="btn btn-light">View license details</a></div>';
+const subscriptionExpiring =
+  '<div><strong>Platform license expires soon</strong><div>Once the license expires you\'ll no longer be able to continue using the Particular Service Platform.</div><a href="#/configuration" class="btn btn-warning">View license details</a></div>';
+const upgradeProtectionExpiring =
+  '<div><strong>Upgrade protection expires soon</strong><div>Once upgrade protection expires, you\'ll no longer have access to support or new product versions</div><a href="#/configuration" class="btn btn-warning">View license details</a></div>';
+const upgradeProtectionExpired =
+  '<div><strong>Upgrade protection expired</strong><div>Once upgrade protection expires, you\'ll no longer have access to support or new product versions</div><a href="#/configuration" class="btn btn-warning">View license details</a></div>';
+const trialExpiring =
+  '<div ><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you\'ll need to extend your license.</div><a href="http://particular.net/extend-your-trial?p=servicepulse" class="btn btn-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="#/configuration" class="btn btn-light">View license details</a></div>';
 
 export const license = reactive({
   edition: "",
@@ -39,10 +43,10 @@ export const licenseStatus = reactive({
   warningLevel: "",
 });
 
-export function useLicense() {
+export async function useLicense() {
   watch(
     () => license.license_status,
-    async (newValue, oldValue) => {
+    (newValue, oldValue) => {
       const checkForWarnings = oldValue !== null ? newValue && newValue != oldValue : newValue !== null;
       if (checkForWarnings) {
         displayWarningMessage(newValue);
@@ -50,40 +54,35 @@ export function useLicense() {
     }
   );
 
-  return getLicense(license)
-    .then((lic) => {
-      Object.assign(license, lic);
-      license.licenseEdition = computed(() => {
-        return license.license_type && license.edition ? ", " + license.edition : "";
-      });
-      license.formattedInstanceName = computed(() => {
-        return license.instance_name || "Upgrade ServiceControl to v3.4.0+ to see more information about this license";
-      });
-      license.formattedExpirationDate = computed(() => {
-        return license.expiration_date ? new Date(license.expiration_date.replace("Z", "")).toLocaleDateString() : "";
-      });
-      license.formattedUpgradeProtectionExpiration = computed(() => {
-        return license.upgrade_protection_expiration ? new Date(license.upgrade_protection_expiration.replace("Z", "")).toLocaleDateString() : "";
-      });
-      return license;
-    })
-    .then((lic) => {
-      licenseStatus.isSubscriptionLicense = isSubscriptionLicense(lic);
-      licenseStatus.isUpgradeProtectionLicense = isUpgradeProtectionLicense(lic);
-      licenseStatus.isTrialLicense = lic.trial_license;
-      licenseStatus.isPlatformExpired = lic.license_status === "InvalidDueToExpiredSubscription";
-      licenseStatus.isPlatformTrialExpiring = lic.license_status === "ValidWithExpiringTrial";
-      licenseStatus.isPlatformTrialExpired = lic.license_status === "InvalidDueToExpiredTrial";
-      licenseStatus.isInvalidDueToUpgradeProtectionExpired = lic.license_status === "InvalidDueToExpiredUpgradeProtection";
-      licenseStatus.isValidWithExpiredUpgradeProtection = lic.license_status === "ValidWithExpiredUpgradeProtection";
-      licenseStatus.isValidWithExpiringUpgradeProtection = lic.license_status === "ValidWithExpiringUpgradeProtection";
-      licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft(lic);
-      licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft(lic);
-      licenseStatus.trialDaysLeft = getTrialDaysLeft(lic);
-      licenseStatus.warningLevel = getLicenseWarningLevel(lic.license_status);
-      licenseStatus.isExpired = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isInvalidDueToUpgradeProtectionExpired;
-      return lic;
-    });
+  const lic = await getLicense(license);
+  Object.assign(license, lic);
+  license.licenseEdition = computed(() => {
+    return license.license_type && license.edition ? ", " + license.edition : "";
+  });
+  license.formattedInstanceName = computed(() => {
+    return license.instance_name || "Upgrade ServiceControl to v3.4.0+ to see more information about this license";
+  });
+  license.formattedExpirationDate = computed(() => {
+    return license.expiration_date ? new Date(license.expiration_date.replace("Z", "")).toLocaleDateString() : "";
+  });
+  license.formattedUpgradeProtectionExpiration = computed(() => {
+    return license.upgrade_protection_expiration ? new Date(license.upgrade_protection_expiration.replace("Z", "")).toLocaleDateString() : "";
+  });
+  licenseStatus.isSubscriptionLicense = isSubscriptionLicense(license);
+  licenseStatus.isUpgradeProtectionLicense = isUpgradeProtectionLicense(license);
+  licenseStatus.isTrialLicense = license.trial_license;
+  licenseStatus.isPlatformExpired = license.license_status === "InvalidDueToExpiredSubscription";
+  licenseStatus.isPlatformTrialExpiring = license.license_status === "ValidWithExpiringTrial";
+  licenseStatus.isPlatformTrialExpired = license.license_status === "InvalidDueToExpiredTrial";
+  licenseStatus.isInvalidDueToUpgradeProtectionExpired = license.license_status === "InvalidDueToExpiredUpgradeProtection";
+  licenseStatus.isValidWithExpiredUpgradeProtection = license.license_status === "ValidWithExpiredUpgradeProtection";
+  licenseStatus.isValidWithExpiringUpgradeProtection = license.license_status === "ValidWithExpiringUpgradeProtection";
+  licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft(license);
+  licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft(license);
+  licenseStatus.trialDaysLeft = getTrialDaysLeft(license);
+  licenseStatus.warningLevel = getLicenseWarningLevel(license.license_status);
+  licenseStatus.isExpired = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isInvalidDueToUpgradeProtectionExpired;
+  return license;
 }
 
 function getLicenseWarningLevel(licenseStatus) {
@@ -160,13 +159,13 @@ function getUpgradeDaysLeft(license) {
   return " - " + expiringIn + " days left";
 }
 
-function getLicense(emptyLicense) {
-  return useFetchFromServiceControl("license?refresh=true")
-    .then((response) => {
-      return response.json();
-    })
-    .catch((err) => {
-      console.log(err);
-      return emptyLicense;
-    });
+async function getLicense(emptyLicense) {
+  try {
+    const response = await useFetchFromServiceControl("license?refresh=true");
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.log(err);
+    return emptyLicense;
+  }
 }

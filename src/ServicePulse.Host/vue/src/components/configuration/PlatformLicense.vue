@@ -77,7 +77,9 @@ const loading = computed(() => {
                         <exclamation-mark :type="licenseStatus.warningLevel" />
                       </span>
                     </span>
-                    <div class="license-expired-text" v-if="licenseStatus.isValidWithExpiredUpgradeProtection || licenseStatus.isValidWithExpiringUpgradeProtection"><b>Warning:</b> Once upgrade protection expires, you'll no longer have access to support or new product versions.</div>
+                    <div class="license-expired-text" v-if="licenseStatus.isValidWithExpiredUpgradeProtection || licenseStatus.isValidWithExpiringUpgradeProtection">
+                      <b>Warning:</b> Once upgrade protection expires, you'll no longer have access to support or new product versions.
+                    </div>
                     <div class="license-expired-text" v-if="licenseStatus.isInvalidDueToUpgradeProtectionExpired">Your license upgrade protection expired before this version of ServicePulse was released.</div>
                   </div>
                 </template>

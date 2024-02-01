@@ -37,36 +37,35 @@ const noteSaveSuccessful = ref(null);
 const groupDeleteSuccessful = ref(null);
 const groupRetrySuccessful = ref(null);
 
-function getExceptionGroups(classifier) {
-  return useGetExceptionGroups(classifier).then((result) => {
-    if (props.sortFunction) {
-      result.sort(props.sortFunction);
-    }
+async function getExceptionGroups(classifier) {
+  const result = await useGetExceptionGroups(classifier);
+  if (props.sortFunction) {
+    result.sort(props.sortFunction);
+  }
 
-    groupsWithNotesAdded.forEach((note) => {
-      const groupFromSC = result.find((group) => {
-        return group.id === note.groupId;
-      });
-      if (!groupFromSC.comment) {
-        groupFromSC.comment = note.comment;
-      } else {
-        note.alreadySaved = true;
-      }
+  groupsWithNotesAdded.forEach((note) => {
+    const groupFromSC = result.find((group) => {
+      return group.id === note.groupId;
     });
-
-    exceptionGroups.value = result;
-    if (result.length > 0) {
-      // need a map in some ui state for controlling animations
-      exceptionGroups.value = result.map(initializeGroupState);
-
-      if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
-        stats.number_of_exception_groups = exceptionGroups.value.length;
-        emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
-      }
+    if (!groupFromSC.comment) {
+      groupFromSC.comment = note.comment;
+    } else {
+      note.alreadySaved = true;
     }
-
-    groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
   });
+
+  exceptionGroups.value = result;
+  if (result.length > 0) {
+    // need a map in some ui state for controlling animations
+    exceptionGroups.value = result.map(initializeGroupState);
+
+    if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
+      stats.number_of_exception_groups = exceptionGroups.value.length;
+      emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
+    }
+  }
+
+  groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
 }
 function initializeGroupState(group, index) {
   group.index = index;
@@ -79,19 +78,18 @@ function initializeGroupState(group, index) {
   return group;
 }
 
-function loadFailedMessageGroups(groupBy) {
+async function loadFailedMessageGroups(groupBy) {
   loadingData.value = true;
 
   if (groupBy) {
     savedGroupBy = groupBy;
   }
 
-  getExceptionGroups(savedGroupBy).then(() => {
-    loadingData.value = false;
-    initialLoadComplete.value = true;
+  await getExceptionGroups(savedGroupBy);
+  loadingData.value = false;
+  initialLoadComplete.value = true;
 
-    emit("InitialLoadComplete");
-  });
+  emit("InitialLoadComplete");
 }
 
 //delete comment note
@@ -101,43 +99,41 @@ function deleteNote(group) {
   showDeleteNoteModal.value = true;
 }
 
-function saveDeleteNote(group, hideToastMessage) {
+async function saveDeleteNote(group, hideToastMessage) {
   showDeleteNoteModal.value = false;
 
-  useDeleteNote(group.groupid).then((result) => {
-    if (result.message === "success") {
-      noteSaveSuccessful.value = true;
-      if (!hideToastMessage) {
-        useShowToast("info", "Info", "Note deleted succesfully");
-      }
-
-      loadFailedMessageGroups(); //reload the groups
-    } else {
-      noteSaveSuccessful.value = false;
-      if (!hideToastMessage) {
-        useShowToast("error", "Error", "Failed to delete a Note:");
-      }
+  const result = await useDeleteNote(group.groupid);
+  if (result.message === "success") {
+    noteSaveSuccessful.value = true;
+    if (!hideToastMessage) {
+      useShowToast("info", "Info", "Note deleted succesfully");
     }
-  });
+
+    loadFailedMessageGroups(); //reload the groups
+  } else {
+    noteSaveSuccessful.value = false;
+    if (!hideToastMessage) {
+      useShowToast("error", "Error", "Failed to delete a Note:");
+    }
+  }
 }
 
 // create comment note
-function saveNote(group) {
+async function saveNote(group) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
 
   groupsWithNotesAdded.push({ groupId: group.groupid, comment: group.comment });
 
-  useEditOrCreateNote(group.groupid, group.comment).then((result) => {
-    if (result.message === "success") {
-      noteSaveSuccessful.value = true;
-      useShowToast("info", "Info", "Note updated successfully");
-      loadFailedMessageGroups(); //reload the groups
-    } else {
-      noteSaveSuccessful.value = false;
-      useShowToast("error", "Error", "Failed to update Note:" + result.message);
-    }
-  });
+  const result = await useEditOrCreateNote(group.groupid, group.comment);
+  if (result.message === "success") {
+    noteSaveSuccessful.value = true;
+    useShowToast("info", "Info", "Note updated successfully");
+    loadFailedMessageGroups(); //reload the groups
+  } else {
+    noteSaveSuccessful.value = false;
+    useShowToast("error", "Error", "Failed to update Note:" + result.message);
+  }
 }
 
 function saveCreatedNote(group) {
@@ -163,7 +159,7 @@ function deleteGroup(group) {
   showDeleteGroupModal.value = true;
 }
 
-function saveDeleteGroup(group) {
+async function saveDeleteGroup(group) {
   showDeleteGroupModal.value = false;
   group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
 
@@ -171,15 +167,14 @@ function saveDeleteGroup(group) {
   changeRefreshInterval(1000);
 
   saveDeleteNote(group, true); // delete comment note when group is archived
-  useArchiveExceptionGroup(group.groupid).then((result) => {
-    if (result.message === "success") {
-      groupDeleteSuccessful.value = true;
-      useShowToast("info", "info", "Group delete started...");
-    } else {
-      groupDeleteSuccessful.value = false;
-      useShowToast("error", "Error", "Failed to delete the group:" + result.message);
-    }
-  });
+  const result = await useArchiveExceptionGroup(group.groupid);
+  if (result.message === "success") {
+    groupDeleteSuccessful.value = true;
+    useShowToast("info", "info", "Group delete started...");
+  } else {
+    groupDeleteSuccessful.value = false;
+    useShowToast("error", "Error", "Failed to delete the group:" + result.message);
+  }
 }
 
 //create workflow state
@@ -207,7 +202,7 @@ function retryGroup(group) {
   showRetryGroupModal.value = true;
 }
 
-function saveRetryGroup(group) {
+async function saveRetryGroup(group) {
   showRetryGroupModal.value = false;
   group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
 
@@ -215,14 +210,13 @@ function saveRetryGroup(group) {
   changeRefreshInterval(1000);
 
   saveDeleteNote(group, true);
-  useRetryExceptionGroup(group.groupid).then((result) => {
-    if (result.message === "success") {
-      groupRetrySuccessful.value = true;
-    } else {
-      groupRetrySuccessful.value = false;
-      useShowToast("error", "Error", "Failed to retry the group:" + result.message);
-    }
-  });
+  const result = await useRetryExceptionGroup(group.groupid);
+  if (result.message === "success") {
+    groupRetrySuccessful.value = true;
+  } else {
+    groupRetrySuccessful.value = false;
+    useShowToast("error", "Error", "Failed to retry the group:" + result.message);
+  }
 }
 
 var statusesForRetryOperation = ["waiting", "preparing", "queued", "forwarding"];
@@ -246,19 +240,18 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
   }
 };
 
-var acknowledgeGroup = function (group) {
-  useAcknowledgeArchiveGroup(group.id).then((result) => {
-    if (result.message === "success") {
-      if (group.operation_status === "ArchiveCompleted") {
-        useShowToast("info", "Info", "Group deleted succesfully");
-      } else {
-        useShowToast("info", "Info", "Group retried succesfully");
-      }
-      loadFailedMessageGroups(); //reload the groups
+var acknowledgeGroup = async function (group) {
+  const result = await useAcknowledgeArchiveGroup(group.id);
+  if (result.message === "success") {
+    if (group.operation_status === "ArchiveCompleted") {
+      useShowToast("info", "Info", "Group deleted succesfully");
     } else {
-      useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
+      useShowToast("info", "Info", "Group retried succesfully");
     }
-  });
+    loadFailedMessageGroups(); //reload the groups
+  } else {
+    useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
+  }
 };
 
 function isBeingArchived(status) {
@@ -331,7 +324,15 @@ defineExpose({
     <div class="row">
       <div class="col-sm-12 no-mobile-side-padding">
         <div v-if="exceptionGroups.length > 0">
-          <div class="row box box-group wf-{{group.workflow_state.status}} failed-message-group repeat-modify" v-for="(group, index) in exceptionGroups" :key="index" :disabled="group.count == 0" @mouseenter="group.hover2 = true" @mouseleave="group.hover2 = false" @click="navigateToGroup($event, group.id)">
+          <div
+            class="row box box-group wf-{{group.workflow_state.status}} failed-message-group repeat-modify"
+            v-for="(group, index) in exceptionGroups"
+            :key="index"
+            :disabled="group.count == 0"
+            @mouseenter="group.hover2 = true"
+            @mouseleave="group.hover2 = false"
+            @click="navigateToGroup($event, group.id)"
+          >
             <div class="col-sm-12 no-mobile-side-padding">
               <div class="row">
                 <div class="col-sm-12 no-side-padding">
@@ -373,9 +374,29 @@ defineExpose({
                   </div>
                   <div class="row" v-if="!isBeingRetried(group) && !isBeingArchived(group.workflow_state.status)">
                     <div class="col-sm-12 no-side-padding">
-                      <button type="button" class="btn btn-link btn-sm" :disabled="group.count == 0 || isBeingRetried(group)" @mouseenter="group.hover3 = true" @mouseleave="group.hover3 = false" v-if="exceptionGroups.length > 0" @click="retryGroup(group)"><i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry</button>
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm"
+                        :disabled="group.count == 0 || isBeingRetried(group)"
+                        @mouseenter="group.hover3 = true"
+                        @mouseleave="group.hover3 = false"
+                        v-if="exceptionGroups.length > 0"
+                        @click="retryGroup(group)"
+                      >
+                        <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
+                      </button>
 
-                      <button type="button" class="btn btn-link btn-sm" :disabled="group.count == 0 || isBeingRetried(group)" @mouseenter="group.hover3 = true" @mouseleave="group.hover3 = false" v-if="exceptionGroups.length > 0" @click="deleteGroup(group)"><i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp;</i>Delete group</button>
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm"
+                        :disabled="group.count == 0 || isBeingRetried(group)"
+                        @mouseenter="group.hover3 = true"
+                        @mouseleave="group.hover3 = false"
+                        v-if="exceptionGroups.length > 0"
+                        @click="deleteGroup(group)"
+                      >
+                        <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp;</i>Delete group
+                      </button>
                       <button type="button" class="btn btn-link btn-sm" v-if="!group.comment" @click="editNote(group)"><i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note</button>
                       <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="editNote(group)"><i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note</button>
                       <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="deleteNote(group)"><i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp;</i>Remove note</button>
@@ -399,7 +420,16 @@ defineExpose({
 
                                 <div class="col-xs-12 col-sm-6">
                                   <div class="progress bulk-retry-progress" v-if="group.workflow_state.status === 'preparing'">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }">{{ group.workflow_state.total }}%</div>
+                                    <div
+                                      class="progress-bar progress-bar-striped active"
+                                      role="progressbar"
+                                      aria-valuenow="{{group.workflow_state.total}}"
+                                      aria-valuemin="0"
+                                      aria-valuemax="100"
+                                      :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }"
+                                    >
+                                      {{ group.workflow_state.total }}%
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -412,7 +442,16 @@ defineExpose({
                                 <div class="col-xs-3 col-sm-3 retry-op-queued" v-if="group.workflow_state.status === 'queued'">(Queued)</div>
                                 <div class="col-xs-12 col-sm-6">
                                   <div class="progress bulk-retry-progress" v-if="group.workflow_state.status === 'forwarding'">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }">{{ group.workflow_state.total }}%</div>
+                                    <div
+                                      class="progress-bar progress-bar-striped active"
+                                      role="progressbar"
+                                      aria-valuenow="{{group.workflow_state.total}}"
+                                      aria-valuemin="0"
+                                      aria-valuemax="100"
+                                      :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }"
+                                    >
+                                      {{ group.workflow_state.total }}%
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -420,14 +459,21 @@ defineExpose({
                             <li v-if="group.workflow_state.status === 'completed'">
                               <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
                               <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
-                              <div class="danger sc-restart-warning" v-if="group.workflow_state.failed"><i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining messages.</div>
+                              <div class="danger sc-restart-warning" v-if="group.workflow_state.failed">
+                                <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining
+                                messages.
+                              </div>
                             </li>
                           </ul>
 
                           <div class="op-metadata">
-                            <span class="metadata"><i aria-hidden="true" class="fa fa-envelope"></i> {{ group.workflow_state.status === "completed" ? "Messages sent:" : "Messages to send:" }} {{ group.operation_remaining_count || group.count }}</span>
+                            <span class="metadata">
+                              <i aria-hidden="true" class="fa fa-envelope"></i> {{ group.workflow_state.status === "completed" ? "Messages sent:" : "Messages to send:" }} {{ group.operation_remaining_count || group.count }}
+                            </span>
                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <time-since :date-utc="group.operation_start_time"></time-since></span>
-                            <span class="metadata" v-if="group.workflow_state.status === 'completed'"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <time-since :date-utc="group.operation_completion_time"></time-since></span>
+                            <span class="metadata" v-if="group.workflow_state.status === 'completed'"
+                              ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <time-since :date-utc="group.operation_completion_time"></time-since
+                            ></span>
                           </div>
                         </div>
                       </div>
@@ -450,7 +496,16 @@ defineExpose({
                                 </div>
                                 <div class="col-xs-12 col-sm-6">
                                   <div class="progress bulk-retry-progress" v-if="group.workflow_state.status === 'archiveprogressing'">
-                                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{group.workflow_state.total}}" aria-valuemin="0" aria-valuemax="100" :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }">{{ group.workflow_state.total }} %</div>
+                                    <div
+                                      class="progress-bar progress-bar-striped active"
+                                      role="progressbar"
+                                      aria-valuenow="{{group.workflow_state.total}}"
+                                      aria-valuemin="0"
+                                      aria-valuemax="100"
+                                      :style="{ 'min-width': '2em', width: group.workflow_state.total + '%' }"
+                                    >
+                                      {{ group.workflow_state.total }} %
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -498,7 +553,14 @@ defineExpose({
   </div>
   <!--modal display - create new/edit comment note-->
   <Teleport to="#modalDisplay">
-    <FailedMessageGroupNoteEdit v-if="showEditNoteModal === true" v-bind="selectedGroup" :group_id="selectedGroup.groupid" @cancelEditNote="showEditNoteModal = false" @createNoteConfirmed="saveCreatedNote" @editNoteConfirmed="saveEditedNote"></FailedMessageGroupNoteEdit>
+    <FailedMessageGroupNoteEdit
+      v-if="showEditNoteModal === true"
+      v-bind="selectedGroup"
+      :group_id="selectedGroup.groupid"
+      @cancelEditNote="showEditNoteModal = false"
+      @createNoteConfirmed="saveCreatedNote"
+      @editNoteConfirmed="saveEditedNote"
+    ></FailedMessageGroupNoteEdit>
   </Teleport>
 
   <!--modal display - delete group-->

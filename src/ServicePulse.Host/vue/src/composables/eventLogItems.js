@@ -1,7 +1,7 @@
 ﻿import { useFetchFromServiceControl } from "./serviceServiceControlUrls";
 
-export function getEventLogItems() {
-  return useFetchFromServiceControl("eventlogitems").then((response) => {
-    return response.json();
-  });
+export async function getEventLogItems() {
+  const response = await useFetchFromServiceControl("eventlogitems");
+  const data = await response.json();
+  return data;
 }

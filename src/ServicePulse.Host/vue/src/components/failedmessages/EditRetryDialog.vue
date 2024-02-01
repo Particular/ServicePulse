@@ -12,7 +12,7 @@ const settings = defineProps({
 });
 
 let panel = ref();
-let message = ref();
+let localMessage = ref();
 let origMessageBody = undefined;
 
 let showEditAndRetryConfirmation = ref(false);
@@ -22,14 +22,14 @@ let showEditRetryGenericError = ref(false);
 const id = computed(() => settings.id);
 const messageBody = computed(() => settings.message.messageBody);
 
-watch(messageBody, async (newValue) => {
+watch(messageBody, (newValue) => {
   if (newValue !== origMessageBody) {
-    message.value.isBodyChanged = true;
+    localMessage.value.isBodyChanged = true;
   }
   if (newValue === "") {
-    message.value.isBodyEmpty = true;
+    localMessage.value.isBodyEmpty = true;
   } else {
-    message.value.isBodyEmpty = false;
+    localMessage.value.isBodyEmpty = false;
   }
 });
 
@@ -42,12 +42,12 @@ function confirmEditAndRetry() {
 }
 
 function confirmCancel() {
-  if (message.value.isBodyChanged) {
+  if (localMessage.value.isBodyChanged) {
     showCancelConfirmation.value = true;
     return;
   }
 
-  if (message.value.headers.some((header) => header.isChanged)) {
+  if (localMessage.value.headers.some((header) => header.isChanged)) {
     showCancelConfirmation.value = true;
     return;
   }
@@ -56,12 +56,12 @@ function confirmCancel() {
 }
 
 function resetBodyChanges() {
-  message.value.messageBody = origMessageBody;
-  message.value.isBodyChanged = false;
+  localMessage.value.messageBody = origMessageBody;
+  localMessage.value.isBodyChanged = false;
 }
 
 function findHeadersByKey(key) {
-  return message.value.headers.find((header) => header.key === key);
+  return localMessage.value.headers.find((header) => header.key === key);
 }
 
 function getContentType() {
@@ -79,39 +79,37 @@ function getMessageIntent() {
 }
 
 function removeHeadersMarkedAsRemoved() {
-  message.value.headers.forEach((header, index, object) => {
+  localMessage.value.headers.forEach((header, index, object) => {
     if (header.isMarkedAsRemoved) {
       object.splice(index, 1);
     }
   });
 }
 
-function retryEditedMessage() {
+async function retryEditedMessage() {
   removeHeadersMarkedAsRemoved();
-  return useRetryEditedMessage([id.value], message)
-    .then(() => {
-      message.value.retried = true;
-      return emit("retried", settings);
-    })
-    .catch(() => {
-      showEditAndRetryConfirmation.value = false;
-      showEditRetryGenericError.value = true;
-      return;
-    });
+  try {
+    await useRetryEditedMessage([id.value], localMessage);
+    localMessage.value.retried = true;
+    return emit("retried", settings);
+  } catch {
+    showEditAndRetryConfirmation.value = false;
+    showEditRetryGenericError.value = true;
+  }
 }
 
 function initializeMessageBodyAndHeaders() {
   origMessageBody = settings.message.messageBody;
-  message.value = settings.message;
-  message.value.isBodyEmpty = false;
-  message.value.isBodyChanged = false;
+  localMessage.value = settings.message;
+  localMessage.value.isBodyEmpty = false;
+  localMessage.value.isBodyChanged = false;
 
   var contentType = getContentType();
-  message.value.bodyContentType = contentType;
-  message.value.isContentTypeSupported = isContentTypeSupported(contentType);
+  localMessage.value.bodyContentType = contentType;
+  localMessage.value.isContentTypeSupported = isContentTypeSupported(contentType);
 
   var messageIntent = getMessageIntent();
-  message.value.isEvent = messageIntent.value === "Publish";
+  localMessage.value.isEvent = messageIntent.value === "Publish";
 
   settings.message.headers.forEach((header, index) => {
     header.isLocked = false;
@@ -125,7 +123,7 @@ function initializeMessageBodyAndHeaders() {
       header.isSensitive = true;
     }
 
-    message.value.headers[index] = header;
+    localMessage.value.headers[index] = header;
   });
 }
 
@@ -164,27 +162,32 @@ onMounted(() => {
                   </div>
                   <div class="row msg-editor-content">
                     <div class="col-sm-12 no-side-padding">
-                      <div class="row alert alert-warning" v-if="message?.isEvent">
-                        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in altering the system behavior.</div>
+                      <div class="row alert alert-warning" v-if="localMessage?.isEvent">
+                        <div class="col-sm-12">
+                          <i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
+                          altering the system behavior.
+                        </div>
                       </div>
-                      <div class="row alert alert-warning" v-if="!message?.isContentTypeSupported || message.bodyUnavailable">
-                        <div class="col-sm-12"><i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ message?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.</div>
+                      <div class="row alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage.bodyUnavailable">
+                        <div class="col-sm-12">
+                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ localMessage?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.
+                        </div>
                       </div>
                       <div class="row alert alert-danger" v-if="showEditRetryGenericError">
                         <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
                       </div>
                       <table class="table" v-if="panel === 1">
                         <tbody>
-                          <tr class="interactiveList" v-for="(header, index) in message.headers" :key="index">
+                          <tr class="interactiveList" v-for="(header, index) in localMessage.headers" :key="index">
                             <MessageHeader :header="header"></MessageHeader>
                           </tr>
                         </tbody>
                       </table>
-                      <div v-if="panel === 2 && !message.bodyUnavailable" style="height: calc(100% - 260px)">
-                        <textarea class="form-control" :disabled="!message.isContentTypeSupported" v-model="message.messageBody"></textarea>
-                        <span class="empty-error" v-if="message.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
-                        <span class="reset-body" v-if="message.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
-                        <div class="alert alert-info" v-if="message.panel === 2 && message.bodyUnavailable">{{ message.bodyUnavailable }}</div>
+                      <div v-if="panel === 2 && !localMessage.bodyUnavailable" style="height: calc(100% - 260px)">
+                        <textarea class="form-control" :disabled="!localMessage.isContentTypeSupported" v-model="localMessage.messageBody"></textarea>
+                        <span class="empty-error" v-if="localMessage.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
+                        <span class="reset-body" v-if="localMessage.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
+                        <div class="alert alert-info" v-if="localMessage.panel === 2 && localMessage.bodyUnavailable">{{ localMessage.bodyUnavailable }}</div>
                       </div>
                     </div>
                   </div>
@@ -193,7 +196,7 @@ onMounted(() => {
             </div>
             <div class="modal-footer" v-if="!showEditAndRetryConfirmation && !showCancelConfirmation">
               <button class="btn btn-default" @click="confirmCancel()">Cancel</button>
-              <button class="btn btn-primary" :disabled="message?.isBodyEmpty || message?.bodyUnavailable" @click="confirmEditAndRetry()">Retry</button>
+              <button class="btn btn-primary" :disabled="localMessage?.isBodyEmpty || localMessage?.bodyUnavailable" @click="confirmEditAndRetry()">Retry</button>
             </div>
             <div class="modal-footer cancel-confirmation" v-if="showCancelConfirmation">
               <div>Are you sure you want to cancel? Any changes you made will be lost.</div>

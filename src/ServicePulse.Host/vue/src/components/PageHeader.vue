@@ -37,62 +37,62 @@ const displayDanger = computed(() => {
         <ul class="nav navbar-nav navbar-inverse">
           <li :class="{ active: subIsActive('/dashboard', true) }">
             <RouterLink :to="{ name: 'dashboard' }">
-              <i class="fa fa-dashboard icon-white"></i>
+              <i class="fa fa-dashboard icon-white" title="Dashboard"></i>
               <span class="navbar-label">Dashboard</span>
             </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/endpoints') }">
             <a :href="`${baseUrl}a/#/endpoints`">
-              <i class="fa fa-heartbeat icon-white"></i>
+              <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
               <span class="navbar-label">Heartbeats</span>
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
-          <li :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
+          <li v-if="useIsMonitoringEnabled()" :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
             <a :href="`${baseUrl}a/#/monitoring`">
-              <i class="fa pa-monitoring icon-white"></i>
+              <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
               <span class="navbar-label">Monitoring</span>
               <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
             </a>
           </li>
           <li :class="{ active: subIsActive('/monitoring') }">
             <RouterLink :to="{ name: 'monitoring' }">
-              <i class="fa pa-monitoring icon-white"></i>
+              <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
               <span class="navbar-label">Monitoring New</span>
               <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
             </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/failed-messages') }">
             <RouterLink :to="{ name: 'failed-messages' }">
-              <i class="fa fa-envelope icon-white"></i>
+              <i class="fa fa-envelope icon-white" title="Failed Messages"></i>
               <span class="navbar-label">Failed Messages</span>
               <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/a/#/custom-checks') }">
             <a :href="`${baseUrl}a/#/custom-checks`">
-              <i class="fa fa-check icon-white"></i>
+              <i class="fa fa-check icon-white" title="Custom Checks"></i>
               <span class="navbar-label">Custom Checks</span>
               <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
             </a>
           </li>
           <li :class="{ active: subIsActive('/a/#/events') }">
             <a :href="`${baseUrl}a/#/events`">
-              <i class="fa fa-list-ul icon-white"></i>
+              <i class="fa fa-list-ul icon-white" title="Events"></i>
               <span class="navbar-label">Events</span>
             </a>
           </li>
           <li :class="{ active: subIsActive('/configuration') }">
             <RouterLink :to="{ name: 'license' }" exact>
-              <i class="fa fa-cog icon-white"></i>
-              <span class="navbar-label">Configuration&nbsp;</span>
-              <exclamation-mark :class="'no-margin'" :type="'warning'" v-if="displayWarn" />
+              <i class="fa fa-cog icon-white" title="Configuration"></i>
+              <span class="navbar-label">Configuration</span>
+              <exclamation-mark :type="'warning'" v-if="displayWarn" />
               <exclamation-mark :type="'danger'" v-if="displayDanger" />
             </RouterLink>
           </li>
           <li>
             <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
-              <i class="fa fa-comment"></i>
+              <i class="fa fa-comment" title="Feedback"></i>
               <span class="navbar-label">Feedback</span>
             </a>
           </li>

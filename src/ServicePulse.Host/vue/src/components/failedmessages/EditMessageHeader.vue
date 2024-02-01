@@ -9,7 +9,7 @@ let origHeaderValue = undefined;
 const header = ref(settings.header);
 
 const headerValue = computed(() => settings.header.value);
-watch(headerValue, async (newValue) => {
+watch(headerValue, (newValue) => {
   header.value.isChanged = newValue !== origHeaderValue;
 });
 
@@ -49,10 +49,10 @@ onMounted(() => {
     <input :class="{ 'header-removed': header.isMarkedAsRemoved }" class="form-control" :disabled="header.isLocked" v-model="header.value" />
   </td>
   <td>
-    <a v-if="!header.isLocked && !header.isMarkedAsRemoved" href="#" @click="markHeaderAsRemoved()">
+    <a v-if="!header.isLocked && !header.isMarkedAsRemoved" @click="markHeaderAsRemoved()">
       <i class="fa fa-trash" tooltip="Protected system header"></i>
     </a>
-    <a v-if="header.isChanged" href="#" @click="resetHeaderChanges()">
+    <a v-if="header.isChanged" @click="resetHeaderChanges()">
       <i class="fa fa-undo" tooltip="Protected system header"></i>
     </a>
   </td>
