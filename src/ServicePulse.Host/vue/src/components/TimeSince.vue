@@ -26,14 +26,14 @@ function updateText() {
 }
 
 onMounted(() => {
-  interval = setInterval(function () {
+  interval = window.setInterval(function () {
     updateText();
   }, 5000);
 
   updateText();
 });
 
-onUnmounted(() => clearInterval(interval));
+onUnmounted(() => window.clearInterval(interval));
 </script>
 
 <template>

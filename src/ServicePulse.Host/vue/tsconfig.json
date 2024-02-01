@@ -1,21 +1,11 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*.ts", "src/**/*.vue"],
-  "exclude": ["node_modules", "src/**/__tests__/*"],
-  "compilerOptions": {
-    "allowJs": true,
-    "alwaysStrict": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
     },
-    "target": "es2020",
-    "strict": true,
-    "sourceMap": true,
-    "lib": ["es2022", "dom", "es6"]
-  }
+    {
+      "path": "./tsconfig.app.json"
+    },
+  ]
 }
-
