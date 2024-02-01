@@ -22,5 +22,6 @@ module.exports = {
     "prefer-spread": "warn",
     "no-var": "warn",
     "prefer-const": "warn",
+    eqeqeq: ["warn", "smart"],
   },
 };

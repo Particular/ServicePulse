@@ -6,6 +6,7 @@
     "allowJs": true,
     "alwaysStrict": true,
     "esModuleInterop": true,
+    "isolatedModules": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
@@ -13,6 +14,7 @@
     },
     "target": "es2020",
     "strict": true,
+    "sourceMap": true,
     "lib": ["es2022", "dom", "es6"]
   }
 }

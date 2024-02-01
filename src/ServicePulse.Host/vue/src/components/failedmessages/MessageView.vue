@@ -15,7 +15,7 @@ import EditRetryDialog from "./EditRetryDialog.vue";
 
 let refreshInterval = undefined;
 let pollingFaster = false;
-let panel = ref();
+const panel = ref();
 const route = useRoute();
 const failedMessage = ref({});
 const configuration = ref([]);
@@ -39,7 +39,7 @@ function loadFailedMessage() {
       return response.json();
     })
     .then((data) => {
-      var message = data;
+      const message = data;
       message.archived = message.status === "archived";
       message.resolved = message.status === "resolved";
       message.retried = message.status === "retryIssued";
@@ -89,7 +89,7 @@ function getEditAndRetryConfig() {
 }
 
 function updateMessageDeleteDate() {
-  var countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
+  const countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
   failedMessage.value.delete_soon = countdown < moment();
   failedMessage.value.deleted_in = countdown.format();
 }
@@ -151,7 +151,7 @@ function downloadHeadersAndBody() {
         return;
       }
 
-      var message = data[0];
+      const message = data[0];
       failedMessage.value.headers = message.headers;
       failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
 
@@ -213,7 +213,7 @@ function formatXml(xml) {
       }
     }
 
-    let shift = ["\n"]; // array of shifts
+    const shift = ["\n"]; // array of shifts
 
     for (let ix = 0; ix < 100; ix++) {
       shift.push(shift[ix] + space);
@@ -224,7 +224,7 @@ function formatXml(xml) {
 
   const indent = "\t";
 
-  let arr = xml
+  const arr = xml
     .replace(/>\s*</gm, "><")
     .replace(/</g, "~::~<")
     .replace(/\s*xmlns([=:])/g, "~::~xmlns$1")
@@ -313,7 +313,7 @@ function exportMessage() {
   txtStr += failedMessage.value.exception.stack_trace;
 
   txtStr += "\n\nHEADERS";
-  for (var i = 0; i < failedMessage.value.headers.length; i++) {
+  for (let i = 0; i < failedMessage.value.headers.length; i++) {
     txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
   }
 

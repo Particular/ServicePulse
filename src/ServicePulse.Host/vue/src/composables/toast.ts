@@ -1,7 +1,5 @@
 import ToastPopup from "../components/ToastPopup.vue";
-import { useToast } from "vue-toastification";
-import type { ToastOptions } from "vue-toastification/dist/types/types";
-import { TYPE } from "vue-toastification/src/ts/constants";
+import { TYPE, useToast } from "vue-toastification";
 
 export function useShowToast(type: TYPE, title: string, message: string, doNotUseTimeout: boolean = false) {
   const toast = useToast();
@@ -17,13 +15,8 @@ export function useShowToast(type: TYPE, title: string, message: string, doNotUs
     },
   };
 
-  const options: ToastOptions = {
+  toast(content, {
+    timeout: doNotUseTimeout ? false : undefined,
     type: type,
-  };
-
-  if (doNotUseTimeout) {
-    options.timeout = false;
-  }
-
-  toast(content, options);
+  });
 }
