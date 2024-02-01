@@ -1,6 +1,7 @@
 {
   "name": "service-pulse",
   "version": "1.0.0",
+  "type":"module",
   "description": "Production monitoring for distributed systems.",
   "main": "index.html",
   "scripts": {

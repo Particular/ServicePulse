@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
-import { environment, newVersions, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";
-import { serviceControlUrl, monitoringUrl } from "../composables/serviceServiceControlUrls.js";
+import { environment, newVersions, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
+import { serviceControlUrl, monitoringUrl } from "../composables/serviceServiceControlUrls";
 
 const isMonitoringEnabled = computed(() => {
   return monitoringUrl.value !== "!" && monitoringUrl.value !== "" && monitoringUrl.value !== null && monitoringUrl.value !== undefined;

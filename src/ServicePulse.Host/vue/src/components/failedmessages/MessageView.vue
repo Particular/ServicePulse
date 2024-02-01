@@ -5,7 +5,7 @@ import { useFetchFromServiceControl } from "../../composables/serviceServiceCont
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
-import { useShowToast } from "../../composables/toast.js";
+import { useShowToast } from "../../composables/toast";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
