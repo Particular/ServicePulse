@@ -102,4 +102,8 @@ const displayDanger = computed(() => {
   </nav>
 </template>
 
-<style></style>
+<style scoped>
+.navbar > .container-fluid > div {
+  margin: 0 1em;
+}
+</style>
