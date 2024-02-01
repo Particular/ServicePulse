@@ -44,6 +44,7 @@ onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
+  //TODO: need to remove all D3 elements that are appended to the body rather than this view
 });
 
 onMounted(async () => {
@@ -224,14 +225,6 @@ a:hover {
   background-image: -o-linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
   background-image: linear-gradient(top, hsl(11, 95%, 76%), hsl(11, 95%, 61%));
   border-color: #fa5833;
-}
-
-body {
-  background-color: #e9eaed;
-  color: #181919;
-  overflow-y: scroll;
-  padding-top: 100px;
-  padding-bottom: 100px;
 }
 
 pre {

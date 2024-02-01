@@ -33,11 +33,13 @@ export function getArrowLabel(pointToTheLeft = false, caption = "") {
       }
 
       div.style.visibility = "visible";
+      div.style.display = null;
       div.style.setProperty("--avg-tooltip-background-color", color); //by using properties the color of the 'before' content pseudo element can be updated.
     },
 
     hide: function () {
       div.style.visibility = "hidden";
+      div.style.display = "none";
     },
 
     value: function (value, unit) {
