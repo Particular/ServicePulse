@@ -248,6 +248,7 @@ a.btn-feedback:focus {
   }
 }
 
+/* TODO move this to the page/control that it's used in*/
 .pa-monitoring {
   mask-image: url("@/assets/monitoring.svg");
   background-color: #929e9e;
