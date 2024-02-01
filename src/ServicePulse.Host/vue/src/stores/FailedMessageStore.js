@@ -14,7 +14,7 @@ export const useFailedMessageStore = defineStore("FailedMessageStore", {
   },
   getters: {
     serviceControlId: (state) => state.failedMessagesList[0].id,
-    errorCount: (state) => state.failedMessagesList[0].count,
+    errorCount: (state) => state.failedMessagesList[0]!=null?state.failedMessagesList[0].count:0,
     isFailedMessagesEmpty: (state) => state.errorCount === 0,
   },
 });
