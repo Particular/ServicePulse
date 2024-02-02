@@ -18,7 +18,7 @@ import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable
             <div class="row">
               <div class="col-sm-12">
                 <h1>Events</h1>
-                <EventLogItem v-for="item in items" :eventLogItem="item" :key="item.id" />
+                <EventLogItem v-for="item of items" :eventLogItem="item" :key="item.id" />
               </div>
             </div>
           </template>

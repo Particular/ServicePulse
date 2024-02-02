@@ -26,7 +26,7 @@ function changeItemsPerPage(option) {
         <span class="caret" />
       </button>
       <ul class="dropdown-menu">
-        <li v-for="option in options" :key="option">
+        <li v-for="option of options" :key="option">
           <a @click.prevent="changeItemsPerPage(option)" href="#">{{ option }}</a>
         </li>
       </ul>
