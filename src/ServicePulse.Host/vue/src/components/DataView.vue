@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
+import ItemsPerPage from "../components/ItemsPerPage.vue";
 import PaginationStrip from "../components/PaginationStrip.vue";
 const props = defineProps({
   apiUrl: String,
@@ -30,10 +31,6 @@ const items = ref([]);
 const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
 const totalCount = ref(0);
-
-const showItemsPerPage = computed(() => {
-  return props.showItemsPerPage;
-});
 
 function changeItemsPerPage(value) {
   itemsPerPage.value = value;
@@ -85,20 +82,7 @@ onUnmounted(() => {
 <template>
   <slot name="data" v-bind="items"></slot>
   <div class="row">
-    <div v-if="showItemsPerPage" class="pagination col-md-2">
-      <div class="dropdown">
-        <label class="control-label">Items Per Page:</label>
-        <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          {{ itemsPerPage }}
-          <span class="caret" />
-        </button>
-        <ul class="dropdown-menu">
-          <li v-for="option in props.itemsPerPageOptions" :key="option">
-            <a @click.prevent="changeItemsPerPage(option)" href="#">{{ option }}</a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <ItemsPerPage v-if="showItemsPerPage" :current="itemsPerPage" :options="itemsPerPageOptions" @changed="changeItemsPerPage" />
     <PaginationStrip :totalCount="totalCount" :itemsPerPage="itemsPerPage" :pageNumber="pageNumber" :showPagination="showPagination" @pageChanged="setPage" />
   </div>
   <slot name="footer" :count="totalCount"></slot>
