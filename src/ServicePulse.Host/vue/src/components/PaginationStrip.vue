@@ -14,10 +14,6 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  showPagination: {
-    type: Boolean,
-    default: true,
-  },
 });
 
 const numberOfPages = computed(() => {
@@ -25,7 +21,7 @@ const numberOfPages = computed(() => {
 });
 
 const showPagination = computed(() => {
-  return props.showPagination && numberOfPages.value > 1;
+  return numberOfPages.value > 1;
 });
 
 const emit = defineEmits(["pageChanged"]);

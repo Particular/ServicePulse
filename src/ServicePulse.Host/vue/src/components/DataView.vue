@@ -83,7 +83,7 @@ onUnmounted(() => {
   <slot name="data" v-bind="items"></slot>
   <div class="row">
     <ItemsPerPage v-if="showItemsPerPage" :current="itemsPerPage" :options="itemsPerPageOptions" @changed="changeItemsPerPage" />
-    <PaginationStrip :totalCount="totalCount" :itemsPerPage="itemsPerPage" :pageNumber="pageNumber" :showPagination="showPagination" @pageChanged="setPage" />
+    <PaginationStrip v-if="showPagination" :totalCount="totalCount" :itemsPerPage="itemsPerPage" :pageNumber="pageNumber" @pageChanged="setPage" />
   </div>
   <slot name="footer" :count="totalCount"></slot>
 </template>
