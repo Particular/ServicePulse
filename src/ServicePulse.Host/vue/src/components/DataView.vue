@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 import ItemsPerPage from "../components/ItemsPerPage.vue";
 import PaginationStrip from "../components/PaginationStrip.vue";
@@ -31,6 +31,14 @@ const items = ref([]);
 const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
 const totalCount = ref(0);
+
+watch(
+  () => props.autoRefresh,
+  () => {
+    stopRefreshTimer();
+    startRefreshTimer();
+  }
+);
 
 function changeItemsPerPage(value) {
   itemsPerPage.value = value;
