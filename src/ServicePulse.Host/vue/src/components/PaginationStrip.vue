@@ -14,6 +14,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  pageBuffer: {
+    type: Number,
+    default: 5,
+  },
 });
 
 const numberOfPages = computed(() => {
@@ -26,14 +30,6 @@ const showPagination = computed(() => {
 
 const emit = defineEmits(["pageChanged"]);
 
-function nextPage() {
-  setPage(props.pageNumber + 1);
-}
-
-function previousPage() {
-  setPage(props.pageNumber - 1);
-}
-
 function setPage(page) {
   if (page > numberOfPages.value) {
     page = numberOfPages.value;
@@ -43,51 +39,105 @@ function setPage(page) {
   emit("pageChanged", page);
 }
 
-function calculatePageNumbers() {
-  if (numberOfPages.value <= 10) {
-    return Array.from(Array(numberOfPages.value), (_, index) => index + 1);
+const doublePageBuffer = computed(() => props.pageBuffer * 2);
+
+const pages = computed(() => {
+  const pages = [];
+  pages.push({
+    label: "Previous",
+    click: () => setPage(props.pageNumber - 1),
+    key: "Previous Page",
+    class: {
+      disabled: props.pageNumber === 1,
+    },
+  });
+
+  if (props.pageNumber > props.pageBuffer + 1 && numberOfPages.value >= doublePageBuffer.value) {
+    pages.push(
+      {
+        label: "1",
+        click: () => setPage(1),
+        key: "First Page",
+      },
+      {
+        label: "...",
+        click: () => setPage(props.pageNumber - props.pageBuffer),
+        key: `Back ${props.pageBuffer}`,
+      }
+    );
   }
 
-  let startIndex = props.pageNumber - 5;
-  let endIndex = props.pageNumber + 5;
-  if (startIndex < 0) {
+  let startIndex = props.pageNumber - props.pageBuffer;
+  let endIndex = props.pageNumber + props.pageBuffer;
+  if (startIndex < 1) {
     // Increase the end index by the offset
     endIndex -= startIndex;
-    startIndex = 0;
+    startIndex = 1;
   }
 
-  if (endIndex > numberOfPages.value) {
+  let showEnd = false;
+  if (endIndex >= numberOfPages.value) {
     endIndex = numberOfPages.value;
+    showEnd = true;
   }
 
-  return Array.from(Array(endIndex - startIndex), (_, index) => index + startIndex + 1);
-}
+  // All of the surrounding pages
+  for (let n = startIndex; n <= endIndex; n++) {
+    pages.push({
+      label: `${n}`,
+      click: () => setPage(n),
+      key: `Page ${n}`,
+      class: {
+        active: n === props.pageNumber,
+      },
+    });
+  }
+
+  if (!showEnd) {
+    pages.push(
+      {
+        label: "...",
+        click: () => setPage(props.pageNumber + props.pageBuffer),
+        key: `Forward ${props.pageBuffer}`,
+      },
+      {
+        label: `${numberOfPages.value}`,
+        click: () => setPage(numberOfPages.value),
+        key: `Last Page`,
+      }
+    );
+  }
+
+  pages.push({
+    label: "Next",
+    click: () => setPage(props.pageNumber + 1),
+    key: "Next Page",
+    class: {
+      disabled: props.pageNumber === numberOfPages.value,
+    },
+  });
+
+  return pages;
+});
 </script>
 
 <template>
   <div v-if="showPagination" class="col align-self-center">
     <ul class="pagination justify-content-center">
-      <li class="page-item" :class="{ disabled: pageNumber === 1 }">
-        <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
-      </li>
-      <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
-        <a @click.prevent="setPage(1)" class="page-link" href="#">1</a>
-      </li>
-      <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
-        <a @click.prevent="setPage(pageNumber - 5)" class="page-link" href="#">...</a>
-      </li>
-      <li v-for="n in calculatePageNumbers()" class="page-item" :class="{ active: pageNumber === n }" :key="n">
-        <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
-      </li>
-      <li v-if="numberOfPages - pageNumber > 5" class="page-item">
-        <a @click.prevent="setPage(pageNumber + 5)" class="page-link" href="#">...</a>
-      </li>
-      <li v-if="numberOfPages - pageNumber > 5" class="page-item">
-        <a @click.prevent="setPage(numberOfPages)" class="page-link" href="#">{{ numberOfPages }}</a>
-      </li>
-      <li class="page-item" :class="{ disabled: pageNumber === numberOfPages }">
-        <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
+      <li v-for="page of pages" class="page-item" :key="page.key">
+        <a class="page-link" @click="page.click" :class="page.class">{{ page.label }}</a>
       </li>
     </ul>
   </div>
 </template>
+
+<style>
+.page-link {
+  cursor: pointer;
+}
+
+.page-link.disabled {
+  cursor: not-allowed;
+  pointer-events: all !important;
+}
+</style>
