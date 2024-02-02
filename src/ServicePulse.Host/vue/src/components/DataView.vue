@@ -13,7 +13,7 @@ const props = defineProps({
     type: Number,
     default: 50,
   },
-  autoRefresh: {
+  autoRefreshSeconds: {
     type: Number,
   },
   showPagination: {
@@ -33,7 +33,7 @@ const itemsPerPage = ref(props.itemsPerPage);
 const totalCount = ref(0);
 
 watch(
-  () => props.autoRefresh,
+  () => props.autoRefreshSeconds,
   () => {
     stopRefreshTimer();
     startRefreshTimer();
@@ -64,10 +64,10 @@ async function loadData() {
 }
 
 function startRefreshTimer() {
-  if (props.autoRefresh) {
+  if (props.autoRefreshSeconds) {
     refreshTimer.value = setInterval(() => {
       loadData();
-    }, props.autoRefresh);
+    }, props.autoRefreshSeconds * 1000);
   }
 }
 

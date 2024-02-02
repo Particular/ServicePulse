@@ -13,7 +13,7 @@ import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable
     <ServiceControlNotAvailable />
     <template v-if="connectionState.connected">
       <div class="events events-view">
-        <DataView api-url="eventlogitems" :auto-refresh="5000" :show-items-per-page="true" :items-per-page="20">
+        <DataView api-url="eventlogitems" :auto-refresh-seconds="5" :show-items-per-page="true" :items-per-page="20">
           <template #data="items">
             <div class="row">
               <div class="col-sm-12">

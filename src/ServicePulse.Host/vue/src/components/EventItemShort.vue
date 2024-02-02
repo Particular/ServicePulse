@@ -5,7 +5,7 @@ import EventLogItem from "../components/EventLogItem.vue";
 
 <template>
   <div class="events">
-    <DataView api-url="eventlogitems" :auto-refresh="5000" :itemsPerPage="10" :show-pagination="false">
+    <DataView api-url="eventlogitems" :auto-refresh-seconds="5" :itemsPerPage="10" :show-pagination="false">
       <template #data="items">
         <div class="col-12">
           <h6>Last 10 events</h6>
