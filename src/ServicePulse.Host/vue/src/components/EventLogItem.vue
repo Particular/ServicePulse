@@ -10,7 +10,7 @@ const router = useRouter();
 function navigateToEvent(eventLogItem) {
   switch (eventLogItem.category) {
     case "Endpoints":
-      router.push("/configuration/endpoint-connection");
+      router.push({ name: "endpoint-connection" });
       break;
     case "HeartbeatMonitoring":
       window.location = "/a/#/endpoints";
@@ -22,17 +22,18 @@ function navigateToEvent(eventLogItem) {
       window.location = "/a/#/endpoints";
       break;
     case "MessageFailures":
-      var newlocation = "/failed-messages";
       if (eventLogItem.related_to?.length && eventLogItem.related_to[0].search("message") > 0) {
-        newlocation = "/failed-messages" + eventLogItem.related_to[0];
+        const messageId = eventLogItem.related_to[0].substring(9);
+        router.push({ name: "message", params: { id: messageId } });
+      } else {
+        router.push({ name: "failed-messages" });
       }
-      router.push(newlocation);
       break;
     case "Recoverability":
-      router.push("/failed-messages");
+      router.push({ name: "failed-messages" });
       break;
     case "MessageRedirects":
-      router.push("/configuration/retry-redirects");
+      router.push({ name: "retry-redirects" });
       break;
     default:
   }
