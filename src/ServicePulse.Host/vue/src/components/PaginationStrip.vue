@@ -121,7 +121,7 @@ const pages = computed(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
 .page-link {
   cursor: pointer;
 }
