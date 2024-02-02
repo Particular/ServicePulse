@@ -35,7 +35,7 @@ const pages = computed(() => {
   const pages = [];
   pages.push({
     label: "Previous",
-    page: pageNumber.value - 1,
+    page: Math.max(pageNumber.value - 1, 1),
     key: "Previous Page",
     class: {
       disabled: pageNumber.value === 1,
@@ -100,7 +100,7 @@ const pages = computed(() => {
 
   pages.push({
     label: "Next",
-    page: pageNumber.value + 1,
+    page: Math.min(pageNumber.value + 1, numberOfPages.value),
     key: "Next Page",
     class: {
       disabled: pageNumber.value === numberOfPages.value,
