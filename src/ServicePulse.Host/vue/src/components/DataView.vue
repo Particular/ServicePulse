@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
-import Pagination from "../components/Pagination.vue";
+import PaginationStrip from "../components/PaginationStrip.vue";
 const props = defineProps({
   apiUrl: String,
   itemsPerPageOptions: {
@@ -99,7 +99,7 @@ onUnmounted(() => {
         </ul>
       </div>
     </div>
-    <Pagination :totalCount="totalCount" :itemsPerPage="itemsPerPage" :pageNumber="pageNumber" :showPagination="showPagination" @pageChanged="setPage" />
+    <PaginationStrip :totalCount="totalCount" :itemsPerPage="itemsPerPage" :pageNumber="pageNumber" :showPagination="showPagination" @pageChanged="setPage" />
   </div>
   <slot name="footer" :count="totalCount"></slot>
 </template>
