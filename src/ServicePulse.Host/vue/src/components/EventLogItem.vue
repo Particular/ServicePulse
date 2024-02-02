@@ -23,7 +23,7 @@ function navigateToEvent(eventLogItem) {
       break;
     case "MessageFailures":
       var newlocation = "/failed-messages";
-      if (eventLogItem.related_to && eventLogItem.related_to.length > 0 && eventLogItem.related_to[0].search("message") > 0) {
+      if (eventLogItem.related_to?.length && eventLogItem.related_to[0].search("message") > 0) {
         newlocation = "/failed-messages" + eventLogItem.related_to[0];
       }
       router.push(newlocation);
@@ -66,8 +66,8 @@ function iconSubClasses(eventItem) {
       <div class="row">
         <div class="col-1">
           <span class="fa-stack fa-lg">
-            <i class="fa fa-stack-2x" :class="iconClasses(eventLogItem)"></i>
-            <i v-if="eventLogItem.severity === 'error' || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse" :class="iconSubClasses(eventLogItem)"></i>
+            <i class="fa fa-stack-2x" :class="iconClasses(eventLogItem)" />
+            <i v-if="eventLogItem.severity === 'error' || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse" :class="iconSubClasses(eventLogItem)" />
           </span>
         </div>
         <div class="col-9">

@@ -133,7 +133,7 @@ onUnmounted(() => {
         <label class="control-label">Items Per Page:</label>
         <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           {{ itemsPerPage }}
-          <span class="caret"></span>
+          <span class="caret" />
         </button>
         <ul class="dropdown-menu">
           <li v-for="option in props.itemsPerPageOptions" :key="option">
@@ -153,7 +153,7 @@ onUnmounted(() => {
         <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
           <a @click.prevent="setPage(pageNumber - 5)" class="page-link" href="#">...</a>
         </li>
-        <li v-for="n in calculatePageNumbers()" class="page-item" :class="{ active: pageNumber == n }" :key="n">
+        <li v-for="n in calculatePageNumbers()" class="page-item" :class="{ active: pageNumber === n }" :key="n">
           <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
         </li>
         <li v-if="numberOfPages - pageNumber > 5" class="page-item">
