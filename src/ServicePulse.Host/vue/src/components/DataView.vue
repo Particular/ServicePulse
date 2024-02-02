@@ -14,7 +14,6 @@ const props = defineProps({
   },
   autoRefresh: {
     type: Number,
-    default: 0,
   },
   showPagination: {
     type: Boolean,
@@ -103,7 +102,7 @@ async function loadData() {
 }
 
 function startRefreshTimer() {
-  if (props.autoRefresh > 0) {
+  if (props.autoRefresh) {
     refreshTimer.value = setInterval(() => {
       loadData();
     }, props.autoRefresh);
