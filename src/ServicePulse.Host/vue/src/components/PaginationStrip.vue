@@ -10,14 +10,15 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  pageNumber: {
-    type: Number,
-    required: true,
-  },
   pageBuffer: {
     type: Number,
     default: 5,
   },
+});
+
+const pageNumber = defineModel({
+  type: Number,
+  required: true,
 });
 
 const numberOfPages = computed(() => {
@@ -28,47 +29,36 @@ const showPagination = computed(() => {
   return numberOfPages.value > 1;
 });
 
-const emit = defineEmits(["pageChanged"]);
-
-function setPage(page) {
-  if (page > numberOfPages.value) {
-    page = numberOfPages.value;
-  } else if (page < 1) {
-    page = 1;
-  }
-  emit("pageChanged", page);
-}
-
 const doublePageBuffer = computed(() => props.pageBuffer * 2);
 
 const pages = computed(() => {
   const pages = [];
   pages.push({
     label: "Previous",
-    click: () => setPage(props.pageNumber - 1),
+    page: pageNumber.value - 1,
     key: "Previous Page",
     class: {
-      disabled: props.pageNumber === 1,
+      disabled: pageNumber.value === 1,
     },
   });
 
-  if (props.pageNumber > props.pageBuffer + 1 && numberOfPages.value >= doublePageBuffer.value) {
+  if (pageNumber.value > props.pageBuffer + 1 && numberOfPages.value >= doublePageBuffer.value) {
     pages.push(
       {
         label: "1",
-        click: () => setPage(1),
+        page: 1,
         key: "First Page",
       },
       {
         label: "...",
-        click: () => setPage(props.pageNumber - props.pageBuffer),
+        page: pageNumber.value - props.pageBuffer,
         key: `Back ${props.pageBuffer}`,
       }
     );
   }
 
-  let startIndex = props.pageNumber - props.pageBuffer;
-  let endIndex = props.pageNumber + props.pageBuffer;
+  let startIndex = pageNumber.value - props.pageBuffer;
+  let endIndex = pageNumber.value + props.pageBuffer;
   if (startIndex < 1) {
     // Increase the end index by the offset
     endIndex -= startIndex;
@@ -85,10 +75,10 @@ const pages = computed(() => {
   for (let n = startIndex; n <= endIndex; n++) {
     pages.push({
       label: `${n}`,
-      click: () => setPage(n),
+      page: n,
       key: `Page ${n}`,
       class: {
-        active: n === props.pageNumber,
+        active: n === pageNumber.value,
       },
     });
   }
@@ -97,23 +87,23 @@ const pages = computed(() => {
     pages.push(
       {
         label: "...",
-        click: () => setPage(props.pageNumber + props.pageBuffer),
+        page: pageNumber.value + props.pageBuffer,
         key: `Forward ${props.pageBuffer}`,
       },
       {
         label: `${numberOfPages.value}`,
-        click: () => setPage(numberOfPages.value),
-        key: `Last Page`,
+        page: numberOfPages.value,
+        key: "Last Page",
       }
     );
   }
 
   pages.push({
     label: "Next",
-    click: () => setPage(props.pageNumber + 1),
+    page: pageNumber.value + 1,
     key: "Next Page",
     class: {
-      disabled: props.pageNumber === numberOfPages.value,
+      disabled: pageNumber.value === numberOfPages.value,
     },
   });
 
@@ -125,7 +115,7 @@ const pages = computed(() => {
   <div v-if="showPagination" class="col align-self-center">
     <ul class="pagination justify-content-center">
       <li v-for="page of pages" class="page-item" :key="page.key">
-        <a class="page-link" @click="page.click" :class="page.class">{{ page.label }}</a>
+        <a class="page-link" @click="pageNumber = page.page" :class="page.class">{{ page.label }}</a>
       </li>
     </ul>
   </div>

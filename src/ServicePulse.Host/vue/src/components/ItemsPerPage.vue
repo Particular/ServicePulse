@@ -4,17 +4,12 @@ defineProps({
     type: Array,
     default: () => [20, 35, 50, 75],
   },
-  current: {
-    type: Number,
-    default: 50,
-  },
 });
 
-const emit = defineEmits(["changed"]);
-
-function changeItemsPerPage(option) {
-  emit("changed", option);
-}
+const current = defineModel({
+  type: Number,
+  default: 50,
+});
 </script>
 
 <template>
@@ -27,7 +22,7 @@ function changeItemsPerPage(option) {
       </button>
       <ul class="dropdown-menu">
         <li v-for="option of options" :key="option">
-          <a @click.prevent="changeItemsPerPage(option)" href="#">{{ option }}</a>
+          <a @click.prevent="current = option" href="#">{{ option }}</a>
         </li>
       </ul>
     </div>

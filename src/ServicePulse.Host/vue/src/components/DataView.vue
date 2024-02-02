@@ -40,15 +40,8 @@ watch(
   }
 );
 
-function changeItemsPerPage(value) {
-  itemsPerPage.value = value;
-  loadData();
-}
-
-function setPage(page) {
-  pageNumber.value = page;
-  loadData();
-}
+watch(itemsPerPage, () => loadData());
+watch(pageNumber, () => loadData());
 
 async function loadData() {
   try {
@@ -90,8 +83,8 @@ onUnmounted(() => {
 <template>
   <slot name="data" v-bind="items"></slot>
   <div class="row">
-    <ItemsPerPage v-if="showItemsPerPage" :current="itemsPerPage" :options="itemsPerPageOptions" @changed="changeItemsPerPage" />
-    <PaginationStrip v-if="showPagination" :totalCount="totalCount" :itemsPerPage="itemsPerPage" :pageNumber="pageNumber" @pageChanged="setPage" />
+    <ItemsPerPage v-if="showItemsPerPage" v-model="itemsPerPage" :options="itemsPerPageOptions" />
+    <PaginationStrip v-if="showPagination" v-model="pageNumber" :totalCount="totalCount" :itemsPerPage="itemsPerPage" />
   </div>
   <slot name="footer" :count="totalCount"></slot>
 </template>
