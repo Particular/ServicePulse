@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps({
+defineProps({
   options: {
     type: Array,
     default: () => [20, 35, 50, 75],

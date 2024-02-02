@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
 import ItemsPerPage from "../components/ItemsPerPage.vue";
 import PaginationStrip from "../components/PaginationStrip.vue";
