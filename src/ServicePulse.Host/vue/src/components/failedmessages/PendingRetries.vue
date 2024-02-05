@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
 import { useEndpoints } from "../../composables/serviceEndpoints";
