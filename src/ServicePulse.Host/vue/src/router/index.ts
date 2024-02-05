@@ -80,7 +80,7 @@ const router = createRouter({
         {
           name: "license",
           path: "",
-          component: () => import("../components/configuration/PlatformLicense.vue"),
+          component: ()=> import("@/components/configuration/PlatformLicense.vue"),
         },
         {
           name: "health-check-notifications",
