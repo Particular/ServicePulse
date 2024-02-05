@@ -42,7 +42,7 @@ function selectToAddress(item) {
 }
 
 function create() {
-  var redirect = {
+  const redirect = {
     sourceQueue: sourceQueue.value,
     targetQueue: targetQueue.value,
     immediatelyRetry: immediatelyRetry.value,
@@ -51,7 +51,7 @@ function create() {
 }
 
 function edit() {
-  var redirect = {
+  const redirect = {
     redirectId: model.message_redirect_id,
     sourceQueue: sourceQueue.value,
     targetQueue: targetQueue.value,

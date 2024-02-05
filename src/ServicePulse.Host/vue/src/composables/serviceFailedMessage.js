@@ -6,7 +6,7 @@ export async function useUnarchiveMessage(ids) {
     if (response.ok === false) {
       throw response.statusText;
     }
-    var result = {
+    const result = {
       status: response.status,
       statusText: response.statusText,
       data: response,
@@ -24,7 +24,7 @@ export async function useArchiveMessage(ids) {
     if (response.ok === false) {
       throw response.statusText;
     }
-    var result = {
+    const result = {
       status: response.status,
       statusText: response.statusText,
       data: response,
@@ -45,7 +45,7 @@ export async function useRetryMessages(ids) {
 }
 
 export async function useRetryEditedMessage(ids, editedMessage) {
-  var payload = { message_body: editedMessage.value.messageBody, message_headers: editedMessage.value.headers };
+  const payload = { message_body: editedMessage.value.messageBody, message_headers: editedMessage.value.headers };
   try {
     const response = await usePostToServiceControl("edit/" + ids, payload);
     if (!response.ok) {

@@ -24,11 +24,11 @@ function saveSortOption(sortCriteria, sortDirection) {
 }
 
 function loadSavedSortOption() {
-  let criteria = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`);
-  let direction = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`);
+  const criteria = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`);
+  const direction = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`);
 
   if (criteria && direction) {
-    var sortBy = getSortOptions().find((sort) => {
+    const sortBy = getSortOptions().find((sort) => {
       return sort.description.toLowerCase() === criteria.toLowerCase();
     });
     return { sort: getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy.description };

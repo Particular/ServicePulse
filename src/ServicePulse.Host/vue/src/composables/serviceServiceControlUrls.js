@@ -115,7 +115,7 @@ export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl)
   window.localStorage.removeItem("scu");
   window.localStorage.removeItem("mu");
 
-  let newSearch = "?scu=" + newServiceControlUrl.value + "&mu=" + newMonitoringUrl.value;
+  const newSearch = "?scu=" + newServiceControlUrl.value + "&mu=" + newMonitoringUrl.value;
   console.debug("updateConnections - new query string: ", newSearch);
   window.location.search = newSearch;
 }
@@ -123,7 +123,7 @@ export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl)
 function getParams() {
   if (!window.location.search) return params;
 
-  var searchParams = window.location.search.split("&");
+  const searchParams = window.location.search.split("&");
   var params = [];
   searchParams.forEach((p) => {
     p = p.startsWith("?") ? p.substring(1, p.length) : p;

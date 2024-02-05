@@ -9,7 +9,7 @@ const settings = defineProps({
 const grpcomment = ref(settings.comment);
 
 function createNote() {
-  var updatedGroup = {
+  const updatedGroup = {
     groupid: settings.groupid,
     comment: grpcomment.value,
   };
@@ -17,7 +17,7 @@ function createNote() {
 }
 
 function editNote() {
-  var updatedGroup = {
+  const updatedGroup = {
     groupid: settings.groupid,
     comment: grpcomment.value,
   };
