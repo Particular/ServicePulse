@@ -90,7 +90,7 @@ function iconSubClasses(eventItem) {
 
 <style scoped>
 .fa-stack-2x {
-  font-size: 24px;
+  font-size: 1.5em;
 }
 
 .box {
@@ -104,12 +104,11 @@ function iconSubClasses(eventItem) {
 }
 
 p.lead {
-  padding-bottom: 10px;
   word-wrap: break-word;
   color: #181919 !important;
-  font-size: 14px !important;
+  font-size: 1em !important;
   font-weight: bold !important;
-  margin-bottom: 3px;
+  margin-bottom: 0.2em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -118,14 +117,14 @@ p.lead {
 .row.box-event-item,
 .row.box-event-item .col-xs-12,
 .row.box.box-event-item .col-12 {
-  padding-top: 8px;
-  padding-bottom: 5px;
+  padding-top: 0.5em;
+  padding-bottom: 0.3em;
   width: 100%;
 }
 
 .col-icon {
   display: table-cell;
-  width: 80px;
+  width: 5em;
   vertical-align: middle;
 }
 
@@ -136,30 +135,30 @@ p.lead {
 }
 
 .col-icon .fa-stack {
-  top: -8px;
+  top: -0.5em;
 }
 
 .col-message p.lead {
-  padding-bottom: 2px;
+  padding-bottom: 0.125em;
 }
 
 .col-timestamp {
   display: table-cell;
-  width: 200px;
+  width: 8em;
   vertical-align: middle;
   padding-top: 0;
-  padding-bottom: 4px;
+  padding-bottom: 0.125em;
 }
 
 .box-event-item {
-  padding-top: 12px;
-  padding-bottom: 12px;
+  padding-top: 0.75em;
+  padding-bottom: 0.75em;
 }
 
 .box {
   box-shadow: none;
   margin: 0 !important;
-  padding-bottom: 10px;
+  padding-bottom: 0.625em;
 }
 
 .box-event-item .fa-stack {
