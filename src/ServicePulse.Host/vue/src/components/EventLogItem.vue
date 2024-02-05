@@ -123,11 +123,6 @@ p.lead {
   width: 100%;
 }
 
-.events-list {
-  display: table;
-  width: 100%;
-}
-
 .col-icon {
   display: table-cell;
   width: 80px;

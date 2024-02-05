@@ -1,6 +1,7 @@
 ﻿<script setup>
 import DataView from "../components/DataView.vue";
 import EventLogItem from "../components/EventLogItem.vue";
+import { RouterLink } from "vue-router";
 </script>
 
 <template>
@@ -15,7 +16,7 @@ import EventLogItem from "../components/EventLogItem.vue";
       <template #footer="{ count }">
         <div v-if="count > 10" class="row text-center">
           <div class="col-12">
-            <a class="btn btn-default btn-secondary btn-all-events" href="/#/events">View all events</a>
+            <RouterLink :to="{ name: 'events' }" class="btn btn-default btn-secondary btn-all-events">View all events</RouterLink>
           </div>
         </div>
       </template>

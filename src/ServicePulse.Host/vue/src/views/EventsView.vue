@@ -32,8 +32,4 @@ import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable
 .events {
   margin-top: 30px;
 }
-
-.events-view {
-  margin-top: 0;
-}
 </style>
