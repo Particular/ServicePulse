@@ -96,7 +96,7 @@ After doing the above steps, navigate to `http://localhost:1331` to see the Serv
  - `dev` - runs `vite` that starts development server doing hot reload over source files
  - `build` - runs build script that outputs files to `..\app` folder
  - `lint` - checks with eslint all vue, ts and js files
- - `preview` - runs `build` and starts static http server that enables smoketesting production build
+ - `type-check` - runs TypeScript in no emit mode
 
 #### AngularJS
 
