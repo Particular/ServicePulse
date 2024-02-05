@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { license, licenseStatus } from "./../../composables/serviceLicense.js";
+import { license, licenseStatus } from "./../../composables/serviceLicense";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";

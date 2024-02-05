@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { connectionState } from "../../composables/serviceServiceControl.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState } from "../../composables/serviceServiceControl";
 import { useEndpoints } from "../../composables/serviceEndpoints";
-import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
-import { useShowToast } from "../../composables/toast.js";
+import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useShowToast } from "../../composables/toast";
 import { useCookies } from "vue3-cookies";
 import OrderBy from "./OrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
@@ -66,7 +66,7 @@ function clearSelectedQueue() {
 
 function loadPendingRetryMessages() {
   let startDate = new Date(0);
-  let endDate = new Date();
+  const endDate = new Date();
 
   switch (selectedPeriod.value) {
     case "Retried in the last 2 Hours":
@@ -118,7 +118,7 @@ async function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhra
     messages.value = data;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;

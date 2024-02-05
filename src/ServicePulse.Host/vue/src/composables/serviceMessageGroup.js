@@ -1,4 +1,4 @@
-import { useDeleteFromServiceControl, usePostToServiceControl, useFetchFromServiceControl } from "./serviceServiceControlUrls.js";
+import { useDeleteFromServiceControl, usePostToServiceControl, useFetchFromServiceControl } from "./serviceServiceControlUrls";
 
 export async function useGetExceptionGroups(classifier) {
   try {
@@ -7,7 +7,7 @@ export async function useGetExceptionGroups(classifier) {
     return data;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;
@@ -22,7 +22,7 @@ export async function useGetArchiveGroups(classifier) {
     return data;
   } catch (err) {
     console.log(err);
-    var result = {
+    const result = {
       message: "error",
     };
     return result;

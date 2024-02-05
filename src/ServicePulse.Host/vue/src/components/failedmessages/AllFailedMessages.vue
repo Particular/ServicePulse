@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { connectionState } from "../../composables/serviceServiceControl.js";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
-import { useShowToast } from "../../composables/toast.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState } from "../../composables/serviceServiceControl";
+import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useShowToast } from "../../composables/toast";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
@@ -93,7 +93,7 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
       messages.value = data;
     } catch (err) {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -147,7 +147,7 @@ function exportSelected() {
     let d = {};
 
     if (type == "array" || type == "object") {
-      for (let i in obj) {
+      for (const i in obj) {
         const newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
         d = Object.assign(d, newD);
       }
@@ -167,12 +167,12 @@ function exportSelected() {
   const selectedMessages = messageList.value.getSelectedMessages();
   const propertiesToSkip = ["hover", "selected", "hover2", "$$hashKey", "panel", "edit_of", "edited"];
 
-  var preparedMessagesForExport = [];
-  for (var i = 0; i < selectedMessages.length; i++) {
+  const preparedMessagesForExport = [];
+  for (let i = 0; i < selectedMessages.length; i++) {
     preparedMessagesForExport.push(parseObject(selectedMessages[i], propertiesToSkip));
   }
 
-  var csvStr = toCSV(preparedMessagesForExport);
+  const csvStr = toCSV(preparedMessagesForExport);
   useDownloadFile(csvStr, "text/csv", "failedMessages.csv");
 }
 

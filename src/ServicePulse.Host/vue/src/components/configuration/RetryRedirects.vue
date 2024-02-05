@@ -1,15 +1,15 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
-import { useShowToast } from "../../composables/toast.js";
+import { useShowToast } from "../../composables/toast";
 import TimeSince from "../TimeSince.vue";
-import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, useRetryPendingMessagesForQueue } from "../../composables/serviceRedirects.js";
+import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, useRetryPendingMessagesForQueue } from "../../composables/serviceRedirects";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
 const isExpired = licenseStatus.isExpired;

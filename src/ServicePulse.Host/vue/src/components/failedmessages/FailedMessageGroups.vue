@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { connectionState } from "../../composables/serviceServiceControl.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState } from "../../composables/serviceServiceControl";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
@@ -80,7 +80,7 @@ function classifierChanged(classifier) {
 
 function loadDefaultGroupingClassifier() {
   const cookies = useCookies().cookies;
-  let cookieGrouping = cookies.get("failed_groups_classification");
+  const cookieGrouping = cookies.get("failed_groups_classification");
 
   if (cookieGrouping) {
     return cookieGrouping;

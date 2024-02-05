@@ -1,8 +1,8 @@
 import { reactive, onMounted, watch, computed } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
-import { useServiceProductUrls } from "./serviceProductUrls.js";
+import { useServiceProductUrls } from "./serviceProductUrls";
 import { useFetchFromServiceControl, useFetchFromMonitoring, serviceControlUrl, monitoringUrl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
-import { useShowToast } from "./toast.js";
+import { useShowToast } from "./toast";
 
 export const stats = reactive({
   active_endpoints: 0,

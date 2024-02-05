@@ -1,7 +1,7 @@
 import { reactive, computed, watch } from "vue";
 import { useGetDayDiffFromToday } from "./formatter";
 import { useFetchFromServiceControl } from "./serviceServiceControlUrls";
-import { useShowToast } from "./toast.js";
+import { useShowToast } from "./toast";
 
 const subscriptionExpiring =
   '<div class="license-warning"><strong>Platform license expires soon</strong><div>Once the license expires you\'ll no longer be able to continue using the Particular Service Platform.</div><a href="#/configuration" class="btn btn-license-warning">View license details</a></div>';
