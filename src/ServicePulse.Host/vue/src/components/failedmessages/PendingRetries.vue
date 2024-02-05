@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
 import { useEndpoints } from "../../composables/serviceEndpoints";
-import { useFetchFromServiceControl, usePostToServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, usePatchToServiceControl, usePostToServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { useCookies } from "vue3-cookies";
 import OrderBy from "./OrderBy.vue";
@@ -106,7 +106,7 @@ async function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhra
     messages.value.forEach((previousMessage) => {
       const receivedMessage = data.find((m) => m.id === previousMessage.id);
       if (receivedMessage) {
-        if (previousMessage.last_modified == receivedMessage.last_modified) {
+        if (previousMessage.last_modified === receivedMessage.last_modified) {
           receivedMessage.submittedForRetrial = previousMessage.submittedForRetrial;
           receivedMessage.resolved = previousMessage.resolved;
         }
@@ -207,7 +207,7 @@ function nextPage() {
 
 function previousPage() {
   pageNumber.value = pageNumber.value - 1;
-  if (pageNumber.value == 0) {
+  if (pageNumber.value === 0) {
     pageNumber.value = 1;
   }
   loadPendingRetryMessages();

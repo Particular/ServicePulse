@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { VueFlow, useVueFlow, MarkerType } from "@vue-flow/core";
+import { MarkerType, useVueFlow, VueFlow } from "@vue-flow/core";
 import TimeSince from "../TimeSince.vue";
 
 const props = defineProps({

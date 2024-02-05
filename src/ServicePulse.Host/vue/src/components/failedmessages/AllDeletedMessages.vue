@@ -1,10 +1,10 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, onUnmounted } from "vue";
+import { onBeforeMount, onMounted, onUnmounted, ref } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
 import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
-import { useRoute, onBeforeRouteLeave } from "vue-router";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
@@ -85,7 +85,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
         messages.value.forEach((previousMessage) => {
           const receivedMessage = data.find((m) => m.id === previousMessage.id);
           if (receivedMessage) {
-            if (previousMessage.last_modified == receivedMessage.last_modified) {
+            if (previousMessage.last_modified === receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
               receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
             }
@@ -150,7 +150,7 @@ function nextPage() {
 
 function previousPage() {
   pageNumber.value = pageNumber.value - 1;
-  if (pageNumber.value == 0) {
+  if (pageNumber.value === 0) {
     pageNumber.value = 1;
   }
   loadMessages();

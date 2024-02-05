@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
 
 const emit = defineEmits(["sortUpdated"]);
@@ -48,7 +48,7 @@ function getSortFunction(selector, dir) {
 }
 
 function sortUpdated(sort) {
-  selectedSort.value = sort.description + (sort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value = sort.description + (sort.dir === "desc" ? " (Descending)" : "");
   saveSortOption(sort.description, sort.dir);
 
   sort.sort = getSortFunction(sort.selector, sort.dir);
@@ -58,7 +58,7 @@ function sortUpdated(sort) {
 
 function setSortOptions(isInitialLoad) {
   const savedSort = loadSavedSortOption();
-  selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value = savedSort.description + (savedSort.dir === "desc" ? " (Descending)" : "");
 
   emit("sortUpdated", savedSort, isInitialLoad);
 }

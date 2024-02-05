@@ -121,10 +121,10 @@ export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl)
 }
 
 function getParams() {
+  const params = [];
   if (!window.location.search) return params;
 
   const searchParams = window.location.search.split("&");
-  var params = [];
   searchParams.forEach((p) => {
     p = p.startsWith("?") ? p.substring(1, p.length) : p;
     const singleParam = p.split("=");

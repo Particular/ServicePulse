@@ -1,4 +1,4 @@
-import { reactive, computed, watch } from "vue";
+import { computed, reactive, watch } from "vue";
 import { useGetDayDiffFromToday } from "./formatter";
 import { useFetchFromServiceControl } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast";
@@ -12,7 +12,7 @@ const upgradeProtectionExpired =
 const trialExpiring =
   '<div class="license-warning"><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you\'ll need to extend your license.</div><a href="http://particular.net/extend-your-trial?p=servicepulse" class="btn btn-license-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="#/configuration" class="btn btn-license-warning-light">View license details</a></div>';
 
-export var license = reactive({
+export let license = reactive({
   edition: "",
   licenseEdition: "",
   expiration_date: undefined,
@@ -45,7 +45,7 @@ export const licenseStatus = reactive({
 
 export async function useLicense() {
   watch(license, (newValue, oldValue) => {
-    const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
+    const checkForWarnings = oldValue !== null ? newValue && newValue.license_status !== oldValue.license_status : newValue !== null;
     if (checkForWarnings) {
       displayWarningMessage(newValue.license_status);
     }

@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { licenseStatus } from "../../composables/serviceLicense";
-import { useServiceControlConnections, connectionState } from "../../composables/serviceServiceControl";
+import { connectionState, useServiceControlConnections } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";

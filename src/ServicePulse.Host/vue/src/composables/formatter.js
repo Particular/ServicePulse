@@ -40,8 +40,7 @@ export function useGetDayDiffFromToday(value) {
 }
 
 export function useFormatLargeNumber(value, decimals) {
-  let exp,
-    suffixes = ["k", "M", "G", "T", "P", "E"];
+  const suffixes = ["k", "M", "G", "T", "P", "E"];
 
   value = Number(value);
 
@@ -53,7 +52,7 @@ export function useFormatLargeNumber(value, decimals) {
     return round(value, decimals);
   }
 
-  exp = Math.floor(Math.log(value) / Math.log(1000));
+  const exp = Math.floor(Math.log(value) / Math.log(1000));
 
   return round(value / Math.pow(1000, exp), decimals) + suffixes[exp - 1];
 }

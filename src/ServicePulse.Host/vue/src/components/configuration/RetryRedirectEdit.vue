@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 
 const emit = defineEmits(["create", "edit", "cancel"]);
 
@@ -19,7 +19,7 @@ const sourceQueueIsValid = computed(() => {
   return sourceQueue.value ? true : false;
 });
 const targetQueueIsValid = computed(() => {
-  return targetQueue.value && targetQueue.value != sourceQueue.value;
+  return targetQueue.value && targetQueue.value !== sourceQueue.value;
 });
 
 const formIsValid = computed(() => {
@@ -31,7 +31,7 @@ const notKnownQueue = computed(() => {
 });
 
 const noKnownQueues = computed(() => {
-  return model.queues.length == 0;
+  return model.queues.length === 0;
 });
 
 const sourceQueueTooltip = "Choose a queue that is known to Service Control";

@@ -1,12 +1,12 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
 import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
-import { useRoute, onBeforeRouteLeave } from "vue-router";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useArchiveExceptionGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import OrderBy from "./OrderBy.vue";
@@ -81,7 +81,7 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
         messages.value.forEach((previousMessage) => {
           const receivedMessage = data.find((m) => m.id === previousMessage.id);
           if (receivedMessage) {
-            if (previousMessage.last_modified == receivedMessage.last_modified) {
+            if (previousMessage.last_modified === receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
               receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
             }
@@ -113,7 +113,7 @@ async function retryRequested(id) {
   changeRefreshInterval(1000);
   useShowToast("info", "Info", "Message retry requested...");
   await useRetryMessages([id]);
-  const message = messages.value.find((m) => m.id == id);
+  const message = messages.value.find((m) => m.id === id);
   if (message) {
     message.retryInProgress = true;
     message.selected = false;
@@ -141,18 +141,18 @@ function exportSelected() {
   }
 
   function parseObject(obj, propertiesToSkip, path) {
-    if (path == undefined) path = "";
+    if (path === undefined) path = "";
 
     const type = typeof obj;
     let d = {};
 
-    if (type == "array" || type == "object") {
+    if (type === "array" || type === "object") {
       for (const i in obj) {
         const newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
         d = Object.assign(d, newD);
       }
       return d;
-    } else if (type == "number" || type == "string" || type == "boolean" || type == "null") {
+    } else if (type === "number" || type === "string" || type === "boolean" || type === "null") {
       const endPath = path.substr(0, path.length - 1);
       if (propertiesToSkip && propertiesToSkip.includes(endPath)) {
         return d;
@@ -215,7 +215,7 @@ function nextPage() {
 
 function previousPage() {
   pageNumber.value = pageNumber.value - 1;
-  if (pageNumber.value == 0) {
+  if (pageNumber.value === 0) {
     pageNumber.value = 1;
   }
   loadMessages();
@@ -340,7 +340,7 @@ onMounted(() => {
         <div class="row">
           <div class="col align-self-center">
             <ul class="pagination justify-content-center">
-              <li class="page-item" :class="{ disabled: pageNumber == 1 }">
+              <li class="page-item" :class="{ disabled: pageNumber === 1 }">
                 <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
               </li>
               <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
@@ -349,7 +349,7 @@ onMounted(() => {
               <li v-if="pageNumber > 5 && numberOfPages > 10" class="page-item">
                 <a @click.prevent="setPage(pageNumber - 5)" class="page-link" href="#">...</a>
               </li>
-              <li v-for="n in calculatePageNumbers()" class="page-item" :class="{ active: pageNumber == n }" :key="n">
+              <li v-for="n in calculatePageNumbers()" class="page-item" :class="{ active: pageNumber === n }" :key="n">
                 <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
               </li>
               <li v-if="numberOfPages - pageNumber > 5" class="page-item">

@@ -1,8 +1,8 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "../../composables/serviceLicense";
-import { stats, connectionState } from "../../composables/serviceServiceControl";
+import { connectionState, stats } from "../../composables/serviceServiceControl";
 import { useShowToast } from "../../composables/toast";
 import { useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
@@ -65,7 +65,7 @@ async function getArchiveGroups(classifier) {
   let maxIndex = archiveGroups.value.reduce((currentMax, currentGroup) => Math.max(currentMax, currentGroup.index), 0);
 
   result.forEach((serverGroup) => {
-    const previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id == serverGroup.id);
+    const previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id === serverGroup.id);
 
     if (previousGroup) {
       serverGroup.index = previousGroup.index;
@@ -153,7 +153,7 @@ async function restoreGroup() {
   // We're starting a restore, poll more frequently
   changeRefreshInterval(1000);
 
-  selectedGroup.value = archiveGroups.value.find((group) => group.id == selectedGroup.value.id);
+  selectedGroup.value = archiveGroups.value.find((group) => group.id === selectedGroup.value.id);
 
   undismissedRestoreGroups.value.push(selectedGroup.value);
 
@@ -172,12 +172,9 @@ async function restoreGroup() {
 }
 
 const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"];
-function getClassesForRestoreOperation(stepStatus, currentStatus) {
-  return getClasses(stepStatus, currentStatus, statusesForRestoreOperation);
-}
 
 //getClasses
-var getClasses = function (stepStatus, currentStatus, statusArray) {
+const getClasses = function (stepStatus, currentStatus, statusArray) {
   const indexOfStep = statusArray.indexOf(stepStatus);
   const indexOfCurrent = statusArray.indexOf(currentStatus);
   if (indexOfStep > indexOfCurrent) {
@@ -188,6 +185,10 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
 
   return "completed";
 };
+
+function getClassesForRestoreOperation(stepStatus, currentStatus) {
+  return getClasses(stepStatus, currentStatus, statusesForRestoreOperation);
+}
 
 const acknowledgeGroup = function (dismissedGroup) {
   undismissedRestoreGroups.value.splice(

@@ -1,4 +1,4 @@
-import { useFetchFromServiceControl, useDeleteFromServiceControl, usePutToServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
+import { useDeleteFromServiceControl, useFetchFromServiceControl, usePostToServiceControl, usePutToServiceControl } from "./serviceServiceControlUrls";
 
 const redirects = {
   data: [],

@@ -1,9 +1,8 @@
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
-import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
+import { useArchiveMessage, useRetryMessages, useUnarchiveMessage } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useShowToast } from "../../composables/toast";
 import NoData from "../NoData.vue";
@@ -153,7 +152,7 @@ async function downloadBody() {
     failedMessage.value.messageBodyNotFound = true;
   }
 
-  if (response.headers.get("content-type") == "application/json") {
+  if (response.headers.get("content-type") === "application/json") {
     try {
       let jsonBody = await response.json();
       jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
@@ -164,7 +163,7 @@ async function downloadBody() {
     }
   }
 
-  if (response.headers.get("content-type") == "text/xml") {
+  if (response.headers.get("content-type") === "text/xml") {
     try {
       const xmlBody = await response.text();
       failedMessage.value.messageBody = formatXml(xmlBody);
@@ -208,11 +207,11 @@ function formatXml(xml) {
     .replace(/\s*xmlns([=:])/g, "~::~xmlns$1")
     .split("~::~");
 
-  let len = arr.length,
-    inComment = false,
-    depth = 0,
-    string = "",
+  const len = arr.length,
     shift = createShiftArr(indent);
+  let inComment = false,
+    depth = 0,
+    string = "";
 
   for (let i = 0; i < len; i++) {
     // start comment or <![CDATA[...]]> or <!DOCTYPE //

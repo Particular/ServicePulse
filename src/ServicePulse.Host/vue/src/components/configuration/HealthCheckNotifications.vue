@@ -1,11 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import { useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications } from "../../composables/serviceNotifications";
+import { useEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications, useUpdateEmailNotifications } from "../../composables/serviceNotifications";
 import { useShowToast } from "../../composables/toast";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
