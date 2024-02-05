@@ -11,9 +11,11 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
+import PaginationStrip from "../../components/PaginationStrip.vue";
 
 let refreshInterval = undefined;
 let sortMethod = undefined;
+const perPage = 50;
 const cookies = useCookies().cookies;
 const selectedPeriod = ref("All Pending Retries");
 const endpoints = ref([]);
@@ -26,7 +28,6 @@ const showConfirmResolveAll = ref(false);
 const showCantRetryAll = ref(false);
 const showRetryAllConfirm = ref(false);
 const pageNumber = ref(1);
-const numberOfPages = ref(1);
 const totalCount = ref(0);
 const sortOptions = [
   {
@@ -52,6 +53,8 @@ const sortOptions = [
   },
 ];
 const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Retried in the last 1 Day", "Retried in the last 7 Days"];
+
+watch(pageNumber, () => loadPendingRetryMessages());
 
 async function loadEndpoints() {
   const loader = new useEndpoints();
@@ -97,9 +100,8 @@ async function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhra
   if (typeof endDate === "undefined") endDate = new Date().toISOString();
 
   try {
-    const response = await useFetchFromServiceControl(`errors?status=retryissued&page=${page}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`);
+    const response = await useFetchFromServiceControl(`errors?status=retryissued&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`);
     totalCount.value = parseInt(response.headers.get("Total-Count"));
-    numberOfPages.value = Math.ceil(totalCount.value / 50);
 
     const data = await response.json();
 
@@ -195,27 +197,6 @@ function retryAllClicked() {
   } else {
     showRetryAllConfirm.value = true;
   }
-}
-
-function nextPage() {
-  pageNumber.value = pageNumber.value + 1;
-  if (pageNumber.value > numberOfPages.value) {
-    pageNumber.value = numberOfPages.value;
-  }
-  loadPendingRetryMessages();
-}
-
-function previousPage() {
-  pageNumber.value = pageNumber.value - 1;
-  if (pageNumber.value === 0) {
-    pageNumber.value = 1;
-  }
-  loadPendingRetryMessages();
-}
-
-function setPage(page) {
-  pageNumber.value = page;
-  loadPendingRetryMessages();
 }
 
 function sortGroups(sort, isInitialLoad) {
@@ -329,19 +310,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="row">
-          <div class="col align-self-center">
-            <ul class="pagination justify-content-center">
-              <li class="page-item" :class="{ disabled: pageNumber == 1 }">
-                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
-              </li>
-              <li v-for="n in numberOfPages" class="page-item" :class="{ active: pageNumber == n }" :key="n">
-                <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#" @click.prevent="nextPage" :class="{ disabled: pageNumber >= numberOfPages }">Next</a>
-              </li>
-            </ul>
-          </div>
+          <PaginationStrip v-model="pageNumber" :total-count="totalCount" :items-per-page="perPage" />
         </div>
         <Teleport to="#modalDisplay">
           <ConfirmDialog
