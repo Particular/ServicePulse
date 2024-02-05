@@ -28,3 +28,20 @@ const current = defineModel({
     </div>
   </div>
 </template>
+
+<style scoped>
+ul.dropdown-menu li a span {
+  color: #aaa;
+}
+
+.btn.sp-btn-menu:active,
+.btn-default.sp-btn-menu:active,
+.btn-default.sp-btn-menu.active,
+.open > .dropdown-toggle.btn-default.sp-btn-menu {
+  background: none;
+  border: none;
+  color: #00a3c4;
+  text-decoration: underline;
+  box-shadow: none;
+}
+</style>

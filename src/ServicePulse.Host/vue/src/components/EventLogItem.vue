@@ -150,11 +150,6 @@ p.lead {
   padding-bottom: 0.125em;
 }
 
-.box-event-item {
-  padding-top: 0.75em;
-  padding-bottom: 0.75em;
-}
-
 .box {
   box-shadow: none;
   margin: 0 !important;
@@ -163,21 +158,5 @@ p.lead {
 
 .box-event-item .fa-stack {
   height: 1em;
-}
-
-ul.dropdown-menu li a span {
-  color: #aaa;
-}
-
-.btn.sp-btn-menu:active,
-.btn-default.sp-btn-menu:active,
-.btn-default.sp-btn-menu.active,
-.open > .dropdown-toggle.btn-default.sp-btn-menu {
-  background: none;
-  border: none;
-  color: #00a3c4;
-  text-decoration: underline;
-  -webkit-box-shadow: none;
-  box-shadow: none;
 }
 </style>
