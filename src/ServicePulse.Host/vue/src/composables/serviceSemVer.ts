@@ -66,12 +66,12 @@ function parse(version: string): SemVer | null {
   return 0 === m.length
     ? null
     : {
-      semver: m[0],
-      version: m[1],
-      major: defaultToZero(m[2]),
-      minor: defaultToZero(m[3]),
-      patch: defaultToZero(m[4]),
-      release: m[5],
-      build: m[6],
-    };
+        semver: m[0],
+        version: m[1],
+        major: defaultToZero(m[2]),
+        minor: defaultToZero(m[3]),
+        patch: defaultToZero(m[4]),
+        release: m[5],
+        build: m[6],
+      };
 }
