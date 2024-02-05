@@ -26,11 +26,11 @@ import { RouterLink } from "vue-router";
 
 <style scoped>
 .events {
-  margin-top: 30px;
+  margin-top: 2em;
 }
 
 .btn.btn-all-events {
-  width: 180px;
-  margin-top: 30px;
+  width: 12em;
+  margin-top: 2em;
 }
 </style>

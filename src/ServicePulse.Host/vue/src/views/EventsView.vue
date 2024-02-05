@@ -30,6 +30,6 @@ import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable
 
 <style scoped>
 .events {
-  margin-top: 30px;
+  margin-top: 2em;
 }
 </style>
