@@ -28,10 +28,12 @@ import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable
   </template>
 </template>
 
-<style>
-/* TODO: Fix up styles */
-
+<style scoped>
 .events {
   margin-top: 30px;
+}
+
+.events-view {
+  margin-top: 0;
 }
 </style>

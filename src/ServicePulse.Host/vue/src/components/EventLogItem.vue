@@ -88,37 +88,36 @@ function iconSubClasses(eventItem) {
   </div>
 </template>
 
-<style>
-/* TODO: Fix up styles */
-
+<style scoped>
 .fa-stack-2x {
   font-size: 24px;
 }
 
-.events {
-  margin-top: 30px;
-}
-
-.events .box {
+.box {
   padding-bottom: 0;
 }
 
-.events .box:hover {
+.box:hover {
   cursor: pointer;
   background-color: #edf6f7;
   border: 1px solid #00a3c4;
 }
 
-.events p.lead {
+p.lead {
   padding-bottom: 10px;
-}
-
-.events-view {
-  margin-top: 0;
+  word-wrap: break-word;
+  color: #181919 !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .row.box-event-item,
-.row.box-event-item .col-xs-12 {
+.row.box-event-item .col-xs-12,
+.row.box.box-event-item .col-12 {
   padding-top: 8px;
   padding-bottom: 5px;
   width: 100%;
@@ -129,33 +128,30 @@ function iconSubClasses(eventItem) {
   width: 100%;
 }
 
-.events-list .col-icon {
+.col-icon {
   display: table-cell;
   width: 80px;
   vertical-align: middle;
 }
 
-.events-list .col-message {
+.col-message {
   display: table-cell;
   width: auto;
   vertical-align: middle;
 }
 
-.events-list .col-icon .fa-stack {
+.col-icon .fa-stack {
   top: -8px;
 }
 
-.events-list .col-message p.lead {
+.col-message p.lead {
   padding-bottom: 2px;
 }
 
-.events-list .col-timestamp {
+.col-timestamp {
   display: table-cell;
   width: 200px;
   vertical-align: middle;
-}
-
-.events-list .col-timestamp {
   padding-top: 0;
   padding-bottom: 4px;
 }
@@ -163,6 +159,12 @@ function iconSubClasses(eventItem) {
 .box-event-item {
   padding-top: 12px;
   padding-bottom: 12px;
+}
+
+.box {
+  box-shadow: none;
+  margin: 0 !important;
+  padding-bottom: 10px;
 }
 
 .box-event-item .fa-stack {
