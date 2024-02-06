@@ -1,10 +1,10 @@
 import { type Ref, ref } from "vue";
 
-export const serviceControlUrl = ref<string>();
-export const monitoringUrl = ref<string>();
+export const serviceControlUrl = ref<string | null>();
+export const monitoringUrl = ref<string | null>();
 
 export function useIsMonitoringDisabled() {
-  return monitoringUrl.value === undefined || monitoringUrl.value === "" || monitoringUrl.value === "!";
+  return monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!";
 }
 
 export function useIsMonitoringEnabled() {
@@ -24,27 +24,27 @@ export async function useTypedFetchFromServiceControl<T>(suffix: string): Promis
 
 export function useFetchFromMonitoring(suffix: string) {
   if (useIsMonitoringDisabled()) {
-    return Promise.resolve(undefined);
+    return Promise.resolve(null);
   }
   return fetch(monitoringUrl.value + suffix);
 }
 
-export function usePostToServiceControl(suffix: string, payload: object | undefined = undefined) {
+export function usePostToServiceControl(suffix: string, payload: object | null = null) {
   const requestOptions: RequestInit = {
     method: "POST",
   };
-  if (payload !== undefined) {
+  if (payload != null) {
     requestOptions.headers = { "Content-Type": "application/json" };
     requestOptions.body = JSON.stringify(payload);
   }
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function usePutToServiceControl(suffix: string, payload: object) {
+export function usePutToServiceControl(suffix: string, payload: object | null) {
   const requestOptions: RequestInit = {
     method: "PUT",
   };
-  if (payload !== undefined) {
+  if (payload != null) {
     requestOptions.headers = { "Content-Type": "application/json" };
     requestOptions.body = JSON.stringify(payload);
   }
@@ -58,11 +58,11 @@ export function useDeleteFromServiceControl(suffix: string) {
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function usePatchToServiceControl(suffix: string, payload: object) {
+export function usePatchToServiceControl(suffix: string, payload: object | null) {
   const requestOptions: RequestInit = {
     method: "PATCH",
   };
-  if (payload !== undefined) {
+  if (payload != null) {
     requestOptions.headers = { "Content-Type": "application/json" };
     requestOptions.body = JSON.stringify(payload);
   }
@@ -79,7 +79,7 @@ export function useServiceControlUrls() {
     window.localStorage.setItem("scu", serviceControlUrl.value);
     console.debug(`ServiceControl Url found in QS and stored in local storage: ${serviceControlUrl.value}`);
   } else if (window.localStorage.getItem("scu")) {
-    serviceControlUrl.value = window.localStorage.getItem("scu") || undefined;
+    serviceControlUrl.value = window.localStorage.getItem("scu");
     console.debug(`ServiceControl Url, not in QS, found in local storage: ${serviceControlUrl.value}`);
   } else if (window.defaultConfig && window.defaultConfig.service_control_url) {
     serviceControlUrl.value = window.defaultConfig.service_control_url;
@@ -93,7 +93,7 @@ export function useServiceControlUrls() {
     window.localStorage.setItem("mu", monitoringUrl.value);
     console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
   } else if (window.localStorage.getItem("mu")) {
-    monitoringUrl.value = window.localStorage.getItem("mu") || undefined;
+    monitoringUrl.value = window.localStorage.getItem("mu");
     console.debug(`Monitoring Url, not in QS, found in local storage: ${monitoringUrl.value}`);
   } else if (window.defaultConfig && window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.length) {
     monitoringUrl.value = window.defaultConfig.monitoring_urls[0];
@@ -122,7 +122,7 @@ export function updateServiceControlUrls(newServiceControlUrl: Ref<string>, newM
   window.localStorage.removeItem("scu");
   window.localStorage.removeItem("mu");
 
-  let newSearch = "?scu=" + newServiceControlUrl.value + "&mu=" + newMonitoringUrl.value;
+  const newSearch = `?scu=${newServiceControlUrl.value}&mu=${newMonitoringUrl.value}`;
   console.debug("updateConnections - new query string: ", newSearch);
   window.location.search = newSearch;
 }
@@ -148,11 +148,7 @@ function getParams() {
 }
 
 function getParameter(params: Param[], key: string) {
-  if (params) {
-    return params.find((param) => {
-      return param.name === key;
-    });
-  }
-
-  return undefined;
+  return params.find((param) => {
+    return param.name === key;
+  });
 }
