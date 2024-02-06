@@ -26,6 +26,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       disconnectedEndpointCount: 0,
       filterString: "",
       historyPeriod: {},
+      sortBy: "name",
+      isSortAscending: false,
       isInitialized: false,
       route: useRoute(),
       router: useRouter(),
@@ -51,6 +53,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     async updateEndpointList() {
       this.endpointList = await MonitoringEndpoints.useGetAllMonitoredEndpoints(this.historyPeriod.pVal);
       if (!this.endpointListIsEmpty) {
+        this.sortEndpointList();
         this.updateGroupSegments();
         if (this.endpointListIsGrouped) {
           this.updateGroupedEndpoints();
@@ -88,6 +91,30 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
         await this.router.push({ query: { ...this.route.query, historyPeriod: this.historyPeriod.pVal } });
       }
     },
+    async updateSort(sortBy = "name", isSortAscending = false) {
+      this.sortBy = sortBy;
+      this.isSortAscending = isSortAscending;
+      await this.updateEndpointList();
+    },
+    sortEndpointList() {
+      const sortByProperty = this.sortBy;
+      let comparator;
+
+      if (sortByProperty === "name") {
+        comparator = (a, b) => {
+          return this.isSortAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+        };
+      } else {
+        comparator = (a, b) => {
+          const propertyA = getPropertyValue(a, `metrics.${sortByProperty}.average`);
+          const propertyB = getPropertyValue(b, `metrics.${sortByProperty}.average`);
+
+          return this.isSortAscending ? propertyA - propertyB : propertyB - propertyA;
+        };
+      }
+
+      this.endpointList.sort(comparator);
+    },
   },
   getters: {
     endpointListCount: (state) => state.endpointList.length,
@@ -99,3 +126,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     },
   },
 });
+
+function getPropertyValue(obj, path) {
+  const properties = path.split(".");
+  return properties.reduce((accumulator, current) => accumulator[current], obj);
+}
