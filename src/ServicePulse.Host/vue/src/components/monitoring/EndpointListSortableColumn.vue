@@ -1,17 +1,28 @@
 <script setup>
 import { ref, computed } from "vue";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
+
 const props = defineProps({
   unit: String,
   isActive: Boolean,
+  sortBy: {
+    type: String,
+    required: true,
+    validator: (value) => ["name", "queueLength", "throughput", "retries", "processingTime", "criticalTime"].includes(value),
+  },
 });
 
+const monitoringStore = useMonitoringStore();
 const isActive = computed(() => props.isActive);
+const sortBy = computed(() => props.sortBy);
 const isAscending = ref(false);
 const sortIcon = ref("sort-down");
 
 function toggleSort() {
   isAscending.value = isActive.value ? !isAscending.value : false;
   sortIcon.value = isAscending.value ? "sort-up" : "sort-down";
+
+  monitoringStore.updateSort(sortBy.value, isAscending.value);
 }
 </script>
 <template>
@@ -46,7 +57,6 @@ function toggleSort() {
 
 .column-header-button div {
   display: inline-block;
-  margin-top: -1px;
 }
 
 .sort-up,
