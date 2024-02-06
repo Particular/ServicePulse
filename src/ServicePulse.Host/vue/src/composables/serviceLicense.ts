@@ -16,10 +16,10 @@ const trialExpiring =
   '<div class="license-warning"><strong>Non-production development license expiring</strong><div>Your non-production development license will expire soon. To continue using the Particular Service Platform you\'ll need to extend your license.</div><a href="http://particular.net/extend-your-trial?p=servicepulse" class="btn btn-license-warning"><i class="fa fa-external-link-alt"></i> Extend your license</a><a href="#/configuration" class="btn btn-license-warning-light">View license details</a></div>';
 
 interface License extends LicenseInfo {
-  licenseEdition?: ComputedRef<string>;
-  formattedExpirationDate?: ComputedRef<string>;
-  formattedUpgradeProtectionExpiration?: ComputedRef<string>;
-  formattedInstanceName?: ComputedRef<string>;
+  licenseEdition: ComputedRef<string>;
+  formattedExpirationDate: ComputedRef<string>;
+  formattedUpgradeProtectionExpiration: ComputedRef<string>;
+  formattedInstanceName: ComputedRef<string>;
 }
 
 const emptyLicense: License = {
@@ -32,9 +32,21 @@ const emptyLicense: License = {
   registered_to: "",
   status: "",
   license_status: LicenseStatus.Unavailable,
+  licenseEdition: computed(() => {
+    return license.license_type && license.edition ? ", " + license.edition : "";
+  }),
+  formattedInstanceName: computed(() => {
+    return license.instance_name || "Upgrade ServiceControl to v3.4.0+ to see more information about this license";
+  }),
+  formattedExpirationDate: computed(() => {
+    return license.expiration_date ? new Date(license.expiration_date.replace("Z", "")).toLocaleDateString() : "";
+  }),
+  formattedUpgradeProtectionExpiration: computed(() => {
+    return license.upgrade_protection_expiration ? new Date(license.upgrade_protection_expiration.replace("Z", "")).toLocaleDateString() : "";
+  }),
 };
 
-export let license = reactive<License>(emptyLicense);
+export const license = reactive<License>(emptyLicense);
 
 export const licenseStatus = reactive({
   isSubscriptionLicense: false,
@@ -61,19 +73,17 @@ export async function useLicense() {
     }
   });
 
-  license = await getLicense();
-  license.licenseEdition = computed(() => {
-    return license.license_type && license.edition ? ", " + license.edition : "";
-  }).value;
-  license.formattedInstanceName = computed(() => {
-    return license.instance_name || "Upgrade ServiceControl to v3.4.0+ to see more information about this license";
-  }).value;
-  license.formattedExpirationDate = computed(() => {
-    return license.expiration_date ? new Date(license.expiration_date.replace("Z", "")).toLocaleDateString() : "";
-  }).value;
-  license.formattedUpgradeProtectionExpiration = computed<string>(() => {
-    return license.upgrade_protection_expiration ? new Date(license.upgrade_protection_expiration.replace("Z", "")).toLocaleDateString() : "";
-  }).value;
+  const lic = await getLicense();
+  license.license_type = lic.license_type;
+  license.expiration_date = lic.expiration_date;
+  license.trial_license = lic.trial_license;
+  license.edition = lic.edition;
+  license.license_status = lic.license_status;
+  license.instance_name = lic.instance_name;
+  license.registered_to = lic.registered_to;
+  license.status = lic.status;
+  license.upgrade_protection_expiration = lic.upgrade_protection_expiration;
+
   licenseStatus.isSubscriptionLicense = isSubscriptionLicense(license);
   licenseStatus.isUpgradeProtectionLicense = isUpgradeProtectionLicense(license);
   licenseStatus.isTrialLicense = license.trial_license;
