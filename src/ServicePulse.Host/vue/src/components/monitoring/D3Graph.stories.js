@@ -1,13 +1,12 @@
-//TODO switch to using SmallGraph
-// import D3Graph from "./D3Graph.vue";
-// /*import { expect } from "@storybook/jest";*/
-// export default {
-//   component: D3Graph,
-//   title: "Monitoring/EndpointList/D3Graph",
-//   tags: ["autodocs"],
-//   //👇 Our events will be mapped in Storybook UI
-//   argTypes: {},
-// };
+import SmallGraph from "./SmallGraph.vue";
+/*import { expect } from "@storybook/jest";*/
+export default {
+  component: SmallGraph,
+  title: "Monitoring/EndpointList/SmallGraph",
+  tags: ["autodocs"],
+  //👇 Our events will be mapped in Storybook UI
+  argTypes: {},
+};
 
 //stories
 
