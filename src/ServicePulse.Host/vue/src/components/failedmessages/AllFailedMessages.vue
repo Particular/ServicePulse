@@ -140,9 +140,7 @@ function exportSelected() {
     return result;
   }
 
-  function parseObject(obj, propertiesToSkip, path) {
-    if (path === undefined) path = "";
-
+  function parseObject(obj, propertiesToSkip, path = "") {
     const type = typeof obj;
     let d = {};
 
