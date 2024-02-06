@@ -4,7 +4,7 @@ import EventItemShort from "../components/EventItemShort.vue";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
 import { connectionState, stats } from "../composables/serviceServiceControl";
-import { licenseStatus } from "./../composables/serviceLicense";
+import { licenseStatus } from "../composables/serviceLicense";
 </script>
 
 <template>

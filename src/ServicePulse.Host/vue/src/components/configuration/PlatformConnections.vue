@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "../../composables/serviceLicense";
-import { monitoringUrl as configuredMonitoringUrl, serviceControlUrl as configuredServiceControlUrl, updateServiceControlUrls, useIsMonitoringDisabled } from "./../../composables/serviceServiceControlUrls";
+import { monitoringUrl as configuredMonitoringUrl, serviceControlUrl as configuredServiceControlUrl, updateServiceControlUrls, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { connectionState, monitoringConnectionState } from "../../composables/serviceServiceControl";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.

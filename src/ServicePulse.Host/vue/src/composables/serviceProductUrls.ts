@@ -1,7 +1,8 @@
-async function getData(url) {
+import type Release from "@/resources/Release";
+
+async function getData(url: string) {
   const response = await fetch(url);
-  const data = await response.json();
-  return data;
+  return (await response.json()) as unknown as Release[];
 }
 
 export async function useServiceProductUrls() {

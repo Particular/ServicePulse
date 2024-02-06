@@ -1,4 +1,4 @@
-﻿<script setup>
+﻿<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import moment from "moment";
 
@@ -9,7 +9,7 @@ const props = defineProps({
   },
 });
 
-let interval = null;
+let interval: number | undefined = undefined;
 
 const title = ref(),
   text = ref();
@@ -26,14 +26,14 @@ function updateText() {
 }
 
 onMounted(() => {
-  interval = setInterval(function () {
+  interval = window.setInterval(function () {
     updateText();
   }, 5000);
 
   updateText();
 });
 
-onUnmounted(() => clearInterval(interval));
+onUnmounted(() => window.clearInterval(interval));
 </script>
 
 <template>
