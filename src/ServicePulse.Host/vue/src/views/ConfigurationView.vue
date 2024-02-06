@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { licenseStatus } from "../composables/serviceLicense.js";
+import { licenseStatus } from "../composables/serviceLicense";
 import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-import { useRedirects } from "../composables/serviceRedirects.js";
+import { useRedirects } from "../composables/serviceRedirects";
 import ExclamationMark from "../components/ExclamationMark.vue";
 
 const redirectCount = ref(0);

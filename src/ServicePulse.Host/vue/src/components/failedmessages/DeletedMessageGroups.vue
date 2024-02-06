@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { stats, connectionState } from "../../composables/serviceServiceControl.js";
-import { useShowToast } from "../../composables/toast.js";
-import { useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { stats, connectionState } from "../../composables/serviceServiceControl";
+import { useShowToast } from "../../composables/toast";
+import { useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";
@@ -65,7 +65,7 @@ async function getArchiveGroups(classifier) {
   let maxIndex = archiveGroups.value.reduce((currentMax, currentGroup) => Math.max(currentMax, currentGroup.index), 0);
 
   result.forEach((serverGroup) => {
-    let previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id == serverGroup.id);
+    const previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id == serverGroup.id);
 
     if (previousGroup) {
       serverGroup.index = previousGroup.index;
@@ -96,7 +96,7 @@ async function getArchiveGroups(classifier) {
 }
 
 function initializeGroupState(group) {
-  var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
+  let operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
   if (operationStatus === "preparing" && group.operation_progress === 1) {
     operationStatus = "queued";
   }
@@ -107,7 +107,7 @@ function initializeGroupState(group) {
 
 function loadDefaultGroupingClassifier() {
   const cookies = useCookies().cookies;
-  let cookieGrouping = cookies.get("archived_groups_classification");
+  const cookieGrouping = cookies.get("archived_groups_classification");
 
   if (cookieGrouping) {
     return cookieGrouping;
@@ -171,15 +171,15 @@ async function restoreGroup() {
   }
 }
 
-var statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"];
+const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"];
 function getClassesForRestoreOperation(stepStatus, currentStatus) {
   return getClasses(stepStatus, currentStatus, statusesForRestoreOperation);
 }
 
 //getClasses
 var getClasses = function (stepStatus, currentStatus, statusArray) {
-  var indexOfStep = statusArray.indexOf(stepStatus);
-  var indexOfCurrent = statusArray.indexOf(currentStatus);
+  const indexOfStep = statusArray.indexOf(stepStatus);
+  const indexOfCurrent = statusArray.indexOf(currentStatus);
   if (indexOfStep > indexOfCurrent) {
     return "left-to-do";
   } else if (indexOfStep === indexOfCurrent) {
@@ -189,7 +189,7 @@ var getClasses = function (stepStatus, currentStatus, statusArray) {
   return "completed";
 };
 
-var acknowledgeGroup = function (dismissedGroup) {
+const acknowledgeGroup = function (dismissedGroup) {
   undismissedRestoreGroups.value.splice(
     undismissedRestoreGroups.value.findIndex((group) => {
       return group.id === dismissedGroup.id;

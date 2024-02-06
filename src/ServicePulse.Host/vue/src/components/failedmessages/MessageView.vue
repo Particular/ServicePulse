@@ -5,7 +5,7 @@ import { useFetchFromServiceControl } from "../../composables/serviceServiceCont
 import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
-import { useShowToast } from "../../composables/toast.js";
+import { useShowToast } from "../../composables/toast";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
@@ -15,7 +15,7 @@ import EditRetryDialog from "./EditRetryDialog.vue";
 
 let refreshInterval = undefined;
 let pollingFaster = false;
-let panel = ref();
+const panel = ref();
 const route = useRoute();
 const failedMessage = ref({});
 const configuration = ref([]);
@@ -37,7 +37,7 @@ async function loadFailedMessage() {
       failedMessage.value = { error: true };
     }
     const data = await response.json();
-    var message = data;
+    const message = data;
     message.archived = message.status === "archived";
     message.resolved = message.status === "resolved";
     message.retried = message.status === "retryIssued";
@@ -78,7 +78,7 @@ async function getEditAndRetryConfig() {
 }
 
 function updateMessageDeleteDate() {
-  var countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
+  const countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
   failedMessage.value.delete_soon = countdown < moment();
   failedMessage.value.deleted_in = countdown.format();
 }
@@ -136,7 +136,7 @@ async function downloadHeadersAndBody() {
       return;
     }
 
-    var message = data[0];
+    const message = data[0];
     failedMessage.value.headers = message.headers;
     failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
 
@@ -191,7 +191,7 @@ function formatXml(xml) {
       }
     }
 
-    let shift = ["\n"]; // array of shifts
+    const shift = ["\n"]; // array of shifts
 
     for (let ix = 0; ix < 100; ix++) {
       shift.push(shift[ix] + space);
@@ -202,7 +202,7 @@ function formatXml(xml) {
 
   const indent = "\t";
 
-  let arr = xml
+  const arr = xml
     .replace(/>\s*</gm, "><")
     .replace(/</g, "~::~<")
     .replace(/\s*xmlns([=:])/g, "~::~xmlns$1")
@@ -291,7 +291,7 @@ function exportMessage() {
   txtStr += failedMessage.value.exception.stack_trace;
 
   txtStr += "\n\nHEADERS";
-  for (var i = 0; i < failedMessage.value.headers.length; i++) {
+  for (let i = 0; i < failedMessage.value.headers.length; i++) {
     txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
   }
 

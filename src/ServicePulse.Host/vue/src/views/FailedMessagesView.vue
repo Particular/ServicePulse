@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, useRoute } from "vue-router";
-import { licenseStatus } from "./../composables/serviceLicense.js";
+import { licenseStatus } from "./../composables/serviceLicense";
 import { stats, connectionState } from "../composables/serviceServiceControl";
 import { RouterView } from "vue-router";
 import LicenseExpired from "../components/LicenseExpired.vue";

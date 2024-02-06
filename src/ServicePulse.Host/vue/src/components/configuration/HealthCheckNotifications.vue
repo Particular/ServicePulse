@@ -2,11 +2,11 @@
 import { ref, onMounted } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import { useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications } from "../../composables/serviceNotifications.js";
-import { useShowToast } from "../../composables/toast.js";
+import { useEmailNotifications, useUpdateEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications } from "../../composables/serviceNotifications";
+import { useShowToast } from "../../composables/toast";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
 // The event is only actually emitted on the RetryRedirects.vue component

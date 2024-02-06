@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onBeforeMount, onMounted, onUnmounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { connectionState } from "../../composables/serviceServiceControl.js";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
-import { useShowToast } from "../../composables/toast.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState } from "../../composables/serviceServiceControl";
+import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useShowToast } from "../../composables/toast";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
@@ -31,7 +31,7 @@ const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in
 
 function loadMessages() {
   let startDate = new Date(0);
-  let endDate = new Date();
+  const endDate = new Date();
 
   switch (selectedPeriod.value) {
     case "All Deleted":
@@ -66,7 +66,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
   if (typeof page === "undefined") page = 1;
   if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
   if (typeof endDate === "undefined") endDate = new Date().toISOString();
-  let dateRange = startDate + "..." + endDate;
+  const dateRange = startDate + "..." + endDate;
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
     loadGroupDetailsPromise = loadGroupDetails(groupId);
@@ -97,7 +97,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
       messages.value = updateMessagesScheduledDeletionDate(data);
     } catch (err) {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -117,7 +117,7 @@ function updateMessagesScheduledDeletionDate(messages) {
   //check deletion time
   messages.forEach((message) => {
     message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-    var countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
+    const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
     message.delete_soon = countdown < moment();
     message.deleted_in = countdown.format();
   });
