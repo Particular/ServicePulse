@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { license, licenseStatus } from "../../composables/serviceLicense";
+import { license, licenseStatus } from "@/composables/serviceLicense";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { connectionState } from "../../composables/serviceServiceControl";
+import { connectionState } from "@/composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
 

@@ -71,7 +71,7 @@ async function saveEditedRedirect(redirect) {
     getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
-    if (result.status === "409" || result.status === 409) {
+    if (result.status === 409) {
       useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
     } else {
       useShowToast("error", "Error", result.message);
@@ -94,9 +94,9 @@ async function saveCreatedRedirect(redirect) {
     getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
-    if ((result.status === "409" || result.status === 409) && result.statusText === "Duplicate") {
+    if (result.status === 409 && result.statusText === "Duplicate") {
       useShowToast("error", "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
-    } else if ((result.status === "409" || result.status === 409) && result.statusText === "Dependents") {
+    } else if (result.status === 409 && result.statusText === "Dependents") {
       useShowToast("error", "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
     } else {
       useShowToast("error", "Error", result.message);

@@ -106,7 +106,7 @@ async function saveDeleteNote(group, hideToastMessage) {
   if (result.message === "success") {
     noteSaveSuccessful.value = true;
     if (!hideToastMessage) {
-      useShowToast("info", "Info", "Note deleted succesfully");
+      useShowToast("info", "Info", "Note deleted successfully");
     }
 
     loadFailedMessageGroups(); //reload the groups
@@ -244,9 +244,9 @@ const acknowledgeGroup = async function (group) {
   const result = await useAcknowledgeArchiveGroup(group.id);
   if (result.message === "success") {
     if (group.operation_status === "ArchiveCompleted") {
-      useShowToast("info", "Info", "Group deleted succesfully");
+      useShowToast("info", "Info", "Group deleted successfully");
     } else {
-      useShowToast("info", "Info", "Group retried succesfully");
+      useShowToast("info", "Info", "Group retried successfully");
     }
     loadFailedMessageGroups(); //reload the groups
   } else {

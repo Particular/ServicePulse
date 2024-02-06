@@ -89,7 +89,7 @@ function removeHeadersMarkedAsRemoved() {
 async function retryEditedMessage() {
   removeHeadersMarkedAsRemoved();
   try {
-    await useRetryEditedMessage([id.value], localMessage);
+    await useRetryEditedMessage(id.value, localMessage);
     localMessage.value.retried = true;
     return emit("retried", settings);
   } catch {

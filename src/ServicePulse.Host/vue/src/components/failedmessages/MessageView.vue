@@ -87,7 +87,7 @@ async function archiveMessage() {
   changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
   try {
     const response = await useArchiveMessage([id.value]);
-    if (response !== undefined) {
+    if (response.data.ok) {
       failedMessage.value.archiving = true;
       return;
     }
@@ -103,9 +103,10 @@ async function unarchiveMessage() {
   try {
     const response = await useUnarchiveMessage([id.value]);
 
-    if (response !== undefined) {
+    if (response.data.ok) {
       failedMessage.value.restoring = true;
     }
+
     return false;
   } catch (err) {
     console.log(err);
