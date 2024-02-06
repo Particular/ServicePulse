@@ -36,6 +36,9 @@ const averageLabelValue = computed(() => {
   return props.isdurationgraph ? useFormatTime(average.value).value : useFormatLargeNumber(average.value, 2);
 });
 const averageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime(average.value).unit.toUpperCase() : props.metricsuffix ?? ""));
+//38 is an arbitrary 'tested' number that ends up with the label in approximately the correct position.
+//To get it exact, we would need to perform measurement on the rendered element, which we want to avoid since this is close enough
+const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.value) * 38}px - 1em)`);
 </script>
 
 <template>
@@ -47,7 +50,7 @@ const averageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime
         <path :d="averageLine" vector-effect="non-scaling-stroke" class="graph-avg-line" />
       </svg>
     </div>
-    <div class="avg-tooltip" :style="{ '--avg-tooltip-background-color': avglabelcolor }">
+    <div class="avg-tooltip" :style="{ '--avg-tooltip-background-color': avglabelcolor, bottom: averageLabelPosition }">
       <div>AVG</div>
       <div class="value">
         {{ averageLabelValue }} <span>{{ averageLabelSuffix }}</span>
@@ -77,7 +80,6 @@ svg {
   position: absolute;
   z-index: 10;
   right: calc(100% + 1.3em);
-  top: calc(50% - 2em);
   display: none;
 }
 
