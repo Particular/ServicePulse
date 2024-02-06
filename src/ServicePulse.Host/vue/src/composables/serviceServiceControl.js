@@ -1,5 +1,5 @@
 import { reactive, onMounted, watch, computed } from "vue";
-import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer.js";
+import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls.js";
 import { useFetchFromServiceControl, useFetchFromMonitoring, serviceControlUrl, monitoringUrl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast.js";
