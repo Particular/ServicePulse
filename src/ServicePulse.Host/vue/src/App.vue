@@ -3,7 +3,7 @@ import { RouterView } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
 import { useServiceControlUrls } from "./composables/serviceServiceControlUrls";
-import { useServiceControlVersion, useServiceControl } from "./composables/serviceServiceControl";
+import { useServiceControl, useServiceControlVersion } from "./composables/serviceServiceControl";
 import { useLicense } from "./composables/serviceLicense";
 import "bootstrap";
 

@@ -1,5 +1,5 @@
 ﻿<script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { getEventLogItems } from "../composables/eventLogItems";
 import TimeSince from "./TimeSince.vue";
@@ -48,13 +48,14 @@ function navigateToEvent(eventLogItem) {
     case "EndpointControl":
       window.location = "/a/#/endpoints";
       break;
-    case "MessageFailures":
-      var newlocation = "/failed-messages";
+    case "MessageFailures": {
+      let newLocation = "/failed-messages";
       if (eventLogItem.related_to && eventLogItem.related_to.length > 0 && eventLogItem.related_to[0].search("message") > 0) {
-        newlocation = "/failed-messages" + eventLogItem.related_to[0];
+        newLocation = "/failed-messages" + eventLogItem.related_to[0];
       }
-      router.push(newlocation);
+      router.push(newLocation);
       break;
+    }
     case "Recoverability":
       router.push("/failed-messages");
       break;

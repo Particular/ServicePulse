@@ -1,4 +1,4 @@
-import { useDeleteFromServiceControl, usePostToServiceControl, useFetchFromServiceControl } from "./serviceServiceControlUrls";
+import { useDeleteFromServiceControl, useFetchFromServiceControl, usePostToServiceControl } from "./serviceServiceControlUrls";
 
 export async function useGetExceptionGroups(classifier) {
   try {

@@ -1,7 +1,7 @@
-import { reactive, onMounted, watch, computed } from "vue";
+import { computed, onMounted, reactive, watch } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls";
-import { useFetchFromServiceControl, useFetchFromMonitoring, serviceControlUrl, monitoringUrl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
+import { monitoringUrl, serviceControlUrl, useFetchFromMonitoring, useFetchFromServiceControl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast";
 
 export const stats = reactive({
@@ -92,7 +92,7 @@ export function useServiceControl() {
 
   watch(scConnectionFailure, (newValue, oldValue) => {
     //NOTE to eliminate success msg showing everytime the screen is refreshed
-    if (newValue != oldValue && !(oldValue === null && newValue === false)) {
+    if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
       if (newValue) {
         useShowToast("error", "Error", "Could not connect to ServiceControl at " + serviceControlUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
       } else {
@@ -105,7 +105,7 @@ export function useServiceControl() {
   if (!useIsMonitoringDisabled()) {
     watch(monitoringConnectionFailure, (newValue, oldValue) => {
       //NOTE to eliminate success msg showing everytime the screen is refreshed
-      if (newValue != oldValue && !(oldValue === null && newValue === false)) {
+      if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
         if (newValue) {
           useShowToast("error", "Error", "Could not connect to the ServiceControl Monitoring service at " + monitoringUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
         } else {
@@ -167,7 +167,7 @@ export function useServiceControlVersion() {
   });
 
   watch(environment, (newValue, oldValue) => {
-    if (newValue.is_compatible_with_sc != oldValue.is_compatible_with_sc) {
+    if (newValue.is_compatible_with_sc !== oldValue.is_compatible_with_sc) {
       if (!newValue.is_compatible_with_sc) {
         useShowToast("error", "Error", "You are using Service Control version " + newValue.sc_version + ". Please, upgrade to version " + newValue.minimum_supported_sc_version.value + " or higher to unlock new functionality in ServicePulse.");
       }

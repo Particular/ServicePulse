@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRetryEditedMessage } from "../../composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
 
@@ -11,13 +11,13 @@ const settings = defineProps({
   configuration: Object,
 });
 
-let panel = ref();
-let localMessage = ref();
+const panel = ref();
+const localMessage = ref();
 let origMessageBody = undefined;
 
-let showEditAndRetryConfirmation = ref(false);
-let showCancelConfirmation = ref(false);
-let showEditRetryGenericError = ref(false);
+const showEditAndRetryConfirmation = ref(false);
+const showCancelConfirmation = ref(false);
+const showEditRetryGenericError = ref(false);
 
 const id = computed(() => settings.id);
 const messageBody = computed(() => settings.message.messageBody);
@@ -65,7 +65,7 @@ function findHeadersByKey(key) {
 }
 
 function getContentType() {
-  var header = findHeadersByKey("NServiceBus.ContentType");
+  const header = findHeadersByKey("NServiceBus.ContentType");
   return header?.value;
 }
 
@@ -74,7 +74,7 @@ function isContentTypeSupported(contentType) {
 }
 
 function getMessageIntent() {
-  var intent = findHeadersByKey("NServiceBus.MessageIntent");
+  const intent = findHeadersByKey("NServiceBus.MessageIntent");
   return intent?.value;
 }
 
@@ -104,11 +104,11 @@ function initializeMessageBodyAndHeaders() {
   localMessage.value.isBodyEmpty = false;
   localMessage.value.isBodyChanged = false;
 
-  var contentType = getContentType();
+  const contentType = getContentType();
   localMessage.value.bodyContentType = contentType;
   localMessage.value.isContentTypeSupported = isContentTypeSupported(contentType);
 
-  var messageIntent = getMessageIntent();
+  const messageIntent = getMessageIntent();
   localMessage.value.isEvent = messageIntent.value === "Publish";
 
   settings.message.headers.forEach((header, index) => {

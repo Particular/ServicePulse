@@ -6,9 +6,9 @@ const hourDuration = moment.duration(60 * 1000); //this ensure that we never use
 const dayDuration = moment.duration(24 * 60 * 60 * 1000);
 
 export function useFormatTime(value) {
-  var duration = moment.duration(value);
+  const duration = moment.duration(value);
 
-  var time = { value: 0, unit: "" };
+  const time = { value: 0, unit: "" };
   if (duration >= dayDuration) {
     time.value = duration.format("D [d] h [hr]");
     return time;
@@ -33,15 +33,14 @@ export function useFormatTime(value) {
 
 export function useGetDayDiffFromToday(value) {
   if (!value) return undefined;
-  var today = new Date();
+  const today = new Date();
   today.setHours(0, 0, 0, 0);
-  var diff = new Date(value.replace("Z", "")) - today;
+  const diff = new Date(value.replace("Z", "")) - today;
   return Math.round(diff / 1000 / 60 / 60 / 24);
 }
 
 export function useFormatLargeNumber(value, decimals) {
-  var exp,
-    suffixes = ["k", "M", "G", "T", "P", "E"];
+  const suffixes = ["k", "M", "G", "T", "P", "E"];
 
   value = Number(value);
 
@@ -53,7 +52,7 @@ export function useFormatLargeNumber(value, decimals) {
     return round(value, decimals);
   }
 
-  exp = Math.floor(Math.log(value) / Math.log(1000));
+  const exp = Math.floor(Math.log(value) / Math.log(1000));
 
   return round(value / Math.pow(1000, exp), decimals) + suffixes[exp - 1];
 }

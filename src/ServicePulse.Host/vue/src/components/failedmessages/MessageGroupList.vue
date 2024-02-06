@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { stats } from "../../composables/serviceServiceControl";
 import { useShowToast } from "../../composables/toast";
-import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
+import { useAcknowledgeArchiveGroup, useArchiveExceptionGroup, useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
@@ -189,6 +189,19 @@ function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
   };
 }
 
+//getClasses
+const getClasses = function (stepStatus, currentStatus, statusArray) {
+  const indexOfStep = statusArray.indexOf(stepStatus);
+  const indexOfCurrent = statusArray.indexOf(currentStatus);
+  if (indexOfStep > indexOfCurrent) {
+    return "left-to-do";
+  } else if (indexOfStep === indexOfCurrent) {
+    return "active";
+  } else {
+    return "completed";
+  }
+};
+
 //getClassesForArchiveOperation
 function getClassesForArchiveOperation(stepStatus, currentStatus) {
   return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
@@ -226,19 +239,6 @@ function getClassesForRetryOperation(stepStatus, currentStatus) {
   }
   return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
 }
-
-//getClasses
-var getClasses = function (stepStatus, currentStatus, statusArray) {
-  const indexOfStep = statusArray.indexOf(stepStatus);
-  const indexOfCurrent = statusArray.indexOf(currentStatus);
-  if (indexOfStep > indexOfCurrent) {
-    return "left-to-do";
-  } else if (indexOfStep === indexOfCurrent) {
-    return "active";
-  } else {
-    return "completed";
-  }
-};
 
 const acknowledgeGroup = async function (group) {
   const result = await useAcknowledgeArchiveGroup(group.id);
