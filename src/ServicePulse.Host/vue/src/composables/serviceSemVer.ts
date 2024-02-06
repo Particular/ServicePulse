@@ -41,7 +41,7 @@ export function useIsSupported(currentVersion: string, minSupportedVersion: stri
 }
 
 interface SemVer {
-  semver: string | undefined;
+  semver: string | null;
   version: string;
   major: number;
   minor: number;
@@ -50,7 +50,7 @@ interface SemVer {
   build: string;
 }
 
-function parse(version: string): SemVer | null {
+function parse(version: string) {
   // semver, major, minor, patch
   // https://github.com/mojombo/semver/issues/32
   // https://github.com/isaacs/node-semver/issues/10
@@ -65,7 +65,7 @@ function parse(version: string): SemVer | null {
 
   return 0 === m.length
     ? null
-    : {
+    : <SemVer>{
         semver: m[0],
         version: m[1],
         major: defaultToZero(m[2]),
