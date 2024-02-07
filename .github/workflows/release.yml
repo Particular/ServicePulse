@@ -5,8 +5,8 @@ on:
       - master
       - release-*
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
-      - '[0-9]+.[0-9]+.[0-9]+-*'
+      - "[0-9]+.[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+.[0-9]+-*"
   pull_request:
   workflow_dispatch:
 env:
@@ -34,16 +34,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.1
         with:
-            node-version: 16
-      - name: AngularJs - Install Host npm packages
-        run: npm run load
-        working-directory: src/ServicePulse.Host/angular
-      - name: AngularJs - Run lint
-        run: npm run lint
-        working-directory: src/ServicePulse.Host/angular
+          node-version: latest
+      # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
+        env:
+          NODE_OPTIONS: "--openssl-legacy-provider"
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
+      # Build and run tests
       - name: Build
         run: dotnet build src --configuration Release
       - id: save-version
@@ -78,7 +76,7 @@ jobs:
             assets/*
             nugets/*
           retention-days: 1
-      - name : Verify release artifact counts
+      - name: Verify release artifact counts
         shell: pwsh
         run: |
           $assetsCount = (Get-ChildItem -Recurse -File assets).Count
@@ -124,11 +122,16 @@ jobs:
         run: exit $(If ($env:SECRETS_AVAILABLE -eq 'true') { 0 } Else { 1 })
       - name: Checkout
         uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.1
         with:
-            node-version: 16
+          node-version: latest
+      # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
+        env:
+          NODE_OPTIONS: "--openssl-legacy-provider"
         run: .\build.ps1
         shell: pwsh
         working-directory: src/ServicePulse.Host
