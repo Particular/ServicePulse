@@ -6,25 +6,13 @@ export async function useUnarchiveMessage(ids: string[]) {
   if (!response.ok) {
     throw response.statusText;
   }
-
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    data: response,
-  };
 }
 
 export async function useArchiveMessage(ids: string[]) {
   const response = await usePatchToServiceControl("errors/archive/", ids);
   if (!response.ok) {
-    throw response.statusText;
+    throw new Error(response.statusText);
   }
-
-  return {
-    status: response.status,
-    statusText: response.statusText,
-    data: response,
-  };
 }
 
 export async function useRetryMessages(ids: string[]) {
@@ -41,8 +29,6 @@ export async function useRetryEditedMessage(
   const payload = { message_body: editedMessage.value.messageBody, message_headers: editedMessage.value.headers };
   const response = await usePostToServiceControl(`edit/${id}`, payload);
   if (!response.ok) {
-    throw response.statusText;
+    throw new Error(response.statusText);
   }
-
-  return response;
 }

@@ -15,50 +15,38 @@ export async function useGetArchiveGroups(classifier: string = "") {
 
 //delete note by group id
 export async function useDeleteNote(groupId: string) {
-  const response = await useDeleteFromServiceControl(`recoverability/groups/${groupId}/comment`);
-  return {
-    message: response.ok ? "success" : `error:${response.statusText}`,
-  };
+  return evaluateResponse(await useDeleteFromServiceControl(`recoverability/groups/${groupId}/comment`));
 }
 
 //edit or create note by group id
 export async function useEditOrCreateNote(groupId: string, comment: string) {
-  const response = await usePostToServiceControl(`recoverability/groups/${groupId}/comment?comment=${comment}`);
-  return {
-    message: response.ok ? "success" : `error:${response.statusText}`,
-  };
+  return evaluateResponse(await usePostToServiceControl(`recoverability/groups/${groupId}/comment?comment=${comment}`));
 }
 
 //archive exception group by group id
 //archiveGroup
 export async function useArchiveExceptionGroup(groupId: string) {
-  const response = await usePostToServiceControl(`recoverability/groups/${groupId}/errors/archive`);
-  return {
-    message: response.ok ? "success" : `error:${response.statusText}`,
-  };
+  return evaluateResponse(await usePostToServiceControl(`recoverability/groups/${groupId}/errors/archive`));
 }
 
 //restore group by group id
 export async function useRestoreGroup(groupId: string) {
-  const response = await usePostToServiceControl(`recoverability/groups/${groupId}/errors/unarchive`);
-  return {
-    message: response.ok ? "success" : `error:${response.statusText}`,
-  };
+  return evaluateResponse(await usePostToServiceControl(`recoverability/groups/${groupId}/errors/unarchive`));
 }
 
 //retry exception group by group id
 //retryGroup
 export async function useRetryExceptionGroup(groupId: string) {
-  const response = await usePostToServiceControl(`recoverability/groups/${groupId}/errors/retry`);
-  return {
-    message: response.ok ? "success" : `error:${response.statusText}`,
-  };
+  return evaluateResponse(await usePostToServiceControl(`recoverability/groups/${groupId}/errors/retry`));
 }
 
 //acknowledge archive exception group by group id
 export async function useAcknowledgeArchiveGroup(groupId: string) {
-  const response = await useDeleteFromServiceControl(`recoverability/unacknowledgedgroups/${groupId}`);
+  return evaluateResponse(await useDeleteFromServiceControl(`recoverability/unacknowledgedgroups/${groupId}`));
+}
+
+async function evaluateResponse(response: Response) {
   return {
-    message: response.ok ? "success" : `error:${response.statusText}`,
+    message: response.ok ? "success" : `error: ${response.statusText}`,
   };
 }

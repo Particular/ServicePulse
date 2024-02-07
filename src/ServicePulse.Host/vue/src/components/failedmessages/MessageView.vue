@@ -85,45 +85,21 @@ function updateMessageDeleteDate() {
 async function archiveMessage() {
   useShowToast("info", "Info", `Deleting the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
-  try {
-    const response = await useArchiveMessage([id.value]);
-    if (response.data.ok) {
-      failedMessage.value.archiving = true;
-      return;
-    }
-    return false;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  await useArchiveMessage([id.value]);
+  failedMessage.value.archiving = true;
 }
 
 async function unarchiveMessage() {
   changeRefreshInterval(1000); // We've started an unarchive, so increase the polling frequency
-  try {
-    const response = await useUnarchiveMessage([id.value]);
-
-    if (response.data.ok) {
-      failedMessage.value.restoring = true;
-    }
-
-    return false;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  await useUnarchiveMessage([id.value]);
+  failedMessage.value.restoring = true;
 }
 
 async function retryMessage() {
   useShowToast("info", "Info", `Retrying the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started a retry, so increase the polling frequency
-  try {
-    await useRetryMessages([id.value]);
-    failedMessage.value.retried = true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  await useRetryMessages([id.value]);
+  failedMessage.value.retried = true;
 }
 
 async function downloadHeadersAndBody() {
