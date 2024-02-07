@@ -172,8 +172,11 @@ async function downloadBody() {
     }
   }
 
-  const textBody = await response.text();
-  failedMessage.value.messageBody = textBody;
+  try {
+    failedMessage.value.messageBody = await response.text();
+  } catch {
+    failedMessage.value.bodyUnavailable = true;
+  }
 }
 
 // taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js

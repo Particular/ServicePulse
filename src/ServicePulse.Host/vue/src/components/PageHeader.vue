@@ -3,7 +3,7 @@ import { RouterLink, useRoute } from "vue-router";
 import { computed } from "vue";
 import { connectionState, monitoringConnectionState, stats } from "../composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-import { licenseStatus } from "./../composables/serviceLicense";
+import { licenseStatus } from "../composables/serviceLicense";
 import ExclamationMark from "./ExclamationMark.vue";
 
 const baseUrl = window.defaultConfig.base_url;

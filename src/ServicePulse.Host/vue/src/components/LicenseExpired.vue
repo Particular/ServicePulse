@@ -1,5 +1,5 @@
 <script setup>
-import { licenseStatus } from "./../composables/serviceLicense";
+import { licenseStatus } from "../composables/serviceLicense";
 </script>
 
 <template>
