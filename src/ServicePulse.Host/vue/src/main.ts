@@ -22,4 +22,8 @@ const toastOptions: PluginOptions = {
 app.use(Toast, toastOptions);
 app.use(SimpleTypeahead);
 
+app.config.errorHandler = (err, instance, info) => {
+  console.error(instance, err);
+};
+
 app.mount("#app");

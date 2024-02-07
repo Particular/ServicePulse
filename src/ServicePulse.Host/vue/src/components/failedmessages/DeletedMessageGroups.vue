@@ -343,7 +343,7 @@ onMounted(async () => {
                                 <button
                                   type="button"
                                   class="btn btn-link btn-sm"
-                                  :disabled="group.count == 0 || isBeingRestored(group.workflow_state.status)"
+                                  :disabled="group.count === 0 || isBeingRestored(group.workflow_state.status)"
                                   @mouseenter="group.hover3 = true"
                                   @mouseleave="group.hover3 = false"
                                   v-if="archiveGroups.length > 0"

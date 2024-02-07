@@ -340,7 +340,7 @@ function getMonitoredEndpoints() {
       if (response != null && response.ok) {
         return response.json();
       }
-      throw "Error connecting to monitoring";
+      throw new Error("Error connecting to monitoring");
     }
   );
 }
@@ -353,7 +353,7 @@ function getDisconnectedEndpointsCount() {
       if (response != null && response.ok) {
         return response.json();
       }
-      throw "Error connecting to monitoring";
+      throw new Error("Error connecting to monitoring");
     }
   );
 }

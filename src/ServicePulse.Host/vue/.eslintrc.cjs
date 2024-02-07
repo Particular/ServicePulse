@@ -28,5 +28,6 @@ module.exports = {
     eqeqeq: ["error", "smart"],
     "unused-imports/no-unused-imports": "error",
     "import/no-duplicates": "error",
+    "no-throw-literal": "error",
   },
 };
