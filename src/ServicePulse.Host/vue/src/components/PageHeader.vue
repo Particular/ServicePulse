@@ -69,11 +69,11 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
             </a>
           </li>
-          <li :class="{ active: subIsActive('/a/#/events') }">
-            <a :href="`${baseUrl}a/#/events`">
+          <li :class="{ active: subIsActive('/events') }">
+            <RouterLink :to="{ name: 'events' }" exact>
               <i class="fa fa-list-ul icon-white" title="Events"></i>
               <span class="navbar-label">Events</span>
-            </a>
+            </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/configuration') }">
             <RouterLink :to="{ name: 'license' }" exact>

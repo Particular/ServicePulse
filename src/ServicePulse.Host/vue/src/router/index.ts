@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import DashboardView from "@/views/DashboardView.vue";
 import FailedMessagesView from "@/views/FailedMessagesView.vue";
+import EventsView from "@/views/EventsView.vue";
 import ConfigurationView from "@/views/ConfigurationView.vue";
 
 const router = createRouter({
@@ -64,6 +65,14 @@ const router = createRouter({
       component: () => import("@/components/failedmessages/MessageView.vue"),
       meta: {
         title: "Message • ServicePulse",
+      },
+    },
+    {
+      path: "/events",
+      name: "events",
+      component: EventsView,
+      meta: {
+        title: "Events • ServicePulse",
       },
     },
     {
