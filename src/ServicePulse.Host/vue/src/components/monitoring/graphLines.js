@@ -64,6 +64,7 @@ class Path {
   }
 
   close() {
+    if (this.#complete) throw new Error("Path is already closed");
     if (this.#pathElements.length === 0) throw new Error("Cannot close an empty path");
     this.#pathElements.push("Z");
     this.#complete = true;
