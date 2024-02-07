@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useFormatLargeNumber, useFormatTime } from "../../composables/formatter";
+import { useGraph } from "./graphLines";
 const props = defineProps({
   plotdata: Object,
   minimumyaxis: Number,
@@ -13,25 +14,11 @@ const props = defineProps({
 
 const hover = ref(false);
 
-const plotData = computed(() => props.plotdata ?? { points: [], average: 0 });
-const values = computed(() => {
-  let result = plotData.value.points;
-  if (result.length === 0) {
-    result = new Array(10).fill(0);
-  }
-  return result;
-});
-const xTick = computed(() => 100 / (values.value.length - 1));
-const coordinates = computed(() => values.value.reduce((points, yValue, i) => [...points, [i * xTick.value, yValue]], []));
-const valuesPath = computed(() => `${coordinates.value.map((c, i) => (i ? `L${c[0]} ${c[1]}` : `M${c[0]} ${c[1]}`)).join(" ")}`);
-const valuesArea = computed(() => `M0 0 ${coordinates.value.map((c) => `L${c[0]} ${c[1]}`).join(" ")} L${100} 0 Z`);
+const { valuesPath, valuesArea, maxYaxis, average, averageLine } = useGraph(
+  () => props.plotdata,
+  () => props.minimumyaxis
+);
 
-const average = computed(() => plotData.value.average);
-//TODO: why is this called minimumYaxis when it's only used to determine the maxYaxis?
-const minimumYaxis = computed(() => (!isNaN(props.minimumyaxis) ? Number(props.minimumyaxis) : 10));
-const maxYaxis = computed(() => Math.max(...[...values.value, average.value * 1.5, minimumYaxis.value]));
-
-const averageLine = computed(() => `M0 ${average.value} L100 ${average.value}`);
 const averageLabelValue = computed(() => {
   return props.isdurationgraph ? useFormatTime(average.value).value : useFormatLargeNumber(average.value, 2);
 });
