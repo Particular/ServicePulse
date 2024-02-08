@@ -4,7 +4,7 @@ import type { Ref } from "vue";
 export async function useUnarchiveMessage(ids: string[]) {
   const response = await usePatchToServiceControl("errors/unarchive/", ids);
   if (!response.ok) {
-    throw response.statusText;
+    throw new Error(response.statusText);
   }
 }
 
