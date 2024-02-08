@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 import { connectionState, environment, monitoringConnectionState, newVersions } from "../composables/serviceServiceControl";
 import { monitoringUrl, serviceControlUrl } from "../composables/serviceServiceControlUrls";
@@ -8,11 +8,11 @@ const isMonitoringEnabled = computed(() => {
 });
 
 const scAddressTooltip = computed(() => {
-  return "ServiceControl URL " + serviceControlUrl.value;
+  return `ServiceControl URL ${serviceControlUrl.value}`;
 });
 
 const scMonitoringAddressTooltip = computed(() => {
-  return "Monitoring URL " + monitoringUrl.value;
+  return `Monitoring URL ${monitoringUrl.value}`;
 });
 </script>
 

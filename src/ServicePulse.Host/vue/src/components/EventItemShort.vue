@@ -1,12 +1,13 @@
-﻿<script setup>
-import DataView from "../components/DataView.vue";
-import EventLogItem from "../components/EventLogItem.vue";
+﻿<script setup lang="ts">
+import DataView from "@/components/DataView.vue";
+import EventLogItem from "@/components/EventLogItem.vue";
+import type EventLogItemType from "@/resources/EventLogItem";
 import { RouterLink } from "vue-router";
 </script>
 
 <template>
   <div class="events">
-    <DataView api-url="eventlogitems" :auto-refresh-seconds="5" :itemsPerPage="10" :show-pagination="false">
+    <DataView api-url="eventlogitems" :items-type="[] as EventLogItemType[]" :auto-refresh-seconds="5" :itemsPerPage="10" :show-pagination="false">
       <template #data="items">
         <div class="col-12">
           <h6>Last 10 events</h6>

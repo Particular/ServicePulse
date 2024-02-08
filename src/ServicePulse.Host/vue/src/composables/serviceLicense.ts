@@ -5,6 +5,7 @@ import { useShowToast } from "./toast";
 import { TYPE } from "vue-toastification";
 import type LicenseInfo from "@/resources/LicenseInfo";
 import { LicenseStatus } from "@/resources/LicenseInfo";
+import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 
 const subscriptionExpiring =
   '<div class="license-warning"><strong>Platform license expires soon</strong><div>Once the license expires you\'ll no longer be able to continue using the Particular Service Platform.</div><a href="#/configuration" class="btn btn-license-warning">View license details</a></div>';
@@ -62,7 +63,7 @@ export const licenseStatus = reactive({
   upgradeDaysLeft: "",
   subscriptionDaysLeft: "",
   trialDaysLeft: "",
-  warningLevel: "",
+  warningLevel: LicenseWarningLevel.None,
 });
 
 export async function useLicense() {
@@ -101,9 +102,10 @@ export async function useLicense() {
 }
 
 function getLicenseWarningLevel(licenseStatus: LicenseStatus) {
-  if (licenseStatus === "InvalidDueToExpiredTrial" || licenseStatus === "InvalidDueToExpiredSubscription" || licenseStatus === "InvalidDueToExpiredUpgradeProtection") return "danger";
-  else if (licenseStatus === "ValidWithExpiringUpgradeProtection" || licenseStatus === "ValidWithExpiringTrial" || licenseStatus === "ValidWithExpiredUpgradeProtection" || licenseStatus === "ValidWithExpiringSubscription") return "warning";
-  return "";
+  if (licenseStatus === "InvalidDueToExpiredTrial" || licenseStatus === "InvalidDueToExpiredSubscription" || licenseStatus === "InvalidDueToExpiredUpgradeProtection") return LicenseWarningLevel.Danger;
+  else if (licenseStatus === "ValidWithExpiringUpgradeProtection" || licenseStatus === "ValidWithExpiringTrial" || licenseStatus === "ValidWithExpiredUpgradeProtection" || licenseStatus === "ValidWithExpiringSubscription")
+    return LicenseWarningLevel.Warning;
+  return LicenseWarningLevel.None;
 }
 
 function isUpgradeProtectionLicense(license: UnwrapNestedRefs<License>) {

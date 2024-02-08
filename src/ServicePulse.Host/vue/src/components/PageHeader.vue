@@ -5,6 +5,7 @@ import { connectionState, monitoringConnectionState, stats } from "../composable
 import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
 import { licenseStatus } from "../composables/serviceLicense";
 import ExclamationMark from "./ExclamationMark.vue";
+import { LicenseWarningLevel } from "@/composables/LicenseStatus.js";
 
 const baseUrl = window.defaultConfig.base_url;
 
@@ -17,10 +18,10 @@ function subIsActive(input, exact) {
 }
 
 const displayWarn = computed(() => {
-  return licenseStatus.warningLevel === "warning";
+  return licenseStatus.warningLevel === LicenseWarningLevel.Warning;
 });
 const displayDanger = computed(() => {
-  return connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled()) || licenseStatus.warningLevel === "danger";
+  return connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled()) || licenseStatus.warningLevel === LicenseWarningLevel.Danger;
 });
 </script>
 
@@ -79,8 +80,8 @@ const displayDanger = computed(() => {
             <RouterLink :to="{ name: 'license' }" exact>
               <i class="fa fa-cog icon-white" title="Configuration"></i>
               <span class="navbar-label">Configuration</span>
-              <exclamation-mark :type="'warning'" v-if="displayWarn" />
-              <exclamation-mark :type="'danger'" v-if="displayDanger" />
+              <exclamation-mark :type="LicenseWarningLevel.Warning" v-if="displayWarn" />
+              <exclamation-mark :type="LicenseWarningLevel.Danger" v-if="displayDanger" />
             </RouterLink>
           </li>
           <li>

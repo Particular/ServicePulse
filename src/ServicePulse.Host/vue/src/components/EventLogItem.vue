@@ -1,25 +1,25 @@
-<script setup>
+<script setup lang="ts">
 import { useRouter } from "vue-router";
 import TimeSince from "../components/TimeSince.vue";
+import type EventLogItem from "@/resources/EventLogItem";
+import { Severity } from "@/resources/EventLogItem";
 
-defineProps({
-  eventLogItem: Object,
-});
+defineProps<{ eventLogItem: EventLogItem }>();
 const router = useRouter();
 
-function navigateToEvent(eventLogItem) {
+function navigateToEvent(eventLogItem: EventLogItem) {
   switch (eventLogItem.category) {
     case "Endpoints":
       router.push({ name: "endpoint-connection" });
       break;
     case "HeartbeatMonitoring":
-      window.location = "/a/#/endpoints";
+      window.location.assign("/a/#/endpoints");
       break;
     case "CustomChecks":
-      window.location = "/a/#/custom-checks";
+      window.location.assign("/a/#/custom-checks");
       break;
     case "EndpointControl":
-      window.location = "/a/#/endpoints";
+      window.location.assign("/a/#/endpoints");
       break;
     case "MessageFailures":
       if (eventLogItem.related_to?.length && eventLogItem.related_to[0].search("message") > 0) {
@@ -39,10 +39,10 @@ function navigateToEvent(eventLogItem) {
   }
 }
 
-function iconClasses(eventItem) {
+function iconClasses(eventItem: EventLogItem) {
   return {
-    normal: eventItem.severity === "info",
-    danger: eventItem.severity === "error",
+    normal: eventItem.severity === Severity.Info,
+    danger: eventItem.severity === Severity.Error,
     "fa-heartbeat": eventItem.category === "Endpoints" || eventItem.category === "EndpointControl" || eventItem.category === "HeartbeatMonitoring",
     "fa-check": eventItem.category === "CustomChecks",
     "fa-envelope": eventItem.category === "MessageFailures" || eventItem.category === "Recoverability",
@@ -51,12 +51,12 @@ function iconClasses(eventItem) {
   };
 }
 
-function iconSubClasses(eventItem) {
+function iconSubClasses(eventItem: EventLogItem) {
   return {
-    "fa-times fa-error": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.severity === "error",
-    "fa-pencil": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectChanged",
-    "fa-plus": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectCreated",
-    "fa-trash": (eventItem.severity === "error" || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectRemoved",
+    "fa-times fa-error": (eventItem.severity === Severity.Error || eventItem.category === "MessageRedirects") && eventItem.severity === Severity.Error,
+    "fa-pencil": (eventItem.severity === Severity.Error || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectChanged",
+    "fa-plus": (eventItem.severity === Severity.Error || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectCreated",
+    "fa-trash": (eventItem.severity === Severity.Error || eventItem.category === "MessageRedirects") && eventItem.category === "MessageRedirects" && eventItem.event_type === "MessageRedirectRemoved",
   };
 }
 </script>
@@ -68,7 +68,7 @@ function iconSubClasses(eventItem) {
         <div class="col-1">
           <span class="fa-stack fa-lg">
             <i class="fa fa-stack-2x" :class="iconClasses(eventLogItem)" />
-            <i v-if="eventLogItem.severity === 'error' || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse" :class="iconSubClasses(eventLogItem)" />
+            <i v-if="eventLogItem.severity === Severity.Error || eventLogItem.category === 'MessageRedirects'" class="fa fa-o fa-stack-1x fa-inverse" :class="iconSubClasses(eventLogItem)" />
           </span>
         </div>
         <div class="col-9">

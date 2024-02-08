@@ -1,14 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
 
 const emit = defineEmits(["confirm", "cancel"]);
 
-const settings = defineProps({
-  heading: String,
-  body: String,
-  secondParagraph: String,
-  hideCancel: Boolean,
-});
+const settings = defineProps<{
+  heading: string;
+  body: string;
+  secondParagraph: string;
+  hideCancel: boolean;
+}>();
 
 function confirm() {
   emit("confirm", settings);

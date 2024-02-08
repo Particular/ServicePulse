@@ -1,25 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from "vue";
 
-const props = defineProps({
-  itemsPerPage: {
-    type: Number,
-    required: true,
-  },
-  totalCount: {
-    type: Number,
-    required: true,
-  },
-  pageBuffer: {
-    type: Number,
-    default: 5,
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    itemsPerPage: number;
+    totalCount: number;
+    pageBuffer?: number;
+  }>(),
+  { pageBuffer: 5 }
+);
 
-const pageNumber = defineModel({
-  type: Number,
-  required: true,
-});
+const pageNumber = defineModel<number>({ required: true });
 
 const numberOfPages = computed(() => {
   return Math.ceil(props.totalCount / props.itemsPerPage);
@@ -31,8 +22,17 @@ const showPagination = computed(() => {
 
 const doublePageBuffer = computed(() => props.pageBuffer * 2);
 
+interface PageData {
+  label: string;
+  page: number;
+  key: string;
+  class?: {
+    disabled?: boolean;
+    active?: boolean;
+  };
+}
 const pages = computed(() => {
-  const pages = [];
+  const pages: PageData[] = [];
   pages.push({
     label: "Previous",
     page: Math.max(pageNumber.value - 1, 1),
