@@ -107,7 +107,7 @@ export function useServiceControlUrls() {
 
 export function updateServiceControlUrls(newServiceControlUrl: Ref<string>, newMonitoringUrl: Ref<string>) {
   if (!newServiceControlUrl.value) {
-    throw "ServiceControl URL is mandatory";
+    throw new Error("ServiceControl URL is mandatory");
   } else if (!newServiceControlUrl.value.endsWith("/")) {
     newServiceControlUrl.value += "/";
   }
