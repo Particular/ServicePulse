@@ -2,7 +2,7 @@
 import { onMounted, onUnmounted, ref, watch } from "vue";
 // eslint-disable-next-line vue/prefer-import-from-vue
 import type { UnwrapRefSimple } from "@vue/reactivity";
-import { useTypedFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
+import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import ItemsPerPage from "../components/ItemsPerPage.vue";
 import PaginationStrip from "../components/PaginationStrip.vue";
 
@@ -19,7 +19,7 @@ const props = withDefaults(
   { itemsPerPageOptions: () => [20, 35, 50, 75], itemsPerPage: 50, showPagination: true, showItemsPerPage: false }
 );
 
-const refreshTimer = ref<number>();
+let refreshTimer: number | undefined;
 const items = ref<T[]>([]);
 const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
@@ -46,14 +46,14 @@ async function loadData() {
 
 function startRefreshTimer() {
   if (props.autoRefreshSeconds) {
-    refreshTimer.value = setInterval(() => {
+    refreshTimer = setInterval(() => {
       loadData();
     }, props.autoRefreshSeconds * 1000);
   }
 }
 
 function stopRefreshTimer() {
-  clearInterval(refreshTimer.value);
+  clearInterval(refreshTimer);
 }
 
 onMounted(() => {
