@@ -1,36 +1,27 @@
-<script setup>
+<script setup lang="ts" generic="T">
 import { onMounted, onUnmounted, ref, watch } from "vue";
-import { useFetchFromServiceControl } from "../composables/serviceServiceControlUrls";
-import ItemsPerPage from "../components/ItemsPerPage.vue";
-import PaginationStrip from "../components/PaginationStrip.vue";
-const props = defineProps({
-  apiUrl: String,
-  itemsPerPageOptions: {
-    type: Array,
-    default: () => [20, 35, 50, 75],
-  },
-  itemsPerPage: {
-    type: Number,
-    default: 50,
-  },
-  autoRefreshSeconds: {
-    type: Number,
-  },
-  showPagination: {
-    type: Boolean,
-    default: true,
-  },
-  showItemsPerPage: {
-    type: Boolean,
-    default: false,
-  },
-});
+import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import ItemsPerPage from "@/components/ItemsPerPage.vue";
+import PaginationStrip from "@/components/PaginationStrip.vue";
+import type DataViewPageModel from "./DataViewPageModel";
 
-const refreshTimer = ref();
-const items = ref([]);
+const props = withDefaults(
+  defineProps<{
+    apiUrl: string;
+    itemsPerPageOptions?: number[];
+    itemsPerPage?: number;
+    autoRefreshSeconds: number;
+    showPagination?: boolean;
+    showItemsPerPage?: boolean;
+  }>(),
+  { itemsPerPageOptions: () => [20, 35, 50, 75], itemsPerPage: 50, showPagination: true, showItemsPerPage: false }
+);
+
+let refreshTimer: number | undefined;
+const viewModel = defineModel<DataViewPageModel<T>>({ required: true });
+
 const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
-const totalCount = ref(0);
 
 watch(
   () => props.autoRefreshSeconds,
@@ -44,30 +35,23 @@ watch(itemsPerPage, () => loadData());
 watch(pageNumber, () => loadData());
 
 async function loadData() {
-  try {
-    const response = await useFetchFromServiceControl(`${props.apiUrl}?page=${pageNumber.value}&per_page=${itemsPerPage.value}`);
-    if (response.ok) {
-      totalCount.value = parseInt(response.headers.get("Total-Count"));
-      const data = await response.json();
-      items.value = data;
-    }
-  } catch (error) {
-    console.log(error);
+  const [response, data] = await useTypedFetchFromServiceControl<T[]>(`${props.apiUrl}?page=${pageNumber.value}&per_page=${itemsPerPage.value}`);
+  if (response.ok) {
+    viewModel.value.totalCount = parseInt(response.headers.get("Total-Count") ?? "0");
+    viewModel.value.data = data;
   }
 }
 
 function startRefreshTimer() {
   if (props.autoRefreshSeconds) {
-    refreshTimer.value = setInterval(() => {
+    refreshTimer = window.setInterval(() => {
       loadData();
     }, props.autoRefreshSeconds * 1000);
   }
 }
 
 function stopRefreshTimer() {
-  if (refreshTimer.value) {
-    clearInterval(refreshTimer.value);
-  }
+  window.clearInterval(refreshTimer);
 }
 
 onMounted(() => {
@@ -81,10 +65,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <slot name="data" v-bind="items"></slot>
+  <slot name="data"></slot>
   <div class="row">
     <ItemsPerPage v-if="showItemsPerPage" v-model="itemsPerPage" :options="itemsPerPageOptions" />
-    <PaginationStrip v-if="showPagination" v-model="pageNumber" :totalCount="totalCount" :itemsPerPage="itemsPerPage" />
+    <PaginationStrip v-if="showPagination" v-model="pageNumber" :totalCount="viewModel.totalCount" :itemsPerPage="itemsPerPage" />
   </div>
-  <slot name="footer" :count="totalCount"></slot>
+  <slot name="footer"></slot>
 </template>

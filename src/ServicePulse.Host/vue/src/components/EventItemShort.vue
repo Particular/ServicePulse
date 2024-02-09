@@ -1,20 +1,26 @@
-﻿<script setup>
-import DataView from "../components/DataView.vue";
-import EventLogItem from "../components/EventLogItem.vue";
+﻿<script setup lang="ts">
+import DataView from "@/components/DataView.vue";
+import EventLogItem from "@/components/EventLogItem.vue";
+import type EventLogItemType from "@/resources/EventLogItem";
+import { ref } from "vue";
 import { RouterLink } from "vue-router";
+
+import type DataViewPageModel from "@/components/DataViewPageModel";
+
+const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCount: 0 });
 </script>
 
 <template>
   <div class="events">
-    <DataView api-url="eventlogitems" :auto-refresh-seconds="5" :itemsPerPage="10" :show-pagination="false">
-      <template #data="items">
+    <DataView api-url="eventlogitems" v-model="pageModel" :auto-refresh-seconds="5" :itemsPerPage="10" :show-pagination="false">
+      <template #data>
         <div class="col-12">
           <h6>Last 10 events</h6>
-          <EventLogItem v-for="item of items" :eventLogItem="item" :key="item.id" />
+          <EventLogItem v-for="item of pageModel.data" :eventLogItem="item" :key="item.id" />
         </div>
       </template>
-      <template #footer="{ count }">
-        <div v-if="count > 10" class="row text-center">
+      <template #footer>
+        <div v-if="pageModel.totalCount > 10" class="row text-center">
           <div class="col-12">
             <RouterLink :to="{ name: 'events' }" class="btn btn-default btn-secondary btn-all-events">View all events</RouterLink>
           </div>

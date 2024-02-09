@@ -1,15 +1,12 @@
-<script setup>
-defineProps({
-  options: {
-    type: Array,
-    default: () => [20, 35, 50, 75],
-  },
-});
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    options: number[];
+  }>(),
+  { options: () => [20, 35, 50, 75] }
+);
 
-const current = defineModel({
-  type: Number,
-  default: 50,
-});
+const current = defineModel<number>({ default: 50 });
 </script>
 
 <template>

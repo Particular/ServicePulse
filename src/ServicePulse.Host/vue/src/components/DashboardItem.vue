@@ -1,9 +1,9 @@
-﻿<script setup>
-const props = defineProps({
-  counter: Number,
-  url: String,
-  iconClass: String,
-});
+﻿<script setup lang="ts">
+const props = defineProps<{
+  counter: number;
+  url: string;
+  iconClass: string;
+}>();
 </script>
 
 <template>

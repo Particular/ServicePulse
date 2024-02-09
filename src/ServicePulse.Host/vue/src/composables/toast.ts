@@ -1,4 +1,4 @@
-import ToastPopup from "../components/ToastPopup.vue";
+import ToastPopup from "@/components/ToastPopup.vue";
 import { TYPE, useToast } from "vue-toastification";
 
 export function useShowToast(type: TYPE, title: string, message: string, doNotUseTimeout: boolean = false) {

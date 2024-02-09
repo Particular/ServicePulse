@@ -1,14 +1,16 @@
-﻿<script setup>
-const props = defineProps({
-  type: String,
-  title: String,
-  message: String,
-});
+﻿<script setup lang="ts">
+import { TYPE } from "vue-toastification";
+
+const props = defineProps<{
+  type: TYPE;
+  title: string;
+  message: string;
+}>();
 </script>
 
 <template>
   <div>
-    <template v-if="props.type === 'success'">
+    <template v-if="props.type === TYPE.SUCCESS">
       <div class="toast-success">
         <p>
           <strong>{{ props.title }}</strong>
@@ -16,7 +18,7 @@ const props = defineProps({
         <span v-html="props.message"></span>
       </div>
     </template>
-    <template v-if="props.type === 'info'">
+    <template v-if="props.type === TYPE.INFO">
       <div class="toast-info">
         <p>
           <strong>{{ props.title }}</strong>
@@ -24,7 +26,7 @@ const props = defineProps({
         <span v-html="props.message"></span>
       </div>
     </template>
-    <template v-if="props.type === 'error'">
+    <template v-if="props.type === TYPE.ERROR">
       <div class="toast-error">
         <p>
           <strong>{{ props.title }}</strong>
@@ -32,7 +34,7 @@ const props = defineProps({
         <span v-html="props.message"></span>
       </div>
     </template>
-    <template v-if="props.type === 'warning'">
+    <template v-if="props.type === TYPE.WARNING">
       <div class="toast-warning">
         <p>
           <strong>{{ props.title }}</strong>
@@ -40,7 +42,7 @@ const props = defineProps({
         <span v-html="props.message"></span>
       </div>
     </template>
-    <template v-if="props.type === 'default'">
+    <template v-if="props.type === TYPE.DEFAULT">
       <div class="toast-default">
         <p>
           <strong>{{ props.title }}</strong>
