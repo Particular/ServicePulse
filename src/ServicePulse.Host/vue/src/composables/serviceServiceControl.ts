@@ -108,9 +108,9 @@ export const connections = reactive<Connections>({
   },
 });
 
-onMounted(() => {
-  useServiceControlStats();
-  useServiceControlMonitoringStats();
+onMounted(async () => {
+  await Promise.all([useServiceControlStats(), useServiceControlMonitoringStats(), getServiceControlVersion()]);
+  setInterval(() => getServiceControlVersion(), 60000);
 });
 
 setInterval(() => useServiceControlStats(), 5000); //NOTE is 5 seconds too often?
@@ -189,11 +189,6 @@ export async function useServiceControlConnections() {
   }
   return connections;
 }
-
-onMounted(() => {
-  getServiceControlVersion();
-  setInterval(() => getServiceControlVersion(), 60000);
-});
 
 watch(environment, (newValue, oldValue) => {
   if (newValue.is_compatible_with_sc !== oldValue.is_compatible_with_sc) {

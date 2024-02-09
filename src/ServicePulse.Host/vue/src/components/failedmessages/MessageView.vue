@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { useFetchFromServiceControl, useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useArchiveMessage, useRetryMessages, useUnarchiveMessage } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useShowToast } from "../../composables/toast";
@@ -257,7 +257,7 @@ function togglePanel(panelNum) {
 function debugInServiceInsight() {
   const messageId = failedMessage.value.message_id;
   const endpointName = failedMessage.value.receiving_endpoint.name;
-  let serviceControlUrl = useServiceControlUrls().serviceControlUrl.value.toLowerCase();
+  let serviceControlUrl = serviceControlUrl.value.toLowerCase();
 
   if (serviceControlUrl.indexOf("https") === 0) {
     serviceControlUrl = serviceControlUrl.replace("https://", "");
