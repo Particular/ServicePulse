@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref, watch } from "vue";
 import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import ItemsPerPage from "@/components/ItemsPerPage.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
+import type DataViewPageModel from "./DataViewPageModel";
 
 const props = withDefaults(
   defineProps<{
@@ -17,11 +18,10 @@ const props = withDefaults(
 );
 
 let refreshTimer: number | undefined;
-const items = defineModel<T[]>({ required: true });
+const viewModel = defineModel<DataViewPageModel<T>>({ required: true });
 
 const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
-const totalCount = ref(0);
 
 watch(
   () => props.autoRefreshSeconds,
@@ -37,8 +37,8 @@ watch(pageNumber, () => loadData());
 async function loadData() {
   const [response, data] = await useTypedFetchFromServiceControl<T[]>(`${props.apiUrl}?page=${pageNumber.value}&per_page=${itemsPerPage.value}`);
   if (response.ok) {
-    totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
-    items.value = data;
+    viewModel.value.totalCount = parseInt(response.headers.get("Total-Count") ?? "0");
+    viewModel.value.data = data;
   }
 }
 
@@ -68,7 +68,7 @@ onUnmounted(() => {
   <slot name="data"></slot>
   <div class="row">
     <ItemsPerPage v-if="showItemsPerPage" v-model="itemsPerPage" :options="itemsPerPageOptions" />
-    <PaginationStrip v-if="showPagination" v-model="pageNumber" :totalCount="totalCount" :itemsPerPage="itemsPerPage" />
+    <PaginationStrip v-if="showPagination" v-model="pageNumber" :totalCount="viewModel.totalCount" :itemsPerPage="itemsPerPage" />
   </div>
-  <slot name="footer" :count="totalCount"></slot>
+  <slot name="footer"></slot>
 </template>

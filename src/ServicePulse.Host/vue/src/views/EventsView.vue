@@ -7,8 +7,9 @@ import EventLogItem from "@/components/EventLogItem.vue";
 import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
 import type EventLogItemType from "@/resources/EventLogItem";
 import { ref } from "vue";
+import type DataViewPageModel from "@/components/DataViewPageModel";
 
-const items = ref<EventLogItemType[]>([]);
+const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCount: 0 });
 </script>
 
 <template>
@@ -17,12 +18,12 @@ const items = ref<EventLogItemType[]>([]);
     <ServiceControlNotAvailable />
     <template v-if="connectionState.connected">
       <div class="events events-view">
-        <DataView api-url="eventlogitems" v-model="items" :auto-refresh-seconds="5" :show-items-per-page="true" :items-per-page="20">
+        <DataView api-url="eventlogitems" v-model="pageModel" :auto-refresh-seconds="5" :show-items-per-page="true" :items-per-page="20">
           <template #data>
             <div class="row">
               <div class="col-sm-12">
                 <h1>Events</h1>
-                <EventLogItem v-for="item of items" :eventLogItem="item" :key="item.id" />
+                <EventLogItem v-for="item of pageModel.data" :eventLogItem="item" :key="item.id" />
               </div>
             </div>
           </template>
