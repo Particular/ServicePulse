@@ -1,6 +1,6 @@
 import { ref, toValue, watchEffect } from "vue";
 
-export function useGraph(plotdata, minimumyaxis) {
+export function useGraph(plotdata, minimumyaxis, minPoints = () => 10) {
   const valuesPath = ref(""),
     valuesArea = ref(""),
     maxYaxis = ref(10),
@@ -12,7 +12,7 @@ export function useGraph(plotdata, minimumyaxis) {
     const values = (() => {
       let result = plotData.points;
       if (result.length === 0) {
-        result = new Array(10).fill(0);
+        result = new Array(toValue(minPoints)).fill(0);
       }
       return result;
     })();

@@ -1,8 +1,8 @@
-import D3LargeGraph from "./D3LargeGraph.vue";
+import LargeGraph from "./LargeGraph.vue";
 /*import { expect } from "@storybook/jest";*/
 export default {
-  component: D3LargeGraph,
-  title: "Monitoring/EndpointDetails/D3LargeGraph",
+  component: LargeGraph,
+  title: "Monitoring/EndpointDetails/LargeGraph",
   tags: ["autodocs"],
   //👇 Our events will be mapped in Storybook UI
   argTypes: {},

@@ -29,12 +29,14 @@ const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.va
 </script>
 
 <template>
-  <div class="graph pull-left ng-isolate-scope" :class="[type, hover ? 'hover' : '']" @mouseover="hover = true" @mouseout="hover = false">
+  <div class="graph pull-left ng-isolate-scope" :class="[hover ? 'hover' : '']" @mouseover="hover = true" @mouseout="hover = false">
     <div class="padding">
       <svg :viewBox="`0 0 100 ${maxYaxis}`" preserveAspectRatio="none">
-        <path :d="valuesArea" class="graph-data-fill" />
-        <path :d="valuesPath" vector-effect="non-scaling-stroke" class="graph-data-line" />
-        <path :d="averageLine" vector-effect="non-scaling-stroke" class="graph-avg-line" />
+        <g :class="type">
+          <path :d="valuesArea" class="graph-data-fill" />
+          <path :d="valuesPath" vector-effect="non-scaling-stroke" class="graph-data-line" />
+          <path :d="averageLine" vector-effect="non-scaling-stroke" class="graph-avg-line" />
+        </g>
       </svg>
     </div>
     <div class="avg-tooltip" :style="{ '--avg-tooltip-background-color': avglabelcolor, bottom: averageLabelPosition }">
@@ -49,6 +51,13 @@ const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.va
 <style scoped>
 .graph {
   position: relative;
+  width: 68%;
+}
+
+.graph svg {
+  position: relative;
+  width: 100%;
+  height: 50px;
 }
 
 .padding {

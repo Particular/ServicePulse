@@ -1769,24 +1769,6 @@ hr.top-separator {
   padding: 30px 0;
 }
 
-.large-graph {
-  width: 100%;
-}
-
-.large-graph svg {
-  width: 100%;
-}
-
-.graph {
-  width: 68%;
-}
-
-.graph svg {
-  position: relative;
-  width: 100%;
-  height: 50px;
-}
-
 .graph * .graph-data-line {
   stroke-width: 1.75px;
   fill: none;
@@ -1802,68 +1784,63 @@ hr.top-separator {
   stroke-dasharray: 5, 5;
 }
 
-.graph.queue-length * .graph-data-line {
+.graph .queue-length .graph-data-line {
   stroke: #ea7e00;
 }
 
-.graph.queue-length * .graph-data-fill {
+.graph .queue-length .graph-data-fill {
   fill: #eaddce;
-  stroke: #eaddce;
 }
 
-.graph.queue-length * .graph-avg-line {
+.graph .queue-length .graph-avg-line {
   stroke: #ea7e00;
 }
 
-.graph.throughput * .graph-data-line {
+.graph .throughput .graph-data-line {
   stroke: #176397;
 }
 
-.graph.throughput * .graph-data-fill {
+.graph .throughput .graph-data-fill {
   fill: #cadce8;
-  stroke: #cadce8;
 }
 
-.graph.throughput * .graph-avg-line {
+.graph .throughput .graph-avg-line {
   stroke: #176397;
 }
 
-.graph.retries * .graph-data-line {
+.graph .retries .graph-data-line {
   stroke: #cc1252;
 }
 
-.graph.retries * .graph-data-fill {
+.graph .retries .graph-data-fill {
   fill: #e9c4d1;
-  stroke: #e9c4d1;
 }
 
-.graph.retries * .graph-avg-line {
+.graph .retries .graph-avg-line {
   stroke: #cc1252;
 }
 
-.graph.processing-time * .graph-data-line {
+.graph .processing-time .graph-data-line {
   stroke: #258135;
 }
 
-.graph.processing-time * .graph-data-fill {
+.graph .processing-time .graph-data-fill {
   fill: #bee6c5;
-  stroke: #bee6c5;
 }
 
-.graph.processing-time * .graph-avg-line {
+.graph .processing-time .graph-avg-line {
   stroke: #258135;
 }
 
-.graph.critical-time * .graph-data-line {
+.graph .critical-time .graph-data-line {
   stroke: #2700cb;
 }
 
-.graph.critical-time * .graph-data-fill {
+.graph .critical-time .graph-data-fill {
   fill: #c4bce5;
-  stroke: #c4bce5;
 }
 
-.graph.critical-time * .graph-avg-line {
+.graph .critical-time .graph-avg-line {
   stroke: #2700cb;
 }
 
@@ -1914,7 +1891,7 @@ hr.top-separator {
   color: #ff0004;
 }
 
-.graph-area {
+.monitoring-view .graph-area {
   width: 33%;
   box-sizing: border-box;
 }
