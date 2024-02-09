@@ -1,19 +1,18 @@
-<script setup>
-import { onMounted, ref } from "vue";
-import { licenseStatus } from "../composables/serviceLicense";
-import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
-import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-import { useRedirects } from "../composables/serviceRedirects";
+<script setup lang="ts">
+import { onMounted, ref, watch } from "vue";
+import { licenseStatus } from "@/composables/serviceLicense";
+import { connectionState, monitoringConnectionState } from "@/composables/serviceServiceControl";
+import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
+import { useRedirects } from "@/composables/serviceRedirects";
 import ExclamationMark from "../components/ExclamationMark.vue";
 import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
+import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
 
 const redirectCount = ref(0);
 
-function updateRedirectCount(newCount) {
-  redirectCount.value = newCount;
-}
+watch(redirectCountUpdated, () => (redirectCount.value = redirectCountUpdated.count));
 
-function subIsActive(subPath) {
+function subIsActive(subPath: string) {
   return window.location.hash.endsWith(subPath);
 }
 
@@ -57,7 +56,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
-    <RouterView @redirectCountUpdated="updateRedirectCount" />
+    <RouterView />
   </div>
 </template>
 

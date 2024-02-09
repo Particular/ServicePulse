@@ -1,20 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { RouterLink, useRoute } from "vue-router";
 import { computed } from "vue";
-import { connectionState, monitoringConnectionState, stats } from "../composables/serviceServiceControl";
-import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-import { licenseStatus } from "../composables/serviceLicense";
+import { connectionState, monitoringConnectionState, stats } from "@/composables/serviceServiceControl";
+import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
+import { licenseStatus } from "@/composables/serviceLicense";
 import ExclamationMark from "./ExclamationMark.vue";
 import { LicenseWarningLevel } from "@/composables/LicenseStatus";
+import { WarningLevel } from "@/components/WarningLevel";
 
 const baseUrl = window.defaultConfig.base_url;
 
-function subIsActive(input, exact) {
-  const paths = Array.isArray(input) ? input : [input];
+function subIsActive(input: string, exact: boolean = false) {
   const route = useRoute();
-  return paths.some((path) => {
-    return exact ? route.path.endsWith(path) : route.path.indexOf(path) === 0; // current path starts with this path string
-  });
+  return exact ? route.path.endsWith(input) : route.path.indexOf(input) === 0; // current path starts with this path string
 }
 
 const displayWarn = computed(() => {

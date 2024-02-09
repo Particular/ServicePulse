@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
 
-const emit = defineEmits(["confirm", "cancel"]);
+const emit = defineEmits<{ confirm: []; cancel: [] }>();
 
-const settings = defineProps<{
-  heading: string;
-  body: string;
-  secondParagraph: string;
-  hideCancel: boolean;
-}>();
+withDefaults(
+  defineProps<{
+    heading: string;
+    body: string;
+    secondParagraph: string;
+    hideCancel: boolean;
+  }>(),
+  { hideCancel: false, secondParagraph: "" }
+);
 
 function confirm() {
-  emit("confirm", settings);
+  emit("confirm");
 }
 
 function close() {
@@ -70,7 +73,7 @@ onMounted(() => {
 
 .modal-container {
   width: 600px;
-  margin: 0px auto;
+  margin: 0 auto;
   padding: 20px 30px;
   background-color: #fff;
   border-radius: 2px;

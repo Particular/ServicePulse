@@ -47,9 +47,9 @@ const emptyLicense: License = {
   }),
 };
 
-export const license = reactive<License>(emptyLicense);
+const license = reactive<License>(emptyLicense);
 
-export const licenseStatus = reactive({
+const licenseStatus = reactive({
   isSubscriptionLicense: false,
   isUpgradeProtectionLicense: false,
   isTrialLicense: false,
@@ -66,40 +66,40 @@ export const licenseStatus = reactive({
   warningLevel: LicenseWarningLevel.None,
 });
 
-export async function useLicense() {
-  watch<UnwrapNestedRefs<License>>(license, async (newValue, oldValue) => {
-    const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
-    if (checkForWarnings) {
-      displayWarningMessage(newValue.license_status);
-    }
-  });
+watch<UnwrapNestedRefs<License>>(license, async (newValue, oldValue) => {
+  const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
+  if (checkForWarnings) {
+    displayWarningMessage(newValue.license_status);
+  }
+});
 
-  const lic = await getLicense();
-  license.license_type = lic.license_type;
-  license.expiration_date = lic.expiration_date;
-  license.trial_license = lic.trial_license;
-  license.edition = lic.edition;
-  license.license_status = lic.license_status;
-  license.instance_name = lic.instance_name;
-  license.registered_to = lic.registered_to;
-  license.status = lic.status;
-  license.upgrade_protection_expiration = lic.upgrade_protection_expiration;
+const lic = await getLicense();
+license.license_type = lic.license_type;
+license.expiration_date = lic.expiration_date;
+license.trial_license = lic.trial_license;
+license.edition = lic.edition;
+license.license_status = lic.license_status;
+license.instance_name = lic.instance_name;
+license.registered_to = lic.registered_to;
+license.status = lic.status;
+license.upgrade_protection_expiration = lic.upgrade_protection_expiration;
 
-  licenseStatus.isSubscriptionLicense = isSubscriptionLicense(license);
-  licenseStatus.isUpgradeProtectionLicense = isUpgradeProtectionLicense(license);
-  licenseStatus.isTrialLicense = license.trial_license;
-  licenseStatus.isPlatformExpired = license.license_status === "InvalidDueToExpiredSubscription";
-  licenseStatus.isPlatformTrialExpiring = license.license_status === "ValidWithExpiringTrial";
-  licenseStatus.isPlatformTrialExpired = license.license_status === "InvalidDueToExpiredTrial";
-  licenseStatus.isInvalidDueToUpgradeProtectionExpired = license.license_status === "InvalidDueToExpiredUpgradeProtection";
-  licenseStatus.isValidWithExpiredUpgradeProtection = license.license_status === "ValidWithExpiredUpgradeProtection";
-  licenseStatus.isValidWithExpiringUpgradeProtection = license.license_status === "ValidWithExpiringUpgradeProtection";
-  licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft(license);
-  licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft(license);
-  licenseStatus.trialDaysLeft = getTrialDaysLeft(license);
-  licenseStatus.warningLevel = getLicenseWarningLevel(license.license_status);
-  licenseStatus.isExpired = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isInvalidDueToUpgradeProtectionExpired;
-}
+licenseStatus.isSubscriptionLicense = isSubscriptionLicense(license);
+licenseStatus.isUpgradeProtectionLicense = isUpgradeProtectionLicense(license);
+licenseStatus.isTrialLicense = license.trial_license;
+licenseStatus.isPlatformExpired = license.license_status === "InvalidDueToExpiredSubscription";
+licenseStatus.isPlatformTrialExpiring = license.license_status === "ValidWithExpiringTrial";
+licenseStatus.isPlatformTrialExpired = license.license_status === "InvalidDueToExpiredTrial";
+licenseStatus.isInvalidDueToUpgradeProtectionExpired = license.license_status === "InvalidDueToExpiredUpgradeProtection";
+licenseStatus.isValidWithExpiredUpgradeProtection = license.license_status === "ValidWithExpiredUpgradeProtection";
+licenseStatus.isValidWithExpiringUpgradeProtection = license.license_status === "ValidWithExpiringUpgradeProtection";
+licenseStatus.upgradeDaysLeft = getUpgradeDaysLeft(license);
+licenseStatus.subscriptionDaysLeft = getSubscriptionDaysLeft(license);
+licenseStatus.trialDaysLeft = getTrialDaysLeft(license);
+licenseStatus.warningLevel = getLicenseWarningLevel(license.license_status);
+licenseStatus.isExpired = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isInvalidDueToUpgradeProtectionExpired;
+
+export { license, licenseStatus };
 
 function getLicenseWarningLevel(licenseStatus: LicenseStatus) {
   if (licenseStatus === "InvalidDueToExpiredTrial" || licenseStatus === "InvalidDueToExpiredSubscription" || licenseStatus === "InvalidDueToExpiredUpgradeProtection") return LicenseWarningLevel.Danger;
