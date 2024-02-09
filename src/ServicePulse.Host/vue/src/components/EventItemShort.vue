@@ -2,13 +2,16 @@
 import DataView from "@/components/DataView.vue";
 import EventLogItem from "@/components/EventLogItem.vue";
 import type EventLogItemType from "@/resources/EventLogItem";
+import { ref } from "vue";
 import { RouterLink } from "vue-router";
+
+const items = ref<EventLogItemType[]>([]);
 </script>
 
 <template>
   <div class="events">
-    <DataView api-url="eventlogitems" :items-type="[] as EventLogItemType[]" :auto-refresh-seconds="5" :itemsPerPage="10" :show-pagination="false">
-      <template #data="items">
+    <DataView api-url="eventlogitems" v-model="items" :auto-refresh-seconds="5" :itemsPerPage="10" :show-pagination="false">
+      <template #data>
         <div class="col-12">
           <h6>Last 10 events</h6>
           <EventLogItem v-for="item of items" :eventLogItem="item" :key="item.id" />
