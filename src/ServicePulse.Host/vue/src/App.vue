@@ -3,6 +3,11 @@ import { RouterView } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
 import "bootstrap";
+import { useLicense } from "@/composables/serviceLicense";
+import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
+import { useServiceControl } from "@/composables/serviceServiceControl";
+
+Promise.all([useLicense(), useServiceControlUrls(), useServiceControl()]);
 </script>
 
 <template>

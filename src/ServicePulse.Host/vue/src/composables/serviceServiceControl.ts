@@ -1,4 +1,4 @@
-import { computed, onMounted, reactive, watch } from "vue";
+import { computed, reactive, watch } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls";
 import { monitoringUrl, serviceControlUrl, useIsMonitoringDisabled, useTypedFetchFromMonitoring, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
@@ -23,18 +23,24 @@ export const stats = reactive({
   number_of_disconnected_endpoints: 0,
 });
 
-export const connectionState = reactive({
+interface ConnectionState {
+  connected: boolean;
+  connecting: boolean;
+  connectedRecently: boolean;
+  unableToConnect: boolean | null;
+}
+export const connectionState = reactive<ConnectionState>({
   connected: false,
   connecting: false,
   connectedRecently: false,
-  unableToConnect: true,
+  unableToConnect: null,
 });
 
-export const monitoringConnectionState = reactive({
+export const monitoringConnectionState = reactive<ConnectionState>({
   connected: false,
   connecting: false,
   connectedRecently: false,
-  unableToConnect: true,
+  unableToConnect: null,
 });
 
 export const environment = reactive({
@@ -108,11 +114,11 @@ export const connections = reactive<Connections>({
   },
 });
 
-onMounted(async () => {
+export async function useServiceControl() {
   await Promise.all([useServiceControlStats(), useServiceControlMonitoringStats(), getServiceControlVersion()]);
-  setInterval(() => getServiceControlVersion(), 60000);
-});
+}
 
+setInterval(() => getServiceControlVersion(), 60000);
 setInterval(() => useServiceControlStats(), 5000); //NOTE is 5 seconds too often?
 setInterval(() => useServiceControlMonitoringStats(), 5000); //NOTE is 5 seconds too often?
 
@@ -276,7 +282,7 @@ async function getMonitoringVersion() {
   }
 }
 
-async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[Response | null, T | null]>, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
+async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[Response | null, T | null]>, connectionState: ConnectionState, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
   if (connectionState.connecting) {
     //Skip the connection state checking
     try {
@@ -327,7 +333,8 @@ async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[
 function getFailedHeartBeatsCount() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromServiceControl<EndpointMonitoringStats>("heartbeats/stats"),
-    (response, data) => {
+    connectionState,
+    (_, data) => {
       return data.failing;
     },
     0
@@ -337,6 +344,7 @@ function getFailedHeartBeatsCount() {
 function getFailedMessagesCount() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=unresolved"),
+    connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? ""),
     0
   );
@@ -345,6 +353,7 @@ function getFailedMessagesCount() {
 function getPendingRetriesCount() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=retryissued"),
+    connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0
   );
@@ -353,6 +362,7 @@ function getPendingRetriesCount() {
 function getArchivedMessagesCount() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=archived"),
+    connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0
   );
@@ -361,6 +371,7 @@ function getArchivedMessagesCount() {
 function getFailedCustomChecksCount() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromServiceControl<CustomCheck[]>("customchecks?status=fail"),
+    connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0
   );
@@ -369,6 +380,7 @@ function getFailedCustomChecksCount() {
 function getMonitoredEndpoints() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromMonitoring<MonitoredEndpoint>("monitored-endpoints?history=1"),
+    monitoringConnectionState,
     (_, data) => {
       return data;
     },
@@ -379,6 +391,7 @@ function getMonitoredEndpoints() {
 function getDisconnectedEndpointsCount() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromMonitoring<number>("monitored-endpoints/disconnected"),
+    monitoringConnectionState,
     (_, data) => {
       return data;
     },

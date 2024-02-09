@@ -56,7 +56,7 @@ function isMonitoringUrlSpecified() {
 }
 
 function saveConnections() {
-  updateServiceControlUrls();
+  updateServiceControlUrls(serviceControlUrl, monitoringUrl);
   connectionSaved.value = true;
 }
 </script>
@@ -95,7 +95,7 @@ function saveConnections() {
                   <label for="monitoringUrl"
                     >CONNECTION URL
                     <span class="auxilliary-label">(OPTIONAL) ( Enter ! to disable monitoring)</span>
-                    <template v-if="monitoringConnectionState.unableToConnect && !useIsMonitoringDisabled()">
+                    <template v-if="monitoringConnectionState.unableToConnect && useIsMonitoringDisabled()">
                       <span class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect </span>
                     </template>
                   </label>
@@ -112,7 +112,7 @@ function saveConnections() {
 
               <button class="btn btn-primary" type="button" @click="saveConnections">Save</button>
               <span class="connection-test connection-successful hide save-connection" v-show="connectionSaved"> <i class="fa fa-check"></i>Connection saved </span>
-              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved !== null && !connectionSaved"> <i class="fa fa-exclamation-triangle"></i> Unable to save </span>
+              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved != null && !connectionSaved"> <i class="fa fa-exclamation-triangle"></i> Unable to save </span>
             </form>
           </div>
         </div>
