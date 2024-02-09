@@ -39,7 +39,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       await this.updateFilterString();
       await this.updateEndpointList();
       this.isInitialized = true;
-      return;
     },
     async updateFilterString(filter = null) {
       this.filterString = filter ?? this.route.query.filter ?? "";
@@ -59,7 +58,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
           this.updateGroupedEndpoints();
         }
       }
-      return;
     },
     updateSelectedGrouping(groupSize) {
       this.grouping.selectedGrouping = groupSize;
@@ -69,8 +67,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       this.grouping.groupSegments = MonitoringEndpoints.useFindEndpointSegments(this.endpointList);
     },
     updateGroupedEndpoints() {
-      const endpointListUsed = this.endpointListIsFiltered ? this.getFilteredEndpointList : this.endpointList;
-      this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(endpointListUsed, this.grouping.selectedGrouping);
+      this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(this.getEndpointList, this.grouping.selectedGrouping);
     },
     async getEndpointDetails(endpointName, historyPeriod) {
       this.endpointDetails = await MonitoringEndpoints.useGetEndpointDetails(endpointName, historyPeriod);
@@ -120,8 +117,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     endpointListCount: (state) => state.endpointList.length,
     endpointListIsEmpty: (state) => state.endpointListCount === 0,
     endpointListIsGrouped: (state) => state.grouping.selectedGrouping !== 0,
-    endpointListIsFiltered: (state) => state.filterString !== "",
-    getFilteredEndpointList: (state) => {
+    getEndpointList: (state) => {
       return state.filterString !== "" ? MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(state.endpointList, state.filterString) : state.endpointList;
     },
   },
