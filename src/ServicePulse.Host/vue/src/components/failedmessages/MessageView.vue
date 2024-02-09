@@ -127,6 +127,7 @@ async function downloadBody() {
   const response = await useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body");
   if (response.status === 404) {
     failedMessage.value.messageBodyNotFound = true;
+    return;
   }
 
   if (response.headers.get("content-type") === "application/json") {
@@ -138,6 +139,7 @@ async function downloadBody() {
     } catch {
       failedMessage.value.bodyUnavailable = true;
     }
+    return;
   }
 
   if (response.headers.get("content-type") === "text/xml") {
@@ -147,6 +149,7 @@ async function downloadBody() {
     } catch {
       failedMessage.value.bodyUnavailable = true;
     }
+    return;
   }
 
   try {
