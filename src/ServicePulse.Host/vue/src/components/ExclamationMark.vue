@@ -1,16 +1,16 @@
 ﻿<script setup lang="ts">
-import { LicenseWarningLevel } from "@/composables/LicenseStatus";
+import { WarningLevel } from "@/components/WarningLevel";
 
 const props = withDefaults(
   defineProps<{
-    type?: LicenseWarningLevel;
+    type: WarningLevel;
   }>(),
-  { type: LicenseWarningLevel.None }
+  { type: WarningLevel.None }
 );
 </script>
 
 <template>
-  <template v-if="props.type !== LicenseWarningLevel.None">
+  <template v-if="props.type !== WarningLevel.None">
     <span class="fa fa-exclamation-triangle" :class="props.type"></span>
   </template>
 </template>

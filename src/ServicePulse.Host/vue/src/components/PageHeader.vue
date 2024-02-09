@@ -80,8 +80,8 @@ const displayDanger = computed(() => {
             <RouterLink :to="{ name: 'license' }" exact>
               <i class="fa fa-cog icon-white" title="Configuration"></i>
               <span class="navbar-label">Configuration</span>
-              <exclamation-mark :type="LicenseWarningLevel.Warning" v-if="displayWarn" />
-              <exclamation-mark :type="LicenseWarningLevel.Danger" v-if="displayDanger" />
+              <exclamation-mark :type="WarningLevel.Warning" v-if="displayWarn" />
+              <exclamation-mark :type="WarningLevel.Danger" v-if="displayDanger" />
             </RouterLink>
           </li>
           <li>

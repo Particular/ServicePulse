@@ -5,6 +5,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "@/composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import ExclamationMark from "./../../components/ExclamationMark.vue";
+import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
 
 // This is needed because the ConfigurationView.vue routerView expects this event.
 // The event is only actually emitted on the RetryRedirects.vue component
@@ -40,7 +41,7 @@ const loading = computed(() => {
                     >
                       {{ license.formattedExpirationDate }}
                       {{ licenseStatus.subscriptionDaysLeft }}
-                      <exclamation-mark :type="licenseStatus.warningLevel" />
+                      <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
                     <div class="license-expired-text" v-if="licenseStatus.isPlatformExpired">Your license expired. Please update the license to continue using the Particular Service Platform.</div>
                   </div>
@@ -55,7 +56,7 @@ const loading = computed(() => {
                     >
                       {{ license.formattedExpirationDate }}
                       {{ licenseStatus.trialDaysLeft }}
-                      <exclamation-mark :type="licenseStatus.warningLevel" />
+                      <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
                     <div class="license-expired-text" v-if="licenseStatus.isPlatformTrialExpired">Your license expired. To continue using the Particular Service Platform you'll need to extend your license.</div>
                     <div class="license-page-extend-trial" v-if="licenseStatus.isPlatformTrialExpiring && licenseStatus.isPlatformTrialExpired">
@@ -74,7 +75,7 @@ const loading = computed(() => {
                       >
                         {{ license.formattedUpgradeProtectionExpiration }}
                         {{ licenseStatus.upgradeDaysLeft }}
-                        <exclamation-mark :type="licenseStatus.warningLevel" />
+                        <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                       </span>
                     </span>
                     <div class="license-expired-text" v-if="licenseStatus.isValidWithExpiredUpgradeProtection || licenseStatus.isValidWithExpiringUpgradeProtection">
