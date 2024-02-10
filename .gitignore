@@ -99,4 +99,4 @@ src/scaffolding.config
 *.sln.iml
 
 # Visual Studio Code
-.vscode
+#.vscode

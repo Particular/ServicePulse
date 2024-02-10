@@ -1,69 +1,113 @@
 ﻿<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#/">
-                <img alt="Service Pulse" src="img/logo.svg">
-            </a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse navbar-right navbar-inverse">
-            <ul class="nav navbar-nav navbar-inverse" ng-show="is_compatible_with_sc">
-                <li ng-class="{ active: isActive('/dashboard') }">
-                    <a href="../#/dashboard">
-                        <i class="fa fa-dashboard icon-white" title="Dashboard"></i>
-                        <span class="navbar-label">Dashboard</span>
-                    </a>
-                </li>
-                <li ng-class="{ active: isActive('/endpoints') }">
-                    <a href="#/endpoints">
-                        <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
-                        <span class="navbar-label">Heartbeats</span>
-                        <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | largeNumber:0}}</span>
-                    </a>
-                </li>
-
-
-                <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('/monitoring') || isActive('/monitoring/endpoint') }">
-                    <a href="#/monitoring">
-                        <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
-                        <span class="navbar-label">Monitoring</span>
-                        <span ng-show="disconnectedendpoints > 0" class="badge badge-important ">{{disconnectedendpoints | largeNumber:0}}</span>
-                    </a>
-                </li>
-                <li ng-class="{ active: isActive('/failed-messages#failed-message-groups') || isActive('/failed-messages#all-failed-messages') || isActive('/failed-messages#deleted-message-groups') || isActive('/failed-messages#all-deleted-messages') || isActive('/failed-messages#pending-retries') }">
-                    <a href="../#/failed-messages">
-                        <i class="fa fa-envelope icon-white" title="Failed Messages"></i>
-                        <span class="navbar-label">Failed Messages</span>
-                        <span ng-show="failedmessages > 0" class="badge badge-important ">{{failedmessages | largeNumber:0}}</span>
-                    </a>
-                </li>
-                <li ng-class="{ active: isActive('/custom-checks') }">
-                    <a href="#/custom-checks">
-                        <i class="fa fa-check icon-white" title="Custom Checks"></i>
-                        <span class="navbar-label">Custom Checks</span>
-                        <span ng-show="failedcustomchecks > 0" class="badge badge-important ">{{failedcustomchecks | largeNumber:0}}</span>
-                    </a>
-                </li>
-                <li ng-class="{ active: isActive('/events') }">
-                    <a href="#/events">
-                        <i class="fa fa-list-ul icon-white" title="Events"></i>
-                        <span class="navbar-label">Events</span>                        
-                    </a>
-                </li>
-                <li ng-class="{ active: isActive('/configuration') }">
-                    <a href="../#/configuration">
-                        <i class="fa fa-cog icon-white" title="Configuration"></i>
-                        <span class="navbar-label">Configuration</span>
-                        <span class="no-margin" exclamation type="{{licensewarning}}" ></span>
-                        <span class="no-margin" exclamation type="{{connectionswarning}}" ></span>
-                    </a>
-                </li>
-                <li>
-                    <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
-                        <i class="fa fa-comment" title="Feedback"></i>
-                        <span class="navbar-label">Feedback</span>
-                    </a>
-                </li>
-            </ul>
-        </div><!--/.nav-collapse -->
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#/">
+        <img alt="Service Pulse" src="img/logo.svg" />
+      </a>
     </div>
+    <div
+      id="navbar"
+      class="collapse navbar-collapse navbar-right navbar-inverse"
+    >
+      <ul class="nav navbar-nav navbar-inverse" ng-show="is_compatible_with_sc">
+        <li ng-class="{ active: isActive('/dashboard') }">
+          <a href="../#/dashboard">
+            <i class="fa fa-dashboard icon-white" title="Dashboard"></i>
+            <span class="navbar-label">Dashboard</span>
+          </a>
+        </li>
+        <li ng-class="{ active: isActive('/endpoints') }">
+          <a href="#/endpoints">
+            <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
+            <span class="navbar-label">Heartbeats</span>
+            <span ng-show="failedheartbeats > 0" class="badge badge-important"
+              >{{failedheartbeats | largeNumber:0}}</span
+            >
+          </a>
+        </li>
+
+        <li
+          ng-if="isMonitoringEnabled"
+          ng-class="{ active: isActive('/monitoring') || isActive('/monitoring/endpoint') }"
+        >
+          <a href="#/monitoring">
+            <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
+            <span class="navbar-label">Monitoring</span>
+            <span
+              ng-show="disconnectedendpoints > 0"
+              class="badge badge-important"
+              >{{disconnectedendpoints | largeNumber:0}}</span
+            >
+          </a>
+        </li>
+        <li
+          ng-if="isMonitoringEnabled"
+          ng-class="{ active: isActive('#/monitoring') || isActive('#/monitoring/endpoint') }"
+        >
+          <a href="../#/monitoring">
+            <i class="fa pa-monitoring icon-white"></i>
+            <span class="navbar-label">Monitoring New</span>
+            <span
+              ng-show="disconnectedendpoints > 0"
+              class="badge badge-important"
+              >{{disconnectedendpoints | largeNumber:0}}</span
+            >
+          </a>
+        </li>
+        <li
+          ng-class="{ active: isActive('/failed-messages#failed-message-groups') || isActive('/failed-messages#all-failed-messages') || isActive('/failed-messages#deleted-message-groups') || isActive('/failed-messages#all-deleted-messages') || isActive('/failed-messages#pending-retries') }"
+        >
+          <a href="../#/failed-messages">
+            <i class="fa fa-envelope icon-white" title="Failed Messages"></i>
+            <span class="navbar-label">Failed Messages</span>
+            <span ng-show="failedmessages > 0" class="badge badge-important"
+              >{{failedmessages | largeNumber:0}}</span
+            >
+          </a>
+        </li>
+        <li ng-class="{ active: isActive('/custom-checks') }">
+          <a href="#/custom-checks">
+            <i class="fa fa-check icon-white" title="Custom Checks"></i>
+            <span class="navbar-label">Custom Checks</span>
+            <span ng-show="failedcustomchecks > 0" class="badge badge-important"
+              >{{failedcustomchecks | largeNumber:0}}</span
+            >
+          </a>
+        </li>
+        <li ng-class="{ active: isActive('/events') }">
+          <a href="#/events">
+            <i class="fa fa-list-ul icon-white" title="Events"></i>
+            <span class="navbar-label">Events</span>
+          </a>
+        </li>
+        <li ng-class="{ active: isActive('/configuration') }">
+          <a href="../#/configuration">
+            <i class="fa fa-cog icon-white" title="Configuration"></i>
+            <span class="navbar-label">Configuration</span>
+            <span
+              class="no-margin"
+              exclamation
+              type="{{licensewarning}}"
+            ></span>
+            <span
+              class="no-margin"
+              exclamation
+              type="{{connectionswarning}}"
+            ></span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="btn-feedback"
+            href="https://github.com/Particular/ServicePulse/issues/new"
+            target="_blank"
+          >
+            <i class="fa fa-comment" title="Feedback"></i>
+            <span class="navbar-label">Feedback</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!--/.nav-collapse -->
+  </div>
 </nav>

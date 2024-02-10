@@ -236,6 +236,7 @@ pre {
 
 .form-control {
   width: 100% !important;
+  font-size: 14px;
 }
 
 .btn-default {
@@ -702,4 +703,48 @@ div.alert.alert-warning strong {
 
 .sp-blue {
   color: #00a3c4;
+}
+
+.tooltip {
+  font-size: 12px;
+}
+
+/* Endpoint graph table*/
+
+.table-head-row {
+  display: flex;
+  padding-bottom: 5px;
+  padding-top: 20px;
+  border-bottom: 1px solid #ced6d3;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #181919;
+}
+.table-first-col {
+  width: 20%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.table-col {
+  width: 16%;
+}
+@media only screen and (min-width: 1730px) {
+  .table-first-col {
+    width: 30%;
+  }
+  .table-col {
+    width: 14%;
+  }
+}
+.endpoint-row {
+  display: flex;
+  height: 61px;
+  position: relative;
+  padding: 2px 0 4px;
+  border-top: 1px solid #eee;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #eee;
+  border-left: 1px solid #fff;
+  background-color: #fff;
 }

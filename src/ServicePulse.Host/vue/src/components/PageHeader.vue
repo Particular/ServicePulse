@@ -56,6 +56,13 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
             </a>
           </li>
+          <li :class="{ active: subIsActive('/monitoring') }">
+            <RouterLink :to="{ name: 'monitoring' }">
+              <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
+              <span class="navbar-label">Monitoring New</span>
+              <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
+            </RouterLink>
+          </li>
           <li :class="{ active: subIsActive('/failed-messages') }">
             <RouterLink :to="{ name: 'failed-messages' }">
               <i class="fa fa-envelope icon-white" title="Failed Messages"></i>
@@ -96,4 +103,8 @@ const displayDanger = computed(() => {
   </nav>
 </template>
 
-<style></style>
+<style scoped>
+.navbar > .container-fluid > div {
+  margin: 0 1em;
+}
+</style>

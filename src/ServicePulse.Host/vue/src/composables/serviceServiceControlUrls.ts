@@ -51,11 +51,29 @@ export function usePutToServiceControl(suffix: string, payload: object | null) {
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
+export function useDeleteFromMonitoring(suffix: string) {
+  const requestOptions = {
+    method: "DELETE",
+  };
+  return fetch(monitoringUrl.value + suffix, requestOptions);
+}
+
 export function useDeleteFromServiceControl(suffix: string) {
   const requestOptions: RequestInit = {
     method: "DELETE",
   };
   return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+
+export function useOptionsFromMonitoring() {
+  if (!monitoringUrl.value) {
+    return;
+  }
+
+  const requestOptions = {
+    method: "OPTIONS",
+  };
+  return fetch(monitoringUrl.value, requestOptions);
 }
 
 export function usePatchToServiceControl(suffix: string, payload: object | null) {
