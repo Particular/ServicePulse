@@ -95,7 +95,7 @@ function saveConnections() {
                   <label for="monitoringUrl"
                     >CONNECTION URL
                     <span class="auxilliary-label">(OPTIONAL) ( Enter ! to disable monitoring)</span>
-                    <template v-if="monitoringConnectionState.unableToConnect && useIsMonitoringDisabled()">
+                    <template v-if="monitoringConnectionState.unableToConnect && !useIsMonitoringDisabled()">
                       <span class="failed-validation"> <i class="fa fa-exclamation-triangle"></i> Unable to connect </span>
                     </template>
                   </label>
