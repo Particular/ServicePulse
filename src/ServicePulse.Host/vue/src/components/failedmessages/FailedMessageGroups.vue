@@ -144,3 +144,16 @@ onMounted(async () => {
     </template>
   </template>
 </template>
+
+<style>
+.lead {
+  word-wrap: break-word;
+  color: #181919 !important;
+  font-size: 1em !important;
+  font-weight: bold !important;
+  margin-bottom: 0.2em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

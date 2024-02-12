@@ -6,6 +6,7 @@ import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls
 import { licenseStatus } from "../composables/serviceLicense";
 import ExclamationMark from "./ExclamationMark.vue";
 import { LicenseWarningLevel } from "@/composables/LicenseStatus";
+import { WarningLevel } from "@/components/WarningLevel";
 
 const baseUrl = window.defaultConfig.base_url;
 
