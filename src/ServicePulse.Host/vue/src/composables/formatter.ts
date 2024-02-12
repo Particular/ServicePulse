@@ -54,7 +54,7 @@ export function useFormatLargeNumber(value: string, decimals: number) {
 }
 
 function round(num: number, decimals: number) {
-  return Math.round(num + Number(`e+${decimals}`)) + Number(`e-${decimals}`);
+  return Number(`${Math.round(Number(`${num}e+${decimals}`))}e-${decimals}`);
 }
 
 function formatTimeValue(timeValue: number, displayTwoDigits = false) {
