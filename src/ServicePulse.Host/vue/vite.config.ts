@@ -23,8 +23,7 @@ function createCSPOverrides(hostPort: number, configuredDestinations: string[]) 
 const port = 5173;
 const defaultUrls = [
   "http://10.211.55.3:*", // The default Parallels url to access Windows VM
-  "http://localhost:33333", // Default SC Error instance
-  "http://localhost:33633"  // Default SC Monitoring instance
+  "http://localhost:*",
 ];
 
 // https://vitejs.dev/config/
