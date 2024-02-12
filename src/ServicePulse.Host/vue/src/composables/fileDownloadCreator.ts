@@ -1,4 +1,4 @@
-﻿export function useDownloadFile(text, fileType, fileName) {
+﻿export function useDownloadFile(text: string, fileType: string, fileName: string) {
   const blob = new Blob([text], { type: fileType });
 
   const a = document.createElement("a");

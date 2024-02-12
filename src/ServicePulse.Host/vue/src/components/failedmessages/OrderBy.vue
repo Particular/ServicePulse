@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
 
 const emit = defineEmits(["sortUpdated"]);
@@ -24,11 +24,11 @@ function saveSortOption(sortCriteria, sortDirection) {
 }
 
 function loadSavedSortOption() {
-  let criteria = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`);
-  let direction = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`);
+  const criteria = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`);
+  const direction = cookies.get(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`);
 
   if (criteria && direction) {
-    var sortBy = getSortOptions().find((sort) => {
+    const sortBy = getSortOptions().find((sort) => {
       return sort.description.toLowerCase() === criteria.toLowerCase();
     });
     return { sort: getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy.description };
@@ -48,7 +48,7 @@ function getSortFunction(selector, dir) {
 }
 
 function sortUpdated(sort) {
-  selectedSort.value = sort.description + (sort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value = sort.description + (sort.dir === "desc" ? " (Descending)" : "");
   saveSortOption(sort.description, sort.dir);
 
   sort.sort = getSortFunction(sort.selector, sort.dir);
@@ -58,7 +58,7 @@ function sortUpdated(sort) {
 
 function setSortOptions(isInitialLoad) {
   const savedSort = loadSavedSortOption();
-  selectedSort.value = savedSort.description + (savedSort.dir == "desc" ? " (Descending)" : "");
+  selectedSort.value = savedSort.description + (savedSort.dir === "desc" ? " (Descending)" : "");
 
   emit("sortUpdated", savedSort, isInitialLoad);
 }

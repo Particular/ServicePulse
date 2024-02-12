@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { VueFlow, useVueFlow, MarkerType } from "@vue-flow/core";
+import { MarkerType, useVueFlow, VueFlow } from "@vue-flow/core";
 import TimeSince from "../TimeSince.vue";
 
 const props = defineProps({
@@ -27,13 +27,13 @@ function mapMessage(message) {
   let parentId = "",
     parentEndpoint = "",
     sagaName = "";
-  let header = message.headers.find((header) => header.key === "NServiceBus.RelatedTo");
+  const header = message.headers.find((header) => header.key === "NServiceBus.RelatedTo");
   if (header) {
     parentId = header.value;
     parentEndpoint = message.headers.find((h) => h.key === "NServiceBus.OriginatingEndpoint")?.value;
   }
 
-  let sagaHeader = message.headers.find((header) => header.key === "NServiceBus.OriginatingSagaType");
+  const sagaHeader = message.headers.find((header) => header.key === "NServiceBus.OriginatingSagaType");
   if (sagaHeader) {
     sagaName = sagaHeader.value.split(", ")[0];
   }
@@ -379,10 +379,5 @@ path.link {
   fill: none;
   stroke: #ccc;
   stroke-width: 2px;
-}
-
-.righ-side-ellipsis {
-  direction: rtl;
-  text-align: left;
 }
 </style>

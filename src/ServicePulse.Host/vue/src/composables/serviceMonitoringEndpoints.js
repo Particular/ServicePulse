@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { useFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { monitoringConnectionState } from "../composables/serviceServiceControl";
-import { useGetExceptionGroups } from "../composables/serviceMessageGroup.js";
+import { useGetExceptionGroups } from "../composables/serviceMessageGroup";
 
 /**
  * @returns the max number of segments in a array of endpoint object names
@@ -54,7 +54,7 @@ export function useFilterAllMonitoredEndpointsByName(endpoints, filterString) {
  * @returns {Array} - An array of grouped endpoint objects
  */
 export function useGroupEndpoints(endpoints, numberOfSegments) {
-  let groups = new Map();
+  const groups = new Map();
   if (endpoints === undefined) return;
   endpoints.forEach(function (element) {
     const grouping = parseEndpoint(element, numberOfSegments);
@@ -95,7 +95,7 @@ export async function useGetEndpointDetails(endpointName, historyPeriod = 1) {
  * @returns {Number} - The count of disconnected endpoint
  */
 export async function useGetDisconnectedEndpointCount() {
-  var disconnectedCount = 0;
+  let disconnectedCount = 0;
   try {
     const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
     disconnectedCount = response.data;
@@ -116,18 +116,18 @@ async function addEndpointsFromScSubscription(endpoints) {
       if (failedMessageEndpoint.operation_status === "ArchiveCompleted") {
         return;
       }
-      var index = endpoints.value.findIndex(function (item) {
+      const index = endpoints.value.findIndex(function (item) {
         return item.name === failedMessageEndpoint.title;
       });
       if (index >= 0) {
         endpoints.value[index].serviceControlId = failedMessageEndpoint.id;
         endpoints.value[index].errorCount = failedMessageEndpoint.count;
       } else {
-        var defaultMetricData = {
+        const defaultMetricData = {
           points: [],
           average: 0,
         };
-        var metricsToAdd = {
+        const metricsToAdd = {
           queueLength: defaultMetricData,
           throughput: defaultMetricData,
           retries: defaultMetricData,

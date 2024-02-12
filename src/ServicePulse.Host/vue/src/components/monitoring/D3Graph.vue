@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watchEffect } from "vue";
 import * as d3 from "d3";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
-import { getArrowLabel } from "../../composables/graphLabel.js";
+import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
+import { getArrowLabel } from "../../composables/graphLabel";
 const props = defineProps({
   plotdata: Object,
   minimumyaxis: Number,
@@ -16,47 +16,47 @@ const averageDecimalsDefault = 2;
 const avgLabelColorDefault = "#2700CB";
 const avgLabelSuffixDefault = "";
 const root = ref(null);
-var averageLabelToTheRight = getArrowLabel(false, "AVG");
+const averageLabelToTheRight = getArrowLabel(false, "AVG");
 
 watchEffect(displayGraphValues, { flush: "post" });
 
 function displayGraphValues() {
-  var svg = root.value.getElementsByTagName("svg")[0];
-  var width = svg.clientWidth;
-  var height = svg.clientHeight;
+  const svg = root.value.getElementsByTagName("svg")[0];
+  let width = svg.clientWidth;
+  let height = svg.clientHeight;
   //HINT: This is workaround for Firefox
   if (width === 0) {
-    var box = svg.getBoundingClientRect();
+    const box = svg.getBoundingClientRect();
 
     width = box.right - box.left;
     height = box.bottom - box.top;
   }
 
-  var verticalMargin = 6;
-  var horizontalMargin = 2;
-  var avgDecimals = avgDecimals || averageDecimalsDefault;
-  var avgLabelColor = props.avglabelcolor || avgLabelColorDefault;
-  var metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
-  var plotData = props.plotdata || { points: [], average: 0 };
-  var points = plotData.points;
+  const verticalMargin = 6;
+  const horizontalMargin = 2;
+  const avgDecimals = averageDecimalsDefault;
+  const avgLabelColor = props.avglabelcolor || avgLabelColorDefault;
+  const metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
+  const plotData = props.plotdata || { points: [], average: 0 };
+  let points = plotData.points;
   if (points.length === 0) {
     points = new Array(10).fill(0);
   }
-  var average = plotData.average || 0;
-  var minimumYaxis = !isNaN(props.minimumyaxis) ? Number(props.minimumyaxis) : 10;
-  var max = points && points.length ? Math.max(average * 1.5, d3.max(points), minimumYaxis) : 1;
-  var numberOfPoints = points && points.length ? points.length : 2;
+  const average = plotData.average || 0;
+  const minimumYaxis = !isNaN(props.minimumyaxis) ? Number(props.minimumyaxis) : 10;
+  const max = points && points.length ? Math.max(average * 1.5, d3.max(points), minimumYaxis) : 1;
+  const numberOfPoints = points && points.length ? points.length : 2;
 
-  var scaleY = d3
+  const scaleY = d3
     .scaleLinear()
     .domain([0, max])
     .range([height - verticalMargin, verticalMargin]);
 
-  var scaleX = d3
+  const scaleX = d3
     .scaleLinear()
     .domain([0, numberOfPoints - 1])
     .range([horizontalMargin, width - horizontalMargin]);
-  var area = d3
+  const area = d3
     .area()
     .x(function (d, i) {
       return scaleX(i);
@@ -69,7 +69,7 @@ function displayGraphValues() {
     })
     .curve(d3.curveLinear);
 
-  var line = d3
+  const line = d3
     .line()
     .x(function (d, i) {
       return scaleX(i);
@@ -80,7 +80,7 @@ function displayGraphValues() {
     .curve(d3.curveLinear);
 
   d3.select(svg).selectAll("*").remove();
-  var chart = d3.select(svg).attr("width", width).attr("height", height);
+  const chart = d3.select(svg).attr("width", width).attr("height", height);
   chart
     .append("rect")
     .attr("width", width - 2 * horizontalMargin)
@@ -93,10 +93,10 @@ function displayGraphValues() {
 
     chart.append("path").datum(points).attr("d", line).attr("class", "graph-data-line");
   }
-  var averageLine = chart.append("path").datum(Array(numberOfPoints).fill(average)).attr("d", line).attr("class", "graph-avg-line");
-  var displayAverageLabel = function (averageLine, label, value, color, unit) {
+  const averageLine = chart.append("path").datum(Array(numberOfPoints).fill(average)).attr("d", line).attr("class", "graph-avg-line");
+  const displayAverageLabel = function (averageLine, label, value, color, unit) {
     if (label != null) {
-      var { x, y, width } = averageLine.node().getBoundingClientRect();
+      const { x, y, width } = averageLine.node().getBoundingClientRect();
       label.value(value, unit);
 
       if (label.pointingToTheLeft) {
@@ -109,8 +109,8 @@ function displayGraphValues() {
 
   chart
     .on("mouseover", function () {
-      var value = useFormatLargeNumber(average, avgDecimals);
-      var suffix = metricSuffix;
+      let value = useFormatLargeNumber(average, avgDecimals);
+      let suffix = metricSuffix;
 
       if (props.isdurationgraph) {
         value = useFormatTime(average).value;

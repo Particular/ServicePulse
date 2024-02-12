@@ -4,12 +4,14 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import SimpleTypeahead from "vue3-simple-typeahead";
-import Toast, { POSITION } from "vue-toastification";
+import Toast, { type PluginOptions, POSITION } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import "vue3-simple-typeahead/dist/vue3-simple-typeahead.css"; //Optional default CSS
 import "./assets/main.css";
 
-const toastOptions = {
+const app = createApp(App);
+
+const toastOptions: PluginOptions = {
   position: POSITION.BOTTOM_RIGHT,
   timeout: 5000,
   transition: "Vue-Toastification__fade",
@@ -19,7 +21,11 @@ const toastOptions = {
   closeButtonClassName: "toast-close-button",
 };
 
-createApp(App)
+app.config.errorHandler = (err, instance, info) => {
+  console.error(instance, err);
+};
+
+app
   .use(router)
   .use(Toast, toastOptions)
   .use(SimpleTypeahead)

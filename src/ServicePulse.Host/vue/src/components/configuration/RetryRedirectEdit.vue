@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 
 const emit = defineEmits(["create", "edit", "cancel"]);
 
@@ -19,7 +19,7 @@ const sourceQueueIsValid = computed(() => {
   return sourceQueue.value ? true : false;
 });
 const targetQueueIsValid = computed(() => {
-  return targetQueue.value && targetQueue.value != sourceQueue.value;
+  return targetQueue.value && targetQueue.value !== sourceQueue.value;
 });
 
 const formIsValid = computed(() => {
@@ -31,7 +31,7 @@ const notKnownQueue = computed(() => {
 });
 
 const noKnownQueues = computed(() => {
-  return model.queues.length == 0;
+  return model.queues.length === 0;
 });
 
 const sourceQueueTooltip = "Choose a queue that is known to Service Control";
@@ -42,7 +42,7 @@ function selectToAddress(item) {
 }
 
 function create() {
-  var redirect = {
+  const redirect = {
     sourceQueue: sourceQueue.value,
     targetQueue: targetQueue.value,
     immediatelyRetry: immediatelyRetry.value,
@@ -51,7 +51,7 @@ function create() {
 }
 
 function edit() {
-  var redirect = {
+  const redirect = {
     redirectId: model.message_redirect_id,
     sourceQueue: sourceQueue.value,
     targetQueue: targetQueue.value,

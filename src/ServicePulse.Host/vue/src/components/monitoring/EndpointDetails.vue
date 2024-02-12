@@ -5,8 +5,8 @@ import { useRoute, useRouter } from "vue-router";
 import D3LargeGraph from "./D3LargeGraph.vue";
 import D3Graph from "./D3Graph.vue";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
+import { licenseStatus } from "../../composables/serviceLicense";
 import { useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
 //stores
 import { useMonitoringStore } from "../../stores/MonitoringStore";
@@ -21,19 +21,19 @@ import NoData from "../NoData.vue";
 const route = useRoute();
 const router = useRouter();
 const endpointName = route.params.endpointName;
-var showInstancesBreakdown = false;
+let showInstancesBreakdown = false;
 let refreshInterval = undefined;
-//var disconnectedCount = 0;
+//let disconnectedCount = 0;
 
 const monitoringStore = useMonitoringStore();
 const failedMessageStore = useFailedMessageStore();
 
-if (route.query.tab != "" && route.query.tab != undefined) {
+if (route.query.tab !== "" && route.query.tab != null) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
 
-var isLoading = ref(true);
-var loadedSuccessfully = ref(false);
+const isLoading = ref(true);
+const loadedSuccessfully = ref(false);
 const smallGraphsMinimumYAxis = {
   queueLength: 10,
   throughputRetries: 10,
@@ -47,7 +47,7 @@ const largeGraphsMinimumYAxis = {
   criticalTime: 10,
 };
 const endpoint = ref({});
-var negativeCriticalTimeIsPresent = ref(false);
+const negativeCriticalTimeIsPresent = ref(false);
 endpoint.value.messageTypesPage = !showInstancesBreakdown ? route.query.pageNo : 1;
 endpoint.value.messageTypesTotalItems = 0;
 endpoint.value.messageTypesItemsPerPage = 10;
@@ -63,13 +63,13 @@ watch(monitoringStore.historyPeriod, (newValue) => {
 
 async function getEndpointDetails() {
   //get historyPeriod
-  var selectedHistoryPeriod = historyPeriod.value.pVal;
+  const selectedHistoryPeriod = historyPeriod.value.pVal;
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
     await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
-    var responseData = monitoringStore.endpointDetails;
+    const responseData = monitoringStore.endpointDetails;
     if (responseData != null) {
       filterOutSystemMessage(responseData);
-      var endpointDetails = responseData;
+      const endpointDetails = responseData;
       endpointDetails.isScMonitoringDisconnected = false;
       endpointDetails.isStale = true;
       Object.assign(endpoint.value, endpointDetails);
@@ -144,7 +144,7 @@ function filterOutSystemMessage(data) {
 }
 
 function mergeIn(destination, source, propertiesToSkip) {
-  for (var propName in source) {
+  for (const propName in source) {
     if (Object.prototype.hasOwnProperty.call(source, propName)) {
       if (!propertiesToSkip || !propertiesToSkip.includes(propName)) {
         destination[propName] = source[propName];
@@ -162,10 +162,7 @@ async function removeEndpoint(endpointName, instance) {
     }
   } catch (err) {
     console.log(err);
-    var result = {
-      message: "error",
-    };
-    return result;
+    return false;
   }
 }
 
@@ -183,7 +180,7 @@ async function isRemovingEndpointEnabled() {
 }
 
 // async function getDisconnectedCount() {
-//   var checkInterval;
+//   let checkInterval;
 //   try {
 //     const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
 //     disconnectedCount = response.data;
@@ -192,7 +189,7 @@ async function isRemovingEndpointEnabled() {
 //     clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
 //   }
 //   //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-//   //var checkDisconnectedCount = function () {
+//   //let checkDisconnectedCount = function () {
 //   //    monitoringService.getDisconnectedCount().then(result => {
 //   //        notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
 //   //    }, e => {
@@ -223,10 +220,10 @@ function parseTheMessageTypeData(messageType) {
   if (!messageType.typeName) return;
 
   if (messageType.typeName.indexOf(";") > 0) {
-    var messageTypeHierarchy = messageType.typeName.split(";");
+    let messageTypeHierarchy = messageType.typeName.split(";");
     messageTypeHierarchy = messageTypeHierarchy.map((item) => {
-      var obj = {};
-      var segments = item.split(",");
+      const obj = {};
+      const segments = item.split(",");
       obj.typeName = segments[0];
       obj.assemblyName = segments[1];
       obj.assemblyVersion = segments[2].substring(segments[2].indexOf("=") + 1);
@@ -250,12 +247,12 @@ function parseTheMessageTypeData(messageType) {
     //Get the name without the namespace
     messageType.shortName = shortenTypeName(messageType.typeName);
 
-    var tooltip = `${messageType.typeName} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
-    if (messageType.culture && messageType.culture != "null") {
+    let tooltip = `${messageType.typeName} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
+    if (messageType.culture && messageType.culture !== "null") {
       tooltip += ` | Culture=${messageType.culture}`;
     }
 
-    if (messageType.publicKeyToken && messageType.publicKeyToken != "null") {
+    if (messageType.publicKeyToken && messageType.publicKeyToken !== "null") {
       tooltip += ` | PublicKeyToken=${messageType.publicKeyToken}`;
     }
 
@@ -277,30 +274,29 @@ function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
   if ($event.target.localName !== "button") {
     showInstancesBreakdown = isVisible;
     refreshMessageTypes();
-    var breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
+    const breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
     router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: breakdownPageNo } });
   }
 }
 
 function formatGraphDuration(input) {
   if (typeof input !== "undefined" && input !== null) {
-    var lastValue = input;
+    let lastValue = input;
     if (input.points) {
       lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
     }
-    var formatLastValue = useFormatTime(lastValue);
-    return formatLastValue;
+    return useFormatTime(lastValue);
   }
   return input;
 }
 
 function formatGraphDecimal(input, deci) {
   if (input) {
-    var lastValue = input;
+    let lastValue = input;
     if (input.points) {
       lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
     }
-    var decimals = 0;
+    let decimals = 0;
     if (lastValue < 10 || input > 1000000) {
       decimals = 2;
     }
@@ -310,7 +306,7 @@ function formatGraphDecimal(input, deci) {
   }
 }
 
-//var startService = function () {
+//let startService = function () {
 //    notifier.subscribe($rootScope, (event, data) => {
 //        if (data.isMonitoringConnected && isConnected == false) {
 //            checkDisconnectedCount();

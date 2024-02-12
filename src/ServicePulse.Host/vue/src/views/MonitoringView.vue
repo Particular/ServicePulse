@@ -2,16 +2,16 @@
 // Composables
 import { ref, onMounted, watch, onUnmounted, computed } from "vue";
 import { storeToRefs } from "pinia";
-import { licenseStatus } from "./../composables/serviceLicense.js";
-import { connectionState } from "../composables/serviceServiceControl";
-import { useMonitoringStore } from "../stores/MonitoringStore";
+import { licenseStatus } from "@/composables/serviceLicense";
+import { connectionState } from "@/composables/serviceServiceControl";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 // Components
-import LicenseExpired from "../components/LicenseExpired.vue";
-import GroupBy from "../components/monitoring/MonitoringGroupBy.vue";
-import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
-import EndpointList from "../components/monitoring/EndpointList.vue";
-import PeriodSelector from "../components/monitoring/MonitoringHistoryPeriod.vue";
-import MonitoringNoData from "../components/monitoring/MonitoringNoData.vue";
+import LicenseExpired from "@/components/LicenseExpired.vue";
+import GroupBy from "@/components/monitoring/MonitoringGroupBy.vue";
+import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
+import EndpointList from "@/components/monitoring/EndpointList.vue";
+import PeriodSelector from "@/components/monitoring/MonitoringHistoryPeriod.vue";
+import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
 
 const monitoringStore = useMonitoringStore();
 const { historyPeriod } = storeToRefs(monitoringStore);

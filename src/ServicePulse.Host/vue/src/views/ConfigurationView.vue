@@ -1,10 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { licenseStatus } from "../composables/serviceLicense.js";
+import { onMounted, ref } from "vue";
+import { licenseStatus } from "../composables/serviceLicense";
 import { connectionState, monitoringConnectionState } from "../composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-import { useRedirects } from "../composables/serviceRedirects.js";
+import { useRedirects } from "../composables/serviceRedirects";
 import ExclamationMark from "../components/ExclamationMark.vue";
+import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
 
 const redirectCount = ref(0);
 
@@ -34,7 +35,7 @@ onMounted(async () => {
         <div class="nav tabs">
           <h5 :class="{ active: subIsActive('configuration'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
             <RouterLink :to="{ name: 'license' }">License</RouterLink>
-            <exclamation-mark :type="licenseStatus.warningLevel" />
+            <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
           </h5>
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('health-check-notifications'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
             <RouterLink :to="{ name: 'health-check-notifications' }">Health Check Notifications</RouterLink>

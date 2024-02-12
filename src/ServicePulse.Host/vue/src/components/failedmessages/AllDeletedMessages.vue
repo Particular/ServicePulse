@@ -1,26 +1,27 @@
 <script setup>
-import { ref, onBeforeMount, onMounted, onUnmounted } from "vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { connectionState } from "../../composables/serviceServiceControl.js";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls.js";
-import { useShowToast } from "../../composables/toast.js";
-import { useRoute, onBeforeRouteLeave } from "vue-router";
+import { onBeforeMount, onMounted, onUnmounted, ref, watch } from "vue";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState } from "../../composables/serviceServiceControl";
+import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useShowToast } from "../../composables/toast";
+import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
+import PaginationStrip from "../../components/PaginationStrip.vue";
 import moment from "moment";
 
 let pollingFaster = false;
 let refreshInterval = undefined;
+const perPage = 50;
 const configuration = ref([]);
 
 const route = useRoute();
 const groupId = ref(route.params.groupId);
 const groupName = ref("");
 const pageNumber = ref(1);
-const numberOfPages = ref(1);
 const totalCount = ref(0);
 const cookies = useCookies().cookies;
 const selectedPeriod = ref("Deleted in the last 7 days");
@@ -29,9 +30,11 @@ const messageList = ref();
 const messages = ref([]);
 const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
+watch(pageNumber, () => loadMessages());
+
 function loadMessages() {
   let startDate = new Date(0);
-  let endDate = new Date();
+  const endDate = new Date();
 
   switch (selectedPeriod.value) {
     case "All Deleted":
@@ -66,7 +69,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
   if (typeof page === "undefined") page = 1;
   if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
   if (typeof endDate === "undefined") endDate = new Date().toISOString();
-  let dateRange = startDate + "..." + endDate;
+  const dateRange = startDate + "..." + endDate;
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
     loadGroupDetailsPromise = loadGroupDetails(groupId);
@@ -74,10 +77,9 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
 
   async function loadDelMessages() {
     try {
-      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`);
+      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`);
 
       totalCount.value = parseInt(response.headers.get("Total-Count"));
-      numberOfPages.value = Math.ceil(totalCount.value / 50);
 
       const data = await response.json();
       if (messages.value.length && data.length) {
@@ -85,7 +87,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
         messages.value.forEach((previousMessage) => {
           const receivedMessage = data.find((m) => m.id === previousMessage.id);
           if (receivedMessage) {
-            if (previousMessage.last_modified == receivedMessage.last_modified) {
+            if (previousMessage.last_modified === receivedMessage.last_modified) {
               receivedMessage.retryInProgress = previousMessage.retryInProgress;
               receivedMessage.deleteInProgress = previousMessage.deleteInProgress;
             }
@@ -97,7 +99,7 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
       messages.value = updateMessagesScheduledDeletionDate(data);
     } catch (err) {
       console.log(err);
-      var result = {
+      const result = {
         message: "error",
       };
       return result;
@@ -117,7 +119,7 @@ function updateMessagesScheduledDeletionDate(messages) {
   //check deletion time
   messages.forEach((message) => {
     message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-    var countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
+    const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
     message.delete_soon = countdown < moment();
     message.deleted_in = countdown.format();
   });
@@ -138,27 +140,6 @@ function deselectAll() {
 
 function isAnythingSelected() {
   return messageList?.value?.isAnythingSelected();
-}
-
-function nextPage() {
-  pageNumber.value = pageNumber.value + 1;
-  if (pageNumber.value > numberOfPages.value) {
-    pageNumber.value = numberOfPages.value;
-  }
-  loadMessages();
-}
-
-function previousPage() {
-  pageNumber.value = pageNumber.value - 1;
-  if (pageNumber.value == 0) {
-    pageNumber.value = 1;
-  }
-  loadMessages();
-}
-
-function setPage(page) {
-  pageNumber.value = page;
-  loadMessages();
 }
 
 async function restoreSelectedMessages() {
@@ -281,19 +262,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="row" v-if="messages.length > 0">
-          <div class="col align-self-center">
-            <ul class="pagination justify-content-center">
-              <li class="page-item" :class="{ disabled: pageNumber == 1 }">
-                <a class="page-link" href="#" @click.prevent="previousPage">Previous</a>
-              </li>
-              <li v-for="n in numberOfPages" class="page-item" :class="{ active: pageNumber == n }" :key="n">
-                <a @click.prevent="setPage(n)" class="page-link" href="#">{{ n }}</a>
-              </li>
-              <li class="page-item">
-                <a class="page-link" href="#" @click.prevent="nextPage">Next</a>
-              </li>
-            </ul>
-          </div>
+          <PaginationStrip v-model="pageNumber" :total-count="totalCount" :items-per-page="perPage" />
         </div>
         <Teleport to="#modalDisplay">
           <ConfirmDialog

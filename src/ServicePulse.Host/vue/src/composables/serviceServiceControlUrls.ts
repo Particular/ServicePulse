@@ -1,56 +1,63 @@
-import { ref } from "vue";
+import { type Ref, ref } from "vue";
 
-export const serviceControlUrl = ref(null);
-export const monitoringUrl = ref(null);
+export const serviceControlUrl = ref<string | null>();
+export const monitoringUrl = ref<string | null>();
 
 export function useIsMonitoringDisabled() {
-  return monitoringUrl.value === null || monitoringUrl.value === "" || monitoringUrl.value === "!";
+  return monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!";
 }
 
 export function useIsMonitoringEnabled() {
   return !useIsMonitoringDisabled();
 }
 
-export function useFetchFromServiceControl(suffix) {
+export function useFetchFromServiceControl(suffix: string) {
   return fetch(serviceControlUrl.value + suffix);
 }
 
-export function useFetchFromMonitoring(suffix) {
+export async function useTypedFetchFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
+  const response = await fetch(serviceControlUrl.value + suffix);
+  const data = await response.json();
+
+  return [response, data];
+}
+
+export function useFetchFromMonitoring(suffix: string) {
   if (useIsMonitoringDisabled()) {
     return Promise.resolve(null);
   }
   return fetch(monitoringUrl.value + suffix);
 }
 
-export function usePostToServiceControl(suffix, payload) {
-  const requestOptions = {
+export function usePostToServiceControl(suffix: string, payload: object | null = null) {
+  const requestOptions: RequestInit = {
     method: "POST",
   };
-  if (payload !== undefined) {
+  if (payload != null) {
     requestOptions.headers = { "Content-Type": "application/json" };
     requestOptions.body = JSON.stringify(payload);
   }
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function usePutToServiceControl(suffix, payload) {
-  const requestOptions = {
+export function usePutToServiceControl(suffix: string, payload: object | null) {
+  const requestOptions: RequestInit = {
     method: "PUT",
   };
-  if (payload !== undefined) {
+  if (payload != null) {
     requestOptions.headers = { "Content-Type": "application/json" };
     requestOptions.body = JSON.stringify(payload);
   }
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function useDeleteFromServiceControl(suffix) {
-  const requestOptions = {
+export function useDeleteFromServiceControl(suffix: string) {
+  const requestOptions: RequestInit = {
     method: "DELETE",
   };
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
-export function useDeleteFromMonitoring(suffix) {
+export function useDeleteFromMonitoring(suffix: string) {
   const requestOptions = {
     method: "DELETE",
   };
@@ -58,16 +65,21 @@ export function useDeleteFromMonitoring(suffix) {
 }
 
 export function useOptionsFromMonitoring() {
+  if (useIsMonitoringDisabled()) {
+    return Promise.resolve(null);
+  }
+
   const requestOptions = {
     method: "OPTIONS",
   };
-  return fetch(monitoringUrl.value, requestOptions);
+  return fetch(monitoringUrl.value ?? "", requestOptions);
 }
-export function usePatchToServiceControl(suffix, payload) {
-  const requestOptions = {
+
+export function usePatchToServiceControl(suffix: string, payload: object | null) {
+  const requestOptions: RequestInit = {
     method: "PATCH",
   };
-  if (payload !== undefined) {
+  if (payload != null) {
     requestOptions.headers = { "Content-Type": "application/json" };
     requestOptions.body = JSON.stringify(payload);
   }
@@ -110,9 +122,9 @@ export function useServiceControlUrls() {
   return { serviceControlUrl, monitoringUrl };
 }
 
-export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl) {
+export function updateServiceControlUrls(newServiceControlUrl: Ref<string>, newMonitoringUrl: Ref<string>) {
   if (!newServiceControlUrl.value) {
-    throw "ServiceControl URL is mandatory";
+    throw new Error("ServiceControl URL is mandatory");
   } else if (!newServiceControlUrl.value.endsWith("/")) {
     newServiceControlUrl.value += "/";
   }
@@ -127,16 +139,23 @@ export function updateServiceControlUrls(newServiceControlUrl, newMonitoringUrl)
   window.localStorage.removeItem("scu");
   window.localStorage.removeItem("mu");
 
-  let newSearch = "?scu=" + newServiceControlUrl.value + "&mu=" + newMonitoringUrl.value;
+  const newSearch = `?scu=${newServiceControlUrl.value}&mu=${newMonitoringUrl.value}`;
   console.debug("updateConnections - new query string: ", newSearch);
   window.location.search = newSearch;
 }
 
+interface Param {
+  name: string;
+  value: string;
+}
+
 function getParams() {
+  const params: Param[] = [];
+
   if (!window.location.search) return params;
 
-  var searchParams = window.location.search.split("&");
-  var params = [];
+  const searchParams = window.location.search.split("&");
+
   searchParams.forEach((p) => {
     p = p.startsWith("?") ? p.substring(1, p.length) : p;
     const singleParam = p.split("=");
@@ -145,12 +164,8 @@ function getParams() {
   return params;
 }
 
-function getParameter(params, key) {
-  if (params) {
-    return params.find((param) => {
-      return param.name === key;
-    });
-  }
-
-  return undefined;
+function getParameter(params: Param[], key: string) {
+  return params.find((param) => {
+    return param.name === key;
+  });
 }
