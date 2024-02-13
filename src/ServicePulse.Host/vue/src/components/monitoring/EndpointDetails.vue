@@ -33,6 +33,7 @@ if (route.query.tab !== "" && route.query.tab != null) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
 
+const isRemovingEndpointEnabled = ref(false);
 const isLoading = ref(true);
 const loadedSuccessfully = ref(false);
 const smallGraphsMinimumYAxis = {
@@ -165,17 +166,19 @@ async function removeEndpoint(endpointName, instance) {
   }
 }
 
-async function isRemovingEndpointEnabled() {
+async function getIsRemovingEndpointEnabled() {
   try {
     const response = await useOptionsFromMonitoring();
-    const headers = response.headers();
-    const allow = headers.allow;
-    const deleteAllowed = allow.indexOf("DELETE") >= 0;
-    return deleteAllowed;
+    if (response) {
+      const headers = response.headers;
+      const allow = headers.get("Allow");
+      const deleteAllowed = allow.indexOf("DELETE") >= 0;
+      return deleteAllowed;
+    }
   } catch (err) {
     console.log(err);
-    return false;
   }
+  return false;
 }
 
 // async function getDisconnectedCount() {
@@ -332,10 +335,11 @@ onUnmounted(() => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
   getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
   //getDisconnectedCount(); // for refresh interval
+  isRemovingEndpointEnabled.value = await getIsRemovingEndpointEnabled();
 });
 </script>
 
@@ -662,7 +666,7 @@ onMounted(() => {
 
                           <!--remove endpoint-->
                           <div class="col-xs-2 col-xl-1 no-side-padding">
-                            <a v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
+                            <a v-if="isRemovingEndpointEnabled && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
                               <i class="fa fa-trash" v-tooltip :title="`Remove endpoint`"></i>
                             </a>
                           </div>
