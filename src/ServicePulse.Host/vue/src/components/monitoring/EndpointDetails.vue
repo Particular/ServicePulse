@@ -71,7 +71,6 @@ async function getEndpointDetails() {
       filterOutSystemMessage(responseData);
       const endpointDetails = responseData;
       endpointDetails.isScMonitoringDisconnected = false;
-      endpointDetails.isStale = true;
       Object.assign(endpoint.value, endpointDetails);
       await updateUI();
     }
@@ -111,7 +110,6 @@ async function updateUI() {
 
     processMessageTypes();
 
-    endpoint.value.isStale = true;
     endpoint.value.isScMonitoringDisconnected = false;
     negativeCriticalTimeIsPresent.value = false;
 
