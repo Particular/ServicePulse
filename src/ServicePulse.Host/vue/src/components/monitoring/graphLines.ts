@@ -1,7 +1,7 @@
 import { ref, toValue, watchEffect } from "vue";
 import type { Coordinate, PlotData } from "./PlotData";
 
-export function useGraph(plotdata: () => PlotData | undefined, minimumyaxis: () => number, minPoints = () => 10) {
+export function useGraph(plotdata: () => PlotData | undefined, minimumyaxis: () => number | undefined, minPoints = () => 10) {
   const valuesPath = ref(""),
     valuesArea = ref(""),
     maxYaxis = ref(10),
@@ -25,7 +25,8 @@ export function useGraph(plotdata: () => PlotData | undefined, minimumyaxis: () 
     average.value = plotData.average;
     //TODO: why is this called minimumYaxis when it's only used to determine the maxYaxis?
     // should the graph actually set the min y value rather than leave it at 0?
-    const minimumYaxis = !isNaN(toValue(minimumyaxis)) ? Number(toValue(minimumyaxis)) : 10;
+    const minYaxis = toValue(minimumyaxis) ?? 10;
+    const minimumYaxis = !isNaN(minYaxis) ? Number(minYaxis) : 10;
     maxYaxis.value = Math.max(...[...values, average.value * 1.5, minimumYaxis]);
 
     averageLine.value = new Path().startAt([0, average.value]).lineTo([100, average.value]).toString();

@@ -6,15 +6,15 @@ import type { PlotData } from "./PlotData";
 
 const props = defineProps<{
   isdurationgraph: boolean;
-  metricsuffix: string;
+  metricsuffix?: string | undefined;
   firstdataseries: PlotData;
-  seconddataseries: PlotData | undefined;
-  minimumyaxis: number;
+  seconddataseries?: PlotData | undefined;
+  minimumyaxis?: number | undefined;
   avgdecimals: number;
-  firstseriestype: string;
-  firstseriesavgcolour: string;
-  secondseriestype: string;
-  secondseriesavgcolour: string;
+  firstseriestype?: string | undefined;
+  firstseriesavgcolour?: string | undefined;
+  secondseriestype?: string | undefined;
+  secondseriesavgcolour?: string | undefined;
 }>();
 
 const hover = ref(false);

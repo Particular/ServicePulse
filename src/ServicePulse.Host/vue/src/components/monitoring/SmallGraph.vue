@@ -6,11 +6,10 @@ import type { PlotData } from "./PlotData";
 
 const props = defineProps<{
   plotdata: PlotData;
-  minimumyaxis: number;
+  minimumyaxis?: number | undefined;
   avglabelcolor: string;
   isdurationgraph: boolean;
-  metricsuffix: string;
-  endpointname: string;
+  metricsuffix?: string | undefined;
   type: string;
 }>();
 
