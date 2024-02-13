@@ -6,6 +6,7 @@ import { monitoringConnectionState, connectionState } from "../../composables/se
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
+import { storeToRefs } from "pinia";
 //stores
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { useFailedMessageStore } from "../../stores/FailedMessageStore";
@@ -55,9 +56,9 @@ endpoint.value.messageTypesAvailable = ref(false);
 endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
-const historyPeriod = ref(monitoringStore.historyPeriod);
+const { historyPeriod } = storeToRefs(monitoringStore);
 
-watch(monitoringStore.historyPeriod, (newValue) => {
+watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
@@ -320,6 +321,7 @@ function changeRefreshInterval(milliseconds) {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
+  getEndpointDetails();
   refreshInterval = setInterval(() => {
     getEndpointDetails();
   }, milliseconds);
