@@ -1,9 +1,9 @@
 <script setup>
 import { ref, computed } from "vue";
-import D3Graph from "./D3Graph.vue";
 import { useRouter } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
+import SmallGraph from "./SmallGraph.vue";
 
 const settings = defineProps({
   endpoint: Object,
@@ -91,7 +91,7 @@ function formatGraphDecimal(input, deci) {
   <div class="table-col">
     <div class="box-header">
       <div class="no-side-padding">
-        <D3Graph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" :key="endpoint"></D3Graph>
+        <SmallGraph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" />
       </div>
       <div class="no-side-padding sparkline-value">
         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.queueLength, 0) }}
@@ -104,7 +104,7 @@ function formatGraphDecimal(input, deci) {
   <div class="table-col">
     <div class="box-header">
       <div class="no-side-padding">
-        <D3Graph :type="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'"></D3Graph>
+        <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" />
       </div>
       <div class="no-side-padding sparkline-value">
         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.throughput, 2) }}
@@ -117,7 +117,7 @@ function formatGraphDecimal(input, deci) {
   <div class="table-col">
     <div class="box-header">
       <div class="no-side-padding">
-        <D3Graph :type="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'"></D3Graph>
+        <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" />
       </div>
       <div class="no-side-padding sparkline-value">
         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(endpoint.metrics.retries, 2) }}
@@ -130,7 +130,7 @@ function formatGraphDecimal(input, deci) {
   <div class="table-col">
     <div class="box-header">
       <div class="no-side-padding">
-        <D3Graph :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'"></D3Graph>
+        <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" />
       </div>
       <div class="no-side-padding sparkline-value">
         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
@@ -144,7 +144,7 @@ function formatGraphDecimal(input, deci) {
   <div class="table-col">
     <div class="box-header">
       <div class="no-side-padding">
-        <D3Graph :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'"></D3Graph>
+        <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" />
       </div>
       <div class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(endpoint.metrics.criticalTime).value < 0 }">
         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
