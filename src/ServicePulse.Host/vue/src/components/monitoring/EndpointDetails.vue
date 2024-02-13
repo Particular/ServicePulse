@@ -122,9 +122,9 @@ async function updateUI() {
         instance.errorCount = failedMessageStore.errorCount;
         instance.isScMonitoringDisconnected = false;
       }
-      endpoint.value.isStale = endpoint.value.isStale && instance.isStale;
       negativeCriticalTimeIsPresent.value |= formatGraphDuration(instance.metrics.criticalTime).value < 0;
     });
+    endpoint.value.isStale = endpoint.value.instances.every((instance) => instance.isStale);
 
     loadedSuccessfully.value = true;
   }
