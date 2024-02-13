@@ -1,6 +1,7 @@
 import { ref, toValue, watchEffect } from "vue";
+import type { Coordinate, PlotData } from "./PlotData";
 
-export function useGraph(plotdata, minimumyaxis, minPoints = () => 10) {
+export function useGraph(plotdata: () => PlotData | undefined, minimumyaxis: () => number, minPoints = () => 10) {
   const valuesPath = ref(""),
     valuesArea = ref(""),
     maxYaxis = ref(10),
@@ -17,7 +18,7 @@ export function useGraph(plotdata, minimumyaxis, minPoints = () => 10) {
       return result;
     })();
     const xTick = 100 / (values.length - 1);
-    const coordinates = values.reduce((points, yValue, i) => [...points, [i * xTick, yValue]], []);
+    const coordinates = values.reduce((points: Coordinate[], yValue, i) => [...points, [i * xTick, yValue] as Coordinate], []);
     valuesPath.value = new Path().startAt(coordinates[0]).followCoordinates(coordinates.slice(1)).toString();
     valuesArea.value = new Path().startAt([0, 0]).followCoordinates(coordinates).lineTo([100, 0]).close().toString();
 
@@ -36,27 +37,27 @@ export function useGraph(plotdata, minimumyaxis, minPoints = () => 10) {
 }
 
 class Path {
-  #pathElements = [];
+  #pathElements: string[] = [];
   #complete = false;
 
-  startAt([x, y]) {
+  startAt([x, y]: Coordinate) {
     if (this.#pathElements.length > 0) throw new Error("startAt must be the first call on a path");
     return this.moveTo([x, y]);
   }
 
-  moveTo([x, y]) {
+  moveTo([x, y]: Coordinate) {
     if (this.#complete) throw new Error("Path is already closed");
     this.#pathElements.push(`M${x} ${y}`);
     return this;
   }
 
-  lineTo([x, y]) {
+  lineTo([x, y]: Coordinate) {
     if (this.#complete) throw new Error("Path is already closed");
     this.#pathElements.push(`L${x} ${y}`);
     return this;
   }
 
-  followCoordinates(coordinates) {
+  followCoordinates(coordinates: Coordinate[]) {
     for (const c of coordinates) {
       this.lineTo(c);
     }

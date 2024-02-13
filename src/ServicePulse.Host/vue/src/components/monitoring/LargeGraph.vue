@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
+import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
 import { useGraph } from "./graphLines";
 import type { PlotData } from "./PlotData";
 
