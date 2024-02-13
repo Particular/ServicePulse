@@ -1,6 +1,6 @@
 ﻿<script setup>
 // Composables
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
@@ -16,6 +16,7 @@ import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 import PeriodSelector from "./MonitoringHistoryPeriod.vue";
 import NoData from "../NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
+import PaginationStrip from "@/components/PaginationStrip.vue";
 import LargeGraph from "./LargeGraph.vue";
 
 const route = useRoute();
@@ -48,7 +49,7 @@ const largeGraphsMinimumYAxis = {
 };
 const endpoint = ref({});
 const negativeCriticalTimeIsPresent = ref(false);
-endpoint.value.messageTypesPage = !showInstancesBreakdown ? route.query.pageNo : 1;
+endpoint.value.messageTypesPage = !showInstancesBreakdown ? Number(route.query.pageNo ?? "1") : 1;
 endpoint.value.messageTypesTotalItems = 0;
 endpoint.value.messageTypesItemsPerPage = 10;
 endpoint.value.messageTypesAvailable = ref(false);
@@ -60,6 +61,18 @@ const historyPeriod = ref(monitoringStore.historyPeriod);
 watch(monitoringStore.historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
 });
+
+const paginatedMessageTypes = computed(() => {
+  return endpoint.value.messageTypes.slice((endpoint.value.messageTypesPage - 1) * endpoint.value.messageTypesItemsPerPage, endpoint.value.messageTypesPage * endpoint.value.messageTypesItemsPerPage);
+});
+
+watch(
+  () => endpoint.value.messageTypesPage,
+  () => {
+    const breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
+    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: endpoint.value.messageTypesPage } });
+  }
+);
 
 async function getEndpointDetails() {
   //get historyPeriod
@@ -724,7 +737,7 @@ onMounted(() => {
                   <div class="col-xs-12 no-side-padding">
                     <div
                       class="row box endpoint-row"
-                      v-for="(messageType, id) in endpoint.messageTypes"
+                      v-for="(messageType, id) in paginatedMessageTypes"
                       :key="id"
                       ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage"
                     >
@@ -816,18 +829,7 @@ onMounted(() => {
                     </div>
                   </div>
                 </div>
-                <div class="row list-pagination">
-                  <ul
-                    uib-pagination
-                    ng-show="endpoint.messageTypesTotalItems >  endpoint.messageTypesItemsPerPage"
-                    total-items="endpoint.messageTypesTotalItems"
-                    ng-model="endpoint.messageTypesPage"
-                    items-per-page="endpoint.messageTypesItemsPerPage"
-                    max-size="10"
-                    boundary-link-numbers="true"
-                    ng-change="updateUrl()"
-                  ></ul>
-                </div>
+                <PaginationStrip v-model="endpoint.messageTypesPage" :itemsPerPage="endpoint.messageTypesItemsPerPage" :totalCount="endpoint.messageTypesTotalItems" />
               </div>
             </div>
           </section>
