@@ -1,16 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from "vue";
 import { useFormatLargeNumber, useFormatTime } from "../../composables/formatter";
 import { useGraph } from "./graphLines";
-const props = defineProps({
-  plotdata: Object,
-  minimumyaxis: Number,
-  avglabelcolor: String,
-  isdurationgraph: Boolean,
-  metricsuffix: String,
-  endpointname: String,
-  type: String,
-});
+import type { PlotData } from "./PlotData";
+
+const props = defineProps<{
+  plotdata: PlotData;
+  minimumyaxis: number;
+  avglabelcolor: string;
+  isdurationgraph: boolean;
+  metricsuffix: string;
+  endpointname: string;
+  type: string;
+}>();
 
 const hover = ref(false);
 
@@ -20,9 +22,9 @@ const { valuesPath, valuesArea, maxYaxis, average, averageLine } = useGraph(
 );
 
 const averageLabelValue = computed(() => {
-  return props.isdurationgraph ? useFormatTime(average.value).value : useFormatLargeNumber(average.value, 2);
+  return props.isdurationgraph ? useFormatTime(average.value.toString()).value : useFormatLargeNumber(average.value.toString(), 2);
 });
-const averageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime(average.value).unit.toUpperCase() : props.metricsuffix ?? ""));
+const averageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime(average.value.toString()).unit.toUpperCase() : props.metricsuffix ?? ""));
 //38 is 50 (height of parent) - 6 - 6 for padding.
 //To get it exact without hard coding a height value, we would need to perform measurement on the rendered SVG element, which we want to avoid
 const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.value) * 38}px - 1em)`);

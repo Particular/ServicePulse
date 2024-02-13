@@ -1,19 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
 import { useGraph } from "./graphLines";
-const props = defineProps({
-  isdurationgraph: Boolean,
-  metricsuffix: String,
-  firstdataseries: Object,
-  seconddataseries: Object,
-  minimumyaxis: Number,
-  avgdecimals: Number,
-  firstseriestype: String,
-  firstseriesavgcolour: String,
-  secondseriestype: String,
-  secondseriesavgcolour: String,
-});
+import type { PlotData } from "./PlotData";
+
+const props = defineProps<{
+  isdurationgraph: boolean;
+  metricsuffix: string;
+  firstdataseries: PlotData;
+  seconddataseries: PlotData | undefined;
+  minimumyaxis: number;
+  avgdecimals: number;
+  firstseriestype: string;
+  firstseriesavgcolour: string;
+  secondseriestype: string;
+  secondseriesavgcolour: string;
+}>();
 
 const hover = ref(false);
 
@@ -21,31 +23,31 @@ const minPoints = computed(() => Math.max(props.firstdataseries.points.length, p
 const series1 = useGraph(
   () => props.firstdataseries,
   () => props.minimumyaxis,
-  () => minPoints
+  () => minPoints.value
 );
 const series2 = useGraph(
   () => props.seconddataseries,
   () => props.minimumyaxis,
-  () => minPoints
+  () => minPoints.value
 );
 const maxYaxis = computed(() => padToWholeValue(Math.max(series1.maxYaxis.value, series2?.maxYaxis.value ?? 0)));
 const tickValues = computed(() => {
   const ticks = [0, (maxYaxis.value * 1) / 4, (maxYaxis.value * 1) / 2, (maxYaxis.value * 3) / 4, maxYaxis.value];
-  const durationTick = (tick) => {
-    var formattedTime = useFormatTime(tick);
+  const durationTick = (tick: number) => {
+    const formattedTime = useFormatTime(tick.toString());
     return `${formattedTime.value} ${formattedTime.unit}`;
   };
   return props.isdurationgraph ? ticks.map((tick) => durationTick(tick)) : ticks;
 });
 
-function padToWholeValue(value) {
-  var emptyDataSetyAxisMax = 10;
+function padToWholeValue(value: number) {
+  const emptyDataSetyAxisMax = 10;
 
   if (!value) {
     return emptyDataSetyAxisMax;
   }
 
-  var upperBound = 10;
+  let upperBound = 10;
 
   while (value > upperBound) {
     upperBound *= 10;
@@ -57,13 +59,13 @@ function padToWholeValue(value) {
 }
 
 const series1AverageLabelValue = computed(() => {
-  return props.isdurationgraph ? useFormatTime(series1.average.value).value : useFormatLargeNumber(series1.average.value, 2);
+  return props.isdurationgraph ? useFormatTime(series1.average.value.toString()).value : useFormatLargeNumber(series1.average.value.toString(), 2);
 });
 const series2AverageLabelValue = computed(() => {
-  return props.isdurationgraph ? useFormatTime(series2.average.value).value : useFormatLargeNumber(series2.average.value, 2);
+  return props.isdurationgraph ? useFormatTime(series2.average.value.toString()).value : useFormatLargeNumber(series2.average.value.toString(), 2);
 });
-const series1AverageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime(series1.average.value).unit.toUpperCase() : props.metricsuffix ?? ""));
-const series2AverageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime(series2.average.value).unit.toUpperCase() : props.metricsuffix ?? ""));
+const series1AverageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime(series1.average.value.toString()).unit.toUpperCase() : props.metricsuffix ?? ""));
+const series2AverageLabelSuffix = computed(() => (props.isdurationgraph ? useFormatTime(series2.average.value.toString()).unit.toUpperCase() : props.metricsuffix ?? ""));
 //NOTE: using hard coded height of graph (200px - 10 for padding). To get it exact without hard coding a height value, we would need to perform measurement on the rendered SVG element, which we want to avoid
 const series1AverageLabelPosition = computed(() => `calc(${(series1.average.value / maxYaxis.value) * 190}px - 1em)`);
 const series2AverageLabelPosition = computed(() => `calc(${(series2.average.value / maxYaxis.value) * 190}px - 1em)`);
