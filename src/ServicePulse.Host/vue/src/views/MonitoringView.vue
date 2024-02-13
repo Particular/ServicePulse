@@ -44,7 +44,6 @@ onUnmounted(() => {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
-  //TODO: need to remove all D3 elements that are appended to the body rather than this view
 });
 
 onMounted(async () => {
