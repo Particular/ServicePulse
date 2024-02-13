@@ -1,10 +1,12 @@
 <script setup>
 import { RouterLink, useRoute } from "vue-router";
 import { computed } from "vue";
-import { stats, connectionState, monitoringConnectionState } from "../composables/serviceServiceControl.js";
+import { connectionState, monitoringConnectionState, stats } from "../composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "../composables/serviceServiceControlUrls";
-import { licenseStatus } from "./../composables/serviceLicense.js";
+import { licenseStatus } from "../composables/serviceLicense";
 import ExclamationMark from "./ExclamationMark.vue";
+import { LicenseWarningLevel } from "@/composables/LicenseStatus";
+import { WarningLevel } from "@/components/WarningLevel";
 
 const baseUrl = window.defaultConfig.base_url;
 
@@ -17,10 +19,10 @@ function subIsActive(input, exact) {
 }
 
 const displayWarn = computed(() => {
-  return licenseStatus.warningLevel === "warning";
+  return licenseStatus.warningLevel === LicenseWarningLevel.Warning;
 });
 const displayDanger = computed(() => {
-  return connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled()) || licenseStatus.warningLevel === "danger";
+  return connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled()) || licenseStatus.warningLevel === LicenseWarningLevel.Danger;
 });
 </script>
 
@@ -76,18 +78,18 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
             </a>
           </li>
-          <li :class="{ active: subIsActive('/a/#/events') }">
-            <a :href="`${baseUrl}a/#/events`">
+          <li :class="{ active: subIsActive('/events') }">
+            <RouterLink :to="{ name: 'events' }" exact>
               <i class="fa fa-list-ul icon-white" title="Events"></i>
               <span class="navbar-label">Events</span>
-            </a>
+            </RouterLink>
           </li>
           <li :class="{ active: subIsActive('/configuration') }">
             <RouterLink :to="{ name: 'license' }" exact>
               <i class="fa fa-cog icon-white" title="Configuration"></i>
               <span class="navbar-label">Configuration</span>
-              <exclamation-mark :type="'warning'" v-if="displayWarn" />
-              <exclamation-mark :type="'danger'" v-if="displayDanger" />
+              <exclamation-mark :type="WarningLevel.Warning" v-if="displayWarn" />
+              <exclamation-mark :type="WarningLevel.Danger" v-if="displayDanger" />
             </RouterLink>
           </li>
           <li>

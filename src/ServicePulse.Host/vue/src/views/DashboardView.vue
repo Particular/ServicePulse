@@ -1,10 +1,10 @@
-<script setup>
-import DashboardItem from "../components/DashboardItem.vue";
-import EventItemShort from "../components/EventItemShort.vue";
-import LicenseExpired from "../components/LicenseExpired.vue";
-import ServiceControlNotAvailable from "../components/ServiceControlNotAvailable.vue";
-import { connectionState, stats } from "../composables/serviceServiceControl";
-import { licenseStatus } from "./../composables/serviceLicense.js";
+<script setup lang="ts">
+import DashboardItem from "@/components/DashboardItem.vue";
+import EventItemShort from "@/components/EventItemShort.vue";
+import LicenseExpired from "@/components/LicenseExpired.vue";
+import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
+import { connectionState, stats } from "@/composables/serviceServiceControl";
+import { licenseStatus } from "@/composables/serviceLicense";
 </script>
 
 <template>

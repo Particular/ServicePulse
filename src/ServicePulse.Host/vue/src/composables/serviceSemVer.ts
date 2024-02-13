@@ -1,8 +1,8 @@
 const reSemver = /^v?((\d+)\.(\d+)\.(\d+))(?:-([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?(?:\+([\dA-Za-z\-_]+(?:\.[\dA-Za-z\-_]+)*))?$/;
 
-export function useIsUpgradeAvailable(currentVersion, latestVersion) {
-  var latest = parse(latestVersion.split("-")[0]);
-  var current = parse(currentVersion.split("-")[0]);
+export function useIsUpgradeAvailable(currentVersion: string, latestVersion: string) {
+  const latest = parse(latestVersion.split("-")[0]);
+  const current = parse(currentVersion.split("-")[0]);
 
   if (latest == null) return false;
   if (current == null) return false;
@@ -20,11 +20,12 @@ export function useIsUpgradeAvailable(currentVersion, latestVersion) {
   return false;
 }
 
-export function useIsSupported(currentVersion, minSupportedVersion) {
-  var minSupported = parse(minSupportedVersion);
-  var current = parse(currentVersion);
+export function useIsSupported(currentVersion: string, minSupportedVersion: string) {
+  const minSupported = parse(minSupportedVersion);
+  const current = parse(currentVersion);
 
   if (current == null) return false;
+  if (minSupported == null) return true;
 
   if (minSupported.major !== current.major) {
     return minSupported.major <= current.major;
@@ -39,43 +40,38 @@ export function useIsSupported(currentVersion, minSupportedVersion) {
   return true;
 }
 
-function SemVer(obj) {
-  if (!obj) {
-    return;
-  }
-
-  var me = this;
-
-  Object.keys(obj).forEach(function (key) {
-    me[key] = obj[key];
-  });
+interface SemVer {
+  semver: string | null;
+  version: string;
+  major: number;
+  minor: number;
+  patch: number;
+  release: string;
+  build: string;
 }
 
-function parse(version) {
+function parse(version: string) {
   // semver, major, minor, patch
   // https://github.com/mojombo/semver/issues/32
   // https://github.com/isaacs/node-semver/issues/10
   // optional v
-  var m = reSemver.exec(version) || [];
+  const m = reSemver.exec(version) || [];
 
-  function defaultToZero(num) {
-    var n = parseInt(num, 10);
+  function defaultToZero(num: string) {
+    const n = parseInt(num, 10);
 
     return isNaN(n) ? 0 : n;
   }
 
-  var ver = new SemVer({
-    semver: m[0],
-    version: m[1],
-    major: defaultToZero(m[2]),
-    minor: defaultToZero(m[3]),
-    patch: defaultToZero(m[4]),
-    release: m[5],
-    build: m[6],
-  });
-  if (0 === m.length) {
-    ver = null;
-  }
-
-  return ver;
+  return 0 === m.length
+    ? null
+    : <SemVer>{
+        semver: m[0],
+        version: m[1],
+        major: defaultToZero(m[2]),
+        minor: defaultToZero(m[3]),
+        patch: defaultToZero(m[4]),
+        release: m[5],
+        build: m[6],
+      };
 }

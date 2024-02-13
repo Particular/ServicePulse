@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
-import { useServiceControlConnections, connectionState } from "../../composables/serviceServiceControl.js";
+import { licenseStatus } from "../../composables/serviceLicense";
+import { connectionState, useServiceControlConnections } from "../../composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
@@ -26,7 +26,7 @@ const queryErrors = ref([]);
 async function getCode() {
   loading.value = true;
 
-  var snippetTemplate = `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
+  const snippetTemplate = `var servicePlatformConnection = ServicePlatformConnectionConfiguration.Parse(@"<json>");
 
     endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
     `;
@@ -42,7 +42,7 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
     errorQueue: connections.serviceControl.settings.ErrorQueue,
     metrics: connections.monitoring.settings,
   };
-  var jsonText = JSON.stringify(config, null, 4);
+  let jsonText = JSON.stringify(config, null, 4);
   jsonConfig.value = jsonText;
 
   jsonText = jsonText.replaceAll('"', '""');

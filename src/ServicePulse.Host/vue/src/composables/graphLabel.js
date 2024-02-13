@@ -1,5 +1,5 @@
 export function getArrowLabel(pointToTheLeft = false, caption = "") {
-  var div = document.createElement("div");
+  const div = document.createElement("div");
   div.style.position = "absolute";
   div.style.zIndex = 10;
   div.style.visibility = "hidden";
@@ -14,17 +14,17 @@ export function getArrowLabel(pointToTheLeft = false, caption = "") {
 
   return {
     displayAt: function ({ x, y, color }) {
-      var labelDimensions = getComputedStyle(div);
+      const labelDimensions = getComputedStyle(div);
       //align the label vertically.
       div.style.top = `${Math.trunc(y - labelDimensions.height.replace("px", "") / 2)}px`;
 
       //align the label horizontally.
       //get the label tip dimensions. The label tip is composed by a roated square of the ::before pseudo-element.
-      var labelTipWidth = getComputedStyle(div, ":before").width.replace("px", "");
-      var labelTipHeight = getComputedStyle(div, ":before").height.replace("px", "");
-      var labelTipHypotenuse = Math.trunc(Math.hypot(labelTipWidth, labelTipHeight));
+      const labelTipWidth = getComputedStyle(div, ":before").width.replace("px", "");
+      const labelTipHeight = getComputedStyle(div, ":before").height.replace("px", "");
+      const labelTipHypotenuse = Math.trunc(Math.hypot(labelTipWidth, labelTipHeight));
 
-      if (pointToTheLeft == false) {
+      if (pointToTheLeft === false) {
         div.style.left = "inherit";
         div.style.right = `calc(100% - ${x}px + ${labelTipHypotenuse / 2}px)`;
       } else {

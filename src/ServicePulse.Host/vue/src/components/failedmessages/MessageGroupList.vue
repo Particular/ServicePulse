@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { stats } from "../../composables/serviceServiceControl.js";
-import { useShowToast } from "../../composables/toast.js";
-import { useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useArchiveExceptionGroup, useAcknowledgeArchiveGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup.js";
+import { stats } from "../../composables/serviceServiceControl";
+import { useShowToast } from "../../composables/toast";
+import { useAcknowledgeArchiveGroup, useArchiveExceptionGroup, useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
@@ -70,7 +70,7 @@ async function getExceptionGroups(classifier) {
 function initializeGroupState(group, index) {
   group.index = index;
 
-  var operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
+  let operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
   if (operationStatus === "preparing" && group.operation_progress === 1) {
     operationStatus = "queued";
   }
@@ -106,7 +106,7 @@ async function saveDeleteNote(group, hideToastMessage) {
   if (result.message === "success") {
     noteSaveSuccessful.value = true;
     if (!hideToastMessage) {
-      useShowToast("info", "Info", "Note deleted succesfully");
+      useShowToast("info", "Info", "Note deleted successfully");
     }
 
     loadFailedMessageGroups(); //reload the groups
@@ -152,7 +152,7 @@ function editNote(group) {
 }
 
 //delete a group
-var statusesForArchiveOperation = ["archivestarted", "archiveprogressing", "archivefinalizing", "archivecompleted"];
+const statusesForArchiveOperation = ["archivestarted", "archiveprogressing", "archivefinalizing", "archivecompleted"];
 function deleteGroup(group) {
   groupDeleteSuccessful.value = null;
   selectedGroup.value.groupid = group.id;
@@ -189,6 +189,19 @@ function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
   };
 }
 
+//getClasses
+const getClasses = function (stepStatus, currentStatus, statusArray) {
+  const indexOfStep = statusArray.indexOf(stepStatus);
+  const indexOfCurrent = statusArray.indexOf(currentStatus);
+  if (indexOfStep > indexOfCurrent) {
+    return "left-to-do";
+  } else if (indexOfStep === indexOfCurrent) {
+    return "active";
+  } else {
+    return "completed";
+  }
+};
+
 //getClassesForArchiveOperation
 function getClassesForArchiveOperation(stepStatus, currentStatus) {
   return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
@@ -219,7 +232,7 @@ async function saveRetryGroup(group) {
   }
 }
 
-var statusesForRetryOperation = ["waiting", "preparing", "queued", "forwarding"];
+const statusesForRetryOperation = ["waiting", "preparing", "queued", "forwarding"];
 function getClassesForRetryOperation(stepStatus, currentStatus) {
   if (currentStatus === "queued") {
     currentStatus = "forwarding";
@@ -227,26 +240,13 @@ function getClassesForRetryOperation(stepStatus, currentStatus) {
   return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
 }
 
-//getClasses
-var getClasses = function (stepStatus, currentStatus, statusArray) {
-  var indexOfStep = statusArray.indexOf(stepStatus);
-  var indexOfCurrent = statusArray.indexOf(currentStatus);
-  if (indexOfStep > indexOfCurrent) {
-    return "left-to-do";
-  } else if (indexOfStep === indexOfCurrent) {
-    return "active";
-  } else {
-    return "completed";
-  }
-};
-
-var acknowledgeGroup = async function (group) {
+const acknowledgeGroup = async function (group) {
   const result = await useAcknowledgeArchiveGroup(group.id);
   if (result.message === "success") {
     if (group.operation_status === "ArchiveCompleted") {
-      useShowToast("info", "Info", "Group deleted succesfully");
+      useShowToast("info", "Info", "Group deleted successfully");
     } else {
-      useShowToast("info", "Info", "Group retried succesfully");
+      useShowToast("info", "Info", "Group retried successfully");
     }
     loadFailedMessageGroups(); //reload the groups
   } else {
