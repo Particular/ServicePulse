@@ -155,3 +155,7 @@ function formatGraphDecimal(input, deci) {
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "../list.css";
+</style>

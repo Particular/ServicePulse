@@ -1,34 +1,23 @@
 <script setup>
 // Composables
-import { ref, onMounted, watch, onUnmounted, computed } from "vue";
-import { useRoute } from "vue-router";
+import { onMounted, watch, onUnmounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { licenseStatus } from "@/composables/serviceLicense";
 import { connectionState } from "@/composables/serviceServiceControl";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
 // Components
 import LicenseExpired from "@/components/LicenseExpired.vue";
-import GroupBy from "@/components/monitoring/MonitoringGroupBy.vue";
 import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
 import EndpointList from "@/components/monitoring/EndpointList.vue";
-import PeriodSelector from "@/components/monitoring/MonitoringHistoryPeriod.vue";
 import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
+import MonitoringFilter from "@/components/monitoring/MonitoringFilter.vue";
 
-const route = useRoute();
 const monitoringStore = useMonitoringStore();
 const { historyPeriod } = storeToRefs(monitoringStore);
 const noData = computed(() => monitoringStore.endpointListIsEmpty);
-const filterString = ref("");
 let refreshInterval = undefined;
 
-watch(route, () => monitoringStore.setHistoryPeriod(route.params.historyPeriod), { deep: true, immediate: true, flush: "pre" });
-
 //const redirectCount = ref(0);
-
-watch(filterString, async (newValue) => {
-  await monitoringStore.updateFilterString(newValue);
-  filterString.value = monitoringStore.filterString;
-});
 
 watch(historyPeriod, async (newValue) => {
   await changeRefreshInterval(newValue.refreshIntervalVal);
@@ -52,7 +41,6 @@ onUnmounted(() => {
 
 onMounted(async () => {
   await monitoringStore.initializeStore();
-  filterString.value = monitoringStore.filterString;
   await changeRefreshInterval(monitoringStore.historyPeriod.refreshIntervalVal);
 });
 </script>
@@ -70,11 +58,7 @@ onMounted(async () => {
               <h1>Endpoints overview</h1>
             </div>
             <div class="col-sm-8 no-side-padding toolbar-menus">
-              <div class="filter-group filter-monitoring">
-                <PeriodSelector />
-                <GroupBy />
-                <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" v-model="filterString" />
-              </div>
+              <MonitoringFilter />
             </div>
           </div>
           <EndpointList />
@@ -90,48 +74,6 @@ onMounted(async () => {
   padding-top: 7px;
   padding-bottom: 7px;
   margin-bottom: 0;
-}
-
-.filter-group.filter-monitoring {
-  width: 100%;
-}
-
-.filter-group.filter-monitoring input {
-  margin-top: 33px;
-  float: none;
-  font-size: 14px;
-}
-
-.filter-group {
-  display: flex;
-  justify-content: flex-end;
-  width: 50%;
-  position: relative;
-  top: -3px;
-  margin-top: -26px;
-  float: right;
-}
-
-.filter-group:before {
-  width: 16px;
-  font-family: "FontAwesome";
-  width: 20px;
-  content: "\f0b0";
-  color: #919e9e;
-  position: absolute;
-  top: 29px;
-  right: 250px;
-}
-
-.filter-group input {
-  display: inline-block;
-  width: 280px;
-  margin: 21px 0 0 15px;
-  padding-right: 10px;
-  padding-left: 30px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  float: right;
 }
 
 .nav {
@@ -185,21 +127,6 @@ onMounted(async () => {
   top: 4px;
   left: -12px;
   font-size: 10px;
-}
-
-.monitoring-view .filter-group.filter-monitoring:before {
-  top: 41px;
-}
-
-.monitoring-view .dropdown {
-  top: 33px;
-  margin-left: 25px;
-  width: 250px;
-}
-
-.monitoring-view .dropdown .dropdown-menu {
-  top: 36px;
-  margin-left: 72px;
 }
 
 /* particular.css START - TODO extract only the classes required */
@@ -537,17 +464,6 @@ body {
   -webkit-flex: 1 1 0;
   flex: 1 1 0;
   margin-right: 48px;
-}
-
-.lead {
-  -ms-word-wrap: break-word;
-  color: #181919 !important;
-  font-size: 14px !important;
-  font-weight: bold;
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .righ-side-ellipsis {
@@ -1150,16 +1066,11 @@ h3.group-title {
   float: right;
 }
 
-.filter-input,
 .action-btns,
 .filter-period-menu,
 .sort-menu {
   display: inline-block;
   padding-bottom: 6px;
-}
-
-.filter-input {
-  width: 100%;
 }
 
 .filter-period-menu {
@@ -3093,15 +3004,7 @@ a.remove-endpoint i {
 a.remove-endpoint:hover i {
   color: #00729c;
 }
-.filter-group {
-  display: flex;
-  justify-content: flex-end;
-  width: 50%;
-  position: relative;
-  top: -3px;
-  margin-top: -26px;
-  float: right;
-}
+
 .filter-group-details {
   display: flex;
   justify-content: flex-end;
@@ -3109,57 +3012,6 @@ a.remove-endpoint:hover i {
   position: relative;
   top: -3px;
   margin-top: -26px;
-  float: right;
-}
-.filter-group:before {
-  width: 16px;
-  font-family: "FontAwesome";
-  width: 20px;
-  content: "\f0b0";
-  color: #919e9e;
-  position: absolute;
-  top: 29px;
-  right: 250px;
-}
-
-.filter-group input {
-  display: inline-block;
-  width: 280px;
-  margin: 21px 0 0 15px;
-  padding-right: 10px;
-  padding-left: 30px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  float: right;
-}
-
-.filter-group.filter-monitoring {
-  width: 100%;
-}
-
-.filter-group.filter-monitoring:before {
-  position: absolute;
-  top: 41px;
-}
-
-.filter-group.filter-monitoring input {
-  margin-top: 33px;
-  float: none;
-}
-
-.monitoring-view .filter-group.filter-monitoring:before {
-  top: 41px;
-}
-
-.monitoring-view .dropdown {
-  top: 33px;
-  margin-left: 25px;
-  width: 250px;
-}
-
-.monitoring-view .dropdown .dropdown-menu {
-  top: 36px;
-  margin-left: 72px;
 }
 
 .events-view {

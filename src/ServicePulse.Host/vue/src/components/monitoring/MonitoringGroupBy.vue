@@ -46,7 +46,17 @@ onMounted(() => {
   </div>
 </template>
 
-<style>
+<style scoped>
+.dropdown {
+  margin-left: 25px;
+  width: 250px;
+}
+
+.dropdown .dropdown-menu {
+  top: 36px;
+  margin-left: 72px;
+}
+
 .btn.btn-dropdown {
   padding: 8px 16px;
   padding-top: 8px;
