@@ -16,14 +16,7 @@ const allPeriods = [
 ];
 
 function getHistoryPeriod(route = null, requestedPeriod = null) {
-  const readUrlPeriod = () => {
-    try {
-      return new URL(`http://x/?${location.hash.split("?")[1]}`).searchParams.get("historyPeriod");
-    } catch {
-      return null;
-    }
-  };
-  const period = requestedPeriod ?? (readUrlPeriod() || route?.query?.historyPeriod || cookies.get("history_period"));
+  const period = requestedPeriod ?? (route?.query?.historyPeriod || cookies.get("history_period"));
 
   return allPeriods.find((index) => index.pVal === parseInt(period)) ?? allPeriods[0];
 }
@@ -60,9 +53,12 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     async updateFilterString(filter = null) {
       this.filterString = filter ?? this.route.query.filter ?? "";
       if (this.filterString === "") {
-        delete this.route.query.filter;
+        // eslint-disable-next-line
+        const { filter, ...withoutFilter } = this.route.query;
+        await this.router.replace({ query: withoutFilter }); // Update or add filter query parameter to url
+      } else {
+        await this.router.replace({ query: { ...this.route.query, filter: this.filterString } }); // Update or add filter query parameter to url
       }
-      await this.router.push({ query: { ...this.route.query, filter: filter } }); // Update or add filter query parameter to url
       await this.updateEndpointList();
       this.updateGroupedEndpoints();
     },
@@ -105,7 +101,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       if (period) {
         this.historyPeriod = period;
         cookies.set("history_period", this.historyPeriod.pVal);
-        await this.router.push({ query: { ...this.route.query, historyPeriod: this.historyPeriod.pVal } });
+        await this.router.replace({ query: { ...this.route.query, historyPeriod: this.historyPeriod.pVal } });
       }
     },
   },
