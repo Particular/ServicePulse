@@ -1,7 +1,8 @@
-async function getData(url) {
+import type Release from "@/resources/Release";
+
+async function getData(url: string) {
   const response = await fetch(url);
-  const data = await response.json();
-  return data;
+  return (await response.json()) as unknown as Release[];
 }
 
 export async function useServiceProductUrls() {
@@ -12,8 +13,8 @@ export async function useServiceProductUrls() {
   const serviceControl = getData(scURL);
 
   const [sp, sc] = await Promise.all([servicePulse, serviceControl]);
-  var latestSP = sp[0];
-  var latestSC = sc[0];
+  const latestSP = sp[0];
+  const latestSC = sc[0];
 
   return { latestSP, latestSC };
 }

@@ -18,7 +18,7 @@ function saveSelectedGroup(groupSize) {
 
 function getDefaultSelectedGroup() {
   const storedGroupSelection = cookies.get("selected_group_size");
-  if (storedGroupSelection != undefined && !isNaN(parseInt(storedGroupSelection))) {
+  if (storedGroupSelection != null && !isNaN(parseInt(storedGroupSelection))) {
     selectGroup(parseInt(storedGroupSelection));
   } else {
     selectGroup(0);

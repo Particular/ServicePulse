@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { useGetExceptionGroupsForEndpoint } from "../composables/serviceMessageGroup.js";
+import { useGetExceptionGroupsForEndpoint } from "../composables/serviceMessageGroup";
 
 export const useFailedMessageStore = defineStore("FailedMessageStore", {
   state: () => {

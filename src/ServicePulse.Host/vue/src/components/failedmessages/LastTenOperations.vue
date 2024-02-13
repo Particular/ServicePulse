@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import NoData from "../NoData.vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import TimeSince from "../TimeSince.vue";

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
+import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import SmallGraph from "./SmallGraph.vue";
 
@@ -28,23 +28,22 @@ function navigateToMessageGroup($event, groupId) {
 }
 function navigateToEndpointDetails($event, endpointName) {
   if ($event.target.localName !== "button") {
-    var selectedPeriod = ref(monitoringStore.historyPeriod);
+    const selectedPeriod = ref(monitoringStore.historyPeriod);
     router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
   }
 }
 
 function formatGraphDuration(input) {
   if (input) {
-    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    var formatLastValue = useFormatTime(lastValue);
-    return formatLastValue;
+    const lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+    return useFormatTime(lastValue);
   }
   return input;
 }
 function formatGraphDecimal(input, deci) {
   if (input) {
-    var lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    var decimals = 0;
+    const lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
+    let decimals = 0;
     if (lastValue < 10 || input > 1000000) {
       decimals = 2;
     }

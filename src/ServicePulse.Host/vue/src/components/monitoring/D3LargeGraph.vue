@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watchEffect } from "vue";
 import * as d3 from "d3";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter.js";
-import { getArrowLabel } from "../../composables/graphLabel.js";
+import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
+import { getArrowLabel } from "../../composables/graphLabel";
 const props = defineProps({
   isdurationgraph: Boolean,
   metricsuffix: String,
@@ -19,47 +19,47 @@ const props = defineProps({
 const averageDecimalsDefault = 2;
 const avgLabelSuffixDefault = "";
 const root = ref(null);
-var averageLabelToTheRight = getArrowLabel(false, "AVG");
-var averageLabelToTheLeft = getArrowLabel(true, "AVG");
+const averageLabelToTheRight = getArrowLabel(false, "AVG");
+const averageLabelToTheLeft = getArrowLabel(true, "AVG");
 
 watchEffect(displayGraphValues, { flush: "post" });
 
 function displayGraphValues() {
-  var avgDecimals = props.avgdecimals || averageDecimalsDefault;
-  var metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
+  const avgDecimals = props.avgdecimals || averageDecimalsDefault;
+  const metricSuffix = props.metricsuffix || avgLabelSuffixDefault;
 
-  var svg = root.value.getElementsByTagName("svg")[0];
+  const svg = root.value.getElementsByTagName("svg")[0];
 
   d3.select(svg).selectAll("*").remove();
 
-  var topMargin = 10;
-  var bottomMargin = 5;
-  var leftMargin = 60;
-  var width = svg.clientWidth;
-  var height = svg.clientHeight;
+  const topMargin = 10;
+  const bottomMargin = 5;
+  const leftMargin = 60;
+  let width = svg.clientWidth;
+  let height = svg.clientHeight;
 
-  var chart = d3.select(svg).attr("width", width).attr("height", height);
+  const chart = d3.select(svg).attr("width", width).attr("height", height);
 
   //HINT: This is workaround for Firefox
   if (width === 0) {
-    var box = svg.getBoundingClientRect();
+    const box = svg.getBoundingClientRect();
 
     width = box.right - box.left;
     height = box.bottom - box.top;
   }
 
-  var firstSeries = props.firstdataseries;
-  var secondSeries = props.seconddataseries;
-  var firstSeriesColor = props.firstseriescolor;
-  var firstSeriesFillColor = props.firstseriesfillcolor;
-  var secondSeriesColor = props.secondseriescolor;
-  var secondSeriesFillColor = props.secondseriesfillcolor;
+  const firstSeries = props.firstdataseries;
+  const secondSeries = props.seconddataseries;
+  const firstSeriesColor = props.firstseriescolor;
+  const firstSeriesFillColor = props.firstseriesfillcolor;
+  const secondSeriesColor = props.secondseriescolor;
+  const secondSeriesFillColor = props.secondseriesfillcolor;
 
-  var amountOfValues = Math.max(firstSeries.points.length, secondSeries ? secondSeries.points.length : 0) || 10;
+  const amountOfValues = Math.max(firstSeries.points.length, secondSeries ? secondSeries.points.length : 0) || 10;
   if (firstSeries.points.length === 0) {
     firstSeries.points = new Array(amountOfValues).fill(0);
   }
-  var scaleX = d3
+  const scaleX = d3
     .scaleLinear()
     .domain([0, amountOfValues - 1])
     .range([leftMargin, width]);
@@ -71,8 +71,8 @@ function displayGraphValues() {
     .attr("transform", "translate(" + leftMargin + "," + topMargin + ")")
     .attr("fill", "#F2F6F7");
 
-  var minimumYaxis = !isNaN(props.minimumyaxis) ? Number(props.minimumyaxis) : 10;
-  var max = Math.max(firstSeries.average, firstSeries.points.length > 0 ? d3.max(firstSeries.points) : 0, minimumYaxis);
+  const minimumYaxis = !isNaN(props.minimumyaxis) ? Number(props.minimumyaxis) : 10;
+  let max = Math.max(firstSeries.average, firstSeries.points.length > 0 ? d3.max(firstSeries.points) : 0, minimumYaxis);
 
   if (secondSeries && secondSeries.points.length > 0) {
     max = Math.max(max, secondSeries.average, d3.max(secondSeries.points));
@@ -80,16 +80,16 @@ function displayGraphValues() {
 
   max = padToWholeValue(max);
 
-  var scaleY = d3
+  const scaleY = d3
     .scaleLinear()
     .domain([0, max])
     .range([height - bottomMargin, topMargin]);
 
-  var yAxis = d3.axisLeft(scaleY).tickValues([0, (max * 1) / 4, (max * 1) / 2, (max * 3) / 4, max]);
+  let yAxis = d3.axisLeft(scaleY).tickValues([0, (max * 1) / 4, (max * 1) / 2, (max * 3) / 4, max]);
 
   if (props.isdurationgraph) {
     yAxis = yAxis.tickFormat(function (v) {
-      var formattedTime = useFormatTime(v);
+      const formattedTime = useFormatTime(v);
       return formattedTime.value + "  " + formattedTime.unit;
     });
   }
@@ -110,11 +110,11 @@ function displayGraphValues() {
       g.selectAll(".tick text").attr("x", -4).attr("fill", "#828282");
     });
 
-  var drawSeries = function (data, lineColor, fillColor) {
+  const drawSeries = function (data, lineColor, fillColor) {
     drawDataSeries(chart, data, lineColor, fillColor, scaleX, scaleY);
   };
 
-  var drawAverage = function (data, lineColor, fillColor) {
+  const drawAverage = function (data, lineColor, fillColor) {
     return drawAverageLine(chart, data, lineColor, fillColor, scaleX, scaleY);
   };
 
@@ -124,9 +124,9 @@ function displayGraphValues() {
     drawSeries(secondSeries, secondSeriesColor, secondSeriesFillColor);
   }
 
-  var firstAverageLine = drawAverage(firstSeries, firstSeriesColor, firstSeriesFillColor);
+  const firstAverageLine = drawAverage(firstSeries, firstSeriesColor, firstSeriesFillColor);
 
-  var secondAverageLine = null;
+  let secondAverageLine = null;
 
   if (secondSeries) {
     secondAverageLine = drawAverage(secondSeries, secondSeriesColor, secondSeriesFillColor);
@@ -134,8 +134,8 @@ function displayGraphValues() {
 
   chart
     .on("mouseover", function () {
-      var value = useFormatLargeNumber(firstSeries.average, avgDecimals);
-      var suffix = metricSuffix;
+      let value = useFormatLargeNumber(firstSeries.average, avgDecimals);
+      let suffix = metricSuffix;
 
       if (props.isdurationgraph) {
         value = useFormatTime(firstSeries.average).value;
@@ -161,7 +161,7 @@ function displayGraphValues() {
 }
 
 function displayAverageLabel(averageLine, label, value, color, unit) {
-  var { x, y, width } = averageLine.node().getBoundingClientRect();
+  const { x, y, width } = averageLine.node().getBoundingClientRect();
   label.value(value, unit);
 
   if (label.pointingToTheLeft) {
@@ -172,7 +172,7 @@ function displayAverageLabel(averageLine, label, value, color, unit) {
 }
 
 function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
-  var area = d3
+  const area = d3
     .area()
     .x(function (d, i) {
       return scaleX(i);
@@ -185,7 +185,7 @@ function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
     })
     .curve(d3.curveLinear);
 
-  var line = d3
+  const line = d3
     .line()
     .x(function (d, i) {
       return scaleX(i);
@@ -195,7 +195,7 @@ function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
     })
     .curve(d3.curveLinear);
 
-  var group = chart.append("g").attr("class", "dataSeries");
+  const group = chart.append("g").attr("class", "dataSeries");
 
   group.append("path").datum(data.points).attr("d", area).attr("fill", fillColor).attr("opacity", 0.8).attr("stroke", fillColor);
 
@@ -203,7 +203,7 @@ function drawDataSeries(chart, data, color, fillColor, scaleX, scaleY) {
 }
 
 function drawAverageLine(chart, data, color, fillColor, scaleX, scaleY) {
-  var line = d3
+  const line = d3
     .line()
     .x(function (d, i) {
       return scaleX(i);
@@ -213,21 +213,19 @@ function drawAverageLine(chart, data, color, fillColor, scaleX, scaleY) {
     })
     .curve(d3.curveLinear);
 
-  var group = chart.append("g").attr("class", "dataAverage");
+  const group = chart.append("g").attr("class", "dataAverage");
 
-  var avgLine = group.append("path").datum(Array(data.points.length).fill(data.average)).attr("d", line).attr("stroke", color).attr("stroke-width", 1.5).attr("opacity", 0.5).attr("stroke-dasharray", "10,10");
-
-  return avgLine;
+  return group.append("path").datum(Array(data.points.length).fill(data.average)).attr("d", line).attr("stroke", color).attr("stroke-width", 1.5).attr("opacity", 0.5).attr("stroke-dasharray", "10,10");
 }
 
 function padToWholeValue(value) {
-  var emptyDataSetyAxisMax = 10;
+  const emptyDataSetyAxisMax = 10;
 
   if (!value) {
     return emptyDataSetyAxisMax;
   }
 
-  var upperBound = 10;
+  let upperBound = 10;
 
   while (value > upperBound) {
     upperBound *= 10;

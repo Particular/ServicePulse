@@ -1,8 +1,7 @@
 <script setup>
-import { RouterLink, useRoute } from "vue-router";
-import { licenseStatus } from "./../composables/serviceLicense.js";
-import { stats, connectionState } from "../composables/serviceServiceControl";
-import { RouterView } from "vue-router";
+import { RouterLink, RouterView, useRoute } from "vue-router";
+import { licenseStatus } from "../composables/serviceLicense";
+import { connectionState, stats } from "../composables/serviceServiceControl";
 import LicenseExpired from "../components/LicenseExpired.vue";
 
 const showPendingRetry = window.defaultConfig.showPendingRetry;

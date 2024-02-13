@@ -1,15 +1,15 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "../../composables/serviceLicense.js";
+import { licenseStatus } from "../../composables/serviceLicense";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import { connectionState } from "../../composables/serviceServiceControl";
 import RetryRedirectEdit from "./RetryRedirectEdit.vue";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
-import { useShowToast } from "../../composables/toast.js";
+import { useShowToast } from "../../composables/toast";
 import TimeSince from "../TimeSince.vue";
-import { useRedirects, useUpdateRedirects, useCreateRedirects, useDeleteRedirects, useRetryPendingMessagesForQueue } from "../../composables/serviceRedirects.js";
+import { useCreateRedirects, useDeleteRedirects, useRedirects, useRetryPendingMessagesForQueue, useUpdateRedirects } from "../../composables/serviceRedirects";
 import ConfirmDialog from "../ConfirmDialog.vue";
 
 const isExpired = licenseStatus.isExpired;
@@ -71,7 +71,7 @@ async function saveEditedRedirect(redirect) {
     getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
-    if (result.status === "409" || result.status === 409) {
+    if (result.status === 409) {
       useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
     } else {
       useShowToast("error", "Error", result.message);
@@ -94,9 +94,9 @@ async function saveCreatedRedirect(redirect) {
     getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
-    if ((result.status === "409" || result.status === 409) && result.statusText === "Duplicate") {
+    if (result.status === 409 && result.statusText === "Duplicate") {
       useShowToast("error", "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
-    } else if ((result.status === "409" || result.status === 409) && result.statusText === "Dependents") {
+    } else if (result.status === 409 && result.statusText === "Dependents") {
       useShowToast("error", "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
     } else {
       useShowToast("error", "Error", result.message);

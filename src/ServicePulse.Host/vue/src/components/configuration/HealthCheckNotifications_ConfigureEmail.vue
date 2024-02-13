@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 
 const emit = defineEmits(["save", "cancel"]);
 const settings = defineProps({
@@ -39,12 +39,12 @@ const formIsValid = computed(() => {
 });
 
 function validateMultipleEmailsCommaSeparated(value) {
-  var result = value.split(",");
+  const result = value.split(",");
   return result.every((address) => emailRe.test(address));
 }
 
 function save() {
-  var updatedSettings = {
+  const updatedSettings = {
     smtp_server: smtp_server.value,
     smtp_port: smtp_port.value,
     authorization_account: authentication_account.value,

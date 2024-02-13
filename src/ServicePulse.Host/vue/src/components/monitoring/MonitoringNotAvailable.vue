@@ -1,6 +1,6 @@
 ﻿<script setup>
 import { ref } from "vue";
-import { monitoringUrl as configuredMonitoringUrl } from "../../composables/serviceServiceControlUrls.js";
+import { monitoringUrl as configuredMonitoringUrl } from "../../composables/serviceServiceControlUrls";
 const monitoringUrl = ref(configuredMonitoringUrl.value);
 </script>
 

@@ -1,11 +1,10 @@
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { useUnarchiveMessage, useArchiveMessage, useRetryMessages } from "../../composables/serviceFailedMessage";
-import { useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, useServiceControlUrls } from "../../composables/serviceServiceControlUrls";
+import { useArchiveMessage, useRetryMessages, useUnarchiveMessage } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
-import { useShowToast } from "../../composables/toast.js";
+import { useShowToast } from "../../composables/toast";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import moment from "moment";
@@ -15,7 +14,7 @@ import EditRetryDialog from "./EditRetryDialog.vue";
 
 let refreshInterval = undefined;
 let pollingFaster = false;
-let panel = ref();
+const panel = ref();
 const route = useRoute();
 const failedMessage = ref({});
 const configuration = ref([]);
@@ -37,7 +36,7 @@ async function loadFailedMessage() {
       failedMessage.value = { error: true };
     }
     const data = await response.json();
-    var message = data;
+    const message = data;
     message.archived = message.status === "archived";
     message.resolved = message.status === "resolved";
     message.retried = message.status === "retryIssued";
@@ -78,7 +77,7 @@ async function getEditAndRetryConfig() {
 }
 
 function updateMessageDeleteDate() {
-  var countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
+  const countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
   failedMessage.value.delete_soon = countdown < moment();
   failedMessage.value.deleted_in = countdown.format();
 }
@@ -86,44 +85,21 @@ function updateMessageDeleteDate() {
 async function archiveMessage() {
   useShowToast("info", "Info", `Deleting the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
-  try {
-    const response = await useArchiveMessage([id.value]);
-    if (response !== undefined) {
-      failedMessage.value.archiving = true;
-      return;
-    }
-    return false;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  await useArchiveMessage([id.value]);
+  failedMessage.value.archiving = true;
 }
 
 async function unarchiveMessage() {
   changeRefreshInterval(1000); // We've started an unarchive, so increase the polling frequency
-  try {
-    const response = await useUnarchiveMessage([id.value]);
-
-    if (response !== undefined) {
-      failedMessage.value.restoring = true;
-    }
-    return false;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  await useUnarchiveMessage([id.value]);
+  failedMessage.value.restoring = true;
 }
 
 async function retryMessage() {
   useShowToast("info", "Info", `Retrying the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started a retry, so increase the polling frequency
-  try {
-    await useRetryMessages([id.value]);
-    failedMessage.value.retried = true;
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
+  await useRetryMessages([id.value]);
+  failedMessage.value.retried = true;
 }
 
 async function downloadHeadersAndBody() {
@@ -136,7 +112,7 @@ async function downloadHeadersAndBody() {
       return;
     }
 
-    var message = data[0];
+    const message = data[0];
     failedMessage.value.headers = message.headers;
     failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
 
@@ -151,9 +127,10 @@ async function downloadBody() {
   const response = await useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body");
   if (response.status === 404) {
     failedMessage.value.messageBodyNotFound = true;
+    return;
   }
 
-  if (response.headers.get("content-type") == "application/json") {
+  if (response.headers.get("content-type") === "application/json") {
     try {
       let jsonBody = await response.json();
       jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
@@ -162,19 +139,24 @@ async function downloadBody() {
     } catch {
       failedMessage.value.bodyUnavailable = true;
     }
+    return;
   }
 
-  if (response.headers.get("content-type") == "text/xml") {
+  if (response.headers.get("content-type") === "text/xml") {
     try {
       const xmlBody = await response.text();
       failedMessage.value.messageBody = formatXml(xmlBody);
     } catch {
       failedMessage.value.bodyUnavailable = true;
     }
+    return;
   }
 
-  const textBody = await response.text();
-  failedMessage.value.messageBody = textBody;
+  try {
+    failedMessage.value.messageBody = await response.text();
+  } catch {
+    failedMessage.value.bodyUnavailable = true;
+  }
 }
 
 // taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js
@@ -191,7 +173,7 @@ function formatXml(xml) {
       }
     }
 
-    let shift = ["\n"]; // array of shifts
+    const shift = ["\n"]; // array of shifts
 
     for (let ix = 0; ix < 100; ix++) {
       shift.push(shift[ix] + space);
@@ -202,17 +184,17 @@ function formatXml(xml) {
 
   const indent = "\t";
 
-  let arr = xml
+  const arr = xml
     .replace(/>\s*</gm, "><")
     .replace(/</g, "~::~<")
     .replace(/\s*xmlns([=:])/g, "~::~xmlns$1")
     .split("~::~");
 
-  let len = arr.length,
-    inComment = false,
-    depth = 0,
-    string = "",
+  const len = arr.length,
     shift = createShiftArr(indent);
+  let inComment = false,
+    depth = 0,
+    string = "";
 
   for (let i = 0; i < len; i++) {
     // start comment or <![CDATA[...]]> or <!DOCTYPE //
@@ -291,7 +273,7 @@ function exportMessage() {
   txtStr += failedMessage.value.exception.stack_trace;
 
   txtStr += "\n\nHEADERS";
-  for (var i = 0; i < failedMessage.value.headers.length; i++) {
+  for (let i = 0; i < failedMessage.value.headers.length; i++) {
     txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
   }
 
@@ -521,5 +503,16 @@ button img {
 
 .msg-tabs {
   margin-bottom: 20px;
+}
+
+.lead {
+  word-wrap: break-word;
+  color: #181919 !important;
+  font-size: 1em !important;
+  font-weight: bold !important;
+  margin-bottom: 0.2em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
