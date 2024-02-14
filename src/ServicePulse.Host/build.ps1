@@ -20,7 +20,9 @@ if ( $? -eq $false ) {
 cd ..
 
 cd $AngularSourceFolder
+$env:NODE_OPTIONS = "--openssl-legacy-provider"
 npm run load
+Remove-Item Env:\NODE_OPTIONS
 
 cd.. 
 

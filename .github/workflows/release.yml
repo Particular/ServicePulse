@@ -37,8 +37,8 @@ jobs:
           node-version: latest
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
-        env:
-          NODE_OPTIONS: "--openssl-legacy-provider"
+        #env:
+        #  NODE_OPTIONS: "--openssl-legacy-provider"
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
       # Build and run tests
@@ -130,8 +130,8 @@ jobs:
           node-version: latest
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
-        env:
-          NODE_OPTIONS: "--openssl-legacy-provider"
+        #env:
+        #  NODE_OPTIONS: "--openssl-legacy-provider"
         run: .\build.ps1
         shell: pwsh
         working-directory: src/ServicePulse.Host
