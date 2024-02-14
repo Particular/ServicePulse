@@ -27,8 +27,6 @@ jobs:
           node-version: latest
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
-        #env:
-        #  NODE_OPTIONS: "--openssl-legacy-provider"
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
       # .NET Build and run tests
@@ -42,7 +40,7 @@ jobs:
       - name: Run Javascript tests
         run: npm run test-firefox-ci
         working-directory: src/ServicePulse.Host.Tests
-        # Upload assets and packages
+      # Upload assets and packages
       - name: Upload assets
         uses: actions/upload-artifact@v4.3.1
         with:

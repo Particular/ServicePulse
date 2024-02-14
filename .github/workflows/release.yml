@@ -37,11 +37,9 @@ jobs:
           node-version: latest
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
-        #env:
-        #  NODE_OPTIONS: "--openssl-legacy-provider"
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
-      # Build and run tests
+      # .NET Build and sign
       - name: Build
         run: dotnet build src --configuration Release
       - id: save-version
@@ -68,6 +66,7 @@ jobs:
         env:
           AZURE_KEY_VAULT_CLIENT_SECRET: ${{ secrets.AZURE_KEY_VAULT_CLIENT_SECRET }}
         run: dotnet build src/Setup --configuration Release
+      # Upload artifacts
       - name: Publish artifacts
         uses: actions/upload-artifact@v4.3.1
         with:
@@ -96,6 +95,7 @@ jobs:
               Write-Host Nugets: Expected $expectedNugetsCount but found $nugetsCount
               exit -1
           }
+      # Deploy to Octopus
       - name: Deploy
         if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
         uses: Particular/push-octopus-package-action@v1.2.1
@@ -130,8 +130,6 @@ jobs:
           node-version: latest
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
-        #env:
-        #  NODE_OPTIONS: "--openssl-legacy-provider"
         run: .\build.ps1
         shell: pwsh
         working-directory: src/ServicePulse.Host
