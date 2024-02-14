@@ -70,7 +70,7 @@ watch(
   () => endpoint.value.messageTypesPage,
   () => {
     const breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
-    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: endpoint.value.messageTypesPage } });
+    router.replace({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: endpoint.value.messageTypesPage } });
   }
 );
 
