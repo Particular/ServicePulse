@@ -2,7 +2,6 @@
 // Composables
 import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import D3LargeGraph from "./D3LargeGraph.vue";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
 import { licenseStatus } from "../../composables/serviceLicense";
@@ -17,6 +16,7 @@ import MonitoringNotAvailable from "./MonitoringNotAvailable.vue";
 import PeriodSelector from "./MonitoringHistoryPeriod.vue";
 import NoData from "../NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
+import LargeGraph from "./LargeGraph.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -388,16 +388,16 @@ onMounted(() => {
             <div class="row">
               <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
                 <!-- large graph -->
-                <D3LargeGraph
+                <LargeGraph
                   v-if="endpoint.metricDetails.metrics.queueLength"
                   :isdurationgraph="false"
                   :firstdataseries="endpoint.metricDetails.metrics.queueLength"
                   :minimumyaxis="largeGraphsMinimumYAxis.queueLength"
-                  :firstseriescolor="'#EA7E00'"
-                  :firstseriesfillcolor="'#EADDCE'"
+                  :firstseriestype="'queue-length'"
+                  :firstseriesavgcolour="'#EA7E00'"
                   :avgdecimals="0"
                   :metricsuffix="'MSGS'"
-                ></D3LargeGraph>
+                />
                 <!--Queue Length-->
                 <div class="col-xs-12 no-side-padding graph-values">
                   <div class="queue-length-values">
@@ -420,19 +420,19 @@ onMounted(() => {
               <!--Throughput and retries-->
               <div class="col-xs-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
                 <!-- large graph -->
-                <D3LargeGraph
+                <LargeGraph
                   v-if="endpoint.metricDetails.metrics.throughput"
                   :isdurationgraph="false"
                   :firstdataseries="endpoint.metricDetails.metrics.throughput"
                   :seconddataseries="endpoint.metricDetails.metrics.retries"
                   :minimumyaxis="largeGraphsMinimumYAxis.throughputRetries"
-                  :firstseriescolor="'#176397'"
-                  :firstseriesfillcolor="'#CADCE8'"
-                  :secondseriescolor="'#CC1252'"
-                  :secondseriesfillcolor="'#E9C4D1'"
+                  :firstseriestype="'throughput'"
+                  :firstseriesavgcolour="'#176397'"
+                  :secondseriestype="'retries'"
+                  :secondseriesavgcolour="'#CC1252'"
                   :avgdecimals="0"
                   :metricsuffix="'MSGS/S'"
-                ></D3LargeGraph>
+                />
                 <div class="col-xs-12 no-side-padding graph-values">
                   <div class="col-xs-6 no-side-padding throughput-values floatleft">
                     <div>
@@ -466,18 +466,18 @@ onMounted(() => {
               <!--ProcessingTime and Critical Time-->
               <div class="col-xs-4 no-side-padding list-section graph-area graph-critical-processing-times">
                 <!-- large graph -->
-                <D3LargeGraph
+                <LargeGraph
                   v-if="endpoint.metricDetails.metrics.criticalTime"
                   :isdurationgraph="true"
                   :firstdataseries="endpoint.metricDetails.metrics.criticalTime"
                   :seconddataseries="endpoint.metricDetails.metrics.processingTime"
                   :minimumyaxis="largeGraphsMinimumYAxis.processingCritical"
-                  :firstseriescolor="'#2700CB'"
-                  :firstseriesfillcolor="'#C4BCE5'"
-                  :secondseriescolor="'#258135'"
-                  :secondseriesfillcolor="'#BEE6C5'"
+                  :firstseriestype="'critical-time'"
+                  :firstseriesavgcolour="'#2700CB'"
+                  :secondseriestype="'processing-time'"
+                  :secondseriesavgcolour="'#258135'"
                   :avgdecimals="0"
-                ></D3LargeGraph>
+                />
                 <div class="col-xs-12 no-side-padding graph-values">
                   <div class="col-xs-6 no-side-padding processing-time-values floatleft">
                     <div class="">
