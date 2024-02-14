@@ -37,6 +37,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       disconnectedEndpointCount: 0,
       filterString: "",
       historyPeriod: getHistoryPeriod(),
+      sortBy: "name",
+      isSortAscending: false,
       isInitialized: false,
       route: useRoute(),
       router: useRouter(),
@@ -48,7 +50,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       await this.updateFilterString();
       await this.updateEndpointList();
       this.isInitialized = true;
-      return;
     },
     async updateFilterString(filter = null) {
       this.filterString = filter ?? this.route.query.filter ?? "";
@@ -65,12 +66,12 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     async updateEndpointList() {
       this.endpointList = await MonitoringEndpoints.useGetAllMonitoredEndpoints(this.historyPeriod.pVal);
       if (!this.endpointListIsEmpty) {
+        this.sortEndpointList();
         this.updateGroupSegments();
         if (this.endpointListIsGrouped) {
           this.updateGroupedEndpoints();
         }
       }
-      return;
     },
     updateSelectedGrouping(groupSize) {
       this.grouping.selectedGrouping = groupSize;
@@ -80,8 +81,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       this.grouping.groupSegments = MonitoringEndpoints.useFindEndpointSegments(this.endpointList);
     },
     updateGroupedEndpoints() {
-      const endpointListUsed = this.endpointListIsFiltered ? this.getFilteredEndpointList : this.endpointList;
-      this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(endpointListUsed, this.grouping.selectedGrouping);
+      this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(this.getEndpointList, this.grouping.selectedGrouping);
     },
     async getEndpointDetails(endpointName, historyPeriod) {
       const { data, refresh } = getMemoisedEndpointDetails(endpointName, historyPeriod);
@@ -104,14 +104,42 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
         await this.router.replace({ query: { ...this.route.query, historyPeriod: this.historyPeriod.pVal } });
       }
     },
+    async updateSort(sortBy = "name", isSortAscending = false) {
+      this.sortBy = sortBy;
+      this.isSortAscending = isSortAscending;
+      await this.updateEndpointList();
+    },
+    sortEndpointList() {
+      const sortByProperty = this.sortBy;
+      let comparator;
+
+      if (sortByProperty === "name") {
+        comparator = (a, b) => {
+          return this.isSortAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+        };
+      } else {
+        comparator = (a, b) => {
+          const propertyA = getPropertyValue(a, `metrics.${sortByProperty}.average`);
+          const propertyB = getPropertyValue(b, `metrics.${sortByProperty}.average`);
+
+          return this.isSortAscending ? propertyA - propertyB : propertyB - propertyA;
+        };
+      }
+
+      this.endpointList.sort(comparator);
+    },
   },
   getters: {
     endpointListCount: (state) => state.endpointList.length,
     endpointListIsEmpty: (state) => state.endpointListCount === 0,
     endpointListIsGrouped: (state) => state.grouping.selectedGrouping !== 0,
-    endpointListIsFiltered: (state) => state.filterString !== "",
-    getFilteredEndpointList: (state) => {
+    getEndpointList: (state) => {
       return state.filterString !== "" ? MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(state.endpointList, state.filterString) : state.endpointList;
     },
   },
 });
+
+function getPropertyValue(obj, path) {
+  const properties = path.split(".");
+  return properties.reduce((accumulator, current) => accumulator[current], obj);
+}

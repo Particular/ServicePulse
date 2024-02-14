@@ -72,7 +72,7 @@ const series2AverageLabelPosition = computed(() => `calc(${(series2.average.valu
 </script>
 
 <template>
-  <div class="graph large-graph pull-left" :class="[hover ? 'hover' : '']" @mouseover="hover = true" @mouseout="hover = false">
+  <div class="graph large-graph pull-left" :class="{ hover: hover }" @mouseover="hover = true" @mouseout="hover = false">
     <div class="padding">
       <svg class="y-axis">
         <!-- 
