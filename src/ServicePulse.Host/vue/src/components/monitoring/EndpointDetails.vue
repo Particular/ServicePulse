@@ -417,21 +417,21 @@ onMounted(async () => {
                   :metricsuffix="'MSGS'"
                 />
                 <!--Queue Length-->
-                <div class="col-xs-12 no-side-padding graph-values">
+                <div class="no-side-padding graph-values">
                   <div class="queue-length-values">
-                    <div class="row">
+                    <div class="">
                       <span class="metric-digest-header" v-tooltip :title="`Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.`"> Queue Length </span>
                     </div>
-                  </div>
-                  <div class="row metric-digest-value current">
-                    <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
-                      {{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }} <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span>
+                    <div class="metric-digest-value current">
+                      <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
+                        {{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }} <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span>
+                      </div>
+                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
-                    <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                  </div>
-                  <div class="row metric-digest-value average">
-                    <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.average, 0) }} <span class="metric-digest-value-suffix">MSGS AVG</span></div>
-                    <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                    <div class="metric-digest-value average">
+                      <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.average, 0) }} <span class="metric-digest-value-suffix">MSGS AVG</span></div>
+                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -451,30 +451,30 @@ onMounted(async () => {
                   :avgdecimals="0"
                   :metricsuffix="'MSGS/S'"
                 />
-                <div class="col-xs-12 no-side-padding graph-values">
-                  <div class="col-xs-6 no-side-padding throughput-values floatleft">
+                <div class="no-side-padding graph-values">
+                  <div class="no-side-padding throughput-values">
                     <div>
                       <span class="metric-digest-header" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`"> Throughput </span>
                     </div>
-                    <div class="row metric-digest-value current">
+                    <div class="metric-digest-value current">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
                       <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
-                    <div class="row metric-digest-value average">
+                    <div class="metric-digest-value average">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
                       <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
                   </div>
-                  <div class="col-xs-6 no-side-padding scheduled-retries-rate-values floatright">
+                  <div class="no-side-padding scheduled-retries-rate-values">
                     <div>
                       <span class="metric-digest-header" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`"> Scheduled retries </span>
                     </div>
 
-                    <div class="row metric-digest-value current">
+                    <div class="metric-digest-value current">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.retries.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
                       <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
-                    <div class="row metric-digest-value average">
+                    <div class="metric-digest-value average">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.retries.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
                       <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
@@ -496,19 +496,19 @@ onMounted(async () => {
                   :secondseriesavgcolour="'#258135'"
                   :avgdecimals="0"
                 />
-                <div class="col-xs-12 no-side-padding graph-values">
-                  <div class="col-xs-6 no-side-padding processing-time-values floatleft">
+                <div class="no-side-padding graph-values">
+                  <div class="no-side-padding processing-time-values">
                     <div class="">
                       <span class="metric-digest-header" v-tooltip :title="`Processing time: The time taken for a receiving endpoint to successfully process a message.`"> Processing Time </span>
                     </div>
-                    <div class="row metric-digest-value current">
+                    <div class="metric-digest-value current">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
                         {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).value }}
                         <span class="metric-digest-value-suffix"> {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).unit }}</span>
                       </div>
                       <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
-                    <div class="row metric-digest-value average">
+                    <div class="metric-digest-value average">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
                         {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).value }}
                         <span class="metric-digest-value-suffix"> {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).unit }} AVG</span>
@@ -517,18 +517,18 @@ onMounted(async () => {
                     </div>
                   </div>
 
-                  <div class="col-xs-6 no-side-padding critical-time-values floatright">
+                  <div class="no-side-padding critical-time-values">
                     <div class="">
                       <span class="metric-digest-header" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`"> Critical Time </span>
                     </div>
-                    <div class="row metric-digest-value current">
+                    <div class="metric-digest-value current">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
                         <span :class="{ negative: formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value < 0 }"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value }}</span>
                         <span class="metric-digest-value-suffix"> &nbsp;{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).unit }}</span>
                       </div>
                       <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
                     </div>
-                    <div class="row metric-digest-value average">
+                    <div class="metric-digest-value average">
                       <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
                         <span :class="{ negative: formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value < 0 }"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value }}</span>
                         <span class="metric-digest-value-suffix"> &nbsp;{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).unit }} AVG </span>
@@ -845,6 +845,8 @@ onMounted(async () => {
 </template>
 
 <style scoped>
+@import "../list.css";
+
 .monitoring-head {
   display: flex;
   justify-content: space-between;
@@ -854,5 +856,85 @@ onMounted(async () => {
   flex: 0;
   display: flex;
   align-items: center;
+}
+
+.graph-values {
+  margin-left: 60px;
+  padding-top: 10px;
+  border-top: 3px solid #fff;
+  margin-top: -8.5px;
+  width: calc(100% - 60px);
+  display: flex;
+  justify-content: space-between;
+}
+
+.graph-queue-length .metric-digest-value {
+  flex-basis: 100%;
+}
+
+.queue-length-values {
+  display: inline-block;
+}
+
+.queue-length-values .metric-digest-header {
+  color: #ea7e00;
+}
+
+.graph-queue-length .current,
+.graph-queue-length .average {
+  border-color: #ea7e00;
+}
+
+.throughput-values span.metric-digest-header {
+  color: #176397;
+}
+
+.throughput-values .current,
+.throughput-values .average {
+  border-color: #176397;
+}
+
+.scheduled-retries-rate-values span.metric-digest-header {
+  color: #cc1252;
+}
+
+.scheduled-retries-rate-values .current,
+.scheduled-retries-rate-values .average {
+  border-color: #cc1252;
+}
+
+.critical-time-values span.metric-digest-header {
+  color: #2700cb;
+}
+
+.critical-time-values .current,
+.critical-time-values .average {
+  border-color: #2700cb;
+}
+
+.processing-time-values span.metric-digest-header {
+  color: #279039;
+}
+
+.processing-time-values .current,
+.processing-time-values .average {
+  border-color: #279039;
+}
+
+.metric-digest-value {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.metric-digest-value div {
+  display: inline-block;
+}
+
+.metric-digest-value-suffix {
+  font-weight: normal;
+  font-size: 14px;
+  display: inline-block;
+  text-transform: uppercase;
+  text-wrap: nowrap;
 }
 </style>

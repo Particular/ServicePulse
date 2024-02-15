@@ -1814,14 +1814,6 @@ hr.top-separator {
   box-sizing: border-box;
 }
 
-.graph-values {
-  margin-left: 60px;
-  padding-top: 10px;
-  border-top: 3px solid #fff;
-  margin-top: -8.5px;
-  width: 93%;
-}
-
 .graph-message-retries-throughputs,
 .graph-critical-processing-times {
   margin-left: 0.5%;
@@ -2084,71 +2076,6 @@ h1 .endpoint-status i.fa-envelope,
 .average {
   border-left: 1px dashed;
   padding-left: 6px;
-}
-
-.queue-length-values {
-  display: inline-block;
-}
-
-.queue-length-values .metric-digest-header {
-  color: #ea7e00;
-}
-
-.graph-queue-length .current,
-.graph-queue-length .average {
-  border-color: #ea7e00;
-}
-
-.throughput-values span.metric-digest-header {
-  color: #176397;
-}
-
-.throughput-values .current,
-.throughput-values .average {
-  border-color: #176397;
-}
-
-.scheduled-retries-rate-values span.metric-digest-header {
-  color: #cc1252;
-}
-
-.scheduled-retries-rate-values .current,
-.scheduled-retries-rate-values .average {
-  border-color: #cc1252;
-}
-
-.critical-time-values span.metric-digest-header {
-  color: #2700cb;
-}
-
-.critical-time-values .current,
-.critical-time-values .average {
-  border-color: #2700cb;
-}
-
-.processing-time-values span.metric-digest-header {
-  color: #279039;
-}
-
-.processing-time-values .current,
-.processing-time-values .average {
-  border-color: #279039;
-}
-
-.metric-digest-value {
-  font-weight: bold;
-  font-size: 22px;
-}
-
-.metric-digest-value div {
-  display: inline-block;
-}
-
-.metric-digest-value-suffix {
-  font-weight: normal;
-  font-size: 14px;
-  display: inline-block;
-  text-transform: uppercase;
 }
 
 .message-type-label {
