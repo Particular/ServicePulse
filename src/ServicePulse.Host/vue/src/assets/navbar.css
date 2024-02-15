@@ -27,11 +27,6 @@
   margin-left: 3px;
 }
 
-.navbar-nav > li {
-  margin-left: 4px;
-  margin-right: 1px;
-}
-
 .navbar-nav > li > a > span {
   margin-left: 8px;
 }
@@ -39,7 +34,7 @@
 .nav > li > a {
   position: relative;
   display: block;
-  padding: 10px 15px 15px 10px;
+  padding: 10px 15px;
   color: var(--bs-link-color);
   text-decoration: none;
 }

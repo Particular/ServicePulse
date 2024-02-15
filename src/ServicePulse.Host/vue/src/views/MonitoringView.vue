@@ -2326,31 +2326,6 @@ i.fa.pa-endpoint-lost.endpoints-overview {
   top: 5px;
 }
 
-.nav-pills.period-selector > li.active > a,
-.nav-pills.period-selector > li.active > a:hover,
-.nav-pills.period-selector > li.active > a:focus {
-  color: #000;
-  font-weight: bold;
-  background-color: initial;
-  border-bottom: 3px solid #000;
-  padding-bottom: 10px;
-}
-
-.nav-pills.period-selector > li > a:hover {
-  color: #00a3c4;
-  font-weight: normal;
-  background-color: initial;
-  border-bottom: 3px solid #00a3c4;
-}
-
-.nav-pills.period-selector > li > a {
-  border-radius: 0px;
-}
-
-.nav.period-selector > li > a {
-  padding: 10px 6px;
-}
-
 footer {
   color: #bcc6c2;
   font-size: 14px;
