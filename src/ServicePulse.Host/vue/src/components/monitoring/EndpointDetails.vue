@@ -412,7 +412,6 @@ onMounted(async () => {
                   :firstdataseries="endpoint.metricDetails.metrics.queueLength"
                   :minimumyaxis="largeGraphsMinimumYAxis.queueLength"
                   :firstseriestype="'queue-length'"
-                  :firstseriesavgcolour="'#EA7E00'"
                   :avgdecimals="0"
                   :metricsuffix="'MSGS'"
                 />
@@ -445,9 +444,7 @@ onMounted(async () => {
                   :seconddataseries="endpoint.metricDetails.metrics.retries"
                   :minimumyaxis="largeGraphsMinimumYAxis.throughputRetries"
                   :firstseriestype="'throughput'"
-                  :firstseriesavgcolour="'#176397'"
                   :secondseriestype="'retries'"
-                  :secondseriesavgcolour="'#CC1252'"
                   :avgdecimals="0"
                   :metricsuffix="'MSGS/S'"
                 />
@@ -491,9 +488,7 @@ onMounted(async () => {
                   :seconddataseries="endpoint.metricDetails.metrics.processingTime"
                   :minimumyaxis="largeGraphsMinimumYAxis.processingCritical"
                   :firstseriestype="'critical-time'"
-                  :firstseriesavgcolour="'#2700CB'"
                   :secondseriestype="'processing-time'"
-                  :secondseriesavgcolour="'#258135'"
                   :avgdecimals="0"
                 />
                 <div class="no-side-padding graph-values">
@@ -626,7 +621,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" />
+                                <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :metricsuffix="'MSGS/S'" />
                                 <span class="no-side-padding sparkline-value">
                                   {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.throughput) }}
                                   <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
@@ -638,7 +633,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" />
+                                <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :metricsuffix="'MSGS/S'" />
                                 <span class="no-side-padding sparkline-value">
                                   {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.retries) }}
                                   <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
@@ -650,7 +645,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" />
+                                <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" />
                                 <span class="no-side-padding sparkline-value">
                                   {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.processingTime).value }}
                                   <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
@@ -665,7 +660,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" />
+                                <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" />
                                 <span class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(instance.metrics.criticalTime).value < 0 }">
                                   {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.criticalTime).value }}
                                   <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
@@ -778,7 +773,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" />
+                                <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="messageType.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :metricsuffix="'MSGS/S'" />
                                 <span class="no-side-padding sparkline-value">
                                   {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.throughput, 2) }}
                                   <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
@@ -790,7 +785,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" />
+                                <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="messageType.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :metricsuffix="'MSGS/S'" />
                                 <span class="no-side-padding sparkline-value">
                                   {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(messageType.metrics.retries, 2) }}
                                   <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
@@ -802,7 +797,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" />
+                                <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="messageType.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" />
                                 <span class="no-side-padding sparkline-value">
                                   {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.processingTime).value }}
                                   <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
@@ -817,7 +812,7 @@ onMounted(async () => {
                           <div class="col-xs-2 col-xl-1 no-side-padding">
                             <div class="row box-header">
                               <div class="no-side-padding">
-                                <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" />
+                                <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" />
                                 <span class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(messageType.metrics.criticalTime).value < 0 }">
                                   {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.criticalTime).value }}
                                   <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
@@ -846,6 +841,7 @@ onMounted(async () => {
 
 <style scoped>
 @import "../list.css";
+@import "./monitoring.css";
 
 .monitoring-head {
   display: flex;
@@ -877,48 +873,48 @@ onMounted(async () => {
 }
 
 .queue-length-values .metric-digest-header {
-  color: #ea7e00;
+  color: var(--monitoring-queue-length);
 }
 
 .graph-queue-length .current,
 .graph-queue-length .average {
-  border-color: #ea7e00;
+  border-color: var(--monitoring-queue-length);
 }
 
 .throughput-values span.metric-digest-header {
-  color: #176397;
+  color: var(--monitoring-throughput);
 }
 
 .throughput-values .current,
 .throughput-values .average {
-  border-color: #176397;
+  border-color: var(--monitoring-throughput);
 }
 
 .scheduled-retries-rate-values span.metric-digest-header {
-  color: #cc1252;
+  color: var(--monitoring-retries);
 }
 
 .scheduled-retries-rate-values .current,
 .scheduled-retries-rate-values .average {
-  border-color: #cc1252;
+  border-color: var(--monitoring-retries);
 }
 
 .critical-time-values span.metric-digest-header {
-  color: #2700cb;
+  color: var(--monitoring-critical-time);
 }
 
 .critical-time-values .current,
 .critical-time-values .average {
-  border-color: #2700cb;
+  border-color: var(--monitoring-critical-time);
 }
 
 .processing-time-values span.metric-digest-header {
-  color: #279039;
+  color: var(--monitoring-processing-time);
 }
 
 .processing-time-values .current,
 .processing-time-values .average {
-  border-color: #279039;
+  border-color: var(--monitoring-processing-time);
 }
 
 .metric-digest-value {

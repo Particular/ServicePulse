@@ -1,0 +1,73 @@
+.queue-length {
+  color: var(--monitoring-queue-length);
+  stroke: var(--monitoring-queue-length);
+}
+
+.queue-length .graph-data-fill {
+  fill: var(--monitoring-queue-length-light);
+  stroke: none;
+}
+
+.queue-length.avg-tooltip {
+  --avg-tooltip-background-color: var(--monitoring-queue-length);
+}
+
+.throughput {
+  color: var(--monitoring-throughput);
+  stroke: var(--monitoring-throughput);
+}
+
+.throughput .graph-data-fill {
+  fill: var(--monitoring-throughput-light);
+  stroke: none;
+}
+
+.throughput.avg-tooltip {
+  --avg-tooltip-background-color: var(--monitoring-throughput);
+}
+
+.retries {
+  color: var(--monitoring-retries);
+  stroke: var(--monitoring-retries);
+}
+
+.retries .graph-data-fill {
+  fill: var(--monitoring-retries-light);
+  stroke: none;
+}
+
+.retries.avg-tooltip {
+  --avg-tooltip-background-color: var(--monitoring-retries);
+}
+
+.processing-time {
+  color: var(--monitoring-processing-time);
+  stroke: var(--monitoring-processing-time);
+}
+
+.processing-time .graph-data-fill {
+  fill: var(--monitoring-processing-time-light);
+  stroke: none;
+}
+
+.processing-time.avg-tooltip {
+  --avg-tooltip-background-color: var(--monitoring-processing-time);
+}
+
+.critical-time {
+  color: var(--monitoring-critical-time);
+  stroke: var(--monitoring-critical-time);
+}
+
+.critical-time .graph-data-fill {
+  fill: var(--monitoring-critical-time-light);
+  stroke: none;
+}
+
+.critical-time.avg-tooltip {
+  --avg-tooltip-background-color: var(--monitoring-critical-time);
+}
+
+.avg-tooltip {
+  color: white;
+}

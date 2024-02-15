@@ -1702,7 +1702,7 @@ hr.top-separator {
   stroke-dasharray: 5, 5;
 }
 
-.graph .queue-length .graph-data-line {
+/* .graph .queue-length .graph-data-line {
   stroke: #ea7e00;
 }
 
@@ -1760,7 +1760,7 @@ hr.top-separator {
 
 .graph .critical-time .graph-avg-line {
   stroke: #2700cb;
-}
+} */
 
 .sparkline-value {
   top: 16px;

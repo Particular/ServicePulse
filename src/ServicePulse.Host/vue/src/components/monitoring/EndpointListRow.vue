@@ -158,4 +158,5 @@ function formatGraphDecimal(input, deci) {
 
 <style scoped>
 @import "../list.css";
+@import "./monitoring.css";
 </style>

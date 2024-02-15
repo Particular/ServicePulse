@@ -7,7 +7,6 @@ import type { PlotData } from "./PlotData";
 const props = defineProps<{
   plotdata: PlotData;
   minimumyaxis?: number | undefined;
-  avglabelcolor: string;
   isdurationgraph: boolean;
   metricsuffix?: string | undefined;
   type: string;
@@ -40,7 +39,7 @@ const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.va
         </g>
       </svg>
     </div>
-    <div class="avg-tooltip" :style="{ '--avg-tooltip-background-color': avglabelcolor, bottom: averageLabelPosition }">
+    <div class="avg-tooltip" :class="type" :style="{ bottom: averageLabelPosition }">
       <div>AVG</div>
       <div class="value">
         {{ averageLabelValue }} <span>{{ averageLabelSuffix }}</span>
@@ -50,6 +49,8 @@ const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.va
 </template>
 
 <style scoped>
+@import "./monitoring.css";
+
 .graph {
   position: relative;
   width: 68%;
