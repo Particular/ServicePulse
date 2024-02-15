@@ -1,28 +1,26 @@
 ﻿<script setup>
-import { ref, watch, computed, onMounted } from "vue";
-import EndpointListSortableColumn from "./EndpointListSortableColumn.vue";
+import { ref, computed } from "vue";
+import SortableColumn from "../../components/SortableColumn.vue";
 import EndpointListRow from "./EndpointListRow.vue";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 
 const monitoringStore = useMonitoringStore();
-const endpoints = ref();
+const endpoints = computed(() => monitoringStore.getEndpointList);
 const isGrouped = computed(() => monitoringStore.endpointListIsGrouped);
+const activeColumn = ref("name");
 
-watch([() => monitoringStore.endpointList, () => monitoringStore.filterString], async () => {
-  if (monitoringStore.endpointListIsFiltered) {
-    endpoints.value = await monitoringStore.getFilteredEndpointList;
-    return;
-  }
-  endpoints.value = monitoringStore.endpointList;
+const sortByColumn = Object.freeze({
+  ENDPOINTNAME: "name",
+  QUEUELENGTH: "queueLength",
+  THROUGHPUT: "throughput",
+  SCHEDULEDRETRIES: "retries",
+  PROCESSINGTIME: "processingTime",
+  CRITICALTIME: "criticalTime",
 });
 
-onMounted(async () => {
-  if (monitoringStore.endpointListIsFiltered) {
-    endpoints.value = await monitoringStore.getFilteredEndpointList;
-  } else {
-    endpoints.value = monitoringStore.endpointList;
-  }
-});
+function updateSorting(isAscending) {
+  monitoringStore.updateSort(activeColumn.value, isAscending);
+}
 </script>
 
 <template>
@@ -30,24 +28,37 @@ onMounted(async () => {
     <!--Table headings-->
     <div class="table-head-row">
       <div class="table-first-col">
-        <endpoint-list-sortable-column>Endpoint name</endpoint-list-sortable-column>
+        <SortableColumn :sort-by="sortByColumn.ENDPOINTNAME" v-model="activeColumn" @isAscending="updateSorting">Endpoint name</SortableColumn>
       </div>
       <div class="table-col">
-        <endpoint-list-sortable-column v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.">Queue Length<template #unit>(MSGS)</template></endpoint-list-sortable-column>
+        <SortableColumn :sort-by="sortByColumn.QUEUELENGTH" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint."
+          >Queue Length<template #unit>(MSGS)</template>
+        </SortableColumn>
       </div>
       <div class="table-col">
-        <endpoint-list-sortable-column v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint.">Throughput<template #unit>(msgs/s)</template></endpoint-list-sortable-column>
+        <SortableColumn :sort-by="sortByColumn.THROUGHPUT" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."
+          >Throughput<template #unit>(msgs/s)</template>
+        </SortableColumn>
       </div>
       <div class="table-col">
-        <endpoint-list-sortable-column v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).">Scheduled retries <template #unit>(msgs/s)</template></endpoint-list-sortable-column>
+        <SortableColumn :sort-by="sortByColumn.SCHEDULEDRETRIES" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."
+          >Scheduled retries <template #unit>(msgs/s)</template>
+        </SortableColumn>
       </div>
       <div class="table-col">
-        <endpoint-list-sortable-column v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."> Processing Time <template #unit>(t)</template></endpoint-list-sortable-column>
+        <SortableColumn :sort-by="sortByColumn.PROCESSINGTIME" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."
+          >Processing Time <template #unit>(t)</template>
+        </SortableColumn>
       </div>
       <div class="table-col">
-        <endpoint-list-sortable-column v-tooltip title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.">
-          Critical Time <template #unit>(t)</template></endpoint-list-sortable-column
-        >
+        <SortableColumn
+          :sort-by="sortByColumn.CRITICALTIME"
+          v-model="activeColumn"
+          @isAscending="updateSorting"
+          v-tooltip
+          title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."
+          >Critical Time <template #unit>(t)</template>
+        </SortableColumn>
       </div>
     </div>
     <div>
