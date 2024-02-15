@@ -66,28 +66,6 @@ onMounted(async () => {
 </template>
 
 <style>
-.form-control-static {
-  min-height: 34px;
-  padding-top: 7px;
-  padding-bottom: 7px;
-  margin-bottom: 0;
-}
-
-.nav {
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
-}
-
-.nav > li {
-  position: relative;
-  display: block;
-}
-
-.nav-pills > li {
-  float: left;
-}
-
 /* particular.css START - TODO extract only the classes required */
 a {
   color: #00a3c4;
@@ -1633,28 +1611,6 @@ sp-moment.danger {
 
 hr.top-separator {
   margin-bottom: 0;
-}
-
-.large-graphs {
-  width: 100%;
-  background-color: white;
-  margin-bottom: 34px;
-  padding: 30px 0;
-}
-
-.graph * .graph-data-line {
-  stroke-width: 1.75px;
-  fill: none;
-}
-
-.graph * .graph-data-fill {
-  opacity: 0.8;
-}
-
-.graph * .graph-avg-line {
-  stroke-width: 1px;
-  opacity: 0.5;
-  stroke-dasharray: 5, 5;
 }
 
 /* .graph .queue-length .graph-data-line {

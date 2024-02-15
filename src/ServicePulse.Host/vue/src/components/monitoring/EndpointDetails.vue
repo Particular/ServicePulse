@@ -977,4 +977,11 @@ onMounted(async () => {
   text-transform: uppercase;
   text-wrap: nowrap;
 }
+
+.large-graphs {
+  width: 100%;
+  background-color: white;
+  margin-bottom: 34px;
+  padding: 30px 0;
+}
 </style>

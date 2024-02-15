@@ -146,8 +146,13 @@ svg.data {
   fill: none;
 }
 
+.graph * .graph-data-fill {
+  opacity: 0.8;
+}
+
 .large-graph .graph-avg-line {
   stroke-width: 1.5;
+  opacity: 0.5;
   stroke-dasharray: 10, 10;
 }
 

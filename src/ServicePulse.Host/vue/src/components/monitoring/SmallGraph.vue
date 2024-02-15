@@ -84,4 +84,19 @@ svg {
 .graph.hover .avg-tooltip {
   display: block;
 }
+
+.graph * .graph-data-line {
+  stroke-width: 1.75px;
+  fill: none;
+}
+
+.graph * .graph-data-fill {
+  opacity: 0.8;
+}
+
+.graph * .graph-avg-line {
+  stroke-width: 1px;
+  opacity: 0.5;
+  stroke-dasharray: 5, 5;
+}
 </style>
