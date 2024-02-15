@@ -418,7 +418,7 @@ onMounted(async () => {
                 <!--Queue Length-->
                 <div class="no-side-padding graph-values">
                   <div class="queue-length-values">
-                    <div class="">
+                    <div>
                       <span class="metric-digest-header" v-tooltip :title="`Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.`"> Queue Length </span>
                     </div>
                     <div class="metric-digest-value current">
