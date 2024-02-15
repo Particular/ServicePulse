@@ -12,9 +12,7 @@ const props = defineProps<{
   minimumyaxis?: number | undefined;
   avgdecimals: number;
   firstseriestype?: string | undefined;
-  firstseriesavgcolour?: string | undefined;
   secondseriestype?: string | undefined;
-  secondseriesavgcolour?: string | undefined;
 }>();
 
 const hover = ref(false);
@@ -103,13 +101,13 @@ const series2AverageLabelPosition = computed(() => `calc(${(series2.average.valu
         </g>
       </svg>
     </div>
-    <div class="avg-tooltip" :style="{ '--avg-tooltip-background-color': props.firstseriesavgcolour, bottom: series1AverageLabelPosition }">
+    <div class="avg-tooltip" :class="firstseriestype" :style="{ bottom: series1AverageLabelPosition }">
       <div>AVG</div>
       <div class="value">
         {{ series1AverageLabelValue }} <span>{{ series1AverageLabelSuffix }}</span>
       </div>
     </div>
-    <div v-if="props.seconddataseries" class="avg-tooltip left" :style="{ '--avg-tooltip-background-color': props.secondseriesavgcolour, bottom: series2AverageLabelPosition }">
+    <div v-if="props.seconddataseries" class="avg-tooltip left" :class="secondseriestype" :style="{ bottom: series2AverageLabelPosition }">
       <div>AVG</div>
       <div class="value">
         {{ series2AverageLabelValue }} <span>{{ series2AverageLabelSuffix }}</span>
@@ -119,6 +117,8 @@ const series2AverageLabelPosition = computed(() => `calc(${(series2.average.valu
 </template>
 
 <style scoped>
+@import "./monitoring.css";
+
 .large-graph {
   position: relative;
   width: 100%;

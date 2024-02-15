@@ -27,11 +27,30 @@ async function selectHistoryPeriod(period) {
   </ul>
 </template>
 
-<style>
-.nav-pills.period-selector {
-  display: inline-flex;
-  position: relative;
-  top: 30px;
+<style scoped>
+.period-selector {
+  color: #00a3c4;
+}
+
+.nav li {
+  display: flex;
+}
+
+.nav-pills.period-selector > li > a {
+  border-radius: 0px;
+  border-bottom: 3px solid transparent;
+  padding: 10px 6px;
+}
+
+.nav-pills.period-selector > li > a:hover {
+  color: #00a3c4;
+  font-weight: normal;
+  background-color: initial;
+  border-bottom-color: #00a3c4;
+}
+
+.nav.period-selector > li > a {
+  padding: 10px 6px;
 }
 
 .nav-pills.period-selector > li.active > a,
@@ -40,8 +59,7 @@ async function selectHistoryPeriod(period) {
   color: #000;
   font-weight: bold;
   background-color: initial;
-  border-bottom: 3px solid #000;
-  padding-bottom: 10px;
+  border-bottom-color: #000;
 }
 
 .nav-pills.period-selector > li > a:hover {

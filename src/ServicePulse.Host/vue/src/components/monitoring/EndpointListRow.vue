@@ -136,7 +136,7 @@ function formatGraphDecimal(input, deci) {
         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
         <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-        <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false"> {{ formatGraphDuration(endpoint.metrics.processingTime).unit }}</span>
+        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected"> {{ formatGraphDuration(endpoint.metrics.processingTime).unit }}</span>
       </div>
     </div>
   </div>
@@ -150,8 +150,13 @@ function formatGraphDecimal(input, deci) {
         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" title="No metrics received or endpoint is not configured to send metrics">?</strong>
         <strong v-if="endpoint.isScMonitoringDisconnected" title="Unable to connect to monitoring server">?</strong>
-        <span v-if="endpoint.isStale == false && endpoint.isScMonitoringDisconnected == false" class="unit"> {{ formatGraphDuration(endpoint.metrics.criticalTime).unit }}</span>
+        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected" class="unit"> {{ formatGraphDuration(endpoint.metrics.criticalTime).unit }}</span>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "../list.css";
+@import "./monitoring.css";
+</style>

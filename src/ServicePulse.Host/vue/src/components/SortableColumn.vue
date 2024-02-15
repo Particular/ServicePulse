@@ -46,10 +46,15 @@ function toggleSort() {
   border: none;
   padding: 0;
   cursor: pointer;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .column-header-button span {
   text-transform: uppercase;
+  display: inline-block;
+  text-align: left;
 }
 
 .column-header-button:hover span {

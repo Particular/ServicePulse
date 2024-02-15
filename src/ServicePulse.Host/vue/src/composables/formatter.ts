@@ -59,5 +59,5 @@ function round(num: number, decimals: number) {
 
 function formatTimeValue(timeValue: number, displayTwoDigits = false) {
   const strValue = Math.floor(timeValue);
-  return `${displayTwoDigits ? ("0" + strValue).slice(-2) : strValue}`;
+  return `${displayTwoDigits ? ("0" + strValue).slice(-2) : strValue.toLocaleString()}`;
 }

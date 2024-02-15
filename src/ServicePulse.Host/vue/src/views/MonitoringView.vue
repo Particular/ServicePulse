@@ -1,6 +1,6 @@
 <script setup>
 // Composables
-import { ref, onMounted, watch, onUnmounted, computed } from "vue";
+import { onMounted, watch, onUnmounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
 import { licenseStatus } from "@/composables/serviceLicense";
@@ -8,27 +8,20 @@ import { connectionState } from "@/composables/serviceServiceControl";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
 // Components
 import LicenseExpired from "@/components/LicenseExpired.vue";
-import GroupBy from "@/components/monitoring/MonitoringGroupBy.vue";
 import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
 import EndpointList from "@/components/monitoring/EndpointList.vue";
-import PeriodSelector from "@/components/monitoring/MonitoringHistoryPeriod.vue";
 import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
+import MonitoringFilter from "@/components/monitoring/MonitoringFilter.vue";
 
 const route = useRoute();
 const monitoringStore = useMonitoringStore();
 const { historyPeriod } = storeToRefs(monitoringStore);
 const noData = computed(() => monitoringStore.endpointListIsEmpty);
-const filterString = ref("");
 let refreshInterval = undefined;
 
 watch(route, () => monitoringStore.setHistoryPeriod(route.params.historyPeriod), { deep: true, immediate: true, flush: "pre" });
 
 //const redirectCount = ref(0);
-
-watch(filterString, async (newValue) => {
-  await monitoringStore.updateFilterString(newValue);
-  filterString.value = monitoringStore.filterString;
-});
 
 watch(historyPeriod, async (newValue) => {
   await changeRefreshInterval(newValue.refreshIntervalVal);
@@ -52,7 +45,6 @@ onUnmounted(() => {
 
 onMounted(async () => {
   await monitoringStore.initializeStore();
-  filterString.value = monitoringStore.filterString;
   await changeRefreshInterval(monitoringStore.historyPeriod.refreshIntervalVal);
 });
 </script>
@@ -70,11 +62,7 @@ onMounted(async () => {
               <h1>Endpoints overview</h1>
             </div>
             <div class="col-sm-8 no-side-padding toolbar-menus">
-              <div class="filter-group filter-monitoring">
-                <PeriodSelector />
-                <GroupBy />
-                <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" v-model="filterString" />
-              </div>
+              <MonitoringFilter />
             </div>
           </div>
           <EndpointList />
@@ -90,48 +78,6 @@ onMounted(async () => {
   padding-top: 7px;
   padding-bottom: 7px;
   margin-bottom: 0;
-}
-
-.filter-group.filter-monitoring {
-  width: 100%;
-}
-
-.filter-group.filter-monitoring input {
-  margin-top: 33px;
-  float: none;
-  font-size: 14px;
-}
-
-.filter-group {
-  display: flex;
-  justify-content: flex-end;
-  width: 50%;
-  position: relative;
-  top: -3px;
-  margin-top: -26px;
-  float: right;
-}
-
-.filter-group:before {
-  width: 16px;
-  font-family: "FontAwesome";
-  width: 20px;
-  content: "\f0b0";
-  color: #919e9e;
-  position: absolute;
-  top: 29px;
-  right: 250px;
-}
-
-.filter-group input {
-  display: inline-block;
-  width: 280px;
-  margin: 21px 0 0 15px;
-  padding-right: 10px;
-  padding-left: 30px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  float: right;
 }
 
 .nav {
@@ -185,21 +131,6 @@ onMounted(async () => {
   top: 4px;
   left: -12px;
   font-size: 10px;
-}
-
-.monitoring-view .filter-group.filter-monitoring:before {
-  top: 41px;
-}
-
-.monitoring-view .dropdown {
-  top: 33px;
-  margin-left: 25px;
-  width: 250px;
-}
-
-.monitoring-view .dropdown .dropdown-menu {
-  top: 36px;
-  margin-left: 72px;
 }
 
 /* particular.css START - TODO extract only the classes required */
@@ -537,17 +468,6 @@ body {
   -webkit-flex: 1 1 0;
   flex: 1 1 0;
   margin-right: 48px;
-}
-
-.lead {
-  -ms-word-wrap: break-word;
-  color: #181919 !important;
-  font-size: 14px !important;
-  font-weight: bold;
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .righ-side-ellipsis {
@@ -1150,16 +1070,11 @@ h3.group-title {
   float: right;
 }
 
-.filter-input,
 .action-btns,
 .filter-period-menu,
 .sort-menu {
   display: inline-block;
   padding-bottom: 6px;
-}
-
-.filter-input {
-  width: 100%;
 }
 
 .filter-period-menu {
@@ -1787,7 +1702,7 @@ hr.top-separator {
   stroke-dasharray: 5, 5;
 }
 
-.graph .queue-length .graph-data-line {
+/* .graph .queue-length .graph-data-line {
   stroke: #ea7e00;
 }
 
@@ -1845,7 +1760,7 @@ hr.top-separator {
 
 .graph .critical-time .graph-avg-line {
   stroke: #2700cb;
-}
+} */
 
 .sparkline-value {
   top: 16px;
@@ -1897,14 +1812,6 @@ hr.top-separator {
 .monitoring-view .graph-area {
   width: 33%;
   box-sizing: border-box;
-}
-
-.graph-values {
-  margin-left: 60px;
-  padding-top: 10px;
-  border-top: 3px solid #fff;
-  margin-top: -8.5px;
-  width: 93%;
 }
 
 .graph-message-retries-throughputs,
@@ -2171,71 +2078,6 @@ h1 .endpoint-status i.fa-envelope,
   padding-left: 6px;
 }
 
-.queue-length-values {
-  display: inline-block;
-}
-
-.queue-length-values .metric-digest-header {
-  color: #ea7e00;
-}
-
-.graph-queue-length .current,
-.graph-queue-length .average {
-  border-color: #ea7e00;
-}
-
-.throughput-values span.metric-digest-header {
-  color: #176397;
-}
-
-.throughput-values .current,
-.throughput-values .average {
-  border-color: #176397;
-}
-
-.scheduled-retries-rate-values span.metric-digest-header {
-  color: #cc1252;
-}
-
-.scheduled-retries-rate-values .current,
-.scheduled-retries-rate-values .average {
-  border-color: #cc1252;
-}
-
-.critical-time-values span.metric-digest-header {
-  color: #2700cb;
-}
-
-.critical-time-values .current,
-.critical-time-values .average {
-  border-color: #2700cb;
-}
-
-.processing-time-values span.metric-digest-header {
-  color: #279039;
-}
-
-.processing-time-values .current,
-.processing-time-values .average {
-  border-color: #279039;
-}
-
-.metric-digest-value {
-  font-weight: bold;
-  font-size: 22px;
-}
-
-.metric-digest-value div {
-  display: inline-block;
-}
-
-.metric-digest-value-suffix {
-  font-weight: normal;
-  font-size: 14px;
-  display: inline-block;
-  text-transform: uppercase;
-}
-
 .message-type-label {
   margin-top: -8px;
 }
@@ -2409,31 +2251,6 @@ i.fa.pa-endpoint-lost.endpoints-overview {
 
 .nav.nav-pills.period-selector.endpoint-details {
   top: 5px;
-}
-
-.nav-pills.period-selector > li.active > a,
-.nav-pills.period-selector > li.active > a:hover,
-.nav-pills.period-selector > li.active > a:focus {
-  color: #000;
-  font-weight: bold;
-  background-color: initial;
-  border-bottom: 3px solid #000;
-  padding-bottom: 10px;
-}
-
-.nav-pills.period-selector > li > a:hover {
-  color: #00a3c4;
-  font-weight: normal;
-  background-color: initial;
-  border-bottom: 3px solid #00a3c4;
-}
-
-.nav-pills.period-selector > li > a {
-  border-radius: 0px;
-}
-
-.nav.period-selector > li > a {
-  padding: 10px 6px;
 }
 
 footer {
@@ -3092,74 +2909,6 @@ a.remove-endpoint i {
 
 a.remove-endpoint:hover i {
   color: #00729c;
-}
-.filter-group {
-  display: flex;
-  justify-content: flex-end;
-  width: 50%;
-  position: relative;
-  top: -3px;
-  margin-top: -26px;
-  float: right;
-}
-.filter-group-details {
-  display: flex;
-  justify-content: flex-end;
-  width: 50%;
-  position: relative;
-  top: -3px;
-  margin-top: -26px;
-  float: right;
-}
-.filter-group:before {
-  width: 16px;
-  font-family: "FontAwesome";
-  width: 20px;
-  content: "\f0b0";
-  color: #919e9e;
-  position: absolute;
-  top: 29px;
-  right: 250px;
-}
-
-.filter-group input {
-  display: inline-block;
-  width: 280px;
-  margin: 21px 0 0 15px;
-  padding-right: 10px;
-  padding-left: 30px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  float: right;
-}
-
-.filter-group.filter-monitoring {
-  width: 100%;
-}
-
-.filter-group.filter-monitoring:before {
-  position: absolute;
-  top: 41px;
-}
-
-.filter-group.filter-monitoring input {
-  margin-top: 33px;
-  float: none;
-}
-
-.monitoring-view .filter-group.filter-monitoring:before {
-  top: 41px;
-}
-
-.monitoring-view .dropdown {
-  top: 33px;
-  margin-left: 25px;
-  width: 250px;
-}
-
-.monitoring-view .dropdown .dropdown-menu {
-  top: 36px;
-  margin-left: 72px;
 }
 
 .events-view {

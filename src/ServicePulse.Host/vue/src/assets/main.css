@@ -1,7 +1,6 @@
 @import "bootstrap/dist/css/bootstrap.css";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 @import "font-awesome/css/font-awesome.css";
-@import "navbar.css";
 @import "footer.css";
 @import "tabs.css";
 @import "dropdown.css";
@@ -12,6 +11,16 @@
   --bs-btn-hover-color: #333;
   --bs-btn-hover-bg: #e6e6e6;
   --bs-btn-hover-border-color: #adadad;
+  --monitoring-queue-length: #ea7e00;
+  --monitoring-queue-length-light: #eaddce;
+  --monitoring-throughput: #176397;
+  --monitoring-throughput-light: #cadce8;
+  --monitoring-retries: #cc1252;
+  --monitoring-retries-light: #e9c4d1;
+  --monitoring-processing-time: #258135;
+  --monitoring-processing-time-light: #bee6c5;
+  --monitoring-critical-time: #2700cb;
+  --monitoring-critical-time-light: #c4bce5;
 }
 
 body {
