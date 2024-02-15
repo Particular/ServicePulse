@@ -77,18 +77,22 @@ export function useGroupEndpoints(endpoints, numberOfSegments) {
  * @param {Number} - The history period value.  The default is (1)
  * @returns {object} - The details of the endpoint
  */
-export async function useGetEndpointDetails(endpointName, historyPeriod = 1) {
-  const endpointDetails = ref({});
-  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    try {
-      const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
-      const data = await response.json();
-      endpointDetails.value = data;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  return endpointDetails.value;
+export function useGetEndpointDetails(endpointName, historyPeriod = 1) {
+  const data = ref({});
+  return {
+    data,
+    refresh: async () => {
+      if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
+        try {
+          const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
+          const result = await response.json();
+          data.value = result;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+  };
 }
 
 /**

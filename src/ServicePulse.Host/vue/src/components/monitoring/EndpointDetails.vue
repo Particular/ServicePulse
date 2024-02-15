@@ -6,6 +6,7 @@ import { monitoringConnectionState, connectionState } from "../../composables/se
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
+import { storeToRefs } from "pinia";
 //stores
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { useFailedMessageStore } from "../../stores/FailedMessageStore";
@@ -33,6 +34,7 @@ if (route.query.tab !== "" && route.query.tab != null) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
 
+const isRemovingEndpointEnabled = ref(false);
 const isLoading = ref(true);
 const loadedSuccessfully = ref(false);
 const smallGraphsMinimumYAxis = {
@@ -56,9 +58,9 @@ endpoint.value.messageTypesAvailable = ref(false);
 endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
-const historyPeriod = ref(monitoringStore.historyPeriod);
+const { historyPeriod } = storeToRefs(monitoringStore);
 
-watch(monitoringStore.historyPeriod, (newValue) => {
+watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
@@ -84,7 +86,6 @@ async function getEndpointDetails() {
       filterOutSystemMessage(responseData);
       const endpointDetails = responseData;
       endpointDetails.isScMonitoringDisconnected = false;
-      endpointDetails.isStale = true;
       Object.assign(endpoint.value, endpointDetails);
       await updateUI();
     }
@@ -124,21 +125,21 @@ async function updateUI() {
 
     processMessageTypes();
 
-    endpoint.value.isStale = true;
     endpoint.value.isScMonitoringDisconnected = false;
-    negativeCriticalTimeIsPresent.value = false;
 
-    endpoint.value.instances.forEach(async function (instance) {
-      //get error count by instance id
-      await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
-      if (!failedMessageStore.isFailedMessagesEmpty) {
-        instance.serviceControlId = failedMessageStore.serviceControlId;
-        instance.errorCount = failedMessageStore.errorCount;
-        instance.isScMonitoringDisconnected = false;
-      }
-      endpoint.value.isStale = endpoint.value.isStale && instance.isStale;
-      negativeCriticalTimeIsPresent.value |= formatGraphDuration(instance.metrics.criticalTime).value < 0;
-    });
+    await Promise.all(
+      endpoint.value.instances.map(async (instance) => {
+        //get error count by instance id
+        await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
+        if (!failedMessageStore.isFailedMessagesEmpty) {
+          instance.serviceControlId = failedMessageStore.serviceControlId;
+          instance.errorCount = failedMessageStore.errorCount;
+          instance.isScMonitoringDisconnected = false;
+        }
+      })
+    );
+    negativeCriticalTimeIsPresent.value = endpoint.value.instances.some((instance) => formatGraphDuration(instance.metrics.criticalTime).value < 0);
+    endpoint.value.isStale = endpoint.value.instances.every((instance) => instance.isStale);
 
     loadedSuccessfully.value = true;
   }
@@ -179,17 +180,19 @@ async function removeEndpoint(endpointName, instance) {
   }
 }
 
-async function isRemovingEndpointEnabled() {
+async function getIsRemovingEndpointEnabled() {
   try {
     const response = await useOptionsFromMonitoring();
-    const headers = response.headers();
-    const allow = headers.allow;
-    const deleteAllowed = allow.indexOf("DELETE") >= 0;
-    return deleteAllowed;
+    if (response) {
+      const headers = response.headers;
+      const allow = headers.get("Allow");
+      const deleteAllowed = allow.indexOf("DELETE") >= 0;
+      return deleteAllowed;
+    }
   } catch (err) {
     console.log(err);
-    return false;
   }
+  return false;
 }
 
 // async function getDisconnectedCount() {
@@ -335,6 +338,7 @@ function changeRefreshInterval(milliseconds) {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
+  getEndpointDetails();
   refreshInterval = setInterval(() => {
     getEndpointDetails();
   }, milliseconds);
@@ -345,10 +349,11 @@ onUnmounted(() => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
   getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
   //getDisconnectedCount(); // for refresh interval
+  isRemovingEndpointEnabled.value = await getIsRemovingEndpointEnabled();
 });
 </script>
 
@@ -675,7 +680,7 @@ onMounted(() => {
 
                           <!--remove endpoint-->
                           <div class="col-xs-2 col-xl-1 no-side-padding">
-                            <a v-if="isRemovingEndpointEnabled() && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
+                            <a v-if="isRemovingEndpointEnabled && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
                               <i class="fa fa-trash" v-tooltip :title="`Remove endpoint`"></i>
                             </a>
                           </div>

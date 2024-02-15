@@ -1,14 +1,13 @@
 <script setup>
-import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 
 const monitoringStore = useMonitoringStore();
 const allPeriods = monitoringStore.allPeriods;
-const selectedPeriod = ref(monitoringStore.historyPeriod);
+const { historyPeriod: selectedPeriod } = storeToRefs(monitoringStore);
 
 async function selectHistoryPeriod(period) {
   await monitoringStore.setHistoryPeriod(period.pVal);
-  selectedPeriod.value = monitoringStore.historyPeriod;
 }
 </script>
 
