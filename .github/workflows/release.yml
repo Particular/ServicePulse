@@ -34,7 +34,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.1
         with:
-          node-version: latest
+          node-version: 21.6.x
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
@@ -127,7 +127,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.1
         with:
-          node-version: latest
+          node-version: 21.6.x
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
