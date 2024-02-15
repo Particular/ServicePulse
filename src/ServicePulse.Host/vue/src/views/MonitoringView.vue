@@ -2984,15 +2984,6 @@ a.remove-endpoint:hover i {
   color: #00729c;
 }
 
-.filter-group-details {
-  display: flex;
-  justify-content: flex-end;
-  width: 50%;
-  position: relative;
-  top: -3px;
-  margin-top: -26px;
-}
-
 .events-view {
   margin-top: 0;
 }

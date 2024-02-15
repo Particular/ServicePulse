@@ -370,12 +370,12 @@ onMounted(async () => {
           </div>
         </div>
         <!--Header-->
-        <div class="row monitoring-head" v-if="loadedSuccessfully">
-          <div class="col-sm-4 no-side-padding list-section">
-            <h1 class="righ-side-ellipsis col-lg-max-10" v-tooltip :title="endpointName">
+        <div class="monitoring-head" v-if="loadedSuccessfully">
+          <div class="endpoint-title no-side-padding list-section">
+            <h1 class="righ-side-ellipsis" v-tooltip :title="endpointName">
               {{ endpointName }}
             </h1>
-            <div class="endpoint-status col-xs-2">
+            <div class="endpoint-status">
               <span class="warning" v-if="negativeCriticalTimeIsPresent">
                 <i class="fa pa-warning" v-tooltip :title="`Warning: endpoint currently has negative critical time, possibly because of a clock drift.`"></i>
               </span>
@@ -394,8 +394,8 @@ onMounted(async () => {
             </div>
           </div>
           <!--filters-->
-          <div class="col-sm-8 no-side-padding toolbar-menus">
-            <div class="filter-group-details filter-monitoring">
+          <div class="no-side-padding toolbar-menus">
+            <div class="filter-monitoring">
               <PeriodSelector />
             </div>
           </div>
@@ -843,3 +843,16 @@ onMounted(async () => {
     </div>
   </template>
 </template>
+
+<style scoped>
+.monitoring-head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.endpoint-title {
+  flex: 0;
+  display: flex;
+  align-items: center;
+}
+</style>
