@@ -62,14 +62,14 @@ function formatGraphDecimal(input, deci) {
 <template>
   <div class="table-first-col endpoint-name name-overview">
     <div class="box-header">
-      <div class="col-lg-max-8 no-side-padding lead righ-side-ellipsis endpoint-details-link">
+      <div class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
         <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
           {{ endpoint.name }}
         </a>
         <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
       </div>
-      <div class="col-xs-5 no-side-padding endpoint-status">
-        <span class="warning" v-if="endpoint.metrics != null && formatGraphDuration(endpoint.metrics.criticalTime).value < 0">
+      <div class="no-side-padding endpoint-status">
+        <span class="warning" v-if="endpoint.metrics != null && parseInt(formatGraphDuration(endpoint.metrics.criticalTime).value) < 0">
           <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
         </span>
         <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
@@ -159,4 +159,16 @@ function formatGraphDecimal(input, deci) {
 <style scoped>
 @import "../list.css";
 @import "./monitoring.css";
+@import "./endpoint.css";
+
+.lead.endpoint-details-link.righ-side-ellipsis {
+  color: #00729c;
+}
+
+.endpoint-name,
+.endpoint-name > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
 </style>

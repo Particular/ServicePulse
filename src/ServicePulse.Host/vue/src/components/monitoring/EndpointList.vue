@@ -80,3 +80,7 @@ function updateSorting(isAscending) {
     </div>
   </section>
 </template>
+
+<style scoped>
+@import "./endpoint.css";
+</style>
