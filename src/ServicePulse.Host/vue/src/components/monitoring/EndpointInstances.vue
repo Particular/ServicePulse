@@ -189,4 +189,6 @@ onMounted(async () => {
   </div>
 </template>
 
-<style></style>
+<style scoped>
+@import "@/components/list.css";
+</style>
