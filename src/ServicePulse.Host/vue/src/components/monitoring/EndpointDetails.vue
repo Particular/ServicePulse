@@ -427,99 +427,10 @@ onMounted(() => {
   align-items: center;
 }
 
-.graph-values {
-  margin-left: 60px;
-  padding-top: 10px;
-  border-top: 3px solid #fff;
-  margin-top: -8.5px;
-  width: calc(100% - 60px);
-  display: flex;
-  justify-content: space-between;
-}
-
-.critical-time-values span.metric-digest-header {
-  color: var(--monitoring-critical-time);
-}
-
-.critical-time-values .current,
-.critical-time-values .average {
-  border-color: var(--monitoring-critical-time);
-}
-
-.processing-time-values span.metric-digest-header {
-  color: var(--monitoring-processing-time);
-}
-
-.processing-time-values .current,
-.processing-time-values .average {
-  border-color: var(--monitoring-processing-time);
-}
-
-.metric-digest-value {
-  font-weight: bold;
-  font-size: 22px;
-}
-
-.metric-digest-value div {
-  display: inline-block;
-}
-
-.metric-digest-value-suffix {
-  font-weight: normal;
-  font-size: 14px;
-  display: inline-block;
-  text-transform: uppercase;
-  text-wrap: nowrap;
-}
-
 .large-graphs {
   width: 100%;
   background-color: white;
   margin-bottom: 34px;
   padding: 30px 0;
-}
-
-.endpoint-row {
-  padding: 0.5em 1.5em;
-  margin: 0;
-}
-
-.box {
-  box-shadow: none;
-  margin: 0;
-}
-
-.metric-digest {
-  padding: 1em;
-}
-
-.metric-digest-header {
-  text-transform: uppercase;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.current,
-.average {
-  margin-top: 4px;
-  margin-bottom: 8px;
-  padding-left: 4px;
-  line-height: 20px;
-  height: 19px;
-}
-
-.current {
-  border-left: 2.5px solid;
-}
-
-.average {
-  border-left: 1px dashed;
-  padding-left: 6px;
-}
-
-.graph-area {
-  width: 33%;
-  box-sizing: border-box;
 }
 </style>

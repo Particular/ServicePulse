@@ -158,4 +158,16 @@ const emit = defineEmits(["refreshMessageTypes"]);
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@import "./endpoint.css";
+
+.endpoint-row {
+  padding: 0.5em 1.5em;
+  margin: 0;
+}
+
+.box {
+  box-shadow: none;
+  margin: 0;
+}
+</style>

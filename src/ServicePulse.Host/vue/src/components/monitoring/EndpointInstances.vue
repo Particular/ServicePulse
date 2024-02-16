@@ -191,4 +191,14 @@ onMounted(async () => {
 
 <style scoped>
 @import "@/components/list.css";
+
+.endpoint-row {
+  padding: 0.5em 1.5em;
+  margin: 0;
+}
+
+.box {
+  box-shadow: none;
+  margin: 0;
+}
 </style>
