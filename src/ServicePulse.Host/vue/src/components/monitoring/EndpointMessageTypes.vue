@@ -159,6 +159,7 @@ const emit = defineEmits(["refreshMessageTypes"]);
 </template>
 
 <style scoped>
+@import "@/components/list.css";
 @import "./endpoint.css";
 
 .endpoint-row {
