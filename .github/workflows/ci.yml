@@ -25,6 +25,9 @@ jobs:
         uses: actions/setup-node@v4.0.2
         with:
           node-version: 21.6.x
+      - name: Run Vue component tests
+        run: npm run test:component
+        working-directory: src/ServicePulse.Host/vue
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
@@ -39,7 +42,7 @@ jobs:
         working-directory: src/ServicePulse.Host.Tests
       - name: Run Javascript tests
         run: npm run test-firefox-ci
-        working-directory: src/ServicePulse.Host.Tests
+        working-directory: src/ServicePulse.Host.Tests      
       # Upload assets and packages
       - name: Upload assets
         uses: actions/upload-artifact@v4.3.1
