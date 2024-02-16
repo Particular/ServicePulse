@@ -1,0 +1,26 @@
+.graph-values {
+  margin-left: 60px;
+  padding-top: 10px;
+  border-top: 3px solid #fff;
+  margin-top: -8.5px;
+  width: calc(100% - 60px);
+  display: flex;
+  justify-content: space-between;
+}
+
+.metric-digest-value {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.metric-digest-value div {
+  display: inline-block;
+}
+
+.metric-digest-value-suffix {
+  font-weight: normal;
+  font-size: 14px;
+  display: inline-block;
+  text-transform: uppercase;
+  text-wrap: nowrap;
+}

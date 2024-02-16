@@ -44,15 +44,8 @@ defineProps({
 </template>
 
 <style scoped>
-.graph-values {
-  margin-left: 60px;
-  padding-top: 10px;
-  border-top: 3px solid #fff;
-  margin-top: -8.5px;
-  width: calc(100% - 60px);
-  display: flex;
-  justify-content: space-between;
-}
+@import "./monitoring.css";
+@import "./largeGraphs.css";
 
 .graph-queue-length .metric-digest-value {
   flex-basis: 100%;
