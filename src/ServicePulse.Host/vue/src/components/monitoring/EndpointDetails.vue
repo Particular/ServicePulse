@@ -1,7 +1,7 @@
 ﻿<script setup>
 // Composables
 import { ref, watch, onMounted, onUnmounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, RouterLink } from "vue-router";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
 import { formatGraphDuration } from "./formatGraph";
 import { licenseStatus } from "../../composables/serviceLicense";
@@ -238,11 +238,6 @@ function shortenTypeName(typeName) {
   return typeName.split(".").pop();
 }
 
-function navigateToMessageGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push({ name: "message-groups", params: { groupId: groupId } });
-  }
-}
 function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
   if ($event.target.localName !== "button") {
     showInstancesBreakdown = isVisible;
@@ -315,10 +310,10 @@ onMounted(() => {
                 <i class="fa pa-monitoring-lost endpoint-details" v-tooltip :title="`Unable to connect to monitoring server`"></i>
               </span>
               <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-                <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
+                <RouterLink :to="{ name: 'message-groups', params: { groupId: endpoint.serviceControlId } }" v-if="endpoint.errorCount" class="warning cursorpointer">
                   <i class="fa fa-envelope"></i>
                   <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
-                </a>
+                </RouterLink>
               </span>
             </div>
           </div>

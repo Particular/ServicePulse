@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, RouterLink } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
 import { useDeleteFromMonitoring, useOptionsFromMonitoring } from "@/composables/serviceServiceControlUrls";
 import { storeToRefs } from "pinia";
@@ -24,12 +24,6 @@ async function removeEndpoint(endpointName, instance) {
   } catch (err) {
     console.log(err);
     return false;
-  }
-}
-
-function navigateToMessageGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push({ name: "message-groups", params: { groupId: groupId } });
   }
 }
 
@@ -111,10 +105,10 @@ onMounted(async () => {
                         <i class="fa pa-endpoint-lost endpoint-details" v-tooltip :title="`Unable to connect to instance`"></i>
                       </span>
                       <span class="warning" v-if="instance.errorCount" v-tooltip :title="instance.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-                        <a v-if="instance.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, instance.serviceControlId)">
+                        <RouterLink :to="{ name: 'message-groups', params: { groupId: instance.serviceControlId } }" v-if="instance.errorCount" class="warning cursorpointer">
                           <i class="fa fa-envelope"></i>
                           <span class="badge badge-important cursorpointer"> {{ instance.errorCount }}</span>
-                        </a>
+                        </RouterLink>
                       </span>
                     </div>
                   </div>
