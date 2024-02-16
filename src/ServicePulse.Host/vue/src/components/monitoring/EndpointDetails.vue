@@ -3,9 +3,9 @@
 import { computed, ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
-import { formatGraphDuration, formatGraphDecimal } from "./formatGraph";
+import { formatGraphDuration, formatGraphDecimal, smallGraphsMinimumYAxis, largeGraphsMinimumYAxis } from "./formatGraph";
 import { licenseStatus } from "../../composables/serviceLicense";
-import { useIsMonitoringDisabled, useDeleteFromMonitoring, useOptionsFromMonitoring } from "../../composables/serviceServiceControlUrls";
+import { useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { storeToRefs } from "pinia";
 //stores
 import { useMonitoringStore } from "../../stores/MonitoringStore";
@@ -21,6 +21,7 @@ import PaginationStrip from "@/components/PaginationStrip.vue";
 import EndpointBacklog from "./EndpointBacklog.vue";
 import EndpointWorkload from "./EndpointWorkload.vue";
 import EndpointTimings from "./EndpointTimings.vue";
+import EndpointInstances from "./EndpointInstances.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -36,21 +37,9 @@ if (route.query.tab !== "" && route.query.tab != null) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
 
-const isRemovingEndpointEnabled = ref(false);
 const isLoading = ref(true);
 const loadedSuccessfully = ref(false);
-const smallGraphsMinimumYAxis = {
-  queueLength: 10,
-  throughputRetries: 10,
-  processingCritical: 10,
-};
-const largeGraphsMinimumYAxis = {
-  queueLength: 10,
-  throughput: 10,
-  retries: 10,
-  processingTime: 10,
-  criticalTime: 10,
-};
+
 const endpoint = ref({});
 const negativeCriticalTimeIsPresent = ref(false);
 endpoint.value.messageTypesPage = !showInstancesBreakdown ? Number(route.query.pageNo ?? "1") : 1;
@@ -167,34 +156,6 @@ function mergeIn(destination, source, propertiesToSkip) {
       }
     }
   }
-}
-
-async function removeEndpoint(endpointName, instance) {
-  try {
-    await useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id);
-    endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
-    if (endpoint.value.instances.length === 0) {
-      router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
-    }
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
-
-async function getIsRemovingEndpointEnabled() {
-  try {
-    const response = await useOptionsFromMonitoring();
-    if (response) {
-      const headers = response.headers;
-      const allow = headers.get("Allow");
-      const deleteAllowed = allow.indexOf("DELETE") >= 0;
-      return deleteAllowed;
-    }
-  } catch (err) {
-    console.log(err);
-  }
-  return false;
 }
 
 // async function getDisconnectedCount() {
@@ -324,11 +285,10 @@ onUnmounted(() => {
   }
 });
 
-onMounted(async () => {
+onMounted(() => {
   getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
   //getDisconnectedCount(); // for refresh interval
-  isRemovingEndpointEnabled.value = await getIsRemovingEndpointEnabled();
 });
 </script>
 
@@ -399,142 +359,8 @@ onMounted(async () => {
           </div>
 
           <!--showInstancesBreakdown-->
-          <section v-if="showInstancesBreakdown" class="endpoint-instances">
-            <div class="row">
-              <div class="col-xs-12 no-side-padding">
-                <!-- Breakdown by instance-->
-                <!--headers-->
-                <div v-if="loadedSuccessfully" class="row box box-no-click table-head-row">
-                  <div class="col-xs-4 col-xl-8">
-                    <div class="row box-header">
-                      <div class="col-xs-12">Instance Name</div>
-                    </div>
-                  </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`">Throughput <span class="table-header-unit">(msgs/s)</span></div>
-                    </div>
-                  </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed).`">
-                        Scheduled retries <span class="table-header-unit">(msgs/s)</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Processing time: The time taken for a receiving endpoint to successfully process a message.`">Processing Time <span class="table-header-unit">(t)</span></div>
-                    </div>
-                  </div>
-                  <div class="col-xs-2 col-xl-1 no-side-padding">
-                    <div class="row box-header">
-                      <div class="col-xs-12 no-side-padding" v-tooltip :title="`Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.`">
-                        Critical Time <span class="table-header-unit">(t)</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <NoData v-if="endpoint.instances.length == 0" title="No messages" message="No messages processed in this period of time"></NoData>
-
-                <div class="row endpoint-instances">
-                  <div class="col-xs-12 no-side-padding">
-                    <div class="row box endpoint-row" v-for="(instance, id) in endpoint.instances" :key="id">
-                      <div class="col-xs-12 no-side-padding">
-                        <div class="row">
-                          <div class="col-xs-4 col-xl-8 endpoint-name">
-                            <div class="row box-header">
-                              <div class="no-side-padding lead righ-side-ellipsis" v-tooltip :title="instance.name">
-                                {{ instance.name }}
-                              </div>
-                              <div class="col-lg-4 no-side-padding endpoint-status">
-                                <span class="warning" v-if="formatGraphDuration(instance.metrics.criticalTime).value < 0">
-                                  <i class="fa pa-warning" v-tooltip :title="`Warning: instance currently has negative critical time, possibly because of a clock drift.`"></i>
-                                </span>
-                                <span class="warning" v-if="instance.isScMonitoringDisconnected">
-                                  <i class="fa pa-monitoring-lost endpoint-details" v-tooltip :title="`Unable to connect to monitoring server`"></i>
-                                </span>
-                                <span class="warning" v-if="instance.isStale">
-                                  <i class="fa pa-endpoint-lost endpoint-details" v-tooltip :title="`Unable to connect to instance`"></i>
-                                </span>
-                                <span class="warning" v-if="instance.errorCount" v-tooltip :title="instance.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-                                  <a v-if="instance.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, instance.serviceControlId)">
-                                    <i class="fa fa-envelope"></i>
-                                    <span class="badge badge-important cursorpointer"> {{ instance.errorCount }}</span>
-                                  </a>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
-                            <div class="row box-header">
-                              <div class="no-side-padding">
-                                <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :metricsuffix="'MSGS/S'" />
-                                <span class="no-side-padding sparkline-value">
-                                  {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.throughput) }}
-                                  <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
-                                  <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
-                            <div class="row box-header">
-                              <div class="no-side-padding">
-                                <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :metricsuffix="'MSGS/S'" />
-                                <span class="no-side-padding sparkline-value">
-                                  {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDecimal(instance.metrics.retries) }}
-                                  <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
-                                  <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
-                            <div class="row box-header">
-                              <div class="no-side-padding">
-                                <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" />
-                                <span class="no-side-padding sparkline-value">
-                                  {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.processingTime).value }}
-                                  <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
-                                  <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                  <span v-if="!instance.isStale && !instance.isScMonitoringDisconnected" class="unit">
-                                    {{ formatGraphDuration(instance.metrics.processingTime).unit }}
-                                  </span>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
-                            <div class="row box-header">
-                              <div class="no-side-padding">
-                                <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" />
-                                <span class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(instance.metrics.criticalTime).value < 0 }">
-                                  {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.criticalTime).value }}
-                                  <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
-                                  <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
-                                  <span v-if="!instance.isStale && !instance.isScMonitoringDisconnected" class="unit">
-                                    {{ formatGraphDuration(instance.metrics.criticalTime).unit }}
-                                  </span>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <!--remove endpoint-->
-                          <div class="col-xs-2 col-xl-1 no-side-padding">
-                            <a v-if="isRemovingEndpointEnabled && instance.isStale" class="remove-endpoint" @click="removeEndpoint(endpointName, instance)">
-                              <i class="fa fa-trash" v-tooltip :title="`Remove endpoint`"></i>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <section v-if="showInstancesBreakdown && loadedSuccessfully" class="endpoint-instances">
+            <EndpointInstances v-model="endpoint" />
           </section>
 
           <!--ShowMessagetypes breakdown-->
