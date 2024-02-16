@@ -35,13 +35,13 @@ jobs:
         uses: actions/setup-node@v4.0.1
         with:
           node-version: 21.6.x
-      - name: Run Vue component tests
-        run: npm run test:component
-        working-directory: src/ServicePulse.Host/vue
       # Build AngularJS and Vue apps
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
+      - name: Run Vue component tests
+        run: npm run test:component
+        working-directory: src/ServicePulse.Host/vue
       # .NET Build and sign
       - name: Build
         run: dotnet build src --configuration Release
