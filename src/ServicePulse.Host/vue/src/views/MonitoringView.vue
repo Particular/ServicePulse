@@ -1720,27 +1720,9 @@ hr.top-separator {
   color: #ff0004;
 }
 
-.monitoring-view .graph-area {
-  width: 33%;
-  box-sizing: border-box;
-}
-
 .graph-message-retries-throughputs,
 .graph-critical-processing-times {
   margin-left: 0.5%;
-}
-
-.endpoint-row .graphicon {
-  top: 14px;
-  left: 120px;
-  position: absolute;
-  width: 94px;
-  padding-left: 36px;
-  display: block;
-}
-
-.endpoint-row .graphicon.graphicon-row-hover {
-  background-color: #edf6f7 !important;
 }
 
 .monitoring-no-data {
@@ -1861,35 +1843,6 @@ p.col-sort-active {
 
 .overview-row-badge {
   margin-left: 5px;
-}
-
-.metric-digest {
-  padding: 1em;
-}
-
-.metric-digest-header {
-  text-transform: uppercase;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.current,
-.average {
-  margin-top: 4px;
-  margin-bottom: 8px;
-  padding-left: 4px;
-  line-height: 20px;
-  height: 19px;
-}
-
-.current {
-  border-left: 2.5px solid;
-}
-
-.average {
-  border-left: 1px dashed;
-  padding-left: 6px;
 }
 
 .message-type-label {

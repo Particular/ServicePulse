@@ -146,7 +146,7 @@ svg.data {
   fill: none;
 }
 
-.graph * .graph-data-fill {
+.large-graph * .graph-data-fill {
   opacity: 0.8;
 }
 

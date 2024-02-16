@@ -100,3 +100,10 @@ h1 .endpoint-status i.fa-envelope,
   border-left: 1px solid #fff;
   background-color: #fff;
 }
+
+.endpoint-name,
+.endpoint-name > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}

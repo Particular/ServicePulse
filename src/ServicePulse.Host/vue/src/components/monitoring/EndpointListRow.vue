@@ -164,11 +164,4 @@ function formatGraphDecimal(input, deci) {
 .lead.endpoint-details-link.righ-side-ellipsis {
   color: #00729c;
 }
-
-.endpoint-name,
-.endpoint-name > div {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
 </style>
