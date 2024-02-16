@@ -129,7 +129,7 @@ async function updateUI() {
         }
       })
     );
-    negativeCriticalTimeIsPresent.value = endpoint.value.instances.some((instance) => formatGraphDuration(instance.metrics.criticalTime).value < 0);
+    negativeCriticalTimeIsPresent.value = endpoint.value.instances.some((instance) => parseInt(formatGraphDuration(instance.metrics.criticalTime).value) < 0);
     endpoint.value.isStale = endpoint.value.instances.every((instance) => instance.isStale);
 
     loadedSuccessfully.value = true;
@@ -359,7 +359,7 @@ onMounted(() => {
           </div>
 
           <!--showInstancesBreakdown-->
-          <section v-if="showInstancesBreakdown && loadedSuccessfully" class="endpoint-instances">
+          <section v-if="showInstancesBreakdown" class="endpoint-instances">
             <EndpointInstances v-model="endpoint" />
           </section>
 
