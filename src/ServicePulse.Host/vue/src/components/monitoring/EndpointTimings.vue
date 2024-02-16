@@ -1,13 +1,8 @@
 <script setup>
-import { formatGraphDuration } from "./formatGraph";
+import { formatGraphDuration, largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
 
 const endpoint = defineModel({});
-defineProps({
-  minimumYAxis: {
-    default: 10,
-  },
-});
 </script>
 
 <template>
@@ -19,7 +14,7 @@ defineProps({
       :isdurationgraph="true"
       :firstdataseries="endpoint.metricDetails.metrics.criticalTime"
       :seconddataseries="endpoint.metricDetails.metrics.processingTime"
-      :minimumyaxis="minimumYAxis"
+      :minimumyaxis="largeGraphsMinimumYAxis.processingCritical"
       :firstseriestype="'critical-time'"
       :secondseriestype="'processing-time'"
       :avgdecimals="0"

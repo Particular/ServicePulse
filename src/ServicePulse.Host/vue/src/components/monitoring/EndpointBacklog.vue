@@ -1,13 +1,8 @@
 <script setup>
-import { formatGraphDecimal } from "./formatGraph";
+import { formatGraphDecimal, largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
 
 const endpoint = defineModel({});
-defineProps({
-  minimumYAxis: {
-    default: 10,
-  },
-});
 </script>
 
 <template>
@@ -17,7 +12,7 @@ defineProps({
       v-if="endpoint.metricDetails.metrics.queueLength"
       :isdurationgraph="false"
       :firstdataseries="endpoint.metricDetails.metrics.queueLength"
-      :minimumyaxis="minimumYAxis"
+      :minimumyaxis="largeGraphsMinimumYAxis.queueLength"
       :firstseriestype="'queue-length'"
       :avgdecimals="0"
       :metricsuffix="'MSGS'"

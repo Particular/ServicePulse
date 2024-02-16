@@ -1,13 +1,8 @@
 <script setup>
-import { formatGraphDecimal } from "./formatGraph";
+import { formatGraphDecimal, largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
 
 const endpoint = defineModel({});
-defineProps({
-  minimumYAxis: {
-    default: 10,
-  },
-});
 </script>
 
 <template>
@@ -19,7 +14,7 @@ defineProps({
       :isdurationgraph="false"
       :firstdataseries="endpoint.metricDetails.metrics.throughput"
       :seconddataseries="endpoint.metricDetails.metrics.retries"
-      :minimumyaxis="minimumYAxis"
+      :minimumyaxis="largeGraphsMinimumYAxis.throughputRetries"
       :firstseriestype="'throughput'"
       :secondseriestype="'retries'"
       :avgdecimals="0"

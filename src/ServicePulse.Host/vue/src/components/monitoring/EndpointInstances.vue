@@ -58,7 +58,7 @@ onMounted(async () => {
     <div class="col-xs-12 no-side-padding">
       <!-- Breakdown by instance-->
       <!--headers-->
-      <div v-if="loadedSuccessfully" class="row box box-no-click table-head-row">
+      <div class="row box box-no-click table-head-row">
         <div class="col-xs-4 col-xl-8">
           <div class="row box-header">
             <div class="col-xs-12">Instance Name</div>
