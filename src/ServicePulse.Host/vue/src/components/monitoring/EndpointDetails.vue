@@ -19,6 +19,7 @@ import NoData from "../NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
 import LargeGraph from "./LargeGraph.vue";
+import EndpointBacklog from "./EndpointBacklog.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -377,36 +378,7 @@ onMounted(async () => {
         <div class="large-graphs" v-if="loadedSuccessfully">
           <div class="container">
             <div class="row">
-              <div class="col-xs-4 no-side-padding list-section graph-area graph-queue-length">
-                <!-- large graph -->
-                <LargeGraph
-                  v-if="endpoint.metricDetails.metrics.queueLength"
-                  :isdurationgraph="false"
-                  :firstdataseries="endpoint.metricDetails.metrics.queueLength"
-                  :minimumyaxis="largeGraphsMinimumYAxis.queueLength"
-                  :firstseriestype="'queue-length'"
-                  :avgdecimals="0"
-                  :metricsuffix="'MSGS'"
-                />
-                <!--Queue Length-->
-                <div class="no-side-padding graph-values">
-                  <div class="queue-length-values">
-                    <div>
-                      <span class="metric-digest-header" v-tooltip :title="`Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint.`"> Queue Length </span>
-                    </div>
-                    <div class="metric-digest-value current">
-                      <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
-                        {{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }} <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span>
-                      </div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                    </div>
-                    <div class="metric-digest-value average">
-                      <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.average, 0) }} <span class="metric-digest-value-suffix">MSGS AVG</span></div>
-                      <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <EndpointBacklog v-model="endpoint" :minimum-y-axis="largeGraphsMinimumYAxis.queueLength" />
               <!--Throughput and retries-->
               <div class="col-xs-4 no-side-padding list-section graph-area graph-message-retries-throughputs">
                 <!-- large graph -->
@@ -880,23 +852,6 @@ onMounted(async () => {
   width: calc(100% - 60px);
   display: flex;
   justify-content: space-between;
-}
-
-.graph-queue-length .metric-digest-value {
-  flex-basis: 100%;
-}
-
-.queue-length-values {
-  display: inline-block;
-}
-
-.queue-length-values .metric-digest-header {
-  color: var(--monitoring-queue-length);
-}
-
-.graph-queue-length .current,
-.graph-queue-length .average {
-  border-color: var(--monitoring-queue-length);
 }
 
 .throughput-values span.metric-digest-header {
