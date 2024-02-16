@@ -9,7 +9,9 @@
     "build": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:component": "vitest run ./src",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@vue-flow/core": "^1.29.1",
