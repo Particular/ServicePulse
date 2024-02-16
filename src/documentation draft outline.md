@@ -1,6 +1,6 @@
 TODO: Determine where this document is going to live
 # Testing
-Both application tests and component tests in ServicePulse follow the Testing Library [Guiding Principle](https://testing-library.com/docs/guiding-principles/) which corages to write tests that closely resemble how web pages are used and to avoid testing implementation details.
+Both application tests and component tests in ServicePulse follow the Testing Library [Guiding Principle](https://testing-library.com/docs/guiding-principles/), which encourages writing tests that closely resemble how web pages are used to avoid testing implementation details.
 
 ## Application tests
 
