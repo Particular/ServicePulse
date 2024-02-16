@@ -68,7 +68,6 @@ async function getEndpointDetails() {
     await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
     const responseData = monitoringStore.endpointDetails;
     if (responseData != null) {
-      filterOutSystemMessage(responseData);
       const endpointDetails = responseData;
       endpointDetails.isScMonitoringDisconnected = false;
       Object.assign(endpoint.value, endpointDetails);
@@ -95,20 +94,7 @@ async function updateUI() {
       mergeIn(endpoint.value, endpoint.value);
     }
 
-    //sorting
-    endpoint.value.instances.sort(function (first, second) {
-      if (first.id < second.id) {
-        return -1;
-      }
-
-      if (first.id > second.id) {
-        return 1;
-      }
-
-      return 0;
-    });
-
-    processMessageTypes();
+    endpoint.value.instances.sort((a, b) => a.id - b.id);
 
     endpoint.value.isScMonitoringDisconnected = false;
 
@@ -134,12 +120,6 @@ async function updateUI() {
     endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
     endpoint.value.errorCount = failedMessageStore.errorCount;
   }
-}
-
-function filterOutSystemMessage(data) {
-  data.messageTypes = data.messageTypes.filter((mt) => {
-    return mt.id;
-  });
 }
 
 function mergeIn(destination, source, propertiesToSkip) {
@@ -176,66 +156,7 @@ function refreshMessageTypes() {
     endpoint.value.messageTypesAvailable.value = false;
     endpoint.value.messageTypes = endpoint.value.messageTypesUpdatedSet;
     endpoint.value.messageTypesUpdatedSet = null;
-
-    processMessageTypes();
   }
-}
-
-function processMessageTypes() {
-  endpoint.value.messageTypesTotalItems = endpoint.value.messageTypes.length;
-  endpoint.value.messageTypes.forEach((messageType) => {
-    messageType = parseTheMessageTypeData(messageType);
-    return messageType;
-  });
-}
-
-function parseTheMessageTypeData(messageType) {
-  if (!messageType.typeName) return;
-
-  if (messageType.typeName.indexOf(";") > 0) {
-    let messageTypeHierarchy = messageType.typeName.split(";");
-    messageTypeHierarchy = messageTypeHierarchy.map((item) => {
-      const obj = {};
-      const segments = item.split(",");
-      obj.typeName = segments[0];
-      obj.assemblyName = segments[1];
-      obj.assemblyVersion = segments[2].substring(segments[2].indexOf("=") + 1);
-
-      if (!segments[4].endsWith("=null")) {
-        //SC monitoring fills culture only if PublicKeyToken is filled
-        obj.culture = segments[3];
-        obj.publicKeyToken = segments[4];
-      }
-      return obj;
-    });
-    messageType.messageTypeHierarchy = messageTypeHierarchy;
-    messageType.typeName = messageTypeHierarchy.map((item) => item.typeName).join(", ");
-    messageType.shortName = messageTypeHierarchy.map((item) => shortenTypeName(item.typeName)).join(", ");
-    messageType.containsTypeHierarchy = true;
-    messageType.tooltipText = messageTypeHierarchy.reduce(
-      (sum, item) => (sum ? `${sum}<br> ` : "") + `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : "") + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ""),
-      ""
-    );
-  } else {
-    //Get the name without the namespace
-    messageType.shortName = shortenTypeName(messageType.typeName);
-
-    let tooltip = `${messageType.typeName} | ${messageType.assemblyName}-${messageType.assemblyVersion}`;
-    if (messageType.culture && messageType.culture !== "null") {
-      tooltip += ` | Culture=${messageType.culture}`;
-    }
-
-    if (messageType.publicKeyToken && messageType.publicKeyToken !== "null") {
-      tooltip += ` | PublicKeyToken=${messageType.publicKeyToken}`;
-    }
-
-    messageType.tooltipText = tooltip;
-  }
-  return messageType;
-}
-
-function shortenTypeName(typeName) {
-  return typeName.split(".").pop();
 }
 
 function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {

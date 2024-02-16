@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useCookies } from "vue3-cookies";
 import { useRoute, useRouter } from "vue-router";
+import messageTypes from "@/components/monitoring/messageTypes";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 
@@ -34,6 +35,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       allPeriods,
       endpointList: [],
       endpointDetails: {},
+      messageTypes: {},
       disconnectedEndpointCount: 0,
       filterString: "",
       historyPeriod: getHistoryPeriod(),
@@ -87,6 +89,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       const { data, refresh } = getMemoisedEndpointDetails(endpointName, historyPeriod);
       await refresh();
       this.endpointDetails = data.value;
+      this.messageTypes = new messageTypes(data.value.messageTypes);
     },
     async getDisconnectedEndpointCount() {
       this.disconnectedEndpointCount = await MonitoringEndpoints.useGetDisconnectedEndpointCount();

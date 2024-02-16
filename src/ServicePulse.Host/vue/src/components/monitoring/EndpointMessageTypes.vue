@@ -1,15 +1,21 @@
 <script setup>
 import { computed } from "vue";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { storeToRefs } from "pinia";
 
 import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
 
 const endpoint = defineModel({});
+const monitoringStore = useMonitoringStore();
+const { messageTypes } = storeToRefs(monitoringStore);
 
 const paginatedMessageTypes = computed(() => {
-  return endpoint.value.messageTypes.slice((endpoint.value.messageTypesPage - 1) * endpoint.value.messageTypesItemsPerPage, endpoint.value.messageTypesPage * endpoint.value.messageTypesItemsPerPage);
+  const pageStart = (endpoint.value.messageTypesPage - 1) * endpoint.value.messageTypesItemsPerPage;
+  const pageEnd = endpoint.value.messageTypesPage * endpoint.value.messageTypesItemsPerPage;
+  return messageTypes.value.data.slice(pageStart, pageEnd);
 });
 
 const emit = defineEmits(["refreshMessageTypes"]);
@@ -67,11 +73,11 @@ const emit = defineEmits(["refreshMessageTypes"]);
           >
             <div class="col-xs-12 no-side-padding">
               <div class="row">
-                <div class="col-xs-4 col-xl-8 endpoint-name" uib-tooltip-html="messageType.tooltipText">
+                <div class="col-xs-4 col-xl-8 endpoint-name" :title="messageType.tooltipText">
                   <div class="row box-header">
                     <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
                       <div class="lead">
-                        {{ messageType.shortName ? messageType.shortName : "Unknown" }}
+                        {{ messageType.shortName || "Unknown" }}
                       </div>
                     </div>
                     <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
@@ -153,7 +159,7 @@ const emit = defineEmits(["refreshMessageTypes"]);
           </div>
         </div>
       </div>
-      <PaginationStrip v-model="endpoint.messageTypesPage" :itemsPerPage="endpoint.messageTypesItemsPerPage" :totalCount="endpoint.messageTypesTotalItems" />
+      <PaginationStrip v-model="endpoint.messageTypesPage" :itemsPerPage="endpoint.messageTypesItemsPerPage" :totalCount="messageTypes.data.length" />
     </div>
   </div>
 </template>
