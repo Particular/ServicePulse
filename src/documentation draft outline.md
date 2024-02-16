@@ -5,13 +5,16 @@ Both application tests and component tests in ServicePulse follow the Testing Li
 ## Application tests
 
 ### Application tests code review checklist
+- [ ] Tests files are in vue/test folder
 
 ## Component tests 
 - Use @testing-library/vue instead of @vue/test-utils
   - TODO: Explain  why
   
 ### Component tests code review checklist
-- [ ] Testing is done through @testing-library/vue only
+- [ ] Testing is done through the functions exported by @component-test-utils only
+- [ ] Tests have the spec.ts extension
+- [ ] Tests files are right next to the file being tested, e.g: for PageFooter.vue create a PageFooter.spec.ts file
   
 ### When to write component tests  
   

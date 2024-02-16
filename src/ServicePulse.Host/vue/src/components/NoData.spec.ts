@@ -1,4 +1,4 @@
-import { expect, it, render, screen } from "../../test/utils";
+import { expect, it, render, screen } from "@component-test-utils";
 
 import HelloWorld from "./NoData.vue";
 
