@@ -10,7 +10,7 @@
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
     "preview": "vite preview",
-    "test:component": "vitest run ./src",
+    "test:component": "vitest ./src",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
