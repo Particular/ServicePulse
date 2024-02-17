@@ -7,6 +7,7 @@ import { useMonitoringStore } from "../../stores/MonitoringStore";
 const monitoringStore = useMonitoringStore();
 const endpoints = computed(() => monitoringStore.getEndpointList);
 const isGrouped = computed(() => monitoringStore.endpointListIsGrouped);
+const groupedEndpoints = computed(() => monitoringStore.grouping.groupedEndpoints);
 const activeColumn = ref("name");
 
 const sortByColumn = Object.freeze({
@@ -63,12 +64,12 @@ function updateSorting(isAscending) {
     </div>
     <div>
       <div v-if="isGrouped">
-        <div class="row" v-for="(endpointGroup, index) in monitoringStore.grouping.groupedEndpoints" :key="index">
+        <div class="row" v-for="(endpointGroup, index) in groupedEndpoints" :key="index">
           <div class="endpoint-group-title">
             {{ endpointGroup.group }}
           </div>
           <div class="row box endpoint-row" v-for="(groupedEndpoint, index) in endpointGroup.endpoints" :key="index">
-            <EndpointListRow :endpoint="groupedEndpoint.endpoint" />
+            <EndpointListRow :endpoint="groupedEndpoint" />
           </div>
         </div>
       </div>

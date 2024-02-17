@@ -11,8 +11,15 @@ const settings = defineProps({
   endpoint: Object,
 });
 
-const endpoint = computed(() => settings.endpoint);
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
+const monitoringStore = useMonitoringStore();
+const isGrouped = computed(() => monitoringStore.endpointListIsGrouped);
+const endpoint = computed(() => {
+  return isGrouped.value ? settings.endpoint.endpoint : settings.endpoint;
+});
+const groupedShortName = computed(() => {
+  return isGrouped.value ? settings.endpoint.shortName : null;
+});
 const router = useRouter();
 const supportsEndpointCount = ref();
 const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
