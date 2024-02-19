@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore, acceptHMRUpdate } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import MessageTypes from "@/components/monitoring/messageTypes";
@@ -82,7 +82,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   }
 
   async function updateFilterString(filter = "") {
-    filterString.value = filter ?? this.route.query.filter ?? "";
+    filterString.value = filter ?? route.query.filter ?? "";
 
     if (filterString.value === "") {
       // eslint-disable-next-line
@@ -258,3 +258,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     updateFilterString,
   };
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useMonitoringStore, import.meta.hot));
+}
