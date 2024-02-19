@@ -12,9 +12,16 @@ const endpoint = defineModel({});
 const monitoringStore = useMonitoringStore();
 const { messageTypes, messageTypesAvailable } = storeToRefs(monitoringStore);
 
+const props = defineProps({
+  perPage: {
+    type: Number,
+    required: true,
+  },
+});
+
 const paginatedMessageTypes = computed(() => {
-  const pageStart = (endpoint.value.messageTypesPage - 1) * endpoint.value.messageTypesItemsPerPage;
-  const pageEnd = endpoint.value.messageTypesPage * endpoint.value.messageTypesItemsPerPage;
+  const pageStart = (endpoint.value.messageTypesPage - 1) * props.perPage;
+  const pageEnd = endpoint.value.messageTypesPage * props.perPage;
   return messageTypes.value.data.slice(pageStart, pageEnd);
 });
 </script>
@@ -157,7 +164,7 @@ const paginatedMessageTypes = computed(() => {
           </div>
         </div>
       </div>
-      <PaginationStrip v-model="endpoint.messageTypesPage" :itemsPerPage="endpoint.messageTypesItemsPerPage" :totalCount="messageTypes.data.length" />
+      <PaginationStrip v-model="endpoint.messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes.data.length" />
     </div>
   </div>
 </template>

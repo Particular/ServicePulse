@@ -36,11 +36,6 @@ const loadedSuccessfully = ref(false);
 
 const endpoint = ref({});
 endpoint.value.messageTypesPage = !showInstancesBreakdown ? Number(route.query.pageNo ?? "1") : 1;
-endpoint.value.messageTypesTotalItems = 0;
-endpoint.value.messageTypesItemsPerPage = 10;
-endpoint.value.messageTypesAvailable = ref(false);
-endpoint.value.messageTypesUpdatedSet = [];
-endpoint.value.instances = [];
 
 const { historyPeriod, negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
 
@@ -206,7 +201,7 @@ onMounted(() => {
 
           <!--ShowMessagetypes breakdown-->
           <section v-if="!showInstancesBreakdown" class="endpoint-message-types">
-            <EndpointMessageTypes v-model="endpoint" />
+            <EndpointMessageTypes v-model="endpoint" :per-page="10" />
           </section>
         </div>
       </template>
