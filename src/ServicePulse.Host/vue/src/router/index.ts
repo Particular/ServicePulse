@@ -21,7 +21,7 @@ const routes = config.map((item) => {
 
 const router = createRouter({
   history: createWebHashHistory(window.defaultConfig.base_url),
-  routes: routes,
+  routes,
 });
 
 router.beforeEach((to, from, next) => {
