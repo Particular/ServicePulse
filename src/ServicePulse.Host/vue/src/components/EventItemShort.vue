@@ -6,6 +6,7 @@ import { ref } from "vue";
 import { RouterLink } from "vue-router";
 
 import type DataViewPageModel from "@/components/DataViewPageModel";
+import routeLinks from "@/router/routeLinks";
 
 const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCount: 0 });
 </script>
@@ -22,7 +23,7 @@ const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCoun
       <template #footer>
         <div v-if="pageModel.totalCount > 10" class="row text-center">
           <div class="col-12">
-            <RouterLink :to="{ name: 'events' }" class="btn btn-default btn-secondary btn-all-events">View all events</RouterLink>
+            <RouterLink :to="routeLinks.events" class="btn btn-default btn-secondary btn-all-events">View all events</RouterLink>
           </div>
         </div>
       </template>

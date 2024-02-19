@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { connectionState, environment, monitoringConnectionState, newVersions } from "../composables/serviceServiceControl";
 import { monitoringUrl, serviceControlUrl } from "../composables/serviceServiceControlUrls";
+import routeLinks from "@/router/routeLinks";
 
 const isMonitoringEnabled = computed(() => {
   return monitoringUrl.value !== "!" && monitoringUrl.value !== "" && monitoringUrl.value !== null && monitoringUrl.value !== undefined;
@@ -23,7 +24,7 @@ const scMonitoringAddressTooltip = computed(() => {
         <div class="connectivity-status">
           <span class="secondary">
             <i class="fa fa-plus sp-blue"></i>
-            <RouterLink :to="{ name: 'endpoint-connection' }">Connect new endpoint</RouterLink>
+            <RouterLink :to="routeLinks.configuration.endpointConnection.link">Connect new endpoint</RouterLink>
           </span>
 
           <span v-if="!newVersions.newSPVersion.newspversion && environment.sp_version"> ServicePulse v{{ environment.sp_version }} </span>
