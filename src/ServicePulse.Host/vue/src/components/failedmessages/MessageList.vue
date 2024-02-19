@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import TimeSince from "../TimeSince.vue";
 import NoData from "../NoData.vue";
+import routeLinks from "@/router/routeLinks";
 
 let lastLabelClickedIndex = undefined;
 const router = useRouter();
@@ -63,7 +64,7 @@ function clearSelection() {
 
 function navigateToMessage($event, messageId) {
   if ($event.target.name !== "retryMessage") {
-    router.push({ path: `/failed-messages/message/${messageId}` });
+    router.push(routeLinks.failedMessage.message.link(messageId));
   }
 }
 
