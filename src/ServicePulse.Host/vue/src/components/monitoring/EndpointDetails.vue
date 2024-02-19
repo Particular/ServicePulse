@@ -62,37 +62,6 @@ async function getEndpointDetails() {
   }
 }
 
-// async function getDisconnectedCount() {
-//   let checkInterval;
-//   try {
-//     const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-//     disconnectedCount = response.data;
-//   } catch (err) {
-//     console.log("Error while getting disconnected endpoints count from monitoring:" + err);
-//     clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
-//   }
-//   //return useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-//   //let checkDisconnectedCount = function () {
-//   //    monitoringService.getDisconnectedCount().then(result => {
-//   //        notifier.notify(disconnectedEndpointsUpdatedEvent, result.data);
-//   //    }, e => {
-//   //        $log.debug('Error while getting disconnected endpoints count from monitoring:' + e);
-//   //        clearInterval(checkInterval); //Stop checking, probably an old version of Monitoring
-//   //    });
-//   //};
-// }
-//let startService = function () {
-//    notifier.subscribe($rootScope, (event, data) => {
-//        if (data.isMonitoringConnected && isConnected == false) {
-//            checkDisconnectedCount();
-//            checkInterval = setInterval(checkDisconnectedCount, 20000);
-//            isConnected = true;
-//        } else if (!data.isMonitoringConnected && isConnected) {
-//            isConnected = false;
-//            clearInterval(checkInterval);
-//        }
-//    }, "MonitoringConnectionStatusChanged");
-//};
 function changeRefreshInterval(milliseconds) {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
@@ -111,7 +80,6 @@ onUnmounted(() => {
 onMounted(() => {
   getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
-  //getDisconnectedCount(); // for refresh interval
 });
 </script>
 
