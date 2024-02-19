@@ -12,6 +12,7 @@ import TimeSince from "../TimeSince.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
+import routeLinks from "@/router/routeLinks";
 
 let pollingFaster = false;
 const messageGroupList = ref();
@@ -210,7 +211,7 @@ function isBeingRestored(status) {
 
 function navigateToGroup($event, groupId) {
   if ($event.target.localName !== "button") {
-    router.push({ name: "deleted-message-groups", params: { groupId: groupId } });
+    router.push(routeLinks.failedMessage.deletedGroup.link(groupId));
   }
 }
 

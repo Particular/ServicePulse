@@ -11,6 +11,7 @@ import moment from "moment";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import FlowDiagram from "./FlowDiagram.vue";
 import EditRetryDialog from "./EditRetryDialog.vue";
+import routeLinks from "@/router/routeLinks";
 
 let refreshInterval = undefined;
 let pollingFaster = false;
@@ -379,7 +380,7 @@ onUnmounted(() => {
                   >{{ failedMessage.number_of_processing_attempts }} Retry Failures</span
                 >
                 <span v-if="failedMessage.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
-                <span v-if="failedMessage.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="`/failed-messages/message/${failedMessage.edit_of}`">View previous version</RouterLink></span>
+                <span v-if="failedMessage.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="routeLinks.failedMessage.message.link(failedMessage.edit_of)">View previous version</RouterLink></span>
                 <span v-if="failedMessage.time_of_failure" class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
                 <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
