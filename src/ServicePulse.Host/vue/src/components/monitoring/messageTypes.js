@@ -47,7 +47,7 @@ function parseTheMessageTypeData(messageType) {
   };
 }
 
-export default class messageTypes {
+export default class MessageTypes {
   constructor(rawMessageTypes) {
     this.totalItems = rawMessageTypes.length;
     this.data = rawMessageTypes
