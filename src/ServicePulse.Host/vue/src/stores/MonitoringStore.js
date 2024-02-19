@@ -9,6 +9,7 @@ import { formatGraphDuration } from "../components/monitoring/formatGraph";
 import { useFailedMessageStore } from "./FailedMessageStore";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
+  const failedMessageStore = useFailedMessageStore();
   const { cookies } = useCookies();
 
   const periods = [
@@ -119,7 +120,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   }
 
   async function getEndpointDetails(name, historyPeriod) {
-    const failedMessageStore = useFailedMessageStore();
     const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriod);
     await refresh();
 
