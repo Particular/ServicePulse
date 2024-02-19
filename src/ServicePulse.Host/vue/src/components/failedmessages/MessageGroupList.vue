@@ -8,6 +8,7 @@ import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
+import routeLinks from "@/router/routeLinks";
 
 const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
 
@@ -268,7 +269,7 @@ function clearInMemoryData() {
 
 function navigateToGroup($event, groupId) {
   if ($event.target.localName !== "button") {
-    router.push({ name: "message-groups", params: { groupId: groupId } });
+    router.push(routeLinks.failedMessage.group.link(groupId));
   }
 }
 

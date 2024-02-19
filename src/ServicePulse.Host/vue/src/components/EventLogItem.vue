@@ -3,6 +3,7 @@ import { useRouter } from "vue-router";
 import TimeSince from "../components/TimeSince.vue";
 import type EventLogItem from "@/resources/EventLogItem";
 import { Severity } from "@/resources/EventLogItem";
+import routeLinks from "@/router/routeLinks";
 
 defineProps<{ eventLogItem: EventLogItem }>();
 const router = useRouter();
@@ -10,30 +11,30 @@ const router = useRouter();
 function navigateToEvent(eventLogItem: EventLogItem) {
   switch (eventLogItem.category) {
     case "Endpoints":
-      router.push({ name: "endpoint-connection" });
+      router.push(routeLinks.configuration.endpointConnection.link);
       break;
     case "HeartbeatMonitoring":
-      window.location.assign("/a/#/endpoints");
+      window.location.assign(routeLinks.heartbeats);
       break;
     case "CustomChecks":
-      window.location.assign("/a/#/custom-checks");
+      window.location.assign(routeLinks.customChecks);
       break;
     case "EndpointControl":
-      window.location.assign("/a/#/endpoints");
+      window.location.assign(routeLinks.heartbeats);
       break;
     case "MessageFailures":
       if (eventLogItem.related_to?.length && eventLogItem.related_to[0].search("message") > 0) {
         const messageId = eventLogItem.related_to[0].substring(9);
-        router.push({ name: "message", params: { id: messageId } });
+        router.push(routeLinks.failedMessage.message.link(messageId));
       } else {
-        router.push({ name: "failed-messages" });
+        router.push(routeLinks.failedMessage.root);
       }
       break;
     case "Recoverability":
-      router.push({ name: "failed-messages" });
+      router.push(routeLinks.failedMessage.root);
       break;
     case "MessageRedirects":
-      router.push({ name: "retry-redirects" });
+      router.push(routeLinks.configuration.retryRedirects.link);
       break;
     default:
   }

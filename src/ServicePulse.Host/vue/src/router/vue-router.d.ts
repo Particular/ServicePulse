@@ -8,7 +8,6 @@ export {};
 
 declare module "vue-router" {
   interface RouteMeta {
-    // is optional
-    title?: string;
+    title: string;
   }
 }

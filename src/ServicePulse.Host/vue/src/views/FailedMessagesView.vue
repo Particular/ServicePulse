@@ -3,6 +3,7 @@ import { RouterLink, RouterView, useRoute } from "vue-router";
 import { licenseStatus } from "../composables/serviceLicense";
 import { connectionState, stats } from "../composables/serviceServiceControl";
 import LicenseExpired from "../components/LicenseExpired.vue";
+import routeLinks from "@/router/routeLinks";
 
 const showPendingRetry = window.defaultConfig.showPendingRetry;
 const route = useRoute();
@@ -25,7 +26,7 @@ function subIsActiveSubPath(subPath) {
           <div class="tabs">
             <!--Failed Message Groups-->
             <h5 :class="{ active: subIsActive('/failed-messages'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages' }">
+              <RouterLink :to="routeLinks.failedMessage.root">
                 Failed Message Groups
                 <span v-show="stats.number_of_failed_messages === 0"> (0) </span>
               </RouterLink>
@@ -34,25 +35,25 @@ function subIsActiveSubPath(subPath) {
 
             <!--All Failed Messages-->
             <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-failed-messages') || subIsActiveSubPath('/failed-messages/group/'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages/all-failed-messages' }">All Failed Messages </RouterLink>
+              <RouterLink :to="routeLinks.failedMessage.allFailedMessages.link">All Failed Messages </RouterLink>
               <span v-if="stats.number_of_failed_messages !== 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </h5>
 
             <!--Deleted Message Group-->
             <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('deleted-message-groups'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages/deleted-message-groups' }">Deleted Message Groups </RouterLink>
+              <RouterLink :to="routeLinks.failedMessage.deletedMessagesGroup.link">Deleted Message Groups </RouterLink>
               <span v-if="stats.number_of_archived_messages !== 0" title="There's varying numbers of deleted message groups depending on group type" class="badge badge-important">!</span>
             </h5>
 
             <!--All Deleted Messages-->
             <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('all-deleted-messages') || subIsActiveSubPath('/deleted-messages/group/'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages/all-deleted-messages' }">All Deleted Messages </RouterLink>
+              <RouterLink :to="routeLinks.failedMessage.allDeletedMessages.link">All Deleted Messages </RouterLink>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
 
             <!--All Pending Retries -->
             <h5 v-if="!licenseStatus.isExpired && showPendingRetry" :class="{ active: subIsActive('pending-retries'), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="{ path: '/failed-messages/pending-retries' }">Pending Retries </RouterLink>
+              <RouterLink :to="routeLinks.failedMessage.pendingRetries.link">Pending Retries </RouterLink>
               <span v-if="stats.number_of_pending_retries !== 0" class="badge badge-important">{{ stats.number_of_pending_retries }}</span>
             </h5>
           </div>

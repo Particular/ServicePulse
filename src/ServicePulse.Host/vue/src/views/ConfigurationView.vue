@@ -7,6 +7,7 @@ import { useRedirects } from "@/composables/serviceRedirects";
 import ExclamationMark from "../components/ExclamationMark.vue";
 import convertToWarningLevel from "@/components/configuration/convertToWarningLevel";
 import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
+import routeLinks from "@/router/routeLinks";
 
 const redirectCount = ref(0);
 
@@ -33,17 +34,17 @@ onMounted(async () => {
       <div class="col-sm-12">
         <div class="nav tabs">
           <h5 :class="{ active: subIsActive('configuration'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <RouterLink :to="{ name: 'license' }">License</RouterLink>
+            <RouterLink :to="routeLinks.configuration.license.link">License</RouterLink>
             <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
           </h5>
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('health-check-notifications'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <RouterLink :to="{ name: 'health-check-notifications' }">Health Check Notifications</RouterLink>
+            <RouterLink :to="routeLinks.configuration.healthCheckNotifications.link">Health Check Notifications</RouterLink>
           </h5>
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('retry-redirects'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <RouterLink :to="{ name: 'retry-redirects' }">Retry Redirects ({{ redirectCount }})</RouterLink>
+            <RouterLink :to="routeLinks.configuration.retryRedirects.link">Retry Redirects ({{ redirectCount }})</RouterLink>
           </h5>
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('connections') }" class="nav-item">
-            <RouterLink :to="{ name: 'connections' }">
+            <RouterLink :to="routeLinks.configuration.connections.link">
               Connections
               <template v-if="connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled())">
                 <span><i class="fa fa-exclamation-triangle"></i></span>
@@ -51,7 +52,7 @@ onMounted(async () => {
             </RouterLink>
           </h5>
           <h5 v-if="!licenseStatus.isExpired" :class="{ active: subIsActive('endpoint-connection'), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
-            <RouterLink :to="{ name: 'endpoint-connection' }">Endpoint Connection</RouterLink>
+            <RouterLink :to="routeLinks.configuration.endpointConnection.link">Endpoint Connection</RouterLink>
           </h5>
         </div>
       </div>
