@@ -5,6 +5,7 @@ import messageTypes from "@/components/monitoring/messageTypes";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 import { useFailedMessageStore } from "./FailedMessageStore";
+import { formatGraphDuration } from "../components/monitoring/formatGraph";
 
 const cookies = useCookies().cookies;
 
@@ -35,11 +36,13 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       },
       allPeriods,
       endpointList: [],
+      endpointName: "",
       endpointDetails: {},
       messageTypes: {},
       messageTypesAvailable: false,
       messageTypesUpdatedSet: [],
       disconnectedEndpointCount: 0,
+      negativeCriticalTimeIsPresent: false,
       filterString: "",
       historyPeriod: getHistoryPeriod(),
       sortBy: "name",
@@ -113,7 +116,9 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
           })
         );
 
-        if (this.endpointDetails?.id === data.value.id && this.endpointDetails?.messageTypes?.length > 0 && this.endpointDetails?.messageTypes?.length !== data.value.messageTypes.length) {
+        data.value.isStale = data.value.instances.every((instance) => instance.isStale);
+
+        if (this.endpointName === endpointName && this.endpointDetails.messageTypes.length > 0 && this.endpointDetails.messageTypes.length !== data.value.messageTypes.length) {
           mergeIn(this.endpointDetails, data.value, ["messageTypes"]);
 
           this.messageTypesAvailable = true;
@@ -122,8 +127,18 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
           mergeIn(this.endpointDetails, data.value);
         }
 
+        this.endpointName = endpointName;
+
         this.endpointDetails.instances.sort((a, b) => a.id - b.id);
         this.messageTypes = new messageTypes(this.endpointDetails.messageTypes);
+        this.negativeCriticalTimeIsPresent = this.endpointDetails.instances.some((instance) => parseInt(formatGraphDuration(instance.metrics.criticalTime).value) < 0);
+      }
+
+      //get error count by endpoint name
+      await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
+      if (!failedMessageStore.isFailedMessagesEmpty) {
+        this.endpointDetails.serviceControlId = failedMessageStore.serviceControlId;
+        this.endpointDetails.errorCount = failedMessageStore.errorCount;
       }
     },
     updateMessageTypes() {
@@ -131,7 +146,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
         this.messageTypesAvailable = false;
         this.endpointDetails.messageTypes = this.messageTypesUpdatedSet;
         this.messageTypesUpdatedSet = [];
-        this.messageTypes = new messageTypes(this.messageTypes.messageTypes);
+        this.messageTypes = new messageTypes(this.endpointDetails.messageTypes);
       }
     },
     async getDisconnectedEndpointCount() {

@@ -3,13 +3,11 @@
 import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
-import { formatGraphDuration } from "./formatGraph";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { storeToRefs } from "pinia";
 //stores
 import { useMonitoringStore } from "../../stores/MonitoringStore";
-import { useFailedMessageStore } from "../../stores/FailedMessageStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -29,17 +27,14 @@ let refreshInterval = undefined;
 //let disconnectedCount = 0;
 
 const monitoringStore = useMonitoringStore();
-const failedMessageStore = useFailedMessageStore();
 
 if (route.query.tab !== "" && route.query.tab != null) {
   showInstancesBreakdown = route.query.tab === "instancesBreakdown";
 }
 
-const isLoading = ref(true);
 const loadedSuccessfully = ref(false);
 
 const endpoint = ref({});
-const negativeCriticalTimeIsPresent = ref(false);
 endpoint.value.messageTypesPage = !showInstancesBreakdown ? Number(route.query.pageNo ?? "1") : 1;
 endpoint.value.messageTypesTotalItems = 0;
 endpoint.value.messageTypesItemsPerPage = 10;
@@ -47,7 +42,7 @@ endpoint.value.messageTypesAvailable = ref(false);
 endpoint.value.messageTypesUpdatedSet = [];
 endpoint.value.instances = [];
 
-const { historyPeriod } = storeToRefs(monitoringStore);
+const { historyPeriod, negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
 
 watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
@@ -71,25 +66,8 @@ async function getEndpointDetails() {
       const endpointDetails = responseData;
       endpointDetails.isScMonitoringDisconnected = false;
       Object.assign(endpoint.value, endpointDetails);
-      await updateUI();
+      loadedSuccessfully.value = !endpoint.value.error;
     }
-  }
-}
-
-async function updateUI() {
-  isLoading.value = false;
-
-  if (!endpoint.value.error) {
-    negativeCriticalTimeIsPresent.value = endpoint.value.instances.some((instance) => parseInt(formatGraphDuration(instance.metrics.criticalTime).value) < 0);
-    endpoint.value.isStale = endpoint.value.instances.every((instance) => instance.isStale);
-
-    loadedSuccessfully.value = true;
-  }
-  //get error count by endpoint name
-  await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
-  if (!failedMessageStore.isFailedMessagesEmpty) {
-    endpoint.value.serviceControlId = failedMessageStore.serviceControlId;
-    endpoint.value.errorCount = failedMessageStore.errorCount;
   }
 }
 
