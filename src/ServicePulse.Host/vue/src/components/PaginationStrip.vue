@@ -115,7 +115,7 @@ const pages = computed(() => {
   <div v-if="showPagination" class="col align-self-center">
     <ul class="pagination justify-content-center">
       <li v-for="page of pages" class="page-item" :key="page.key">
-        <a class="page-link" @click="pageNumber = page.page" :class="page.class">{{ page.label }}</a>
+        <button :disabled="!!page.class?.disabled" :aria-label="page.label" class="page-link" @click="pageNumber = page.page" :class="page.class">{{ page.label }}</button>
       </li>
     </ul>
   </div>
