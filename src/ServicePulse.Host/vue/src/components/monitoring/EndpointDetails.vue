@@ -23,7 +23,6 @@ const route = useRoute();
 const router = useRouter();
 const endpointName = route.params.endpointName;
 let refreshInterval = undefined;
-//let disconnectedCount = 0;
 
 const monitoringStore = useMonitoringStore();
 
