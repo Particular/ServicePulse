@@ -11,7 +11,7 @@ import LicenseExpired from "@/components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
 import EndpointList from "@/components/monitoring/EndpointList.vue";
 import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
-import MonitoringFilter from "@/components/monitoring/MonitoringFilter.vue";
+import MonitoringHead from "@/components/monitoring/MonitoringHead.vue";
 
 const route = useRoute();
 const monitoringStore = useMonitoringStore();
@@ -57,14 +57,7 @@ onMounted(async () => {
       <template v-if="connectionState.connected && monitoringStore.isInitialized">
         <MonitoringNoData v-if="noData"></MonitoringNoData>
         <template v-if="!noData">
-          <div class="row monitoring-head">
-            <div class="col-sm-4 no-side-padding list-section">
-              <h1>Endpoints overview</h1>
-            </div>
-            <div class="col-sm-8 no-side-padding toolbar-menus">
-              <MonitoringFilter />
-            </div>
-          </div>
+          <MonitoringHead />
           <EndpointList />
         </template>
       </template>
@@ -73,66 +66,6 @@ onMounted(async () => {
 </template>
 
 <style>
-.form-control-static {
-  min-height: 34px;
-  padding-top: 7px;
-  padding-bottom: 7px;
-  margin-bottom: 0;
-}
-
-.nav {
-  padding-left: 0;
-  margin-bottom: 0;
-  list-style: none;
-}
-
-.nav > li {
-  position: relative;
-  display: block;
-}
-
-.nav-pills > li {
-  float: left;
-}
-
-.monitoring-head h1 {
-  margin-bottom: 10px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.monitoring-head .msg-group-menu {
-  margin: 6px 0px 0 6px;
-  padding-right: 0;
-}
-
-.monitoring-head .endpoint-status {
-  top: 4px;
-}
-
-.monitoring-head .endpoint-status a {
-  top: 0;
-}
-
-.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
-  top: -5px;
-}
-
-.monitoring-head i.fa.fa-envelope {
-  font-size: 26px;
-  position: relative;
-  top: -4px;
-  left: 1px;
-}
-
-.monitoring-head .endpoint-status .badge {
-  position: relative;
-  top: 4px;
-  left: -12px;
-  font-size: 10px;
-}
-
 /* particular.css START - TODO extract only the classes required */
 a {
   color: #00a3c4;
@@ -1680,28 +1613,6 @@ hr.top-separator {
   margin-bottom: 0;
 }
 
-.large-graphs {
-  width: 100%;
-  background-color: white;
-  margin-bottom: 34px;
-  padding: 30px 0;
-}
-
-.graph * .graph-data-line {
-  stroke-width: 1.75px;
-  fill: none;
-}
-
-.graph * .graph-data-fill {
-  opacity: 0.8;
-}
-
-.graph * .graph-avg-line {
-  stroke-width: 1px;
-  opacity: 0.5;
-  stroke-dasharray: 5, 5;
-}
-
 /* .graph .queue-length .graph-data-line {
   stroke: #ea7e00;
 }
@@ -1809,27 +1720,9 @@ hr.top-separator {
   color: #ff0004;
 }
 
-.monitoring-view .graph-area {
-  width: 33%;
-  box-sizing: border-box;
-}
-
 .graph-message-retries-throughputs,
 .graph-critical-processing-times {
   margin-left: 0.5%;
-}
-
-.endpoint-row .graphicon {
-  top: 14px;
-  left: 120px;
-  position: absolute;
-  width: 94px;
-  padding-left: 36px;
-  display: block;
-}
-
-.endpoint-row .graphicon.graphicon-row-hover {
-  background-color: #edf6f7 !important;
 }
 
 .monitoring-no-data {
@@ -1867,18 +1760,6 @@ hr.top-separator {
 
 .monitoring-no-data .btn {
   font-size: 16px;
-}
-
-.monitoring-head h1 {
-  margin-bottom: 10px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.monitoring-head .msg-group-menu {
-  margin: 6px 0px 0 6px;
-  padding-right: 0;
 }
 
 .btn-default {
@@ -1951,12 +1832,6 @@ p.col-sort-active {
   max-width: 600px;
 }
 
-.endpoint-status {
-  display: inline-block;
-  top: 1px;
-  margin-left: 7px;
-  padding-left: 0;
-}
 .floatleft {
   float: left;
   width: auto;
@@ -1965,117 +1840,9 @@ p.col-sort-active {
   float: right;
   width: auto;
 }
-.endpoint-status i.fa-envelope,
-.endpoint-status i.fa-exclamation-triangle {
-  font-size: 20px;
-  color: #ce4844;
-}
-
-h1 .endpoint-status i.fa-envelope,
-.endpoint-status i.fa-exclamation-triangle {
-  font-size: 24px;
-}
-
-.endpoint-status i.fa-envelope {
-  color: #777f7f;
-}
-
-.endpoint-status i.fa-envelope:hover {
-  color: #23527c;
-}
 
 .overview-row-badge {
   margin-left: 5px;
-}
-
-.endpoint-status .badge {
-  position: relative;
-  top: 8px;
-  font-size: 10px;
-  margin-right: 0;
-  left: -10px;
-}
-
-.endpoint-status i.fa-envelope,
-.endpoint-name i.fa-exclamation-triangle {
-  font-size: 20px;
-  margin-left: 6px;
-}
-
-.endpoint-status a {
-  position: relative;
-  top: -4px;
-  padding-left: 5px;
-}
-
-.endpoint-status a:hover {
-  text-decoration: none;
-}
-
-.endpoint-status a[ng-if="endpoint.errorCount"] {
-  top: -11px;
-}
-
-.monitoring-head .endpoint-status {
-  top: 4px;
-}
-
-.monitoring-head .endpoint-status a {
-  top: 0;
-}
-
-.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
-  top: -5px;
-}
-
-.monitoring-head i.fa.fa-envelope {
-  font-size: 26px;
-  position: relative;
-  top: -4px;
-  left: 1px;
-}
-
-.monitoring-head .endpoint-status .badge {
-  position: relative;
-  top: 4px;
-  left: -12px;
-  font-size: 10px;
-}
-
-.endpoint-status .badge {
-  position: relative;
-  top: 2px;
-  left: -9px;
-  font-size: 10px;
-}
-
-.metric-digest {
-  padding: 1em;
-}
-
-.metric-digest-header {
-  text-transform: uppercase;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.current,
-.average {
-  margin-top: 4px;
-  margin-bottom: 8px;
-  padding-left: 4px;
-  line-height: 20px;
-  height: 19px;
-}
-
-.current {
-  border-left: 2.5px solid;
-}
-
-.average {
-  border-left: 1px dashed;
-  padding-left: 6px;
 }
 
 .message-type-label {
@@ -2188,26 +1955,6 @@ i.fa-exclamation-triangle {
   margin-top: -3px;
 }
 
-.monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details,
-.monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
-  width: 32px;
-  height: 30px;
-}
-
-.endpoint-status .pa-endpoint-lost.endpoint-details,
-.endpoint-status .pa-monitoring-lost.endpoint-details,
-.endpoint-status .pa-endpoint-lost.endpoints-overview,
-.endpoint-status .pa-monitoring-lost.endpoints-overview {
-  width: 26px;
-  height: 26px;
-  left: 6px;
-  position: relative;
-}
-
-.endpoint-message-types .endpoint-status {
-  margin-top: -8px;
-}
-
 .row.message-type-properties {
   position: relative;
   top: -5px;
@@ -2224,23 +1971,6 @@ i.fa.pa-monitoring-lost.endpoints-overview {
 
 i.fa.pa-endpoint-lost.endpoints-overview {
   top: 8px;
-}
-
-.endpoint-name {
-  margin-top: 15px;
-}
-
-.endpoint-name > div > div > a {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #00729c;
-  border-bottom: 1px dotted lightgrey;
-}
-
-.endpoint-name > div > div > a:first-child:hover {
-  border-bottom: 1px solid #00729c;
-  text-decoration: none !important;
 }
 
 .toolbar-menus.endpoint-details {
@@ -2378,10 +2108,6 @@ div.alert.alert-warning strong {
 .alert.alert-warning {
   font-size: 16px;
   margin: 20px 0 0;
-}
-
-.lead.endpoint-details-link.righ-side-ellipsis {
-  color: #00729c !important;
 }
 
 .pre-wrap {

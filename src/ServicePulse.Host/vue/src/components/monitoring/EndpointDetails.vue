@@ -596,7 +596,7 @@ onMounted(async () => {
                         <div class="row">
                           <div class="col-xs-4 col-xl-8 endpoint-name">
                             <div class="row box-header">
-                              <div class="col-lg-max-9 no-side-padding lead righ-side-ellipsis floatleft" v-tooltip :title="instance.name">
+                              <div class="no-side-padding lead righ-side-ellipsis" v-tooltip :title="instance.name">
                                 {{ instance.name }}
                               </div>
                               <div class="col-lg-4 no-side-padding endpoint-status">
@@ -842,10 +842,55 @@ onMounted(async () => {
 <style scoped>
 @import "../list.css";
 @import "./monitoring.css";
+@import "./endpoint.css";
 
 .monitoring-head {
   display: flex;
   justify-content: space-between;
+}
+
+.monitoring-head h1 {
+  margin-bottom: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.monitoring-head .msg-group-menu {
+  margin: 6px 0px 0 6px;
+  padding-right: 0;
+}
+
+.monitoring-head .endpoint-status {
+  top: 4px;
+}
+
+.monitoring-head .endpoint-status a {
+  top: 0;
+}
+
+.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
+  top: -5px;
+}
+
+.monitoring-head i.fa.fa-envelope {
+  font-size: 26px;
+  position: relative;
+  top: -4px;
+  left: 1px;
+}
+
+.monitoring-head .endpoint-status .badge {
+  position: relative;
+  top: 4px;
+  left: -12px;
+  font-size: 10px;
+}
+
+.monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details,
+.monitoring-head .endpoint-status .pa-monitoring-lost.endpoint-details {
+  width: 32px;
+  height: 30px;
 }
 
 .endpoint-title {
@@ -932,5 +977,56 @@ onMounted(async () => {
   display: inline-block;
   text-transform: uppercase;
   text-wrap: nowrap;
+}
+
+.large-graphs {
+  width: 100%;
+  background-color: white;
+  margin-bottom: 34px;
+  padding: 30px 0;
+}
+
+.endpoint-row {
+  padding: 0.5em 1.5em;
+  margin: 0;
+}
+
+.box {
+  box-shadow: none;
+  margin: 0;
+}
+
+.metric-digest {
+  padding: 1em;
+}
+
+.metric-digest-header {
+  text-transform: uppercase;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.current,
+.average {
+  margin-top: 4px;
+  margin-bottom: 8px;
+  padding-left: 4px;
+  line-height: 20px;
+  height: 19px;
+}
+
+.current {
+  border-left: 2.5px solid;
+}
+
+.average {
+  border-left: 1px dashed;
+  padding-left: 6px;
+}
+
+.graph-area {
+  width: 33%;
+  box-sizing: border-box;
 }
 </style>

@@ -742,14 +742,3 @@ div.alert.alert-warning strong {
     width: 14%;
   }
 }
-.endpoint-row {
-  display: flex;
-  height: 61px;
-  position: relative;
-  padding: 2px 0 4px;
-  border-top: 1px solid #eee;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #eee;
-  border-left: 1px solid #fff;
-  background-color: #fff;
-}
