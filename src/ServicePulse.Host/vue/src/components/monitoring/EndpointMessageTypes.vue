@@ -10,23 +10,21 @@ import PaginationStrip from "@/components/PaginationStrip.vue";
 
 const endpoint = defineModel({});
 const monitoringStore = useMonitoringStore();
-const { messageTypes } = storeToRefs(monitoringStore);
+const { messageTypes, messageTypesAvailable } = storeToRefs(monitoringStore);
 
 const paginatedMessageTypes = computed(() => {
   const pageStart = (endpoint.value.messageTypesPage - 1) * endpoint.value.messageTypesItemsPerPage;
   const pageEnd = endpoint.value.messageTypesPage * endpoint.value.messageTypesItemsPerPage;
   return messageTypes.value.data.slice(pageStart, pageEnd);
 });
-
-const emit = defineEmits(["refreshMessageTypes"]);
 </script>
 
 <template>
   <div class="row">
     <div class="col-xs-12 no-side-padding">
-      <div v-if="endpoint.messageTypesAvailable" class="alert alert-warning endpoint-data-changed">
+      <div v-if="messageTypesAvailable" class="alert alert-warning endpoint-data-changed">
         <i class="fa fa-warning"></i> <strong>Warning:</strong> The number of available message types has changed.
-        <a @click="emit('refreshMessageTypes')" class="alink">Click here to reload the view</a>
+        <a @click="monitoringStore.updateMessageTypes()" class="alink">Click here to reload the view</a>
       </div>
 
       <!-- Breakdown by message type-->

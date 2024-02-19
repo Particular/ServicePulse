@@ -36,6 +36,8 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       endpointList: [],
       endpointDetails: {},
       messageTypes: {},
+      messageTypesAvailable: false,
+      messageTypesUpdatedSet: [],
       disconnectedEndpointCount: 0,
       filterString: "",
       historyPeriod: getHistoryPeriod(),
@@ -88,8 +90,26 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
     async getEndpointDetails(endpointName, historyPeriod) {
       const { data, refresh } = getMemoisedEndpointDetails(endpointName, historyPeriod);
       await refresh();
-      this.endpointDetails = data.value;
-      this.messageTypes = new messageTypes(data.value.messageTypes);
+
+      if (this.endpointDetails?.id === data.value.id && this.endpointDetails?.messageTypes?.length > 0 && this.endpointDetails?.messageTypes?.length !== data.value.messageTypes.length) {
+        mergeIn(this.endpointDetails, data.value, ["messageTypes"]);
+
+        this.messageTypesAvailable = true;
+        this.messageTypesUpdatedSet = data.value.messageTypes;
+      } else {
+        mergeIn(this.endpointDetails, data.value);
+      }
+
+      this.endpointDetails.instances.sort((a, b) => a.id - b.id);
+      this.messageTypes = new messageTypes(this.endpointDetails.messageTypes);
+    },
+    updateMessageTypes() {
+      if (this.messageTypesAvailable) {
+        this.messageTypesAvailable = false;
+        this.endpointDetails.messageTypes = this.messageTypesUpdatedSet;
+        this.messageTypesUpdatedSet = [];
+        this.messageTypes = new messageTypes(this.messageTypes.messageTypes);
+      }
     },
     async getDisconnectedEndpointCount() {
       this.disconnectedEndpointCount = await MonitoringEndpoints.useGetDisconnectedEndpointCount();
@@ -145,4 +165,14 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
 function getPropertyValue(obj, path) {
   const properties = path.split(".");
   return properties.reduce((accumulator, current) => accumulator[current], obj);
+}
+
+function mergeIn(destination, source, propertiesToSkip) {
+  for (const propName in source) {
+    if (Object.prototype.hasOwnProperty.call(source, propName)) {
+      if (!propertiesToSkip || !propertiesToSkip.includes(propName)) {
+        destination[propName] = source[propName];
+      }
+    }
+  }
 }

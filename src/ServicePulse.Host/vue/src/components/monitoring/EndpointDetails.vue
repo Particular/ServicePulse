@@ -85,17 +85,6 @@ async function updateUI() {
     }
     endpoint.value.isScMonitoringDisconnected = true;
   } else {
-    if (endpoint.value.messageTypesTotalItems > 0 && endpoint.value.messageTypesTotalItems !== endpoint.value.messageTypes.length) {
-      mergeIn(endpoint.value, endpoint.value, ["messageTypes"]);
-
-      endpoint.value.messageTypesAvailable.value = true;
-      endpoint.value.messageTypesUpdatedSet = endpoint.value.messageTypes;
-    } else {
-      mergeIn(endpoint.value, endpoint.value);
-    }
-
-    endpoint.value.instances.sort((a, b) => a.id - b.id);
-
     endpoint.value.isScMonitoringDisconnected = false;
 
     await Promise.all(
@@ -122,16 +111,6 @@ async function updateUI() {
   }
 }
 
-function mergeIn(destination, source, propertiesToSkip) {
-  for (const propName in source) {
-    if (Object.prototype.hasOwnProperty.call(source, propName)) {
-      if (!propertiesToSkip || !propertiesToSkip.includes(propName)) {
-        destination[propName] = source[propName];
-      }
-    }
-  }
-}
-
 // async function getDisconnectedCount() {
 //   let checkInterval;
 //   try {
@@ -151,18 +130,10 @@ function mergeIn(destination, source, propertiesToSkip) {
 //   //    });
 //   //};
 // }
-function refreshMessageTypes() {
-  if (endpoint.value.messageTypesAvailable) {
-    endpoint.value.messageTypesAvailable.value = false;
-    endpoint.value.messageTypes = endpoint.value.messageTypesUpdatedSet;
-    endpoint.value.messageTypesUpdatedSet = null;
-  }
-}
 
 function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
   if ($event.target.localName !== "button") {
     showInstancesBreakdown = isVisible;
-    refreshMessageTypes();
     const breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
     router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: breakdownPageNo } });
   }
@@ -275,7 +246,7 @@ onMounted(() => {
 
           <!--ShowMessagetypes breakdown-->
           <section v-if="!showInstancesBreakdown" class="endpoint-message-types">
-            <EndpointMessageTypes v-model="endpoint" @refresh-message-types="refreshMessageTypes" />
+            <EndpointMessageTypes v-model="endpoint" />
           </section>
         </div>
       </template>
