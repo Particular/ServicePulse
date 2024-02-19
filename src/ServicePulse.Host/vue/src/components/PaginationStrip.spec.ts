@@ -1,6 +1,5 @@
-import { expect, it, render, screen } from "@component-test-utils";
+import { expect, it, render, screen, describe } from "@component-test-utils";
 import paginationStrip from "./PaginationStrip.vue";
-import { describe } from "node:test";
 
 describe("Previous page behavior", () => {
   it("Disables navigating to previous page while on first page", async () => {
@@ -36,7 +35,11 @@ describe("Next page behavior", () => {
 });
 
 describe("Page buffer behavior", () => {
+  it.todo("Example 1");
+  it.todo("Example 2");
 });
 
 describe("Total count and items per page behavior", () => {
+  it.todo("Example 1");
+  it.todo("Example 2");
 });
