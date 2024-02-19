@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore, acceptHMRUpdate } from "pinia";
 import { computed, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import MessageTypes from "@/components/monitoring/messageTypes";
@@ -258,3 +258,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     updateFilterString,
   };
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useMonitoringStore, import.meta.hot));
+}
