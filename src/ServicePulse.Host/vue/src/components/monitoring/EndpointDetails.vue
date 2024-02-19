@@ -22,20 +22,16 @@ import EndpointMessageTypes from "./EndpointMessageTypes.vue";
 const route = useRoute();
 const router = useRouter();
 const endpointName = route.params.endpointName;
-let showInstancesBreakdown = false;
 let refreshInterval = undefined;
 //let disconnectedCount = 0;
 
 const monitoringStore = useMonitoringStore();
 
-if (route.query.tab !== "" && route.query.tab != null) {
-  showInstancesBreakdown = route.query.tab === "instancesBreakdown";
-}
+const showInstancesBreakdown = ref(route?.query?.tab === "instancesBreakdown");
 
 const loadedSuccessfully = ref(false);
 
 const endpoint = ref({});
-endpoint.value.messageTypesPage = !showInstancesBreakdown ? Number(route.query.pageNo ?? "1") : 1;
 
 const { historyPeriod, negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
 
@@ -44,10 +40,10 @@ watch(historyPeriod, (newValue) => {
 });
 
 watch(
-  () => endpoint.value.messageTypesPage,
+  () => showInstancesBreakdown.value,
   () => {
-    const breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
-    router.replace({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: endpoint.value.messageTypesPage } });
+    const breakdownTabName = showInstancesBreakdown.value ? "instancesBreakdown" : "messageTypeBreakdown";
+    router.replace({ query: { ...route.query, tab: breakdownTabName } });
   }
 );
 
@@ -85,15 +81,6 @@ async function getEndpointDetails() {
 //   //    });
 //   //};
 // }
-
-function navigateToEndpointUrl($event, isVisible, breakdownPageNo) {
-  if ($event.target.localName !== "button") {
-    showInstancesBreakdown = isVisible;
-    const breakdownTabName = showInstancesBreakdown ? "instancesBreakdown" : "messageTypeBreakdown";
-    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: historyPeriod.value.pVal, tab: breakdownTabName, pageNo: breakdownPageNo } });
-  }
-}
-
 //let startService = function () {
 //    notifier.subscribe($rootScope, (event, data) => {
 //        if (data.isMonitoringConnected && isConnected == false) {
@@ -187,10 +174,10 @@ onMounted(() => {
           <!--tabs-->
           <div class="tabs">
             <h5 :class="{ active: !showInstancesBreakdown }">
-              <a @click="navigateToEndpointUrl($event, false, endpoint.messageTypesPage)" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
+              <a @click="showInstancesBreakdown = false" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
             </h5>
             <h5 :class="{ active: showInstancesBreakdown }">
-              <a @click="navigateToEndpointUrl($event, true, 1)" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
+              <a @click="showInstancesBreakdown = true" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
             </h5>
           </div>
 
@@ -201,7 +188,7 @@ onMounted(() => {
 
           <!--ShowMessagetypes breakdown-->
           <section v-if="!showInstancesBreakdown" class="endpoint-message-types">
-            <EndpointMessageTypes v-model="endpoint" :per-page="10" />
+            <EndpointMessageTypes />
           </section>
         </div>
       </template>

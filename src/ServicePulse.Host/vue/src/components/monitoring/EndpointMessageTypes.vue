@@ -1,5 +1,6 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { storeToRefs } from "pinia";
@@ -8,20 +9,27 @@ import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
 
-const endpoint = defineModel({});
 const monitoringStore = useMonitoringStore();
-const { messageTypes, messageTypesAvailable } = storeToRefs(monitoringStore);
+const { endpointDetails: endpoint, messageTypes, messageTypesAvailable } = storeToRefs(monitoringStore);
+
+const route = useRoute();
+const router = useRouter();
+const messageTypesPage = ref(Number(route?.query?.pageNo ?? "1"));
+
+watch(messageTypesPage, () => {
+  router.replace({ query: { ...route.query, pageNo: messageTypesPage.value } });
+});
 
 const props = defineProps({
   perPage: {
     type: Number,
-    required: true,
+    default: 10,
   },
 });
 
 const paginatedMessageTypes = computed(() => {
-  const pageStart = (endpoint.value.messageTypesPage - 1) * props.perPage;
-  const pageEnd = endpoint.value.messageTypesPage * props.perPage;
+  const pageStart = (messageTypesPage.value - 1) * props.perPage;
+  const pageEnd = messageTypesPage.value * props.perPage;
   return messageTypes.value.data.slice(pageStart, pageEnd);
 });
 </script>
@@ -164,7 +172,7 @@ const paginatedMessageTypes = computed(() => {
           </div>
         </div>
       </div>
-      <PaginationStrip v-model="endpoint.messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes.data.length" />
+      <PaginationStrip v-model="messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes.data.length" />
     </div>
   </div>
 </template>
