@@ -183,7 +183,7 @@ onMounted(() => {
 
           <!--showInstancesBreakdown-->
           <section v-if="showInstancesBreakdown" class="endpoint-instances">
-            <EndpointInstances v-model="endpoint" />
+            <EndpointInstances />
           </section>
 
           <!--ShowMessagetypes breakdown-->

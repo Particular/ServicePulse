@@ -11,8 +11,7 @@ import SmallGraph from "./SmallGraph.vue";
 const isRemovingEndpointEnabled = ref(false);
 const router = useRouter();
 const monitoringStore = useMonitoringStore();
-const { historyPeriod } = storeToRefs(monitoringStore);
-const endpoint = defineModel({});
+const { endpointDetails: endpoint, historyPeriod } = storeToRefs(monitoringStore);
 
 async function removeEndpoint(endpointName, instance) {
   try {
