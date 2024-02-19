@@ -81,7 +81,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   }
 
   async function updateFilterString(filter = "") {
-    filterString.value = filter ?? route.query["filter"] ?? "";
+    filterString.value = filter ?? this.route.query.filter ?? "";
 
     if (filterString.value === "") {
       // eslint-disable-next-line
@@ -255,5 +255,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     getDisconnectedEndpointCount,
     getEndpointDetails,
     updateEndpointList,
+    updateFilterString,
   };
 });
