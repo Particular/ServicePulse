@@ -65,8 +65,8 @@ const paginatedMessageTypes = computed(() => {
         <div class="col-xs-12 no-side-padding">
           <div
             class="row box endpoint-row"
-            v-for="(messageType, id) in paginatedMessageTypes"
-            :key="id"
+            v-for="messageType in paginatedMessageTypes"
+            :key="messageType.id"
             ng-repeat="messageType in endpoint.messageTypes | orderBy: 'typeName' | limitTo: endpoint.messageTypesItemsPerPage : (endpoint.messageTypesPage-1) * endpoint.messageTypesItemsPerPage"
           >
             <div class="col-xs-12 no-side-padding">

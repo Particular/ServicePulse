@@ -79,25 +79,7 @@ async function getEndpointDetails() {
 async function updateUI() {
   isLoading.value = false;
 
-  if (endpoint.value.error) {
-    if (endpoint.value && endpoint.value.instances) {
-      endpoint.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
-    }
-    endpoint.value.isScMonitoringDisconnected = true;
-  } else {
-    endpoint.value.isScMonitoringDisconnected = false;
-
-    await Promise.all(
-      endpoint.value.instances.map(async (instance) => {
-        //get error count by instance id
-        await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
-        if (!failedMessageStore.isFailedMessagesEmpty) {
-          instance.serviceControlId = failedMessageStore.serviceControlId;
-          instance.errorCount = failedMessageStore.errorCount;
-          instance.isScMonitoringDisconnected = false;
-        }
-      })
-    );
+  if (!endpoint.value.error) {
     negativeCriticalTimeIsPresent.value = endpoint.value.instances.some((instance) => parseInt(formatGraphDuration(instance.metrics.criticalTime).value) < 0);
     endpoint.value.isStale = endpoint.value.instances.every((instance) => instance.isStale);
 

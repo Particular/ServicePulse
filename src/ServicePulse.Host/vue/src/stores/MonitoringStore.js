@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import messageTypes from "@/components/monitoring/messageTypes";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
+import { useFailedMessageStore } from "./FailedMessageStore";
 
 const cookies = useCookies().cookies;
 
@@ -88,20 +89,42 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(this.getEndpointList, this.grouping.selectedGrouping);
     },
     async getEndpointDetails(endpointName, historyPeriod) {
+      const failedMessageStore = useFailedMessageStore();
       const { data, refresh } = getMemoisedEndpointDetails(endpointName, historyPeriod);
       await refresh();
 
-      if (this.endpointDetails?.id === data.value.id && this.endpointDetails?.messageTypes?.length > 0 && this.endpointDetails?.messageTypes?.length !== data.value.messageTypes.length) {
-        mergeIn(this.endpointDetails, data.value, ["messageTypes"]);
-
-        this.messageTypesAvailable = true;
-        this.messageTypesUpdatedSet = data.value.messageTypes;
+      if (data.value.error) {
+        if (this.endpointDetails && this.endpointDetails.instances) {
+          this.endpointDetails.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
+        }
+        this.endpointDetails.isScMonitoringDisconnected = true;
       } else {
-        mergeIn(this.endpointDetails, data.value);
-      }
+        this.endpointDetails.isScMonitoringDisconnected = false;
 
-      this.endpointDetails.instances.sort((a, b) => a.id - b.id);
-      this.messageTypes = new messageTypes(this.endpointDetails.messageTypes);
+        await Promise.all(
+          data.value.instances.map(async (instance) => {
+            //get error count by instance id
+            await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
+            if (!failedMessageStore.isFailedMessagesEmpty) {
+              instance.serviceControlId = failedMessageStore.serviceControlId;
+              instance.errorCount = failedMessageStore.errorCount;
+              instance.isScMonitoringDisconnected = false;
+            }
+          })
+        );
+
+        if (this.endpointDetails?.id === data.value.id && this.endpointDetails?.messageTypes?.length > 0 && this.endpointDetails?.messageTypes?.length !== data.value.messageTypes.length) {
+          mergeIn(this.endpointDetails, data.value, ["messageTypes"]);
+
+          this.messageTypesAvailable = true;
+          this.messageTypesUpdatedSet = data.value.messageTypes;
+        } else {
+          mergeIn(this.endpointDetails, data.value);
+        }
+
+        this.endpointDetails.instances.sort((a, b) => a.id - b.id);
+        this.messageTypes = new messageTypes(this.endpointDetails.messageTypes);
+      }
     },
     updateMessageTypes() {
       if (this.messageTypesAvailable) {
