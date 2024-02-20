@@ -4,14 +4,18 @@ import { useRouter, RouterLink } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
 import { useDeleteFromMonitoring, useOptionsFromMonitoring } from "@/composables/serviceServiceControlUrls";
 import { storeToRefs } from "pinia";
-import { useMonitoringStore } from "@/stores/MonitoringStore";
+import { useMonitoringEndpointDetailsStore } from "@/stores/MonitoringEndpointDetailsStore";
 import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
+import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 
 const isRemovingEndpointEnabled = ref(false);
 const router = useRouter();
-const monitoringStore = useMonitoringStore();
-const { endpointDetails: endpoint, historyPeriod } = storeToRefs(monitoringStore);
+const monitoringStore = useMonitoringEndpointDetailsStore();
+const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
+
+const { endpointDetails: endpoint } = storeToRefs(monitoringStore);
+const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
 async function removeEndpoint(endpointName, instance) {
   try {
@@ -81,7 +85,7 @@ onMounted(async () => {
         </div>
       </div>
 
-      <NoData v-if="endpoint.instances.length == 0" title="No messages" message="No messages processed in this period of time"></NoData>
+      <NoData v-if="!endpoint?.instances?.length" title="No messages" message="No messages processed in this period of time"></NoData>
 
       <div class="row endpoint-instances">
         <div class="col-xs-12 no-side-padding">

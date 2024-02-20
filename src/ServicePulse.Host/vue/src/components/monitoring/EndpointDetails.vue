@@ -7,7 +7,7 @@ import { licenseStatus } from "../../composables/serviceLicense";
 import { useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { storeToRefs } from "pinia";
 //stores
-import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { useMonitoringEndpointDetailsStore } from "../../stores/MonitoringEndpointDetailsStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -25,7 +25,7 @@ const router = useRouter();
 const endpointName = route.params.endpointName;
 let refreshInterval = undefined;
 
-const monitoringStore = useMonitoringStore();
+const monitoringStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
 const showInstancesBreakdown = ref(route?.query?.tab === "instancesBreakdown");
