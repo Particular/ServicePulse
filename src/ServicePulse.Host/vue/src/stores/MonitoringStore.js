@@ -1,8 +1,11 @@
 import { defineStore } from "pinia";
 import { useCookies } from "vue3-cookies";
 import { useRoute, useRouter } from "vue-router";
+import messageTypes from "@/components/monitoring/messageTypes";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
+import { useFailedMessageStore } from "./FailedMessageStore";
+import { formatGraphDuration } from "../components/monitoring/formatGraph";
 
 const cookies = useCookies().cookies;
 
@@ -33,8 +36,13 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       },
       allPeriods,
       endpointList: [],
+      endpointName: "",
       endpointDetails: {},
+      messageTypes: {},
+      messageTypesAvailable: false,
+      messageTypesUpdatedSet: [],
       disconnectedEndpointCount: 0,
+      negativeCriticalTimeIsPresent: false,
       filterString: "",
       historyPeriod: getHistoryPeriod(),
       sortBy: "name",
@@ -84,9 +92,62 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
       this.grouping.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(this.getEndpointList, this.grouping.selectedGrouping);
     },
     async getEndpointDetails(endpointName, historyPeriod) {
+      const failedMessageStore = useFailedMessageStore();
       const { data, refresh } = getMemoisedEndpointDetails(endpointName, historyPeriod);
       await refresh();
-      this.endpointDetails = data.value;
+
+      if (data.value.error) {
+        if (this.endpointDetails && this.endpointDetails.instances) {
+          this.endpointDetails.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
+        }
+        this.endpointDetails.isScMonitoringDisconnected = true;
+      } else {
+        this.endpointDetails.isScMonitoringDisconnected = false;
+
+        await Promise.all(
+          data.value.instances.map(async (instance) => {
+            //get error count by instance id
+            await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
+            if (!failedMessageStore.isFailedMessagesEmpty) {
+              instance.serviceControlId = failedMessageStore.serviceControlId;
+              instance.errorCount = failedMessageStore.errorCount;
+              instance.isScMonitoringDisconnected = false;
+            }
+          })
+        );
+
+        data.value.isStale = data.value.instances.every((instance) => instance.isStale);
+
+        if (this.endpointName === endpointName && this.endpointDetails.messageTypes.length > 0 && this.endpointDetails.messageTypes.length !== data.value.messageTypes.length) {
+          mergeIn(this.endpointDetails, data.value, ["messageTypes"]);
+
+          this.messageTypesAvailable = true;
+          this.messageTypesUpdatedSet = data.value.messageTypes;
+        } else {
+          mergeIn(this.endpointDetails, data.value);
+        }
+
+        this.endpointName = endpointName;
+
+        this.endpointDetails.instances.sort((a, b) => a.id - b.id);
+        this.messageTypes = new messageTypes(this.endpointDetails.messageTypes);
+        this.negativeCriticalTimeIsPresent = this.endpointDetails.instances.some((instance) => parseInt(formatGraphDuration(instance.metrics.criticalTime).value) < 0);
+      }
+
+      //get error count by endpoint name
+      await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
+      if (!failedMessageStore.isFailedMessagesEmpty) {
+        this.endpointDetails.serviceControlId = failedMessageStore.serviceControlId;
+        this.endpointDetails.errorCount = failedMessageStore.errorCount;
+      }
+    },
+    updateMessageTypes() {
+      if (this.messageTypesAvailable) {
+        this.messageTypesAvailable = false;
+        this.endpointDetails.messageTypes = this.messageTypesUpdatedSet;
+        this.messageTypesUpdatedSet = [];
+        this.messageTypes = new messageTypes(this.endpointDetails.messageTypes);
+      }
     },
     async getDisconnectedEndpointCount() {
       this.disconnectedEndpointCount = await MonitoringEndpoints.useGetDisconnectedEndpointCount();
@@ -142,4 +203,14 @@ export const useMonitoringStore = defineStore("MonitoringStore", {
 function getPropertyValue(obj, path) {
   const properties = path.split(".");
   return properties.reduce((accumulator, current) => accumulator[current], obj);
+}
+
+function mergeIn(destination, source, propertiesToSkip) {
+  for (const propName in source) {
+    if (Object.prototype.hasOwnProperty.call(source, propName)) {
+      if (!propertiesToSkip || !propertiesToSkip.includes(propName)) {
+        destination[propName] = source[propName];
+      }
+    }
+  }
 }
