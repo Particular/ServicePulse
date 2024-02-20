@@ -71,7 +71,7 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
     }
 
     //get error count by endpoint name
-    await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName);
+    await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName.value);
     if (!failedMessageStore.isFailedMessagesEmpty) {
       endpointDetails.value.serviceControlId = failedMessageStore.serviceControlId;
       endpointDetails.value.errorCount = failedMessageStore.errorCount;
