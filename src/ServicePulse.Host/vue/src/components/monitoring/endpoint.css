@@ -99,6 +99,7 @@ h1 .endpoint-status i.fa-envelope,
   border-bottom: 1px solid #eee;
   border-left: 1px solid #fff;
   background-color: #fff;
+  margin: 0px;
 }
 
 .endpoint-name,

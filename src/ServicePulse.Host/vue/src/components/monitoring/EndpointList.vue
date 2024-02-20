@@ -32,28 +32,28 @@ function updateSorting(isAscending) {
         <SortableColumn :sort-by="sortByColumn.ENDPOINTNAME" v-model="activeColumn" @isAscending="updateSorting">Endpoint name</SortableColumn>
       </div>
       <div class="table-col">
-        <SortableColumn :sort-by="sortByColumn.QUEUELENGTH" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint."
+        <SortableColumn :sort-by="isGrouped ? '' : sortByColumn.QUEUELENGTH" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Queue length: The number of messages waiting to be processed in the input queue(s) of the endpoint."
           >Queue Length<template #unit>(MSGS)</template>
         </SortableColumn>
       </div>
       <div class="table-col">
-        <SortableColumn :sort-by="sortByColumn.THROUGHPUT" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."
+        <SortableColumn :sort-by="isGrouped ? '' : sortByColumn.THROUGHPUT" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Throughput: The number of messages per second successfully processed by a receiving endpoint."
           >Throughput<template #unit>(msgs/s)</template>
         </SortableColumn>
       </div>
       <div class="table-col">
-        <SortableColumn :sort-by="sortByColumn.SCHEDULEDRETRIES" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."
+        <SortableColumn :sort-by="isGrouped ? '' : sortByColumn.SCHEDULEDRETRIES" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Scheduled retries: The number of messages per second scheduled for retries (immediate or delayed)."
           >Scheduled retries <template #unit>(msgs/s)</template>
         </SortableColumn>
       </div>
       <div class="table-col">
-        <SortableColumn :sort-by="sortByColumn.PROCESSINGTIME" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."
+        <SortableColumn :sort-by="isGrouped ? '' : sortByColumn.PROCESSINGTIME" v-model="activeColumn" @isAscending="updateSorting" v-tooltip title="Processing time: The time taken for a receiving endpoint to successfully process a message."
           >Processing Time <template #unit>(t)</template>
         </SortableColumn>
       </div>
       <div class="table-col">
         <SortableColumn
-          :sort-by="sortByColumn.CRITICALTIME"
+          :sort-by="isGrouped ? '' : sortByColumn.CRITICALTIME"
           v-model="activeColumn"
           @isAscending="updateSorting"
           v-tooltip
@@ -84,4 +84,10 @@ function updateSorting(isAscending) {
 
 <style scoped>
 @import "./endpoint.css";
+
+.endpoint-group-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 20px 0 10px 5px;
+}
 </style>
