@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, RouterLink } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
+import { smallGraphsMinimumYAxis } from "./formatGraph";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import SmallGraph from "./SmallGraph.vue";
 
@@ -13,19 +14,7 @@ const endpoint = computed(() => settings.endpoint);
 const monitoringStore = useMonitoringStore();
 const router = useRouter();
 const supportsEndpointCount = ref();
-const smallGraphsMinimumYAxis = {
-  queueLength: 10,
-  throughput: 10,
-  retries: 10,
-  processingTime: 10,
-  criticalTime: 10,
-};
 
-function navigateToMessageGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push({ name: "message-groups", params: { groupId: groupId } });
-  }
-}
 function navigateToEndpointDetails($event, endpointName) {
   if ($event.target.localName !== "button") {
     const selectedPeriod = ref(monitoringStore.historyPeriod);
@@ -79,10 +68,10 @@ function formatGraphDecimal(input, deci) {
           <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
         </span>
         <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-          <a v-if="endpoint.errorCount" class="warning cursorpointer" @click="navigateToMessageGroup($event, endpoint.serviceControlId)">
+          <RouterLink :to="{ name: 'message-groups', params: { groupId: endpoint.serviceControlId } }" v-if="endpoint.errorCount" class="warning cursorpointer">
             <i class="fa fa-envelope"></i>
             <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount }}</span>
-          </a>
+          </RouterLink>
         </span>
       </div>
     </div>
