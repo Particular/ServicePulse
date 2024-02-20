@@ -190,4 +190,12 @@ const paginatedMessageTypes = computed(() => {
   box-shadow: none;
   margin: 0;
 }
+
+.message-type-part {
+  margin-right: 24px;
+  color: #8c8c8c;
+  font-weight: normal;
+  font-size: 12px;
+  display: inline-block;
+}
 </style>

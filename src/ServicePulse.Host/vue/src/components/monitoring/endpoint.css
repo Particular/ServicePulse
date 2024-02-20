@@ -291,7 +291,7 @@ h1 .endpoint-status i.fa-envelope,
 
 .sparkline-value {
   top: 16px;
-  left: -12px;
+  left: -0.6em;
   position: relative;
   font-weight: normal;
   float: right;
@@ -378,6 +378,6 @@ h1 .endpoint-status i.fa-envelope,
   font-size: 16px;
 }
 
-span.table-header-unit {
+:deep(span.table-header-unit) {
   color: #777f7f;
 }

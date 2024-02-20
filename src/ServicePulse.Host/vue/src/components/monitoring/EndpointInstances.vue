@@ -184,6 +184,7 @@ onMounted(async () => {
 
 <style scoped>
 @import "@/components/list.css";
+@import "./endpoint.css";
 
 .endpoint-row {
   padding: 0.5em 1.5em;
