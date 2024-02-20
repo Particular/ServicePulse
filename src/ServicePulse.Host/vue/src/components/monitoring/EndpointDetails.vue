@@ -7,7 +7,7 @@ import { licenseStatus } from "../../composables/serviceLicense";
 import { useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { storeToRefs } from "pinia";
 //stores
-import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { useMonitoringEndpointDetailsStore } from "../../stores/MonitoringEndpointDetailsStore";
 // Components
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../../components/ServiceControlNotAvailable.vue";
@@ -18,13 +18,15 @@ import EndpointWorkload from "./EndpointWorkload.vue";
 import EndpointTimings from "./EndpointTimings.vue";
 import EndpointInstances from "./EndpointInstances.vue";
 import EndpointMessageTypes from "./EndpointMessageTypes.vue";
+import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 
 const route = useRoute();
 const router = useRouter();
 const endpointName = route.params.endpointName;
 let refreshInterval = undefined;
 
-const monitoringStore = useMonitoringStore();
+const monitoringStore = useMonitoringEndpointDetailsStore();
+const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
 const showInstancesBreakdown = ref(route?.query?.tab === "instancesBreakdown");
 
@@ -32,7 +34,8 @@ const loadedSuccessfully = ref(false);
 
 const endpoint = ref({});
 
-const { historyPeriod, negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
+const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
+const { negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
 
 watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);

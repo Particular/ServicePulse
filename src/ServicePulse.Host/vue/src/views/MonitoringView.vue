@@ -12,14 +12,16 @@ import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.
 import EndpointList from "@/components/monitoring/EndpointList.vue";
 import MonitoringNoData from "@/components/monitoring/MonitoringNoData.vue";
 import MonitoringHead from "@/components/monitoring/MonitoringHead.vue";
+import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 
 const route = useRoute();
 const monitoringStore = useMonitoringStore();
-const { historyPeriod } = storeToRefs(monitoringStore);
+const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
+const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const noData = computed(() => monitoringStore.endpointListIsEmpty);
 let refreshInterval = undefined;
 
-watch(route, () => monitoringStore.setHistoryPeriod(route.params.historyPeriod), { deep: true, immediate: true, flush: "pre" });
+watch(route, () => monitoringHistoryPeriodStore.setHistoryPeriod(route.params.historyPeriod), { deep: true, immediate: true, flush: "pre" });
 
 //const redirectCount = ref(0);
 
@@ -45,7 +47,7 @@ onUnmounted(() => {
 
 onMounted(async () => {
   await monitoringStore.initializeStore();
-  await changeRefreshInterval(monitoringStore.historyPeriod.refreshIntervalVal);
+  await changeRefreshInterval(monitoringHistoryPeriodStore.historyPeriod.refreshIntervalVal);
 });
 </script>
 
