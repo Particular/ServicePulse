@@ -36,7 +36,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
 
   //STORE ACTIONS
   async function initializeStore() {
-    //await setHistoryPeriod();
     await updateFilterString();
     await updateEndpointList();
     isInitialized.value = true;
