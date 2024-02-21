@@ -9,7 +9,8 @@
     var scUrl = window.connectionsManager.getServiceControlUrl();
     console.debug('Retrieving license from ServiceControl at: ', scUrl);
 
-    $http.get(scUrl + '/license').then(function (response) {
+    var licenseUrl = scUrl + 'license';
+    $http.get(licenseUrl).then(function (response) {
 
         serviceControlApp.constant('license', response.data);
 
