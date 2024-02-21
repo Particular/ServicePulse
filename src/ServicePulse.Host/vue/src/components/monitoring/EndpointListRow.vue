@@ -3,21 +3,22 @@ import { ref, computed } from "vue";
 import { useRouter, RouterLink } from "vue-router";
 import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
 import { smallGraphsMinimumYAxis } from "./formatGraph";
-import { useMonitoringStore } from "../../stores/MonitoringStore";
 import SmallGraph from "./SmallGraph.vue";
+import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
+import { storeToRefs } from "pinia";
 
 const settings = defineProps({
   endpoint: Object,
 });
 
 const endpoint = computed(() => settings.endpoint);
-const monitoringStore = useMonitoringStore();
+const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const router = useRouter();
 const supportsEndpointCount = ref();
+const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
 function navigateToEndpointDetails($event, endpointName) {
   if ($event.target.localName !== "button") {
-    const selectedPeriod = ref(monitoringStore.historyPeriod);
     router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
   }
 }

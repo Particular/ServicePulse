@@ -2,14 +2,14 @@
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
-import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { storeToRefs } from "pinia";
 
 import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
+import { useMonitoringEndpointDetailsStore } from "@/stores/MonitoringEndpointDetailsStore";
 
-const monitoringStore = useMonitoringStore();
+const monitoringStore = useMonitoringEndpointDetailsStore();
 const { endpointDetails: endpoint, messageTypes, messageTypesAvailable } = storeToRefs(monitoringStore);
 
 const route = useRoute();
@@ -30,7 +30,7 @@ const props = defineProps({
 const paginatedMessageTypes = computed(() => {
   const pageStart = (messageTypesPage.value - 1) * props.perPage;
   const pageEnd = messageTypesPage.value * props.perPage;
-  return messageTypes.value.data.slice(pageStart, pageEnd);
+  return messageTypes.value ? messageTypes.value.data.slice(pageStart, pageEnd) : [];
 });
 </script>
 
@@ -74,7 +74,7 @@ const paginatedMessageTypes = computed(() => {
         </div>
       </div>
 
-      <no-data v-if="endpoint.messageTypes.length == 0" message="No messages processed in this period of time."></no-data>
+      <no-data v-if="!endpoint?.messageTypes?.length" message="No messages processed in this period of time."></no-data>
 
       <div class="row">
         <div class="col-xs-12 no-side-padding">

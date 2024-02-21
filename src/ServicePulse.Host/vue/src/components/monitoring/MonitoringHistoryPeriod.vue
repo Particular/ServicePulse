@@ -1,13 +1,13 @@
 <script setup>
 import { storeToRefs } from "pinia";
-import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 
-const monitoringStore = useMonitoringStore();
-const allPeriods = monitoringStore.allPeriods;
-const { historyPeriod: selectedPeriod } = storeToRefs(monitoringStore);
+const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
+const allPeriods = monitoringHistoryPeriodStore.allPeriods;
+const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
 async function selectHistoryPeriod(period) {
-  await monitoringStore.setHistoryPeriod(period.pVal);
+  await monitoringHistoryPeriodStore.setHistoryPeriod(period.pVal);
 }
 </script>
 
