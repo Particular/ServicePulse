@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, type RouteLocationNormalizedLoaded } from "vue-router";
 import { useCookies } from "vue3-cookies";
 
 export const useMonitoringHistoryPeriodStore = defineStore("MonitoringHistoryPeriodStore", () => {
@@ -17,28 +17,24 @@ export const useMonitoringHistoryPeriodStore = defineStore("MonitoringHistoryPer
     { pVal: 60, text: "1h", refreshIntervalVal: 60 * 1000, refreshIntervalText: "Show data from the last hour. Refreshes every 1 minute" },
   ];
 
-  function getHistoryPeriod(route = null, requestedPeriod = null) {
-    const period = requestedPeriod ?? (route?.query?.historyPeriod || cookies.get("history_period"));
+  function getHistoryPeriod(route?: RouteLocationNormalizedLoaded, requestedPeriod?: string) {
+    const period = requestedPeriod ?? (route?.query?.historyPeriod?.toString() || cookies.get("history_period"));
 
     return allPeriods.value.find((index) => index.pVal === parseInt(period)) ?? periods[0];
   }
 
   const allPeriods = ref(periods);
 
-  const historyPeriod = ref(getHistoryPeriod());
+  const historyPeriod = ref(getHistoryPeriod(route));
 
   /**
-   * @param {String} period - The history period value
+   * @param {String} requestedPeriod - The history period value
    * @description Sets the history period based on, in order of importance, a passed parameter, the url query string, saved cookie, or default value
    */
-  async function setHistoryPeriod(requestedPeriod = null) {
-    const period = getHistoryPeriod(route, requestedPeriod);
-
-    if (period) {
-      historyPeriod.value = period;
-      cookies.set("history_period", historyPeriod.value.pVal);
-      await router.replace({ query: { ...route.query, historyPeriod: historyPeriod.value.pVal } });
-    }
+  async function setHistoryPeriod(requestedPeriod?: string) {
+    historyPeriod.value = getHistoryPeriod(route, requestedPeriod);
+    cookies.set("history_period", historyPeriod.value.pVal.toString());
+    await router.replace({ query: { ...route.query, historyPeriod: historyPeriod.value.pVal } });
   }
 
   return {

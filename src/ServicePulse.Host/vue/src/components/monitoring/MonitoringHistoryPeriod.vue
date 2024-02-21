@@ -1,6 +1,8 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
+import { useRoute } from "vue-router";
+import { watch } from "vue";
 
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const allPeriods = monitoringHistoryPeriodStore.allPeriods;
@@ -9,6 +11,9 @@ const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodSto
 async function selectHistoryPeriod(period) {
   await monitoringHistoryPeriodStore.setHistoryPeriod(period.pVal);
 }
+
+const route = useRoute();
+watch(route.params.historyPeriod, () => monitoringHistoryPeriodStore.setHistoryPeriod(route.params.historyPeriod), { deep: true, immediate: true, flush: "pre" });
 </script>
 
 <template>
