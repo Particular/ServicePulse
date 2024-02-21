@@ -2756,12 +2756,6 @@ button[ng-click="vm.toggleSort()"] div {
   background-image: url("../../a/img/sort-down.svg");
 }
 
-.endpoint-group-title {
-  font-size: 14px;
-  font-weight: bold;
-  margin: 20px 0 10px 15px;
-}
-
 .notifications .btn-sm {
   padding: 0px;
 }

@@ -5,14 +5,22 @@ import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter
 import { smallGraphsMinimumYAxis } from "./formatGraph";
 import SmallGraph from "./SmallGraph.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { storeToRefs } from "pinia";
 
 const settings = defineProps({
   endpoint: Object,
 });
 
-const endpoint = computed(() => settings.endpoint);
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
+const monitoringStore = useMonitoringStore();
+const isGrouped = computed(() => monitoringStore.endpointListIsGrouped);
+const endpoint = computed(() => {
+  return isGrouped.value ? settings.endpoint.endpoint : settings.endpoint;
+});
+const shortName = computed(() => {
+  return isGrouped.value ? settings.endpoint.shortName : "";
+});
 const router = useRouter();
 const supportsEndpointCount = ref();
 const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
@@ -54,7 +62,7 @@ function formatGraphDecimal(input, deci) {
     <div class="box-header">
       <div class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
         <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
-          {{ endpoint.name }}
+          {{ isGrouped ? shortName : endpoint.name }}
         </a>
         <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
       </div>
