@@ -83,4 +83,10 @@ function updateSorting(isAscending) {
 
 <style scoped>
 @import "./endpoint.css";
+
+.endpoint-group-title {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 20px 0 10px 15px;
+}
 </style>

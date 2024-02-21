@@ -180,16 +180,7 @@ const paginatedMessageTypes = computed(() => {
 <style scoped>
 @import "@/components/list.css";
 @import "./endpoint.css";
-
-.endpoint-row {
-  padding: 0.5em 1.5em;
-  margin: 0;
-}
-
-.box {
-  box-shadow: none;
-  margin: 0;
-}
+@import "./endpointSubTab.css";
 
 .message-type-part {
   margin-right: 24px;
@@ -197,5 +188,35 @@ const paginatedMessageTypes = computed(() => {
   font-weight: normal;
   font-size: 12px;
   display: inline-block;
+}
+
+.row.message-type-properties {
+  position: relative;
+  top: -5px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.endpoint-data-changed {
+  text-align: center;
+  margin: 26px 0 0;
+}
+
+.endpoint-data-changed a {
+  text-decoration: underline;
+}
+
+.endpoint-data-changed a:hover {
+  cursor: pointer;
+}
+
+.endpoint-data-changed.sticky {
+  position: fixed;
+  top: 50px;
+  width: 92%;
+  z-index: 999999;
+  box-shadow: 0 3px 20px rgba(0, 0, 0, 0.15);
+  transition-duration: 0.5s;
 }
 </style>

@@ -5,14 +5,12 @@
   padding-left: 0;
 }
 
-.endpoint-status i.fa-envelope,
-.endpoint-status i.fa-exclamation-triangle {
+.endpoint-status i.fa-envelope {
   font-size: 20px;
   color: #ce4844;
 }
 
-h1 .endpoint-status i.fa-envelope,
-.endpoint-status i.fa-exclamation-triangle {
+h1 .endpoint-status i.fa-envelope {
   font-size: 24px;
 }
 
@@ -32,8 +30,7 @@ h1 .endpoint-status i.fa-envelope,
   left: -10px;
 }
 
-.endpoint-status i.fa-envelope,
-.endpoint-name i.fa-exclamation-triangle {
+.endpoint-status i.fa-envelope {
   font-size: 20px;
   margin-left: 6px;
 }
@@ -378,6 +375,53 @@ h1 .endpoint-status i.fa-envelope,
   font-size: 16px;
 }
 
+.monitoring-no-data a.btn.btn-default.btn-secondary {
+  margin-left: 10px;
+}
+
 :deep(span.table-header-unit) {
   color: #777f7f;
+}
+
+.box-header {
+  padding-bottom: 3px;
+  padding-top: 2px;
+}
+
+.box-header ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.righ-side-ellipsis {
+  direction: rtl;
+  text-align: left;
+}
+
+@supports (-ms-ime-align: auto) {
+  .righ-side-ellipsis {
+    direction: ltr;
+  }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .righ-side-ellipsis {
+    direction: ltr;
+  }
+}
+
+i.fa.pa-endpoint-lost.endpoints-overview,
+i.fa.pa-monitoring-lost.endpoints-overview {
+  position: relative;
+  margin-right: 4px;
+}
+
+i.fa.pa-endpoint-lost.endpoints-overview {
+  top: 8px;
+}
+
+div[content="Unable to connect to instance"],
+div[content="Unable to connect to monitoring server"] {
+  z-index: 99999;
 }

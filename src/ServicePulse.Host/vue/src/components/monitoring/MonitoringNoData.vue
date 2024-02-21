@@ -25,3 +25,7 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "./endpoint.css";
+</style>

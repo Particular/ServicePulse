@@ -153,4 +153,8 @@ function formatGraphDecimal(input, deci) {
 .lead.endpoint-details-link.righ-side-ellipsis {
   color: #00729c;
 }
+
+.monitoring-lost-link i {
+  top: 7px;
+}
 </style>
