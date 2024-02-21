@@ -31,6 +31,19 @@ const configurationLinks = (root: string) => {
   };
 };
 
+const throughputReportLinks = (root: string) => {
+  function createLink(template: string) {
+    return { link: `${root}/${template}`, template: template };
+  }
+
+  return {
+    root: root,
+    endpoints: createLink(""),
+    setup: createLink("setup"),
+    report: createLink("report"),
+  };
+};
+
 const monitoringLinks = (root: string) => {
   return {
     root,
@@ -48,6 +61,7 @@ const routeLinks = {
   customChecks: `${baseUrl}a/#/custom-checks`,
   events: "/events",
   configuration: configurationLinks("/configuration"),
+  throughputReport: throughputReportLinks("/throughput-report"),
 };
 
 export default routeLinks;
