@@ -31,7 +31,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="dropdown" v-tooltip title="Endpoint grouping will take '.' in endpoint names to delimit segments. Grouping endpoints will disable list sorting.">
+  <div class="dropdown" v-tooltip title="Endpoint grouping will take '.' in endpoint names to delimit segments. Grouping endpoints will disable some list sorting.">
     <label class="control-label">Group by:</label>
     <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ grouping.selectedGrouping === 0 ? "no grouping" : "max. " + grouping.selectedGrouping + " segments" }}
