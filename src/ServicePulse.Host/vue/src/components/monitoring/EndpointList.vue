@@ -88,6 +88,6 @@ function updateSorting(isAscending) {
 .endpoint-group-title {
   font-size: 14px;
   font-weight: bold;
-  margin: 20px 0 10px 5px;
+  margin: 20px 0 10px 15px;
 }
 </style>

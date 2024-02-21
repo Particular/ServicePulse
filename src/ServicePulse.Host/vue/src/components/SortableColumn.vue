@@ -80,6 +80,16 @@ function toggleSort() {
   display: inline-block;
 }
 
+.sort-up,
+.sort-down {
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 8px;
+  height: 14px;
+  padding: 0;
+  margin-left: 10px;
+}
+
 .sort-up {
   background-image: url("../assets/sort-up.svg");
 }

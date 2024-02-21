@@ -68,4 +68,8 @@ onMounted(() => {
 .btn.dropdown-toggle::after {
   vertical-align: middle;
 }
+
+ul.dropdown-menu li a span {
+  color: #aaa;
+}
 </style>
