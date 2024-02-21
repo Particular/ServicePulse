@@ -1,8 +1,14 @@
 .endpoint-status {
-  display: inline-block;
+  display: flex;
   top: 1px;
   margin-left: 7px;
   padding-left: 0;
+  align-items: baseline;
+}
+
+.endpoint-status .warning {
+  display: block;
+  position: relative;
 }
 
 .endpoint-status i.fa-envelope {
