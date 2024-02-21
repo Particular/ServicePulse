@@ -16,12 +16,6 @@ import { licenseStatus } from "@/composables/serviceLicense";
       <template v-if="connectionState.connected">
         <div class="row">
           <div class="col-12">
-            <h1>Dashboard</h1>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-12">
             <h6>System status</h6>
             <div class="row box system-status">
               <div class="col-12">
