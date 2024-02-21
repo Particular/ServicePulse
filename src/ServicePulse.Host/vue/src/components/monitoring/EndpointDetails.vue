@@ -114,7 +114,7 @@ onMounted(() => {
                 <i class="fa pa-monitoring-lost endpoint-details" v-tooltip :title="`Unable to connect to monitoring server`"></i>
               </span>
               <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-                <RouterLink :to="{ name: 'message-groups', params: { groupId: 1 } }" v-if="endpoint.errorCount" class="warning cursorpointer">
+                <RouterLink :to="{ name: 'message-groups', params: { groupId: endpoint.serviceControlId } }" v-if="endpoint.errorCount" class="warning cursorpointer">
                   <i class="fa fa-envelope"></i>
                 </RouterLink>
                 <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
