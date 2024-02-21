@@ -66,7 +66,7 @@ Because of that, we have [extra recommendations](/docs/frontend/frontend-ide.md)
 Open a command window and navigate to `ServicePulse\src\ServicePulse.Host` path (NOTE: ensure [cmd](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cmd) is being used, not [PowerShell](https://learn.microsoft.com/en-us/powershell/)). Run `nginx` that is a reverse proxy for AngularJS and Vue.js applications:
 
 ```cmd
-docker run -it --rm -p 1331:1331 -v %cd%/nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
+docker run -it --rm -p 1331:1331 -v ./nginx.conf:/etc/nginx/nginx.conf:ro --name service-pulse-dev nginx
 ```
 
 #### Step 2 - run AngularJS development server 
