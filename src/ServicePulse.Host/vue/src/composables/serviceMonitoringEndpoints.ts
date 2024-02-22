@@ -1,31 +1,29 @@
 import { ref } from "vue";
 import { useFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
-import { monitoringConnectionState } from "../composables/serviceServiceControl";
-import { useGetExceptionGroups } from "../composables/serviceMessageGroup";
+import { monitoringConnectionState } from "./serviceServiceControl";
+import { useGetExceptionGroups } from "./serviceMessageGroup";
+import type { Endpoint, EndpointValues, EndpointMetrics, EndpointValuesWithTime, GroupedEndpoint, EndpointGroup } from "@/resources/Endpoint";
 
 /**
  * @returns the max number of segments in a array of endpoint object names
  */
-export function useFindEndpointSegments(endpoints) {
-  if (endpoints !== undefined) {
-    return endpoints.reduce(function (acc, cur) {
-      return Math.max(acc, cur.name.split(".").length - 1);
-    }, 0);
-  }
-  return 0;
+export function useFindEndpointSegments(endpoints: Endpoint[]) {
+  return endpoints.reduce(function (acc, cur) {
+    return Math.max(acc, cur.name.split(".").length - 1);
+  }, 0);
 }
 
 /**
- * @param {Number} historyPeriod - The history period value.  The default is (1)
+ * @param historyPeriod - The history period value.  The default is (1)
  * @returns A array of monitoring endpoint objects
  */
 export async function useGetAllMonitoredEndpoints(historyPeriod = 1) {
-  const endpoints = ref([]);
+  let endpoints: Endpoint[] = [];
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
     try {
       const response = await useFetchFromMonitoring(`${`monitored-endpoints`}?history=${historyPeriod}`);
-      const data = await response.json();
-      endpoints.value = data;
+      const data = response && (await response.json());
+      endpoints = data ?? [];
       await addEndpointsFromScSubscription(endpoints);
     } catch (error) {
       console.error(error);
@@ -33,51 +31,46 @@ export async function useGetAllMonitoredEndpoints(historyPeriod = 1) {
   } else {
     await addEndpointsFromScSubscription(endpoints);
   }
-  return endpoints.value;
+  return endpoints;
 }
 
 /**
- * @param {String} filterString - The text entered by the user when filtering monitoring endpoints by name
+ * @param filterString - The text entered by the user when filtering monitoring endpoints by name
  * @returns A filtered array of monitoring endpoint objects
  */
-export function useFilterAllMonitoredEndpointsByName(endpoints, filterString) {
-  if (filterString === "") {
-    return endpoints.value;
+export function useFilterAllMonitoredEndpointsByName(endpoints: Endpoint[], filterString: string) {
+  if (!filterString) {
+    return endpoints;
   }
-  const filteredEndpoints = endpoints.filter((endpoint) => endpoint.name.includes(filterString));
-  return filteredEndpoints;
+  return endpoints.filter((endpoint) => endpoint.name.includes(filterString));
 }
 
 /**
- * @param {Array} endpoints - An array of endpoint objects from ServiceControl
- * @param {Number} numberOfSegments - The number of segments to group the array of endpoints by
- * @returns {Array} - An array of grouped endpoint objects
+ * @param endpoints - An array of endpoint objects from ServiceControl
+ * @param numberOfSegments - The number of segments to group the array of endpoints by
+ * @returns An array of grouped endpoint objects
  */
-export function useGroupEndpoints(endpoints, numberOfSegments) {
-  const groups = new Map();
-  if (endpoints === undefined) return;
-  endpoints.forEach(function (element) {
+export function useGroupEndpoints(endpoints: Endpoint[], numberOfSegments: number): EndpointGroup[] {
+  const groups = new Map<string, { group: string; endpoints: GroupedEndpoint[] }>();
+  for (const element of endpoints) {
     const grouping = parseEndpoint(element, numberOfSegments);
 
-    let resultGroup = groups.get(grouping.groupName);
-    if (!resultGroup) {
-      resultGroup = {
-        group: grouping.groupName,
-        endpoints: [],
-      };
-      groups.set(grouping.groupName, resultGroup);
-    }
+    const resultGroup = groups.get(grouping.groupName) ?? {
+      group: grouping.groupName,
+      endpoints: [],
+    };
     resultGroup.endpoints.push(grouping);
-  });
+    groups.set(grouping.groupName, resultGroup);
+  }
   return [...groups.values()];
 }
 
 /**
- * @param {string}  - the endpoint name whose details is needed
- * @param {Number} - The history period value.  The default is (1)
- * @returns {object} - The details of the endpoint
+ * @param endpointName - the endpoint name whose details is needed
+ * @param The history period value.  The default is (1)
+ * @returns The details of the endpoint
  */
-export function useGetEndpointDetails(endpointName, historyPeriod = 1) {
+export function useGetEndpointDetails(endpointName: string, historyPeriod = 1) {
   const data = ref({});
   return {
     data,
@@ -85,7 +78,7 @@ export function useGetEndpointDetails(endpointName, historyPeriod = 1) {
       if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
         try {
           const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
-          const result = await response.json();
+          const result = response && (await response.json());
           data.value = result;
         } catch (error) {
           console.error(error);
@@ -96,20 +89,22 @@ export function useGetEndpointDetails(endpointName, historyPeriod = 1) {
 }
 
 /**
- * @returns {Number} - The count of disconnected endpoint
+ * @returns The count of disconnected endpoint
  */
 export async function useGetDisconnectedEndpointCount() {
   let disconnectedCount = 0;
   try {
     const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-    disconnectedCount = response.data;
+    //TODO test
+    return (response && ((await response.json()) as number)) ?? 0;
   } catch (error) {
     console.error(error);
   }
 
   return disconnectedCount;
 }
-async function addEndpointsFromScSubscription(endpoints) {
+
+async function addEndpointsFromScSubscription(endpoints: Endpoint[]) {
   const exceptionGroups = await useGetExceptionGroups("Endpoint Name");
 
   //Squash and add to existing monitored endpoints
@@ -120,31 +115,35 @@ async function addEndpointsFromScSubscription(endpoints) {
       if (failedMessageEndpoint.operation_status === "ArchiveCompleted") {
         return;
       }
-      const index = endpoints.value.findIndex(function (item) {
+      const index = endpoints.findIndex(function (item) {
         return item.name === failedMessageEndpoint.title;
       });
       if (index >= 0) {
-        endpoints.value[index].serviceControlId = failedMessageEndpoint.id;
-        endpoints.value[index].errorCount = failedMessageEndpoint.count;
+        endpoints[index].serviceControlId = failedMessageEndpoint.id;
+        endpoints[index].errorCount = failedMessageEndpoint.count;
       } else {
-        const defaultMetricData = {
+        const defaultMetricData: EndpointValues = {
           points: [],
           average: 0,
         };
-        const metricsToAdd = {
+        const defaultTimeMetricData: EndpointValuesWithTime = {
+          ...defaultMetricData,
+          timeAxisValues: [],
+        };
+        const metricsToAdd: EndpointMetrics = {
           queueLength: defaultMetricData,
           throughput: defaultMetricData,
           retries: defaultMetricData,
-          processingTime: defaultMetricData,
-          criticalTime: defaultMetricData,
+          processingTime: defaultTimeMetricData,
+          criticalTime: defaultTimeMetricData,
         };
-        endpoints.value.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true, metrics: metricsToAdd });
+        endpoints.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true, metrics: metricsToAdd });
       }
     });
   }
 }
 
-function parseEndpoint(endpoint, maxGroupSegments) {
+function parseEndpoint(endpoint: Endpoint, maxGroupSegments: number) {
   if (maxGroupSegments === 0) {
     return {
       groupName: "Ungrouped",
@@ -164,6 +163,6 @@ function parseEndpoint(endpoint, maxGroupSegments) {
   return {
     groupName: groupSegments.join("."),
     shortName: endpointSegments.join("."),
-    endpoint: endpoint,
-  };
+    endpoint,
+  } as GroupedEndpoint;
 }
