@@ -35,7 +35,7 @@ describe("Previous page behavior", () => {
     await dsl.clickPrevious();
 
     dsl.assert.previousIsDisabled();
-    dsl.assert.activePageIs("1");
+    dsl.assert.activePageIs("Page 1");
   });
 
   example("Enables navigating to 'Previous' page while not first rendered on the first page", async () => {
@@ -50,7 +50,7 @@ describe("Previous page behavior", () => {
 
     await dsl.clickNext();
 
-    dsl.assert.activePageIs("2");
+    dsl.assert.activePageIs("Page 2");
     dsl.assert.previousIsEnabled();
   });
 });
@@ -69,7 +69,7 @@ describe("Next page behavior", () => {
     await dsl.clickNext();
 
     dsl.assert.nextIsDisabled();
-    dsl.assert.activePageIs("10");
+    dsl.assert.activePageIs("Page 10");
   });
 
   example("Enables navigating to 'Next' page when NOT first rendered on the last page", async () => {
@@ -85,12 +85,12 @@ describe("Next page behavior", () => {
 
     await dls.clickPrevious();
     dls.assert.previousIsEnabled();
-    dls.assert.activePageIs("9");
+    dls.assert.activePageIs("Page 9");
   });
 });
 
 describe("Feature: Jumping a number of pages forward or backward must be possible", () => {
-  describe("Rule: Buttons for skpping back or forward should be available only when enough pages ahead or back are available", () => {
+  describe("Rule: Buttons for jumping pages back or forward should be available only when enough pages ahead or back are available", () => {
     example("Example: Enough pages to jump forward and backward", async () => {
       const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
 
@@ -110,10 +110,10 @@ describe("Feature: Jumping a number of pages forward or backward must be possibl
 
       dsl.assert.jumpPagesBackIsPresent();
       dsl.assert.jumpPagesForwardIsPresent(false);
-      dsl.assert.activePageIs("50");
+      dsl.assert.activePageIs("Page 50");
     });
 
-    example("Example: No enough pages forward or backward", async () => {
+    example("Example: Not enough pages to jump forward or backward", async () => {
       const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy: 5 });
 
       dsl.assert.jumpPagesBackIsPresent(false);
@@ -131,7 +131,7 @@ describe("Feature: Jumping a number of pages forward or backward must be possibl
       dsl.assert.jumpPagesBackIsPresent();
       dsl.assert.jumpPagesForwardIsPresent();
 
-      dsl.assert.activePageIs("11");
+      dsl.assert.activePageIs("Page 11");
     });
 
     example("Example: Jump 10 pages back", async () => {
@@ -146,7 +146,7 @@ describe("Feature: Jumping a number of pages forward or backward must be possibl
       dsl.assert.jumpPagesBackIsPresent();
       dsl.assert.jumpPagesForwardIsPresent();
 
-      dsl.assert.activePageIs("40");
+      dsl.assert.activePageIs("Page 40");
     });
   });
 });
@@ -160,7 +160,7 @@ function rederPaginationStripWith({ records, itemsPerPage, selectedPage, allowTo
       pageBuffer: allowToJumpPagesBy,
     },
   });
-
+  
   let dslAPI: PaginationStripDSL = {
     assert: {
       previousIsDisabled: function () {
@@ -177,7 +177,7 @@ function rederPaginationStripWith({ records, itemsPerPage, selectedPage, allowTo
         expect(screen.queryByLabelText("Next Page")).not.toBeDisabled();
       },
       activePageIs: function (value) {
-        expect(screen.getByRole("button", { pressed: true })).toContainHTML(value);
+        expect(screen.getByRole("button", { pressed: true, name:value })).toBeInTheDocument();
       },
       jumpPagesBackIsPresent: function (truthy = true) {
         if (truthy) {
