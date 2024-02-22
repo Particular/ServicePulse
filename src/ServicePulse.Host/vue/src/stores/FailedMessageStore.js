@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useGetExceptionGroupsForEndpoint } from "../composables/serviceMessageGroup";
 
+//TODO: this store doesn't work correctly. It assumes only one endpoint, whereas for the endpoint list they call this in parallel (so the store will only reflect the failed messages for the last endpoint)
 export const useFailedMessageStore = defineStore("FailedMessageStore", {
   state: () => {
     return {

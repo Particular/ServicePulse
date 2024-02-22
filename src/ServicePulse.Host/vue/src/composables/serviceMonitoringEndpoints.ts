@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { monitoringConnectionState } from "./serviceServiceControl";
 import { useGetExceptionGroups } from "./serviceMessageGroup";
-import type { Endpoint, EndpointValues, EndpointMetrics, EndpointValuesWithTime, GroupedEndpoint, EndpointGroup } from "@/resources/Endpoint";
+import { type Endpoint, type EndpointValues, type EndpointMetrics, type EndpointValuesWithTime, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, emptyEndpointMetrics } from "@/resources/Endpoint";
 
 /**
  * @returns the max number of segments in a array of endpoint object names
@@ -71,14 +71,14 @@ export function useGroupEndpoints(endpoints: Endpoint[], numberOfSegments: numbe
  * @returns The details of the endpoint
  */
 export function useGetEndpointDetails(endpointName: string, historyPeriod = 1) {
-  const data = ref({});
+  const data = ref<EndpointDetails | null>(null);
   return {
     data,
     refresh: async () => {
       if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
         try {
           const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
-          const result = response && (await response.json());
+          const result: EndpointDetails = response && (await response.json());
           data.value = result;
         } catch (error) {
           console.error(error);
@@ -121,21 +121,7 @@ async function addEndpointsFromScSubscription(endpoints: Endpoint[]) {
         endpoints[index].serviceControlId = failedMessageEndpoint.id;
         endpoints[index].errorCount = failedMessageEndpoint.count;
       } else {
-        const defaultMetricData: EndpointValues = {
-          points: [],
-          average: 0,
-        };
-        const defaultTimeMetricData: EndpointValuesWithTime = {
-          ...defaultMetricData,
-          timeAxisValues: [],
-        };
-        const metricsToAdd: EndpointMetrics = {
-          queueLength: defaultMetricData,
-          throughput: defaultMetricData,
-          retries: defaultMetricData,
-          processingTime: defaultTimeMetricData,
-          criticalTime: defaultTimeMetricData,
-        };
+        const metricsToAdd: EndpointMetrics = emptyEndpointMetrics();
         endpoints.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true, metrics: metricsToAdd });
       }
     });

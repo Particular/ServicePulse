@@ -5,67 +5,68 @@ import * as MonitoringEndpoints from "@/composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
 import { useFailedMessageStore } from "./FailedMessageStore";
+import { type EndpointDetails, emptyEndpointMetrics, type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, type EndpointInstance } from "@/resources/Endpoint";
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const failedMessageStore = useFailedMessageStore();
 
-  function mergeIn(destination, source, propertiesToSkip) {
-    for (const propName in source) {
-      if (Object.prototype.hasOwnProperty.call(source, propName)) {
-        if (!propertiesToSkip || !propertiesToSkip.includes(propName)) {
-          destination[propName] = source[propName];
-        }
-      }
-    }
-  }
-
   const getMemoisedEndpointDetails = memoiseOne(MonitoringEndpoints.useGetEndpointDetails);
 
   const endpointName = ref("");
-  const endpointDetails = ref({});
+  const endpointDetails = ref<ExtendedEndpointDetails>({
+    instances: [],
+    metricDetails: { metrics: emptyEndpointMetrics() },
+    isScMonitoringDisconnected: false,
+    serviceControlId: "",
+    errorCount: 0,
+    isStale: false,
+    messageTypes: [],
+  });
   const messageTypes = ref({});
   const messageTypesAvailable = ref(false);
-  const messageTypesUpdatedSet = ref([]);
+  const messageTypesUpdatedSet = ref<MessageType[]>([]);
   const negativeCriticalTimeIsPresent = ref(false);
 
-  async function getEndpointDetails(name, historyPeriod) {
+  async function getEndpointDetails(name: string, historyPeriod: number) {
     const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriod);
     await refresh();
 
-    if (data.value.error) {
-      if (endpointDetails.value && endpointDetails.value.instances) {
-        endpointDetails.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
-      }
-      endpointDetails.value.isScMonitoringDisconnected = true;
-    } else {
+    if (data.value == null) return;
+
+    // if (data.value?.error ?? false) {
+    //   if (endpointDetails.value && endpointDetails.value.instances) {
+    //     endpointDetails.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
+    //   }
+    //   endpointDetails.value.isScMonitoringDisconnected = true;
+    // } else
+    {
       endpointDetails.value.isScMonitoringDisconnected = false;
 
-      await Promise.all(
-        data.value.instances.map(async (instance) => {
+      const instances = await Promise.all(
+        data.value.instances.map(async (instance): Promise<ExtendedEndpointInstance> => {
           //get error count by instance id
           await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
           if (!failedMessageStore.isFailedMessagesEmpty) {
-            instance.serviceControlId = failedMessageStore.serviceControlId;
-            instance.errorCount = failedMessageStore.errorCount;
-            instance.isScMonitoringDisconnected = false;
+            return { ...instance, serviceControlId: failedMessageStore.serviceControlId, errorCount: failedMessageStore.errorCount, isScMonitoringDisconnected: false };
           }
+          return { ...instance, serviceControlId: "", errorCount: 0, isScMonitoringDisconnected: false };
         })
       );
+      instances.sort((a, b) => a.id.localeCompare(b.id));
 
-      data.value.isStale = data.value.instances.every((instance) => instance.isStale);
+      endpointDetails.value.isStale = instances.every((instance) => instance.isStale);
 
       if (name === endpointName.value && endpointDetails.value.messageTypes.length > 0 && endpointDetails.value.messageTypes.length !== data.value.messageTypes.length) {
-        mergeIn(endpointDetails.value, data.value, ["messageTypes"]);
+        endpointDetails.value = { ...endpointDetails.value, ...(data.value as Omit<EndpointDetails, "messageTypes">), instances };
 
         messageTypesAvailable.value = true;
         messageTypesUpdatedSet.value = data.value.messageTypes;
       } else {
-        mergeIn(endpointDetails.value, data.value);
+        endpointDetails.value = { ...endpointDetails.value, ...data.value, instances };
       }
 
       endpointName.value = name;
 
-      endpointDetails.value.instances.sort((a, b) => a.id - b.id);
       messageTypes.value = new MessageTypes(endpointDetails.value.messageTypes);
       negativeCriticalTimeIsPresent.value = endpointDetails.value.instances.some((instance) => parseInt(formatGraphDuration(instance.metrics.criticalTime).value) < 0);
     }
@@ -81,7 +82,7 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
   function updateMessageTypes() {
     if (messageTypesAvailable.value) {
       messageTypesAvailable.value = false;
-      endpointDetails.value.messageTypes = messageTypesUpdatedSet;
+      endpointDetails.value.messageTypes = messageTypesUpdatedSet.value;
       messageTypesUpdatedSet.value = [];
       messageTypes.value = new MessageTypes(endpointDetails.value.messageTypes);
     }
@@ -102,3 +103,5 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useMonitoringEndpointDetailsStore, import.meta.hot));
 }
+
+export type MonitoringEndpointDetailsStore = ReturnType<typeof useMonitoringEndpointDetailsStore>;

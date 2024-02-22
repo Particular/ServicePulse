@@ -3,12 +3,19 @@ import { ref } from "vue";
 import { useRoute, useRouter, type RouteLocationNormalizedLoaded } from "vue-router";
 import { useCookies } from "vue3-cookies";
 
+export interface MonitoringHistoryPeriod {
+  pVal: number;
+  text: string;
+  refreshIntervalVal: number;
+  refreshIntervalText: string;
+}
+
 export const useMonitoringHistoryPeriodStore = defineStore("MonitoringHistoryPeriodStore", () => {
   const { cookies } = useCookies();
   const route = useRoute();
   const router = useRouter();
 
-  const periods = [
+  const periods: MonitoringHistoryPeriod[] = [
     { pVal: 1, text: "1m", refreshIntervalVal: 1 * 1000, refreshIntervalText: "Show data from the last minute. Refreshes every 1 second" },
     { pVal: 5, text: "5m", refreshIntervalVal: 5 * 1000, refreshIntervalText: "Show data from the last 5 minutes. Refreshes every 5 seconds" },
     { pVal: 10, text: "10m", refreshIntervalVal: 10 * 1000, refreshIntervalText: "Show data from the last 10 minutes. Refreshes every 10 seconds" },
@@ -23,9 +30,9 @@ export const useMonitoringHistoryPeriodStore = defineStore("MonitoringHistoryPer
     return allPeriods.value.find((index) => index.pVal === parseInt(period)) ?? periods[0];
   }
 
-  const allPeriods = ref(periods);
+  const allPeriods = ref<MonitoringHistoryPeriod[]>(periods);
 
-  const historyPeriod = ref(getHistoryPeriod(route));
+  const historyPeriod = ref<MonitoringHistoryPeriod>(getHistoryPeriod(route));
 
   /**
    * @param {String} requestedPeriod - The history period value
@@ -47,3 +54,5 @@ export const useMonitoringHistoryPeriodStore = defineStore("MonitoringHistoryPer
 if (import.meta.hot) {
   import.meta.hot.accept(acceptHMRUpdate(useMonitoringHistoryPeriodStore, import.meta.hot));
 }
+
+export type MonitoringHistoryPeriodStore = ReturnType<typeof useMonitoringHistoryPeriodStore>;
