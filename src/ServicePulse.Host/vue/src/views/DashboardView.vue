@@ -5,6 +5,6 @@ const pageNumber = ref(1);
 </script>
 
 <template>
-  <h1>Hola</h1>
-  <PaginationStrip v-model="pageNumber" :total-count="100" :items-per-page="1" :pageBuffer="0" />
+  <h1>{{ pageNumber }}</h1>
+  <PaginationStrip v-model="pageNumber" :total-count="500" :items-per-page="10" :pageBuffer="5" />
 </template>
