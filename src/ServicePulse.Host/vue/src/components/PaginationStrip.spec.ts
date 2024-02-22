@@ -1,6 +1,7 @@
 import { expect, it as example, render, screen, describe, userEvent } from "@component-test-utils";
 import paginationStrip from "./PaginationStrip.vue";
 
+//Defines a domain-specific language (DSL) for interacting with the system under test (sut)
 interface PaginationStripDSL {
   assert: PaginationStripDSLAssertions;
   clickPrevious(): Promise<void>;
@@ -10,6 +11,7 @@ interface PaginationStripDSL {
   clickJumpPagesBack(): Promise<void>;
 }
 
+//Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
 interface PaginationStripDSLAssertions {
   activePageIs(value: string): void;
   previousIsEnabled(): void;
