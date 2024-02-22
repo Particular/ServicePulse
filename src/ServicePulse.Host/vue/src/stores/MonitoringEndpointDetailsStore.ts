@@ -31,15 +31,10 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
     const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriod);
     await refresh();
 
-    if (data.value == null) return;
-
-    // if (data.value?.error ?? false) {
-    //   if (endpointDetails.value && endpointDetails.value.instances) {
-    //     endpointDetails.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
-    //   }
-    //   endpointDetails.value.isScMonitoringDisconnected = true;
-    // } else
-    {
+    if (data.value == null) {
+      endpointDetails.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
+      endpointDetails.value.isScMonitoringDisconnected = true;
+    } else {
       endpointDetails.value.isScMonitoringDisconnected = false;
 
       const instances = await Promise.all(

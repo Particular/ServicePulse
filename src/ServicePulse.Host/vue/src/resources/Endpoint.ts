@@ -73,6 +73,7 @@ export interface EndpointDetails {
 }
 
 export interface ExtendedEndpointDetails extends EndpointDetails {
+  instances: ExtendedEndpointInstance[];
   isScMonitoringDisconnected: boolean;
   serviceControlId: string;
   errorCount: number;
