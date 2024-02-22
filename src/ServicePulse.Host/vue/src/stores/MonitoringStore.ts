@@ -37,11 +37,11 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     isInitialized.value = true;
   }
 
-  async function updateFilterString(filter = "") {
-    filterString.value = filter || route.query.filter?.toString() || "";
+  async function updateFilterString(filter = null) {
+    filterString.value = filter ?? route.query.filter?.toString() ?? "";
 
     if (filterString.value === "") {
-      const withoutFilter = route.query as Omit<LocationQuery, "filter">;
+      const { filter: _, ...withoutFilter } = route.query;
       await router.replace({ query: withoutFilter }); // Update or add filter query parameter to url
     } else {
       await router.replace({ query: { ...route.query, filter: filterString.value } }); // Update or add filter query parameter to url
