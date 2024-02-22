@@ -13,7 +13,11 @@ async function selectHistoryPeriod(period) {
 }
 
 const route = useRoute();
-watch(route.params.historyPeriod, () => monitoringHistoryPeriodStore.setHistoryPeriod(route.params.historyPeriod), { deep: true, immediate: true, flush: "pre" });
+watch(
+  () => route.params.historyPeriod,
+  () => monitoringHistoryPeriodStore.setHistoryPeriod(route.params.historyPeriod),
+  { deep: true, immediate: true, flush: "pre" }
+);
 </script>
 
 <template>

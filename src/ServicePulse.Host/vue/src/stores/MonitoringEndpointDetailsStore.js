@@ -1,7 +1,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { ref } from "vue";
 import MessageTypes from "@/components/monitoring/messageTypes";
-import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
+import * as MonitoringEndpoints from "@/composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
 import { useFailedMessageStore } from "./FailedMessageStore";

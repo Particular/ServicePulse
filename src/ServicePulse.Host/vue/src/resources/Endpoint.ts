@@ -1,5 +1,4 @@
 export interface Endpoint {
-  [index: string]: any;
   name: string;
   errorCount: number;
   serviceControlId: string;
@@ -17,6 +16,7 @@ export interface EndpointValuesWithTime extends EndpointValues {
 }
 
 export interface EndpointMetrics {
+  [index: string]: EndpointValues;
   queueLength: EndpointValues;
   throughput: EndpointValues;
   retries: EndpointValues;

@@ -42,7 +42,7 @@ export function useFilterAllMonitoredEndpointsByName(endpoints: Endpoint[], filt
   if (!filterString) {
     return endpoints;
   }
-  return endpoints.filter((endpoint) => endpoint.name.includes(filterString));
+  return endpoints.filter((endpoint) => endpoint.name.toLowerCase().includes(filterString.toLowerCase()));
 }
 
 /**
@@ -51,7 +51,7 @@ export function useFilterAllMonitoredEndpointsByName(endpoints: Endpoint[], filt
  * @returns An array of grouped endpoint objects
  */
 export function useGroupEndpoints(endpoints: Endpoint[], numberOfSegments: number): EndpointGroup[] {
-  const groups = new Map<string, { group: string; endpoints: GroupedEndpoint[] }>();
+  const groups = new Map<string, EndpointGroup>();
   for (const element of endpoints) {
     const grouping = parseEndpoint(element, numberOfSegments);
 
@@ -95,7 +95,6 @@ export async function useGetDisconnectedEndpointCount() {
   let disconnectedCount = 0;
   try {
     const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-    //TODO test
     return (response && ((await response.json()) as number)) ?? 0;
   } catch (error) {
     console.error(error);
