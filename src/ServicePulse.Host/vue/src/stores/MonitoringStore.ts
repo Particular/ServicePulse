@@ -3,7 +3,7 @@ import { computed, ref } from "vue";
 import { useRoute, useRouter, type LocationQuery } from "vue-router";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
-import type { Endpoint, EndpointGroup } from "@/resources/Endpoint";
+import type { Endpoint, EndpointGroup, GroupedEndpoint } from "@/resources/Endpoint";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
@@ -99,12 +99,12 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   function sortGroupedEndpointList() {
     const sortByProperty = sortBy.value;
     let comparator;
-    const endpointShortNameComparator = (a, b) => {
+    const endpointShortNameComparator = (a: GroupedEndpoint, b: GroupedEndpoint) => {
       return isSortAscending.value ? a.shortName.localeCompare(b.shortName) : b.shortName.localeCompare(a.shortName);
     };
 
     if (sortByProperty === "name") {
-      comparator = (a, b) => {
+      comparator = (a: EndpointGroup, b: EndpointGroup) => {
         const groupNameA = a.group;
         const groupNameB = b.group;
         const endpointListGroupA = a.endpoints;
