@@ -52,7 +52,8 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
       endpointDetails.value.isStale = instances.every((instance) => instance.isStale);
 
       if (name === endpointName.value && endpointDetails.value.messageTypes.length > 0 && endpointDetails.value.messageTypes.length !== data.value.messageTypes.length) {
-        endpointDetails.value = { ...endpointDetails.value, ...(data.value as Omit<EndpointDetails, "messageTypes">), instances };
+        const { messageTypes: _, ...dataWithoutMessageTypes } = data.value;
+        endpointDetails.value = { ...endpointDetails.value, ...dataWithoutMessageTypes, instances };
 
         messageTypesAvailable.value = true;
         messageTypesUpdatedSet.value = data.value.messageTypes;
