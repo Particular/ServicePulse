@@ -2,11 +2,11 @@ import { expect, it, render, screen, describe, userEvent } from "@component-test
 import paginationStrip from "./PaginationStrip.vue";
 
 describe("Previous page behavior", () => {
-  it("Disables navigating to previous page while on first page", async () => {
+  it("Disables navigating to 'Previous' page while first rendered on the first page", async () => {
     render(paginationStrip, {
       props: {
         modelValue: 1,
-        itemsPerPage: 0,
+        itemsPerPage: 10,
         totalCount: 100,
         pageBuffer: 0,
       },
@@ -15,7 +15,25 @@ describe("Previous page behavior", () => {
     expect(screen.queryByLabelText("Previous")).toBeDisabled();
   });
 
-  it("Enables navigating to 'Previous' page while not on first page", async () => {
+  it("Disables navigating to 'Previous' after navigating to the first page", async () => {
+    render(paginationStrip, {
+      props: {
+        modelValue: 2,
+        itemsPerPage: 10,
+        totalCount: 100,
+        pageBuffer: 0,
+      },
+    });
+
+    const sut = await screen.findByLabelText("Previous");
+
+    expect(sut).not.toBeDisabled();
+    
+    await userEvent.click(sut)
+    expect(sut).toBeDisabled();
+  });
+
+  it("Enables navigating to 'Previous' page while not first rendered on the first page", async () => {
     render(paginationStrip, {
       props: {
         modelValue: 2,
@@ -26,6 +44,24 @@ describe("Previous page behavior", () => {
     });
 
     expect(screen.queryByLabelText("Previous")).not.toBeDisabled();
+  });
+
+  it("Enables navigating to 'Previous' page after navigating one page next", async () => {
+    render(paginationStrip, {
+      props: {
+        modelValue: 1,
+        itemsPerPage: 10,
+        totalCount: 100,
+        pageBuffer: 0,
+      },
+    });
+
+    expect(screen.queryByLabelText("Previous")).toBeDisabled();
+
+    const sut = await screen.findByLabelText("Next");
+
+    await userEvent.click(sut)
+    expect(sut).toBeEnabled();
   });
 });
 
