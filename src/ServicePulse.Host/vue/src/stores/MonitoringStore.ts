@@ -53,17 +53,14 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   async function updateEndpointList() {
     endpointList.value = await MonitoringEndpoints.useGetAllMonitoredEndpoints(historyPeriodStore.historyPeriod.pVal);
     if (!endpointListIsEmpty.value) {
-      sortEndpointList();
       updateGroupSegments();
-      if (endpointListIsGrouped.value) {
-        updateGroupedEndpoints();
-      }
+      endpointListIsGrouped.value ? updateGroupedEndpoints() : sortEndpointList();
     }
   }
 
   function updateSelectedGrouping(groupSize: number) {
     grouping.value.selectedGrouping = groupSize;
-    updateGroupedEndpoints();
+    groupSize === 0 ? sortEndpointList() : updateGroupedEndpoints();
   }
 
   function updateGroupSegments() {
@@ -72,6 +69,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
 
   function updateGroupedEndpoints() {
     grouping.value.groupedEndpoints = MonitoringEndpoints.useGroupEndpoints(getEndpointList.value, grouping.value.selectedGrouping);
+    sortGroupedEndpointList();
   }
 
   async function updateSort(newSortBy = "name", newIsSortAscending = false) {
@@ -96,6 +94,36 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     })();
 
     endpointList.value.sort(comparator);
+  }
+
+  function sortGroupedEndpointList() {
+    const sortByProperty = sortBy.value;
+    let comparator;
+    const endpointShortNameComparator = (a, b) => {
+      return isSortAscending.value ? a.shortName.localeCompare(b.shortName) : b.shortName.localeCompare(a.shortName);
+    };
+
+    if (sortByProperty === "name") {
+      comparator = (a, b) => {
+        const groupNameA = a.group;
+        const groupNameB = b.group;
+        const endpointListGroupA = a.endpoints;
+        const endpointListGroupB = b.endpoints;
+
+        // Sort each group's endpoints before sorting the group name
+        endpointListGroupA.sort(endpointShortNameComparator);
+        endpointListGroupB.sort(endpointShortNameComparator);
+
+        return isSortAscending.value ? groupNameA.localeCompare(groupNameB) : groupNameB.localeCompare(groupNameA);
+      };
+    }
+    // TODO: Determine how sorting should be handled for columns other than endpoint name
+
+    if (grouping.value.groupedEndpoints.length > 1) {
+      grouping.value.groupedEndpoints.sort(comparator);
+    } else if (grouping.value.groupedEndpoints.length === 1) {
+      grouping.value.groupedEndpoints[0].endpoints.sort(endpointShortNameComparator);
+    }
   }
 
   return {

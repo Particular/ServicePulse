@@ -1,3 +1,53 @@
+div.avg-tooltip {
+  position: absolute;
+  text-align: left;
+  padding: 0.3rem;
+  line-height: 1;
+  background: var(--avg-tooltip-background-color);
+  color: #ffffff;
+  border-radius: 8px 1px 1px 8px;
+  pointer-events: none;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+div.avg-tooltip.left {
+  border-radius: 1px 8px 8px 1px;
+}
+
+div.avg-tooltip:before {
+  content: "";
+  display: block;
+  z-index: -1;
+  right: 0;
+  position: absolute;
+  top: 50%;
+  background-color: var(--avg-tooltip-background-color);
+  width: 24px;
+  height: 24px;
+  margin-top: -12px;
+  margin-right: -12px;
+
+  transform: rotate(45deg);
+}
+
+div.avg-tooltip.left:before {
+  right: inherit;
+  margin-right: inherit;
+  margin-left: -12px;
+  left: 0;
+}
+
+div.avg-tooltip .value {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+div.avg-tooltip .value span {
+  font-size: 11px;
+  font-weight: normal;
+}
+
 .queue-length {
   color: var(--monitoring-queue-length);
   stroke: var(--monitoring-queue-length);

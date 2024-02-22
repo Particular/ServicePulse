@@ -28,7 +28,7 @@ function toggleSort() {
 </script>
 <template>
   <div class="box-header">
-    <button @click="toggleSort" class="column-header-button">
+    <button v-if="props.sortBy" @click="toggleSort" class="column-header-button">
       <span>
         <slot></slot>
         <span class="table-header-unit"><slot name="unit"></slot></span>
@@ -37,10 +37,25 @@ function toggleSort() {
         </span>
       </span>
     </button>
+    <div v-else class="column-header">
+      <span>
+        <slot></slot>
+        <span class="table-header-unit"><slot name="unit"></slot></span>
+      </span>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.column-header {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: default;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
 .column-header-button {
   background: none;
   border: none;
@@ -63,6 +78,16 @@ function toggleSort() {
 
 .column-header-button div {
   display: inline-block;
+}
+
+.sort-up,
+.sort-down {
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 8px;
+  height: 14px;
+  padding: 0;
+  margin-left: 10px;
 }
 
 .sort-up {

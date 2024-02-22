@@ -188,14 +188,36 @@ onMounted(async () => {
 
 <style scoped>
 @import "@/components/list.css";
+@import "./endpoint.css";
+@import "./endpointSubTab.css";
 
-.endpoint-row {
-  padding: 0.5em 1.5em;
-  margin: 0;
+.endpoint-row a.remove-endpoint {
+  display: block;
+  position: absolute;
+  top: 17px;
+  right: 22px;
 }
 
-.box {
-  box-shadow: none;
-  margin: 0;
+.endpoint-row:hover a.remove-endpoint {
+  display: block;
+  position: absolute;
+  top: 17px;
+  right: 22px;
+}
+
+a.remove-endpoint {
+  margin-left: 7px;
+}
+
+a.remove-endpoint:hover {
+  cursor: pointer;
+}
+
+a.remove-endpoint i {
+  color: #00a3c4;
+}
+
+a.remove-endpoint:hover i {
+  color: #00729c;
 }
 </style>

@@ -116,8 +116,8 @@ onMounted(() => {
               <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
                 <RouterLink :to="{ name: 'message-groups', params: { groupId: endpoint.serviceControlId } }" v-if="endpoint.errorCount" class="warning cursorpointer">
                   <i class="fa fa-envelope"></i>
-                  <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
                 </RouterLink>
+                <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
               </span>
             </div>
           </div>
@@ -192,14 +192,6 @@ onMounted(() => {
   top: 4px;
 }
 
-.monitoring-head .endpoint-status a {
-  top: 0;
-}
-
-.monitoring-head .endpoint-status a[ng-if="endpoint.errorCount"] {
-  top: -5px;
-}
-
 .monitoring-head i.fa.fa-envelope {
   font-size: 26px;
   position: relative;
@@ -208,10 +200,12 @@ onMounted(() => {
 }
 
 .monitoring-head .endpoint-status .badge {
-  position: relative;
-  top: 4px;
-  left: -12px;
+  position: absolute;
   font-size: 10px;
+  right: -10px;
+  left: unset;
+  top: unset;
+  bottom: 5px;
 }
 
 .monitoring-head .endpoint-status .pa-endpoint-lost.endpoint-details,
