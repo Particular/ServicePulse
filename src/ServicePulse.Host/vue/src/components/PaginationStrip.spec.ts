@@ -5,6 +5,9 @@ interface PaginationStripDSL {
   assert: PaginationStripDSLAssertions;
   clickPrevious(): Promise<void>;
   clickNext(): Promise<void>;
+
+  clickJumpPagesForward(): Promise<void>;
+  clickJumpPagesBack(): Promise<void>;
 }
 
 interface PaginationStripDSLAssertions {
@@ -13,8 +16,8 @@ interface PaginationStripDSLAssertions {
   previousIsDisabled(): void;
   nextIsEnabled(): void;
   nextIsDisabled(): void;
-  skipPagesBackIsPresent(value?: boolean): void;
-  skipPagesForwardIsPresent(value?: boolean): void;
+  jumpPagesBackIsPresent(value?: boolean): void;
+  jumpPagesForwardIsPresent(value?: boolean): void;
 }
 
 describe("Previous page behavior", () => {
@@ -86,34 +89,64 @@ describe("Next page behavior", () => {
   });
 });
 
-describe("Feature: Skipping a number of pages forward or backward must be possible", () => {
+describe("Feature: Jumping a number of pages forward or backward must be possible", () => {
   describe("Rule: Buttons for skpping back or forward should be available only when enough pages ahead or back are available", () => {
-    example("Example: Enough pages to skip forward and backward", async () => {
+    example("Example: Enough pages to jump forward and backward", async () => {
       const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
 
-      dsl.assert.skipPagesBackIsPresent();
-      dsl.assert.skipPagesForwardIsPresent();
+      dsl.assert.jumpPagesBackIsPresent();
+      dsl.assert.jumpPagesForwardIsPresent();
     });
 
-    example("Example: Enough pages to skip foward only", async () => {
+    example("Example: Enough pages to jump foward only", async () => {
       const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
 
-      dsl.assert.skipPagesBackIsPresent(false);
-      dsl.assert.skipPagesForwardIsPresent();
+      dsl.assert.jumpPagesBackIsPresent(false);
+      dsl.assert.jumpPagesForwardIsPresent();
     });
 
-    example("Example: Enough pages to skip backward only", async () => {
-      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 500, allowToJumpPagesBy: 5 });
+    example("Example: Enough pages to jump back only", async () => {
+      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
 
-      dsl.assert.skipPagesBackIsPresent();
-      dsl.assert.skipPagesForwardIsPresent(false);
+      dsl.assert.jumpPagesBackIsPresent();
+      dsl.assert.jumpPagesForwardIsPresent(false);
+      dsl.assert.activePageIs("50");
     });
 
     example("Example: No enough pages forward or backward", async () => {
       const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy: 5 });
 
-      dsl.assert.skipPagesBackIsPresent(false);
-      dsl.assert.skipPagesForwardIsPresent(false);
+      dsl.assert.jumpPagesBackIsPresent(false);
+      dsl.assert.jumpPagesForwardIsPresent(false);
+    });
+
+    example("Example: Jump 5 pages forward", async () => {
+      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
+
+      dsl.assert.jumpPagesBackIsPresent(false);
+      dsl.assert.jumpPagesForwardIsPresent();
+
+      await dsl.clickJumpPagesForward();
+
+      dsl.assert.jumpPagesBackIsPresent();
+      dsl.assert.jumpPagesForwardIsPresent();
+
+      dsl.assert.activePageIs("11");
+    });
+
+    example("Example: Jump 10 pages back", async () => {
+      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
+
+      dsl.assert.jumpPagesBackIsPresent();
+      dsl.assert.jumpPagesForwardIsPresent(false);
+
+      await dsl.clickJumpPagesBack();
+      await dsl.clickJumpPagesBack();
+
+      dsl.assert.jumpPagesBackIsPresent();
+      dsl.assert.jumpPagesForwardIsPresent();
+
+      dsl.assert.activePageIs("40");
     });
   });
 });
@@ -146,13 +179,13 @@ function rederPaginationStripWith({ records, itemsPerPage, selectedPage, allowTo
       activePageIs: function (value) {
         expect(screen.getByRole("button", { pressed: true })).toContainHTML(value);
       },
-      skipPagesBackIsPresent: function (truthy = true) {
+      jumpPagesBackIsPresent: function (truthy = true) {
         if (truthy) {
           expect(screen.queryByLabelText(`Back ${allowToJumpPagesBy}`)).toBeInTheDocument();
         } else {
         }
       },
-      skipPagesForwardIsPresent: function (truthy = true) {
+      jumpPagesForwardIsPresent: function (truthy = true) {
         if (truthy) {
           expect(screen.queryByLabelText(`Forward ${allowToJumpPagesBy}`)).toBeInTheDocument();
         } else {
@@ -166,6 +199,14 @@ function rederPaginationStripWith({ records, itemsPerPage, selectedPage, allowTo
 
     clickNext: async function () {
       await userEvent.click(await screen.findByLabelText("Next Page"));
+    },
+
+    clickJumpPagesForward: async function () {
+      await userEvent.click(await screen.findByLabelText(`Forward ${allowToJumpPagesBy}`));
+    },
+
+    clickJumpPagesBack: async function () {
+      await userEvent.click(await screen.findByLabelText(`Back ${allowToJumpPagesBy}`));
     },
   };
 
