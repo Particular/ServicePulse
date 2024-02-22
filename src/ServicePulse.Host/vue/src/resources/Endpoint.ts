@@ -4,6 +4,10 @@ export interface Endpoint {
   serviceControlId: string;
   isScMonitoringDisconnected: boolean;
   metrics: EndpointMetrics;
+  isStale: boolean;
+  endpointInstanceIds: string[];
+  disconnectedCount: number;
+  connectedCount: number;
 }
 
 export interface EndpointValues {

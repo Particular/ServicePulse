@@ -5,7 +5,7 @@ const minuteDuration = moment.duration(60 * 1000);
 const hourDuration = moment.duration(60 * 1000); //this ensures that we never use minute formatting
 const dayDuration = moment.duration(24 * 60 * 60 * 1000);
 
-export function useFormatTime(value: string) {
+export function useFormatTime(value: number) {
   const duration = moment.duration(value);
   const time = { value: "0", unit: "" };
 
@@ -35,22 +35,22 @@ export function useGetDayDiffFromToday(value: string) {
   return Math.round(diff / 1000 / 60 / 60 / 24);
 }
 
-export function useFormatLargeNumber(value: string, decimals: number) {
+export function useFormatLargeNumber(value: number, decimals: number) {
   const suffixes = ["k", "M", "G", "T", "P", "E"];
 
   const num = Number(value);
 
   if (isNaN(num)) {
-    return null;
+    return "";
   }
 
   if (num < 1000000) {
-    return round(num, decimals);
+    return round(num, decimals).toString();
   }
 
   const exp = Math.floor(Math.log(num) / Math.log(1000));
 
-  return round(num / Math.pow(1000, exp), decimals) + suffixes[exp - 1];
+  return `${round(num / Math.pow(1000, exp), decimals)}${suffixes[exp - 1]}`;
 }
 
 function round(num: number, decimals: number) {

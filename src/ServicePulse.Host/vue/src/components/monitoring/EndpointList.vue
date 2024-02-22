@@ -1,10 +1,10 @@
-﻿<script setup>
+﻿<script setup lang="ts">
 import { ref } from "vue";
 import SortableColumn from "../../components/SortableColumn.vue";
 import EndpointListRow from "./EndpointListRow.vue";
-import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { type MonitoringStore, useMonitoringStore } from "@/stores/MonitoringStore";
 
-const monitoringStore = useMonitoringStore();
+const monitoringStore: MonitoringStore = useMonitoringStore();
 const activeColumn = ref("name");
 
 const sortByColumn = Object.freeze({
@@ -16,7 +16,7 @@ const sortByColumn = Object.freeze({
   CRITICALTIME: "criticalTime",
 });
 
-function updateSorting(isAscending) {
+function updateSorting(isAscending: boolean) {
   monitoringStore.updateSort(activeColumn.value, isAscending);
 }
 </script>

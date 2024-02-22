@@ -1,9 +1,9 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { computed, ref } from "vue";
-import { useRoute, useRouter, type LocationQuery } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
-import type { Endpoint, EndpointGroup, GroupedEndpoint } from "@/resources/Endpoint";
+import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/Endpoint";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();

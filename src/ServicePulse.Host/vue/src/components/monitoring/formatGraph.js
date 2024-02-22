@@ -27,13 +27,13 @@ export function formatGraphDecimal(input, deci) {
   }
 }
 
-export const smallGraphsMinimumYAxis = Object.freeze({
+export const largeGraphsMinimumYAxis = Object.freeze({
   queueLength: 10,
   throughputRetries: 10,
   processingCritical: 10,
 });
 
-export const largeGraphsMinimumYAxis = Object.freeze({
+export const smallGraphsMinimumYAxis = Object.freeze({
   queueLength: 10,
   throughput: 10,
   retries: 10,

@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { monitoringConnectionState } from "./serviceServiceControl";
 import { useGetExceptionGroups } from "./serviceMessageGroup";
-import { type Endpoint, type EndpointValues, type EndpointMetrics, type EndpointValuesWithTime, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, emptyEndpointMetrics } from "@/resources/Endpoint";
+import { type Endpoint, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, emptyEndpointMetrics } from "@/resources/Endpoint";
 
 /**
  * @returns the max number of segments in a array of endpoint object names
@@ -121,8 +121,18 @@ async function addEndpointsFromScSubscription(endpoints: Endpoint[]) {
         endpoints[index].serviceControlId = failedMessageEndpoint.id;
         endpoints[index].errorCount = failedMessageEndpoint.count;
       } else {
-        const metricsToAdd: EndpointMetrics = emptyEndpointMetrics();
-        endpoints.push({ name: failedMessageEndpoint.title, errorCount: failedMessageEndpoint.count, serviceControlId: failedMessageEndpoint.id, isScMonitoringDisconnected: true, metrics: metricsToAdd });
+        const metricsToAdd = emptyEndpointMetrics();
+        endpoints.push({
+          name: failedMessageEndpoint.title,
+          isStale: false,
+          endpointInstanceIds: [],
+          disconnectedCount: 0,
+          connectedCount: 0,
+          errorCount: failedMessageEndpoint.count,
+          serviceControlId: failedMessageEndpoint.id,
+          isScMonitoringDisconnected: true,
+          metrics: metricsToAdd,
+        });
       }
     });
   }
