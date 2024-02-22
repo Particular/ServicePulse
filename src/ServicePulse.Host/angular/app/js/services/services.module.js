@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('services', [
-        'services.streamService',
+        // 'services.streamService',
         'services.serviceControlService',
         'services.monitoringService',
         'services.connectivityNotifier',
