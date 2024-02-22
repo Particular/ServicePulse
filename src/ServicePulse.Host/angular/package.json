@@ -4,6 +4,7 @@
   "description": "Production monitoring for distributed systems.",
   "main": "index.html",
   "dependencies": {
+    "@microsoft/signalr": "^8.0.0",
     "angular": "^1.8.0",
     "angular-animate": "^1.8.0",
     "angular-cookies": "^1.8.0",
@@ -21,9 +22,8 @@
     "jquery-csv": "^1.0.21",
     "moment": "^2.29.4",
     "moment-duration-format": "^2.3.2",
-    "ngstorage": "git://github.com/gsklee/ngStorage#0.3.10",
+    "ngstorage": "git://github.com/gsklee/ngStorage.git#0.3.10",
     "rx": "^4.1.0",
-    "signalr": "^2.2.1",
     "ui-select": "^0.18.1",
     "url-search-params-polyfill": "^5.0.0",
     "zeroclipboard": "^2.2.0"
@@ -56,5 +56,6 @@
     "lint": "eslint ./app"
   },
   "author": "Particular Software",
-  "license": "RPL-1.5"
+  "license": "RPL-1.5",
+  "keywords": []
 }
