@@ -25,12 +25,13 @@ describe("Previous page behavior", () => {
       },
     });
 
-    const sut = await screen.findByLabelText("Previous");
+    const previousButton = await screen.findByLabelText("Previous");
 
-    expect(sut).not.toBeDisabled();
+    expect(previousButton).not.toBeDisabled();
     
-    await userEvent.click(sut)
-    expect(sut).toBeDisabled();
+    await userEvent.click(previousButton)
+    expect(previousButton).toBeDisabled();
+    expect(screen.getByRole('button', { pressed: true })).toContainHTML("1")
   });
 
   it("Enables navigating to 'Previous' page while not first rendered on the first page", async () => {
@@ -58,10 +59,11 @@ describe("Previous page behavior", () => {
 
     expect(screen.queryByLabelText("Previous")).toBeDisabled();
 
-    const sut = await screen.findByLabelText("Next");
+    const nextButton = await screen.findByLabelText("Next");
 
-    await userEvent.click(sut)
-    expect(sut).toBeEnabled();
+    await userEvent.click(nextButton)
+    activeSelectedPageShouldBe("2")
+    expect(nextButton).toBeEnabled();
   });
 });
 
@@ -94,6 +96,7 @@ describe("Next page behavior", () => {
     expect(nextButton).not.toBeDisabled();
     
     await userEvent.click(nextButton)
+    activeSelectedPageShouldBe("10")
     expect(nextButton).toBeDisabled();
   });
 
@@ -122,24 +125,28 @@ describe("Next page behavior", () => {
 
     expect(screen.queryByLabelText("Next")).toBeDisabled();
 
-    const nextButton = await screen.findByLabelText("Previous");
+    const previousButton = await screen.findByLabelText("Previous");
+    await userEvent.click(previousButton)
 
-    await userEvent.click(nextButton)
-    expect(nextButton).toBeEnabled();
+    activeSelectedPageShouldBe("9")
+    expect(previousButton).toBeEnabled();
   });
 });
 
 
-describe("Page buffer behavior", () => {
-  it.todo("Example 1");
-  it.todo("Example 2");
-});
+// describe("Page buffer behavior", () => {
+// // If the current page number is less than the page buffer there should be no left ellipsis
+// // If the current page number is greater than the page buffer there should be a left ellipsis
+// // If the current page is equal to the page buffer then should be no left ellipsis
+// // Same for the right ellipsis, although that should be "current page is within page buffer of the last page.
+// });
 
 describe("Total count and items per page behavior", () => {
-  // If the current page number is less than the page buffer there should be no left ellipsis
-// If the current page number is greater than the page buffer there should be a left ellipsis
-// If the current page is equal to the page buffer then should be no left ellipsis
-// Same for the right ellipsis, although that should be "current page is within page buffer of the last page.
+  
   it.todo("Example 1");
   it.todo("Example 2");
 });
+function activeSelectedPageShouldBe(activePageNumber:string) {
+  expect(screen.getByRole('button', { pressed: true })).toContainHTML(activePageNumber);
+}
+
