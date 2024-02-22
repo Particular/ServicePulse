@@ -83,9 +83,9 @@ describe("Next page behavior", () => {
 
     dls.assert.nextIsDisabled();
 
-    dls.clickPrevious();
+    await dls.clickPrevious();
     dls.assert.previousIsEnabled();
-    dls.assert.activePageIs("8");
+    dls.assert.activePageIs("9");
   });
 });
 
