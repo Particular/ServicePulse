@@ -13,6 +13,7 @@ interface PaginationStripDSL {
 
 //Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
 interface PaginationStripDSLAssertions {
+  pageButtonIsDisplayed(value: string): void;
   activePageIs(value: string): void;
   previousIsEnabled(): void;
   previousIsDisabled(): void;
@@ -97,6 +98,25 @@ describe("Feature: Moving forward through pages with a single button must be pos
   });
 });
 
+describe("Feature: Navigating to a specific page that is available must be possible", () => {
+  describe("Rule: Number of page buttons displayed match the relationship between the total number of items and the number of items allowed per page", () => {
+    example("Example: 100 items vs. 10 items per page", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
+
+      component.assert.pageButtonIsDisplayed("Page 1");
+      component.assert.pageButtonIsDisplayed("Page 2");
+      /*component.assert.pageButtonIsDisplayed("Page 3");
+      component.assert.pageButtonIsDisplayed("Page 4");
+      component.assert.pageButtonIsDisplayed("Page 5");
+      component.assert.pageButtonIsDisplayed("Page 6");
+      component.assert.pageButtonIsDisplayed("Page 7");
+      component.assert.pageButtonIsDisplayed("Page 8");
+      component.assert.pageButtonIsDisplayed("Page 9");
+      component.assert.pageButtonIsDisplayed("Last Page"); */
+    });
+  });
+});
+
 describe("Feature: Jumping a number of pages forward or backward must be possible", () => {
   describe("Rule: Buttons for jumping pages back or forward are available only when enough pages ahead or back are available", () => {
     example("Example: Enough pages to jump forward and backward", async () => {
@@ -175,14 +195,13 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
         expect(screen.queryByLabelText("Previous Page")).toBeDisabled();
       },
       previousIsEnabled: function () {
-        expect(screen.queryByLabelText("Previous Page")).not.toBeDisabled();
+        expect(screen.queryByLabelText("Previous Page")).toBeEnabled();
       },
-
       nextIsDisabled: function () {
         expect(screen.queryByLabelText("Next Page")).toBeDisabled();
       },
       nextIsEnabled: function () {
-        expect(screen.queryByLabelText("Next Page")).not.toBeDisabled();
+        expect(screen.queryByLabelText("Next Page")).toBeEnabled();
       },
       activePageIs: function (value) {
         expect(screen.getByRole("button", { pressed: true, name: value })).toBeInTheDocument();
@@ -199,6 +218,9 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
         } else {
           expect(screen.queryByLabelText(`Forward ${allowToJumpPagesBy}`)).not.toBeInTheDocument();
         }
+      },
+      pageButtonIsDisplayed: function (value: string): void {
+        expect(screen.getByRole("button", { name: value })).toBeInTheDocument();
       },
     },
     clickPrevious: async function () {
