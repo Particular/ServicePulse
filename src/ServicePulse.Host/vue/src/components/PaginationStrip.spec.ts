@@ -99,13 +99,7 @@ describe("Feature: Moving forward through pages with a single button must be pos
 });
 
 describe("Feature: Navigating to a specific page that is available must be possible", () => {
-  describe("Rule: Number of page buttons displayed match the relationship between the total number of items and the number of items allowed per page", () => {
-    example.only("Example: Strip for 100 records with 10 items per page, allowing to jump pages by 2", async () => {
-      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy:2});
-
-      component.assert.stripOfButtonsMatchesSequence("Previous,1,2,3,4,...,10,Next")      
-    });
-
+  describe("Rule: Clicking to an specific page should show the page as active", () => {
     example.only("Example: First page is active then clicking to page number 4", async () => {
       const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy:2});
 
@@ -121,6 +115,13 @@ describe("Feature: Navigating to a specific page that is available must be possi
 
 describe("Feature: Jumping a number of pages forward or backward must be possible", () => {
   describe("Rule: Buttons for jumping pages back or forward are available only when enough pages ahead or back are available", () => {
+    
+    example.only("Example: Strip for 100 records with 10 items per page, allowing to jump pages by 2", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy:2});
+
+      component.assert.stripOfButtonsMatchesSequence("Previous,1,2,3,4,...,10,Next")      
+    });
+
     example("Example: Enough pages to jump forward and backward", async () => {
       const component = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
 
