@@ -19,7 +19,6 @@ import EndpointTimings from "./EndpointTimings.vue";
 import EndpointInstances from "./EndpointInstances.vue";
 import EndpointMessageTypes from "./EndpointMessageTypes.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
-import { emptyEndpointDetails, type ExtendedEndpointDetails } from "@/resources/Endpoint";
 
 const route = useRoute();
 const router = useRouter();
@@ -31,12 +30,8 @@ const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
 const showInstancesBreakdown = ref(route?.query?.tab === "instancesBreakdown");
 
-const loadedSuccessfully = ref(false);
-
-const endpoint = ref<ExtendedEndpointDetails>(emptyEndpointDetails());
-
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
-const { negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
+const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringStore);
 
 watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
@@ -51,16 +46,8 @@ watch(
 );
 
 async function getEndpointDetails() {
-  //get historyPeriod
   const selectedHistoryPeriod = historyPeriod.value.pVal;
-  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
-    const endpointDetails = monitoringStore.endpointDetails;
-    if (endpointDetails != null) {
-      endpoint.value = { ...endpointDetails, isScMonitoringDisconnected: false } as ExtendedEndpointDetails;
-      loadedSuccessfully.value = monitoringStore.endpointError == null;
-    }
-  }
+  await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
 }
 
 function changeRefreshInterval(milliseconds: number) {
@@ -97,7 +84,7 @@ onMounted(() => {
           </div>
         </div>
         <!--Header-->
-        <div class="monitoring-head" v-if="loadedSuccessfully">
+        <div class="monitoring-head">
           <div class="endpoint-title no-side-padding list-section">
             <h1 class="righ-side-ellipsis" v-tooltip :title="endpointName">
               {{ endpointName }}
@@ -128,7 +115,7 @@ onMounted(() => {
           </div>
         </div>
         <!--large graphs-->
-        <div class="large-graphs" v-if="loadedSuccessfully">
+        <div class="large-graphs">
           <div class="container">
             <div class="row">
               <EndpointBacklog v-model="endpoint" />
@@ -139,7 +126,7 @@ onMounted(() => {
         </div>
 
         <!--Messagetypes and instances-->
-        <div v-if="loadedSuccessfully">
+        <div>
           <!--tabs-->
           <div class="tabs">
             <h5 :class="{ active: !showInstancesBreakdown }">

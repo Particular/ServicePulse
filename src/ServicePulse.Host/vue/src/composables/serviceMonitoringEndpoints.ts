@@ -79,10 +79,10 @@ export function useGetEndpointDetails(endpointName: string, historyPeriod = 1) {
         try {
           const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
           if (!response?.ok) throw new Error(response?.statusText ?? "No response");
-          data.value = await response.json() as EndpointDetails;
+          data.value = (await response.json()) as EndpointDetails;
         } catch (error: any) {
           console.error(error);
-          data.value = { error: error.message };
+          data.value = { error: error.message } as EndpointDetailsError;
         }
       }
     },

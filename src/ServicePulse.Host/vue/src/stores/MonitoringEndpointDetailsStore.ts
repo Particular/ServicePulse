@@ -5,7 +5,7 @@ import * as MonitoringEndpoints from "@/composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
 import { useFailedMessageStore } from "./FailedMessageStore";
-import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, emptyEndpointDetails, type EndpointDetails, type EndpointDetailsError } from "@/resources/Endpoint";
+import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, emptyEndpointDetails, type EndpointDetails, type EndpointDetailsError, isError } from "@/resources/Endpoint";
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const failedMessageStore = useFailedMessageStore();
@@ -24,11 +24,10 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
     const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriod);
     await refresh();
 
-    const errorValue = data.value as EndpointDetailsError;
-    if (data.value == null || errorValue != null) {
+    if (data.value == null || isError(data.value)) {
       endpointDetails.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
       endpointDetails.value.isScMonitoringDisconnected = true;
-      endpointError.value = errorValue;
+      endpointError.value = data.value;
     } else {
       endpointError.value = null;
       const returnedEndpointDetails = data.value as EndpointDetails;

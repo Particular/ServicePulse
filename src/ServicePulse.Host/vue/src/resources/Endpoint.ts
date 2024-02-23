@@ -108,3 +108,7 @@ export interface EndpointGroup {
 export interface EndpointDetailsError {
   error: any;
 }
+
+export function isError(obj: EndpointDetails | EndpointDetailsError): obj is EndpointDetailsError {
+  return (obj as EndpointDetailsError).error !== undefined;
+}
