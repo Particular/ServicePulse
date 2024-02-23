@@ -1,6 +1,6 @@
 ﻿<script setup lang="ts">
 // Composables
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { computed, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
 import { licenseStatus } from "../../composables/serviceLicense";
@@ -28,8 +28,6 @@ let refreshInterval: number;
 const monitoringStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
-const showInstancesBreakdown = ref(route?.query?.tab === "instancesBreakdown");
-
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringStore);
 
@@ -37,13 +35,19 @@ watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
-watch(
-  () => showInstancesBreakdown.value,
-  () => {
-    const breakdownTabName = showInstancesBreakdown.value ? "instancesBreakdown" : "messageTypeBreakdown";
-    router.replace({ query: { ...route.query, tab: breakdownTabName } });
-  }
-);
+const tabs = Object.freeze({
+  messageTypeBreakdown: "messageTypeBreakdown",
+  instancesBreakdown: "instancesBreakdown",
+});
+
+const activeTab = computed({
+  get() {
+    return route?.query?.tab ?? tabs.messageTypeBreakdown;
+  },
+  set(newValue) {
+    router.replace({ query: { ...route.query, tab: newValue } });
+  },
+});
 
 async function getEndpointDetails() {
   await monitoringStore.getEndpointDetails(endpointName);
@@ -127,21 +131,21 @@ onMounted(() => {
         <div>
           <!--tabs-->
           <div class="tabs">
-            <h5 :class="{ active: !showInstancesBreakdown }">
-              <a @click="showInstancesBreakdown = false" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
+            <h5 :class="{ active: activeTab === tabs.messageTypeBreakdown }">
+              <a @click="activeTab = tabs.messageTypeBreakdown" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
             </h5>
-            <h5 :class="{ active: showInstancesBreakdown }">
-              <a @click="showInstancesBreakdown = true" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
+            <h5 :class="{ active: activeTab === tabs.instancesBreakdown }">
+              <a @click="activeTab = tabs.instancesBreakdown" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
             </h5>
           </div>
 
           <!--showInstancesBreakdown-->
-          <section v-if="showInstancesBreakdown" class="endpoint-instances">
+          <section v-if="activeTab === tabs.instancesBreakdown" class="endpoint-instances">
             <EndpointInstances />
           </section>
 
           <!--ShowMessagetypes breakdown-->
-          <section v-if="!showInstancesBreakdown" class="endpoint-message-types">
+          <section v-if="activeTab === tabs.messageTypeBreakdown" class="endpoint-message-types">
             <EndpointMessageTypes />
           </section>
         </div>
