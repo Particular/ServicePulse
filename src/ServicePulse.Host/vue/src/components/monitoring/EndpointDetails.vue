@@ -66,7 +66,6 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
 });
 </script>
