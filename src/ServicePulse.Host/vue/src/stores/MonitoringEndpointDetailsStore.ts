@@ -5,7 +5,7 @@ import * as MonitoringEndpoints from "@/composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
 import { useFailedMessageStore } from "./FailedMessageStore";
-import { type EndpointDetails, emptyEndpointMetrics, type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, type EndpointInstance } from "@/resources/Endpoint";
+import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, emptyEndpointDetails, type EndpointDetails, type EndpointDetailsError } from "@/resources/Endpoint";
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const failedMessageStore = useFailedMessageStore();
@@ -13,15 +13,8 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
   const getMemoisedEndpointDetails = memoiseOne(MonitoringEndpoints.useGetEndpointDetails);
 
   const endpointName = ref("");
-  const endpointDetails = ref<ExtendedEndpointDetails>({
-    instances: [],
-    metricDetails: { metrics: emptyEndpointMetrics() },
-    isScMonitoringDisconnected: false,
-    serviceControlId: "",
-    errorCount: 0,
-    isStale: false,
-    messageTypes: [],
-  });
+  const endpointDetails = ref<ExtendedEndpointDetails>(emptyEndpointDetails());
+  const endpointError = ref<EndpointDetailsError | null>(null);
   const messageTypes = ref({});
   const messageTypesAvailable = ref(false);
   const messageTypesUpdatedSet = ref<MessageType[]>([]);
@@ -31,14 +24,18 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
     const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriod);
     await refresh();
 
-    if (data.value == null) {
+    const errorValue = data.value as EndpointDetailsError;
+    if (data.value == null || errorValue != null) {
       endpointDetails.value.instances.forEach((item) => (item.isScMonitoringDisconnected = true));
       endpointDetails.value.isScMonitoringDisconnected = true;
+      endpointError.value = errorValue;
     } else {
+      endpointError.value = null;
+      const returnedEndpointDetails = data.value as EndpointDetails;
       endpointDetails.value.isScMonitoringDisconnected = false;
 
       const instances = await Promise.all(
-        data.value.instances.map(async (instance): Promise<ExtendedEndpointInstance> => {
+        returnedEndpointDetails.instances.map(async (instance): Promise<ExtendedEndpointInstance> => {
           //get error count by instance id
           await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
           if (!failedMessageStore.isFailedMessagesEmpty) {
@@ -51,12 +48,12 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
 
       endpointDetails.value.isStale = instances.every((instance) => instance.isStale);
 
-      if (name === endpointName.value && endpointDetails.value.messageTypes.length > 0 && endpointDetails.value.messageTypes.length !== data.value.messageTypes.length) {
-        const { messageTypes: _, ...dataWithoutMessageTypes } = data.value;
+      if (name === endpointName.value && endpointDetails.value.messageTypes.length > 0 && endpointDetails.value.messageTypes.length !== returnedEndpointDetails.messageTypes.length) {
+        const { messageTypes: returnedMessageTypes, ...dataWithoutMessageTypes } = returnedEndpointDetails;
         endpointDetails.value = { ...endpointDetails.value, ...dataWithoutMessageTypes, instances };
 
         messageTypesAvailable.value = true;
-        messageTypesUpdatedSet.value = data.value.messageTypes;
+        messageTypesUpdatedSet.value = returnedMessageTypes;
       } else {
         endpointDetails.value = { ...endpointDetails.value, ...data.value, instances };
       }
@@ -87,6 +84,7 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
   return {
     endpointName,
     endpointDetails,
+    endpointError,
     messageTypes,
     messageTypesAvailable,
     messageTypesUpdatedSet,

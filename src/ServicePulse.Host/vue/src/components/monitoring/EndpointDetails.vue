@@ -1,4 +1,4 @@
-﻿<script setup>
+﻿<script setup lang="ts">
 // Composables
 import { ref, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
@@ -19,11 +19,12 @@ import EndpointTimings from "./EndpointTimings.vue";
 import EndpointInstances from "./EndpointInstances.vue";
 import EndpointMessageTypes from "./EndpointMessageTypes.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
+import { emptyEndpointDetails, type ExtendedEndpointDetails } from "@/resources/Endpoint";
 
 const route = useRoute();
 const router = useRouter();
-const endpointName = route.params.endpointName;
-let refreshInterval = undefined;
+const endpointName = route.params.endpointName.toString();
+let refreshInterval: number;
 
 const monitoringStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
@@ -32,7 +33,7 @@ const showInstancesBreakdown = ref(route?.query?.tab === "instancesBreakdown");
 
 const loadedSuccessfully = ref(false);
 
-const endpoint = ref({});
+const endpoint = ref<ExtendedEndpointDetails>(emptyEndpointDetails());
 
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const { negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
@@ -54,22 +55,20 @@ async function getEndpointDetails() {
   const selectedHistoryPeriod = historyPeriod.value.pVal;
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
     await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
-    const responseData = monitoringStore.endpointDetails;
-    if (responseData != null) {
-      const endpointDetails = responseData;
-      endpointDetails.isScMonitoringDisconnected = false;
-      Object.assign(endpoint.value, endpointDetails);
-      loadedSuccessfully.value = !endpoint.value.error;
+    const endpointDetails = monitoringStore.endpointDetails;
+    if (endpointDetails != null) {
+      endpoint.value = { ...endpointDetails, isScMonitoringDisconnected: false } as ExtendedEndpointDetails;
+      loadedSuccessfully.value = monitoringStore.endpointError == null;
     }
   }
 }
 
-function changeRefreshInterval(milliseconds) {
+function changeRefreshInterval(milliseconds: number) {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
   getEndpointDetails();
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     getEndpointDetails();
   }, milliseconds);
 }

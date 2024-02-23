@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { monitoringConnectionState } from "./serviceServiceControl";
 import { useGetExceptionGroups } from "./serviceMessageGroup";
-import { type Endpoint, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, emptyEndpointMetrics } from "@/resources/Endpoint";
+import { type Endpoint, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, emptyEndpointMetrics, type EndpointDetailsError } from "@/resources/Endpoint";
 
 /**
  * @returns the max number of segments in a array of endpoint object names
@@ -71,17 +71,18 @@ export function useGroupEndpoints(endpoints: Endpoint[], numberOfSegments: numbe
  * @returns The details of the endpoint
  */
 export function useGetEndpointDetails(endpointName: string, historyPeriod = 1) {
-  const data = ref<EndpointDetails | null>(null);
+  const data = ref<EndpointDetails | EndpointDetailsError | null>(null);
   return {
     data,
     refresh: async () => {
       if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
         try {
           const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
-          const result: EndpointDetails = response && (await response.json());
-          data.value = result;
-        } catch (error) {
+          if (!response?.ok) throw new Error(response?.statusText ?? "No response");
+          data.value = await response.json() as EndpointDetails;
+        } catch (error: any) {
           console.error(error);
+          data.value = { error: error.message };
         }
       }
     },

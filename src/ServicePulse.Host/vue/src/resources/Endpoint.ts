@@ -84,6 +84,16 @@ export interface ExtendedEndpointDetails extends EndpointDetails {
   isStale: boolean;
 }
 
+export const emptyEndpointDetails = (): ExtendedEndpointDetails => ({
+  instances: [],
+  metricDetails: { metrics: emptyEndpointMetrics() },
+  isScMonitoringDisconnected: false,
+  serviceControlId: "",
+  errorCount: 0,
+  isStale: false,
+  messageTypes: [],
+});
+
 export interface GroupedEndpoint {
   groupName: string;
   shortName: string;
@@ -93,4 +103,8 @@ export interface GroupedEndpoint {
 export interface EndpointGroup {
   group: string;
   endpoints: GroupedEndpoint[];
+}
+
+export interface EndpointDetailsError {
+  error: any;
 }
