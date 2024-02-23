@@ -23,7 +23,7 @@ interface PaginationStripDSLAssertions {
 }
 
 describe("Feature: Moving backwards through pages with a single button must be possible", () => {
-  describe("Rule: The 'Previous' button should be disabled when the first page is active", () => {
+  describe("Rule: The 'Previous' button is disabled when the first page is active", () => {
     example("Example: First page is active on the initial render", async () => {
       const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
 
@@ -41,7 +41,7 @@ describe("Feature: Moving backwards through pages with a single button must be p
       component.assert.activePageIs("Page 1");
     });
   });
-  describe("Rule: The 'Previous' button should be enabled when the first page is not active", () => {
+  describe("Rule: The 'Previous' button is enabled when the first page is not active", () => {
     example("Example: Second page is active on initial render", async () => {
       const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
       component.assert.previousIsEnabled();
@@ -61,7 +61,7 @@ describe("Feature: Moving backwards through pages with a single button must be p
 });
 
 describe("Feature: Moving forward through pages with a single button must be possible", () => {
-  describe("Rule: The 'Next' button should be disabled when the last page is active", () => {
+  describe("Rule: The 'Next' button is disabled when the last page is active", () => {
     example("Example: Last page is active on the initial render", async () => {
       const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
       component.assert.nextIsDisabled();
@@ -78,7 +78,7 @@ describe("Feature: Moving forward through pages with a single button must be pos
       component.assert.activePageIs("Page 10");
     });
   });
-  describe("Rule: The 'Next' button should be enabled when the last page is not active", () => {
+  describe("Rule: The 'Next' button is enabled when the last page is not active", () => {
     example("Example: Penultimate page is active on initial render", async () => {
       const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
 
@@ -98,7 +98,7 @@ describe("Feature: Moving forward through pages with a single button must be pos
 });
 
 describe("Feature: Jumping a number of pages forward or backward must be possible", () => {
-  describe("Rule: Buttons for jumping pages back or forward should be available only when enough pages ahead or back are available", () => {
+  describe("Rule: Buttons for jumping pages back or forward are available only when enough pages ahead or back are available", () => {
     example("Example: Enough pages to jump forward and backward", async () => {
       const component = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
 
