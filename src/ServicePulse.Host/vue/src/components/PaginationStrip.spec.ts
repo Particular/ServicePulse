@@ -185,6 +185,7 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
         if (truthy) {
           expect(screen.queryByLabelText(`Back ${allowToJumpPagesBy}`)).toBeInTheDocument();
         } else {
+          expect(screen.queryByLabelText(`Back ${allowToJumpPagesBy}`)).not.toBeInTheDocument();
         }
       },
       jumpPagesForwardButtonIsPresent: function (truthy = true) {
