@@ -46,8 +46,7 @@ watch(
 );
 
 async function getEndpointDetails() {
-  const selectedHistoryPeriod = historyPeriod.value.pVal;
-  await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
+  await monitoringStore.getEndpointDetails(endpointName);
 }
 
 function changeRefreshInterval(milliseconds: number) {

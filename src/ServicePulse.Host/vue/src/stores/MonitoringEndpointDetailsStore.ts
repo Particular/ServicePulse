@@ -6,9 +6,11 @@ import memoiseOne from "memoize-one";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
 import { useFailedMessageStore } from "./FailedMessageStore";
 import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, emptyEndpointDetails, type EndpointDetails, type EndpointDetailsError, isError } from "@/resources/Endpoint";
+import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
   const failedMessageStore = useFailedMessageStore();
+  const historyPeriodStore = useMonitoringHistoryPeriodStore();
 
   const getMemoisedEndpointDetails = memoiseOne(MonitoringEndpoints.useGetEndpointDetails);
 
@@ -20,8 +22,8 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
   const messageTypesUpdatedSet = ref<MessageType[]>([]);
   const negativeCriticalTimeIsPresent = ref(false);
 
-  async function getEndpointDetails(name: string, historyPeriod: number) {
-    const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriod);
+  async function getEndpointDetails(name: string) {
+    const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriodStore.historyPeriod.pVal);
     await refresh();
 
     if (data.value == null || isError(data.value)) {
