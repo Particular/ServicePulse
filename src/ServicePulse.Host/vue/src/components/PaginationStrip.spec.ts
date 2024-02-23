@@ -6,14 +6,14 @@ interface PaginationStripDSL {
   assert: PaginationStripDSLAssertions;
   clickPrevious(): Promise<void>;
   clickNext(): Promise<void>;
-
+  clickPage(pageName:string): Promise<void>;
   clickJumpPagesForward(): Promise<void>;
   clickJumpPagesBack(): Promise<void>;
 }
 
 //Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
 interface PaginationStripDSLAssertions {
-  pageButtonIsDisplayed(value: string): void;
+  stripOfButtonsMatchesSequence(value: string): void;
   activePageIs(value: string): void;
   previousIsEnabled(): void;
   previousIsDisabled(): void;
@@ -100,19 +100,21 @@ describe("Feature: Moving forward through pages with a single button must be pos
 
 describe("Feature: Navigating to a specific page that is available must be possible", () => {
   describe("Rule: Number of page buttons displayed match the relationship between the total number of items and the number of items allowed per page", () => {
-    example("Example: 100 items vs. 10 items per page", async () => {
-      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
+    example.only("Example: Strip for 100 records with 10 items per page, allowing to jump pages by 2", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy:2});
 
-      component.assert.pageButtonIsDisplayed("Page 1");
-      component.assert.pageButtonIsDisplayed("Page 2");
-      /*component.assert.pageButtonIsDisplayed("Page 3");
-      component.assert.pageButtonIsDisplayed("Page 4");
-      component.assert.pageButtonIsDisplayed("Page 5");
-      component.assert.pageButtonIsDisplayed("Page 6");
-      component.assert.pageButtonIsDisplayed("Page 7");
-      component.assert.pageButtonIsDisplayed("Page 8");
-      component.assert.pageButtonIsDisplayed("Page 9");
-      component.assert.pageButtonIsDisplayed("Last Page"); */
+      component.assert.stripOfButtonsMatchesSequence("Previous,1,2,3,4,...,10,Next")      
+    });
+
+    example.only("Example: First page is active then clicking to page number 4", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy:2});
+
+      component.assert.stripOfButtonsMatchesSequence("Previous,1,2,3,4,...,10,Next")      
+
+      await component.clickPage("Page 4");
+      component.assert.activePageIs("Page 4");
+
+      component.assert.stripOfButtonsMatchesSequence("Previous,1,...,2,3,4,5,6,...,10,Next")      
     });
   });
 });
@@ -219,8 +221,10 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
           expect(screen.queryByLabelText(`Forward ${allowToJumpPagesBy}`)).not.toBeInTheDocument();
         }
       },
-      pageButtonIsDisplayed: function (value: string): void {
-        expect(screen.getByRole("button", { name: value })).toBeInTheDocument();
+      stripOfButtonsMatchesSequence: function (sequence: string): void {
+        const allButtons = screen.getAllByRole('button');
+        let generatedStripText = allButtons.map(v => v.innerHTML).join(",");
+        expect(generatedStripText).toBe(sequence);
       },
     },
     clickPrevious: async function () {
@@ -238,6 +242,9 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
     clickJumpPagesBack: async function () {
       await userEvent.click(await screen.findByLabelText(`Back ${allowToJumpPagesBy}`));
     },
+    clickPage: async function (pageName: string): Promise<void> {
+      await userEvent.click(await screen.findByLabelText(pageName));
+    }
   };
 
   return dslAPI;
