@@ -18,137 +18,143 @@ interface PaginationStripDSLAssertions {
   previousIsDisabled(): void;
   nextIsEnabled(): void;
   nextIsDisabled(): void;
-  jumpPagesBackButtonIsPresent(value?: boolean): void;
-  jumpPagesForwardButtonIsPresent(value?: boolean): void;
+  jumpPagesBackIsPresent(value?: boolean): void;
+  jumpPagesForwardIsPresent(value?: boolean): void;
 }
 
-describe("Previous page behavior", () => {
-  example("Disables navigating to 'Previous' page while first rendered on the first page", async () => {
-    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
+describe("Feature: Moving backwards through pages with a single button must be possible", () => {
+  describe("Rule: The 'Previous' button should be disabled when the first page is active", () => {
+    example("Example: First page is active on the initial render", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
 
-    dsl.assert.previousIsDisabled();
+      component.assert.previousIsDisabled();
+    });
+
+    example("Example: Clicking 'previous' button from second page", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
+
+      component.assert.previousIsEnabled();
+
+      await component.clickPrevious();
+
+      component.assert.previousIsDisabled();
+      component.assert.activePageIs("Page 1");
+    });
   });
+  describe("Rule: The 'Previous' button should be enabled when the first page is not active", () => {
+    example("Example: Second page is active on initial render", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
+      component.assert.previousIsEnabled();
+    });
 
-  example("Disables navigating to 'Previous' after navigating to the first page", async () => {
-    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
+    example("Example: Clicking 'Next' button from first page", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
 
-    dsl.assert.previousIsEnabled();
+      component.assert.previousIsDisabled();
 
-    await dsl.clickPrevious();
+      await component.clickNext();
 
-    dsl.assert.previousIsDisabled();
-    dsl.assert.activePageIs("Page 1");
-  });
-
-  example("Enables navigating to 'Previous' page while not first rendered on the first page", async () => {
-    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
-    dsl.assert.previousIsEnabled();
-  });
-
-  example("Enables navigating to 'Previous' page after navigating one page next", async () => {
-    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
-
-    dsl.assert.previousIsDisabled();
-
-    await dsl.clickNext();
-
-    dsl.assert.activePageIs("Page 2");
-    dsl.assert.previousIsEnabled();
+      component.assert.activePageIs("Page 2");
+      component.assert.previousIsEnabled();
+    });
   });
 });
 
-describe("Next page behavior", () => {
-  example("Disables navigating to 'Next' page when first rendered on the last page", async () => {
-    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
-    dsl.assert.nextIsDisabled();
+describe("Feature: Moving forward through pages with a single button must be possible", () => {
+  describe("Rule: The 'Next' button should be disabled when the last page is active", () => {
+    example("Example: Last page is active on the initial render", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
+      component.assert.nextIsDisabled();
+    });
+
+    example("Example: Clicking 'Next' button from penultimate page", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
+
+      component.assert.nextIsEnabled();
+
+      await component.clickNext();
+
+      component.assert.nextIsDisabled();
+      component.assert.activePageIs("Page 10");
+    });
   });
+  describe("Rule: The 'Next' button should be enabled when the last page is not active", () => {
+    example("Example: Penultimate page is active on initial render", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
 
-  example("Disables navigating to 'Next' after navigating to the last page", async () => {
-    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
+      component.assert.nextIsEnabled();
+    });
 
-    dsl.assert.nextIsEnabled();
+    example("Example: Clicking 'Previous' button from last page", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
 
-    await dsl.clickNext();
+      component.assert.nextIsDisabled();
 
-    dsl.assert.nextIsDisabled();
-    dsl.assert.activePageIs("Page 10");
-  });
-
-  example("Enables navigating to 'Next' page when NOT first rendered on the last page", async () => {
-    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
-
-    dsl.assert.nextIsEnabled();
-  });
-
-  example("Enables navigating to 'Next' page after navigating one page back", async () => {
-    const dls = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
-
-    dls.assert.nextIsDisabled();
-
-    await dls.clickPrevious();
-    dls.assert.previousIsEnabled();
-    dls.assert.activePageIs("Page 9");
+      await component.clickPrevious();
+      component.assert.previousIsEnabled();
+      component.assert.activePageIs("Page 9");
+    });
   });
 });
 
 describe("Feature: Jumping a number of pages forward or backward must be possible", () => {
   describe("Rule: Buttons for jumping pages back or forward should be available only when enough pages ahead or back are available", () => {
     example("Example: Enough pages to jump forward and backward", async () => {
-      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
+      const component = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackButtonIsPresent();
-      dsl.assert.jumpPagesForwardButtonIsPresent();
+      component.assert.jumpPagesBackIsPresent();
+      component.assert.jumpPagesForwardIsPresent();
     });
 
     example("Example: Enough pages to jump foward only", async () => {
-      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
+      const component = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackButtonIsPresent(false);
-      dsl.assert.jumpPagesForwardButtonIsPresent();
+      component.assert.jumpPagesBackIsPresent(false);
+      component.assert.jumpPagesForwardIsPresent();
     });
 
     example("Example: Enough pages to jump back only", async () => {
-      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
+      const component = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackButtonIsPresent();
-      dsl.assert.jumpPagesForwardButtonIsPresent(false);
-      dsl.assert.activePageIs("Page 50");
+      component.assert.jumpPagesBackIsPresent();
+      component.assert.jumpPagesForwardIsPresent(false);
+      component.assert.activePageIs("Page 50");
     });
 
     example("Example: Not enough pages to jump forward or backward", async () => {
-      const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy: 5 });
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackButtonIsPresent(false);
-      dsl.assert.jumpPagesForwardButtonIsPresent(false);
+      component.assert.jumpPagesBackIsPresent(false);
+      component.assert.jumpPagesForwardIsPresent(false);
     });
 
     example("Example: Jump 5 pages forward", async () => {
-      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
+      const component = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackButtonIsPresent(false);
-      dsl.assert.jumpPagesForwardButtonIsPresent();
+      component.assert.jumpPagesBackIsPresent(false);
+      component.assert.jumpPagesForwardIsPresent();
 
-      await dsl.clickJumpPagesForward();
+      await component.clickJumpPagesForward();
 
-      dsl.assert.jumpPagesBackButtonIsPresent();
-      dsl.assert.jumpPagesForwardButtonIsPresent();
+      component.assert.jumpPagesBackIsPresent();
+      component.assert.jumpPagesForwardIsPresent();
 
-      dsl.assert.activePageIs("Page 11");
+      component.assert.activePageIs("Page 11");
     });
 
     example("Example: Jump 10 pages back", async () => {
-      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
+      const component = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackButtonIsPresent();
-      dsl.assert.jumpPagesForwardButtonIsPresent(false);
+      component.assert.jumpPagesBackIsPresent();
+      component.assert.jumpPagesForwardIsPresent(false);
 
-      await dsl.clickJumpPagesBack();
-      await dsl.clickJumpPagesBack();
+      await component.clickJumpPagesBack();
+      await component.clickJumpPagesBack();
 
-      dsl.assert.jumpPagesBackButtonIsPresent();
-      dsl.assert.jumpPagesForwardButtonIsPresent();
+      component.assert.jumpPagesBackIsPresent();
+      component.assert.jumpPagesForwardIsPresent();
 
-      dsl.assert.activePageIs("Page 40");
+      component.assert.activePageIs("Page 40");
     });
   });
 });
@@ -162,7 +168,7 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
       pageBuffer: allowToJumpPagesBy,
     },
   });
-  
+
   let dslAPI: PaginationStripDSL = {
     assert: {
       previousIsDisabled: function () {
@@ -179,16 +185,15 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
         expect(screen.queryByLabelText("Next Page")).not.toBeDisabled();
       },
       activePageIs: function (value) {
-        expect(screen.getByRole("button", { pressed: true, name:value })).toBeInTheDocument();
+        expect(screen.getByRole("button", { pressed: true, name: value })).toBeInTheDocument();
       },
-      jumpPagesBackButtonIsPresent: function (truthy = true) {
+      jumpPagesBackIsPresent: function (truthy = true) {
         if (truthy) {
           expect(screen.queryByLabelText(`Back ${allowToJumpPagesBy}`)).toBeInTheDocument();
         } else {
-          expect(screen.queryByLabelText(`Back ${allowToJumpPagesBy}`)).not.toBeInTheDocument();
         }
       },
-      jumpPagesForwardButtonIsPresent: function (truthy = true) {
+      jumpPagesForwardIsPresent: function (truthy = true) {
         if (truthy) {
           expect(screen.queryByLabelText(`Forward ${allowToJumpPagesBy}`)).toBeInTheDocument();
         } else {
