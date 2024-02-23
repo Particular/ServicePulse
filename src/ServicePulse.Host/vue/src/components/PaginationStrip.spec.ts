@@ -18,19 +18,19 @@ interface PaginationStripDSLAssertions {
   previousIsDisabled(): void;
   nextIsEnabled(): void;
   nextIsDisabled(): void;
-  jumpPagesBackIsPresent(value?: boolean): void;
-  jumpPagesForwardIsPresent(value?: boolean): void;
+  jumpPagesBackButtonIsPresent(value?: boolean): void;
+  jumpPagesForwardButtonIsPresent(value?: boolean): void;
 }
 
 describe("Previous page behavior", () => {
   example("Disables navigating to 'Previous' page while first rendered on the first page", async () => {
-    const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
+    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
 
     dsl.assert.previousIsDisabled();
   });
 
   example("Disables navigating to 'Previous' after navigating to the first page", async () => {
-    const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
+    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
 
     dsl.assert.previousIsEnabled();
 
@@ -41,12 +41,12 @@ describe("Previous page behavior", () => {
   });
 
   example("Enables navigating to 'Previous' page while not first rendered on the first page", async () => {
-    const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
+    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 2 });
     dsl.assert.previousIsEnabled();
   });
 
   example("Enables navigating to 'Previous' page after navigating one page next", async () => {
-    const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
+    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1 });
 
     dsl.assert.previousIsDisabled();
 
@@ -59,12 +59,12 @@ describe("Previous page behavior", () => {
 
 describe("Next page behavior", () => {
   example("Disables navigating to 'Next' page when first rendered on the last page", async () => {
-    const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
+    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
     dsl.assert.nextIsDisabled();
   });
 
   example("Disables navigating to 'Next' after navigating to the last page", async () => {
-    const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
+    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
 
     dsl.assert.nextIsEnabled();
 
@@ -75,13 +75,13 @@ describe("Next page behavior", () => {
   });
 
   example("Enables navigating to 'Next' page when NOT first rendered on the last page", async () => {
-    const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
+    const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 9 });
 
     dsl.assert.nextIsEnabled();
   });
 
   example("Enables navigating to 'Next' page after navigating one page back", async () => {
-    const dls = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
+    const dls = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 10 });
 
     dls.assert.nextIsDisabled();
 
@@ -94,66 +94,66 @@ describe("Next page behavior", () => {
 describe("Feature: Jumping a number of pages forward or backward must be possible", () => {
   describe("Rule: Buttons for jumping pages back or forward should be available only when enough pages ahead or back are available", () => {
     example("Example: Enough pages to jump forward and backward", async () => {
-      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
+      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 10, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackIsPresent();
-      dsl.assert.jumpPagesForwardIsPresent();
+      dsl.assert.jumpPagesBackButtonIsPresent();
+      dsl.assert.jumpPagesForwardButtonIsPresent();
     });
 
     example("Example: Enough pages to jump foward only", async () => {
-      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
+      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackIsPresent(false);
-      dsl.assert.jumpPagesForwardIsPresent();
+      dsl.assert.jumpPagesBackButtonIsPresent(false);
+      dsl.assert.jumpPagesForwardButtonIsPresent();
     });
 
     example("Example: Enough pages to jump back only", async () => {
-      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
+      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackIsPresent();
-      dsl.assert.jumpPagesForwardIsPresent(false);
+      dsl.assert.jumpPagesBackButtonIsPresent();
+      dsl.assert.jumpPagesForwardButtonIsPresent(false);
       dsl.assert.activePageIs("Page 50");
     });
 
     example("Example: Not enough pages to jump forward or backward", async () => {
-      const dsl = rederPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy: 5 });
+      const dsl = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 1, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackIsPresent(false);
-      dsl.assert.jumpPagesForwardIsPresent(false);
+      dsl.assert.jumpPagesBackButtonIsPresent(false);
+      dsl.assert.jumpPagesForwardButtonIsPresent(false);
     });
 
     example("Example: Jump 5 pages forward", async () => {
-      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
+      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 6, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackIsPresent(false);
-      dsl.assert.jumpPagesForwardIsPresent();
+      dsl.assert.jumpPagesBackButtonIsPresent(false);
+      dsl.assert.jumpPagesForwardButtonIsPresent();
 
       await dsl.clickJumpPagesForward();
 
-      dsl.assert.jumpPagesBackIsPresent();
-      dsl.assert.jumpPagesForwardIsPresent();
+      dsl.assert.jumpPagesBackButtonIsPresent();
+      dsl.assert.jumpPagesForwardButtonIsPresent();
 
       dsl.assert.activePageIs("Page 11");
     });
 
     example("Example: Jump 10 pages back", async () => {
-      const dsl = rederPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
+      const dsl = renderPaginationStripWith({ records: 500, itemsPerPage: 10, selectedPage: 50, allowToJumpPagesBy: 5 });
 
-      dsl.assert.jumpPagesBackIsPresent();
-      dsl.assert.jumpPagesForwardIsPresent(false);
+      dsl.assert.jumpPagesBackButtonIsPresent();
+      dsl.assert.jumpPagesForwardButtonIsPresent(false);
 
       await dsl.clickJumpPagesBack();
       await dsl.clickJumpPagesBack();
 
-      dsl.assert.jumpPagesBackIsPresent();
-      dsl.assert.jumpPagesForwardIsPresent();
+      dsl.assert.jumpPagesBackButtonIsPresent();
+      dsl.assert.jumpPagesForwardButtonIsPresent();
 
       dsl.assert.activePageIs("Page 40");
     });
   });
 });
 
-function rederPaginationStripWith({ records, itemsPerPage, selectedPage, allowToJumpPagesBy = 0 }: { records: number; itemsPerPage: number; selectedPage: number; allowToJumpPagesBy?: number }): PaginationStripDSL {
+function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowToJumpPagesBy = 0 }: { records: number; itemsPerPage: number; selectedPage: number; allowToJumpPagesBy?: number }): PaginationStripDSL {
   render(paginationStrip, {
     props: {
       modelValue: selectedPage,
@@ -181,13 +181,13 @@ function rederPaginationStripWith({ records, itemsPerPage, selectedPage, allowTo
       activePageIs: function (value) {
         expect(screen.getByRole("button", { pressed: true, name:value })).toBeInTheDocument();
       },
-      jumpPagesBackIsPresent: function (truthy = true) {
+      jumpPagesBackButtonIsPresent: function (truthy = true) {
         if (truthy) {
           expect(screen.queryByLabelText(`Back ${allowToJumpPagesBy}`)).toBeInTheDocument();
         } else {
         }
       },
-      jumpPagesForwardIsPresent: function (truthy = true) {
+      jumpPagesForwardButtonIsPresent: function (truthy = true) {
         if (truthy) {
           expect(screen.queryByLabelText(`Forward ${allowToJumpPagesBy}`)).toBeInTheDocument();
         } else {
