@@ -5,24 +5,31 @@ const minuteDuration = moment.duration(60 * 1000);
 const hourDuration = moment.duration(60 * 1000); //this ensures that we never use minute formatting
 const dayDuration = moment.duration(24 * 60 * 60 * 1000);
 
-export function useFormatTime(value: number) {
-  const duration = moment.duration(value);
-  const time = { value: "0", unit: "" };
+export interface ValueWithUnit {
+  value: string;
+  unit: string;
+}
 
-  if (duration >= dayDuration) {
-    time.value = formatTimeValue(duration.days()) + " d " + formatTimeValue(duration.hours()) + " hrs";
-  } else if (duration >= hourDuration) {
-    time.value = formatTimeValue(duration.hours(), true) + ":" + formatTimeValue(duration.minutes(), true);
-    time.unit = "hr";
-  } else if (duration >= minuteDuration) {
-    time.value = formatTimeValue(duration.minutes()) + ":" + formatTimeValue(duration.seconds());
-    time.unit = "min";
-  } else if (duration >= secondDuration) {
-    time.value = formatTimeValue(duration.seconds());
-    time.unit = "sec";
-  } else {
-    time.value = formatTimeValue(duration.asMilliseconds());
-    time.unit = "ms";
+export function useFormatTime(value?: number): ValueWithUnit {
+  const time = { value: "0", unit: "" };
+  if (value) {
+    const duration = moment.duration(value);
+
+    if (duration >= dayDuration) {
+      time.value = formatTimeValue(duration.days()) + " d " + formatTimeValue(duration.hours()) + " hrs";
+    } else if (duration >= hourDuration) {
+      time.value = formatTimeValue(duration.hours(), true) + ":" + formatTimeValue(duration.minutes(), true);
+      time.unit = "hr";
+    } else if (duration >= minuteDuration) {
+      time.value = formatTimeValue(duration.minutes()) + ":" + formatTimeValue(duration.seconds());
+      time.unit = "min";
+    } else if (duration >= secondDuration) {
+      time.value = formatTimeValue(duration.seconds());
+      time.unit = "sec";
+    } else {
+      time.value = formatTimeValue(duration.asMilliseconds());
+      time.unit = "ms";
+    }
   }
 
   return time;

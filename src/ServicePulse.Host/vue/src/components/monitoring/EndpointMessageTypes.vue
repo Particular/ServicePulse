@@ -94,7 +94,7 @@ const paginatedMessageTypes = computed(() => {
                       </div>
                     </div>
                     <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
-                      <span class="warning" v-if="messageType.metrics != null && formatGraphDuration(messageType.metrics.criticalTime).value < 0">
+                      <span class="warning" v-if="messageType.metrics != null && parseFloat(formatGraphDuration(messageType.metrics.criticalTime).value) < 0">
                         <i class="fa pa-warning" v-tooltip :title="`Warning: message type currently has negative critical time, possibly because of a clock drift.`"></i>
                       </span>
                       <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
@@ -156,7 +156,7 @@ const paginatedMessageTypes = computed(() => {
                   <div class="row box-header">
                     <div class="no-side-padding">
                       <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" />
-                      <span class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(messageType.metrics.criticalTime).value < 0 }">
+                      <span class="no-side-padding sparkline-value" :class="{ negative: parseFloat(formatGraphDuration(messageType.metrics.criticalTime).value) < 0 }">
                         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.criticalTime).value }}
                         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
                         <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>

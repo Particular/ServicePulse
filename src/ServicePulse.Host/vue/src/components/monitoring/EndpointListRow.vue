@@ -38,7 +38,7 @@ function formatGraphDuration(input: EndpointValues) {
   return { value: "0", unit: "" };
 }
 
-function formatGraphDecimal(input: EndpointValues, deci: number) {
+function formatGraphDecimal(input: EndpointValues | null, deci: number) {
   input = input ?? {
     points: [],
     average: 0,

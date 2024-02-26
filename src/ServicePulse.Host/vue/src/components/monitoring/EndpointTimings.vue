@@ -1,8 +1,18 @@
-<script setup>
-import { formatGraphDuration, largeGraphsMinimumYAxis } from "./formatGraph";
+<script setup lang="ts">
+import { computed } from "vue";
+import { useFormatTime } from "@/composables/formatter";
+import { largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
+import type { ExtendedEndpointDetails } from "@/resources/Endpoint";
 
-const endpoint = defineModel({});
+const endpoint = defineModel<ExtendedEndpointDetails>({
+  required: true,
+});
+
+const latestProcessingTime = computed(() => useFormatTime(endpoint.value.digest.metrics.processingTime?.latest));
+const averageProcessingTime = computed(() => useFormatTime(endpoint.value.digest.metrics.processingTime?.average));
+const latestCriticalTime = computed(() => useFormatTime(endpoint.value.digest.metrics.criticalTime?.latest));
+const averageCriticalTime = computed(() => useFormatTime(endpoint.value.digest.metrics.criticalTime?.average));
 </script>
 
 <template>
@@ -26,15 +36,15 @@ const endpoint = defineModel({});
         </div>
         <div class="metric-digest-value current">
           <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
-            {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).value }}
-            <span class="metric-digest-value-suffix"> {{ formatGraphDuration(endpoint.digest.metrics.processingTime.latest).unit }}</span>
+            {{ latestProcessingTime.value }}
+            <span class="metric-digest-value-suffix"> {{ latestProcessingTime.unit }}</span>
           </div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
         <div class="metric-digest-value average">
           <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
-            {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).value }}
-            <span class="metric-digest-value-suffix"> {{ formatGraphDuration(endpoint.digest.metrics.processingTime.average).unit }} AVG</span>
+            {{ averageProcessingTime.value }}
+            <span class="metric-digest-value-suffix"> {{ averageProcessingTime.unit }} AVG</span>
           </div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
@@ -46,15 +56,15 @@ const endpoint = defineModel({});
         </div>
         <div class="metric-digest-value current">
           <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
-            <span :class="{ negative: formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value < 0 }"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).value }}</span>
-            <span class="metric-digest-value-suffix"> &nbsp;{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.latest).unit }}</span>
+            <span :class="{ negative: parseFloat(latestCriticalTime.value) < 0 }"> {{ latestCriticalTime.value }}</span>
+            <span class="metric-digest-value-suffix"> &nbsp;{{ latestCriticalTime.unit }}</span>
           </div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
         <div class="metric-digest-value average">
           <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
-            <span :class="{ negative: formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value < 0 }"> {{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).value }}</span>
-            <span class="metric-digest-value-suffix"> &nbsp;{{ formatGraphDuration(endpoint.digest.metrics.criticalTime.average).unit }} AVG </span>
+            <span :class="{ negative: parseFloat(averageCriticalTime.value) < 0 }"> {{ averageCriticalTime.value }}</span>
+            <span class="metric-digest-value-suffix"> &nbsp;{{ averageCriticalTime.unit }} AVG </span>
           </div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>

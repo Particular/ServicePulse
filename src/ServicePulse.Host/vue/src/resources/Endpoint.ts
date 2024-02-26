@@ -10,6 +10,20 @@ export interface Endpoint {
   connectedCount: number;
 }
 
+export interface DigestValues {
+  latest?: number;
+  average?: number;
+}
+
+export interface EndpointDigest {
+  [index: string]: DigestValues | undefined;
+  queueLength?: DigestValues;
+  throughput?: DigestValues;
+  retries?: DigestValues;
+  processingTime?: DigestValues;
+  criticalTime?: DigestValues;
+}
+
 export interface EndpointValues {
   points: number[];
   average: number;
@@ -36,12 +50,23 @@ const defaultTimeMetricData: EndpointValuesWithTime = {
   ...defaultMetricData,
   timeAxisValues: [],
 };
+
 export const emptyEndpointMetrics = (): EndpointMetrics => ({
   queueLength: defaultMetricData,
   throughput: defaultMetricData,
   retries: defaultMetricData,
   processingTime: defaultTimeMetricData,
   criticalTime: defaultTimeMetricData,
+});
+
+const defaultDigestValuesData: DigestValues = {};
+
+export const emptyEndpointDigest = (): EndpointDigest => ({
+  queueLength: defaultDigestValuesData,
+  throughput: defaultDigestValuesData,
+  retries: defaultDigestValuesData,
+  processingTime: defaultDigestValuesData,
+  criticalTime: defaultDigestValuesData,
 });
 
 export interface EndpointInstance {
@@ -85,6 +110,7 @@ export interface ExtendedMessageType extends MessageType {
 
 export interface EndpointDetails {
   instances: EndpointInstance[];
+  digest: { metrics: EndpointDigest };
   metricDetails: {
     metrics: EndpointMetrics;
   };
@@ -101,6 +127,7 @@ export interface ExtendedEndpointDetails extends EndpointDetails {
 
 export const emptyEndpointDetails = (): ExtendedEndpointDetails => ({
   instances: [],
+  digest: { metrics: emptyEndpointDigest() },
   metricDetails: { metrics: emptyEndpointMetrics() },
   isScMonitoringDisconnected: false,
   serviceControlId: "",
