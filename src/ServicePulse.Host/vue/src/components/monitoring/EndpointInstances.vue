@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter, RouterLink } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
@@ -8,16 +8,17 @@ import { useMonitoringEndpointDetailsStore } from "@/stores/MonitoringEndpointDe
 import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
+import type { ExtendedEndpointInstance } from "@/resources/Endpoint";
 
-const isRemovingEndpointEnabled = ref(false);
+const isRemovingEndpointEnabled = ref<boolean>(false);
 const router = useRouter();
 const monitoringStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
-const { endpointDetails: endpoint } = storeToRefs(monitoringStore);
+const { endpointDetails: endpoint, endpointName } = storeToRefs(monitoringStore);
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
-async function removeEndpoint(endpointName, instance) {
+async function removeEndpoint(endpointName: string, instance: ExtendedEndpointInstance) {
   try {
     await useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id);
     endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
@@ -36,8 +37,10 @@ async function getIsRemovingEndpointEnabled() {
     if (response) {
       const headers = response.headers;
       const allow = headers.get("Allow");
-      const deleteAllowed = allow.indexOf("DELETE") >= 0;
-      return deleteAllowed;
+      if (allow) {
+        const deleteAllowed = allow.indexOf("DELETE") >= 0;
+        return deleteAllowed;
+      }
     }
   } catch (err) {
     console.log(err);
@@ -98,7 +101,7 @@ onMounted(async () => {
                       {{ instance.name }}
                     </div>
                     <div class="col-lg-4 no-side-padding endpoint-status">
-                      <span class="warning" v-if="formatGraphDuration(instance.metrics.criticalTime).value < 0">
+                      <span class="warning" v-if="parseFloat(formatGraphDuration(instance.metrics.criticalTime).value) < 0">
                         <i class="fa pa-warning" v-tooltip :title="`Warning: instance currently has negative critical time, possibly because of a clock drift.`"></i>
                       </span>
                       <span class="warning" v-if="instance.isScMonitoringDisconnected">
@@ -159,7 +162,7 @@ onMounted(async () => {
                   <div class="row box-header">
                     <div class="no-side-padding">
                       <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" />
-                      <span class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(instance.metrics.criticalTime).value < 0 }">
+                      <span class="no-side-padding sparkline-value" :class="{ negative: parseFloat(formatGraphDuration(instance.metrics.criticalTime).value) < 0 }">
                         {{ instance.isStale == true || instance.isScMonitoringDisconnected == true ? "" : formatGraphDuration(instance.metrics.criticalTime).value }}
                         <strong v-if="instance.isStale && !instance.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or instance is not configured to send metrics`">?</strong>
                         <strong v-if="instance.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
