@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
 import GroupBy from "./MonitoringGroupBy.vue";
 import PeriodSelector from "./MonitoringHistoryPeriod.vue";
@@ -6,7 +6,7 @@ import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 const monitoringStore = useMonitoringStore();
 
-const filterString = ref(monitoringStore.filterString);
+const filterString = ref<string>(monitoringStore.filterString);
 
 watch(filterString, async (newValue) => {
   await monitoringStore.updateFilterString(newValue);

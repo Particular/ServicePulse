@@ -37,7 +37,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     isInitialized.value = true;
   }
 
-  async function updateFilterString(filter = null) {
+  async function updateFilterString(filter: string | null = null) {
     filterString.value = filter ?? route.query.filter?.toString() ?? "";
 
     if (filterString.value === "") {
