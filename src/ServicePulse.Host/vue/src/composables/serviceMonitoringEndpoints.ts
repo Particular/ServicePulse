@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
+import { useTypedFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { monitoringConnectionState } from "./serviceServiceControl";
 import { useGetExceptionGroups } from "./serviceMessageGroup";
 import { type Endpoint, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, emptyEndpointMetrics, type EndpointDetailsError } from "@/resources/Endpoint";
@@ -21,8 +21,7 @@ export async function useGetAllMonitoredEndpoints(historyPeriod = 1) {
   let endpoints: Endpoint[] = [];
   if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
     try {
-      const response = await useFetchFromMonitoring(`${`monitored-endpoints`}?history=${historyPeriod}`);
-      const data = response && (await response.json());
+      const [_, data] = await useTypedFetchFromMonitoring<Endpoint[]>(`${`monitored-endpoints`}?history=${historyPeriod}`);
       endpoints = data ?? [];
       await addEndpointsFromScSubscription(endpoints);
     } catch (error) {
@@ -77,9 +76,8 @@ export function useGetEndpointDetails(endpointName: string, historyPeriod = 1) {
     refresh: async () => {
       if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
         try {
-          const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
-          if (!response?.ok) throw new Error(response?.statusText ?? "No response");
-          data.value = (await response.json()) as EndpointDetails;
+          const [_, details] = await useTypedFetchFromMonitoring<EndpointDetails>(`${`monitored-endpoints`}/${endpointName}?history=${historyPeriod}`);
+          data.value = details!;
         } catch (error: any) {
           console.error(error);
           data.value = { error: error.message } as EndpointDetailsError;
@@ -93,15 +91,13 @@ export function useGetEndpointDetails(endpointName: string, historyPeriod = 1) {
  * @returns The count of disconnected endpoint
  */
 export async function useGetDisconnectedEndpointCount() {
-  let disconnectedCount = 0;
   try {
-    const response = await useFetchFromMonitoring(`${`monitored-endpoints`}/disconnected`);
-    return (response && ((await response.json()) as number)) ?? 0;
+    const [_, count] = await useTypedFetchFromMonitoring<number>(`${`monitored-endpoints`}/disconnected`);
+    return count ?? 0;
   } catch (error) {
     console.error(error);
   }
-
-  return disconnectedCount;
+  return 0;
 }
 
 async function addEndpointsFromScSubscription(endpoints: Endpoint[]) {

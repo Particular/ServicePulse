@@ -16,17 +16,23 @@ export function useFetchFromServiceControl(suffix: string) {
 }
 
 export async function useTypedFetchFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
-  const response = await fetch(serviceControlUrl.value + suffix);
+  const response = await fetch(`${serviceControlUrl.value}${suffix}`);
+  if (!response?.ok) throw new Error(response?.statusText ?? "No response");
   const data = await response.json();
 
   return [response, data];
 }
 
-export function useFetchFromMonitoring(suffix: string) {
+export async function useTypedFetchFromMonitoring<T>(suffix: string): Promise<[Response?, T?]> {
   if (useIsMonitoringDisabled()) {
-    return Promise.resolve(null);
+    return [];
   }
-  return fetch(monitoringUrl.value + suffix);
+
+  const response = await fetch(`${monitoringUrl.value}${suffix}`);
+  if (!response?.ok) throw new Error(response?.statusText ?? "No response");
+  const data = await response.json();
+
+  return [response, data];
 }
 
 export function usePostToServiceControl(suffix: string, payload: object | null = null) {
