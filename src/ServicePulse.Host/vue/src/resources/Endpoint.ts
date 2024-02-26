@@ -30,7 +30,7 @@ export interface EndpointValues {
 }
 
 export interface EndpointValuesWithTime extends EndpointValues {
-  timeAxisValues: Date[];
+  timeAxisValues: string[]; //dates
 }
 
 export interface EndpointMetrics {

@@ -2,9 +2,9 @@
 import { ref } from "vue";
 import SortableColumn from "../../components/SortableColumn.vue";
 import EndpointListRow from "./EndpointListRow.vue";
-import { type MonitoringStore, useMonitoringStore } from "@/stores/MonitoringStore";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 
-const monitoringStore: MonitoringStore = useMonitoringStore();
+const monitoringStore = useMonitoringStore();
 const activeColumn = ref("name");
 
 const sortByColumn = Object.freeze({

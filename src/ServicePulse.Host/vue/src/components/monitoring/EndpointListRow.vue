@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRouter, RouterLink } from "vue-router";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
-import { smallGraphsMinimumYAxis } from "./formatGraph";
+import { smallGraphsMinimumYAxis, formatGraphDuration, formatGraphDecimal } from "./formatGraph";
 import SmallGraph from "./SmallGraph.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
-import { useMonitoringStore, type MonitoringStore } from "../../stores/MonitoringStore";
+import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { storeToRefs } from "pinia";
-import type { GroupedEndpoint, Endpoint, EndpointValues } from "@/resources/Endpoint";
+import type { GroupedEndpoint, Endpoint } from "@/resources/Endpoint";
 
 const settings = defineProps<{
   endpoint: GroupedEndpoint | Endpoint;
 }>();
 
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
-const monitoringStore: MonitoringStore = useMonitoringStore();
+const monitoringStore = useMonitoringStore();
 const isGrouped = computed<boolean>(() => monitoringStore.endpointListIsGrouped);
 const endpoint = computed<Endpoint>(() => {
   return isGrouped.value ? (settings.endpoint as GroupedEndpoint).endpoint : (settings.endpoint as Endpoint);
@@ -29,27 +28,6 @@ const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodSto
 function navigateToEndpointDetails(endpointName: string) {
   router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
 }
-
-function formatGraphDuration(input: EndpointValues) {
-  if (input) {
-    const lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    return useFormatTime(lastValue);
-  }
-  return { value: "0", unit: "" };
-}
-
-function formatGraphDecimal(input: EndpointValues | null, deci: number) {
-  input = input ?? {
-    points: [],
-    average: 0,
-  };
-  const lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-  let decimals = 0;
-  if (lastValue < 10 || lastValue > 1000000) {
-    decimals = 2;
-  }
-  return useFormatLargeNumber(lastValue, deci || decimals);
-}
 </script>
 
 <template>
@@ -59,7 +37,7 @@ function formatGraphDecimal(input: EndpointValues | null, deci: number) {
         <a @click="navigateToEndpointDetails(endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
           {{ shortName }}
         </a>
-        <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):${endpoint.connectedCount || 0}`">({{ endpoint.connectedCount || 0 }})</span>
+        <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):${endpoint.connectedCount}`">({{ endpoint.connectedCount }})</span>
       </div>
       <div class="no-side-padding endpoint-status">
         <span class="warning" v-if="endpoint.metrics != null && parseInt(formatGraphDuration(endpoint.metrics.criticalTime).value) < 0">
