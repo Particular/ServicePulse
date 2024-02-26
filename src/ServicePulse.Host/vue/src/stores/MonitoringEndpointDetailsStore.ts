@@ -4,12 +4,21 @@ import MessageTypes from "@/components/monitoring/messageTypes";
 import * as MonitoringEndpoints from "@/composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
-import { useFailedMessageStore } from "./FailedMessageStore";
 import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, emptyEndpointDetails, type EndpointDetails, type EndpointDetailsError, isError } from "@/resources/Endpoint";
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
+import { useGetExceptionGroupsForEndpoint } from "../composables/serviceMessageGroup";
+import type GroupOperation from "@/resources/GroupOperation";
+
+async function getFailureDetails(classifier: string, classifierFilter: string) {
+  const failedMessages: GroupOperation[] = await useGetExceptionGroupsForEndpoint(classifier, classifierFilter);
+  const groupOperation: GroupOperation | undefined = failedMessages[0];
+  return {
+    serviceControlId: groupOperation?.id ?? "",
+    errorCount: groupOperation?.count ?? 0,
+  };
+}
 
 export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpointDetailsStore", () => {
-  const failedMessageStore = useFailedMessageStore();
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
 
   const getMemoisedEndpointDetails = memoiseOne(MonitoringEndpoints.useGetEndpointDetails);
@@ -38,11 +47,8 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
       const instances = await Promise.all(
         returnedEndpointDetails.instances.map(async (instance): Promise<ExtendedEndpointInstance> => {
           //get error count by instance id
-          await failedMessageStore.getFailedMessagesList("Endpoint Instance", instance.id);
-          if (!failedMessageStore.isFailedMessagesEmpty) {
-            return { ...instance, serviceControlId: failedMessageStore.serviceControlId, errorCount: failedMessageStore.errorCount, isScMonitoringDisconnected: false };
-          }
-          return { ...instance, serviceControlId: "", errorCount: 0, isScMonitoringDisconnected: false };
+          const { serviceControlId, errorCount } = await getFailureDetails("Endpoint Instance", instance.id);
+          return { ...instance, serviceControlId, errorCount, isScMonitoringDisconnected: false };
         })
       );
       instances.sort((a, b) => a.id.localeCompare(b.id));
@@ -66,9 +72,9 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
     }
 
     //get error count by endpoint name
-    await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName.value);
-    endpointDetails.value.serviceControlId = !failedMessageStore.isFailedMessagesEmpty ? failedMessageStore.serviceControlId : "";
-    endpointDetails.value.errorCount = !failedMessageStore.isFailedMessagesEmpty ? failedMessageStore.errorCount : 0;
+    const { serviceControlId, errorCount } = await getFailureDetails("Endpoint Name", endpointName.value);
+    endpointDetails.value.serviceControlId = serviceControlId;
+    endpointDetails.value.errorCount = errorCount;
   }
 
   function updateMessageTypes() {
