@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
@@ -86,11 +86,11 @@ const paginatedMessageTypes = computed(() => {
           >
             <div class="col-xs-12 no-side-padding">
               <div class="row">
-                <div class="col-xs-4 col-xl-8 endpoint-name" :title="messageType.tooltipText">
+                <div class="col-xs-4 col-xl-8 endpoint-name" :title="messageType?.tooltipText">
                   <div class="row box-header">
                     <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
                       <div class="lead">
-                        {{ messageType.shortName || "Unknown" }}
+                        {{ messageType?.shortName || "Unknown" }}
                       </div>
                     </div>
                     <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
@@ -172,7 +172,7 @@ const paginatedMessageTypes = computed(() => {
           </div>
         </div>
       </div>
-      <PaginationStrip v-model="messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes.data.length" />
+      <PaginationStrip v-model="messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes?.data?.length ?? 0" />
     </div>
   </div>
 </template>

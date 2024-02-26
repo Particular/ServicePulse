@@ -14,13 +14,13 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
 
   const getMemoisedEndpointDetails = memoiseOne(MonitoringEndpoints.useGetEndpointDetails);
 
-  const endpointName = ref("");
+  const endpointName = ref<string>("");
   const endpointDetails = ref<ExtendedEndpointDetails>(emptyEndpointDetails());
   const endpointError = ref<EndpointDetailsError | null>(null);
-  const messageTypes = ref({});
-  const messageTypesAvailable = ref(false);
+  const messageTypes = ref<MessageTypes | null>(null);
+  const messageTypesAvailable = ref<boolean>(false);
   const messageTypesUpdatedSet = ref<MessageType[]>([]);
-  const negativeCriticalTimeIsPresent = ref(false);
+  const negativeCriticalTimeIsPresent = ref<boolean>(false);
 
   async function getEndpointDetails(name: string) {
     const { data, refresh } = getMemoisedEndpointDetails(name, historyPeriodStore.historyPeriod.pVal);

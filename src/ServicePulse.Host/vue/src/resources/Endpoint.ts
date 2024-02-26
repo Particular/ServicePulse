@@ -68,6 +68,21 @@ export interface MessageType {
   metrics: EndpointMetrics;
 }
 
+export interface MessageTypeDetails {
+  typeName: string;
+  assemblyName: string;
+  assemblyVersion: string;
+  culture?: string;
+  publicKeyToken?: string;
+}
+
+export interface ExtendedMessageType extends MessageType {
+  shortName: string;
+  messageTypeHierarchy?: MessageTypeDetails[];
+  containsTypeHierarchy?: boolean;
+  tooltipText: string;
+}
+
 export interface EndpointDetails {
   instances: EndpointInstance[];
   metricDetails: {
