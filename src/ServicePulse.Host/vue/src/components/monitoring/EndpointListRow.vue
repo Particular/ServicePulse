@@ -25,6 +25,9 @@ const router = useRouter();
 const supportsEndpointCount = ref();
 const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
+const processingTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.processingTime));
+const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.criticalTime));
+
 function navigateToEndpointDetails(endpointName: string) {
   router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
 }
@@ -40,7 +43,7 @@ function navigateToEndpointDetails(endpointName: string) {
         <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):${endpoint.connectedCount}`">({{ endpoint.connectedCount }})</span>
       </div>
       <div class="no-side-padding endpoint-status">
-        <span class="warning" v-if="endpoint.metrics != null && parseInt(formatGraphDuration(endpoint.metrics.criticalTime).value) < 0">
+        <span class="warning" v-if="endpoint.metrics != null && parseFloat(criticalTimeGraphDuration.value) < 0">
           <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
         </span>
         <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
@@ -104,10 +107,10 @@ function navigateToEndpointDetails(endpointName: string) {
         <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" />
       </div>
       <div class="no-side-padding sparkline-value">
-        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
+        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : processingTimeGraphDuration.value }}
         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
         <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected"> {{ formatGraphDuration(endpoint.metrics.processingTime).unit }}</span>
+        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected"> {{ processingTimeGraphDuration.unit }}</span>
       </div>
     </div>
   </div>
@@ -117,11 +120,11 @@ function navigateToEndpointDetails(endpointName: string) {
       <div class="no-side-padding">
         <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" />
       </div>
-      <div class="no-side-padding sparkline-value" :class="{ negative: parseFloat(formatGraphDuration(endpoint.metrics.criticalTime).value) < 0 }">
-        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
+      <div class="no-side-padding sparkline-value" :class="{ negative: parseFloat(criticalTimeGraphDuration.value) < 0 }">
+        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : criticalTimeGraphDuration.value }}
         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" title="No metrics received or endpoint is not configured to send metrics">?</strong>
         <strong v-if="endpoint.isScMonitoringDisconnected" title="Unable to connect to monitoring server">?</strong>
-        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected" class="unit"> {{ formatGraphDuration(endpoint.metrics.criticalTime).unit }}</span>
+        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected" class="unit"> {{ criticalTimeGraphDuration.unit }}</span>
       </div>
     </div>
   </div>
