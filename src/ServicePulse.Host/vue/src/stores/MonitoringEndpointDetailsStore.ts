@@ -67,10 +67,8 @@ export const useMonitoringEndpointDetailsStore = defineStore("MonitoringEndpoint
 
     //get error count by endpoint name
     await failedMessageStore.getFailedMessagesList("Endpoint Name", endpointName.value);
-    if (!failedMessageStore.isFailedMessagesEmpty) {
-      endpointDetails.value.serviceControlId = failedMessageStore.serviceControlId;
-      endpointDetails.value.errorCount = failedMessageStore.errorCount;
-    }
+    endpointDetails.value.serviceControlId = !failedMessageStore.isFailedMessagesEmpty ? failedMessageStore.serviceControlId : "";
+    endpointDetails.value.errorCount = !failedMessageStore.isFailedMessagesEmpty ? failedMessageStore.errorCount : 0;
   }
 
   function updateMessageTypes() {
