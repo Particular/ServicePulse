@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 // Composables
 import { onMounted, watch, onUnmounted, computed } from "vue";
 import { storeToRefs } from "pinia";
@@ -17,25 +17,25 @@ const monitoringStore = useMonitoringStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 const noData = computed(() => monitoringStore.endpointListIsEmpty);
-let refreshInterval = undefined;
+let refreshInterval: number | undefined = undefined;
 
 watch(historyPeriod, async (newValue) => {
   await changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
-async function changeRefreshInterval(milliseconds) {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+async function changeRefreshInterval(milliseconds: number) {
+  if (refreshInterval) {
+    window.clearInterval(refreshInterval);
   }
   await monitoringStore.updateEndpointList();
-  refreshInterval = setInterval(async () => {
+  refreshInterval = window.setInterval(async () => {
     await monitoringStore.updateEndpointList();
   }, milliseconds);
 }
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+  if (refreshInterval) {
+    window.clearInterval(refreshInterval);
   }
 });
 
