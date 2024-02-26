@@ -92,7 +92,7 @@ describe("Feature: Moving forward through pages with a single button must be pos
       component.assert.nextIsDisabled();
 
       await component.clickPrevious();
-      component.assert.previousIsEnabled();
+      component.assert.nextIsEnabled();
       component.assert.activePageIs("Page 9");
     });
   });
