@@ -42,10 +42,8 @@ export function useGetDayDiffFromToday(value: string) {
   return Math.round(diff / 1000 / 60 / 60 / 24);
 }
 
-export function useFormatLargeNumber(value: number, decimals: number) {
+export function useFormatLargeNumber(num: number, decimals: number) {
   const suffixes = ["k", "M", "G", "T", "P", "E"];
-
-  const num = Number(value);
 
   if (isNaN(num)) {
     return "";
