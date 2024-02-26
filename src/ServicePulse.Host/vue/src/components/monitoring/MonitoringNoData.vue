@@ -1,4 +1,6 @@
-﻿<template>
+﻿<script setup lang="ts"></script>
+
+<template>
   <div class="row">
     <div class="col-sm-12">
       <div class="row">
