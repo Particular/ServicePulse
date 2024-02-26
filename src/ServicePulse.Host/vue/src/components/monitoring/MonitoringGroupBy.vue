@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useCookies } from "vue3-cookies";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
@@ -7,13 +7,13 @@ const monitoringStore = useMonitoringStore();
 const cookies = useCookies().cookies;
 const grouping = ref(monitoringStore.grouping);
 
-async function selectGroup(groupSize) {
+async function selectGroup(groupSize: number) {
   saveSelectedGroup(groupSize);
   await monitoringStore.updateSelectedGrouping(groupSize);
 }
 
-function saveSelectedGroup(groupSize) {
-  cookies.set(`selected_group_size`, groupSize);
+function saveSelectedGroup(groupSize: number) {
+  cookies.set(`selected_group_size`, groupSize.toString());
 }
 
 function getDefaultSelectedGroup() {
