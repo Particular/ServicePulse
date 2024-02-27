@@ -4,10 +4,11 @@ import MessageTypes from "@/components/monitoring/messageTypes";
 import * as MonitoringEndpoints from "@/composables/serviceMonitoringEndpoints";
 import memoiseOne from "memoize-one";
 import { formatGraphDuration } from "../components/monitoring/formatGraph";
-import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, emptyEndpointDetails, type EndpointDetails, type EndpointDetailsError, isError } from "@/resources/Endpoint";
+import { type ExtendedEndpointDetails, type ExtendedEndpointInstance, type MessageType, type EndpointDetails, type EndpointDetailsError, isError } from "@/resources/Endpoint";
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
 import { useGetExceptionGroupsForEndpoint } from "../composables/serviceMessageGroup";
 import type GroupOperation from "@/resources/GroupOperation";
+import { emptyEndpointDetails } from "@/components/monitoring/endpoints";
 
 async function getFailureDetails(classifier: string, classifierFilter: string) {
   const failedMessages: GroupOperation[] = await useGetExceptionGroupsForEndpoint(classifier, classifierFilter);

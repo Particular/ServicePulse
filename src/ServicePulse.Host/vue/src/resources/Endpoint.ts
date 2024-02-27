@@ -42,33 +42,6 @@ export interface EndpointMetrics {
   criticalTime: EndpointValuesWithTime;
 }
 
-const defaultMetricData: EndpointValues = {
-  points: [],
-  average: 0,
-};
-const defaultTimeMetricData: EndpointValuesWithTime = {
-  ...defaultMetricData,
-  timeAxisValues: [],
-};
-
-export const emptyEndpointMetrics = (): EndpointMetrics => ({
-  queueLength: defaultMetricData,
-  throughput: defaultMetricData,
-  retries: defaultMetricData,
-  processingTime: defaultTimeMetricData,
-  criticalTime: defaultTimeMetricData,
-});
-
-const defaultDigestValuesData: DigestValues = {};
-
-export const emptyEndpointDigest = (): EndpointDigest => ({
-  queueLength: defaultDigestValuesData,
-  throughput: defaultDigestValuesData,
-  retries: defaultDigestValuesData,
-  processingTime: defaultDigestValuesData,
-  criticalTime: defaultDigestValuesData,
-});
-
 export interface EndpointInstance {
   name: string;
   id: string;
@@ -124,17 +97,6 @@ export interface ExtendedEndpointDetails extends EndpointDetails {
   errorCount: number;
   isStale: boolean;
 }
-
-export const emptyEndpointDetails = (): ExtendedEndpointDetails => ({
-  instances: [],
-  digest: { metrics: emptyEndpointDigest() },
-  metricDetails: { metrics: emptyEndpointMetrics() },
-  isScMonitoringDisconnected: false,
-  serviceControlId: "",
-  errorCount: 0,
-  isStale: false,
-  messageTypes: [],
-});
 
 export interface GroupedEndpoint {
   groupName: string;
