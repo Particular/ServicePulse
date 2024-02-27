@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 const props = withDefaults(
   defineProps<{
@@ -21,6 +21,12 @@ const showPagination = computed(() => {
 });
 
 const doublePageBuffer = computed(() => props.pageBuffer * 2);
+
+watch(numberOfPages, (newValue) => {
+  if (newValue < pageNumber.value) {
+    pageNumber.value = 1;
+  }
+});
 
 interface PageData {
   label: string;
