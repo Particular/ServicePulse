@@ -7,7 +7,8 @@ import { useLicense } from "@/composables/serviceLicense";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
 import { useServiceControl } from "@/composables/serviceServiceControl";
 
-Promise.all([useLicense(), useServiceControlUrls(), useServiceControl()]);
+// eslint-disable-next-line github/no-then
+useServiceControlUrls().then(() => Promise.all([useLicense(), useServiceControl()]));
 </script>
 
 <template>
