@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { licenseStatus } from "../composables/serviceLicense";
+import routeLinks from "@/router/routeLinks";
 </script>
 
 <template>
@@ -8,7 +9,7 @@ import { licenseStatus } from "../composables/serviceLicense";
       <h1>Platform license expired</h1>
       <p>Please update your license to continue using the Particular Service Platform</p>
       <div class="action-toolbar">
-        <a class="btn btn-default btn-primary" href="#/configuration">View license details</a>
+        <a class="btn btn-default btn-primary" :href="routeLinks.configuration.license.link">View license details</a>
       </div>
     </div>
   </template>
@@ -18,7 +19,7 @@ import { licenseStatus } from "../composables/serviceLicense";
       <p>To continue using the Particular Service Platform, please extend your license</p>
       <div class="action-toolbar">
         <a class="btn btn-default btn-primary" href="https://particular.net/extend-your-trial?p=servicepulse" target="_blank">Extend your license <i class="fa fa-external-link"></i></a>
-        <a class="btn btn-default btn-secondary" href="#/configuration">View license details</a>
+        <a class="btn btn-default btn-secondary" :href="routeLinks.configuration.license.link">View license details</a>
       </div>
     </div>
   </template>
@@ -27,7 +28,7 @@ import { licenseStatus } from "../composables/serviceLicense";
       <h1>Platform license expired</h1>
       <p>Your upgrade protection period has elapsed and your license is not valid for this version of ServicePulse.</p>
       <div class="action-toolbar">
-        <a class="btn btn-default btn-primary" href="#/configuration">View license details</a>
+        <a class="btn btn-default btn-primary" :href="routeLinks.configuration.license.link">View license details</a>
       </div>
     </div>
   </template>

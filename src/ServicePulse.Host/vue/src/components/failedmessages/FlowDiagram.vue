@@ -3,6 +3,7 @@ import { onMounted, ref } from "vue";
 import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { MarkerType, useVueFlow, VueFlow } from "@vue-flow/core";
 import TimeSince from "../TimeSince.vue";
+import routeLinks from "@/router/routeLinks";
 
 const props = defineProps({
   conversationId: String,
@@ -180,7 +181,7 @@ function typeIcon(type) {
             <i class="fa" :class="typeIcon(nodeProps.data.type)" :title="nodeProps.data.type" />
             <div class="lead righ-side-ellipsis" :title="nodeProps.data.nodeName">
               <strong>
-                <RouterLink v-if="nodeProps.data.isError" :to="{ name: 'message', params: { id: nodeProps.data.id } }">{{ nodeProps.data.nodeName }}</RouterLink>
+                <RouterLink v-if="nodeProps.data.isError" :to="routeLinks.failedMessage.message.link(nodeProps.data.id)">{{ nodeProps.data.nodeName }}</RouterLink>
                 <span v-else>{{ nodeProps.data.nodeName }}</span>
               </strong>
             </div>
