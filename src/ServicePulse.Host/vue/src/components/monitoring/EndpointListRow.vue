@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRouter, RouterLink } from "vue-router";
+import { RouterLink } from "vue-router";
 import { smallGraphsMinimumYAxis, formatGraphDuration, formatGraphDecimal } from "./formatGraph";
 import SmallGraph from "./SmallGraph.vue";
-import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
-import { storeToRefs } from "pinia";
 import type { GroupedEndpoint, Endpoint } from "@/resources/Endpoint";
+import routeLinks from "@/router/routeLinks";
 
 const settings = defineProps<{
   endpoint: GroupedEndpoint | Endpoint;
 }>();
 
-const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const monitoringStore = useMonitoringStore();
 const isGrouped = computed<boolean>(() => monitoringStore.endpointListIsGrouped);
 const endpoint = computed<Endpoint>(() => {
@@ -21,25 +19,19 @@ const endpoint = computed<Endpoint>(() => {
 const shortName = computed(() => {
   return isGrouped.value ? (settings.endpoint as GroupedEndpoint).shortName : endpoint.value.name;
 });
-const router = useRouter();
 const supportsEndpointCount = ref();
-const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
 const processingTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.processingTime));
 const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.criticalTime));
-
-function navigateToEndpointDetails(endpointName: string) {
-  router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
-}
 </script>
 
 <template>
   <div class="table-first-col endpoint-name name-overview">
     <div class="box-header">
       <div class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-        <a @click="navigateToEndpointDetails(endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
+        <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
           {{ shortName }}
-        </a>
+        </RouterLink>
         <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):${endpoint.connectedCount}`">({{ endpoint.connectedCount }})</span>
       </div>
       <div class="no-side-padding endpoint-status">
@@ -53,7 +45,7 @@ function navigateToEndpointDetails(endpointName: string) {
           <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
         </span>
         <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-          <RouterLink :to="{ name: 'message-groups', params: { groupId: endpoint.serviceControlId } }" v-if="endpoint.errorCount" class="warning cursorpointer">
+          <RouterLink :to="routeLinks.failedMessage.group.link(endpoint.serviceControlId)" v-if="endpoint.errorCount" class="warning cursorpointer">
             <i class="fa fa-envelope"></i>
             <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount }}</span>
           </RouterLink>

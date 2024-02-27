@@ -72,13 +72,11 @@ const config: RouteItem[] = [
     path: routeLinks.monitoring.root,
     component: MonitoringView,
     title: "Monitored Endpoints",
-    children: [
-      {
-        title: "Endpoint Details",
-        path: routeLinks.monitoring.endpointDetails.template,
-        component: () => import("@/components/monitoring/EndpointDetails.vue"),
-      },
-    ],
+  },
+  {
+    path: routeLinks.monitoring.endpointDetails.template,
+    component: () => import("@/components/monitoring/EndpointDetails.vue"),
+    title: "Endpoint Details",
   },
   {
     path: routeLinks.events,

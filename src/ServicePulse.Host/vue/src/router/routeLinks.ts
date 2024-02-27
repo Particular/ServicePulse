@@ -34,7 +34,7 @@ const configurationLinks = (root: string) => {
 const monitoringLinks = (root: string) => {
   return {
     root,
-    endpointDetails: { link: (endpointName: string) => `${root}/endpoint/${endpointName}`, template: "endpoint/:endpointName" },
+    endpointDetails: { link: (endpointName: string) => `${root}/endpoint/${endpointName}`, template: "/monitoring/endpoint/:endpointName" },
   };
 };
 

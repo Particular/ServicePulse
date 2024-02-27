@@ -7,23 +7,21 @@ import { storeToRefs } from "pinia";
 import { useMonitoringEndpointDetailsStore } from "@/stores/MonitoringEndpointDetailsStore";
 import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
-import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 import type { ExtendedEndpointInstance } from "@/resources/Endpoint";
+import routeLinks from "@/router/routeLinks";
 
 const isRemovingEndpointEnabled = ref<boolean>(false);
 const router = useRouter();
 const monitoringStore = useMonitoringEndpointDetailsStore();
-const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
 const { endpointDetails: endpoint, endpointName } = storeToRefs(monitoringStore);
-const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
 async function removeEndpoint(endpointName: string, instance: ExtendedEndpointInstance) {
   try {
     await useDeleteFromMonitoring("monitored-instance/" + endpointName + "/" + instance.id);
     endpoint.value.instances.splice(endpoint.value.instances.indexOf(instance), 1);
     if (endpoint.value.instances.length === 0) {
-      router.push({ name: "monitoring", query: { historyPeriod: historyPeriod.value.pVal } });
+      router.push(routeLinks.monitoring.root);
     }
   } catch (err) {
     console.log(err);
@@ -111,7 +109,7 @@ onMounted(async () => {
                         <i class="fa pa-endpoint-lost endpoint-details" v-tooltip :title="`Unable to connect to instance`"></i>
                       </span>
                       <span class="warning" v-if="instance.errorCount" v-tooltip :title="instance.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
-                        <RouterLink :to="{ name: 'message-groups', params: { groupId: instance.serviceControlId } }" v-if="instance.errorCount" class="warning cursorpointer">
+                        <RouterLink :to="routeLinks.failedMessage.group.link(instance.serviceControlId)" v-if="instance.errorCount" class="warning cursorpointer">
                           <i class="fa fa-envelope"></i>
                           <span class="badge badge-important cursorpointer"> {{ instance.errorCount }}</span>
                         </RouterLink>
