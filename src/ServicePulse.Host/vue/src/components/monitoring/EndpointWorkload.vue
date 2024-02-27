@@ -1,8 +1,9 @@
-<script setup>
-import { formatGraphDecimal, largeGraphsMinimumYAxis } from "./formatGraph";
+<script setup lang="ts">
+import { type ExtendedEndpointDetails } from "@/resources/Endpoint";
+import { formatGraphDecimalFromNumber, largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
 
-const endpoint = defineModel({});
+const endpoint = defineModel<ExtendedEndpointDetails>({ required: true });
 </script>
 
 <template>
@@ -26,11 +27,11 @@ const endpoint = defineModel({});
           <span class="metric-digest-header" v-tooltip :title="`Throughput: The number of messages per second successfully processed by a receiving endpoint.`"> Throughput </span>
         </div>
         <div class="metric-digest-value current">
-          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimalFromNumber(endpoint.digest.metrics.throughput?.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
         <div class="metric-digest-value average">
-          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.throughput.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
+          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimalFromNumber(endpoint.digest.metrics.throughput?.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
       </div>
@@ -40,11 +41,11 @@ const endpoint = defineModel({});
         </div>
 
         <div class="metric-digest-value current">
-          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.retries.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
+          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimalFromNumber(endpoint.digest.metrics.retries?.latest, 2) }} <span class="metric-digest-value-suffix">MSGS/S</span></div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
         <div class="metric-digest-value average">
-          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.retries.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
+          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimalFromNumber(endpoint.digest.metrics.retries?.average, 2) }} <span class="metric-digest-value-suffix">MSGS/S AVG</span></div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
       </div>

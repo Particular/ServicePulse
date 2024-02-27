@@ -1,59 +1,35 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRouter, RouterLink } from "vue-router";
-import { useFormatTime, useFormatLargeNumber } from "../../composables/formatter";
-import { smallGraphsMinimumYAxis } from "./formatGraph";
+import { smallGraphsMinimumYAxis, formatGraphDuration, formatGraphDecimal } from "./formatGraph";
 import SmallGraph from "./SmallGraph.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { storeToRefs } from "pinia";
+import type { GroupedEndpoint, Endpoint } from "@/resources/Endpoint";
 
-const settings = defineProps({
-  endpoint: Object,
-});
+const settings = defineProps<{
+  endpoint: GroupedEndpoint | Endpoint;
+}>();
 
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const monitoringStore = useMonitoringStore();
-const isGrouped = computed(() => monitoringStore.endpointListIsGrouped);
-const endpoint = computed(() => {
-  return isGrouped.value ? settings.endpoint.endpoint : settings.endpoint;
+const isGrouped = computed<boolean>(() => monitoringStore.endpointListIsGrouped);
+const endpoint = computed<Endpoint>(() => {
+  return isGrouped.value ? (settings.endpoint as GroupedEndpoint).endpoint : (settings.endpoint as Endpoint);
 });
 const shortName = computed(() => {
-  return isGrouped.value ? settings.endpoint.shortName : "";
+  return isGrouped.value ? (settings.endpoint as GroupedEndpoint).shortName : endpoint.value.name;
 });
 const router = useRouter();
 const supportsEndpointCount = ref();
 const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
-function navigateToEndpointDetails($event, endpointName) {
-  if ($event.target.localName !== "button") {
-    router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
-  }
-}
+const processingTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.processingTime));
+const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.criticalTime));
 
-function formatGraphDuration(input) {
-  if (input) {
-    const lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    return useFormatTime(lastValue);
-  }
-  return input;
-}
-function formatGraphDecimal(input, deci) {
-  if (input) {
-    const lastValue = input.points.length > 0 ? input.points[input.points.length - 1] : 0;
-    let decimals = 0;
-    if (lastValue < 10 || input > 1000000) {
-      decimals = 2;
-    }
-    return useFormatLargeNumber(lastValue, deci || decimals);
-  } else {
-    input = {
-      points: [],
-      average: 0,
-      displayValue: 0,
-    };
-    return input;
-  }
+function navigateToEndpointDetails(endpointName: string) {
+  router.push({ name: "endpoint-details", params: { endpointName: endpointName }, query: { historyPeriod: selectedPeriod.value.pVal } });
 }
 </script>
 
@@ -61,13 +37,13 @@ function formatGraphDecimal(input, deci) {
   <div class="table-first-col endpoint-name name-overview">
     <div class="box-header">
       <div class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-        <a @click="navigateToEndpointDetails($event, endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
-          {{ isGrouped ? shortName : endpoint.name }}
+        <a @click="navigateToEndpointDetails(endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
+          {{ shortName }}
         </a>
-        <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):` + endpoint.connectedCount || 0">({{ endpoint.connectedCount || 0 }})</span>
+        <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):${endpoint.connectedCount}`">({{ endpoint.connectedCount }})</span>
       </div>
       <div class="no-side-padding endpoint-status">
-        <span class="warning" v-if="endpoint.metrics != null && parseInt(formatGraphDuration(endpoint.metrics.criticalTime).value) < 0">
+        <span class="warning" v-if="endpoint.metrics != null && parseFloat(criticalTimeGraphDuration.value) < 0">
           <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
         </span>
         <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
@@ -131,10 +107,10 @@ function formatGraphDecimal(input, deci) {
         <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" />
       </div>
       <div class="no-side-padding sparkline-value">
-        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.processingTime).value }}
+        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : processingTimeGraphDuration.value }}
         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip title="No metrics received or endpoint is not configured to send metrics">?</strong>
         <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip title="Unable to connect to monitoring server">?</strong>
-        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected"> {{ formatGraphDuration(endpoint.metrics.processingTime).unit }}</span>
+        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected"> {{ processingTimeGraphDuration.unit }}</span>
       </div>
     </div>
   </div>
@@ -144,11 +120,11 @@ function formatGraphDecimal(input, deci) {
       <div class="no-side-padding">
         <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" />
       </div>
-      <div class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(endpoint.metrics.criticalTime).value < 0 }">
-        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(endpoint.metrics.criticalTime).value }}
+      <div class="no-side-padding sparkline-value" :class="{ negative: parseFloat(criticalTimeGraphDuration.value) < 0 }">
+        {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : criticalTimeGraphDuration.value }}
         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" title="No metrics received or endpoint is not configured to send metrics">?</strong>
         <strong v-if="endpoint.isScMonitoringDisconnected" title="Unable to connect to monitoring server">?</strong>
-        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected" class="unit"> {{ formatGraphDuration(endpoint.metrics.criticalTime).unit }}</span>
+        <span v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected" class="unit"> {{ criticalTimeGraphDuration.unit }}</span>
       </div>
     </div>
   </div>

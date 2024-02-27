@@ -1,8 +1,11 @@
-<script setup>
-import { formatGraphDecimal, largeGraphsMinimumYAxis } from "./formatGraph";
+<script setup lang="ts">
+import type { ExtendedEndpointDetails } from "@/resources/Endpoint";
+import { formatGraphDecimalFromNumber, largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
 
-const endpoint = defineModel({});
+const endpoint = defineModel<ExtendedEndpointDetails>({
+  required: true,
+});
 </script>
 
 <template>
@@ -25,12 +28,12 @@ const endpoint = defineModel({});
         </div>
         <div class="metric-digest-value current">
           <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">
-            {{ formatGraphDecimal(endpoint.digest.metrics.queueLength.latest, 0) }} <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span>
+            {{ formatGraphDecimalFromNumber(endpoint.digest.metrics.queueLength?.latest, 0) }} <span v-if="!endpoint.isStale || !endpoint.isScMonitoringDisconnected" class="metric-digest-value-suffix">MSGS</span>
           </div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
         <div class="metric-digest-value average">
-          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimal(endpoint.digest.metrics.queueLength.average, 0) }} <span class="metric-digest-value-suffix">MSGS AVG</span></div>
+          <div v-if="!endpoint.isStale && !endpoint.isScMonitoringDisconnected">{{ formatGraphDecimalFromNumber(endpoint.digest.metrics.queueLength?.average, 0) }} <span class="metric-digest-value-suffix">MSGS AVG</span></div>
           <strong v-if="endpoint.isStale || endpoint.isScMonitoringDisconnected">?</strong>
         </div>
       </div>

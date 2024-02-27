@@ -1,13 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 
-const props = defineProps({
-  unit: String,
-  sortBy: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<{
+  sortBy: string;
+}>();
 
 const activeColumn = defineModel({
   type: String,

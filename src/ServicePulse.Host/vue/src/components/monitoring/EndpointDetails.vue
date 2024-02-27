@@ -1,6 +1,6 @@
-﻿<script setup>
+﻿<script setup lang="ts">
 // Composables
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { computed, watch, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter, RouterLink } from "vue-router";
 import { monitoringConnectionState, connectionState } from "../../composables/serviceServiceControl";
 import { licenseStatus } from "../../composables/serviceLicense";
@@ -22,54 +22,43 @@ import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPerio
 
 const route = useRoute();
 const router = useRouter();
-const endpointName = route.params.endpointName;
-let refreshInterval = undefined;
+const endpointName = route.params.endpointName.toString();
+let refreshInterval: number;
 
 const monitoringStore = useMonitoringEndpointDetailsStore();
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
-const showInstancesBreakdown = ref(route?.query?.tab === "instancesBreakdown");
-
-const loadedSuccessfully = ref(false);
-
-const endpoint = ref({});
-
 const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
-const { negativeCriticalTimeIsPresent } = storeToRefs(monitoringStore);
+const { negativeCriticalTimeIsPresent, endpointDetails: endpoint } = storeToRefs(monitoringStore);
 
 watch(historyPeriod, (newValue) => {
   changeRefreshInterval(newValue.refreshIntervalVal);
 });
 
-watch(
-  () => showInstancesBreakdown.value,
-  () => {
-    const breakdownTabName = showInstancesBreakdown.value ? "instancesBreakdown" : "messageTypeBreakdown";
-    router.replace({ query: { ...route.query, tab: breakdownTabName } });
-  }
-);
+const tabs = Object.freeze({
+  messageTypeBreakdown: "messageTypeBreakdown",
+  instancesBreakdown: "instancesBreakdown",
+});
+
+const activeTab = computed({
+  get() {
+    return route?.query?.tab ?? tabs.messageTypeBreakdown;
+  },
+  set(newValue) {
+    router.replace({ query: { ...route.query, tab: newValue } });
+  },
+});
 
 async function getEndpointDetails() {
-  //get historyPeriod
-  const selectedHistoryPeriod = historyPeriod.value.pVal;
-  if (!useIsMonitoringDisabled() && !monitoringConnectionState.unableToConnect) {
-    await monitoringStore.getEndpointDetails(endpointName, selectedHistoryPeriod);
-    const responseData = monitoringStore.endpointDetails;
-    if (responseData != null) {
-      const endpointDetails = responseData;
-      endpointDetails.isScMonitoringDisconnected = false;
-      Object.assign(endpoint.value, endpointDetails);
-      loadedSuccessfully.value = !endpoint.value.error;
-    }
-  }
+  await monitoringStore.getEndpointDetails(endpointName);
 }
 
-function changeRefreshInterval(milliseconds) {
+function changeRefreshInterval(milliseconds: number) {
   if (typeof refreshInterval !== "undefined") {
     clearInterval(refreshInterval);
   }
   getEndpointDetails();
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     getEndpointDetails();
   }, milliseconds);
 }
@@ -80,7 +69,6 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  getEndpointDetails();
   changeRefreshInterval(historyPeriod.value.refreshIntervalVal);
 });
 </script>
@@ -98,7 +86,7 @@ onMounted(() => {
           </div>
         </div>
         <!--Header-->
-        <div class="monitoring-head" v-if="loadedSuccessfully">
+        <div class="monitoring-head">
           <div class="endpoint-title no-side-padding list-section">
             <h1 class="righ-side-ellipsis" v-tooltip :title="endpointName">
               {{ endpointName }}
@@ -129,7 +117,7 @@ onMounted(() => {
           </div>
         </div>
         <!--large graphs-->
-        <div class="large-graphs" v-if="loadedSuccessfully">
+        <div class="large-graphs">
           <div class="container">
             <div class="row">
               <EndpointBacklog v-model="endpoint" />
@@ -140,24 +128,24 @@ onMounted(() => {
         </div>
 
         <!--Messagetypes and instances-->
-        <div v-if="loadedSuccessfully">
+        <div>
           <!--tabs-->
           <div class="tabs">
-            <h5 :class="{ active: !showInstancesBreakdown }">
-              <a @click="showInstancesBreakdown = false" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
+            <h5 :class="{ active: activeTab === tabs.messageTypeBreakdown }">
+              <a @click="activeTab = tabs.messageTypeBreakdown" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
             </h5>
-            <h5 :class="{ active: showInstancesBreakdown }">
-              <a @click="showInstancesBreakdown = true" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
+            <h5 :class="{ active: activeTab === tabs.instancesBreakdown }">
+              <a @click="activeTab = tabs.instancesBreakdown" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
             </h5>
           </div>
 
           <!--showInstancesBreakdown-->
-          <section v-if="showInstancesBreakdown" class="endpoint-instances">
+          <section v-if="activeTab === tabs.instancesBreakdown" class="endpoint-instances">
             <EndpointInstances />
           </section>
 
           <!--ShowMessagetypes breakdown-->
-          <section v-if="!showInstancesBreakdown" class="endpoint-message-types">
+          <section v-if="activeTab === tabs.messageTypeBreakdown" class="endpoint-message-types">
             <EndpointMessageTypes />
           </section>
         </div>

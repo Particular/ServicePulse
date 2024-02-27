@@ -1,14 +1,23 @@
-<script setup>
+<script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
+import { useMonitoringHistoryPeriodStore, type MonitoringHistoryPeriod } from "@/stores/MonitoringHistoryPeriodStore";
+import { useRoute } from "vue-router";
+import { watch } from "vue";
 
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const allPeriods = monitoringHistoryPeriodStore.allPeriods;
 const { historyPeriod: selectedPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
-async function selectHistoryPeriod(period) {
-  await monitoringHistoryPeriodStore.setHistoryPeriod(period.pVal);
+async function selectHistoryPeriod(period: MonitoringHistoryPeriod) {
+  await monitoringHistoryPeriodStore.setHistoryPeriod(period.pVal.toString());
 }
+
+const route = useRoute();
+watch(
+  () => route.query.historyPeriod,
+  () => monitoringHistoryPeriodStore.setHistoryPeriod(route?.query?.historyPeriod?.toString()),
+  { immediate: true }
+);
 </script>
 
 <template>

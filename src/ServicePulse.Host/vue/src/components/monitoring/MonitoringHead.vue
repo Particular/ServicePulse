@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import MonitoringFilter from "./MonitoringFilter.vue";
 </script>
 

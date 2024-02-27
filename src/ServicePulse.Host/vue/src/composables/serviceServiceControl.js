@@ -1,7 +1,7 @@
 import { computed, onMounted, reactive, watch } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls";
-import { monitoringUrl, serviceControlUrl, useFetchFromMonitoring, useFetchFromServiceControl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
+import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useFetchFromServiceControl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast";
 
 export const stats = reactive({
@@ -224,8 +224,9 @@ async function getSCConnection() {
 async function getMonitoringConnection() {
   try {
     if (!useIsMonitoringDisabled()) {
-      const response = await useFetchFromMonitoring("connection");
-      return response.json();
+      // eslint-disable-next-line
+      const [_, data] = await useTypedFetchFromMonitoring("connection");
+      return data;
     }
   } catch {
     connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
@@ -245,9 +246,9 @@ async function getSCVersion() {
 
 async function getMonitoringVersion() {
   try {
-    const response = await useFetchFromMonitoring("");
+    const [response, data] = await useTypedFetchFromMonitoring("");
     environment.monitoring_version = response.headers.get("X-Particular-Version");
-    return response.json();
+    return data;
   } catch {
     return null;
   }
@@ -334,17 +335,22 @@ function getFailedCustomChecksCount() {
   );
 }
 
+async function useFetchFromMonitoring(endpoint) {
+  try {
+    // eslint-disable-next-line
+    const [_, data] = await useTypedFetchFromMonitoring(endpoint);
+    return data;
+  } catch {
+    throw new Error("Error connecting to monitoring");
+  }
+}
+
 function getMonitoredEndpoints() {
   if (!useIsMonitoringDisabled()) {
     return fetchWithErrorHandling(
       () => useFetchFromMonitoring("monitored-endpoints?history=1"),
       monitoringConnectionState,
-      (response) => {
-        if (response != null && response.ok) {
-          return response.json();
-        }
-        throw new Error("Error connecting to monitoring");
-      }
+      (response) => response
     );
   }
 }
@@ -354,12 +360,7 @@ function getDisconnectedEndpointsCount() {
     return fetchWithErrorHandling(
       () => useFetchFromMonitoring("monitored-endpoints/disconnected"),
       monitoringConnectionState,
-      (response) => {
-        if (response != null && response.ok) {
-          return response.json();
-        }
-        throw new Error("Error connecting to monitoring");
-      }
+      (response) => response
     );
   }
 }

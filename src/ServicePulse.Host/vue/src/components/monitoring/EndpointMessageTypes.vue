@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { formatGraphDecimal, formatGraphDuration, smallGraphsMinimumYAxis } from "./formatGraph";
@@ -86,15 +86,15 @@ const paginatedMessageTypes = computed(() => {
           >
             <div class="col-xs-12 no-side-padding">
               <div class="row">
-                <div class="col-xs-4 col-xl-8 endpoint-name" :title="messageType.tooltipText">
+                <div class="col-xs-4 col-xl-8 endpoint-name" :title="messageType?.tooltipText">
                   <div class="row box-header">
                     <div class="col-lg-max-9 no-side-padding lead message-type-label righ-side-ellipsis">
                       <div class="lead">
-                        {{ messageType.shortName || "Unknown" }}
+                        {{ messageType?.shortName || "Unknown" }}
                       </div>
                     </div>
                     <div class="col-lg-4 no-side-padding endpoint-status message-type-status">
-                      <span class="warning" v-if="messageType.metrics != null && formatGraphDuration(messageType.metrics.criticalTime).value < 0">
+                      <span class="warning" v-if="messageType.metrics != null && parseFloat(formatGraphDuration(messageType.metrics.criticalTime).value) < 0">
                         <i class="fa pa-warning" v-tooltip :title="`Warning: message type currently has negative critical time, possibly because of a clock drift.`"></i>
                       </span>
                       <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
@@ -156,7 +156,7 @@ const paginatedMessageTypes = computed(() => {
                   <div class="row box-header">
                     <div class="no-side-padding">
                       <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="messageType.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" />
-                      <span class="no-side-padding sparkline-value" :class="{ negative: formatGraphDuration(messageType.metrics.criticalTime).value < 0 }">
+                      <span class="no-side-padding sparkline-value" :class="{ negative: parseFloat(formatGraphDuration(messageType.metrics.criticalTime).value) < 0 }">
                         {{ endpoint.isStale == true || endpoint.isScMonitoringDisconnected == true ? "" : formatGraphDuration(messageType.metrics.criticalTime).value }}
                         <strong v-if="endpoint.isStale && !endpoint.isScMonitoringDisconnected" v-tooltip :title="`No metrics received or endpoint is not configured to send metrics`">?</strong>
                         <strong v-if="endpoint.isScMonitoringDisconnected" v-tooltip :title="`Unable to connect to monitoring server`">?</strong>
@@ -172,7 +172,7 @@ const paginatedMessageTypes = computed(() => {
           </div>
         </div>
       </div>
-      <PaginationStrip v-model="messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes.data.length" />
+      <PaginationStrip v-model="messageTypesPage" :itemsPerPage="perPage" :totalCount="messageTypes?.data?.length ?? 0" />
     </div>
   </div>
 </template>

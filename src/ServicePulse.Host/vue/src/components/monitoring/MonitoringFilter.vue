@@ -1,18 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from "vue";
 import GroupBy from "./MonitoringGroupBy.vue";
 import PeriodSelector from "./MonitoringHistoryPeriod.vue";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
-import { useRoute } from "vue-router";
-import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 
 const monitoringStore = useMonitoringStore();
-const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 
-const filterString = ref(monitoringStore.filterString);
-const route = useRoute();
+const filterString = ref<string>(monitoringStore.filterString);
 
-watch(route, () => monitoringHistoryPeriodStore.setHistoryPeriod(route.params.historyPeriod), { deep: true, immediate: true, flush: "pre" });
 watch(filterString, async (newValue) => {
   await monitoringStore.updateFilterString(newValue);
   filterString.value = monitoringStore.filterString;
