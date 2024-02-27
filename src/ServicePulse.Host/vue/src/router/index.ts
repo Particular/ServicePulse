@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
-import config, { type RouteItem } from "./config";
+import config from "./config";
 
 function meta(item: { title: string }) {
   return { title: `${item.title} • ServicePulse` };

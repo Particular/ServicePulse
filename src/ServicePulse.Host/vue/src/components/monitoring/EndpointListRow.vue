@@ -3,7 +3,9 @@ import { ref, computed } from "vue";
 import { RouterLink } from "vue-router";
 import { smallGraphsMinimumYAxis, formatGraphDuration, formatGraphDecimal } from "./formatGraph";
 import SmallGraph from "./SmallGraph.vue";
+import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
+import { storeToRefs } from "pinia";
 import type { GroupedEndpoint, Endpoint } from "@/resources/Endpoint";
 import routeLinks from "@/router/routeLinks";
 
@@ -11,6 +13,7 @@ const settings = defineProps<{
   endpoint: GroupedEndpoint | Endpoint;
 }>();
 
+const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const monitoringStore = useMonitoringStore();
 const isGrouped = computed<boolean>(() => monitoringStore.endpointListIsGrouped);
 const endpoint = computed<Endpoint>(() => {
@@ -20,6 +23,7 @@ const shortName = computed(() => {
   return isGrouped.value ? (settings.endpoint as GroupedEndpoint).shortName : endpoint.value.name;
 });
 const supportsEndpointCount = ref();
+const { historyPeriod } = storeToRefs(monitoringHistoryPeriodStore);
 
 const processingTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.processingTime));
 const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.value.metrics.criticalTime));
@@ -29,7 +33,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
   <div class="table-first-col endpoint-name name-overview">
     <div class="box-header">
       <div class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-        <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
+        <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal)" class="cursorpointer" v-tooltip :title="endpoint.name">
           {{ shortName }}
         </RouterLink>
         <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):${endpoint.connectedCount}`">({{ endpoint.connectedCount }})</span>
