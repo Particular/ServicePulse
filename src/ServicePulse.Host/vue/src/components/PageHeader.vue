@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink } from "vue-router";
 import { computed } from "vue";
 import { connectionState, monitoringConnectionState, stats } from "@/composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
@@ -8,11 +8,7 @@ import ExclamationMark from "./ExclamationMark.vue";
 import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 import { WarningLevel } from "@/components/WarningLevel";
 import routeLinks from "@/router/routeLinks";
-
-function subIsActive(input: string, exact: boolean = false) {
-  const route = useRoute();
-  return exact ? route.path.endsWith(input) : route.path.indexOf(input) === 0; // current path starts with this path string
-}
+import isRouteSelected from "@/composables/isRouteSelected";
 
 const displayWarn = computed(() => {
   return licenseStatus.warningLevel === LicenseWarningLevel.Warning;
@@ -33,47 +29,47 @@ const displayDanger = computed(() => {
 
       <div id="navbar" class="navbar navbar-expand-lg">
         <ul class="nav navbar-nav navbar-inverse">
-          <li :class="{ active: subIsActive('/dashboard', true) }">
+          <li :class="{ active: isRouteSelected(routeLinks.dashboard) }">
             <RouterLink :to="routeLinks.dashboard">
               <i class="fa fa-dashboard icon-white" title="Dashboard"></i>
               <span class="navbar-label">Dashboard</span>
             </RouterLink>
           </li>
-          <li :class="{ active: subIsActive('/a/#/endpoints') }">
+          <li>
             <a :href="routeLinks.heartbeats">
               <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
               <span class="navbar-label">Heartbeats</span>
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
-          <li v-if="useIsMonitoringEnabled()" :class="{ active: subIsActive('/a/#/monitoring') || subIsActive('/a/#/monitoring/endpoint') }">
+          <li v-if="useIsMonitoringEnabled()">
             <a :href="routeLinks.monitoring">
               <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
               <span class="navbar-label">Monitoring</span>
               <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
             </a>
           </li>
-          <li :class="{ active: subIsActive('/failed-messages') }">
+          <li :class="{ active: isRouteSelected(routeLinks.failedMessage.root) }">
             <RouterLink :to="routeLinks.failedMessage.root">
               <i class="fa fa-envelope icon-white" title="Failed Messages"></i>
               <span class="navbar-label">Failed Messages</span>
               <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </RouterLink>
           </li>
-          <li :class="{ active: subIsActive('/a/#/custom-checks') }">
+          <li>
             <a :href="routeLinks.customChecks">
               <i class="fa fa-check icon-white" title="Custom Checks"></i>
               <span class="navbar-label">Custom Checks</span>
               <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
             </a>
           </li>
-          <li :class="{ active: subIsActive('/events') }">
+          <li :class="{ active: isRouteSelected(routeLinks.events) }">
             <RouterLink :to="routeLinks.events" exact>
               <i class="fa fa-list-ul icon-white" title="Events"></i>
               <span class="navbar-label">Events</span>
             </RouterLink>
           </li>
-          <li :class="{ active: subIsActive('/configuration') }">
+          <li :class="{ active: isRouteSelected(routeLinks.configuration.root) }">
             <RouterLink :to="routeLinks.configuration.root" exact>
               <i class="fa fa-cog icon-white" title="Configuration"></i>
               <span class="navbar-label">Configuration</span>
