@@ -4,8 +4,8 @@ const failedMessagesLinks = (root: string) => {
   }
 
   return {
-    root: root,
-    failedMessagesGroups: createLink(""),
+    root,
+    failedMessagesGroups: createLink("failed-message-groups"),
     allFailedMessages: createLink("all-failed-messages"),
     deletedMessagesGroup: createLink("deleted-message-groups"),
     allDeletedMessages: createLink("all-deleted-messages"),
@@ -22,8 +22,8 @@ const configurationLinks = (root: string) => {
   }
 
   return {
-    root: root,
-    license: createLink(""),
+    root,
+    license: createLink("license"),
     healthCheckNotifications: createLink("health-check-notifications"),
     retryRedirects: createLink("retry-redirects"),
     connections: createLink("connections"),

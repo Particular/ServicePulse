@@ -5,9 +5,8 @@ function meta(item: { title: string }) {
   return { title: `${item.title} • ServicePulse` };
 }
 
-const routes = config.flatMap<RouteRecordRaw>((item) => {
-  const result: RouteRecordRaw[] = [];
-  result.push({
+const routes = config.map<RouteRecordRaw>((item) => {
+  const result: RouteRecordRaw = {
     path: item.path,
     name: item.path,
     meta: meta(item),
@@ -18,14 +17,9 @@ const routes = config.flatMap<RouteRecordRaw>((item) => {
       meta: meta(child),
       component: child.component,
     })),
-  });
-
-  result.push(
-    ...(item.alias?.map((value) => ({
-      path: value,
-      redirect: item.path,
-    })) ?? [])
-  );
+  };
+  if (item.redirect) result.redirect = item.redirect;
+  if (item.alias) result.alias = item.alias;
 
   return result;
 });

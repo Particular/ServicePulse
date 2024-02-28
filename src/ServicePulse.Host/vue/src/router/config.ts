@@ -8,7 +8,8 @@ import routeLinks from "@/router/routeLinks";
 
 export interface RouteItem {
   path: string;
-  alias?: string[];
+  alias?: string;
+  redirect?: string;
   title: string;
   component: RouteComponent | (() => Promise<RouteComponent>);
   children?: RouteItem[];
@@ -17,7 +18,7 @@ export interface RouteItem {
 const config: RouteItem[] = [
   {
     path: routeLinks.dashboard,
-    alias: ["/"],
+    alias: "/",
     component: DashboardView,
     title: "Dashboard",
   },
@@ -25,6 +26,7 @@ const config: RouteItem[] = [
     path: routeLinks.failedMessage.root,
     component: FailedMessagesView,
     title: "Failed Messages",
+    redirect: routeLinks.failedMessage.failedMessagesGroups.link,
     children: [
       {
         title: "Failed Messages",
@@ -87,6 +89,7 @@ const config: RouteItem[] = [
     path: routeLinks.configuration.root,
     title: "Configuration",
     component: ConfigurationView,
+    redirect: routeLinks.configuration.license.link,
     children: [
       {
         title: "License",
