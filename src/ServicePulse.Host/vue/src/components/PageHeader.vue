@@ -42,7 +42,7 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
-          <li v-if="useIsMonitoringEnabled()" :class="{ active: isRouteSelected(routeLinks.monitoring.root) }">
+          <li v-if="useIsMonitoringEnabled()" :class="{ active: isRouteSelected(routeLinks.monitoring.root) || isRouteSelected(routeLinks.monitoring.endpointDetails.link('endpointName', 1)) }">
             <RouterLink :to="routeLinks.monitoring.root">
               <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
               <span class="navbar-label">Monitoring</span>

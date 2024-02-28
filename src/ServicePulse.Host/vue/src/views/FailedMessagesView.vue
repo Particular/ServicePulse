@@ -17,7 +17,7 @@ const showPendingRetry = window.defaultConfig.showPendingRetry;
         <div class="col-sm-12">
           <div class="tabs">
             <!--Failed Message Groups-->
-            <h5 :class="{ active: isRouteSelected(routeLinks.failedMessage.root) || isRouteSelected(routeLinks.failedMessage.group.link(`id`)), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+            <h5 :class="{ active: isRouteSelected(routeLinks.failedMessage.failedMessagesGroups.link) || isRouteSelected(routeLinks.failedMessage.group.link(`id`)), disabled: !connectionState.connected && !connectionState.connectedRecently }">
               <RouterLink :to="routeLinks.failedMessage.failedMessagesGroups.link">
                 Failed Message Groups
                 <span v-show="stats.number_of_failed_messages === 0"> (0) </span>

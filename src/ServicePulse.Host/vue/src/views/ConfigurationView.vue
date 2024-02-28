@@ -31,7 +31,7 @@ onMounted(async () => {
     <div class="row">
       <div class="col-sm-12">
         <div class="nav tabs">
-          <h5 :class="{ active: isRouteSelected(routeLinks.configuration.root), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
+          <h5 :class="{ active: isRouteSelected(routeLinks.configuration.license.link), disabled: !connectionState.connected && !connectionState.connectedRecently }" class="nav-item">
             <RouterLink :to="routeLinks.configuration.license.link">License</RouterLink>
             <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
           </h5>

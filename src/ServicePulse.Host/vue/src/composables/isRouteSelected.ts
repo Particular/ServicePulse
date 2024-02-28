@@ -11,5 +11,6 @@ export default function isRouteSelected(path: string) {
     return true;
   }
 
-  return useLink({ to: path }).route.value.name === route.name;
+  const pathRoute = useLink({ to: path }).route.value;
+  return route.matched.some((match) => match.name === pathRoute.name);
 }
