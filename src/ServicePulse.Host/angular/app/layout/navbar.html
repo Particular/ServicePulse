@@ -20,19 +20,10 @@
                         <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | largeNumber:0}}</span>
                     </a>
                 </li>
-
-
-                <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('/monitoring') || isActive('/monitoring/endpoint') }">
-                    <a href="#/monitoring">
-                        <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
-                        <span class="navbar-label">Monitoring</span>
-                        <span ng-show="disconnectedendpoints > 0" class="badge badge-important ">{{disconnectedendpoints | largeNumber:0}}</span>
-                    </a>
-                </li>
                 <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('#/monitoring') || isActive('#/monitoring/endpoint') }">
                   <a href="../#/monitoring">
                       <i class="fa pa-monitoring icon-white"></i>
-                      <span class="navbar-label">Monitoring New</span>
+                      <span class="navbar-label">Monitoring</span>
                       <span ng-show="disconnectedendpoints > 0" class="badge badge-important ">{{disconnectedendpoints | largeNumber:0}}</span>
                   </a>
               </li>
