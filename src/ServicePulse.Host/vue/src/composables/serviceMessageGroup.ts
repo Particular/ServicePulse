@@ -7,6 +7,11 @@ export async function useGetExceptionGroups(classifier: string = "") {
   return data;
 }
 
+export async function useGetExceptionGroupsForEndpoint(classifier: string = "", classiferFilter = "") {
+  const [, data] = await useTypedFetchFromServiceControl<GroupOperation[]>(`recoverability/groups/${classifier}?classifierFilter=${classiferFilter}`);
+  return data;
+}
+
 //get all deleted message groups
 export async function useGetArchiveGroups(classifier: string = "") {
   const [, data] = await useTypedFetchFromServiceControl<FailureGroupView[]>(`errors/groups/${classifier}`);

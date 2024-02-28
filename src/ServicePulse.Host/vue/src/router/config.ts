@@ -1,6 +1,7 @@
 import DashboardView from "@/views/DashboardView.vue";
 import type { RouteComponent } from "vue-router";
 import FailedMessagesView from "@/views/FailedMessagesView.vue";
+import MonitoringView from "@/views/MonitoringView.vue";
 import EventsView from "@/views/EventsView.vue";
 import ConfigurationView from "@/views/ConfigurationView.vue";
 import routeLinks from "@/router/routeLinks";
@@ -66,6 +67,16 @@ const config: RouteItem[] = [
         component: () => import("@/components/failedmessages/MessageView.vue"),
       },
     ],
+  },
+  {
+    path: routeLinks.monitoring.root,
+    component: MonitoringView,
+    title: "Monitored Endpoints",
+  },
+  {
+    path: routeLinks.monitoring.endpointDetails.template,
+    component: () => import("@/components/monitoring/EndpointDetails.vue"),
+    title: "Endpoint Details",
   },
   {
     path: routeLinks.events,

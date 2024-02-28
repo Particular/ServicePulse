@@ -5,5 +5,4 @@ pushd .\vue
 start "Vue" npm run dev
 popd
 pushd .\angular
-set NODE_OPTIONS=--openssl-legacy-provider
 start "Angular" npm run dev

@@ -28,6 +28,14 @@ const defaultUrls = [
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+    __VUE_OPTIONS_API__: "false",
+    __VUE_PROD_DEVTOOLS__: "false",
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: "false",
+  },
+  css: {
+    devSourcemap: true,
+  },
   plugins: [
     vue(),
     checker({ overlay: { initialIsOpen: "error" }, vueTsc: { tsconfigPath: "tsconfig.app.json" }, eslint: { lintCommand: "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore" } }),

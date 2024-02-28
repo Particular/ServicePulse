@@ -31,12 +31,19 @@ const configurationLinks = (root: string) => {
   };
 };
 
+const monitoringLinks = (root: string) => {
+  return {
+    root,
+    endpointDetails: { link: (endpointName: string, historyPeriod: number) => `${root}/endpoint/${endpointName}?historyPeriod=${historyPeriod}`, template: "/monitoring/endpoint/:endpointName" },
+  };
+};
+
 const baseUrl = window.defaultConfig.base_url;
 
 const routeLinks = {
   dashboard: "/dashboard",
   heartbeats: `${baseUrl}a/#/endpoints`,
-  monitoring: `${baseUrl}a/#/monitoring`,
+  monitoring: monitoringLinks("/monitoring"),
   failedMessage: failedMessagesLinks("/failed-messages"),
   customChecks: `${baseUrl}a/#/custom-checks`,
   events: "/events",

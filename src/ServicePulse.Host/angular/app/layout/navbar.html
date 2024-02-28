@@ -1,7 +1,7 @@
 ﻿<nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#/">
+            <a class="navbar-brand" href="../#/">
                 <img alt="Service Pulse" src="img/logo.svg">
             </a>
         </div>
@@ -20,15 +20,13 @@
                         <span ng-show="failedheartbeats > 0" class="badge badge-important ">{{failedheartbeats | largeNumber:0}}</span>
                     </a>
                 </li>
-
-
-                <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('/monitoring') || isActive('/monitoring/endpoint') }">
-                    <a href="#/monitoring">
-                        <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
-                        <span class="navbar-label">Monitoring</span>
-                        <span ng-show="disconnectedendpoints > 0" class="badge badge-important ">{{disconnectedendpoints | largeNumber:0}}</span>
-                    </a>
-                </li>
+                <li ng-if="isMonitoringEnabled" ng-class="{ active: isActive('#/monitoring') || isActive('#/monitoring/endpoint') }">
+                  <a href="../#/monitoring">
+                      <i class="fa pa-monitoring icon-white"></i>
+                      <span class="navbar-label">Monitoring</span>
+                      <span ng-show="disconnectedendpoints > 0" class="badge badge-important ">{{disconnectedendpoints | largeNumber:0}}</span>
+                  </a>
+              </li>
                 <li ng-class="{ active: isActive('/failed-messages#failed-message-groups') || isActive('/failed-messages#all-failed-messages') || isActive('/failed-messages#deleted-message-groups') || isActive('/failed-messages#all-deleted-messages') || isActive('/failed-messages#pending-retries') }">
                     <a href="../#/failed-messages">
                         <i class="fa fa-envelope icon-white" title="Failed Messages"></i>

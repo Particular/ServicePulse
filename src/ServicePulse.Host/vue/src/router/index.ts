@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
-import config, { type RouteItem } from "./config";
+import config from "./config";
 
 function meta(item: { title: string }) {
   return { title: `${item.title} • ServicePulse` };
@@ -30,14 +30,10 @@ const routes = config.flatMap<RouteRecordRaw>((item) => {
   return result;
 });
 
-const router = createRouter({
-  history: createWebHashHistory(window.defaultConfig.base_url),
-  routes,
-});
-
-router.beforeEach((to, from, next) => {
-  document.title = to.meta.title;
-  next();
-});
-
-export default router;
+export default function makeRouter() {
+  return createRouter({
+    history: createWebHashHistory(window.defaultConfig.base_url),
+    routes: routes,
+    strict: false,
+  });
+}
