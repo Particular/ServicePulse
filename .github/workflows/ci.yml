@@ -36,7 +36,7 @@ jobs:
       - name: Build
         run: dotnet build src --configuration Release
       - name: Run .NET tests
-        uses: Particular/run-tests-action@v1.6.0
+        uses: Particular/run-tests-action@v1.7.0
       - name: Install test npm packages
         run: npm install
         working-directory: src/ServicePulse.Host.Tests
