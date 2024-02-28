@@ -5,7 +5,7 @@ function meta(item: { title: string }) {
   return { title: `${item.title} • ServicePulse` };
 }
 
-const routes = config.flatMap<RouteRecordRaw>((item) => {
+const routes = config.map<RouteRecordRaw>((item) => {
   const result: RouteRecordRaw = {
     path: item.path,
     name: item.path,
