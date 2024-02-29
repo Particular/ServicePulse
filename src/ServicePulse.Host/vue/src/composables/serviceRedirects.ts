@@ -1,21 +1,11 @@
 import { useDeleteFromServiceControl, usePostToServiceControl, usePutToServiceControl, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
+import type Redirect from "@/resources/Redirect";
+import type QueueAddress from "@/resources/QueueAddress";
 
-interface Redirect {
-  message_redirect_id: string;
-  from_physical_address: string;
-  to_physical_address: string;
-  last_modified: string;
-}
-
-interface Redirects {
+export interface Redirects {
   data: Redirect[];
   queues: string[];
   total: number;
-}
-
-interface QueueAddress {
-  physical_address: string;
-  failed_message_count: number;
 }
 
 export async function useRedirects() {

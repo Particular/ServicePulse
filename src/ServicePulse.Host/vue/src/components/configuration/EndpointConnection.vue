@@ -1,18 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "../../composables/serviceLicense";
-import { connectionState, useServiceControlConnections } from "../../composables/serviceServiceControl";
+import { licenseStatus } from "@/composables/serviceLicense";
+import { connectionState, useServiceControlConnections } from "@/composables/serviceServiceControl";
 import BusyIndicator from "../BusyIndicator.vue";
 import { HighCode } from "vue-highlight-code";
 import "vue-highlight-code/dist/style.css";
-
-// This is needed because the ConfigurationView.vue routerView expects this event.
-// The event is only actually emitted on the RetryRedirects.vue component
-// but if we don't include it, the console will show warnings about not being able to
-// subscribe to this event
-defineEmits(["redirectCountUpdated"]);
 
 const isExpired = licenseStatus.isExpired;
 
@@ -21,7 +15,7 @@ const showCodeOnlyTab = ref(true);
 const jsonSnippet = ref("");
 const inlineSnippet = ref("");
 const jsonConfig = ref("");
-const queryErrors = ref([]);
+const queryErrors = ref<string[]>([]);
 
 async function getCode() {
   loading.value = true;
@@ -55,8 +49,8 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
   loading.value = false;
 }
 
-onMounted(() => {
-  getCode();
+onMounted(async () => {
+  await getCode();
 });
 
 function switchCodeOnlyTab() {
@@ -147,7 +141,7 @@ function switchJsonTab() {
 }
 
 .box > .row {
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 section[name="platformconnection"] ol {

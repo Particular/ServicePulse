@@ -47,9 +47,9 @@ const emptyLicense: License = {
   }),
 };
 
-export const license = reactive<License>(emptyLicense);
+const license = reactive<License>(emptyLicense);
 
-export const licenseStatus = reactive({
+const licenseStatus = reactive({
   isSubscriptionLicense: false,
   isUpgradeProtectionLicense: false,
   isTrialLicense: false,
@@ -66,7 +66,7 @@ export const licenseStatus = reactive({
   warningLevel: LicenseWarningLevel.None,
 });
 
-export async function useLicense() {
+async function useLicense() {
   watch<UnwrapNestedRefs<License>>(license, async (newValue, oldValue) => {
     const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
     if (checkForWarnings) {
@@ -100,6 +100,8 @@ export async function useLicense() {
   licenseStatus.warningLevel = getLicenseWarningLevel(license.license_status);
   licenseStatus.isExpired = licenseStatus.isPlatformExpired || licenseStatus.isPlatformTrialExpired || licenseStatus.isInvalidDueToUpgradeProtectionExpired;
 }
+
+export { useLicense, license, licenseStatus };
 
 function getLicenseWarningLevel(licenseStatus: LicenseStatus) {
   if (licenseStatus === "InvalidDueToExpiredTrial" || licenseStatus === "InvalidDueToExpiredSubscription" || licenseStatus === "InvalidDueToExpiredUpgradeProtection") return LicenseWarningLevel.Danger;

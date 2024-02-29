@@ -2,15 +2,13 @@
 import { RouterView } from "vue-router";
 import PageFooter from "./components/PageFooter.vue";
 import PageHeader from "./components/PageHeader.vue";
-import { useServiceControlUrls } from "./composables/serviceServiceControlUrls";
-import { useServiceControl, useServiceControlVersion } from "./composables/serviceServiceControl";
-import { useLicense } from "./composables/serviceLicense";
 import "bootstrap";
+import { useLicense } from "@/composables/serviceLicense";
+import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
+import { useServiceControl } from "@/composables/serviceServiceControl";
 
-useServiceControlUrls();
-useServiceControl();
-useServiceControlVersion();
-useLicense();
+// eslint-disable-next-line github/no-then
+useServiceControlUrls().then(() => Promise.all([useLicense(), useServiceControl()]));
 </script>
 
 <template>

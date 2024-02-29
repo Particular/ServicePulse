@@ -1,8 +1,14 @@
-import { computed, onMounted, reactive, watch } from "vue";
+import { computed, reactive, watch } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls";
-import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useFetchFromServiceControl, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
+import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useIsMonitoringDisabled, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast";
+import { TYPE } from "vue-toastification";
+import type RootUrls from "@/resources/RootUrls";
+import type EndpointMonitoringStats from "@/resources/EndpointMonitoringStats";
+import type FailedMessageView from "@/resources/FailedMessageView";
+import type CustomCheck from "@/resources/CustomCheck";
+import type MonitoredEndpoint from "@/resources/MonitoredEndpoint";
 
 export const stats = reactive({
   active_endpoints: 0,
@@ -17,14 +23,20 @@ export const stats = reactive({
   number_of_disconnected_endpoints: 0,
 });
 
-export const connectionState = reactive({
+interface ConnectionState {
+  connected: boolean;
+  connecting: boolean;
+  connectedRecently: boolean;
+  unableToConnect: boolean | null;
+}
+export const connectionState = reactive<ConnectionState>({
   connected: false,
   connecting: false,
   connectedRecently: false,
   unableToConnect: null,
 });
 
-export const monitoringConnectionState = reactive({
+export const monitoringConnectionState = reactive<ConnectionState>({
   connected: false,
   connecting: false,
   connectedRecently: false,
@@ -67,56 +79,75 @@ export const newVersions = reactive({
   },
 });
 
-export const connections = reactive({
+interface ServiceControlInstanceConnection {
+  settings: { [key: string]: Object };
+  errors: string[];
+}
+
+interface MetricsConnectionDetails {
+  Enabled: boolean;
+  MetricsQueue?: string;
+  Interval?: string;
+}
+
+interface Connections {
+  serviceControl: ServiceControlInstanceConnection;
+  monitoring: {
+    settings: MetricsConnectionDetails;
+    errors: string[];
+  };
+}
+
+export const connections = reactive<Connections>({
   serviceControl: {
     settings: {},
     errors: [],
   },
   monitoring: {
-    settings: {},
+    settings: { Enabled: false },
     errors: [],
   },
 });
 
-export function useServiceControl() {
-  onMounted(() => {
-    useServiceControlStats();
-    useServiceControlMonitoringStats();
-  });
-
-  setInterval(() => useServiceControlStats(), 5000); //NOTE is 5 seconds too often?
-  setInterval(() => useServiceControlMonitoringStats(), 5000); //NOTE is 5 seconds too often?
-
-  const scConnectionFailure = computed(() => connectionState.unableToConnect);
-  const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
-
-  watch(scConnectionFailure, (newValue, oldValue) => {
-    //NOTE to eliminate success msg showing everytime the screen is refreshed
-    if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
-      if (newValue) {
-        useShowToast("error", "Error", "Could not connect to ServiceControl at " + serviceControlUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
-      } else {
-        useShowToast("success", "Success", "Connection to ServiceControl was successful at " + serviceControlUrl.value + ".");
-      }
-    }
-  });
-
-  // Only watch the state change if monitoring is enabled
-  if (!useIsMonitoringDisabled()) {
-    watch(monitoringConnectionFailure, (newValue, oldValue) => {
-      //NOTE to eliminate success msg showing everytime the screen is refreshed
-      if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
-        if (newValue) {
-          useShowToast("error", "Error", "Could not connect to the ServiceControl Monitoring service at " + monitoringUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
-        } else {
-          useShowToast("success", "Success", "Connection to ServiceControl Monitoring service was successful at " + monitoringUrl.value + ".");
-        }
-      }
-    });
-  }
+export async function useServiceControl() {
+  await Promise.all([useServiceControlStats(), useServiceControlMonitoringStats(), getServiceControlVersion()]);
 }
 
-export async function useServiceControlStats() {
+setInterval(() => getServiceControlVersion(), 60000);
+setInterval(() => useServiceControlStats(), 5000); //NOTE is 5 seconds too often?
+setInterval(() => useServiceControlMonitoringStats(), 5000); //NOTE is 5 seconds too often?
+
+const primaryConnectionFailure = computed(() => connectionState.unableToConnect);
+const monitoringConnectionFailure = computed(() => monitoringConnectionState.unableToConnect);
+
+watch(primaryConnectionFailure, (newValue, oldValue) => {
+  //NOTE to eliminate success msg showing everytime the screen is refreshed
+  if (newValue !== oldValue) {
+    if (newValue) {
+      useShowToast(TYPE.ERROR, "Error", "Could not connect to ServiceControl at " + serviceControlUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
+    } else {
+      useShowToast(TYPE.SUCCESS, "Success", "Connection to ServiceControl was successful at " + serviceControlUrl.value + ".");
+    }
+  }
+});
+
+watch(monitoringConnectionFailure, (newValue, oldValue) => {
+  // Only watch the state change if monitoring is enabled
+  if (useIsMonitoringDisabled()) {
+    return;
+  }
+
+  //NOTE to eliminate success msg showing everytime the screen is refreshed
+  if (newValue !== oldValue) {
+    if (newValue) {
+      useShowToast(TYPE.ERROR, "Error", "Could not connect to the ServiceControl Monitoring service at " + monitoringUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
+    } else {
+      useShowToast(TYPE.SUCCESS, "Success", "Connection to ServiceControl Monitoring service was successful at " + monitoringUrl.value + ".");
+    }
+  }
+});
+
+async function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const failedCustomChecksResult = getFailedCustomChecksCount();
@@ -136,7 +167,7 @@ export async function useServiceControlStats() {
   }
 }
 
-export async function useServiceControlMonitoringStats() {
+async function useServiceControlMonitoringStats() {
   const monitoredEndpointsResult = getMonitoredEndpoints();
   const disconnectedEndpointsCountResult = getDisconnectedEndpointsCount();
 
@@ -146,7 +177,7 @@ export async function useServiceControlMonitoringStats() {
 }
 
 export async function useServiceControlConnections() {
-  const scConnectionResult = getSCConnection();
+  const scConnectionResult = getServiceControlConnection();
   const monitoringConnectionResult = getMonitoringConnection();
 
   const [scConnection, mConnection] = await Promise.all([scConnectionResult, monitoringConnectionResult]);
@@ -160,29 +191,22 @@ export async function useServiceControlConnections() {
   return connections;
 }
 
-export function useServiceControlVersion() {
-  onMounted(() => {
-    getServiceControlVersion();
-    setInterval(() => getServiceControlVersion(), 60000);
-  });
-
-  watch(environment, (newValue, oldValue) => {
-    if (newValue.is_compatible_with_sc !== oldValue.is_compatible_with_sc) {
-      if (!newValue.is_compatible_with_sc) {
-        useShowToast("error", "Error", "You are using Service Control version " + newValue.sc_version + ". Please, upgrade to version " + newValue.minimum_supported_sc_version.value + " or higher to unlock new functionality in ServicePulse.");
-      }
+watch(environment, (newValue, oldValue) => {
+  if (newValue.is_compatible_with_sc !== oldValue.is_compatible_with_sc) {
+    if (!newValue.is_compatible_with_sc) {
+      useShowToast(TYPE.ERROR, "Error", `You are using Service Control version ${newValue.sc_version}. Please, upgrade to version ${newValue.minimum_supported_sc_version} or higher to unlock new functionality in ServicePulse.`);
     }
-  });
-}
+  }
+});
 
 async function getServiceControlVersion() {
   const productsResult = useServiceProductUrls();
-  const scResult = getSCVersion();
+  const scResult = getPrimaryVersion();
   const mResult = getMonitoringVersion();
 
   const [products, scVer] = await Promise.all([productsResult, scResult, mResult]);
   if (scVer) {
-    environment.supportsArchiveGroups = scVer.archived_groups_url && scVer.archived_groups_url.length > 0;
+    environment.supportsArchiveGroups = !!scVer.archived_groups_url;
     environment.is_compatible_with_sc = useIsSupported(environment.sc_version, environment.minimum_supported_sc_version);
     environment.endpoints_error_url = scVer && scVer.endpoints_error_url;
     environment.known_endpoints_url = scVer && scVer.known_endpoints_url;
@@ -211,34 +235,33 @@ async function getServiceControlVersion() {
   }
 }
 
-async function getSCConnection() {
+async function getServiceControlConnection() {
   try {
-    const response = await useFetchFromServiceControl("connection");
-    return await response.json();
+    const [, data] = await useTypedFetchFromServiceControl<ServiceControlInstanceConnection>("connection");
+    return data;
   } catch {
-    connections.serviceControl.errors = ["Error reaching ServiceControl at " + serviceControlUrl.value + "connection"];
-    return {};
+    connections.serviceControl.errors = [`Error reaching ServiceControl at ${serviceControlUrl.value} connection`];
+    return null;
   }
 }
 
 async function getMonitoringConnection() {
   try {
     if (!useIsMonitoringDisabled()) {
-      // eslint-disable-next-line
-      const [_, data] = await useTypedFetchFromMonitoring("connection");
+      const [, data] = await useTypedFetchFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
       return data;
     }
   } catch {
-    connections.monitoring.errors = ["Error SC Monitoring instance at " + monitoringUrl.value + "connection"];
-    return {};
+    connections.monitoring.errors = [`Error SC Monitoring instance at ${monitoringUrl.value}connection`];
+    return undefined;
   }
 }
 
-async function getSCVersion() {
+async function getPrimaryVersion() {
   try {
-    const response = await useFetchFromServiceControl("");
-    environment.sc_version = response.headers.get("X-Particular-Version");
-    return await response.json();
+    const [response, data] = await useTypedFetchFromServiceControl<RootUrls>("");
+    environment.sc_version = response.headers.get("X-Particular-Version") ?? "";
+    return data;
   } catch {
     return null;
   }
@@ -246,23 +269,24 @@ async function getSCVersion() {
 
 async function getMonitoringVersion() {
   try {
-    const [response, data] = await useTypedFetchFromMonitoring("");
-    environment.monitoring_version = response.headers.get("X-Particular-Version");
-    return data;
-  } catch {
-    return null;
-  }
+    const [response] = await useTypedFetchFromMonitoring("");
+    if (response) {
+      environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
+    }
+  } catch {}
 }
 
-async function fetchWithErrorHandling(fetchFunction, connectionState, action) {
+async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[Response?, T?]>, connectionState: ConnectionState, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
   if (connectionState.connecting) {
     //Skip the connection state checking
     try {
-      const response = await fetchFunction();
-      return action(response);
+      const [response, data] = await fetchFunction();
+      if (response != null && data != null) {
+        return await action(response, data);
+      }
     } catch (err) {
       console.log(err);
-      return;
+      return defaultResult;
     }
   }
   try {
@@ -272,13 +296,19 @@ async function fetchWithErrorHandling(fetchFunction, connectionState, action) {
     }
 
     try {
-      const response = await fetchFunction();
-      const result = action(response);
+      const [response, data] = await fetchFunction();
+      let result: TResult | null = null;
+      if (response != null && data != null) {
+        result = await action(response, data);
+      }
       connectionState.unableToConnect = false;
       connectionState.connectedRecently = true;
       connectionState.connected = true;
       connectionState.connecting = false;
-      return result;
+
+      if (result) {
+        return result;
+      }
     } catch (err) {
       connectionState.connected = false;
       connectionState.unableToConnect = true;
@@ -290,77 +320,76 @@ async function fetchWithErrorHandling(fetchFunction, connectionState, action) {
     connectionState.connecting = false;
     connectionState.connected = false;
   }
+
+  return defaultResult;
 }
 
 function getFailedHeartBeatsCount() {
   return fetchWithErrorHandling(
-    () => useFetchFromServiceControl("heartbeats/stats"),
+    () => useTypedFetchFromServiceControl<EndpointMonitoringStats>("heartbeats/stats"),
     connectionState,
-    async (response) => {
-      const data = await response.json();
-      return parseInt(data.failing);
-    }
+    (_, data) => {
+      return data.failing;
+    },
+    0
   );
 }
 
 function getFailedMessagesCount() {
   return fetchWithErrorHandling(
-    () => useFetchFromServiceControl("errors?status=unresolved"),
+    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=unresolved"),
     connectionState,
-    (response) => parseInt(response.headers.get("Total-Count"))
+    (response) => parseInt(response.headers.get("Total-Count") ?? ""),
+    0
   );
 }
 
 function getPendingRetriesCount() {
   return fetchWithErrorHandling(
-    () => useFetchFromServiceControl("errors?status=retryissued"),
+    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=retryissued"),
     connectionState,
-    (response) => parseInt(response.headers.get("Total-Count"))
+    (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
+    0
   );
 }
 
 function getArchivedMessagesCount() {
   return fetchWithErrorHandling(
-    () => useFetchFromServiceControl("errors?status=archived"),
+    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=archived"),
     connectionState,
-    (response) => parseInt(response.headers.get("Total-Count"))
+    (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
+    0
   );
 }
 
 function getFailedCustomChecksCount() {
   return fetchWithErrorHandling(
-    () => useFetchFromServiceControl("customchecks?status=fail"),
+    () => useTypedFetchFromServiceControl<CustomCheck[]>("customchecks?status=fail"),
     connectionState,
-    (response) => parseInt(response.headers.get("Total-Count"))
+    (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
+    0
   );
 }
 
-async function useFetchFromMonitoring(endpoint) {
-  try {
-    // eslint-disable-next-line
-    const [_, data] = await useTypedFetchFromMonitoring(endpoint);
-    return data;
-  } catch {
-    throw new Error("Error connecting to monitoring");
-  }
-}
-
 function getMonitoredEndpoints() {
-  if (!useIsMonitoringDisabled()) {
-    return fetchWithErrorHandling(
-      () => useFetchFromMonitoring("monitored-endpoints?history=1"),
-      monitoringConnectionState,
-      (response) => response
-    );
-  }
+  return fetchWithErrorHandling(
+    () => useTypedFetchFromMonitoring<MonitoredEndpoint>("monitored-endpoints?history=1"),
+    monitoringConnectionState,
+    (_, data) => {
+      return data;
+    },
+    null
+  );
 }
 
 function getDisconnectedEndpointsCount() {
-  if (!useIsMonitoringDisabled()) {
-    return fetchWithErrorHandling(
-      () => useFetchFromMonitoring("monitored-endpoints/disconnected"),
-      monitoringConnectionState,
-      (response) => response
-    );
-  }
+  return fetchWithErrorHandling(
+    () => useTypedFetchFromMonitoring<number>("monitored-endpoints/disconnected"),
+    monitoringConnectionState,
+
+    (_, data) => {
+      return data;
+    },
+    0
+  );
 }
