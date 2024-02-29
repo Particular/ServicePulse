@@ -11,7 +11,7 @@ export interface ValueWithUnit {
 }
 
 export function useFormatTime(value?: number): ValueWithUnit {
-  const time = { value: "0", unit: "" };
+  const time = { value: "0", unit: "ms" };
   if (value) {
     const duration = moment.duration(value);
 
