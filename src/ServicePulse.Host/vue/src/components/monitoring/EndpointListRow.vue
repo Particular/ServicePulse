@@ -31,7 +31,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
 
 <template>
   <div class="table-first-col endpoint-name name-overview">
-    <div class="box-header">
+    <div class="box-header with-status">
       <div class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
         <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal)" class="cursorpointer" v-tooltip :title="endpoint.name">
           {{ shortName }}
@@ -46,7 +46,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
           <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
         </span>
         <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
-          <a class="monitoring-lost-link" ng-href="{{getDetailsUrl(endpoint)}}&tab=instancesBreakdown"><i class="fa pa-endpoint-lost endpoints-overview"></i></a>
+          <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal, 'instancesBreakdown')" class="cursorpointer" v-tooltip :title="endpoint.name"><i class="fa pa-endpoint-lost endpoints-overview" /></RouterLink>
         </span>
         <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
           <RouterLink :to="routeLinks.failedMessage.group.link(endpoint.serviceControlId)" v-if="endpoint.errorCount" class="warning cursorpointer">

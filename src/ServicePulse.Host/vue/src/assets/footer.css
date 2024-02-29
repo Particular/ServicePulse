@@ -38,8 +38,7 @@ footer span.newscversion {
 
 .versionnumber,
 footer span.monitoring-connected,
-footer span.monitoring-connected span,
-footer span.connection-failed.ng-scope {
+footer span.monitoring-connected span {
   padding-right: 0;
 }
 

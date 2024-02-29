@@ -94,7 +94,7 @@ onMounted(async () => {
             <div class="col-xs-12 no-side-padding">
               <div class="row">
                 <div class="col-xs-4 col-xl-8 endpoint-name">
-                  <div class="box-header">
+                  <div class="box-header with-status">
                     <div class="no-side-padding lead righ-side-ellipsis" v-tooltip :title="instance.name">
                       {{ instance.name }}
                     </div>
