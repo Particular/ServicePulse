@@ -157,7 +157,7 @@ h1 .endpoint-status i.fa-envelope {
   gap: 0.25em;
 }
 
-.endpoint-instances .endpoint-name .box-header {
+.endpoint-name .box-header.with-status {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
