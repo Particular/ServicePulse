@@ -1,8 +1,4 @@
-type GoToOptions = {
-  device?: "desktop" | "mobile";
-};
-
-type GoTo = (path: string, options?: GoToOptions) => Promise<void>;
+type GoTo = (path: string) => Promise<void>;
 
 export type MockEndpointOptions = {
   body: string | unknown[] | Record<string | number, unknown>;
@@ -20,8 +16,6 @@ export type SetupFactoryOptions = {
 type SetupFactory = ({ driver }: SetupFactoryOptions) => any;
 
 type SetUp = <Factory extends SetupFactory>(factory: Factory) => Promise<ReturnType<Factory>>;
-
-import {getQueriesForElement} from '@testing-library/dom'
 
 export type Driver = {    
   goTo: GoTo;
