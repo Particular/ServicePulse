@@ -20,3 +20,7 @@ const props = defineProps<{
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "@/components/list.css";
+</style>
