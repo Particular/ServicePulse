@@ -1,6 +1,4 @@
 import { defineConfig } from "vitest/config";
-import { fileURLToPath, URL } from "node:url";
-import path from "path";
 import viteConfig from "./vite.config.js";
 import path from "path";
 export default defineConfig({
