@@ -161,6 +161,7 @@ h1 .endpoint-status i.fa-envelope {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  max-width: 100%;
 }
 
 /* RESPONSIVE TWEAKS */
