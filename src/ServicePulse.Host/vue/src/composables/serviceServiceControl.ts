@@ -1,7 +1,7 @@
 import { computed, reactive, watch } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls";
-import { monitoringUrl, serviceControlUrl, useIsMonitoringDisabled, useTypedFetchFromMonitoring, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
+import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useIsMonitoringDisabled, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
 import { useShowToast } from "./toast";
 import { TYPE } from "vue-toastification";
 import type RootUrls from "@/resources/RootUrls";
@@ -96,11 +96,6 @@ interface Connections {
     settings: MetricsConnectionDetails;
     errors: string[];
   };
-}
-
-interface MonitoringRoot {
-  instanceType: string;
-  version: string;
 }
 
 export const connections = reactive<Connections>({
@@ -252,11 +247,13 @@ async function getServiceControlConnection() {
 
 async function getMonitoringConnection() {
   try {
-    const [, data] = await useTypedFetchFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
-    return data;
+    if (!useIsMonitoringDisabled()) {
+      const [, data] = await useTypedFetchFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
+      return data;
+    }
   } catch {
     connections.monitoring.errors = [`Error SC Monitoring instance at ${monitoringUrl.value}connection`];
-    return null;
+    return undefined;
   }
 }
 
@@ -272,17 +269,14 @@ async function getPrimaryVersion() {
 
 async function getMonitoringVersion() {
   try {
-    const [response, data] = await useTypedFetchFromMonitoring<MonitoringRoot>("");
+    const [response] = await useTypedFetchFromMonitoring("");
     if (response) {
       environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
     }
-    return data;
-  } catch {
-    return null;
-  }
+  } catch {}
 }
 
-async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[Response | null, T | null]>, connectionState: ConnectionState, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
+async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[Response?, T?]>, connectionState: ConnectionState, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
   if (connectionState.connecting) {
     //Skip the connection state checking
     try {
@@ -392,6 +386,7 @@ function getDisconnectedEndpointsCount() {
   return fetchWithErrorHandling(
     () => useTypedFetchFromMonitoring<number>("monitored-endpoints/disconnected"),
     monitoringConnectionState,
+
     (_, data) => {
       return data;
     },

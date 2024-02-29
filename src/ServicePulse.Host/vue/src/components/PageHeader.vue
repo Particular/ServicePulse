@@ -42,12 +42,12 @@ const displayDanger = computed(() => {
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
-          <li v-if="useIsMonitoringEnabled()">
-            <a :href="routeLinks.monitoring">
+          <li v-if="useIsMonitoringEnabled()" :class="{ active: isRouteSelected(routeLinks.monitoring.root) || isRouteSelected(routeLinks.monitoring.endpointDetails.link('endpointName', 1)) }">
+            <RouterLink :to="routeLinks.monitoring.root">
               <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
               <span class="navbar-label">Monitoring</span>
               <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
-            </a>
+            </RouterLink>
           </li>
           <li :class="{ active: isRouteSelected(routeLinks.failedMessage.root) }">
             <RouterLink :to="routeLinks.failedMessage.root">
@@ -89,4 +89,15 @@ const displayDanger = computed(() => {
   </nav>
 </template>
 
-<style></style>
+<style scoped>
+@import "@/assets/navbar.css";
+
+.nav {
+  --bs-link-color: #9d9d9d;
+  --bs-link-hover-color: #fff;
+}
+
+.navbar > .container-fluid > div {
+  margin: 0 1em;
+}
+</style>

@@ -90,6 +90,8 @@ function iconSubClasses(eventItem: EventLogItem) {
 </template>
 
 <style scoped>
+@import "./list.css";
+
 .fa-stack-2x {
   font-size: 1.5em;
 }
@@ -102,17 +104,6 @@ function iconSubClasses(eventItem: EventLogItem) {
   cursor: pointer;
   background-color: #edf6f7;
   border: 1px solid #00a3c4;
-}
-
-p.lead {
-  word-wrap: break-word;
-  color: #181919 !important;
-  font-size: 1em !important;
-  font-weight: bold !important;
-  margin-bottom: 0.2em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .row.box-event-item,

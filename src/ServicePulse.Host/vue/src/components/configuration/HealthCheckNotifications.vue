@@ -178,6 +178,8 @@ onMounted(async () => {
 </template>
 
 <style>
+@import "../list.css";
+
 .screen-intro {
   margin: 30px 0;
 }
@@ -272,18 +274,6 @@ onMounted(async () => {
   list-style-type: none;
   margin: 0;
   padding: 0;
-}
-
-.lead {
-  -ms-word-wrap: break-word;
-  word-wrap: break-word;
-  color: #181919 !important;
-  font-size: 14px !important;
-  font-weight: bold;
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 p.endpoint-metadata {

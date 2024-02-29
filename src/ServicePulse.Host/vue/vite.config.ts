@@ -28,6 +28,9 @@ const defaultUrls = [
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  css: {
+    devSourcemap: true,
+  },
   plugins: [
     vue(),
     checker({ overlay: { initialIsOpen: "error" }, vueTsc: { tsconfigPath: "tsconfig.app.json" }, eslint: { lintCommand: "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore" } }),

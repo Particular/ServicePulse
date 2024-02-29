@@ -52,17 +52,19 @@ export function useFetchFromServiceControl(suffix: string) {
 }
 
 export async function useTypedFetchFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
-  const response = await fetch(serviceControlUrl.value + suffix);
+  const response = await fetch(`${serviceControlUrl.value}${suffix}`);
+  if (!response?.ok) throw new Error(response?.statusText ?? "No response");
   const data = await response.json();
 
   return [response, data];
 }
 
-export async function useTypedFetchFromMonitoring<T>(suffix: string): Promise<[Response | null, T | null]> {
+export async function useTypedFetchFromMonitoring<T>(suffix: string): Promise<[Response?, T?]> {
   if (useIsMonitoringDisabled()) {
-    return Promise.resolve([null, null]);
+    return [];
   }
-  const response = await fetch(monitoringUrl.value + suffix);
+
+  const response = await fetch(`${monitoringUrl.value}${suffix}`);
   const data = await response.json();
 
   return [response, data];
@@ -95,6 +97,23 @@ export function useDeleteFromServiceControl(suffix: string) {
     method: "DELETE",
   };
   return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+export function useDeleteFromMonitoring(suffix: string) {
+  const requestOptions = {
+    method: "DELETE",
+  };
+  return fetch(monitoringUrl.value + suffix, requestOptions);
+}
+
+export function useOptionsFromMonitoring() {
+  if (useIsMonitoringDisabled()) {
+    return Promise.resolve(null);
+  }
+
+  const requestOptions = {
+    method: "OPTIONS",
+  };
+  return fetch(monitoringUrl.value ?? "", requestOptions);
 }
 
 export function usePatchToServiceControl(suffix: string, payload: object | null) {

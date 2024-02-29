@@ -5,8 +5,8 @@ import routeLinks from "@/router/routeLinks";
 </script>
 
 <template>
-  <div class="sp-loader" v-if="connectionState.connecting"></div>
-  <template v-if="connectionState.unableToConnect && !connectionState.connecting">
+  <div class="sp-loader" v-if="connectionState.connecting && !connectionState.unableToConnect"></div>
+  <template v-if="connectionState.unableToConnect">
     <div class="text-center monitoring-no-data">
       <h1>Cannot connect to ServiceControl</h1>
       <p>
@@ -21,3 +21,21 @@ import routeLinks from "@/router/routeLinks";
     </div>
   </template>
 </template>
+
+<style scoped>
+.action-toolbar {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+}
+
+.sp-loader {
+  width: 100%;
+  height: 90vh;
+  margin-top: -100px;
+  background-image: url("@/assets/sp-loader.gif");
+  background-size: 150px 150px;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+</style>

@@ -1,0 +1,48 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug Vue on Docker Port - Edge",
+        "type": "msedge",
+        "request": "launch",
+        "url": "http://localhost:1331",
+        "webRoot": "${workspaceFolder}/vue/src",        
+      },
+      {
+        "name": "Debug Vue on Docker Port - Chrome",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:1331",
+        "webRoot": "${workspaceFolder}/vue/src",        
+      },      
+      {
+        "name": "Storybook Debug with Edge",
+        "type": "node-terminal",
+        "request": "launch",
+        "command": "npm run storybook-dont-auto-open",
+        "cwd": "${workspaceFolder}/vue",        
+        "internalConsoleOptions": "openOnFirstSessionStart",
+        "serverReadyAction": {
+          "pattern": "Local:.+(https?://[^:]+:[0-9]+)",
+          "uriFormat": "%s",
+          "action": "debugWithEdge"
+        }
+      },      
+      {
+        "name": "Storybook Debug with Chrome",
+        "type": "node-terminal",
+        "request": "launch",
+        "command": "npm run storybook-dont-auto-open",
+        "cwd": "${workspaceFolder}/vue",        
+        "internalConsoleOptions": "openOnFirstSessionStart",        
+        "sourceMaps": true,        
+        "serverReadyAction": {
+          "pattern": "Local:.+(https?://[^:]+:[0-9]+)",
+          "uriFormat": "%s",
+          "action":"debugWithChrome",
+          "webRoot": "${workspaceFolder}",
+          "killOnServerStop": true
+        }
+      }
+    ]
+  }

@@ -1,13 +1,12 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
-import config, { type RouteItem } from "./config";
+import config from "./config";
 
 function meta(item: { title: string }) {
   return { title: `${item.title} • ServicePulse` };
 }
 
-const routes = config.flatMap<RouteRecordRaw>((item) => {
-  const result: RouteRecordRaw[] = [];
-  result.push({
+const routes = config.map<RouteRecordRaw>((item) => {
+  const result: RouteRecordRaw = {
     path: item.path,
     name: item.path,
     meta: meta(item),
@@ -18,26 +17,17 @@ const routes = config.flatMap<RouteRecordRaw>((item) => {
       meta: meta(child),
       component: child.component,
     })),
-  });
-
-  result.push(
-    ...(item.alias?.map((value) => ({
-      path: value,
-      redirect: item.path,
-    })) ?? [])
-  );
+  };
+  if (item.redirect) result.redirect = item.redirect;
+  if (item.alias) result.alias = item.alias;
 
   return result;
 });
 
-const router = createRouter({
-  history: createWebHashHistory(window.defaultConfig.base_url),
-  routes,
-});
-
-router.beforeEach((to, from, next) => {
-  document.title = to.meta.title;
-  next();
-});
-
-export default router;
+export default function makeRouter() {
+  return createRouter({
+    history: createWebHashHistory(window.defaultConfig.base_url),
+    routes: routes,
+    strict: false,
+  });
+}
