@@ -1,6 +1,6 @@
-import { http } from 'msw';
-import type { SetupWorker } from 'msw/browser';
-import { SetupServer } from 'msw/node';
+import { http } from "msw";
+import type { SetupWorker } from "msw/browser";
+import { SetupServer } from "msw/node";
 
 export const makeMockEndpoint =
   ({ mockServer }: { mockServer: SetupServer | SetupWorker }) =>
@@ -8,30 +8,25 @@ export const makeMockEndpoint =
     endpoint: string,
     {
       body,
-      method = 'get',
+      method = "get",
       status = 200,
-      headers = {}
+      headers = {},
     }: {
-      body: string | unknown[] | Record<string | number, unknown>; 
-      method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
+      body: string | unknown[] | Record<string | number, unknown>;
+      method?: "get" | "post" | "put" | "patch" | "delete";
       status?: number;
-      headers?: { [key: string]: string }
-    },
+      headers?: { [key: string]: string };
+    }
   ) => {
     mockServer.use(
-      http[method](endpoint, ()=> {
-        //console.log('Responding to ', `${endpoint}`)
+      http[method](endpoint, () => {
         return new Response(JSON.stringify(body), {
-            status: status,
-            headers: {
-              ...headers,'Content-Type': 'application/json',
-            },
-          })
-        }
-          
-      ),
+          status: status,
+          headers: {
+            ...headers,
+            "Content-Type": "application/json",
+          },
+        });
+      })
     );
   };
-
-
-  

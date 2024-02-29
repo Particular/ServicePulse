@@ -1,28 +1,21 @@
-import content1 from "../mocks/monitored-endpoints1.json";
-import content2 from "../mocks/monitored-endpoints2.json";
-import content3 from "../mocks/monitored-endpoints3.json";
+import hasEndpointsResponse from "../mocks/monitored-endpoints.json";
+import hasNoEmpoints from "../mocks/monitored-endpoints-empty.json";
+
 import { SetupFactoryOptions } from "../driver";
 
-export const hasMonitoredEndpoints1 =
+export const hasMonitoredEndpoints =
   ({ driver }: SetupFactoryOptions) => {
     driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
-      body: content1,
+      body: hasEndpointsResponse,
     });
-    return content1;
+    return hasEndpointsResponse;
   };
 
-  export const hasMonitoredEndpoints2 =
+  export const hasNoMonitoredEndpoints =
   ({ driver }: SetupFactoryOptions) => {
     driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
-      body: content2,
+      body: hasNoEmpoints,
     });
-    return content2;
+    return hasNoEmpoints;
   };
 
-  export const hasMonitoredEndpoints3 =
-  ({ driver }: SetupFactoryOptions) => {
-    driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
-      body: content3,
-    });
-    return content3;
-  };

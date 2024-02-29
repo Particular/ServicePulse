@@ -8,9 +8,10 @@ export { hasFourActiveTwoFailingHeartbeats } from "../preconditions/hasFourActiv
 export { hasNoErrors } from "../preconditions/hasNoErrors";
 export { hasNoFailingCustomChecks } from "../preconditions/hasNoFailingCustomChecks";
 export { hasNoDisconnectedEndpoints } from "../preconditions/hasNoDisconnectedEndpoints";
-export { hasMonitoredEndpoints1, hasMonitoredEndpoints2,hasMonitoredEndpoints3} from "../preconditions/hasMonitoredEndpoints";
+export { hasMonitoredEndpoints, hasNoMonitoredEndpoints} from "../preconditions/hasMonitoredEndpoints";
 export { hasEventLogItems } from "../preconditions/hasEventLogItems";
 export {hasRecoverabilityGroups} from '../preconditions/hasEmptyRecoverabilityGroups';
 export {hasHistoryPeriodDataForOneMinute} from './hasHistoryPeriodDataForOneMinute';
+export {serviceControlWithMonitoring} from './serviceControlWithMonitoring';
 
 

@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "test:component": "vitest ./src",
     "test:coverage": "vitest run --coverage",
-    "test:application:vitest": "npx vitest run ./test/specs",
+    "test:application:vitest": "npx vitest ./test/specs",
     "test:application": "npm run test:application:vitest"
   },
   "dependencies": {
