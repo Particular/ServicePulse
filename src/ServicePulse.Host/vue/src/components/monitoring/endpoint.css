@@ -157,6 +157,12 @@ h1 .endpoint-status i.fa-envelope {
   gap: 0.25em;
 }
 
+.endpoint-instances .endpoint-name .box-header {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
 /* RESPONSIVE TWEAKS */
 
 @media only screen and (min-width: 993px) {
