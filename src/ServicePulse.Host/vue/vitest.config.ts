@@ -1,11 +1,18 @@
 import { defineConfig } from "vitest/config";
 import viteConfig from "./vite.config.js";
+import path from "path";
 export default defineConfig({
   ...viteConfig,
   resolve: {
-    alias: {
-      "@component-test-utils": "/test/utils.ts",
-    },
+    alias: [
+      {
+        find: "@component-test-utils", replacement: "/test/utils.ts"
+      },
+      {
+        find: "@",
+        replacement: path.resolve(__dirname, './src'),
+      },
+    ],
   },
   test: {
     globals: true,

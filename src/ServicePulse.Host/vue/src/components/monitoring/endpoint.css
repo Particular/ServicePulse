@@ -72,7 +72,8 @@ h1 .endpoint-status i.fa-envelope {
   position: relative;
 }
 
-.endpoint-status .pa-monitoring-lost.endpoints-overview {
+.endpoint-status .pa-monitoring-lost.endpoints-overview,
+.endpoint-status .pa-monitoring-lost.endpoint-details {
   top: 4px;
 }
 
@@ -146,8 +147,20 @@ h1 .endpoint-status i.fa-envelope {
 .endpoint-name,
 .endpoint-name > div {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.endpoint-name {
+  gap: 0.25em;
+}
+
+.endpoint-instances .endpoint-name .box-header {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 /* RESPONSIVE TWEAKS */
@@ -419,13 +432,19 @@ h1 .endpoint-status i.fa-envelope {
 }
 
 i.fa.pa-endpoint-lost.endpoints-overview,
-i.fa.pa-monitoring-lost.endpoints-overview {
+i.fa.pa-monitoring-lost.endpoints-overview,
+i.fa.pa-endpoint-lost.endpoint-details,
+i.fa.pa-monitoring-lost.endpoint-details {
   position: relative;
   margin-right: 4px;
 }
 
 i.fa.pa-endpoint-lost.endpoints-overview {
   top: 8px;
+}
+
+.endpoint-instances .fa.pa-endpoint-lost.endpoint-details {
+  top: 4px;
 }
 
 div[content="Unable to connect to instance"],

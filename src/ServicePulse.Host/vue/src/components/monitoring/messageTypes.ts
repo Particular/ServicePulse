@@ -28,7 +28,7 @@ function parseTheMessageTypeData(messageType: MessageType): ExtendedMessageType 
       shortName: messageTypeHierarchy.map((item) => shortenTypeName(item.typeName)).join(", "),
       containsTypeHierarchy: true,
       tooltipText: messageTypeHierarchy.reduce(
-        (sum, item) => (sum ? `${sum}<br> ` : "") + `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : "") + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ""),
+        (sum, item) => (sum ? `${sum}\n ` : "") + `${item.typeName} |${item.assemblyName}-${item.assemblyVersion}` + (item.culture ? ` |${item.culture}` : "") + (item.publicKeyToken ? ` |${item.publicKeyToken}` : ""),
         ""
       ),
     };

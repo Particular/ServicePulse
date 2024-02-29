@@ -94,11 +94,11 @@ onMounted(async () => {
             <div class="col-xs-12 no-side-padding">
               <div class="row">
                 <div class="col-xs-4 col-xl-8 endpoint-name">
-                  <div class="row box-header">
+                  <div class="box-header">
                     <div class="no-side-padding lead righ-side-ellipsis" v-tooltip :title="instance.name">
                       {{ instance.name }}
                     </div>
-                    <div class="col-lg-4 no-side-padding endpoint-status">
+                    <div class="no-side-padding endpoint-status">
                       <span class="warning" v-if="parseFloat(formatGraphDuration(instance.metrics.criticalTime).value) < 0">
                         <i class="fa pa-warning" v-tooltip :title="`Warning: instance currently has negative critical time, possibly because of a clock drift.`"></i>
                       </span>
