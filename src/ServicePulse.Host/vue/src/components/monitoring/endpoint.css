@@ -147,8 +147,14 @@ h1 .endpoint-status i.fa-envelope {
 .endpoint-name,
 .endpoint-name > div {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.endpoint-name {
+  gap: 0.25em;
 }
 
 /* RESPONSIVE TWEAKS */
