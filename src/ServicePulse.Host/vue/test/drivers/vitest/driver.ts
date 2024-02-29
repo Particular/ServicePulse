@@ -1,7 +1,7 @@
 import { it as itVitest, describe } from "vitest";
 import { Driver } from "../../driver";
 import { mount } from "../../../src/mount";
-import  makeRouter from "../../../src/router";
+import makeRouter from "../../../src/router";
 import { mockEndpoint } from "../../utils";
 
 const makeDriver = (): Driver => ({

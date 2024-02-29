@@ -1,4 +1,4 @@
-import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { afterEach, beforeAll, vi } from "vitest";
 import { mockServer } from "../../mock-server";
 import '@testing-library/jest-dom/vitest';
 
@@ -21,11 +21,7 @@ beforeAll(() => {
     },
   });
 });
-afterAll(() => {
-  mockServer.close();
-});
 afterEach(() => {
-  mockServer.resetHandlers();
   localStorage.clear();
   sessionStorage.clear();
 });
