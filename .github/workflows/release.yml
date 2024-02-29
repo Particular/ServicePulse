@@ -39,8 +39,8 @@ jobs:
       - name: Build AngularJS and Vue.js
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
-      - name: Run Vue component tests
-        run: npm run test:component
+      - name: Run Vue component & application tests
+        run: npm run test:coverage
         working-directory: src/ServicePulse.Host/vue
       # .NET Build and sign
       - name: Build
