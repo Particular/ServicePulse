@@ -29,17 +29,17 @@ describe("List of monitoring endpoints should be filterable by the name", () => 
 
     //Asssert 
     //Check the sales endpoint still shows right before filtering
-    expect(await screen.findByText("A.C.Sales")).toBeInTheDocument(); 
-    expect(await screen.findByText("A.C.ClientUI")).toBeInTheDocument();
-
+    expect(await screen.findByRole('link', { name: /a\.c\.sales/i })).toBeInTheDocument();
+   
     //Act
     var filterByNameInput = await screen.findByLabelText("filter by name");
+    expect(filterByNameInput).toBeInTheDocument();
     await fireEvent.update(filterByNameInput,"A.C.ClientUI");
-  
+
     //Assert
     //Confirm the sales endpoint no longer shows in the list after filtering
-    expect(await screen.findByText("A.C.Sales")).not.toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /a\.c\.sales/i })).toBeNull();
     //Confirm the sales endpoint Still shows in the list after filtering
-    expect(await screen.findByText("A.C.ClientUI")).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: /a\.c\.clientui/i })).toBeInTheDocument();
   });
 });
