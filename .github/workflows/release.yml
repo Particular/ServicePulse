@@ -42,6 +42,9 @@ jobs:
       - name: Run Vue component tests
         run: npm run test:component
         working-directory: src/ServicePulse.Host/vue
+      - name: Run Vue application tests
+        run: npm run test:application
+        working-directory: src/ServicePulse.Host/vue
       # .NET Build and sign
       - name: Build
         run: dotnet build src --configuration Release

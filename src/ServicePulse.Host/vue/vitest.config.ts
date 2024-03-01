@@ -15,6 +15,7 @@ export default defineConfig({
     ],
   },
   test: {
+    pool: 'forks', //https://github.com/vitest-dev/vitest/issues/2008#issuecomment-187106690
     globals: true,
     clearMocks: true,
     css: true,
@@ -22,7 +23,7 @@ export default defineConfig({
       all: true,
       exclude: [`**/__test__/**/*`, `**/.eslintrc.js`, `**/*.spec.ts`, `test/**/*`],
       provider: `v8`,
-      reporter: [`html`, `text`],
+      reporter: ["text","text-summary","cobertura"],
     },
     environment: `jsdom`,
     setupFiles: [`./test/drivers/vitest/setup.ts`],

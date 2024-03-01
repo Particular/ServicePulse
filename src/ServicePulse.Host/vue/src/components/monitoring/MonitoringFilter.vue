@@ -19,7 +19,7 @@ watch(filterString, async (newValue) => {
     <PeriodSelector />
     <GroupBy />
     <div class="filter-input">
-      <input type="text" placeholder="Filter by name..." class="form-control-static filter-input" v-model="filterString" />
+      <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="filterString" />
     </div>
   </div>
 </template>
