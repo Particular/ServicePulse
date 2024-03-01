@@ -124,9 +124,9 @@ watch(primaryConnectionFailure, (newValue, oldValue) => {
   //NOTE to eliminate success msg showing everytime the screen is refreshed
   if (newValue !== oldValue) {
     if (newValue) {
-      useShowToast(TYPE.ERROR, "Error", "Could not connect to ServiceControl at " + serviceControlUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
+      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlUrl.value}. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>`);
     } else {
-      useShowToast(TYPE.SUCCESS, "Success", "Connection to ServiceControl was successful at " + serviceControlUrl.value + ".");
+      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlUrl.value}.`);
     }
   }
 });
@@ -140,9 +140,9 @@ watch(monitoringConnectionFailure, (newValue, oldValue) => {
   //NOTE to eliminate success msg showing everytime the screen is refreshed
   if (newValue !== oldValue) {
     if (newValue) {
-      useShowToast(TYPE.ERROR, "Error", "Could not connect to the ServiceControl Monitoring service at " + monitoringUrl.value + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>');
+      useShowToast(TYPE.ERROR, "Error", `Could not connect to the ServiceControl Monitoring service at ${monitoringUrl.value}. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>`);
     } else {
-      useShowToast(TYPE.SUCCESS, "Success", "Connection to ServiceControl Monitoring service was successful at " + monitoringUrl.value + ".");
+      useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl Monitoring service was successful at ${monitoringUrl.value}.`);
     }
   }
 });
@@ -202,7 +202,7 @@ watch(environment, (newValue, oldValue) => {
 async function getServiceControlVersion() {
   const productsResult = useServiceProductUrls();
   const scResult = getPrimaryVersion();
-  const mResult = getMonitoringVersion();
+  const mResult = setMonitoringVersion();
 
   const [products, scVer] = await Promise.all([productsResult, scResult, mResult]);
   if (scVer) {
@@ -241,19 +241,15 @@ async function getServiceControlConnection() {
     return data;
   } catch {
     connections.serviceControl.errors = [`Error reaching ServiceControl at ${serviceControlUrl.value} connection`];
-    return null;
   }
 }
 
 async function getMonitoringConnection() {
   try {
-    if (!useIsMonitoringDisabled()) {
-      const [, data] = await useTypedFetchFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
-      return data;
-    }
+    const [, data] = await useTypedFetchFromMonitoring<{ Metrics: MetricsConnectionDetails }>("connection");
+    return data;
   } catch {
     connections.monitoring.errors = [`Error SC Monitoring instance at ${monitoringUrl.value}connection`];
-    return undefined;
   }
 }
 
@@ -267,13 +263,11 @@ async function getPrimaryVersion() {
   }
 }
 
-async function getMonitoringVersion() {
-  try {
-    const [response] = await useTypedFetchFromMonitoring("");
-    if (response) {
-      environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
-    }
-  } catch {}
+async function setMonitoringVersion() {
+  const [response] = await useTypedFetchFromMonitoring("");
+  if (response) {
+    environment.monitoring_version = response.headers.get("X-Particular-Version") ?? "";
+  }
 }
 
 async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[Response?, T?]>, connectionState: ConnectionState, action: (response: Response, data: T) => TResult, defaultResult: TResult) {
