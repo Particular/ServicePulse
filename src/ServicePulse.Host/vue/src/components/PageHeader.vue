@@ -7,7 +7,7 @@ import { licenseStatus } from "../composables/serviceLicense";
 import ExclamationMark from "./ExclamationMark.vue";
 import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 import { WarningLevel } from "@/components/WarningLevel";
-import routeLinks from "@/router/routeLinks";
+import routeLinks, { baseUrl } from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
 
 const displayWarn = computed(() => {
@@ -22,7 +22,7 @@ const displayDanger = computed(() => {
   <nav class="navbar navbar-expand-lg navbar-inverse navbar-dark">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" :href="baseUrl + routeLinks.dashboard">
           <img alt="Service Pulse" src="@/assets/logo.svg" />
         </a>
       </div>

@@ -38,7 +38,7 @@ const monitoringLinks = (root: string) => {
   };
 };
 
-const baseUrl = window.defaultConfig.base_url;
+export const baseUrl = window.defaultConfig.base_url;
 
 const routeLinks = {
   dashboard: "/dashboard",
