@@ -50,12 +50,12 @@ export function useFormatLargeNumber(num: number, decimals: number) {
   }
 
   if (num < 1000000) {
-    return round(num, decimals).toString();
+    return round(num, decimals).toLocaleString();
   }
 
   const exp = Math.floor(Math.log(num) / Math.log(1000));
 
-  return `${round(num / Math.pow(1000, exp), decimals)}${suffixes[exp - 1]}`;
+  return `${round(num / Math.pow(1000, exp), decimals).toLocaleString()}${suffixes[exp - 1]}`;
 }
 
 function round(num: number, decimals: number) {
