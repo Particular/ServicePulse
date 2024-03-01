@@ -1,25 +1,22 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
+import type { SortInfo } from "./SortInfo";
 
-const props = defineProps<{
-  sortBy: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    sortBy: string;
+    defaultAscending: boolean;
+  }>(),
+  { defaultAscending: false }
+);
 
-const activeColumn = defineModel({
-  type: String,
-  required: true,
-});
+const activeColumn = defineModel<SortInfo>({ required: true });
 
-const emit = defineEmits(["isAscending"]);
-
-const isAscending = ref(false);
-const isActive = computed(() => activeColumn.value === props.sortBy);
-const sortIcon = computed(() => (isAscending.value ? "sort-up" : "sort-down"));
+const isActive = computed(() => activeColumn.value?.property === props.sortBy);
+const sortIcon = computed(() => (activeColumn.value.isAscending ? "sort-up" : "sort-down"));
 
 function toggleSort() {
-  activeColumn.value = props.sortBy;
-  isAscending.value = isActive.value ? !isAscending.value : false;
-  emit("isAscending", isAscending.value);
+  activeColumn.value = { property: props.sortBy, isAscending: isActive.value ? !activeColumn.value.isAscending : props.defaultAscending };
 }
 </script>
 <template>

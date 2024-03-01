@@ -1,9 +1,10 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
 import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/Endpoint";
+import type { SortInfo } from "@/components/SortInfo";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {
   const historyPeriodStore = useMonitoringHistoryPeriodStore();
@@ -18,17 +19,22 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     selectedGrouping: 0,
   });
 
+  const sortBy = ref<SortInfo>({
+    property: "name",
+    isAscending: true,
+  });
+
   const endpointList = ref<Endpoint[]>([]);
   const disconnectedEndpointCount = ref(0);
   const negativeCriticalTimeIsPresent = ref(false);
   const filterString = ref("");
-  const sortBy = ref("name");
-  const isSortAscending = ref(false);
   const isInitialized = ref(false);
   const endpointListCount = computed<number>(() => endpointList.value.length);
   const endpointListIsEmpty = computed<boolean>(() => endpointListCount.value === 0);
   const endpointListIsGrouped = computed<boolean>(() => grouping.value.selectedGrouping !== 0);
   const getEndpointList = computed<Endpoint[]>(() => (filterString.value !== "" ? MonitoringEndpoints.useFilterAllMonitoredEndpointsByName(endpointList.value, filterString.value) : endpointList.value));
+
+  watch(sortBy, () => updateEndpointList(), { deep: true });
 
   //STORE ACTIONS
   async function initializeStore() {
@@ -72,23 +78,16 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     sortGroupedEndpointList();
   }
 
-  async function updateSort(newSortBy = "name", newIsSortAscending = false) {
-    sortBy.value = newSortBy;
-    isSortAscending.value = newIsSortAscending;
-    await updateEndpointList();
-  }
-
   function sortEndpointList() {
-    const sortByProperty = sortBy.value;
     const comparator = (() => {
-      if (sortByProperty === "name") {
-        return (a: Endpoint, b: Endpoint) => (isSortAscending.value ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
+      if (sortBy.value.property === "name") {
+        return (a: Endpoint, b: Endpoint) => (sortBy.value.isAscending ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name));
       } else {
         return (a: Endpoint, b: Endpoint) => {
-          const propertyA = a.metrics[sortByProperty].average;
-          const propertyB = b.metrics[sortByProperty].average;
+          const propertyA = a.metrics[sortBy.value.property].average;
+          const propertyB = b.metrics[sortBy.value.property].average;
 
-          return isSortAscending.value ? propertyA - propertyB : propertyB - propertyA;
+          return sortBy.value.isAscending ? propertyA - propertyB : propertyB - propertyA;
         };
       }
     })();
@@ -97,13 +96,12 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
   }
 
   function sortGroupedEndpointList() {
-    const sortByProperty = sortBy.value;
     let comparator;
     const endpointShortNameComparator = (a: GroupedEndpoint, b: GroupedEndpoint) => {
-      return isSortAscending.value ? a.shortName.localeCompare(b.shortName) : b.shortName.localeCompare(a.shortName);
+      return sortBy.value.isAscending ? a.shortName.localeCompare(b.shortName) : b.shortName.localeCompare(a.shortName);
     };
 
-    if (sortByProperty === "name") {
+    if (sortBy.value.property === "name") {
       comparator = (a: EndpointGroup, b: EndpointGroup) => {
         const groupNameA = a.group;
         const groupNameB = b.group;
@@ -114,7 +112,7 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
         endpointListGroupA.sort(endpointShortNameComparator);
         endpointListGroupB.sort(endpointShortNameComparator);
 
-        return isSortAscending.value ? groupNameA.localeCompare(groupNameB) : groupNameB.localeCompare(groupNameA);
+        return sortBy.value.isAscending ? groupNameA.localeCompare(groupNameB) : groupNameB.localeCompare(groupNameA);
       };
     }
     // TODO: Determine how sorting should be handled for columns other than endpoint name
@@ -134,7 +132,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     negativeCriticalTimeIsPresent,
     filterString,
     sortBy,
-    isSortAscending,
     isInitialized,
 
     //getters
@@ -146,7 +143,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     //actions
     initializeStore,
     updateSelectedGrouping,
-    updateSort,
     updateEndpointList,
     updateFilterString,
   };
