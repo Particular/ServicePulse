@@ -8,6 +8,7 @@ interface PaginationStripDSL {
   clickPage(pageName: string): Promise<void>;
   clickJumpPagesForward(): Promise<void>;
   clickJumpPagesBack(): Promise<void>;
+  updateNumberOfRecordsPerPage(newNumberOfItemsPerPage: number): Promise<void>;
   assert: PaginationStripDSLAssertions;
 }
 
@@ -181,8 +182,24 @@ describe("Feature: Jumping a number of pages forward or backward must be possibl
   });
 });
 
+describe("Feature: changes in the number of records per page are allowed", () => {
+  describe("Rule: Updating the number of records per page recalculates the pages of the strip and resets selected page", () => {
+    example("Example: Number of records per page gets updated from 10 to 50", async () => {
+      const component = renderPaginationStripWith({ records: 100, itemsPerPage: 10, selectedPage: 3, allowToJumpPagesBy: 2 });
+
+      component.assert.stripOfButtonsMatchesSequence("Previous,1,2,3,4,5,...,10,Next");
+      component.assert.activePageIs("Page 3");
+
+      await component.updateNumberOfRecordsPerPage(50);
+      component.assert.stripOfButtonsMatchesSequence("Previous,1,2,Next");
+
+      component.assert.activePageIs("Page 1");
+    });
+  });
+});
+
 function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowToJumpPagesBy = 0 }: { records: number; itemsPerPage: number; selectedPage: number; allowToJumpPagesBy?: number }): PaginationStripDSL {
-  render(paginationStrip, {
+  const { rerender } = render(paginationStrip, {
     props: {
       modelValue: selectedPage,
       itemsPerPage: itemsPerPage,
@@ -209,6 +226,14 @@ function renderPaginationStripWith({ records, itemsPerPage, selectedPage, allowT
     },
     clickPage: async function (pageName: string): Promise<void> {
       await userEvent.click(await screen.findByLabelText(pageName));
+    },
+    updateNumberOfRecordsPerPage: async function (newNumberOfItemsPerPage: number) {
+      await rerender({
+        modelValue: selectedPage,
+        itemsPerPage: newNumberOfItemsPerPage,
+        totalCount: records,
+        pageBuffer: allowToJumpPagesBy,
+      });      
     },
     assert: {
       previousIsDisabled: function () {
