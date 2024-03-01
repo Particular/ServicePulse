@@ -20,7 +20,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
 
   const endpointList = ref<Endpoint[]>([]);
   const disconnectedEndpointCount = ref(0);
-  const negativeCriticalTimeIsPresent = ref(false);
   const filterString = ref("");
   const sortBy = ref("name");
   const isSortAscending = ref(false);
@@ -131,7 +130,6 @@ export const useMonitoringStore = defineStore("MonitoringStore", () => {
     grouping,
     endpointList,
     disconnectedEndpointCount,
-    negativeCriticalTimeIsPresent,
     filterString,
     sortBy,
     isSortAscending,
