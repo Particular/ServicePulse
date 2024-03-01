@@ -164,6 +164,10 @@ h1 .endpoint-status i.fa-envelope {
   max-width: 100%;
 }
 
+.endpoint-name .box-header.with-status > *:not(:first-child) {
+  margin-left: 0.25em;
+}
+
 /* RESPONSIVE TWEAKS */
 
 @media only screen and (min-width: 993px) {

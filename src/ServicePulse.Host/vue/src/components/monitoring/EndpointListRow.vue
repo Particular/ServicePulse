@@ -36,8 +36,10 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
         <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal)" class="cursorpointer" v-tooltip :title="endpoint.name">
           {{ shortName }}
         </RouterLink>
-        <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip :title="`Endpoint instance(s):${endpoint.connectedCount}`">({{ endpoint.connectedCount }})</span>
       </div>
+      <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip title="Endpoint instance(s): (connected/total)">
+        ({{ endpoint.connectedCount }}/{{ endpoint.connectedCount + endpoint.disconnectedCount }})</span
+      >
       <div class="no-side-padding endpoint-status">
         <span class="warning" v-if="endpoint.metrics != null && parseFloat(criticalTimeGraphDuration.value) < 0">
           <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
@@ -46,7 +48,9 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
           <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
         </span>
         <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
-          <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal, 'instancesBreakdown')" class="cursorpointer" v-tooltip :title="endpoint.name"><i class="fa pa-endpoint-lost endpoints-overview" /></RouterLink>
+          <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal, 'instancesBreakdown')" class="cursorpointer">
+            <i class="fa pa-endpoint-lost endpoints-overview" />
+          </RouterLink>
         </span>
         <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
           <RouterLink :to="routeLinks.failedMessage.group.link(endpoint.serviceControlId)" v-if="endpoint.errorCount" class="warning cursorpointer">
@@ -133,9 +137,14 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
 
 .lead.endpoint-details-link.righ-side-ellipsis {
   color: #00729c;
+  margin: 0;
 }
 
 .monitoring-lost-link i {
   top: 7px;
+}
+
+.endpoint-count {
+  font-weight: bold;
 }
 </style>
