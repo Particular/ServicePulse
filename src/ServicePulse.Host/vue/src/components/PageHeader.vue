@@ -22,9 +22,9 @@ const displayDanger = computed(() => {
   <nav class="navbar navbar-expand-lg navbar-inverse navbar-dark">
     <div class="container-fluid">
       <div class="navbar-header">
-        <a class="navbar-brand" href="/">
+        <RouterLink class="navbar-brand" :to="routeLinks.dashboard">
           <img alt="Service Pulse" src="@/assets/logo.svg" />
-        </a>
+        </RouterLink>
       </div>
 
       <div id="navbar" class="navbar navbar-expand-lg">
