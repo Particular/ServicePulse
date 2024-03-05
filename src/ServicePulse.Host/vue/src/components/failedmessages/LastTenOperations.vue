@@ -5,16 +5,17 @@ import NoData from "../NoData.vue";
 import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import TimeSince from "../TimeSince.vue";
 import type HistoricRetryOperation from "@/resources/HistoricRetryOperation";
+import RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
 
 const historicOperations: Ref<HistoricRetryOperation[]> = ref([]);
 const showHistoricRetries = ref(false);
 
 async function getHistoricOperations() {
-  const [, data] = await useTypedFetchFromServiceControl<HistoricRetryOperation[]>("recoverability/history");
+  const [, data] = await useTypedFetchFromServiceControl<RecoverabilityHistoryResponse>("recoverability/history");
 
   // TODO: Check why this is here. It probably does not work as expected.
   historicOperations.value = [];
-  historicOperations.value = data; //TODO: check if this requires data.historic_operations
+  historicOperations.value = data.historic_operations;
 }
 
 onMounted(() => {
