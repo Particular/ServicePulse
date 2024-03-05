@@ -1,18 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
+import type { Ref } from "vue";
 import NoData from "../NoData.vue";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import TimeSince from "../TimeSince.vue";
+import type HistoricRetryOperation from "@/resources/HistoricRetryOperation";
 
-const historicOperations = ref([]);
+const historicOperations: Ref<HistoricRetryOperation[]> = ref([]);
 const showHistoricRetries = ref(false);
 
 async function getHistoricOperations() {
-  const response = await useFetchFromServiceControl("recoverability/history");
-  const data = await response.json();
+  const [, data] = await useTypedFetchFromServiceControl<HistoricRetryOperation[]>("recoverability/history");
+
   // TODO: Check why this is here. It probably does not work as expected.
   historicOperations.value = [];
-  historicOperations.value = data.historic_operations;
+  historicOperations.value = data; //TODO: check if this requires data.historic_operations
 }
 
 onMounted(() => {
