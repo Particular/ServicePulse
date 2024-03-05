@@ -13,7 +13,7 @@
         function reportFailedConnection() {
 
             if (isConnected) {
-                var message = 'Could not connect to the ServiceControl Monitoring service at ' + mu + '. <a class="btn btn-default" href="/configuration#connections">View connection settings</a>';
+                var message = 'Could not connect to the ServiceControl Monitoring service at ' + mu + '. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>';
                 console.log(message);
                 if (shouldShowFailedMessage) {
                     toastService.showError(message);
