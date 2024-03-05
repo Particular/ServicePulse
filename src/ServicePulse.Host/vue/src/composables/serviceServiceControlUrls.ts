@@ -1,7 +1,43 @@
 import { type Ref, ref } from "vue";
 
-export const serviceControlUrl = ref<string | null>();
-export const monitoringUrl = ref<string | null>();
+const serviceControlUrl = ref<string | null>();
+const monitoringUrl = ref<string | null>();
+
+async function useServiceControlUrls() {
+  const params = getParams();
+  const scu = getParameter(params, "scu");
+  const mu = getParameter(params, "mu");
+
+  if (scu) {
+    serviceControlUrl.value = scu.value;
+    window.localStorage.setItem("scu", serviceControlUrl.value);
+    console.debug(`ServiceControl Url found in QS and stored in local storage: ${serviceControlUrl.value}`);
+  } else if (window.localStorage.getItem("scu")) {
+    serviceControlUrl.value = window.localStorage.getItem("scu");
+    console.debug(`ServiceControl Url, not in QS, found in local storage: ${serviceControlUrl.value}`);
+  } else if (window.defaultConfig && window.defaultConfig.service_control_url) {
+    serviceControlUrl.value = window.defaultConfig.service_control_url;
+    console.debug(`setting ServiceControl Url to its default value: ${window.defaultConfig.service_control_url}`);
+  } else {
+    console.warn("ServiceControl Url is not defined.");
+  }
+
+  if (mu) {
+    monitoringUrl.value = mu.value;
+    window.localStorage.setItem("mu", monitoringUrl.value);
+    console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
+  } else if (window.localStorage.getItem("mu")) {
+    monitoringUrl.value = window.localStorage.getItem("mu");
+    console.debug(`Monitoring Url, not in QS, found in local storage: ${monitoringUrl.value}`);
+  } else if (window.defaultConfig && window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.length) {
+    monitoringUrl.value = window.defaultConfig.monitoring_urls[0];
+    console.debug(`setting Monitoring Url to its default value: ${window.defaultConfig.monitoring_urls[0]}`);
+  } else {
+    console.warn("Monitoring Url is not defined.");
+  }
+}
+
+export { useServiceControlUrls, serviceControlUrl, monitoringUrl };
 
 export function useIsMonitoringDisabled() {
   return monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!";
@@ -29,7 +65,6 @@ export async function useTypedFetchFromMonitoring<T>(suffix: string): Promise<[R
   }
 
   const response = await fetch(`${monitoringUrl.value}${suffix}`);
-  if (!response?.ok) throw new Error(response?.statusText ?? "No response");
   const data = await response.json();
 
   return [response, data];
@@ -92,43 +127,7 @@ export function usePatchToServiceControl(suffix: string, payload: object | null)
   return fetch(serviceControlUrl.value + suffix, requestOptions);
 }
 
-export function useServiceControlUrls() {
-  const params = getParams();
-  const scu = getParameter(params, "scu");
-  const mu = getParameter(params, "mu");
-
-  if (scu) {
-    serviceControlUrl.value = scu.value;
-    window.localStorage.setItem("scu", serviceControlUrl.value);
-    console.debug(`ServiceControl Url found in QS and stored in local storage: ${serviceControlUrl.value}`);
-  } else if (window.localStorage.getItem("scu")) {
-    serviceControlUrl.value = window.localStorage.getItem("scu");
-    console.debug(`ServiceControl Url, not in QS, found in local storage: ${serviceControlUrl.value}`);
-  } else if (window.defaultConfig && window.defaultConfig.service_control_url) {
-    serviceControlUrl.value = window.defaultConfig.service_control_url;
-    console.debug(`setting ServiceControl Url to its default value: ${window.defaultConfig.service_control_url}`);
-  } else {
-    console.warn("ServiceControl Url is not defined.");
-  }
-
-  if (mu) {
-    monitoringUrl.value = mu.value;
-    window.localStorage.setItem("mu", monitoringUrl.value);
-    console.debug(`Monitoring Url found in QS and stored in local storage: ${monitoringUrl.value}`);
-  } else if (window.localStorage.getItem("mu")) {
-    monitoringUrl.value = window.localStorage.getItem("mu");
-    console.debug(`Monitoring Url, not in QS, found in local storage: ${monitoringUrl.value}`);
-  } else if (window.defaultConfig && window.defaultConfig.monitoring_urls && window.defaultConfig.monitoring_urls.length) {
-    monitoringUrl.value = window.defaultConfig.monitoring_urls[0];
-    console.debug(`setting Monitoring Url to its default value: ${window.defaultConfig.monitoring_urls[0]}`);
-  } else {
-    console.warn("Monitoring Url is not defined.");
-  }
-
-  return { serviceControlUrl, monitoringUrl };
-}
-
-export function updateServiceControlUrls(newServiceControlUrl: Ref<string>, newMonitoringUrl: Ref<string>) {
+export function updateServiceControlUrls(newServiceControlUrl: Ref<string | null | undefined>, newMonitoringUrl: Ref<string | null | undefined>) {
   if (!newServiceControlUrl.value) {
     throw new Error("ServiceControl URL is mandatory");
   } else if (!newServiceControlUrl.value.endsWith("/")) {
