@@ -72,7 +72,7 @@ export default defineConfig({
   },
   server: {
     headers: {
-      "Content-Security-Policy": createCSPOverrides(port, defaultUrls),
+      "content-security-policy": createCSPOverrides(port, defaultUrls),
     },
     host: true,
     port: port,
