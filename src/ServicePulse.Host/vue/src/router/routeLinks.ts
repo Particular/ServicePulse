@@ -34,7 +34,7 @@ const configurationLinks = (root: string) => {
 const monitoringLinks = (root: string) => {
   return {
     root,
-    endpointDetails: { link: (endpointName: string, historyPeriod: number, tab?: string) => `${root}/endpoint/${endpointName}?historyPeriod=${historyPeriod}${tab && `&tab=${tab}`}`, template: "/monitoring/endpoint/:endpointName" },
+    endpointDetails: { link: (endpointName: string, historyPeriod: number, tab?: string) => `${root}/endpoint/${endpointName}?historyPeriod=${historyPeriod}${(tab && `&tab=${tab}`) ?? ""}`, template: "/monitoring/endpoint/:endpointName" },
   };
 };
 
