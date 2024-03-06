@@ -143,7 +143,7 @@ Execute the build script from the command line:
 PowerShell -File .\build.ps1
 ```
 
-NOTE: It might be necessary to change the PowerShell execution policy using `Set-ExecutionPolicy Unrestricted`
+NOTE: It might be necessary to change the PowerShell execution policy using `Set-ExecutionPolicy Unrestricted -scope UserPolicy`
 
 ### Step 3 - run `ServicePulse.Host.exe`
 
@@ -167,7 +167,7 @@ Dockerfiles for ServicePulse resides within the [`src`](https://github.com/Parti
 
 ### Building & staging docker images
 
-The docker files are all built as part of the [release workflow](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml), pushed to the Docker hub, and tagged with the version of ServicePulse being deployed.
+The docker files are all built as part of the [release workflow](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml), pushed to the Docker hub, and tagged with the version of ServicePulse being deployed. More details are available in the [documentation](https://docs.particular.net/servicepulse/containerization/).
 
 E.g., If we were deploying version 1.30.1 of ServicePulse, the build configurations after the Deploy step will build the following 2 containers for ServicePulse and tag them `1.30.1`:
 
