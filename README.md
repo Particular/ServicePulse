@@ -129,6 +129,12 @@ It is possible to run ServicePulse directly via `ServicePulse.Host.exe`.
 
 ServicePulse.Host.exe depends on a self-hosted web server. A URL ACL reservation needs to be set up to start the project. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
 
+```
+add urlacl url=URL
+```
+
+Where `URL` is the configured URL on the local machine.
+
 ### Step 2 - build ServicePulse site 
 
 Execute the build script from the command line:
