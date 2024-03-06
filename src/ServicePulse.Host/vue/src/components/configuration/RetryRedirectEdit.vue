@@ -77,8 +77,6 @@ function edit() {
 function close() {
   emit("cancel");
 }
-
-function save() {}
 </script>
 
 <template>
@@ -90,7 +88,7 @@ function save() {}
           <h3 class="modal-title" v-if="!model.message_redirect_id">Create redirect</h3>
         </div>
 
-        <form name="redirectForm" novalidate @submit.prevent="save">
+        <form name="redirectForm" novalidate>
           <div class="modal-body">
             <div class="row">
               <div class="form-group">
