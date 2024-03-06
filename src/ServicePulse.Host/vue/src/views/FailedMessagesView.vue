@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
 import { licenseStatus } from "../composables/serviceLicense";
 import { connectionState, stats } from "../composables/serviceServiceControl";
