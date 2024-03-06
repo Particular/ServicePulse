@@ -1,12 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 
-const settings = defineProps({
-  header: Object,
-});
+interface MessageHeader {
+  key: string;
+  value: string;
+  isChanged: boolean;
+  isMarkedAsRemoved: boolean;
+  isLocked: boolean;
+  isSensitive: boolean;
+}
 
-let origHeaderValue = undefined;
-const header = ref(settings.header);
+const settings = defineProps<{
+  header: MessageHeader;
+}>();
+
+let origHeaderValue: string;
+const header = ref<MessageHeader>(settings.header);
 
 const headerValue = computed(() => settings.header.value);
 watch(headerValue, (newValue) => {
