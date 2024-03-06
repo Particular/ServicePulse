@@ -12,9 +12,6 @@ const showHistoricRetries = ref(false);
 
 async function getHistoricOperations() {
   const [, data] = await useTypedFetchFromServiceControl<RecoverabilityHistoryResponse>("recoverability/history");
-
-  // TODO: Check why this is here. It probably does not work as expected.
-  historicOperations.value = [];
   historicOperations.value = data.historic_operations;
 }
 
