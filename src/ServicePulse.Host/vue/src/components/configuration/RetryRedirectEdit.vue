@@ -173,7 +173,7 @@ function close() {
 }
 
 .modal-container {
-  width: 400px;
+  width: 600px;
   margin: 0 auto;
   padding: 20px 30px;
   background-color: #fff;
