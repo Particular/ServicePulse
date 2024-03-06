@@ -1,4 +1,5 @@
 import type EndpointDetails from "@/resources/EndpointDetails";
+import type Header from "@/resources/Header";
 
 export default interface FailedMessageView {
   id: string;
@@ -26,6 +27,21 @@ export interface FailedMessageViewWithExtendedUIProperties extends FailedMessage
   deleteInProgress: boolean
   restoreInProgress: boolean;
   selected: boolean;
+  retried: boolean;
+  archiving: boolean;
+  restoring: boolean;
+  notFound: boolean;
+  archived: boolean;
+  resolved: boolean;
+  error: boolean
+  headersNotFound: boolean;
+  messageBodyNotFound: boolean;
+  bodyUnavailable: boolean;
+  headers: Header[];
+  conversationId: string;
+  messageBody: string;
+  isEditAndRetryEnabled: boolean;
+  redirect:boolean;
 }
 
 export interface ExceptionDetails {

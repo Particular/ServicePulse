@@ -33,3 +33,9 @@ export default interface Configuration {
     logging_level: string;
     raven_db_log_level: string;
   }
+
+  export interface EditAndRetryConfig {
+    enabled: boolean;
+    sensitive_headers: string[];
+    locked_headers: string[];
+  }

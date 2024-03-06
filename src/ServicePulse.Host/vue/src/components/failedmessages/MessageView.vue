@@ -1,7 +1,7 @@
-<script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+<script setup lang="ts">
+import { Ref, computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, useTypedFetchFromServiceControl, serviceControlUrl } from "../../composables/serviceServiceControlUrls";
 import { useArchiveMessage, useRetryMessages, useUnarchiveMessage } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useShowToast } from "../../composables/toast";
@@ -12,13 +12,18 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 import FlowDiagram from "./FlowDiagram.vue";
 import EditRetryDialog from "./EditRetryDialog.vue";
 import routeLinks from "@/router/routeLinks";
+import Configuration, { EditAndRetryConfig } from "@/resources/Configuration";
+import { TYPE } from "vue-toastification";
+import { FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
+import Message from "@/resources/Message";
 
-let refreshInterval = undefined;
+let refreshInterval: ReturnType<typeof setInterval>;
 let pollingFaster = false;
-const panel = ref();
+let panel: Ref<number>;
 const route = useRoute();
-const failedMessage = ref({});
-const configuration = ref([]);
+let failedMessage: Ref<FailedMessageViewWithExtendedUIProperties>;
+let configuration: Ref<Configuration>;
+let editAndRetryConfiguration: Ref<EditAndRetryConfig>;
 
 const id = computed(() => route.params.id);
 watch(id, async () => await loadFailedMessage());
@@ -32,9 +37,9 @@ async function loadFailedMessage() {
   try {
     const response = await useFetchFromServiceControl("errors/last/" + id.value);
     if (response.status === 404) {
-      failedMessage.value = { notFound: true };
+      failedMessage.value = { notFound: true } as FailedMessageViewWithExtendedUIProperties;
     } else if (response.status !== 200) {
-      failedMessage.value = { error: true };
+      failedMessage.value = { error: true } as FailedMessageViewWithExtendedUIProperties;
     }
     const data = await response.json();
     const message = data;
@@ -42,7 +47,7 @@ async function loadFailedMessage() {
     message.resolved = message.status === "resolved";
     message.retried = message.status === "retryIssued";
     message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-    message.isEditAndRetryEnabled = configuration.value.edit.enabled;
+    message.isEditAndRetryEnabled = editAndRetryConfiguration.value.enabled;
 
     // Maintain the mutations of the message in memory until the api returns a newer modified message
     if (failedMessage.value.last_modified === message.last_modified) {
@@ -54,7 +59,7 @@ async function loadFailedMessage() {
       message.restoring = false;
     }
 
-    Object.assign(failedMessage.value, message);
+    failedMessage.value = message;
     updateMessageDeleteDate();
     return downloadHeadersAndBody();
   } catch (err) {
@@ -71,9 +76,9 @@ async function getConfiguration() {
 }
 
 async function getEditAndRetryConfig() {
-  const response = await useFetchFromServiceControl("edit/config");
-  const data = await response.json();
-  configuration.value.edit = data;
+  const [, data] = await useTypedFetchFromServiceControl<EditAndRetryConfig>("edit/config");
+
+  editAndRetryConfiguration.value = data;
   return;
 }
 
@@ -84,38 +89,38 @@ function updateMessageDeleteDate() {
 }
 
 async function archiveMessage() {
-  useShowToast("info", "Info", `Deleting the message ${id.value} ...`);
+  useShowToast(TYPE.INFO, "Info", `Deleting the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
-  await useArchiveMessage([id.value]);
+  await useArchiveMessage([id.value as string]);
   failedMessage.value.archiving = true;
 }
 
 async function unarchiveMessage() {
   changeRefreshInterval(1000); // We've started an unarchive, so increase the polling frequency
-  await useUnarchiveMessage([id.value]);
+  await useUnarchiveMessage([id.value as string]);
   failedMessage.value.restoring = true;
 }
 
 async function retryMessage() {
-  useShowToast("info", "Info", `Retrying the message ${id.value} ...`);
+  useShowToast(TYPE.INFO, "Info", `Retrying the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started a retry, so increase the polling frequency
-  await useRetryMessages([id.value]);
+  await useRetryMessages([id.value as string]);
   failedMessage.value.retried = true;
 }
 
 async function downloadHeadersAndBody() {
   try {
-    const response = await useFetchFromServiceControl("messages/search/" + failedMessage.value.message_id);
-    const data = await response.json();
+    const [, data] = await useTypedFetchFromServiceControl<Message[]>("messages/search/" + failedMessage.value.message_id);
+
     if (data[0] === undefined) {
       failedMessage.value.headersNotFound = true;
       failedMessage.value.messageBodyNotFound = true;
       return;
     }
 
-    const message = data[0];
+    const message: Message = data[0];
     failedMessage.value.headers = message.headers;
-    failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
+    failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId")?.value ?? "";
 
     return downloadBody();
   } catch (err) {
@@ -125,7 +130,7 @@ async function downloadHeadersAndBody() {
 }
 
 async function downloadBody() {
-  const response = await useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body");
+  const [response, data] = await useTypedFetchFromServiceControl<string>("messages/" + failedMessage.value.message_id + "/body");
   if (response.status === 404) {
     failedMessage.value.messageBodyNotFound = true;
     return;
@@ -133,7 +138,7 @@ async function downloadBody() {
 
   if (response.headers.get("content-type") === "application/json") {
     try {
-      let jsonBody = await response.json();
+      let jsonBody = data;
       jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
 
       failedMessage.value.messageBody = formatJson(jsonBody);
@@ -161,15 +166,15 @@ async function downloadBody() {
 }
 
 // taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js
-function formatXml(xml) {
-  function createShiftArr(step) {
+function formatXml(xml: string) {
+  function createShiftArr(step: string) {
     let space = "";
     if (isNaN(parseInt(step))) {
       // argument is string
       space = step;
     } else {
       // argument is integer
-      for (let i = 0; i < step; i++) {
+      for (let i = 0; i < parseInt(step); i++) {
         space += " ";
       }
     }
@@ -195,14 +200,17 @@ function formatXml(xml) {
     shift = createShiftArr(indent);
   let inComment = false,
     depth = 0,
-    string = "";
+    string = "",
+    m1: RegExpExecArray | null,
+    m2: RegExpExecArray | null;
 
   for (let i = 0; i < len; i++) {
+    m1 = /^<[\w:\-.,]+/.exec(arr[i - 1]);
+    m2 = /^<\/[\w:\-.,]+/.exec(arr[i]);
     // start comment or <![CDATA[...]]> or <!DOCTYPE //
     if (arr[i].indexOf("<!") !== -1) {
       string += shift[depth] + arr[i];
       inComment = true;
-
       // end comment or <![CDATA[...]]> //
       if (arr[i].indexOf("-->") !== -1 || arr[i].indexOf("]>") !== -1 || arr[i].indexOf("!DOCTYPE") !== -1) {
         inComment = false;
@@ -214,7 +222,9 @@ function formatXml(xml) {
     } else if (
       /^<\w/.test(arr[i - 1]) &&
       /^<\/\w/.test(arr[i]) && // <elm></elm> //
-      /^<[\w:\-.,]+/.exec(arr[i - 1])[0] === /^<\/[\w:\-.,]+/.exec(arr[i])[0].replace("/", "")
+      m1 &&
+      m2 &&
+      m1[0] === m2[0].replace("/", "")
     ) {
       string += arr[i];
       if (!inComment) depth--;
@@ -244,11 +254,11 @@ function formatXml(xml) {
   return string.trim();
 }
 
-function formatJson(json) {
+function formatJson(json: string) {
   return JSON.stringify(json, null, 2);
 }
 
-function togglePanel(panelNum) {
+function togglePanel(panelNum: number) {
   if (!failedMessage.value.notFound && !failedMessage.value.error) {
     panel.value = panelNum;
   }
@@ -258,15 +268,15 @@ function togglePanel(panelNum) {
 function debugInServiceInsight() {
   const messageId = failedMessage.value.message_id;
   const endpointName = failedMessage.value.receiving_endpoint.name;
-  let serviceControlUrl = serviceControlUrl.value.toLowerCase();
+  let url = serviceControlUrl.value?.toLowerCase() ?? "";
 
-  if (serviceControlUrl.indexOf("https") === 0) {
-    serviceControlUrl = serviceControlUrl.replace("https://", "");
+  if (url.indexOf("https") === 0) {
+    url = url.replace("https://", "");
   } else {
-    serviceControlUrl = serviceControlUrl.replace("http://", "");
+    url = url.replace("http://", "");
   }
 
-  window.open("si://" + serviceControlUrl + "?search=" + messageId + "&endpointname=" + endpointName);
+  window.open("si://" + url + "?search=" + messageId + "&endpointname=" + endpointName);
 }
 
 function exportMessage() {
@@ -282,7 +292,7 @@ function exportMessage() {
   txtStr += failedMessage.value.messageBody;
 
   useDownloadFile(txtStr, "text/txt", "failedMessage.txt");
-  useShowToast("info", "Info", "Message export completed.");
+  useShowToast(TYPE.INFO, "Info", "Message export completed.");
 }
 
 function showEditAndRetryModal() {
@@ -298,7 +308,7 @@ function cancelEditAndRetry() {
 
 function confirmEditAndRetry() {
   showEditRetryModal.value = false;
-  useShowToast("info", "Info", `Retrying the edited message ${id.value} ...`);
+  useShowToast(TYPE.INFO, "Info", `Retrying the edited message ${id.value} ...`);
   return startRefreshInterval();
 }
 
@@ -320,7 +330,7 @@ function isRetryOrArchiveOperationInProgress() {
   return failedMessage.value.retried || failedMessage.value.archiving || failedMessage.value.restoring;
 }
 
-function changeRefreshInterval(milliseconds) {
+function changeRefreshInterval(milliseconds: number) {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
   refreshInterval = setInterval(() => {
@@ -435,7 +445,7 @@ onUnmounted(() => {
                 Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.
               </div>
               <div v-if="panel === 3 && failedMessage.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
-              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id"></FlowDiagram>
+              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id as string"></FlowDiagram>
             </div>
           </div>
 
@@ -474,7 +484,7 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog v-if="showEditRetryModal === true" @cancel="cancelEditAndRetry()" @retried="confirmEditAndRetry()" :id="id" :message="failedMessage" :configuration="configuration.edit"></EditRetryDialog>
+            <EditRetryDialog v-if="showEditRetryModal === true" @cancel="cancelEditAndRetry()" @retried="confirmEditAndRetry()" :id="id as string" :message="failedMessage" :configuration="editAndRetryConfiguration"></EditRetryDialog>
           </Teleport>
         </div>
       </section>
