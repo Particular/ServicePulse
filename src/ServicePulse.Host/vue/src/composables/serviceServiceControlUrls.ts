@@ -1,75 +1,9 @@
 import { type Ref, ref } from "vue";
 
-export const serviceControlUrl = ref<string | null>();
-export const monitoringUrl = ref<string | null>();
+const serviceControlUrl = ref<string | null>();
+const monitoringUrl = ref<string | null>();
 
-export function useIsMonitoringDisabled() {
-  return monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!";
-}
-
-export function useIsMonitoringEnabled() {
-  return !useIsMonitoringDisabled();
-}
-
-export function useFetchFromServiceControl(suffix: string) {
-  return fetch(serviceControlUrl.value + suffix);
-}
-
-export async function useTypedFetchFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
-  const response = await fetch(serviceControlUrl.value + suffix);
-  const data = await response.json();
-
-  return [response, data];
-}
-
-export function useFetchFromMonitoring(suffix: string) {
-  if (useIsMonitoringDisabled()) {
-    return Promise.resolve(null);
-  }
-  return fetch(monitoringUrl.value + suffix);
-}
-
-export function usePostToServiceControl(suffix: string, payload: object | null = null) {
-  const requestOptions: RequestInit = {
-    method: "POST",
-  };
-  if (payload != null) {
-    requestOptions.headers = { "Content-Type": "application/json" };
-    requestOptions.body = JSON.stringify(payload);
-  }
-  return fetch(serviceControlUrl.value + suffix, requestOptions);
-}
-
-export function usePutToServiceControl(suffix: string, payload: object | null) {
-  const requestOptions: RequestInit = {
-    method: "PUT",
-  };
-  if (payload != null) {
-    requestOptions.headers = { "Content-Type": "application/json" };
-    requestOptions.body = JSON.stringify(payload);
-  }
-  return fetch(serviceControlUrl.value + suffix, requestOptions);
-}
-
-export function useDeleteFromServiceControl(suffix: string) {
-  const requestOptions: RequestInit = {
-    method: "DELETE",
-  };
-  return fetch(serviceControlUrl.value + suffix, requestOptions);
-}
-
-export function usePatchToServiceControl(suffix: string, payload: object | null) {
-  const requestOptions: RequestInit = {
-    method: "PATCH",
-  };
-  if (payload != null) {
-    requestOptions.headers = { "Content-Type": "application/json" };
-    requestOptions.body = JSON.stringify(payload);
-  }
-  return fetch(serviceControlUrl.value + suffix, requestOptions);
-}
-
-export function useServiceControlUrls() {
+async function useServiceControlUrls() {
   const params = getParams();
   const scu = getParameter(params, "scu");
   const mu = getParameter(params, "mu");
@@ -101,11 +35,99 @@ export function useServiceControlUrls() {
   } else {
     console.warn("Monitoring Url is not defined.");
   }
-
-  return { serviceControlUrl, monitoringUrl };
 }
 
-export function updateServiceControlUrls(newServiceControlUrl: Ref<string>, newMonitoringUrl: Ref<string>) {
+export { useServiceControlUrls, serviceControlUrl, monitoringUrl };
+
+export function useIsMonitoringDisabled() {
+  return monitoringUrl.value == null || monitoringUrl.value === "" || monitoringUrl.value === "!";
+}
+
+export function useIsMonitoringEnabled() {
+  return !useIsMonitoringDisabled();
+}
+
+export function useFetchFromServiceControl(suffix: string) {
+  return fetch(serviceControlUrl.value + suffix);
+}
+
+export async function useTypedFetchFromServiceControl<T>(suffix: string): Promise<[Response, T]> {
+  const response = await fetch(`${serviceControlUrl.value}${suffix}`);
+  if (!response?.ok) throw new Error(response?.statusText ?? "No response");
+  const data = await response.json();
+
+  return [response, data];
+}
+
+export async function useTypedFetchFromMonitoring<T>(suffix: string): Promise<[Response?, T?]> {
+  if (useIsMonitoringDisabled()) {
+    return [];
+  }
+
+  const response = await fetch(`${monitoringUrl.value}${suffix}`);
+  const data = await response.json();
+
+  return [response, data];
+}
+
+export function usePostToServiceControl(suffix: string, payload: object | null = null) {
+  const requestOptions: RequestInit = {
+    method: "POST",
+  };
+  if (payload != null) {
+    requestOptions.headers = { "Content-Type": "application/json" };
+    requestOptions.body = JSON.stringify(payload);
+  }
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+
+export function usePutToServiceControl(suffix: string, payload: object | null) {
+  const requestOptions: RequestInit = {
+    method: "PUT",
+  };
+  if (payload != null) {
+    requestOptions.headers = { "Content-Type": "application/json" };
+    requestOptions.body = JSON.stringify(payload);
+  }
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+
+export function useDeleteFromServiceControl(suffix: string) {
+  const requestOptions: RequestInit = {
+    method: "DELETE",
+  };
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+export function useDeleteFromMonitoring(suffix: string) {
+  const requestOptions = {
+    method: "DELETE",
+  };
+  return fetch(monitoringUrl.value + suffix, requestOptions);
+}
+
+export function useOptionsFromMonitoring() {
+  if (useIsMonitoringDisabled()) {
+    return Promise.resolve(null);
+  }
+
+  const requestOptions = {
+    method: "OPTIONS",
+  };
+  return fetch(monitoringUrl.value ?? "", requestOptions);
+}
+
+export function usePatchToServiceControl(suffix: string, payload: object | null) {
+  const requestOptions: RequestInit = {
+    method: "PATCH",
+  };
+  if (payload != null) {
+    requestOptions.headers = { "Content-Type": "application/json" };
+    requestOptions.body = JSON.stringify(payload);
+  }
+  return fetch(serviceControlUrl.value + suffix, requestOptions);
+}
+
+export function updateServiceControlUrls(newServiceControlUrl: Ref<string | null | undefined>, newMonitoringUrl: Ref<string | null | undefined>) {
   if (!newServiceControlUrl.value) {
     throw new Error("ServiceControl URL is mandatory");
   } else if (!newServiceControlUrl.value.endsWith("/")) {

@@ -1,44 +1,45 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, reactive, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "../../composables/serviceLicense";
+import { licenseStatus } from "@/composables/serviceLicense";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { connectionState } from "../../composables/serviceServiceControl";
-import RetryRedirectEdit from "./RetryRedirectEdit.vue";
+import { connectionState } from "@/composables/serviceServiceControl";
 import NoData from "../NoData.vue";
 import BusyIndicator from "../BusyIndicator.vue";
-import { useShowToast } from "../../composables/toast";
+import { useShowToast } from "@/composables/toast";
 import TimeSince from "../TimeSince.vue";
-import { useCreateRedirects, useDeleteRedirects, useRedirects, useRetryPendingMessagesForQueue, useUpdateRedirects } from "../../composables/serviceRedirects";
+import { useCreateRedirects, useDeleteRedirects, useRedirects, useRetryPendingMessagesForQueue, useUpdateRedirects } from "@/composables/serviceRedirects";
 import ConfirmDialog from "../ConfirmDialog.vue";
+import { TYPE } from "vue-toastification";
+import type Redirect from "@/resources/Redirect";
+import RetryRedirectEdit, { type RetryRedirect } from "@/components/configuration/RetryRedirectEdit.vue";
+import redirectCountUpdated from "@/components/configuration/redirectCountUpdated";
 
 const isExpired = licenseStatus.isExpired;
 
-const emit = defineEmits(["redirectCountUpdated"]);
-
 const loadingData = ref(true);
-const redirects = reactive({
+const redirects = reactive<{ total: number; data: Redirect[] }>({
   total: 0,
   data: [],
 });
 
 const showDelete = ref(false);
 const showEdit = ref(false);
-const selectedRedirect = ref({
+const selectedRedirect = ref<Redirect & { queues: string[] }>({
   message_redirect_id: "",
   from_physical_address: "",
   to_physical_address: "",
-  date_last_modified: null,
+  last_modified: "",
   queues: [],
 });
 
-const redirectSaveSuccessful = ref(null);
+const redirectSaveSuccessful = ref<boolean | null>(null);
 
 async function getRedirect() {
   loadingData.value = true;
   const result = await useRedirects();
   if (redirects.total !== result.total) {
-    emit("redirectCountUpdated", result.total);
+    redirectCountUpdated.count = result.total;
   }
   redirects.total = result.total;
   redirects.data = result.data;
@@ -48,12 +49,13 @@ async function getRedirect() {
 
 function createRedirect() {
   redirectSaveSuccessful.value = null;
-  (selectedRedirect.value.message_redirect_id = null), (selectedRedirect.value.from_physical_address = "");
+  selectedRedirect.value.message_redirect_id = "";
+  selectedRedirect.value.from_physical_address = "";
   selectedRedirect.value.to_physical_address = "";
   showEdit.value = true;
 }
 
-function editRedirect(redirect) {
+function editRedirect(redirect: Redirect) {
   redirectSaveSuccessful.value = null;
   selectedRedirect.value.message_redirect_id = redirect.message_redirect_id;
   selectedRedirect.value.from_physical_address = redirect.from_physical_address;
@@ -61,20 +63,20 @@ function editRedirect(redirect) {
   showEdit.value = true;
 }
 
-async function saveEditedRedirect(redirect) {
+async function saveEditedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
   const result = await useUpdateRedirects(redirect.redirectId, redirect.sourceQueue, redirect.targetQueue);
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
-    useShowToast("info", "Info", "Redirect updated successfully");
+    useShowToast(TYPE.INFO, "Info", "Redirect updated successfully");
     getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409) {
-      useShowToast("error", "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
+      useShowToast(TYPE.ERROR, "Error", "Failed to update a redirect, can not create redirect to a queue" + redirect.targetQueue + " as it already has a redirect. Provide a different queue or end the redirect.");
     } else {
-      useShowToast("error", "Error", result.message);
+      useShowToast(TYPE.ERROR, "Error", result.message);
     }
   }
   if (result.message === "success" && redirect.immediatelyRetry) {
@@ -84,40 +86,41 @@ async function saveEditedRedirect(redirect) {
   }
 }
 
-async function saveCreatedRedirect(redirect) {
+async function saveCreatedRedirect(redirect: RetryRedirect) {
   redirectSaveSuccessful.value = null;
   showEdit.value = false;
   const result = await useCreateRedirects(redirect.sourceQueue, redirect.targetQueue);
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
-    useShowToast("info", "Info", "Redirect created successfully");
+    useShowToast(TYPE.INFO, "Info", "Redirect created successfully");
     getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
     if (result.status === 409 && result.statusText === "Duplicate") {
-      useShowToast("error", "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
+      useShowToast(TYPE.ERROR, "Error", "Failed to create a redirect, can not create more than one redirect for queue: " + redirect.sourceQueue);
     } else if (result.status === 409 && result.statusText === "Dependents") {
-      useShowToast("error", "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
+      useShowToast(TYPE.ERROR, "Error", "Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.");
     } else {
-      useShowToast("error", "Error", result.message);
+      useShowToast(TYPE.ERROR, "Error", result.message);
     }
   }
 }
 
-function deleteRedirect(redirect) {
+function deleteRedirect(redirect: Redirect) {
   redirectSaveSuccessful.value = null;
-  (selectedRedirect.value.message_redirect_id = redirect.message_redirect_id), (showDelete.value = true);
+  selectedRedirect.value.message_redirect_id = redirect.message_redirect_id;
+  showDelete.value = true;
 }
 
 async function saveDeleteRedirect() {
   const result = await useDeleteRedirects(selectedRedirect.value.message_redirect_id);
   if (result.message === "success") {
     redirectSaveSuccessful.value = true;
-    useShowToast("info", "Info", "Redirect deleted");
-    getRedirect();
+    useShowToast(TYPE.INFO, "Info", "Redirect deleted");
+    await getRedirect();
   } else {
     redirectSaveSuccessful.value = false;
-    useShowToast("error", "Error", result.message);
+    useShowToast(TYPE.ERROR, "Error", result.message);
   }
 }
 
@@ -193,7 +196,7 @@ onMounted(() => {
             ></ConfirmDialog>
           </Teleport>
           <Teleport to="#modalDisplay">
-            <RetryRedirectEdit v-if="showEdit === true" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
+            <RetryRedirectEdit v-if="showEdit" v-bind="selectedRedirect" @cancel="showEdit = false" @create="saveCreatedRedirect" @edit="saveEditedRedirect"></RetryRedirectEdit>
           </Teleport>
         </section>
       </template>

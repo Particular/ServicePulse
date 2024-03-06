@@ -1,27 +1,24 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import { licenseStatus } from "../../composables/serviceLicense";
-import { connectionState } from "../../composables/serviceServiceControl";
+import { licenseStatus } from "@/composables/serviceLicense";
+import { connectionState } from "@/composables/serviceServiceControl";
 import HealthCheckNotifications_EmailConfiguration from "./HealthCheckNotifications_ConfigureEmail.vue";
-import { useEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications, useUpdateEmailNotifications } from "../../composables/serviceNotifications";
-import { useShowToast } from "../../composables/toast";
-
-// This is needed because the ConfigurationView.vue routerView expects this event.
-// The event is only actually emitted on the RetryRedirects.vue component
-// but if we don't include it, the console will show warnings about not being able to
-// subscribe to this event
-defineEmits(["redirectCountUpdated"]);
+import { useEmailNotifications, useTestEmailNotifications, useToggleEmailNotifications, useUpdateEmailNotifications } from "@/composables/serviceNotifications";
+import { useShowToast } from "@/composables/toast";
+import { TYPE } from "vue-toastification";
+import type UpdateEmailNotificationsSettingsRequest from "@/resources/UpdateEmailNotificationsSettingsRequest";
+import type EmailSettings from "@/components/configuration/EmailSettings";
 
 const isExpired = licenseStatus.isExpired;
-const emailTestSuccessful = ref(null);
-const emailTestInProgress = ref(null);
-const emailToggleSucessful = ref(null);
-const emailUpdateSuccessful = ref(null);
-const showEmailConfiguration = ref(false);
+const emailTestSuccessful = ref<boolean | null>(null);
+const emailTestInProgress = ref<boolean | null>(null);
+const emailToggleSuccessful = ref<boolean | null>(null);
+const emailUpdateSuccessful = ref<boolean | null>(null);
+const showEmailConfiguration = ref<boolean | null>(null);
 
-const emailNotifications = ref({
+const emailNotifications = ref<EmailSettings>({
   enabled: null,
   enable_tls: null,
   smtp_server: "",
@@ -37,28 +34,28 @@ async function toggleEmailNotifications() {
   emailUpdateSuccessful.value = null;
   const result = await useToggleEmailNotifications(emailNotifications.value.enabled === null ? true : !emailNotifications.value.enabled);
   if (result.message === "success") {
-    emailToggleSucessful.value = true;
+    emailToggleSuccessful.value = true;
   } else {
-    emailToggleSucessful.value = false;
+    emailToggleSuccessful.value = false;
     //set it back to what it was
     emailNotifications.value.enabled = !emailNotifications.value.enabled;
   }
 }
 
 function editEmailNotifications() {
-  emailToggleSucessful.value = null;
+  emailToggleSuccessful.value = null;
   emailTestSuccessful.value = null;
   emailUpdateSuccessful.value = null;
   showEmailConfiguration.value = true;
 }
 
-async function saveEditedEmailNotifications(newSettings) {
+async function saveEditedEmailNotifications(newSettings: UpdateEmailNotificationsSettingsRequest) {
   emailUpdateSuccessful.value = null;
   showEmailConfiguration.value = false;
   const result = await useUpdateEmailNotifications(newSettings);
   if (result.message === "success") {
     emailUpdateSuccessful.value = true;
-    useShowToast("info", "Info", "Email settings updated.");
+    useShowToast(TYPE.INFO, "Info", "Email settings updated.");
     emailNotifications.value.enable_tls = newSettings.enable_tls;
     emailNotifications.value.smtp_server = newSettings.smtp_server;
     emailNotifications.value.smtp_port = newSettings.smtp_port;
@@ -68,20 +65,16 @@ async function saveEditedEmailNotifications(newSettings) {
     emailNotifications.value.to = newSettings.to;
   } else {
     emailUpdateSuccessful.value = false;
-    useShowToast("Error", "Error", "Failed to update the email settings.");
+    useShowToast(TYPE.ERROR, "Error", "Failed to update the email settings.");
   }
 }
 
 async function testEmailNotifications() {
   emailTestInProgress.value = true;
-  emailToggleSucessful.value = null;
+  emailToggleSuccessful.value = null;
   emailUpdateSuccessful.value = null;
   const result = await useTestEmailNotifications();
-  if (result.message === "success") {
-    emailTestSuccessful.value = true;
-  } else {
-    emailTestSuccessful.value = false;
-  }
+  emailTestSuccessful.value = result.message === "success";
   emailTestInProgress.value = false;
 }
 
@@ -91,15 +84,15 @@ async function getEmailNotifications() {
   emailNotifications.value.enabled = result.enabled;
   emailNotifications.value.enable_tls = result.enable_tls;
   emailNotifications.value.smtp_server = result.smtp_server ? result.smtp_server : "";
-  emailNotifications.value.smtp_port = result.smtp_port ? result.smtp_port : undefined;
+  emailNotifications.value.smtp_port = result.smtp_port ? result.smtp_port : null;
   emailNotifications.value.authentication_account = result.authentication_account ? result.authentication_account : "";
   emailNotifications.value.authentication_password = result.authentication_password ? result.authentication_password : "";
   emailNotifications.value.from = result.from ? result.from : "";
   emailNotifications.value.to = result.to ? result.to : "";
 }
 
-onMounted(() => {
-  getEmailNotifications();
+onMounted(async () => {
+  await getEmailNotifications();
 });
 </script>
 
@@ -130,7 +123,7 @@ onMounted(() => {
                       </div>
                       <div>
                         <span class="connection-test connection-failed">
-                          <template v-if="emailToggleSucessful === false"> <i class="fa fa-exclamation-triangle"></i> Update failed </template>
+                          <template v-if="emailToggleSuccessful === false"> <i class="fa fa-exclamation-triangle"></i> Update failed </template>
                         </span>
                       </div>
                     </div>
@@ -142,7 +135,7 @@ onMounted(() => {
                             <button class="btn btn-link btn-sm" type="button" @click="editEmailNotifications"><i class="fa fa-edit"></i>Configure</button>
                           </p>
                           <p class="endpoint-metadata">
-                            <button class="btn btn-link btn-sm" type="button" @click="testEmailNotifications" :disabled="emailTestInProgress"><i class="fa fa-envelope"></i>Send test notification</button>
+                            <button class="btn btn-link btn-sm" type="button" @click="testEmailNotifications" :disabled="!!emailTestInProgress"><i class="fa fa-envelope"></i>Send test notification</button>
                             <span class="connection-test connection-testing">
                               <template v-if="emailTestInProgress">
                                 <i class="glyphicon glyphicon-refresh rotate"></i>
@@ -185,6 +178,8 @@ onMounted(() => {
 </template>
 
 <style>
+@import "../list.css";
+
 .screen-intro {
   margin: 30px 0;
 }
@@ -267,7 +262,7 @@ onMounted(() => {
 }
 
 .onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
-  right: 0px;
+  right: 0;
 }
 
 .box-header {
@@ -279,18 +274,6 @@ onMounted(() => {
   list-style-type: none;
   margin: 0;
   padding: 0;
-}
-
-.lead {
-  -ms-word-wrap: break-word;
-  word-wrap: break-word;
-  color: #181919 !important;
-  font-size: 14px !important;
-  font-weight: bold;
-  margin-bottom: 3px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 p.endpoint-metadata {
@@ -313,7 +296,7 @@ p.endpoint-metadata {
 }
 
 .notifications .btn-sm {
-  padding: 0px;
+  padding: 0;
 }
 
 .notifications .connection-test {

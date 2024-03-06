@@ -1,7 +1,6 @@
 @import "bootstrap/dist/css/bootstrap.css";
 @import "bootstrap-icons/font/bootstrap-icons.css";
 @import "font-awesome/css/font-awesome.css";
-@import "navbar.css";
 @import "footer.css";
 @import "tabs.css";
 @import "dropdown.css";
@@ -12,6 +11,16 @@
   --bs-btn-hover-color: #333;
   --bs-btn-hover-bg: #e6e6e6;
   --bs-btn-hover-border-color: #adadad;
+  --monitoring-queue-length: #ea7e00;
+  --monitoring-queue-length-light: #eaddce;
+  --monitoring-throughput: #176397;
+  --monitoring-throughput-light: #cadce8;
+  --monitoring-retries: #cc1252;
+  --monitoring-retries-light: #e9c4d1;
+  --monitoring-processing-time: #258135;
+  --monitoring-processing-time-light: #bee6c5;
+  --monitoring-critical-time: #2700cb;
+  --monitoring-critical-time-light: #c4bce5;
 }
 
 body {
@@ -58,6 +67,11 @@ body {
   width: 92%;
   max-width: inherit;
   padding: 0;
+}
+
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 #main-content {
@@ -236,6 +250,7 @@ pre {
 
 .form-control {
   width: 100% !important;
+  font-size: 14px;
 }
 
 .btn-default {
@@ -478,10 +493,6 @@ pre {
   outline: 0;
 }
 
-.form-control {
-  font-size: 14px;
-}
-
 .danger {
   color: #ce4844 !important;
   font-weight: bold !important;
@@ -702,4 +713,37 @@ div.alert.alert-warning strong {
 
 .sp-blue {
   color: #00a3c4;
+}
+
+.tooltip {
+  font-size: 12px;
+}
+
+/* Endpoint graph table*/
+
+.table-head-row {
+  display: flex;
+  padding-bottom: 5px;
+  padding-top: 20px;
+  border-bottom: 1px solid #ced6d3;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #181919;
+}
+.table-first-col {
+  width: 20%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.table-col {
+  width: 16%;
+}
+@media only screen and (min-width: 1730px) {
+  .table-first-col {
+    width: 30%;
+  }
+  .table-col {
+    width: 14%;
+  }
 }

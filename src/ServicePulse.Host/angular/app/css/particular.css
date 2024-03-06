@@ -2628,14 +2628,14 @@ span.fa-exclamation-triangle.danger {
 }
 
 #toast-container > .toast-error {
-    background-image: url('../a/img/toast-danger.svg') !important;
+    background-image: url('../img/toast-danger.svg') !important;
     background-position-y: 30px;
     background-size: 28px 28px;
 }
 
 #toast-container > .toast-warning {
     background-color: #F3BC52;
-    background-image: url('../a/img/toast-warning.svg') !important;
+    background-image: url('../img/toast-warning.svg') !important;
     background-position-y: 30px;
     background-size: 28px 28px;
 }

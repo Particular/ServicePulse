@@ -1,15 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import LicenseExpired from "../LicenseExpired.vue";
-import { licenseStatus } from "../../composables/serviceLicense";
+import { licenseStatus } from "@/composables/serviceLicense";
 import { monitoringUrl as configuredMonitoringUrl, serviceControlUrl as configuredServiceControlUrl, updateServiceControlUrls, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
-import { connectionState, monitoringConnectionState } from "../../composables/serviceServiceControl";
-
-// This is needed because the ConfigurationView.vue routerView expects this event.
-// The event is only actually emitted on the RetryRedirects.vue component
-// but if we don't include it, the console will show warnings about not being able to
-// subscribe to this event
-defineEmits(["redirectCountUpdated"]);
+import { connectionState, monitoringConnectionState } from "@/composables/serviceServiceControl";
 
 const isExpired = licenseStatus.isExpired;
 
@@ -17,15 +11,15 @@ const serviceControlUrl = ref(configuredServiceControlUrl.value);
 const monitoringUrl = ref(configuredMonitoringUrl.value);
 
 const testingServiceControl = ref(false);
-const serviceControlValid = ref(null);
+const serviceControlValid = ref<boolean | null>(null);
 
 const testingMonitoring = ref(false);
-const monitoringValid = ref(null);
+const monitoringValid = ref<boolean | null>(null);
 
-const connectionSaved = ref(null);
+const connectionSaved = ref<boolean | null>(null);
 
-async function testServiceControlUrl(event) {
-  if (event) {
+async function testServiceControlUrl() {
+  if (serviceControlUrl.value) {
     testingServiceControl.value = true;
     try {
       const response = await fetch(serviceControlUrl.value);
@@ -38,8 +32,8 @@ async function testServiceControlUrl(event) {
   }
 }
 
-async function testMonitoringUrl(event) {
-  if (event) {
+async function testMonitoringUrl() {
+  if (monitoringUrl.value) {
     testingMonitoring.value = true;
 
     if (!monitoringUrl.value.endsWith("/") && monitoringUrl.value !== "!") {
@@ -61,11 +55,9 @@ function isMonitoringUrlSpecified() {
   return monitoringUrl.value && monitoringUrl.value !== "!";
 }
 
-function saveConnections(event) {
-  if (event) {
-    updateServiceControlUrls(serviceControlUrl, monitoringUrl);
-    connectionSaved.value = true;
-  }
+function saveConnections() {
+  updateServiceControlUrls(serviceControlUrl, monitoringUrl);
+  connectionSaved.value = true;
 }
 </script>
 
@@ -120,7 +112,7 @@ function saveConnections(event) {
 
               <button class="btn btn-primary" type="button" @click="saveConnections">Save</button>
               <span class="connection-test connection-successful hide save-connection" v-show="connectionSaved"> <i class="fa fa-check"></i>Connection saved </span>
-              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved !== null && !connectionSaved"> <i class="fa fa-exclamation-triangle"></i> Unable to save </span>
+              <span class="connection-test connection-failed hide save-connection" v-show="connectionSaved != null && !connectionSaved"> <i class="fa fa-exclamation-triangle"></i> Unable to save </span>
             </form>
           </div>
         </div>
@@ -150,11 +142,11 @@ form .connection .form-group input {
 }
 
 .row.connection {
-  margin-left: 0px;
+  margin-left: 0;
 }
 
 span.connection-test.save-connection {
-  top: 0px;
+  top: 0;
 }
 
 .btn-connection-test {

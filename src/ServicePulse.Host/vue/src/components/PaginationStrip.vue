@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 
 const props = withDefaults(
   defineProps<{
@@ -21,6 +21,12 @@ const showPagination = computed(() => {
 });
 
 const doublePageBuffer = computed(() => props.pageBuffer * 2);
+
+watch(numberOfPages, (newValue) => {
+  if (newValue < pageNumber.value) {
+    pageNumber.value = 1;
+  }
+});
 
 interface PageData {
   label: string;
@@ -115,7 +121,7 @@ const pages = computed(() => {
   <div v-if="showPagination" class="col align-self-center">
     <ul class="pagination justify-content-center">
       <li v-for="page of pages" class="page-item" :key="page.key">
-        <a class="page-link" @click="pageNumber = page.page" :class="page.class">{{ page.label }}</a>
+        <button :aria-pressed="page.class?.active" :disabled="page.class?.disabled" :aria-label="page.key" class="page-link" @click="pageNumber = page.page" :class="page.class">{{ page.label }}</button>
       </li>
     </ul>
   </div>

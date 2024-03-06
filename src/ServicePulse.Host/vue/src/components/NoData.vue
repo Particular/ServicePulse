@@ -1,6 +1,5 @@
 ﻿<script setup lang="ts">
 const props = defineProps<{
-  title: string;
   message: string;
 }>();
 </script>
@@ -21,3 +20,7 @@ const props = defineProps<{
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "@/components/list.css";
+</style>

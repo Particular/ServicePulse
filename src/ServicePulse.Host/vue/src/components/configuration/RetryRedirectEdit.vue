@@ -1,22 +1,35 @@
-<script setup>
+<script setup lang="ts">
 import { computed, ref } from "vue";
 
-const emit = defineEmits(["create", "edit", "cancel"]);
+export interface RetryRedirect {
+  redirectId: string;
+  sourceQueue: string;
+  targetQueue: string;
+  immediatelyRetry: boolean;
+}
 
-const model = defineProps({
-  message_redirect_id: String,
-  from_physical_address: String,
-  to_physical_address: String,
-  immediately_Retry: Boolean,
-  queues: Array,
-});
+const emit = defineEmits<{
+  create: [retry: RetryRedirect];
+  edit: [retry: RetryRedirect];
+  cancel: [];
+}>();
+const model = withDefaults(
+  defineProps<{
+    message_redirect_id: string;
+    from_physical_address: string;
+    to_physical_address: string;
+    immediately_retry: boolean;
+    queues: string[];
+  }>(),
+  { immediately_retry: false }
+);
 
 const sourceQueue = ref(model.from_physical_address);
 const targetQueue = ref(model.to_physical_address);
-const immediatelyRetry = ref(model.immediately_Retry);
+const immediatelyRetry = ref(model.immediately_retry);
 
 const sourceQueueIsValid = computed(() => {
-  return sourceQueue.value ? true : false;
+  return !!sourceQueue.value;
 });
 const targetQueueIsValid = computed(() => {
   return targetQueue.value && targetQueue.value !== sourceQueue.value;
@@ -37,12 +50,13 @@ const noKnownQueues = computed(() => {
 const sourceQueueTooltip = "Choose a queue that is known to Service Control";
 const targetQueueTooltip = "Choose a queue that is known to Service Control or provide a custom queue";
 
-function selectToAddress(item) {
+function selectToAddress(item: string) {
   targetQueue.value = item;
 }
 
 function create() {
   const redirect = {
+    redirectId: "",
     sourceQueue: sourceQueue.value,
     targetQueue: targetQueue.value,
     immediatelyRetry: immediatelyRetry.value,
@@ -63,6 +77,8 @@ function edit() {
 function close() {
   emit("cancel");
 }
+
+function save() {}
 </script>
 
 <template>
@@ -83,7 +99,7 @@ function close() {
                   <i class="fa fa-info-circle"></i>
                 </span>
                 <div :class="{ 'has-error': !sourceQueueIsValid, 'has-success': sourceQueueIsValid }">
-                  <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-select" required :disabled="model.message_redirect_id">
+                  <select id="sourceQueue" name="sourceQueue" v-model="sourceQueue" class="form-select" required :disabled="!!model.message_redirect_id">
                     <option v-for="option in model.queues" :value="option" :key="option">
                       {{ option }}
                     </option>
@@ -160,7 +176,7 @@ function close() {
 
 .modal-container {
   width: 400px;
-  margin: 0px auto;
+  margin: 0 auto;
   padding: 20px 30px;
   background-color: #fff;
   border-radius: 2px;
