@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { onBeforeMount, onMounted, onUnmounted, ref, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, usePatchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
@@ -12,14 +12,18 @@ import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
 import moment from "moment";
+import type { Ref } from "vue";
+import { FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
+import Configuration from "@/resources/Configuration";
+import { TYPE } from "vue-toastification";
 
 let pollingFaster = false;
-let refreshInterval = undefined;
+let refreshInterval: ReturnType<typeof setInterval>;
 const perPage = 50;
-const configuration = ref([]);
+const configuration: Ref<Configuration | null> = ref(null);
 
 const route = useRoute();
-const groupId = ref(route.params.groupId);
+const groupId: Ref<string | string[]> = ref(route.params.groupId);
 const groupName = ref("");
 const pageNumber = ref(1);
 const totalCount = ref(0);
@@ -27,7 +31,7 @@ const cookies = useCookies().cookies;
 const selectedPeriod = ref("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
 const messageList = ref();
-const messages = ref([]);
+const messages: Ref<FailedMessageViewWithExtendedUIProperties[]> = ref([]);
 const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
 watch(pageNumber, () => loadMessages());
@@ -57,18 +61,13 @@ function loadMessages() {
   return loadPagedMessages(groupId.value, pageNumber.value, "", "", startDate.toISOString(), endDate.toISOString());
 }
 
-async function loadGroupDetails(groupId) {
+async function loadGroupDetails(groupId: string | string[]) {
   const response = await useFetchFromServiceControl(`archive/groups/id/${groupId}`);
   const data = await response.json();
   groupName.value = data.title;
 }
 
-function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate) {
-  if (typeof sortBy === "undefined") sortBy = "modified";
-  if (typeof direction === "undefined") direction = "desc";
-  if (typeof page === "undefined") page = 1;
-  if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
-  if (typeof endDate === "undefined") endDate = new Date().toISOString();
+function loadPagedMessages(groupId?: string | string[], page: number = 1, sortBy: string = "modified", direction: string = "desc", startDate: string = new Date(0).toISOString(), endDate: string = new Date().toISOString()) {
   const dateRange = startDate + "..." + endDate;
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
@@ -77,11 +76,12 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
 
   async function loadDelMessages() {
     try {
-      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`);
+      const [response, data] = await useTypedFetchFromServiceControl<FailedMessageViewWithExtendedUIProperties[]>(
+        `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
+      );
 
-      totalCount.value = parseInt(response.headers.get("Total-Count"));
+      totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
 
-      const data = await response.json();
       if (messages.value.length && data.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
@@ -115,10 +115,10 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
   return loadDelMessagesPromise;
 }
 
-function updateMessagesScheduledDeletionDate(messages) {
+function updateMessagesScheduledDeletionDate(messages: FailedMessageViewWithExtendedUIProperties[]) {
   //check deletion time
-  messages.forEach((message) => {
-    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+  messages.forEach((message: FailedMessageViewWithExtendedUIProperties) => {
+    message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
     const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
     message.delete_soon = countdown < moment();
     message.deleted_in = countdown.format();
@@ -144,9 +144,9 @@ function isAnythingSelected() {
 
 async function restoreSelectedMessages() {
   changeRefreshInterval(1000);
-  const selectedMessages = messageList.value.getSelectedMessages();
+  const selectedMessages = messageList.value.getSelectedMessages() as FailedMessageViewWithExtendedUIProperties[]; //TODO: remove this cast once messageList has been converted to typescript
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
-  useShowToast("info", "Info", "restoring " + selectedMessages.length + " messages...");
+  useShowToast(TYPE.INFO, "Info", "restoring " + selectedMessages.length + " messages...");
 
   await usePatchToServiceControl(
     "errors/unarchive",
@@ -155,7 +155,7 @@ async function restoreSelectedMessages() {
   messageList.value.deselectAll();
 }
 
-function periodChanged(period) {
+function periodChanged(period: string) {
   selectedPeriod.value = period;
   cookies.set("all_deleted_messages_period", period);
 
@@ -163,8 +163,7 @@ function periodChanged(period) {
 }
 
 async function getConfiguration() {
-  const response = await useFetchFromServiceControl("configuration");
-  const data = await response.json();
+  const [, data] = await useTypedFetchFromServiceControl<Configuration>("configuration");
   configuration.value = data;
 }
 
@@ -172,8 +171,8 @@ function isRestoreInProgress() {
   return messages.value.some((message) => message.restoreInProgress);
 }
 
-function changeRefreshInterval(milliseconds) {
-  if (typeof refreshInterval !== "undefined") {
+function changeRefreshInterval(milliseconds: number) {
+  if (refreshInterval) {
     clearInterval(refreshInterval);
   }
 
@@ -193,8 +192,8 @@ function changeRefreshInterval(milliseconds) {
 }
 
 onBeforeRouteLeave(() => {
-  groupId.value = undefined;
-  groupName.value = undefined;
+  groupId.value = "";
+  groupName.value = "";
 });
 
 onBeforeMount(() => {
@@ -202,7 +201,7 @@ onBeforeMount(() => {
 });
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
+  if (refreshInterval) {
     clearInterval(refreshInterval);
   }
 });

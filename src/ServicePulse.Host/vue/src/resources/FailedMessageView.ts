@@ -18,6 +18,16 @@ export default interface FailedMessageView {
   edit_of: string;
 }
 
+export interface FailedMessageViewWithExtendedUIProperties extends FailedMessageView {
+  error_retention_period: number;
+  delete_soon: boolean;
+  deleted_in: string;
+  retryInProgress: boolean;
+  deleteInProgress: boolean
+  restoreInProgress: boolean;
+  selected: boolean;
+}
+
 export interface ExceptionDetails {
   exception_type: string;
   message: string;
