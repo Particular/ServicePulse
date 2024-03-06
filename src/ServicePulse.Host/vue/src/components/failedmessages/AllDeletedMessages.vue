@@ -20,7 +20,7 @@ import { TYPE } from "vue-toastification";
 let pollingFaster = false;
 let refreshInterval: ReturnType<typeof setInterval>;
 const perPage = 50;
-let configuration: Ref<Configuration>;
+const configuration: Ref<Configuration | null> = ref(null);
 
 const route = useRoute();
 const groupId: Ref<string | string[]> = ref(route.params.groupId);
@@ -118,7 +118,7 @@ function loadPagedMessages(groupId?: string | string[], page: number = 1, sortBy
 function updateMessagesScheduledDeletionDate(messages: FailedMessageViewWithExtendedUIProperties[]) {
   //check deletion time
   messages.forEach((message: FailedMessageViewWithExtendedUIProperties) => {
-    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+    message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
     const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
     message.delete_soon = countdown < moment();
     message.deleted_in = countdown.format();
