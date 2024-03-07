@@ -13,7 +13,10 @@ interface HeaderWithEditing extends Header {
   isChanged: boolean;
 }
 
-const emit = defineEmits(["cancel", "retried"]);
+const emit = defineEmits<{
+  cancel: [];
+  retried: [];
+}>();
 
 const props = defineProps<{
   id: string;
@@ -97,7 +100,7 @@ async function retryEditedMessage() {
   try {
     await useRetryEditedMessage(id.value, localMessage);
     localMessage.value.retried = true;
-    return emit("retried", props);
+    return emit("retried");
   } catch {
     showEditAndRetryConfirmation.value = false;
     showEditRetryGenericError.value = true;
