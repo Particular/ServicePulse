@@ -7,7 +7,7 @@ import TimeSince from "../TimeSince.vue";
 import type HistoricRetryOperation from "@/resources/HistoricRetryOperation";
 import RecoverabilityHistoryResponse from "@/resources/RecoverabilityHistoryResponse";
 
-const historicOperations: Ref<HistoricRetryOperation[]> = ref([]);
+const historicOperations = ref<HistoricRetryOperation[]>([]);
 const showHistoricRetries = ref(false);
 
 async function getHistoricOperations() {
