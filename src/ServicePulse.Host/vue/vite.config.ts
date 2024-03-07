@@ -70,7 +70,10 @@ export default defineConfig({
       external: ["./js/app.constants.js"],
     },
   },
-  server: {    
+  server: { 
+    headers: {
+      "content-security-policy": createCSPOverrides(port, defaultUrls),
+    },   
     host: true,
     port: port,
     fs: {
