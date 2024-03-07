@@ -20,7 +20,7 @@ import { TYPE } from "vue-toastification";
 let pollingFaster = false;
 let refreshInterval: ReturnType<typeof setInterval>;
 const perPage = 50;
-const configuration: Ref<Configuration | null> = ref(null);
+const configuration = ref<Configuration | null>(null);
 
 const route = useRoute();
 const groupId: Ref<string> = ref(route.params.groupId as string);
