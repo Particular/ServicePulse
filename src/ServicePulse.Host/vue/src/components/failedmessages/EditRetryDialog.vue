@@ -189,7 +189,7 @@ onMounted(() => {
                       </div>
                       <table class="table" v-if="panel === 1">
                         <tbody>
-                          <tr class="interactiveList" v-for="(header, index) in localMessage?.headers" :key="header.key">
+                          <tr class="interactiveList" v-for="header in localMessage?.headers" :key="header.key">
                             <MessageHeader :header="header"></MessageHeader>
                           </tr>
                         </tbody>
