@@ -23,7 +23,7 @@ const perPage = 50;
 const configuration: Ref<Configuration | null> = ref(null);
 
 const route = useRoute();
-const groupId: Ref<string | string[]> = ref(route.params.groupId);
+const groupId: Ref<string> = ref(route.params.groupId as string);
 const groupName = ref("");
 const pageNumber = ref(1);
 const totalCount = ref(0);
@@ -61,13 +61,13 @@ function loadMessages() {
   return loadPagedMessages(groupId.value, pageNumber.value, "", "", startDate.toISOString(), endDate.toISOString());
 }
 
-async function loadGroupDetails(groupId: string | string[]) {
+async function loadGroupDetails(groupId: string) {
   const response = await useFetchFromServiceControl(`archive/groups/id/${groupId}`);
   const data = await response.json();
   groupName.value = data.title;
 }
 
-function loadPagedMessages(groupId?: string | string[], page: number = 1, sortBy: string = "modified", direction: string = "desc", startDate: string = new Date(0).toISOString(), endDate: string = new Date().toISOString()) {
+function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = "modified", direction: string = "desc", startDate: string = new Date(0).toISOString(), endDate: string = new Date().toISOString()) {
   const dateRange = startDate + "..." + endDate;
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
