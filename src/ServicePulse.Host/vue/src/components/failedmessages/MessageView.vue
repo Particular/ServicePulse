@@ -19,11 +19,11 @@ import Message from "@/resources/Message";
 
 let refreshInterval: ReturnType<typeof setInterval>;
 let pollingFaster = false;
-let panel: Ref<number>;
+const panel: Ref<number> = ref(1);
 const route = useRoute();
-let failedMessage: Ref<FailedMessageViewWithExtendedUIProperties>;
-let configuration: Ref<Configuration>;
-let editAndRetryConfiguration: Ref<EditAndRetryConfig>;
+const failedMessage: Ref<FailedMessageViewWithExtendedUIProperties | null> = ref(null);
+const configuration: Ref<Configuration | null> = ref(null);
+const editAndRetryConfiguration: Ref<EditAndRetryConfig | null> = ref(null);
 
 const id = computed(() => route.params.id);
 watch(id, async () => await loadFailedMessage());
@@ -46,14 +46,14 @@ async function loadFailedMessage() {
     message.archived = message.status === "archived";
     message.resolved = message.status === "resolved";
     message.retried = message.status === "retryIssued";
-    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-    message.isEditAndRetryEnabled = editAndRetryConfiguration.value.enabled;
+    message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
+    message.isEditAndRetryEnabled = editAndRetryConfiguration.value?.enabled;
 
     // Maintain the mutations of the message in memory until the api returns a newer modified message
-    if (failedMessage.value.last_modified === message.last_modified) {
-      message.retried = failedMessage.value.retried;
-      message.archiving = failedMessage.value.archiving;
-      message.restoring = failedMessage.value.restoring;
+    if (failedMessage.value?.last_modified === message.last_modified) {
+      message.retried = failedMessage.value?.retried;
+      message.archiving = failedMessage.value?.archiving;
+      message.restoring = failedMessage.value?.restoring;
     } else {
       message.archiving = false;
       message.restoring = false;
@@ -83,44 +83,57 @@ async function getEditAndRetryConfig() {
 }
 
 function updateMessageDeleteDate() {
-  const countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
-  failedMessage.value.delete_soon = countdown < moment();
-  failedMessage.value.deleted_in = countdown.format();
+  const countdown = moment(failedMessage.value?.last_modified).add(failedMessage.value?.error_retention_period, "hours");
+  if (failedMessage.value) {
+    failedMessage.value.delete_soon = countdown < moment();
+    failedMessage.value.deleted_in = countdown.format();
+  }
 }
 
 async function archiveMessage() {
   useShowToast(TYPE.INFO, "Info", `Deleting the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
   await useArchiveMessage([id.value as string]);
-  failedMessage.value.archiving = true;
+  if (failedMessage.value) {
+    failedMessage.value.archiving = true;
+  }
 }
 
 async function unarchiveMessage() {
   changeRefreshInterval(1000); // We've started an unarchive, so increase the polling frequency
   await useUnarchiveMessage([id.value as string]);
-  failedMessage.value.restoring = true;
+  if (failedMessage.value) {
+    failedMessage.value.restoring = true;
+  }
 }
 
 async function retryMessage() {
   useShowToast(TYPE.INFO, "Info", `Retrying the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started a retry, so increase the polling frequency
   await useRetryMessages([id.value as string]);
-  failedMessage.value.retried = true;
+  if (failedMessage.value) {
+    failedMessage.value.retried = true;
+  }
 }
 
 async function downloadHeadersAndBody() {
   try {
-    const [, data] = await useTypedFetchFromServiceControl<Message[]>("messages/search/" + failedMessage.value.message_id);
+    const [, data] = await useTypedFetchFromServiceControl<Message[]>("messages/search/" + failedMessage.value?.message_id);
 
     if (data[0] === undefined) {
-      failedMessage.value.headersNotFound = true;
-      failedMessage.value.messageBodyNotFound = true;
+      if (failedMessage.value) {
+        failedMessage.value.headersNotFound = true;
+        failedMessage.value.messageBodyNotFound = true;
+      }
+
       return;
     }
 
     const message: Message = data[0];
-    failedMessage.value.headers = message.headers;
-    failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId")?.value ?? "";
+    if (failedMessage.value) {
+      failedMessage.value.headers = message.headers;
+      failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId")?.value ?? "";
+    }
 
     return downloadBody();
   } catch (err) {
@@ -130,20 +143,26 @@ async function downloadHeadersAndBody() {
 }
 
 async function downloadBody() {
-  const [response, data] = await useTypedFetchFromServiceControl<string>("messages/" + failedMessage.value.message_id + "/body");
+  const response = await useFetchFromServiceControl("messages/" + failedMessage.value?.message_id + "/body");
   if (response.status === 404) {
-    failedMessage.value.messageBodyNotFound = true;
+    if (failedMessage.value) {
+      failedMessage.value.messageBodyNotFound = true;
+    }
+
     return;
   }
 
   if (response.headers.get("content-type") === "application/json") {
     try {
-      let jsonBody = data;
+      let jsonBody = await response.json();
       jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
-
-      failedMessage.value.messageBody = formatJson(jsonBody);
+      if (failedMessage.value) {
+        failedMessage.value.messageBody = formatJson(jsonBody);
+      }
     } catch {
-      failedMessage.value.bodyUnavailable = true;
+      if (failedMessage.value) {
+        failedMessage.value.bodyUnavailable = true;
+      }
     }
     return;
   }
@@ -151,17 +170,25 @@ async function downloadBody() {
   if (response.headers.get("content-type") === "text/xml") {
     try {
       const xmlBody = await response.text();
-      failedMessage.value.messageBody = formatXml(xmlBody);
+      if (failedMessage.value) {
+        failedMessage.value.messageBody = formatXml(xmlBody);
+      }
     } catch {
-      failedMessage.value.bodyUnavailable = true;
+      if (failedMessage.value) {
+        failedMessage.value.bodyUnavailable = true;
+      }
     }
     return;
   }
 
   try {
-    failedMessage.value.messageBody = await response.text();
+    if (failedMessage.value) {
+      failedMessage.value.messageBody = await response.text();
+    }
   } catch {
-    failedMessage.value.bodyUnavailable = true;
+    if (failedMessage.value) {
+      failedMessage.value.bodyUnavailable = true;
+    }
   }
 }
 
@@ -259,15 +286,15 @@ function formatJson(json: string) {
 }
 
 function togglePanel(panelNum: number) {
-  if (!failedMessage.value.notFound && !failedMessage.value.error) {
+  if (!failedMessage.value?.notFound && !failedMessage.value?.error) {
     panel.value = panelNum;
   }
   return false;
 }
 
 function debugInServiceInsight() {
-  const messageId = failedMessage.value.message_id;
-  const endpointName = failedMessage.value.receiving_endpoint.name;
+  const messageId = failedMessage.value?.message_id;
+  const endpointName = failedMessage.value?.receiving_endpoint.name;
   let url = serviceControlUrl.value?.toLowerCase() ?? "";
 
   if (url.indexOf("https") === 0) {
@@ -281,15 +308,17 @@ function debugInServiceInsight() {
 
 function exportMessage() {
   let txtStr = "STACKTRACE\n";
-  txtStr += failedMessage.value.exception.stack_trace;
+  txtStr += failedMessage.value?.exception.stack_trace;
 
   txtStr += "\n\nHEADERS";
-  for (let i = 0; i < failedMessage.value.headers.length; i++) {
-    txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
+  if (failedMessage.value) {
+    for (let i = 0; i < failedMessage.value.headers.length; i++) {
+      txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
+    }
   }
 
   txtStr += "\n\nMESSAGE BODY\n";
-  txtStr += failedMessage.value.messageBody;
+  txtStr += failedMessage.value?.messageBody;
 
   useDownloadFile(txtStr, "text/txt", "failedMessage.txt");
   useShowToast(TYPE.INFO, "Info", "Message export completed.");
@@ -327,7 +356,7 @@ function stopRefreshInterval() {
 }
 
 function isRetryOrArchiveOperationInProgress() {
-  return failedMessage.value.retried || failedMessage.value.archiving || failedMessage.value.restoring;
+  return failedMessage.value?.retried || failedMessage.value?.archiving || failedMessage.value?.restoring;
 }
 
 function changeRefreshInterval(milliseconds: number) {
@@ -374,29 +403,29 @@ onUnmounted(() => {
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="active break group-title">
-                <h1 class="message-type-title">{{ failedMessage.message_type }}</h1>
+                <h1 class="message-type-title">{{ failedMessage?.message_type }}</h1>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="metadata group-message-count message-metadata">
-                <span v-if="failedMessage.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
-                <span v-if="failedMessage.restoring" title="Message is being retried" class="label sidebar-label label-info metadata-label">Restoring...</span>
-                <span v-if="failedMessage.archiving" title="Message is being deleted" class="label sidebar-label label-info metadata-label">Deleting...</span>
-                <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
-                <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
-                <span v-if="failedMessage.number_of_processing_attempts > 1" :title="'This message has already failed ' + failedMessage.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label"
-                  >{{ failedMessage.number_of_processing_attempts }} Retry Failures</span
+                <span v-if="failedMessage?.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
+                <span v-if="failedMessage?.restoring" title="Message is being retried" class="label sidebar-label label-info metadata-label">Restoring...</span>
+                <span v-if="failedMessage?.archiving" title="Message is being deleted" class="label sidebar-label label-info metadata-label">Deleting...</span>
+                <span v-if="failedMessage?.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
+                <span v-if="failedMessage?.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
+                <span v-if="failedMessage?.number_of_processing_attempts ?? 0 > 1" :title="'This message has already failed ' + failedMessage?.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label"
+                  >{{ failedMessage?.number_of_processing_attempts }} Retry Failures</span
                 >
-                <span v-if="failedMessage.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
-                <span v-if="failedMessage.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="routeLinks.failedMessage.message.link(failedMessage.edit_of)">View previous version</RouterLink></span>
-                <span v-if="failedMessage.time_of_failure" class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
-                <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
-                <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
-                <span v-if="failedMessage.redirect" class="metadata"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
+                <span v-if="failedMessage?.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
+                <span v-if="failedMessage?.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="routeLinks.failedMessage.message.link(failedMessage.edit_of)">View previous version</RouterLink></span>
+                <span v-if="failedMessage?.time_of_failure" class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
+                <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage?.receiving_endpoint?.name }}</span>
+                <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage?.receiving_endpoint?.host }}</span>
+                <span v-if="failedMessage?.redirect" class="metadata"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
               </div>
-              <div class="metadata group-message-count message-metadata" v-if="failedMessage.archived">
+              <div class="metadata group-message-count message-metadata" v-if="failedMessage?.archived">
                 <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="failedMessage.last_modified"></time-since></span>
                 <span class="metadata danger" v-if="failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
                 <span class="metadata danger" v-if="!failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <time-since :date-utc="failedMessage.deleted_in"></time-since></span>
@@ -406,14 +435,14 @@ onUnmounted(() => {
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="btn-toolbar message-toolbar">
-                <button type="button" class="btn btn-default" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
-                <button type="button" class="btn btn-default" v-if="failedMessage.archived" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
-                <button type="button" class="btn btn-default" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
-                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showEditAndRetryModal()">
+                <button type="button" class="btn btn-default" v-if="!failedMessage?.archived" :disabled="failedMessage?.retried || failedMessage?.resolved" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage?.archived" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
+                <button type="button" class="btn btn-default" :disabled="failedMessage?.retried || failedMessage?.archived || failedMessage?.resolved" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage?.isEditAndRetryEnabled" :disabled="failedMessage?.retried || failedMessage?.archived || failedMessage?.resolved" @click="showEditAndRetryModal()">
                   <i class="fa fa-pencil"></i> Edit & retry
                 </button>
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
-                <button type="button" class="btn btn-default" v-if="!failedMessage.notFound && !failedMessage.error" @click="exportMessage()"><i class="fa fa-download"></i> Export message</button>
+                <button type="button" class="btn btn-default" v-if="!failedMessage?.notFound && !failedMessage?.error" @click="exportMessage()"><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
           </div>
@@ -425,11 +454,11 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click="togglePanel(3)"><a href="javascript:void(0)">Message body</a></h5>
                 <h5 :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="javascript:void(0)">Flow Diagram</a></h5>
               </div>
-              <pre v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
-              <pre v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
-              <table class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
+              <pre v-if="panel === 0">{{ failedMessage?.exception?.message }}</pre>
+              <pre v-if="panel === 1">{{ failedMessage?.exception?.stack_trace }}</pre>
+              <table class="table" v-if="panel === 2 && !failedMessage?.headersNotFound">
                 <tbody>
-                  <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
+                  <tr class="interactiveList" v-for="(header, index) in failedMessage?.headers" :key="index">
                     <td nowrap="nowrap">{{ header.key }}</td>
                     <td>
                       <pre>{{ header.value }}</pre>
@@ -437,15 +466,15 @@ onUnmounted(() => {
                   </tr>
                 </tbody>
               </table>
-              <div v-if="panel === 2 && failedMessage.headersNotFound" class="alert alert-info">
+              <div v-if="panel === 2 && failedMessage?.headersNotFound" class="alert alert-info">
                 Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.
               </div>
-              <pre v-if="panel === 3 && !failedMessage.messageBodyNotFound && !failedMessage.bodyUnavailable">{{ failedMessage.messageBody }}</pre>
-              <div v-if="panel === 3 && failedMessage.messageBodyNotFound" class="alert alert-info">
+              <pre v-if="panel === 3 && !failedMessage?.messageBodyNotFound && !failedMessage?.bodyUnavailable">{{ failedMessage?.messageBody }}</pre>
+              <div v-if="panel === 3 && failedMessage?.messageBodyNotFound" class="alert alert-info">
                 Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.
               </div>
-              <div v-if="panel === 3 && failedMessage.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
-              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id as string"></FlowDiagram>
+              <div v-if="panel === 3 && failedMessage?.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
+              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage?.conversationId" :message-id="route.params.id as string"></FlowDiagram>
             </div>
           </div>
 
@@ -484,7 +513,14 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog v-if="showEditRetryModal === true" @cancel="cancelEditAndRetry()" @retried="confirmEditAndRetry()" :id="id as string" :message="failedMessage" :configuration="editAndRetryConfiguration"></EditRetryDialog>
+            <EditRetryDialog
+              v-if="editAndRetryConfiguration && failedMessage && showEditRetryModal === true"
+              @cancel="cancelEditAndRetry()"
+              @retried="confirmEditAndRetry()"
+              :id="id as string"
+              :message="failedMessage"
+              :configuration="editAndRetryConfiguration"
+            ></EditRetryDialog>
           </Teleport>
         </div>
       </section>
