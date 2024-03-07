@@ -2,9 +2,9 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRetryEditedMessage } from "../../composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
-import { FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
 import { EditAndRetryConfig } from "@/resources/Configuration";
 import type Header from "@/resources/Header";
+import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 
 interface HeaderWithEditing extends Header {
   isLocked: boolean;
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const props = defineProps<{
   id: string;
-  message: FailedMessageViewWithExtendedUIProperties;
+  message: ExtendedFailedMessage;
   configuration: EditAndRetryConfig;
 }>();
 
