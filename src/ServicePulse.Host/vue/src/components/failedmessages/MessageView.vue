@@ -474,7 +474,7 @@ onUnmounted(() => {
                 Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.
               </div>
               <div v-if="panel === 3 && failedMessage?.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
-              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage?.conversationId" :message-id="route.params.id as string"></FlowDiagram>
+              <FlowDiagram v-if="failedMessage && panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id as string"></FlowDiagram>
             </div>
           </div>
 
