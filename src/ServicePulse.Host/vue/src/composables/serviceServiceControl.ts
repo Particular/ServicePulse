@@ -6,10 +6,10 @@ import { useShowToast } from "./toast";
 import { TYPE } from "vue-toastification";
 import type RootUrls from "@/resources/RootUrls";
 import type EndpointMonitoringStats from "@/resources/EndpointMonitoringStats";
-import type FailedMessageView from "@/resources/FailedMessageView";
+import type FailedMessage from "@/resources/FailedMessage";
 import type CustomCheck from "@/resources/CustomCheck";
 import type MonitoredEndpoint from "@/resources/MonitoredEndpoint";
-import { FailedMessageStatus } from "@/resources/FailedMessageView";
+import { FailedMessageStatus } from "@/resources/FailedMessage";
 
 export const stats = reactive({
   active_endpoints: 0,
@@ -344,7 +344,7 @@ function getArchivedMessagesCount() {
 
 function getErrorMessagesCount(status: FailedMessageStatus) {
   return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessageView>(`errors?status=${status}`),
+    () => useTypedFetchFromServiceControl<FailedMessage>(`errors?status=${status}`),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0

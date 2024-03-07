@@ -12,7 +12,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
-import { FailedMessageStatus } from "@/resources/FailedMessageView";
+import { FailedMessageStatus } from "@/resources/FailedMessage";
 
 let refreshInterval = undefined;
 let sortMethod = undefined;

@@ -13,7 +13,7 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
 import moment from "moment";
 import type { Ref } from "vue";
-import { FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
+import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import Configuration from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
 
@@ -31,7 +31,7 @@ const cookies = useCookies().cookies;
 const selectedPeriod = ref("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
 const messageList = ref();
-const messages: Ref<FailedMessageViewWithExtendedUIProperties[]> = ref([]);
+const messages: Ref<ExtendedFailedMessage[]> = ref([]);
 const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
 watch(pageNumber, () => loadMessages());
@@ -76,7 +76,7 @@ function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = 
 
   async function loadDelMessages() {
     try {
-      const [response, data] = await useTypedFetchFromServiceControl<FailedMessageViewWithExtendedUIProperties[]>(
+      const [response, data] = await useTypedFetchFromServiceControl<ExtendedFailedMessage[]>(
         `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
       );
 
@@ -115,9 +115,9 @@ function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = 
   return loadDelMessagesPromise;
 }
 
-function updateMessagesScheduledDeletionDate(messages: FailedMessageViewWithExtendedUIProperties[]) {
+function updateMessagesScheduledDeletionDate(messages: ExtendedFailedMessage[]) {
   //check deletion time
-  messages.forEach((message: FailedMessageViewWithExtendedUIProperties) => {
+  messages.forEach((message) => {
     message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
     const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
     message.delete_soon = countdown < moment();
@@ -144,9 +144,9 @@ function isAnythingSelected() {
 
 async function restoreSelectedMessages() {
   changeRefreshInterval(1000);
-  const selectedMessages = messageList.value.getSelectedMessages() as FailedMessageViewWithExtendedUIProperties[]; //TODO: remove this cast once messageList has been converted to typescript
+  const selectedMessages = messageList.value.getSelectedMessages() as ExtendedFailedMessage[]; //TODO: remove this cast once messageList has been converted to typescript
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
-  useShowToast(TYPE.INFO, "Info", "restoring " + selectedMessages.length + " messages...");
+  useShowToast(TYPE.INFO, "Info", `restoring ${selectedMessages.length} messages...`);
 
   await usePatchToServiceControl(
     "errors/unarchive",

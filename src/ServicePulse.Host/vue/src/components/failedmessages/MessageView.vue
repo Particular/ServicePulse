@@ -14,14 +14,14 @@ import EditRetryDialog from "./EditRetryDialog.vue";
 import routeLinks from "@/router/routeLinks";
 import Configuration, { EditAndRetryConfig } from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
-import { FailedMessageStatus, FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
+import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
 import Message from "@/resources/Message";
 
 let refreshInterval: ReturnType<typeof setInterval>;
 let pollingFaster = false;
 const panel: Ref<number> = ref(1);
 const route = useRoute();
-const failedMessage: Ref<FailedMessageViewWithExtendedUIProperties | null> = ref(null);
+const failedMessage: Ref<ExtendedFailedMessage | null> = ref(null);
 const configuration: Ref<Configuration | null> = ref(null);
 const editAndRetryConfiguration: Ref<EditAndRetryConfig | null> = ref(null);
 
@@ -37,9 +37,9 @@ async function loadFailedMessage() {
   try {
     const response = await useFetchFromServiceControl("errors/last/" + id.value);
     if (response.status === 404) {
-      failedMessage.value = { notFound: true } as FailedMessageViewWithExtendedUIProperties;
+      failedMessage.value = { notFound: true } as ExtendedFailedMessage;
     } else if (response.status !== 200) {
-      failedMessage.value = { error: true } as FailedMessageViewWithExtendedUIProperties;
+      failedMessage.value = { error: true } as ExtendedFailedMessage;
     }
     const data = await response.json();
     const message = data;
@@ -286,7 +286,7 @@ function formatJson(json: string) {
 }
 
 function togglePanel(panelNum: number) {
-  if (!failedMessage.value?.notFound && !failedMessage.value?.error) {
+  if (failedMessage.value && !failedMessage.value.notFound && !failedMessage.value.error) {
     panel.value = panelNum;
   }
   return false;
@@ -303,7 +303,7 @@ function debugInServiceInsight() {
     url = url.replace("http://", "");
   }
 
-  window.open("si://" + url + "?search=" + messageId + "&endpointname=" + endpointName);
+  window.open(`si://${url}?search=${messageId}&endpointname=${endpointName}`);
 }
 
 function exportMessage() {
@@ -390,42 +390,42 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container">
+  <div v-if="failedMessage" class="container">
     <section>
       <section name="failed_message">
         <no-data
-          v-if="failedMessage?.notFound"
+          v-if="failedMessage.notFound"
           title="message failures"
           message="Could not find message. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl."
         ></no-data>
-        <no-data v-if="failedMessage?.error" title="message failures" message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
-        <div v-if="!failedMessage?.error && !failedMessage?.notFound">
+        <no-data v-if="failedMessage.error" title="message failures" message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
+        <div v-if="!failedMessage.error && !failedMessage.notFound">
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="active break group-title">
-                <h1 class="message-type-title">{{ failedMessage?.message_type }}</h1>
+                <h1 class="message-type-title">{{ failedMessage.message_type }}</h1>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="metadata group-message-count message-metadata">
-                <span v-if="failedMessage?.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
-                <span v-if="failedMessage?.restoring" title="Message is being retried" class="label sidebar-label label-info metadata-label">Restoring...</span>
-                <span v-if="failedMessage?.archiving" title="Message is being deleted" class="label sidebar-label label-info metadata-label">Deleting...</span>
-                <span v-if="failedMessage?.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
-                <span v-if="failedMessage?.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
-                <span v-if="failedMessage?.number_of_processing_attempts ?? 0 > 1" :title="'This message has already failed ' + failedMessage?.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label"
-                  >{{ failedMessage?.number_of_processing_attempts }} Retry Failures</span
+                <span v-if="failedMessage.retried" title="Message is being retried" class="label sidebar-label label-info metadata-label">Retried</span>
+                <span v-if="failedMessage.restoring" title="Message is being retried" class="label sidebar-label label-info metadata-label">Restoring...</span>
+                <span v-if="failedMessage.archiving" title="Message is being deleted" class="label sidebar-label label-info metadata-label">Deleting...</span>
+                <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
+                <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
+                <span v-if="failedMessage.number_of_processing_attempts ?? 0 > 1" :title="'This message has already failed ' + failedMessage.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label"
+                  >{{ failedMessage.number_of_processing_attempts }} Retry Failures</span
                 >
-                <span v-if="failedMessage?.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
-                <span v-if="failedMessage?.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="routeLinks.failedMessage.message.link(failedMessage.edit_of)">View previous version</RouterLink></span>
-                <span v-if="failedMessage?.time_of_failure" class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
-                <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage?.receiving_endpoint?.name }}</span>
-                <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage?.receiving_endpoint?.host }}</span>
-                <span v-if="failedMessage?.redirect" class="metadata"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
+                <span v-if="failedMessage.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
+                <span v-if="failedMessage.edited" class="metadata metadata-link"><i class="fa fa-history"></i> <RouterLink :to="routeLinks.failedMessage.message.link(failedMessage.edit_of)">View previous version</RouterLink></span>
+                <span v-if="failedMessage.time_of_failure" class="metadata"><i class="fa fa-clock-o"></i> Failed: <time-since :date-utc="failedMessage.time_of_failure"></time-since></span>
+                <span class="metadata"><i class="fa pa-endpoint"></i> Endpoint: {{ failedMessage.receiving_endpoint?.name }}</span>
+                <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ failedMessage.receiving_endpoint?.host }}</span>
+                <span v-if="failedMessage.redirect" class="metadata"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ failedMessage.redirect }}</span>
               </div>
-              <div class="metadata group-message-count message-metadata" v-if="failedMessage?.archived">
+              <div class="metadata group-message-count message-metadata" v-if="failedMessage.archived">
                 <span class="metadata"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="failedMessage.last_modified"></time-since></span>
                 <span class="metadata danger" v-if="failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: immediately</span>
                 <span class="metadata danger" v-if="!failedMessage.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for permanent deletion: <time-since :date-utc="failedMessage.deleted_in"></time-since></span>
@@ -435,14 +435,14 @@ onUnmounted(() => {
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="btn-toolbar message-toolbar">
-                <button type="button" class="btn btn-default" v-if="!failedMessage?.archived" :disabled="failedMessage?.retried || failedMessage?.resolved" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
-                <button type="button" class="btn btn-default" v-if="failedMessage?.archived" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
-                <button type="button" class="btn btn-default" :disabled="failedMessage?.retried || failedMessage?.archived || failedMessage?.resolved" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
-                <button type="button" class="btn btn-default" v-if="failedMessage?.isEditAndRetryEnabled" :disabled="failedMessage?.retried || failedMessage?.archived || failedMessage?.resolved" @click="showEditAndRetryModal()">
+                <button type="button" class="btn btn-default" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage.archived" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
+                <button type="button" class="btn btn-default" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
+                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showEditAndRetryModal()">
                   <i class="fa fa-pencil"></i> Edit & retry
                 </button>
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
-                <button type="button" class="btn btn-default" v-if="!failedMessage?.notFound && !failedMessage?.error" @click="exportMessage()"><i class="fa fa-download"></i> Export message</button>
+                <button type="button" class="btn btn-default" v-if="!failedMessage.notFound && !failedMessage.error" @click="exportMessage()"><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
           </div>
@@ -454,11 +454,11 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click="togglePanel(3)"><a href="javascript:void(0)">Message body</a></h5>
                 <h5 :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="javascript:void(0)">Flow Diagram</a></h5>
               </div>
-              <pre v-if="panel === 0">{{ failedMessage?.exception?.message }}</pre>
-              <pre v-if="panel === 1">{{ failedMessage?.exception?.stack_trace }}</pre>
-              <table class="table" v-if="panel === 2 && !failedMessage?.headersNotFound">
+              <pre v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
+              <pre v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
+              <table class="table" v-if="panel === 2 && !failedMessage.headersNotFound">
                 <tbody>
-                  <tr class="interactiveList" v-for="(header, index) in failedMessage?.headers" :key="index">
+                  <tr class="interactiveList" v-for="(header, index) in failedMessage.headers" :key="index">
                     <td nowrap="nowrap">{{ header.key }}</td>
                     <td>
                       <pre>{{ header.value }}</pre>
@@ -466,15 +466,15 @@ onUnmounted(() => {
                   </tr>
                 </tbody>
               </table>
-              <div v-if="panel === 2 && failedMessage?.headersNotFound" class="alert alert-info">
+              <div v-if="panel === 2 && failedMessage.headersNotFound" class="alert alert-info">
                 Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.
               </div>
-              <pre v-if="panel === 3 && !failedMessage?.messageBodyNotFound && !failedMessage?.bodyUnavailable">{{ failedMessage?.messageBody }}</pre>
-              <div v-if="panel === 3 && failedMessage?.messageBodyNotFound" class="alert alert-info">
+              <pre v-if="panel === 3 && !failedMessage.messageBodyNotFound && !failedMessage.bodyUnavailable">{{ failedMessage.messageBody }}</pre>
+              <div v-if="panel === 3 && failedMessage.messageBodyNotFound" class="alert alert-info">
                 Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.
               </div>
-              <div v-if="panel === 3 && failedMessage?.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
-              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage?.conversationId" :message-id="route.params.id as string"></FlowDiagram>
+              <div v-if="panel === 3 && failedMessage.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
+              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id as string"></FlowDiagram>
             </div>
           </div>
 
