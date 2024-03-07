@@ -1,11 +1,14 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 
 const emit = defineEmits(["createNoteConfirmed", "editNoteConfirmed", "cancelEditNote"]);
-const settings = defineProps({
-  groupid: String,
-  comment: String,
-});
+
+interface GroupComment {
+  groupid: string;
+  comment?: string;
+}
+
+const settings = defineProps<GroupComment>();
 const grpcomment = ref(settings.comment);
 
 function createNote() {
@@ -48,7 +51,7 @@ onMounted(() => {
           <h3 class="modal-title" v-if="!settings.comment">Create Note</h3>
         </div>
 
-        <form name="commentNoteForm" novalidate @submit.prevent="save">
+        <form name="commentNoteForm" novalidate>
           <div class="modal-body">
             <div class="row">
               <div class="form-group">
