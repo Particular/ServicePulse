@@ -14,6 +14,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
+import { FailedMessageStatus } from "@/resources/FailedMessageView";
 
 let pollingFaster = false;
 let refreshInterval = undefined;
@@ -75,7 +76,7 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
 
   async function loadMessages() {
     try {
-      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=unresolved&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}`);
+      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=${FailedMessageStatus.Unresolved}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}`);
       totalCount.value = parseInt(response.headers.get("Total-Count"));
       const data = await response.json();
       if (messages.value.length && data.length) {

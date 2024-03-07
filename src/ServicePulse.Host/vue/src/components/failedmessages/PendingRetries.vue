@@ -12,6 +12,7 @@ import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
+import { FailedMessageStatus } from "@/resources/FailedMessageView";
 
 let refreshInterval = undefined;
 let sortMethod = undefined;
@@ -100,7 +101,7 @@ async function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhra
   if (typeof endDate === "undefined") endDate = new Date().toISOString();
 
   try {
-    const response = await useFetchFromServiceControl(`errors?status=retryissued&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`);
+    const response = await useFetchFromServiceControl(`errors?status=${FailedMessageStatus.RetryIssued}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`);
     totalCount.value = parseInt(response.headers.get("Total-Count"));
 
     const data = await response.json();

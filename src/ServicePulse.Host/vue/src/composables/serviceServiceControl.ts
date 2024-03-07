@@ -9,6 +9,7 @@ import type EndpointMonitoringStats from "@/resources/EndpointMonitoringStats";
 import type FailedMessageView from "@/resources/FailedMessageView";
 import type CustomCheck from "@/resources/CustomCheck";
 import type MonitoredEndpoint from "@/resources/MonitoredEndpoint";
+import { FailedMessageStatus } from "@/resources/FailedMessageView";
 
 export const stats = reactive({
   active_endpoints: 0,
@@ -330,26 +331,20 @@ function getFailedHeartBeatsCount() {
 }
 
 function getFailedMessagesCount() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=unresolved"),
-    connectionState,
-    (response) => parseInt(response.headers.get("Total-Count") ?? ""),
-    0
-  );
+  return getErrorMessagesCount(FailedMessageStatus.Unresolved);
 }
 
 function getPendingRetriesCount() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=retryissued"),
-    connectionState,
-    (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
-    0
-  );
+  return getErrorMessagesCount(FailedMessageStatus.RetryIssued);
 }
 
 function getArchivedMessagesCount() {
+  return getErrorMessagesCount(FailedMessageStatus.Archived);
+}
+
+function getErrorMessagesCount(status: FailedMessageStatus) {
   return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=archived"),
+    () => useTypedFetchFromServiceControl<FailedMessageView>(`errors?status=${status}`),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0
