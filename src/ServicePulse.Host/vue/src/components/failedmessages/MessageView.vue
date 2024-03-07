@@ -19,7 +19,7 @@ import Message from "@/resources/Message";
 
 let refreshInterval: ReturnType<typeof setInterval>;
 let pollingFaster = false;
-const panel: Ref<number> = ref(1);
+const panel = ref<number>(1);
 const route = useRoute();
 const failedMessage: Ref<ExtendedFailedMessage | null> = ref(null);
 const configuration: Ref<Configuration | null> = ref(null);
