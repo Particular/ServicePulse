@@ -1,16 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import { useRouter } from "vue-router";
 import TimeSince from "../TimeSince.vue";
 import NoData from "../NoData.vue";
 import routeLinks from "@/router/routeLinks";
+import { FailedMessageStatus, FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
 
-let lastLabelClickedIndex = undefined;
+let lastLabelClickedIndex: number | undefined = undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
-const props = defineProps({
-  messages: Array,
-  showRequestRetry: Boolean,
-});
+const props = defineProps<{
+  messages: FailedMessageViewWithExtendedUIProperties[];
+  showRequestRetry: boolean;
+}>();
 
 function getSelectedMessages() {
   return props.messages.filter((m) => m.selected);
@@ -36,7 +37,8 @@ function numberDisplayed() {
   return props.messages.length;
 }
 
-function labelClicked($event, index) {
+function labelClicked($event: MouseEvent, index: number) {
+  //TODO: this functionality isn't consistent on including start/end items
   if ($event.shiftKey && typeof lastLabelClickedIndex !== "undefined") {
     // toggle selection from lastLabel until current index
     const start = (index < lastLabelClickedIndex ? index : lastLabelClickedIndex) + 1;
@@ -47,25 +49,18 @@ function labelClicked($event, index) {
       messages[x].selected = !messages[x].selected;
     }
 
-    clearSelection();
+    //clear selection
+    const selection = document.getSelection();
+    if (selection) {
+      selection.empty();
+    }
   }
 
   lastLabelClickedIndex = index;
 }
 
-function clearSelection() {
-  if (document.selection && document.selection.empty) {
-    document.selection.empty();
-  } else if (window.getSelection) {
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-  }
-}
-
-function navigateToMessage($event, messageId) {
-  if ($event.target.name !== "retryMessage") {
-    router.push(routeLinks.failedMessage.message.link(messageId));
-  }
+function navigateToMessage(messageId: string) {
+  router.push(routeLinks.failedMessage.message.link(messageId));
 }
 
 defineExpose({
@@ -92,7 +87,7 @@ defineExpose({
       <div class="row">
         <div class="col-12">
           <div class="row box-header">
-            <div class="col-12 no-side-padding" @click="navigateToMessage($event, message.id)">
+            <div class="col-12 no-side-padding" @click="navigateToMessage(message.id)">
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
                 <span v-if="message.submittedForRetrial" :title="'Message was submitted for retrying'" class="label sidebar-label label-info metadata-label">To retry</span>
@@ -113,9 +108,11 @@ defineExpose({
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
                 <!-- for deleted messages-->
-                <span class="metadata" v-if="message.status == 'archived'"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="message.last_modified"></time-since></span>
-                <span class="metadata danger" v-if="message.status == 'archived' && message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
-                <span class="metadata danger" v-if="message.status == 'archived' && !message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: <time-since class="danger" :date-utc="message.deleted_in"></time-since> </span>
+                <span class="metadata" v-if="message.status === FailedMessageStatus.Archived"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="message.last_modified"></time-since></span>
+                <span class="metadata danger" v-if="message.status === FailedMessageStatus.Archived && message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
+                <span class="metadata danger" v-if="message.status === FailedMessageStatus.Archived && !message.delete_soon">
+                  <i class="fa fa-trash-o danger"></i> Scheduled for deletion: <time-since class="danger" :date-utc="message.deleted_in"></time-since>
+                </span>
 
                 <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)">
                   <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry

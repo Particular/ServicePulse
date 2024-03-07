@@ -138,7 +138,7 @@ watch(monitoringConnectionFailure, (newValue, oldValue) => {
   }
 
   //NOTE to eliminate success msg showing everytime the screen is refreshed
-  if (newValue !== oldValue) {
+  if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
     if (newValue) {
       useShowToast(TYPE.ERROR, "Error", `Could not connect to the ServiceControl Monitoring service at ${monitoringUrl.value}. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>`);
     } else {

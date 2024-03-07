@@ -14,7 +14,7 @@ import EditRetryDialog from "./EditRetryDialog.vue";
 import routeLinks from "@/router/routeLinks";
 import Configuration, { EditAndRetryConfig } from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
-import { FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
+import { FailedMessageStatus, FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
 import Message from "@/resources/Message";
 
 let refreshInterval: ReturnType<typeof setInterval>;
@@ -43,9 +43,9 @@ async function loadFailedMessage() {
     }
     const data = await response.json();
     const message = data;
-    message.archived = message.status === "archived";
-    message.resolved = message.status === "resolved";
-    message.retried = message.status === "retryIssued";
+    message.archived = message.status === FailedMessageStatus.Archived;
+    message.resolved = message.status === FailedMessageStatus.Resolved;
+    message.retried = message.status === FailedMessageStatus.RetryIssued;
     message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
     message.isEditAndRetryEnabled = editAndRetryConfiguration.value?.enabled;
 

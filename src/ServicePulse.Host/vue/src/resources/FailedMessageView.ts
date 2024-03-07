@@ -24,7 +24,7 @@ export interface FailedMessageViewWithExtendedUIProperties extends FailedMessage
   delete_soon: boolean;
   deleted_in: string;
   retryInProgress: boolean;
-  deleteInProgress: boolean
+  deleteInProgress: boolean;
   restoreInProgress: boolean;
   selected: boolean;
   retried: boolean;
@@ -33,7 +33,7 @@ export interface FailedMessageViewWithExtendedUIProperties extends FailedMessage
   notFound: boolean;
   archived: boolean;
   resolved: boolean;
-  error: boolean
+  error: boolean;
   headersNotFound: boolean;
   messageBodyNotFound: boolean;
   bodyUnavailable: boolean;
@@ -41,7 +41,8 @@ export interface FailedMessageViewWithExtendedUIProperties extends FailedMessage
   conversationId: string;
   messageBody: string;
   isEditAndRetryEnabled: boolean;
-  redirect:boolean;
+  redirect: boolean;
+  submittedForRetrial: boolean;
 }
 
 export interface ExceptionDetails {
