@@ -2,7 +2,7 @@
 import { onBeforeMount, onMounted, onUnmounted, ref, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import { useFetchFromServiceControl, usePatchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
@@ -16,6 +16,7 @@ import type { Ref } from "vue";
 import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import Configuration from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
+import FailureGroup from "@/resources/FailureGroup";
 
 let pollingFaster = false;
 let refreshInterval: ReturnType<typeof setInterval>;
@@ -62,8 +63,7 @@ function loadMessages() {
 }
 
 async function loadGroupDetails(groupId: string) {
-  const response = await useFetchFromServiceControl(`archive/groups/id/${groupId}`);
-  const data = await response.json();
+  const [, data] = await useTypedFetchFromServiceControl<FailureGroup>(`archive/groups/id/${groupId}`);
   groupName.value = data.title;
 }
 
