@@ -12,7 +12,6 @@ import MessageList from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
 import moment from "moment";
-import type { Ref } from "vue";
 import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import Configuration from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
@@ -24,7 +23,7 @@ const perPage = 50;
 const configuration = ref<Configuration | null>(null);
 
 const route = useRoute();
-const groupId: Ref<string> = ref(route.params.groupId as string);
+const groupId = ref<string>(route.params.groupId as string);
 const groupName = ref("");
 const pageNumber = ref(1);
 const totalCount = ref(0);
@@ -32,7 +31,7 @@ const cookies = useCookies().cookies;
 const selectedPeriod = ref("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
 const messageList = ref();
-const messages: Ref<ExtendedFailedMessage[]> = ref([]);
+const messages = ref<ExtendedFailedMessage[]>([]);
 const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
 watch(pageNumber, () => loadMessages());

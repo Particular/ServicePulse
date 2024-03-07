@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Ref, computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { useFetchFromServiceControl, useTypedFetchFromServiceControl, serviceControlUrl } from "../../composables/serviceServiceControlUrls";
 import { useArchiveMessage, useRetryMessages, useUnarchiveMessage } from "../../composables/serviceFailedMessage";
@@ -21,9 +21,9 @@ let refreshInterval: ReturnType<typeof setInterval>;
 let pollingFaster = false;
 const panel = ref<number>(1);
 const route = useRoute();
-const failedMessage: Ref<ExtendedFailedMessage | null> = ref(null);
-const configuration: Ref<Configuration | null> = ref(null);
-const editAndRetryConfiguration: Ref<EditAndRetryConfig | null> = ref(null);
+const failedMessage = ref<ExtendedFailedMessage | null>(null);
+const configuration = ref<Configuration | null>(null);
+const editAndRetryConfiguration = ref<EditAndRetryConfig | null>(null);
 
 const id = computed(() => route.params.id);
 watch(id, async () => await loadFailedMessage());
