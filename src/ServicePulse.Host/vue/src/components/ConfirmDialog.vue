@@ -7,8 +7,8 @@ withDefaults(
   defineProps<{
     heading: string;
     body: string;
-    secondParagraph: string;
-    hideCancel: boolean;
+    secondParagraph?: string;
+    hideCancel?: boolean;
   }>(),
   { hideCancel: false, secondParagraph: "" }
 );

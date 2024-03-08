@@ -22,6 +22,7 @@ export const stats = reactive({
   number_of_pending_retries: 0,
   number_of_endpoints: 0,
   number_of_disconnected_endpoints: 0,
+  number_of_archive_groups: 0,
 });
 
 interface ConnectionState {
