@@ -1,7 +1,7 @@
 import type EndpointDetails from "@/resources/EndpointDetails";
 import type Header from "@/resources/Header";
 
-export default interface FailedMessageView {
+export default interface FailedMessage {
   id: string;
   message_type: string;
   time_sent?: string;
@@ -19,7 +19,7 @@ export default interface FailedMessageView {
   edit_of: string;
 }
 
-export interface FailedMessageViewWithExtendedUIProperties extends FailedMessageView {
+export interface ExtendedFailedMessage extends FailedMessage {
   error_retention_period: number;
   delete_soon: boolean;
   deleted_in: string;

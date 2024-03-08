@@ -21,7 +21,7 @@ export default interface Message {
   body_size: number;
   instance_id: string;
 }
-export interface MessageWithExtendedUIProperties extends Message {
+export interface ExtendedMessage extends Message {
   notFound: boolean;
   error: boolean
   headersNotFound: boolean;

@@ -3,13 +3,13 @@ import { useRouter } from "vue-router";
 import TimeSince from "../TimeSince.vue";
 import NoData from "../NoData.vue";
 import routeLinks from "@/router/routeLinks";
-import { FailedMessageStatus, FailedMessageViewWithExtendedUIProperties } from "@/resources/FailedMessageView";
+import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
 
 let lastLabelClickedIndex: number | undefined = undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
 const props = defineProps<{
-  messages: FailedMessageViewWithExtendedUIProperties[];
+  messages: ExtendedFailedMessage[];
   showRequestRetry: boolean;
 }>();
 
