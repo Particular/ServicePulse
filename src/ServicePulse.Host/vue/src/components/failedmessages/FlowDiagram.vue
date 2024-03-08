@@ -94,7 +94,7 @@ function constructNodes(mappedMessages: MappedMessage[]): Node[] {
     mappedMessages
       //group by level
       .reduce((groups: MappedMessage[][], message: MappedMessage) => {
-        groups[message.level as number] = [...(groups[message.level as number] ?? []), message];
+        groups[message.level!] = [...(groups[message.level!] ?? []), message];
         return groups;
       }, [])
       //ensure each level has their items in the same "grouped" order as the level above
@@ -115,9 +115,9 @@ function constructNodes(mappedMessages: MappedMessage[]): Node[] {
             const parentMessage = previousLevel?.find((plMessage) => message.parentId === plMessage.messageId && message.parentEndpoint === plMessage.receivingEndpoint) ?? null;
             //if the current parent node is the same as the previous parent node, then the current position needs to be to the right of siblings
             const currentParentWidth = previousParent === parentMessage ? currentWidth : 0;
-            const startX = parentMessage == null ? 0 : (parentMessage.XPos as number) - (parentMessage.width as number) / 2;
+            const startX = parentMessage == null ? 0 : parentMessage.XPos! - parentMessage.width! / 2;
             //store the position of the node against the message, so child nodes can use it to determine their start position
-            message.XPos = startX + (currentParentWidth + (message.width as number) / 2);
+            message.XPos = startX + (currentParentWidth + message.width! / 2);
             return {
               result: [
                 ...result,
@@ -126,10 +126,10 @@ function constructNodes(mappedMessages: MappedMessage[]): Node[] {
                   type: "message",
                   data: message,
                   label: message.nodeName,
-                  position: { x: message.XPos * nodeSpacingX, y: (message.level as number) * nodeSpacingY },
+                  position: { x: message.XPos * nodeSpacingX, y: message.level! * nodeSpacingY },
                 },
               ],
-              currentWidth: currentParentWidth + (message.width as number),
+              currentWidth: currentParentWidth + message.width!,
               previousParent: parentMessage,
             };
           },
@@ -168,7 +168,7 @@ onMounted(async () => {
     message.width =
       children.length === 0
         ? 1 //leaf node
-        : children.map((child) => (child.width == null ? assignDescendantLevelsAndWidth(child, level + 1) : child)).reduce((sum, { width }) => sum + (width as number), 0);
+        : children.map((child) => (child.width == null ? assignDescendantLevelsAndWidth(child, level + 1) : child)).reduce((sum, { width }) => sum + width!, 0);
     return message;
   };
   for (const root of mappedMessages.filter((message) => !message.parentId)) assignDescendantLevelsAndWidth(root);
