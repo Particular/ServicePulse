@@ -381,7 +381,7 @@ onMounted(async () => {
                                       </li>
                                       <li v-if="group.workflow_state.status === 'restorecompleted'">
                                         <div class="retry-completed bulk-retry-progress-status">Restore request completed</div>
-                                        <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
+                                        <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click.stop="acknowledgeGroup(group)">Dismiss</button>
                                       </li>
                                     </ul>
                                     <div class="op-metadata">
