@@ -1,14 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
+import SortOptions, { GroupValue } from "@/resources/SortOptions";
 
-const emit = defineEmits(["sortUpdated"]);
+const emit = defineEmits<{
+  sortUpdated: [];
+}>();
 
-const props = defineProps({
-  hideSort: Boolean,
-  sortOptions: Array,
-  sortSavePrefix: String,
-});
+const props = defineProps<{
+  hideSort: boolean;
+  sortOptions: SortOptions[];
+  sortSavePrefix: string;
+}>();
 
 const cookies = useCookies().cookies;
 
@@ -18,7 +21,7 @@ function getSortOptions() {
   return props.sortOptions;
 }
 
-function saveSortOption(sortCriteria, sortDirection) {
+function saveSortOption(sortCriteria: string, sortDirection: string) {
   cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortCriteria`, sortCriteria);
   cookies.set(`${props.sortSavePrefix ? props.sortSavePrefix : ""}sortDirection`, sortDirection);
 }
@@ -31,14 +34,16 @@ function loadSavedSortOption() {
     const sortBy = getSortOptions().find((sort) => {
       return sort.description.toLowerCase() === criteria.toLowerCase();
     });
-    return { sort: getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy.description };
+    if (sortBy) {
+      return { sort: getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy?.description };
+    }
   }
 
   return props.sortOptions[0];
 }
 
-function getSortFunction(selector, dir) {
-  return (firstElement, secondElement) => {
+function getSortFunction(selector: SortOptions["selector"], dir: string) {
+  return (firstElement: GroupValue, secondElement: GroupValue) => {
     if (dir === "asc") {
       return selector(firstElement) < selector(secondElement) ? -1 : 1;
     } else {
@@ -47,7 +52,7 @@ function getSortFunction(selector, dir) {
   };
 }
 
-function sortUpdated(sort) {
+function sortUpdated(sort: SortOptions) {
   selectedSort.value = sort.description + (sort.dir === "desc" ? " (Descending)" : "");
   saveSortOption(sort.description, sort.dir);
 
@@ -56,11 +61,12 @@ function sortUpdated(sort) {
   emit("sortUpdated", sort);
 }
 
-function setSortOptions(isInitialLoad) {
+function setSortOptions() {
   const savedSort = loadSavedSortOption();
   selectedSort.value = savedSort.description + (savedSort.dir === "desc" ? " (Descending)" : "");
 
-  emit("sortUpdated", savedSort, isInitialLoad);
+  emit("sortUpdated", savedSort);
+  //emit("sortUpdated", savedSort, isInitialLoad);
 }
 
 defineExpose({
@@ -68,7 +74,7 @@ defineExpose({
 });
 
 onMounted(() => {
-  setSortOptions(true);
+  setSortOptions();
 });
 </script>
 
