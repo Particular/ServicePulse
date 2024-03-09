@@ -1,9 +1,13 @@
-export type GroupValue = string | number | Date;
+import FailedMessage from "./FailedMessage";
+import FailureGroup from "./FailureGroup";
 
-export default interface SortOptions {
+export type GroupType = FailedMessage | FailureGroup;
+export type GroupPropertyType = string | number | Date;
+
+export default interface SortOptions<GroupType> {
   description: string;
   dir: string;
-  selector: (group: GroupValue) => GroupValue;
+  selector: (group: GroupType) => GroupPropertyType;
   icon: string;
-  sort: (firstElement: GroupValue, secondElement: GroupValue) => number;
+  sort: (firstElement: GroupType, secondElement: GroupType) => number;
 }
