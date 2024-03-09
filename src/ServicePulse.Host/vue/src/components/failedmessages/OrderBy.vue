@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
-import SortOptions, { GroupValue } from "@/resources/SortOptions";
+import SortOptions, { GroupType } from "@/resources/SortOptions";
 
 const emit = defineEmits<{
-  sortUpdated: [];
+  sortUpdated: SortOptions<GroupType>[];
 }>();
 
 const props = defineProps<{
   hideSort: boolean;
-  sortOptions: SortOptions[];
+  sortOptions: SortOptions<GroupType>[];
   sortSavePrefix: string;
 }>();
 
@@ -35,15 +35,17 @@ function loadSavedSortOption() {
       return sort.description.toLowerCase() === criteria.toLowerCase();
     });
     if (sortBy) {
-      return { sort: getSortFunction(sortBy.selector, direction), dir: direction, description: sortBy?.description };
+      sortBy.sort = getSortFunction(sortBy.selector, direction);
+      sortBy.dir = direction;
+      return sortBy;
     }
   }
 
   return props.sortOptions[0];
 }
 
-function getSortFunction(selector: SortOptions["selector"], dir: string) {
-  return (firstElement: GroupValue, secondElement: GroupValue) => {
+function getSortFunction(selector: SortOptions<GroupType>["selector"], dir: string) {
+  return (firstElement: GroupType, secondElement: GroupType) => {
     if (dir === "asc") {
       return selector(firstElement) < selector(secondElement) ? -1 : 1;
     } else {
@@ -52,7 +54,8 @@ function getSortFunction(selector: SortOptions["selector"], dir: string) {
   };
 }
 
-function sortUpdated(sort: SortOptions) {
+function sortUpdated(sort: SortOptions<GroupType>, dir: string) {
+  sort.dir = dir;
   selectedSort.value = sort.description + (sort.dir === "desc" ? " (Descending)" : "");
   saveSortOption(sort.description, sort.dir);
 
@@ -66,7 +69,6 @@ function setSortOptions() {
   selectedSort.value = savedSort.description + (savedSort.dir === "desc" ? " (Descending)" : "");
 
   emit("sortUpdated", savedSort);
-  //emit("sortUpdated", savedSort, isInitialLoad);
 }
 
 defineExpose({
@@ -88,10 +90,10 @@ onMounted(() => {
     <ul class="dropdown-menu">
       <span v-for="(sort, index) in getSortOptions()" :key="index">
         <li>
-          <button @click="sortUpdated({ selector: sort.selector, dir: 'asc', description: sort.description })"><i class="bi" :class="`${sort.icon}up`"></i>{{ sort.description }}</button>
+          <button @click="sortUpdated(sort, 'asc')"><i class="bi" :class="`${sort.icon}up`"></i>{{ sort.description }}</button>
         </li>
         <li>
-          <button @click="sortUpdated({ selector: sort.selector, dir: 'desc', description: sort.description })"><i class="bi" :class="`${sort.icon}down`"></i>{{ sort.description }}<span> (Descending)</span></button>
+          <button @click="sortUpdated(sort, 'desc')"><i class="bi" :class="`${sort.icon}down`"></i>{{ sort.description }}<span> (Descending)</span></button>
         </li>
       </span>
     </ul>

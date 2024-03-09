@@ -206,7 +206,6 @@ function sortGroups(sort) {
 
   if (!isInitialLoad.value) {
     loadPendingRetryMessages();
-    isInitialLoad.value = false;
   }
 }
 
