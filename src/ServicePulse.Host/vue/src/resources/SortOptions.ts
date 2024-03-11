@@ -4,7 +4,7 @@ import FailureGroup from "./FailureGroup";
 export type GroupType = FailedMessage | FailureGroup;
 export type GroupPropertyType = string | number | Date;
 
-export default interface SortOptions<GroupType> {
+export default interface SortOptions {
   description: string;
   dir: string;
   selector: (group: GroupType) => GroupPropertyType;

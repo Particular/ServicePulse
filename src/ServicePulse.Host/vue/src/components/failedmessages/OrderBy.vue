@@ -4,13 +4,13 @@ import { useCookies } from "vue3-cookies";
 import SortOptions, { GroupType } from "@/resources/SortOptions";
 
 const emit = defineEmits<{
-  sortUpdated: SortOptions<GroupType>[];
+  sortUpdated: SortOptions[];
 }>();
 
 const props = withDefaults(
   defineProps<{
     hideSort?: boolean;
-    sortOptions: SortOptions<GroupType>[];
+    sortOptions: SortOptions[];
     sortSavePrefix?: string;
   }>(),
   {
@@ -49,7 +49,7 @@ function loadSavedSortOption() {
   return props.sortOptions[0];
 }
 
-function getSortFunction(selector: SortOptions<GroupType>["selector"], dir: string) {
+function getSortFunction(selector: SortOptions["selector"], dir: string) {
   return (firstElement: GroupType, secondElement: GroupType) => {
     if (dir === "asc") {
       return selector(firstElement) < selector(secondElement) ? -1 : 1;
@@ -59,7 +59,7 @@ function getSortFunction(selector: SortOptions<GroupType>["selector"], dir: stri
   };
 }
 
-function sortUpdated(sort: SortOptions<GroupType>, dir: string) {
+function sortUpdated(sort: SortOptions, dir: string) {
   sort.dir = dir;
   selectedSort.value = sort.description + (sort.dir === "desc" ? " (Descending)" : "");
   saveSortOption(sort.description, sort.dir);
