@@ -4,7 +4,7 @@ import { useCookies } from "vue3-cookies";
 import SortOptions, { GroupType } from "@/resources/SortOptions";
 
 const emit = defineEmits<{
-  sortUpdated: SortOptions[];
+  sortUpdated: [option: SortOptions];
 }>();
 
 const props = withDefaults(
