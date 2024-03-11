@@ -40,9 +40,11 @@ function loadSavedSortOption() {
       return sort.description.toLowerCase() === criteria.toLowerCase();
     });
     if (sortBy) {
-      sortBy.sort = getSortFunction(sortBy.selector, direction);
-      sortBy.dir = direction;
-      return sortBy;
+      return {
+        ...sortBy,
+        sort: getSortFunction(sortBy.selector, direction),
+        dir: direction,
+      };
     }
   }
 
@@ -66,7 +68,11 @@ function sortUpdated(sort: SortOptions, dir: string) {
 
   sort.sort = getSortFunction(sort.selector, sort.dir);
 
-  emit("sortUpdated", sort);
+  emit("sortUpdated", {
+    ...sort,
+    dir: dir,
+    sort: getSortFunction(sort.selector, sort.dir),
+  });
 }
 
 function setSortOptions() {
