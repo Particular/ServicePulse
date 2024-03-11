@@ -7,11 +7,16 @@ const emit = defineEmits<{
   sortUpdated: SortOptions<GroupType>[];
 }>();
 
-const props = defineProps<{
-  hideSort: boolean;
-  sortOptions: SortOptions<GroupType>[];
-  sortSavePrefix: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    hideSort?: boolean;
+    sortOptions: SortOptions<GroupType>[];
+    sortSavePrefix?: string;
+  }>(),
+  {
+    hideSort: false,
+  }
+);
 
 const cookies = useCookies().cookies;
 
