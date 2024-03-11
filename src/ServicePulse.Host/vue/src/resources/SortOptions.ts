@@ -11,3 +11,8 @@ export default interface SortOptions {
   icon: string;
   sort: (firstElement: GroupType, secondElement: GroupType) => number;
 }
+
+export enum SortDirection {
+  Ascending = "asc",
+  Descending = "desc",
+}
