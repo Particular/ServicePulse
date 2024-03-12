@@ -5,6 +5,15 @@ import NoData from "../NoData.vue";
 import routeLinks from "@/router/routeLinks";
 import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
 
+export interface IMessageList {
+  getSelectedMessages(): ExtendedFailedMessage[];
+  selectAll(): void;
+  deselectAll(): void;
+  isAnythingSelected(): ExtendedFailedMessage | undefined;
+  isAnythingDisplayed(): boolean;
+  numberDisplayed(): number;
+}
+
 let lastLabelClickedIndex: number | undefined = undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
@@ -63,7 +72,7 @@ function navigateToMessage(messageId: string) {
   router.push(routeLinks.failedMessage.message.link(messageId));
 }
 
-defineExpose({
+defineExpose<IMessageList>({
   getSelectedMessages,
   selectAll,
   deselectAll,

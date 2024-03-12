@@ -52,6 +52,8 @@ function loadSavedSortOption() {
 }
 
 function getSortFunction(selector: SortOptions["selector"], dir: SortDirection) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  if (!selector) return (_: GroupType, __: GroupType) => 0;
   return (firstElement: GroupType, secondElement: GroupType) => {
     if (dir === SortDirection.Ascending) {
       return selector(firstElement) < selector(secondElement) ? -1 : 1;
@@ -74,7 +76,7 @@ function sortUpdated(sort: SortOptions, dir: SortDirection) {
 
 function setSortOptions() {
   const savedSort = loadSavedSortOption();
-  selectedSort.value = savedSort.description + (savedSort.dir === SortDirection.Descending ? " (Descending)" : "");
+  selectedSort.value = `${savedSort.description}${savedSort.dir === SortDirection.Descending ? " (Descending)" : ""}`;
 
   emit("sortUpdated", savedSort);
 }

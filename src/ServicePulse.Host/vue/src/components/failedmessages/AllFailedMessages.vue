@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, usePatchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { useRetryMessages } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
@@ -11,63 +11,58 @@ import { useArchiveExceptionGroup, useRetryExceptionGroup } from "../../composab
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import OrderBy from "./OrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import MessageList from "./MessageList.vue";
+import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
-import { FailedMessageStatus } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
+import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import { TYPE } from "vue-toastification";
 
 let pollingFaster = false;
-let refreshInterval = undefined;
-let sortMethod = undefined;
+let refreshInterval: number | undefined;
+let sortMethod: SortOptions | undefined;
 const perPage = 50;
 const route = useRoute();
-const groupId = ref(route.params.groupId);
+const groupId = ref<string>(route.params.groupId as string);
 const groupName = ref("");
 const pageNumber = ref(1);
 const totalCount = ref(0);
 const showDelete = ref(false);
 const showConfirmRetryAll = ref(false);
 const showConfirmDeleteAll = ref(false);
-const messageList = ref();
-const messages = ref([]);
-const sortOptions = [
+const messageList = ref<IMessageList>();
+const messages = ref<ExtendedFailedMessage[]>([]);
+const sortOptions: SortOptions[] = [
   {
     description: "Time of failure",
-    selector: function (group) {
-      return group.title;
-    },
     icon: "bi-sort-",
   },
   {
     description: "Message Type",
-    selector: function (group) {
-      return group.count;
-    },
     icon: "bi-sort-alpha-",
   },
 ];
 
 watch(pageNumber, () => loadMessages());
 
-function sortGroups(sort) {
+function sortGroups(sort: SortOptions) {
   sortMethod = sort;
   loadMessages();
 }
 
 function loadMessages() {
-  loadPagedMessages(groupId.value, pageNumber.value, sortMethod?.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir);
+  loadPagedMessages(groupId.value, pageNumber.value, sortMethod && sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod?.dir);
 }
 
-async function loadGroupDetails(groupId) {
+async function loadGroupDetails(groupId: string) {
   const response = await useFetchFromServiceControl(`recoverability/groups/id/${groupId}`);
   const data = await response.json();
   groupName.value = data.title;
 }
 
-function loadPagedMessages(groupId, page, sortBy, direction) {
-  if (typeof sortBy === "undefined") sortBy = "time_of_failure";
-  if (typeof direction === "undefined") direction = "desc";
-  if (typeof page === "undefined") page = 1;
+function loadPagedMessages(groupId: string, page: number, sortBy: string | undefined, direction: SortDirection | undefined) {
+  if (!sortBy) sortBy = "time_of_failure";
+  if (!direction) direction = SortDirection.Descending;
 
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
@@ -76,9 +71,10 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
 
   async function loadMessages() {
     try {
-      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=${FailedMessageStatus.Unresolved}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}`);
-      totalCount.value = parseInt(response.headers.get("Total-Count"));
-      const data = await response.json();
+      const [response, data] = await useTypedFetchFromServiceControl<ExtendedFailedMessage[]>(
+        `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=${FailedMessageStatus.Unresolved}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}`
+      );
+      totalCount.value = parseInt(response.headers.get("Total-Count") ?? "");
       if (messages.value.length && data.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
@@ -112,9 +108,9 @@ function loadPagedMessages(groupId, page, sortBy, direction) {
   return loadMessagesPromise;
 }
 
-async function retryRequested(id) {
+async function retryRequested(id: string) {
   changeRefreshInterval(1000);
-  useShowToast("info", "Info", "Message retry requested...");
+  useShowToast(TYPE.INFO, "Info", "Message retry requested...");
   await useRetryMessages([id]);
   const message = messages.value.find((m) => m.id === id);
   if (message) {
@@ -125,15 +121,16 @@ async function retryRequested(id) {
 
 async function retrySelected() {
   changeRefreshInterval(1000);
-  const selectedMessages = messageList.value.getSelectedMessages();
-  useShowToast("info", "Info", "Retrying " + selectedMessages.length + " messages...");
+  const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
+  useShowToast(TYPE.INFO, "Info", "Retrying " + selectedMessages.length + " messages...");
   await useRetryMessages(selectedMessages.map((m) => m.id));
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.retryInProgress = true));
 }
 
 function exportSelected() {
-  function toCSV(array) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function toCSV(array: any[]) {
     const keys = Object.keys(array[0]);
     let result = keys.join("\t") + "\n";
     array.forEach((obj) => {
@@ -143,17 +140,19 @@ function exportSelected() {
     return result;
   }
 
-  function parseObject(obj, propertiesToSkip, path = "") {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function parseObject(obj: any | null, propertiesToSkip: string[], path = "") {
     const type = typeof obj;
-    let d = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let d = {} as any;
 
-    if (type === "array" || type === "object") {
+    if (obj != null && type === "object") {
       for (const i in obj) {
         const newD = parseObject(obj[i], propertiesToSkip, path + i + ".");
         d = Object.assign(d, newD);
       }
       return d;
-    } else if (type === "number" || type === "string" || type === "boolean" || type === "null") {
+    } else if (type === "number" || type === "string" || type === "boolean" || obj == null) {
       const endPath = path.substr(0, path.length - 1);
       if (propertiesToSkip && propertiesToSkip.includes(endPath)) {
         return d;
@@ -165,7 +164,7 @@ function exportSelected() {
     return d;
   }
 
-  const selectedMessages = messageList.value.getSelectedMessages();
+  const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
   const propertiesToSkip = ["hover", "selected", "hover2", "$$hashKey", "panel", "edit_of", "edited"];
 
   const preparedMessagesForExport = [];
@@ -178,15 +177,15 @@ function exportSelected() {
 }
 
 function numberSelected() {
-  return messageList?.value?.getSelectedMessages()?.length ?? 0;
+  return messageList.value?.getSelectedMessages()?.length ?? 0;
 }
 
 function selectAll() {
-  messageList.value.selectAll();
+  messageList.value?.selectAll();
 }
 
 function deselectAll() {
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
 }
 
 function isAnythingSelected() {
@@ -195,25 +194,25 @@ function isAnythingSelected() {
 
 async function deleteSelectedMessages() {
   changeRefreshInterval(1000);
-  const selectedMessages = messageList.value.getSelectedMessages();
+  const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
-  useShowToast("info", "Info", "Deleting " + selectedMessages.length + " messages...");
+  useShowToast(TYPE.INFO, "Info", "Deleting " + selectedMessages.length + " messages...");
   await usePatchToServiceControl(
     "errors/archive",
     selectedMessages.map((m) => m.id)
   );
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.deleteInProgress = true));
 }
 
 async function retryGroup() {
-  useShowToast("info", "Info", "Retrying all messages...");
+  useShowToast(TYPE.INFO, "Info", "Retrying all messages...");
   await useRetryExceptionGroup(groupId.value);
   messages.value.forEach((m) => (m.retryInProgress = true));
 }
 
 async function deleteGroup() {
-  useShowToast("info", "Info", "Deleting all messages...");
+  useShowToast(TYPE.INFO, "Info", "Deleting all messages...");
   await useArchiveExceptionGroup(groupId.value);
   messages.value.forEach((m) => (m.deleteInProgress = true));
 }
@@ -224,12 +223,12 @@ function isRetryOrDeleteOperationInProgress() {
   });
 }
 
-function changeRefreshInterval(milliseconds) {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+function changeRefreshInterval(milliseconds: number) {
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
       changeRefreshInterval(1000);
@@ -245,13 +244,13 @@ function changeRefreshInterval(milliseconds) {
 }
 
 onBeforeRouteLeave(() => {
-  groupId.value = undefined;
-  groupName.value = undefined;
+  groupId.value = "";
+  groupName.value = "";
 });
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 });
 

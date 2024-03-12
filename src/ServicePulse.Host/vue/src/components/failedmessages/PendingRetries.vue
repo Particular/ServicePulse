@@ -34,23 +34,14 @@ const isInitialLoad = ref(true);
 const sortOptions = [
   {
     description: "Time of failure",
-    selector: function (group) {
-      return group.title;
-    },
     icon: "bi-sort-",
   },
   {
     description: "Message Type",
-    selector: function (group) {
-      return group.count;
-    },
     icon: "bi-sort-alpha-",
   },
   {
     description: "Time of retry request",
-    selector: function (group) {
-      return group.count;
-    },
     icon: "bi-sort-",
   },
 ];

@@ -6,10 +6,11 @@ export type GroupPropertyType = string | number | Date;
 
 export default interface SortOptions {
   description: string;
-  dir: string;
-  selector: (group: GroupType) => GroupPropertyType;
   icon: string;
-  sort: (firstElement: GroupType, secondElement: GroupType) => number;
+  dir?: SortDirection;
+  //used for client-side sorting only
+  selector?: (group: GroupType) => GroupPropertyType;
+  sort?: (firstElement: GroupType, secondElement: GroupType) => number;
 }
 
 export enum SortDirection {
