@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
-import SortOptions, { GroupType, SortDirection } from "@/resources/SortOptions";
+import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import GroupOperation from "@/resources/GroupOperation";
 
 const emit = defineEmits<{
   sortUpdated: [option: SortOptions];
@@ -53,8 +54,8 @@ function loadSavedSortOption() {
 
 function getSortFunction(selector: SortOptions["selector"], dir: SortDirection) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  if (!selector) return (_: GroupType, __: GroupType) => 0;
-  return (firstElement: GroupType, secondElement: GroupType) => {
+  if (!selector) return (firstElement: GroupOperation, secondElement: GroupOperation) => 0;
+  return (firstElement: GroupOperation, secondElement: GroupOperation) => {
     if (dir === SortDirection.Ascending) {
       return selector(firstElement) < selector(secondElement) ? -1 : 1;
     } else {
@@ -81,7 +82,11 @@ function setSortOptions() {
   emit("sortUpdated", savedSort);
 }
 
-defineExpose({
+export interface IOrderBy {
+  getSortFunction(selector: SortOptions["selector"], dir: SortDirection): (firstElement: GroupOperation, secondElement: GroupOperation) => number;
+}
+
+defineExpose<IOrderBy>({
   getSortFunction,
 });
 
