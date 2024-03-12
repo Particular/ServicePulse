@@ -60,9 +60,9 @@ async function loadGroupDetails(groupId: string) {
   groupName.value = data.title;
 }
 
-function loadPagedMessages(groupId: string, page: number, sortBy: string | undefined, direction: SortDirection | undefined) {
-  if (!sortBy) sortBy = "time_of_failure";
-  if (!direction) direction = SortDirection.Descending;
+function loadPagedMessages(groupId: string, page: number, sortBy?: string, direction?: SortDirection) {
+  sortBy ??= "time_of_failure";
+  direction ??= SortDirection.Descending;
 
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
