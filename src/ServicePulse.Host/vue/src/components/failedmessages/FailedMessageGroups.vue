@@ -10,7 +10,6 @@ import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList, { IMessageGroupList } from "../failedmessages/MessageGroupList.vue";
 import OrderBy, { IOrderBy } from "./OrderBy.vue";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
-import GroupOperation from "@/resources/GroupOperation";
 
 const selectedClassifier = ref<string>("");
 const classifiers = ref<string[]>([]);
