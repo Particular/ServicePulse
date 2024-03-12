@@ -18,7 +18,7 @@ import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
 
 let pollingFaster = false;
-let refreshInterval: ReturnType<typeof setInterval>;
+let refreshInterval: number | undefined;
 const perPage = 50;
 const configuration = ref<Configuration | null>(null);
 
@@ -171,11 +171,11 @@ function isRestoreInProgress() {
 }
 
 function changeRefreshInterval(milliseconds: number) {
-  if (refreshInterval) {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRestoreInProgress()) {
       changeRefreshInterval(1000);
@@ -200,8 +200,8 @@ onBeforeMount(() => {
 });
 
 onUnmounted(() => {
-  if (refreshInterval) {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 });
 

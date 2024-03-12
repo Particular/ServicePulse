@@ -17,7 +17,7 @@ import { TYPE } from "vue-toastification";
 import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
 import Message from "@/resources/Message";
 
-let refreshInterval: ReturnType<typeof setInterval>;
+let refreshInterval: number | undefined;
 let pollingFaster = false;
 const panel = ref<number>(1);
 const route = useRoute();
@@ -344,14 +344,14 @@ function confirmEditAndRetry() {
 function startRefreshInterval() {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     loadFailedMessage();
   }, 5000);
 }
 
 function stopRefreshInterval() {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 }
 
@@ -362,7 +362,7 @@ function isRetryOrArchiveOperationInProgress() {
 function changeRefreshInterval(milliseconds: number) {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at the default interval of 5 seconds and there is a retry, delete, or restore in progress, then change the polling interval
     if (!pollingFaster && isRetryOrArchiveOperationInProgress()) {
       changeRefreshInterval(milliseconds);
