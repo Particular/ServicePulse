@@ -2,19 +2,19 @@
 import { onMounted, ref } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
-import MessageGroupList from "../failedmessages/MessageGroupList.vue";
+import MessageGroupList, { IMessageGroupList } from "../failedmessages/MessageGroupList.vue";
 import OrderBy, { IOrderBy } from "./OrderBy.vue";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import GroupOperation from "@/resources/GroupOperation";
 
 const selectedClassifier = ref<string>("");
-const classifiers = ref([]);
-const messageGroupList = ref();
+const classifiers = ref<string[]>([]);
+const messageGroupList = ref<IMessageGroupList>();
 const orderBy = ref<IOrderBy>();
 const sortMethod = ref<(firstElement: GroupOperation, secondElement: GroupOperation) => number>();
 
@@ -22,7 +22,7 @@ function sortGroups(sort: SortOptions) {
   sortMethod.value = sort.sort ?? orderBy.value?.getSortFunction(sort.selector, SortDirection.Ascending);
 
   // force a re-render of the messagegroup list
-  messageGroupList.value.loadFailedMessageGroups();
+  messageGroupList.value?.loadFailedMessageGroups();
 }
 
 const sortOptions: SortOptions[] = [
@@ -54,8 +54,7 @@ const sortOptions: SortOptions[] = [
 ];
 
 async function getGroupingClassifiers() {
-  const response = await useFetchFromServiceControl("recoverability/classifiers");
-  const data = await response.json();
+  const [, data] = await useTypedFetchFromServiceControl<string[]>("recoverability/classifiers");
   classifiers.value = data;
 }
 
@@ -67,7 +66,7 @@ function saveDefaultGroupingClassifier(classifier: string) {
 function classifierChanged(classifier: string) {
   selectedClassifier.value = classifier;
   saveDefaultGroupingClassifier(classifier);
-  messageGroupList.value.loadFailedMessageGroups(classifier);
+  messageGroupList.value?.loadFailedMessageGroups(classifier);
 }
 
 function loadDefaultGroupingClassifier() {
@@ -90,7 +89,7 @@ onMounted(async () => {
   }
 
   selectedClassifier.value = savedClassifier;
-  messageGroupList.value.loadFailedMessageGroups(savedClassifier);
+  messageGroupList.value?.loadFailedMessageGroups(savedClassifier);
 });
 </script>
 

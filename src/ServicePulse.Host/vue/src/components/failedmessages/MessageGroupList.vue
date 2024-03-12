@@ -99,7 +99,7 @@ function initializeGroupState(group: GroupOperation, index: number): ExtendedGro
   };
 }
 
-async function loadFailedMessageGroups(groupBy: string | null = null) {
+async function loadFailedMessageGroups(groupBy?: string) {
   loadingData.value = true;
 
   if (groupBy) {
@@ -330,7 +330,12 @@ onMounted(() => {
   changeRefreshInterval(5000);
 });
 
-defineExpose({
+export interface IMessageGroupList {
+  loadFailedMessageGroups(groupBy?: string): Promise<void>;
+  clearInMemoryData(): void;
+}
+
+defineExpose<IMessageGroupList>({
   loadFailedMessageGroups,
   clearInMemoryData,
 });
