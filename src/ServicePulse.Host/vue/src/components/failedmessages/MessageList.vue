@@ -9,6 +9,7 @@ export interface IMessageList {
   getSelectedMessages(): ExtendedFailedMessage[];
   selectAll(): void;
   deselectAll(): void;
+  resolveAll(): void;
   isAnythingSelected(): ExtendedFailedMessage | undefined;
   isAnythingDisplayed(): boolean;
   numberDisplayed(): number;
@@ -17,10 +18,13 @@ export interface IMessageList {
 let lastLabelClickedIndex: number | undefined = undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
-const props = defineProps<{
-  messages: ExtendedFailedMessage[];
-  showRequestRetry: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    messages: ExtendedFailedMessage[];
+    showRequestRetry?: boolean;
+  }>(),
+  { showRequestRetry: false }
+);
 
 function getSelectedMessages() {
   return props.messages.filter((m) => m.selected);
@@ -32,6 +36,10 @@ function selectAll() {
 
 function deselectAll() {
   props.messages.forEach((m) => (m.selected = false));
+}
+
+function resolveAll() {
+  props.messages.forEach((m) => (m.resolved = true));
 }
 
 function isAnythingSelected() {
@@ -76,6 +84,7 @@ defineExpose<IMessageList>({
   getSelectedMessages,
   selectAll,
   deselectAll,
+  resolveAll,
   isAnythingSelected,
   isAnythingDisplayed,
   numberDisplayed,

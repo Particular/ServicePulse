@@ -295,7 +295,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" :showRequestRetry="true" @retry-requested="retryRequested" ref="messageList"></MessageList>
+            <MessageList :messages="messages" :show-request-retry="true" @retry-requested="retryRequested" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row">

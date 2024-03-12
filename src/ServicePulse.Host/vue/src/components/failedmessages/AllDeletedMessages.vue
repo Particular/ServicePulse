@@ -256,7 +256,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" :showRequestRetry="false" ref="messageList"></MessageList>
+            <MessageList :messages="messages" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row" v-if="messages.length > 0">
