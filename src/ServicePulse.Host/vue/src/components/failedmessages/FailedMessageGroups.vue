@@ -16,7 +16,7 @@ const selectedClassifier = ref<string>("");
 const classifiers = ref<string[]>([]);
 const messageGroupList = ref<IMessageGroupList>();
 const orderBy = ref<IOrderBy>();
-const sortMethod = ref<(firstElement: GroupOperation, secondElement: GroupOperation) => number>();
+const sortMethod = ref<SortOptions["sort"]>();
 
 function sortGroups(sort: SortOptions) {
   sortMethod.value = sort.sort ?? orderBy.value?.getSortFunction(sort.selector, SortDirection.Ascending);
