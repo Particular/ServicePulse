@@ -30,6 +30,7 @@ const showCantRetryAll = ref(false);
 const showRetryAllConfirm = ref(false);
 const pageNumber = ref(1);
 const totalCount = ref(0);
+const isInitialLoad = ref(true);
 const sortOptions = [
   {
     description: "Time of failure",
@@ -200,10 +201,10 @@ function retryAllClicked() {
   }
 }
 
-function sortGroups(sort, isInitialLoad) {
+function sortGroups(sort) {
   sortMethod = sort;
 
-  if (!isInitialLoad) {
+  if (!isInitialLoad.value) {
     loadPendingRetryMessages();
   }
 }
@@ -236,6 +237,8 @@ onMounted(() => {
   refreshInterval = setInterval(() => {
     loadPendingRetryMessages();
   }, 5000);
+
+  isInitialLoad.value = false;
 });
 </script>
 
