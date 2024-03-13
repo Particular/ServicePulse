@@ -28,11 +28,12 @@ const groupName = ref("");
 const pageNumber = ref(1);
 const totalCount = ref(0);
 const cookies = useCookies().cookies;
-const selectedPeriod = ref("Deleted in the last 7 days");
+const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"] as const;
+type PeriodOption = (typeof periodOptions)[number];
+const selectedPeriod = ref<PeriodOption>("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
 const messageList = ref<IMessageList | undefined>();
 const messages = ref<ExtendedFailedMessage[]>([]);
-const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
 watch(pageNumber, () => loadMessages());
 
@@ -154,7 +155,7 @@ async function restoreSelectedMessages() {
   messageList.value?.deselectAll();
 }
 
-function periodChanged(period: string) {
+function periodChanged(period: PeriodOption) {
   selectedPeriod.value = period;
   cookies.set("all_deleted_messages_period", period);
 
@@ -206,9 +207,9 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  let cookiePeriod = cookies.get("all_deleted_messages_period");
+  let cookiePeriod = cookies.get("all_deleted_messages_period") as PeriodOption;
   if (!cookiePeriod) {
-    cookiePeriod = periodOptions[3]; //default is last 7 days
+    cookiePeriod = periodOptions[periodOptions.length - 1]; //default is last 7 days
   }
   selectedPeriod.value = cookiePeriod;
   loadMessages();

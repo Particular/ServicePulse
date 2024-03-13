@@ -15,7 +15,7 @@ export interface IMessageList {
   numberDisplayed(): number;
 }
 
-let lastLabelClickedIndex: number | undefined = undefined;
+let lastLabelClickedIndex: number | undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
 const props = withDefaults(
@@ -56,7 +56,7 @@ function numberDisplayed() {
 
 function labelClicked($event: MouseEvent, index: number) {
   //TODO: this functionality isn't consistent on including start/end items
-  if ($event.shiftKey && typeof lastLabelClickedIndex !== "undefined") {
+  if ($event.shiftKey && lastLabelClickedIndex != null) {
     // toggle selection from lastLabel until current index
     const start = (index < lastLabelClickedIndex ? index : lastLabelClickedIndex) + 1;
     const end = (index < lastLabelClickedIndex ? lastLabelClickedIndex : index) + 1;

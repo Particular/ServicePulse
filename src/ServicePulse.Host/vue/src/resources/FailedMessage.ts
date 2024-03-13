@@ -30,10 +30,8 @@ export interface ExtendedFailedMessage extends FailedMessage {
   retried: boolean;
   archiving: boolean;
   restoring: boolean;
-  notFound: boolean;
   archived: boolean;
   resolved: boolean;
-  error: boolean;
   headersNotFound: boolean;
   messageBodyNotFound: boolean;
   bodyUnavailable: boolean;
@@ -43,6 +41,15 @@ export interface ExtendedFailedMessage extends FailedMessage {
   isEditAndRetryEnabled: boolean;
   redirect: boolean;
   submittedForRetrial: boolean;
+}
+
+export interface FailedMessageError {
+  notFound: boolean;
+  error: boolean;
+}
+
+export function isError(obj: ExtendedFailedMessage | FailedMessageError): obj is FailedMessageError {
+  return (obj as FailedMessageError).error !== undefined || (obj as FailedMessageError).notFound !== undefined;
 }
 
 export interface ExceptionDetails {
