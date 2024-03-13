@@ -54,10 +54,8 @@ const selectedClassifier = ref<string | null>(null);
 const classifiers = ref<string[]>([]);
 
 async function getGroupingClassifiers() {
-  const [response, data] = await useTypedFetchFromServiceControl<string[]>("recoverability/classifiers");
-  if (response.ok) {
-    classifiers.value = data;
-  }
+  const [, data] = await useTypedFetchFromServiceControl<string[]>("recoverability/classifiers");
+  classifiers.value = data;
 }
 
 function saveDefaultGroupingClassifier(classifier: string) {
