@@ -353,7 +353,7 @@ defineExpose<IMessageGroupList>({
       <div class="col-sm-12 no-mobile-side-padding">
         <div v-if="exceptionGroups.length > 0">
           <div
-            class="row box box-group wf-{{group.workflow_state.status}} failed-message-group repeat-modify"
+            :class="`row box box-group wf-${group.workflow_state.status} failed-message-group repeat-modify`"
             v-for="(group, index) in exceptionGroups"
             :key="index"
             :disabled="group.count == 0"
@@ -635,9 +635,5 @@ defineExpose<IMessageGroupList>({
 
 .toolbar-menus > .msg-group-menu {
   margin: 0;
-}
-
-.failed-message-group {
-  cursor: pointer;
 }
 </style>

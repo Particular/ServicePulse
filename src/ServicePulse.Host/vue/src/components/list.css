@@ -1,4 +1,5 @@
-.lead {
+.lead,
+.box p .lead {
   word-wrap: break-word;
   color: #181919;
   font-size: 1em;

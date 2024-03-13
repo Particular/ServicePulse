@@ -314,7 +314,7 @@ onMounted(async () => {
                 <div class="col-sm-12 no-mobile-side-padding">
                   <div v-if="archiveGroups.length > 0">
                     <div
-                      class="row box box-group wf-{{group.workflow_state.status}} repeat-modify"
+                      :class="`row box box-group wf-${group.workflow_state.status} repeat-modify deleted-message-group`"
                       v-for="(group, index) in archiveGroups"
                       :key="index"
                       :disabled="group.count == 0"

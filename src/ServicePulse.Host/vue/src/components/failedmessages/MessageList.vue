@@ -188,12 +188,6 @@ div.failed-message-data {
   padding-bottom: 0;
 }
 
-.box p {
-  color: #777f7f;
-  font-size: 14px;
-  margin-bottom: 0;
-}
-
 .pa-endpoint {
   position: relative;
   top: 3px;
@@ -252,17 +246,29 @@ p.metadata button {
   top: 0;
 }
 
-.metadata > .btn-sm {
+.failed-message .btn-link,
+.failed-message-group .btn-link,
+.deleted-message-group .btn-link {
   color: #00a3c4;
   font-size: 14px;
   font-weight: bold;
   padding: 0 36px 10px 0;
   text-decoration: none;
+}
+
+.failed-message .metadata > .btn-link {
   display: none;
 }
 
-.failed-message:hover .metadata > .btn-sm {
+.failed-message:hover .metadata > .btn-link {
   display: block;
+}
+
+.failed-message .btn-link:hover,
+.failed-message-group .btn-link:hover,
+.deleted-message-group .btn-link:hover {
+  color: #23527c;
+  text-decoration: underline;
 }
 
 .label-info {
@@ -298,7 +304,15 @@ p.metadata button {
   border-radius: 0.25em;
 }
 
-.lead.break {
+.failed-message-data,
+.failed-message-group,
+.deleted-message-group {
   cursor: pointer;
+}
+
+.failed-message-data:hover .lead.break,
+.failed-message-group:hover .lead.break,
+.deleted-message-group:hover .lead.break {
+  text-decoration: underline;
 }
 </style>
