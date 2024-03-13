@@ -5,7 +5,7 @@
   "compilerOptions": {
     "moduleResolution": "Bundler",
     "composite": true,
-    "allowJs": true,
+    "allowJs": false,
     "alwaysStrict": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": false,
