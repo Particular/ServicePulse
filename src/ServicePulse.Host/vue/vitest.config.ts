@@ -1,7 +1,6 @@
 import { defineConfig } from "vitest/config";
 import viteConfig from "./vite.config.js";
 import path from "path";
-
 export default defineConfig({
   ...viteConfig,
   resolve: {

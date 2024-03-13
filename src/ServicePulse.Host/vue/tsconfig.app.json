@@ -3,7 +3,6 @@
   "include": ["env.d.ts", "src/**/*.js", "src/**/*.ts", "src/**/*.vue", "./test/**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
-    "moduleResolution": "Bundler",
     "composite": true,
     "allowJs": false,
     "alwaysStrict": true,
@@ -16,7 +15,6 @@
     },
     "strict": true,
     "sourceMap": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["node"]
+    "lib": ["ES2022", "DOM", "DOM.Iterable"]
   }
 }

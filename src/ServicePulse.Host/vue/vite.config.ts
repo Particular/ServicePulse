@@ -1,4 +1,4 @@
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import path from "path";
@@ -40,7 +40,7 @@ export default defineConfig({
         const cachebuster = Math.round(new Date().getTime() / 1000);
         return html.replace(/app.constants.js/, "app.constants.js?" + cachebuster);
       },
-    }, 
+    },
   ],
   resolve: {
     alias: [
@@ -67,10 +67,10 @@ export default defineConfig({
       external: ["./js/app.constants.js"],
     },
   },
-  server: { 
+  server: {
     headers: {
-      "content-security-policy": createCSPOverrides(port, defaultUrls),
-    },   
+      "Content-Security-Policy": createCSPOverrides(port, defaultUrls),
+    },
     host: true,
     port: port,
     fs: {
