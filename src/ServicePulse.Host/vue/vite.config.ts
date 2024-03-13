@@ -4,9 +4,6 @@ import vue from "@vitejs/plugin-vue";
 import path from "path";
 import checker from "vite-plugin-checker";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 function createCSPOverrides(hostPort: number, configuredDestinations: string[]) {
   const destinations = configuredDestinations.join(" ");
 
