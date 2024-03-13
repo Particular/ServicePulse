@@ -14,4 +14,5 @@ export default interface GroupOperation {
   operation_startTime?: string;
   operation_completion_time?: string;
   need_user_acknowledgement: boolean;
+  last_operation_completion_time?: string;
 }

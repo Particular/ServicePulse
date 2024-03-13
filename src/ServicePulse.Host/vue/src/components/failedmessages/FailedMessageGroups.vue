@@ -1,81 +1,71 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
-import MessageGroupList from "../failedmessages/MessageGroupList.vue";
-import OrderBy from "./OrderBy.vue";
+import MessageGroupList, { IMessageGroupList } from "../failedmessages/MessageGroupList.vue";
+import OrderBy, { IOrderBy } from "./OrderBy.vue";
+import SortOptions, { SortDirection } from "@/resources/SortOptions";
 
-const selectedClassifier = ref(null);
-const classifiers = ref([]);
-const messageGroupList = ref();
-const orderBy = ref();
-const sortMethod = ref(() => {});
+const selectedClassifier = ref<string>("");
+const classifiers = ref<string[]>([]);
+const messageGroupList = ref<IMessageGroupList>();
+const orderBy = ref<IOrderBy>();
+const sortMethod = ref<SortOptions["sort"]>();
 
-function sortGroups(sort) {
-  sortMethod.value = sort.sort ?? orderBy.value.getSortFunction(sort.selector, "asc");
+function sortGroups(sort: SortOptions) {
+  sortMethod.value = sort.sort ?? orderBy.value?.getSortFunction(sort.selector, SortDirection.Ascending);
 
   // force a re-render of the messagegroup list
-  messageGroupList.value.loadFailedMessageGroups();
+  messageGroupList.value?.loadFailedMessageGroups();
 }
 
-const sortOptions = [
+const sortOptions: SortOptions[] = [
   {
     description: "Name",
-    selector: function (group) {
-      return group.title;
-    },
+    selector: (group) => group.title,
     icon: "bi-sort-alpha-",
   },
   {
     description: "Number of messages",
-    selector: function (group) {
-      return group.count;
-    },
+    selector: (group) => group.count,
     icon: "bi-sort-numeric-",
   },
   {
     description: "First Failed Time",
-    selector: function (group) {
-      return group.first;
-    },
+    selector: (group) => group.first!,
     icon: "bi-sort-",
   },
   {
     description: "Last Failed Time",
-    selector: function (group) {
-      return group.last;
-    },
+    selector: (group) => group.last!,
     icon: "bi-sort-",
   },
   {
     description: "Last Retried Time",
-    selector: function (group) {
-      return group.last_operation_completion_time;
-    },
+    selector: (group) => group.last_operation_completion_time!,
     icon: "bi-sort-",
   },
 ];
 
 async function getGroupingClassifiers() {
-  const response = await useFetchFromServiceControl("recoverability/classifiers");
-  const data = await response.json();
+  const [, data] = await useTypedFetchFromServiceControl<string[]>("recoverability/classifiers");
   classifiers.value = data;
 }
 
-function saveDefaultGroupingClassifier(classifier) {
+function saveDefaultGroupingClassifier(classifier: string) {
   const cookies = useCookies().cookies;
   cookies.set("failed_groups_classification", classifier);
 }
 
-function classifierChanged(classifier) {
+function classifierChanged(classifier: string) {
   selectedClassifier.value = classifier;
   saveDefaultGroupingClassifier(classifier);
-  messageGroupList.value.loadFailedMessageGroups(classifier);
+  messageGroupList.value?.loadFailedMessageGroups(classifier);
 }
 
 function loadDefaultGroupingClassifier() {
@@ -98,7 +88,7 @@ onMounted(async () => {
   }
 
   selectedClassifier.value = savedClassifier;
-  messageGroupList.value.loadFailedMessageGroups(savedClassifier);
+  messageGroupList.value?.loadFailedMessageGroups(savedClassifier);
 });
 </script>
 
@@ -129,7 +119,7 @@ onMounted(async () => {
             <OrderBy @sort-updated="sortGroups" :sortOptions="sortOptions" ref="orderBy"></OrderBy>
           </div>
         </div>
-        <div class="box-container">
+        <div class="box-container" v-if="sortMethod">
           <div class="row">
             <div class="col-12">
               <div class="list-section">

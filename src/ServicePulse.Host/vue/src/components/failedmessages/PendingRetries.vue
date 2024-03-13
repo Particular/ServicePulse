@@ -1,27 +1,29 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import { useEndpoints } from "../../composables/serviceEndpoints";
-import { useFetchFromServiceControl, usePatchToServiceControl, usePostToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { usePatchToServiceControl, usePostToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { useCookies } from "vue3-cookies";
 import OrderBy from "./OrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import MessageList from "./MessageList.vue";
+import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
-import { FailedMessageStatus } from "@/resources/FailedMessage";
+import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
+import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import QueueAddress from "@/resources/QueueAddress";
+import { TYPE } from "vue-toastification";
 
-let refreshInterval = undefined;
-let sortMethod = undefined;
+let refreshInterval: number | undefined;
+let sortMethod: SortOptions | undefined;
 const perPage = 50;
 const cookies = useCookies().cookies;
 const selectedPeriod = ref("All Pending Retries");
-const endpoints = ref([]);
-const messageList = ref();
-const messages = ref([]);
+const endpoints = ref<string[]>([]);
+const messageList = ref<IMessageList>();
+const messages = ref<ExtendedFailedMessage[]>([]);
 const selectedQueue = ref("empty");
 const showConfirmRetry = ref(false);
 const showConfirmResolve = ref(false);
@@ -31,26 +33,17 @@ const showRetryAllConfirm = ref(false);
 const pageNumber = ref(1);
 const totalCount = ref(0);
 const isInitialLoad = ref(true);
-const sortOptions = [
+const sortOptions: SortOptions[] = [
   {
     description: "Time of failure",
-    selector: function (group) {
-      return group.title;
-    },
     icon: "bi-sort-",
   },
   {
     description: "Message Type",
-    selector: function (group) {
-      return group.count;
-    },
     icon: "bi-sort-alpha-",
   },
   {
     description: "Time of retry request",
-    selector: function (group) {
-      return group.count;
-    },
     icon: "bi-sort-",
   },
 ];
@@ -59,9 +52,8 @@ const periodOptions = ["All Pending Retries", "Retried in the last 2 Hours", "Re
 watch(pageNumber, () => loadPendingRetryMessages());
 
 async function loadEndpoints() {
-  const loader = new useEndpoints();
-  const queues = await loader.getQueueNames();
-  endpoints.value = queues.map((endpoint) => endpoint.physical_address);
+  const [, data] = await useTypedFetchFromServiceControl<QueueAddress[]>("errors/queues/addresses");
+  endpoints.value = data.map((endpoint) => endpoint.physical_address);
 }
 
 function clearSelectedQueue() {
@@ -90,24 +82,21 @@ function loadPendingRetryMessages() {
       break;
   }
 
-  return loadPagedPendingRetryMessages(pageNumber.value, sortMethod.description.replaceAll(" ", "_").toLowerCase(), sortMethod.dir, selectedQueue.value, startDate.toISOString(), endDate.toISOString());
+  return loadPagedPendingRetryMessages(pageNumber.value, selectedQueue.value, startDate, endDate, sortMethod?.description.replaceAll(" ", "_").toLowerCase(), sortMethod?.dir);
 }
 
-async function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhrase, startDate, endDate) {
-  if (typeof sortBy === "undefined") sortBy = "time_of_failure";
-  if (typeof direction === "undefined") direction = "desc";
-  if (typeof page === "undefined") page = 1;
-  if (typeof searchPhrase === "undefined" || searchPhrase === "empty") searchPhrase = "";
-  if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
-  if (typeof endDate === "undefined") endDate = new Date().toISOString();
+async function loadPagedPendingRetryMessages(page: number, searchPhrase: string, startDate: Date, endDate: Date, sortBy?: string, direction?: SortDirection) {
+  sortBy ??= "time_of_failure";
+  direction ??= SortDirection.Descending;
+  if (searchPhrase === "empty") searchPhrase = "";
 
   try {
-    const response = await useFetchFromServiceControl(`errors?status=${FailedMessageStatus.RetryIssued}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate}...${endDate}`);
-    totalCount.value = parseInt(response.headers.get("Total-Count"));
+    const [response, data] = await useTypedFetchFromServiceControl<ExtendedFailedMessage[]>(
+      `errors?status=${FailedMessageStatus.RetryIssued}&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&queueaddress=${searchPhrase}&modified=${startDate.toISOString()}...${endDate.toISOString()}`
+    );
+    totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
 
-    const data = await response.json();
-
-    messages.value.forEach((previousMessage) => {
+    messages.value.forEach((previousMessage: ExtendedFailedMessage) => {
       const receivedMessage = data.find((m) => m.id === previousMessage.id);
       if (receivedMessage) {
         if (previousMessage.last_modified === receivedMessage.last_modified) {
@@ -130,60 +119,60 @@ async function loadPagedPendingRetryMessages(page, sortBy, direction, searchPhra
 }
 
 function numberDisplayed() {
-  return messageList?.value?.numberDisplayed();
+  return messageList.value?.numberDisplayed();
 }
 
 function isAnythingDisplayed() {
-  return messageList?.value?.isAnythingDisplayed();
+  return messageList.value?.isAnythingDisplayed();
 }
 
 function isAnythingSelected() {
-  return messageList?.value?.isAnythingSelected();
+  return messageList.value?.isAnythingSelected();
 }
 
 function numberSelected() {
-  return messageList?.value?.getSelectedMessages()?.length ?? 0;
+  return messageList.value?.getSelectedMessages()?.length ?? 0;
 }
 
 async function retrySelectedMessages() {
-  const selectedMessages = messageList.value.getSelectedMessages();
+  const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
-  useShowToast("info", "Info", "Selected messages were submitted for retry...");
+  useShowToast(TYPE.INFO, "Info", "Selected messages were submitted for retry...");
   await usePostToServiceControl(
     "pendingretries/retry",
     selectedMessages.map((m) => m.id)
   );
 
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.submittedForRetrial = true));
 }
 
 async function resolveSelectedMessages() {
-  const selectedMessages = messageList.value.getSelectedMessages();
+  const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
 
-  useShowToast("info", "Info", "Selected messages were marked as resolved.");
+  useShowToast(TYPE.INFO, "Info", "Selected messages were marked as resolved.");
   await usePatchToServiceControl("pendingretries/resolve", { uniquemessageids: selectedMessages.map((m) => m.id) });
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
   selectedMessages.forEach((m) => (m.resolved = true));
 }
 
 async function resolveAllMessages() {
-  useShowToast("info", "Info", "All filtered messages were marked as resolved.");
+  useShowToast(TYPE.INFO, "Info", "All filtered messages were marked as resolved.");
   await usePatchToServiceControl("pendingretries/resolve", { from: new Date(0).toISOString(), to: new Date().toISOString() });
-  messageList.value.deselectAll();
-  messageList.value.forEach((m) => (m.resolved = true));
+  messageList.value?.deselectAll();
+  messageList.value?.resolveAll();
 }
 
 async function retryAllMessages() {
   let url = "pendingretries/retry";
-  const data = {};
+  const data: { from: string; to: string; queueaddress?: string } = {
+    from: new Date(0).toISOString(),
+    to: new Date(0).toISOString(),
+  };
   if (selectedQueue.value !== "empty") {
     url = "pendingretries/queues/retry";
     data.queueaddress = selectedQueue.value;
   }
-
-  data.from = new Date(0).toISOString();
-  data.to = new Date().toISOString();
 
   await usePostToServiceControl(url, data);
   messages.value.forEach((message) => {
@@ -201,7 +190,7 @@ function retryAllClicked() {
   }
 }
 
-function sortGroups(sort) {
+function sortGroups(sort: SortOptions) {
   sortMethod = sort;
 
   if (!isInitialLoad.value) {
@@ -209,7 +198,7 @@ function sortGroups(sort) {
   }
 }
 
-function periodChanged(period) {
+function periodChanged(period: string) {
   selectedPeriod.value = period;
   cookies.set("pending_retries_period", period);
 
@@ -217,8 +206,8 @@ function periodChanged(period) {
 }
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 });
 
@@ -234,7 +223,7 @@ onMounted(() => {
 
   loadPendingRetryMessages();
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     loadPendingRetryMessages();
   }, 5000);
 
@@ -377,6 +366,8 @@ onMounted(() => {
 </template>
 
 <style>
+@import "../list.css";
+
 .input-group-text {
   margin-bottom: 0;
 }

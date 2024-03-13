@@ -1,15 +1,14 @@
-import FailedMessage from "./FailedMessage";
-import FailureGroup from "./FailureGroup";
+import GroupOperation from "./GroupOperation";
 
-export type GroupType = FailedMessage | FailureGroup;
 export type GroupPropertyType = string | number | Date;
 
 export default interface SortOptions {
   description: string;
-  dir: string;
-  selector: (group: GroupType) => GroupPropertyType;
   icon: string;
-  sort: (firstElement: GroupType, secondElement: GroupType) => number;
+  dir?: SortDirection;
+  //used for client-side sorting only
+  selector?: (group: GroupOperation) => GroupPropertyType;
+  sort?: (firstElement: GroupOperation, secondElement: GroupOperation) => number;
 }
 
 export enum SortDirection {

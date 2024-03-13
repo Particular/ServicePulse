@@ -8,7 +8,7 @@ import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import MessageList from "./MessageList.vue";
+import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
 import moment from "moment";
@@ -18,7 +18,7 @@ import { TYPE } from "vue-toastification";
 import FailureGroup from "@/resources/FailureGroup";
 
 let pollingFaster = false;
-let refreshInterval: ReturnType<typeof setInterval>;
+let refreshInterval: number | undefined;
 const perPage = 50;
 const configuration = ref<Configuration | null>(null);
 
@@ -30,7 +30,7 @@ const totalCount = ref(0);
 const cookies = useCookies().cookies;
 const selectedPeriod = ref("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
-const messageList = ref();
+const messageList = ref<IMessageList | undefined>();
 const messages = ref<ExtendedFailedMessage[]>([]);
 const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
 
@@ -126,24 +126,24 @@ function updateMessagesScheduledDeletionDate(messages: ExtendedFailedMessage[]) 
 }
 
 function numberSelected() {
-  return messageList?.value?.getSelectedMessages()?.length ?? 0;
+  return messageList.value?.getSelectedMessages()?.length ?? 0;
 }
 
 function selectAll() {
-  messageList.value.selectAll();
+  messageList.value?.selectAll();
 }
 
 function deselectAll() {
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
 }
 
 function isAnythingSelected() {
-  return messageList?.value?.isAnythingSelected();
+  return messageList.value?.isAnythingSelected();
 }
 
 async function restoreSelectedMessages() {
   changeRefreshInterval(1000);
-  const selectedMessages = messageList.value.getSelectedMessages() as ExtendedFailedMessage[]; //TODO: remove this cast once messageList has been converted to typescript
+  const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
   useShowToast(TYPE.INFO, "Info", `restoring ${selectedMessages.length} messages...`);
 
@@ -151,7 +151,7 @@ async function restoreSelectedMessages() {
     "errors/unarchive",
     selectedMessages.map((m) => m.id)
   );
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
 }
 
 function periodChanged(period: string) {
@@ -171,11 +171,11 @@ function isRestoreInProgress() {
 }
 
 function changeRefreshInterval(milliseconds: number) {
-  if (refreshInterval) {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRestoreInProgress()) {
       changeRefreshInterval(1000);
@@ -200,8 +200,8 @@ onBeforeMount(() => {
 });
 
 onUnmounted(() => {
-  if (refreshInterval) {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 });
 
@@ -256,7 +256,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" :showRequestRetry="false" ref="messageList"></MessageList>
+            <MessageList :messages="messages" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row" v-if="messages.length > 0">

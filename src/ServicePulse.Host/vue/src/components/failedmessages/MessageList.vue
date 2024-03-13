@@ -5,13 +5,26 @@ import NoData from "../NoData.vue";
 import routeLinks from "@/router/routeLinks";
 import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
 
+export interface IMessageList {
+  getSelectedMessages(): ExtendedFailedMessage[];
+  selectAll(): void;
+  deselectAll(): void;
+  resolveAll(): void;
+  isAnythingSelected(): ExtendedFailedMessage | undefined;
+  isAnythingDisplayed(): boolean;
+  numberDisplayed(): number;
+}
+
 let lastLabelClickedIndex: number | undefined = undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
-const props = defineProps<{
-  messages: ExtendedFailedMessage[];
-  showRequestRetry: boolean;
-}>();
+const props = withDefaults(
+  defineProps<{
+    messages: ExtendedFailedMessage[];
+    showRequestRetry?: boolean;
+  }>(),
+  { showRequestRetry: false }
+);
 
 function getSelectedMessages() {
   return props.messages.filter((m) => m.selected);
@@ -23,6 +36,10 @@ function selectAll() {
 
 function deselectAll() {
   props.messages.forEach((m) => (m.selected = false));
+}
+
+function resolveAll() {
+  props.messages.forEach((m) => (m.resolved = true));
 }
 
 function isAnythingSelected() {
@@ -63,10 +80,11 @@ function navigateToMessage(messageId: string) {
   router.push(routeLinks.failedMessage.message.link(messageId));
 }
 
-defineExpose({
+defineExpose<IMessageList>({
   getSelectedMessages,
   selectAll,
   deselectAll,
+  resolveAll,
   isAnythingSelected,
   isAnythingDisplayed,
   numberDisplayed,
