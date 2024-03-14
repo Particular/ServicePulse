@@ -50,8 +50,14 @@ export async function useAcknowledgeArchiveGroup(groupId: string) {
   return evaluateResponse(await useDeleteFromServiceControl(`recoverability/unacknowledgedgroups/${groupId}`));
 }
 
-async function evaluateResponse(response: Response) {
-  return {
-    message: response.ok ? "success" : `error: ${response.statusText}`,
-  };
+function evaluateResponse(response: Response): SuccessResponse | ErrorResponse {
+  return response.ok ? ({} as SuccessResponse) : ({ message: response.statusText } as ErrorResponse);
+}
+
+export interface SuccessResponse {}
+export interface ErrorResponse {
+  message: string;
+}
+export function isError(obj: SuccessResponse | ErrorResponse): obj is ErrorResponse {
+  return (obj as ErrorResponse).message !== undefined;
 }

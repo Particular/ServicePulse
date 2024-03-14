@@ -1,11 +1,11 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState, stats } from "../../composables/serviceServiceControl";
 import { useShowToast } from "../../composables/toast";
-import { useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { isError, useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup";
+import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
@@ -13,40 +13,61 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import routeLinks from "@/router/routeLinks";
+import FailureGroupView from "@/resources/FailureGroupView";
+import { TYPE } from "vue-toastification";
+
+const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"] as const;
+type RestoreOperationStatus = (typeof statusesForRestoreOperation)[number];
+const otherStatuses = ["none", "working"] as const;
+type Status = RestoreOperationStatus | (typeof otherStatuses)[number];
+interface WorkflowState {
+  status: Status;
+  total?: number;
+  failed?: boolean;
+  message?: string;
+}
+
+interface ExtendedFailureGroupView extends FailureGroupView {
+  index: number;
+  need_user_acknowledgement?: boolean;
+  workflow_state: WorkflowState;
+  operation_remaining_count?: number;
+  hover2?: boolean;
+  hover3?: boolean;
+  operation_start_time?: string;
+  last_operation_completion_time?: string;
+}
 
 let pollingFaster = false;
 const messageGroupList = ref();
-const archiveGroups = ref([]);
-const undismissedRestoreGroups = ref([]);
+const archiveGroups = ref<ExtendedFailureGroupView[]>([]);
+const undismissedRestoreGroups = ref<ExtendedFailureGroupView[]>([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
-const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
-let refreshInterval = undefined;
+const emit = defineEmits<{
+  InitialLoadComplete: [];
+}>();
+let refreshInterval: number | undefined = undefined;
 const route = useRoute();
 const router = useRouter();
 const showRestoreGroupModal = ref(false);
-const selectedGroup = ref({
-  groupid: "",
-  messagecount: "",
-  comment: "",
-});
+const selectedGroup = ref<ExtendedFailureGroupView>();
 
-const groupRestoreSuccessful = ref(null);
-const selectedClassifier = ref(null);
-const classifiers = ref([]);
+const groupRestoreSuccessful = ref<boolean | null>(null);
+const selectedClassifier = ref<string | null>(null);
+const classifiers = ref<string[]>([]);
 
 async function getGroupingClassifiers() {
-  const response = await useFetchFromServiceControl("recoverability/classifiers");
-  const data = await response.json();
+  const [, data] = await useTypedFetchFromServiceControl<string[]>("recoverability/classifiers");
   classifiers.value = data;
 }
 
-function saveDefaultGroupingClassifier(classifier) {
+function saveDefaultGroupingClassifier(classifier: string) {
   const cookies = useCookies().cookies;
   cookies.set("archived_groups_classification", classifier);
 }
 
-function classifierChanged(classifier) {
+function classifierChanged(classifier: string) {
   saveDefaultGroupingClassifier(classifier);
 
   selectedClassifier.value = classifier;
@@ -54,7 +75,7 @@ function classifierChanged(classifier) {
   messageGroupList.value = loadArchivedMessageGroups(classifier);
 }
 
-async function getArchiveGroups(classifier) {
+async function getArchiveGroups(classifier: string) {
   const result = await useGetArchiveGroups(classifier);
   if (result.length === 0 && undismissedRestoreGroups.value.length > 0) {
     undismissedRestoreGroups.value.forEach((deletedGroup) => {
@@ -62,18 +83,6 @@ async function getArchiveGroups(classifier) {
       deletedGroup.workflow_state.status = "restorecompleted";
     });
   }
-
-  let maxIndex = archiveGroups.value.reduce((currentMax, currentGroup) => Math.max(currentMax, currentGroup.index), 0);
-
-  result.forEach((serverGroup) => {
-    const previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id === serverGroup.id);
-
-    if (previousGroup) {
-      serverGroup.index = previousGroup.index;
-    } else {
-      serverGroup.index = ++maxIndex;
-    }
-  });
 
   undismissedRestoreGroups.value.forEach((deletedGroup) => {
     if (!result.find((group) => group.id === deletedGroup.id)) {
@@ -83,27 +92,38 @@ async function getArchiveGroups(classifier) {
   });
 
   // need a map in some ui state for controlling animations
-  archiveGroups.value = result
+  const mappedResults = result
     .filter((group) => !undismissedRestoreGroups.value.find((deletedGroup) => deletedGroup.id === group.id))
     .map(initializeGroupState)
-    .concat(undismissedRestoreGroups.value)
-    .sort((group1, group2) => {
-      return group1.index - group2.index;
-    });
+    .concat(undismissedRestoreGroups.value);
+
+  let maxIndex = archiveGroups.value.reduce((currentMax, currentGroup) => Math.max(currentMax, currentGroup.index), 0);
+
+  mappedResults.forEach((serverGroup) => {
+    const previousGroup = archiveGroups.value.find((oldGroup) => oldGroup.id === serverGroup.id);
+
+    if (previousGroup) {
+      serverGroup.index = previousGroup.index;
+    } else {
+      serverGroup.index = ++maxIndex;
+    }
+  });
+
+  archiveGroups.value = mappedResults.sort((group1, group2) => {
+    return group1.index - group2.index;
+  });
 
   if (archiveGroups.value.length !== stats.number_of_archive_groups) {
     stats.number_of_archive_groups = archiveGroups.value.length;
   }
 }
 
-function initializeGroupState(group) {
-  let operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
-  if (operationStatus === "preparing" && group.operation_progress === 1) {
-    operationStatus = "queued";
-  }
-
-  group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
-  return group;
+function initializeGroupState(group: FailureGroupView): ExtendedFailureGroupView {
+  return {
+    index: 0,
+    workflow_state: createWorkflowState("none"),
+    ...group,
+  };
 }
 
 function loadDefaultGroupingClassifier() {
@@ -117,13 +137,13 @@ function loadDefaultGroupingClassifier() {
   return null;
 }
 
-async function loadArchivedMessageGroups(groupBy) {
+async function loadArchivedMessageGroups(groupBy: string | null = null) {
   loadingData.value = true;
   if (!initialLoadComplete.value || !groupBy) {
     groupBy = loadDefaultGroupingClassifier();
   }
 
-  await getArchiveGroups(groupBy ?? route.query.deletedGroupBy);
+  await getArchiveGroups(groupBy ?? (route.query.deletedGroupBy as string));
   loadingData.value = false;
   initialLoadComplete.value = true;
 
@@ -131,51 +151,48 @@ async function loadArchivedMessageGroups(groupBy) {
 }
 
 //create workflow state
-function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
+function createWorkflowState(optionalStatus?: Status, optionalTotal?: number, optionalFailed?: boolean): WorkflowState {
   if (optionalTotal && optionalTotal <= 1) {
     optionalTotal = optionalTotal * 100;
   }
 
   return {
-    status: optionalStatus || "working",
-    total: optionalTotal || 0,
-    failed: optionalFailed || false,
+    status: optionalStatus ?? "working",
+    total: optionalTotal ?? 0,
+    failed: optionalFailed ?? false,
   };
 }
 
 //Restore operation
-function showRestoreGroupDialog(group) {
+function showRestoreGroupDialog(group: ExtendedFailureGroupView) {
   groupRestoreSuccessful.value = null;
   selectedGroup.value = group;
   showRestoreGroupModal.value = true;
 }
 
 async function restoreGroup() {
-  // We're starting a restore, poll more frequently
-  changeRefreshInterval(1000);
-
-  selectedGroup.value = archiveGroups.value.find((group) => group.id === selectedGroup.value.id);
-
-  undismissedRestoreGroups.value.push(selectedGroup.value);
-
   const group = selectedGroup.value;
-  group.workflow_state = { status: "restorestarted", message: "Restore request initiated..." };
-  group.operation_start_time = new Date().toUTCString();
+  if (group) {
+    // We're starting a restore, poll more frequently
+    changeRefreshInterval(1000);
+    undismissedRestoreGroups.value.push(group);
 
-  const result = await useRestoreGroup(group.id);
-  if (result.message === "success") {
-    groupRestoreSuccessful.value = true;
-    useShowToast("info", "Info", "Group restore started...");
-  } else {
-    groupRestoreSuccessful.value = false;
-    useShowToast("error", "Error", "Failed to restore the group:" + result.message);
+    group.workflow_state = { status: "restorestarted", message: "Restore request initiated..." };
+    group.operation_start_time = new Date().toUTCString();
+
+    const result = await useRestoreGroup(group.id);
+    if (isError(result)) {
+      groupRestoreSuccessful.value = false;
+      useShowToast(TYPE.ERROR, "Error", `Failed to restore the group: ${result.message}`);
+    } else {
+      groupRestoreSuccessful.value = true;
+      useShowToast(TYPE.INFO, "Info", "Group restore started...");
+    }
   }
 }
 
-const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"];
-
 //getClasses
-const getClasses = function (stepStatus, currentStatus, statusArray) {
+const getClasses = function (stepStatus: Status, currentStatus: Status, statusArray: readonly Status[]) {
   const indexOfStep = statusArray.indexOf(stepStatus);
   const indexOfCurrent = statusArray.indexOf(currentStatus);
   if (indexOfStep > indexOfCurrent) {
@@ -187,11 +204,11 @@ const getClasses = function (stepStatus, currentStatus, statusArray) {
   return "completed";
 };
 
-function getClassesForRestoreOperation(stepStatus, currentStatus) {
+function getClassesForRestoreOperation(stepStatus: Status, currentStatus: Status) {
   return getClasses(stepStatus, currentStatus, statusesForRestoreOperation);
 }
 
-const acknowledgeGroup = function (dismissedGroup) {
+const acknowledgeGroup = function (dismissedGroup: FailureGroupView) {
   undismissedRestoreGroups.value.splice(
     undismissedRestoreGroups.value.findIndex((group) => {
       return group.id === dismissedGroup.id;
@@ -205,26 +222,24 @@ const acknowledgeGroup = function (dismissedGroup) {
   );
 };
 
-function isBeingRestored(status) {
-  return statusesForRestoreOperation.includes(status);
+function isBeingRestored(status: Status) {
+  return (statusesForRestoreOperation as readonly Status[]).includes(status);
 }
 
-function navigateToGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push(routeLinks.failedMessage.deletedGroup.link(groupId));
-  }
+function navigateToGroup(groupId: string) {
+  router.push(routeLinks.failedMessage.deletedGroup.link(groupId));
 }
 
 function isRestoreInProgress() {
   return archiveGroups.value.some((group) => group.workflow_state.status !== "none" && group.workflow_state.status !== "restorecompleted");
 }
 
-function changeRefreshInterval(milliseconds) {
-  if (typeof refreshInterval !== "undefined") {
+function changeRefreshInterval(milliseconds: number) {
+  if (refreshInterval) {
     clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRestoreInProgress()) {
       changeRefreshInterval(1000);
@@ -240,7 +255,7 @@ function changeRefreshInterval(milliseconds) {
 }
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
+  if (refreshInterval) {
     clearInterval(refreshInterval);
   }
 });
@@ -299,13 +314,13 @@ onMounted(async () => {
                 <div class="col-sm-12 no-mobile-side-padding">
                   <div v-if="archiveGroups.length > 0">
                     <div
-                      class="row box box-group wf-{{group.workflow_state.status}} repeat-modify"
+                      :class="`row box box-group wf-${group.workflow_state.status} repeat-modify deleted-message-group`"
                       v-for="(group, index) in archiveGroups"
                       :key="index"
                       :disabled="group.count == 0"
                       @mouseenter="group.hover2 = true"
                       @mouseleave="group.hover2 = false"
-                      @click="navigateToGroup($event, group.id)"
+                      @click.prevent="navigateToGroup(group.id)"
                     >
                       <div class="col-sm-12 no-mobile-side-padding">
                         <div class="row">
@@ -317,7 +332,7 @@ onMounted(async () => {
                                   <span class="metadata">
                                     <i aria-hidden="true" class="fa fa-envelope"></i>
                                     {{ group.count }} message<span v-if="group.count > 1">s</span>
-                                    <span v-if="group.operation_remaining_count > 0"> (currently restoring {{ group.operation_remaining_count }} </span>
+                                    <span v-if="group.operation_remaining_count"> (currently restoring {{ group.operation_remaining_count }} </span>
                                   </span>
 
                                   <span class="metadata">
@@ -348,7 +363,7 @@ onMounted(async () => {
                                   @mouseenter="group.hover3 = true"
                                   @mouseleave="group.hover3 = false"
                                   v-if="archiveGroups.length > 0"
-                                  @click="showRestoreGroupDialog(group)"
+                                  @click.stop="showRestoreGroupDialog(group)"
                                 >
                                   <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Restore group
                                 </button>
@@ -366,7 +381,7 @@ onMounted(async () => {
                                       </li>
                                       <li v-if="group.workflow_state.status === 'restorecompleted'">
                                         <div class="retry-completed bulk-retry-progress-status">Restore request completed</div>
-                                        <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
+                                        <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click.stop="acknowledgeGroup(group)">Dismiss</button>
                                       </li>
                                     </ul>
                                     <div class="op-metadata">
@@ -405,7 +420,10 @@ onMounted(async () => {
     </template>
   </template>
 </template>
-<style>
+
+<style scoped>
+@import "../list.css";
+
 .fake-link i {
   padding-right: 0.2em;
 }

@@ -4,7 +4,7 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "composite": true,
-    "allowJs": true,
+    "allowJs": false,
     "alwaysStrict": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": false,

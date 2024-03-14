@@ -6,9 +6,10 @@ import { useShowToast } from "./toast";
 import { TYPE } from "vue-toastification";
 import type RootUrls from "@/resources/RootUrls";
 import type EndpointMonitoringStats from "@/resources/EndpointMonitoringStats";
-import type FailedMessageView from "@/resources/FailedMessageView";
+import type FailedMessage from "@/resources/FailedMessage";
 import type CustomCheck from "@/resources/CustomCheck";
 import type MonitoredEndpoint from "@/resources/MonitoredEndpoint";
+import { FailedMessageStatus } from "@/resources/FailedMessage";
 
 export const stats = reactive({
   active_endpoints: 0,
@@ -21,6 +22,7 @@ export const stats = reactive({
   number_of_pending_retries: 0,
   number_of_endpoints: 0,
   number_of_disconnected_endpoints: 0,
+  number_of_archive_groups: 0,
 });
 
 interface ConnectionState {
@@ -138,7 +140,7 @@ watch(monitoringConnectionFailure, (newValue, oldValue) => {
   }
 
   //NOTE to eliminate success msg showing everytime the screen is refreshed
-  if (newValue !== oldValue) {
+  if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
     if (newValue) {
       useShowToast(TYPE.ERROR, "Error", `Could not connect to the ServiceControl Monitoring service at ${monitoringUrl.value}. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>`);
     } else {
@@ -330,26 +332,20 @@ function getFailedHeartBeatsCount() {
 }
 
 function getFailedMessagesCount() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=unresolved"),
-    connectionState,
-    (response) => parseInt(response.headers.get("Total-Count") ?? ""),
-    0
-  );
+  return getErrorMessagesCount(FailedMessageStatus.Unresolved);
 }
 
 function getPendingRetriesCount() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=retryissued"),
-    connectionState,
-    (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
-    0
-  );
+  return getErrorMessagesCount(FailedMessageStatus.RetryIssued);
 }
 
 function getArchivedMessagesCount() {
+  return getErrorMessagesCount(FailedMessageStatus.Archived);
+}
+
+function getErrorMessagesCount(status: FailedMessageStatus) {
   return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<FailedMessageView>("errors?status=archived"),
+    () => useTypedFetchFromServiceControl<FailedMessage>(`errors?status=${status}`),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0

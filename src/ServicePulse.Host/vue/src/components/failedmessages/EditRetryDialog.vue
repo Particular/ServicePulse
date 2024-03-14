@@ -1,26 +1,39 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useRetryEditedMessage } from "../../composables/serviceFailedMessage";
 import MessageHeader from "./EditMessageHeader.vue";
+import { EditAndRetryConfig } from "@/resources/Configuration";
+import type Header from "@/resources/Header";
+import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 
-const emit = defineEmits(["cancel", "retried"]);
+interface HeaderWithEditing extends Header {
+  isLocked: boolean;
+  isSensitive: boolean;
+  isMarkedAsRemoved: boolean;
+  isChanged: boolean;
+}
 
-const settings = defineProps({
-  id: String,
-  message: Object,
-  configuration: Object,
-});
+const emit = defineEmits<{
+  cancel: [];
+  retried: [];
+}>();
+
+const props = defineProps<{
+  id: string;
+  message: ExtendedFailedMessage;
+  configuration: EditAndRetryConfig;
+}>();
 
 const panel = ref();
 const localMessage = ref();
-let origMessageBody = undefined;
+let origMessageBody: string;
 
 const showEditAndRetryConfirmation = ref(false);
 const showCancelConfirmation = ref(false);
 const showEditRetryGenericError = ref(false);
 
-const id = computed(() => settings.id);
-const messageBody = computed(() => settings.message.messageBody);
+const id = computed(() => props.id);
+const messageBody = computed(() => props.message.messageBody);
 
 watch(messageBody, (newValue) => {
   if (newValue !== origMessageBody) {
@@ -47,7 +60,7 @@ function confirmCancel() {
     return;
   }
 
-  if (localMessage.value.headers.some((header) => header.isChanged)) {
+  if (localMessage.value.headers.some((header: HeaderWithEditing) => header.isChanged)) {
     showCancelConfirmation.value = true;
     return;
   }
@@ -60,30 +73,26 @@ function resetBodyChanges() {
   localMessage.value.isBodyChanged = false;
 }
 
-function findHeadersByKey(key) {
-  return localMessage.value.headers.find((header) => header.key === key);
+function findHeadersByKey(key: string) {
+  return localMessage.value.headers.find((header: HeaderWithEditing) => header.key === key);
 }
 
 function getContentType() {
   const header = findHeadersByKey("NServiceBus.ContentType");
-  return header?.value;
+  return header.value;
 }
 
-function isContentTypeSupported(contentType) {
+function isContentTypeSupported(contentType: string) {
   return contentType === "application/json" || contentType === "text/xml";
 }
 
 function getMessageIntent() {
   const intent = findHeadersByKey("NServiceBus.MessageIntent");
-  return intent?.value;
+  return intent.value;
 }
 
 function removeHeadersMarkedAsRemoved() {
-  localMessage.value.headers.forEach((header, index, object) => {
-    if (header.isMarkedAsRemoved) {
-      object.splice(index, 1);
-    }
-  });
+  localMessage.value.headers = localMessage.value.headers.filter((header: HeaderWithEditing) => !header.isMarkedAsRemoved);
 }
 
 async function retryEditedMessage() {
@@ -91,7 +100,7 @@ async function retryEditedMessage() {
   try {
     await useRetryEditedMessage(id.value, localMessage);
     localMessage.value.retried = true;
-    return emit("retried", settings);
+    return emit("retried");
   } catch {
     showEditAndRetryConfirmation.value = false;
     showEditRetryGenericError.value = true;
@@ -99,8 +108,8 @@ async function retryEditedMessage() {
 }
 
 function initializeMessageBodyAndHeaders() {
-  origMessageBody = settings.message.messageBody;
-  localMessage.value = settings.message;
+  origMessageBody = props.message.messageBody;
+  localMessage.value = props.message;
   localMessage.value.isBodyEmpty = false;
   localMessage.value.isBodyChanged = false;
 
@@ -111,23 +120,25 @@ function initializeMessageBodyAndHeaders() {
   const messageIntent = getMessageIntent();
   localMessage.value.isEvent = messageIntent.value === "Publish";
 
-  settings.message.headers.forEach((header, index) => {
+  for (let index = 0; index < props.message.headers.length; index++) {
+    const header: HeaderWithEditing = props.message.headers[index] as HeaderWithEditing;
+
     header.isLocked = false;
     header.isSensitive = false;
     header.isMarkedAsRemoved = false;
     header.isChanged = false;
 
-    if (settings.configuration.locked_headers.includes(header.key)) {
+    if (props.configuration.locked_headers.includes(header.key)) {
       header.isLocked = true;
-    } else if (settings.configuration.sensitive_headers.includes(header.key)) {
+    } else if (props.configuration.sensitive_headers.includes(header.key)) {
       header.isSensitive = true;
     }
 
     localMessage.value.headers[index] = header;
-  });
+  }
 }
 
-function togglePanel(panelNum) {
+function togglePanel(panelNum: number) {
   panel.value = panelNum;
   return false;
 }
@@ -168,7 +179,7 @@ onMounted(() => {
                           altering the system behavior.
                         </div>
                       </div>
-                      <div class="row alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage.bodyUnavailable">
+                      <div class="row alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage?.bodyUnavailable">
                         <div class="col-sm-12">
                           <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ localMessage?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.
                         </div>
@@ -178,16 +189,16 @@ onMounted(() => {
                       </div>
                       <table class="table" v-if="panel === 1">
                         <tbody>
-                          <tr class="interactiveList" v-for="(header, index) in localMessage.headers" :key="index">
+                          <tr class="interactiveList" v-for="header in localMessage?.headers" :key="header.key">
                             <MessageHeader :header="header"></MessageHeader>
                           </tr>
                         </tbody>
                       </table>
-                      <div v-if="panel === 2 && !localMessage.bodyUnavailable" style="height: calc(100% - 260px)">
-                        <textarea class="form-control" :disabled="!localMessage.isContentTypeSupported" v-model="localMessage.messageBody"></textarea>
-                        <span class="empty-error" v-if="localMessage.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
-                        <span class="reset-body" v-if="localMessage.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
-                        <div class="alert alert-info" v-if="localMessage.panel === 2 && localMessage.bodyUnavailable">{{ localMessage.bodyUnavailable }}</div>
+                      <div v-if="panel === 2 && !localMessage?.bodyUnavailable" style="height: calc(100% - 260px)">
+                        <textarea class="form-control" :disabled="!localMessage?.isContentTypeSupported" v-model="localMessage.messageBody"></textarea>
+                        <span class="empty-error" v-if="localMessage?.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
+                        <span class="reset-body" v-if="localMessage?.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
+                        <div class="alert alert-info" v-if="localMessage?.panel === 2 && localMessage.bodyUnavailable">{{ localMessage.bodyUnavailable }}</div>
                       </div>
                     </div>
                   </div>

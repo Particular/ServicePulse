@@ -1,44 +1,65 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { stats } from "../../composables/serviceServiceControl";
 import { useShowToast } from "../../composables/toast";
-import { useAcknowledgeArchiveGroup, useArchiveExceptionGroup, useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
+import { isError, useAcknowledgeArchiveGroup, useArchiveExceptionGroup, useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import routeLinks from "@/router/routeLinks";
+import { TYPE } from "vue-toastification";
+import GroupOperation from "@/resources/GroupOperation";
 
-const emit = defineEmits(["InitialLoadComplete", "ExceptionGroupCountUpdated"]);
+interface WorkflowState {
+  status: string;
+  total?: number;
+  failed?: boolean;
+  message?: string;
+}
+
+interface ExtendedGroupOperation extends GroupOperation {
+  index: number;
+  hover2?: boolean;
+  hover3?: boolean;
+  workflow_state: WorkflowState;
+  operation_remaining_count?: number;
+  operation_start_time?: string;
+}
+
+const emit = defineEmits<{
+  InitialLoadComplete: [];
+  ExceptionGroupCountUpdated: [number];
+}>();
 
 let pollingFaster = false;
-let refreshInterval = undefined;
-const props = defineProps({
-  sortFunction: Function,
-});
+let refreshInterval: number | undefined = undefined;
+const props = defineProps<{
+  sortFunction: (a: GroupOperation, b: GroupOperation) => number;
+}>();
 const router = useRouter();
-let groupsWithNotesAdded = [];
-let savedGroupBy = null;
+let groupsWithNotesAdded: {
+  groupId: string;
+  comment: string;
+  alreadySaved?: boolean;
+}[] = [];
+let savedGroupBy: string | undefined = undefined;
 
-const selectedGroup = ref({
-  groupid: "",
-  messagecount: "",
-  comment: "",
-});
+const selectedGroup = ref<ExtendedGroupOperation>();
 
-const exceptionGroups = ref([]);
+const exceptionGroups = ref<ExtendedGroupOperation[]>([]);
 const loadingData = ref(true);
 const initialLoadComplete = ref(false);
 const showDeleteNoteModal = ref(false);
 const showEditNoteModal = ref(false);
 const showDeleteGroupModal = ref(false);
 const showRetryGroupModal = ref(false);
-const noteSaveSuccessful = ref(null);
-const groupDeleteSuccessful = ref(null);
-const groupRetrySuccessful = ref(null);
+const noteSaveSuccessful = ref<boolean | null>(null);
+const groupDeleteSuccessful = ref<boolean | null>(null);
+const groupRetrySuccessful = ref<boolean | null>(null);
 
-async function getExceptionGroups(classifier) {
+async function getExceptionGroups(classifier?: string) {
   const result = await useGetExceptionGroups(classifier);
   if (props.sortFunction) {
     result.sort(props.sortFunction);
@@ -48,38 +69,37 @@ async function getExceptionGroups(classifier) {
     const groupFromSC = result.find((group) => {
       return group.id === note.groupId;
     });
-    if (!groupFromSC.comment) {
+    if (groupFromSC && !groupFromSC.comment) {
       groupFromSC.comment = note.comment;
     } else {
       note.alreadySaved = true;
     }
   });
 
-  exceptionGroups.value = result;
-  if (result.length > 0) {
-    // need a map in some ui state for controlling animations
-    exceptionGroups.value = result.map(initializeGroupState);
+  // need a map in some ui state for controlling animations
+  exceptionGroups.value = result.map(initializeGroupState);
 
-    if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
-      stats.number_of_exception_groups = exceptionGroups.value.length;
-      emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
-    }
+  if (exceptionGroups.value.length !== stats.number_of_exception_groups) {
+    stats.number_of_exception_groups = exceptionGroups.value.length;
+    emit("ExceptionGroupCountUpdated", stats.number_of_exception_groups);
   }
 
   groupsWithNotesAdded = groupsWithNotesAdded.filter((note) => !note.alreadySaved);
 }
-function initializeGroupState(group, index) {
-  group.index = index;
 
+function initializeGroupState(group: GroupOperation, index: number): ExtendedGroupOperation {
   let operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
   if (operationStatus === "preparing" && group.operation_progress === 1) {
     operationStatus = "queued";
   }
-  group.workflow_state = createWorkflowState(operationStatus, group.operation_progress, group.operation_failed);
-  return group;
+  return {
+    ...group,
+    workflow_state: createWorkflowState(operationStatus, group.operation_progress, group.operation_failed),
+    index,
+  };
 }
 
-async function loadFailedMessageGroups(groupBy) {
+async function loadFailedMessageGroups(groupBy?: string) {
   loadingData.value = true;
 
   if (groupBy) {
@@ -94,92 +114,95 @@ async function loadFailedMessageGroups(groupBy) {
 }
 
 //delete comment note
-function deleteNote(group) {
+function deleteNote(group: ExtendedGroupOperation) {
   noteSaveSuccessful.value = null;
-  selectedGroup.value.groupid = group.id;
+  selectedGroup.value = group;
   showDeleteNoteModal.value = true;
 }
 
-async function saveDeleteNote(group, hideToastMessage) {
+async function saveDeleteNote(group?: GroupOperation, hideToastMessage?: boolean) {
   showDeleteNoteModal.value = false;
 
-  const result = await useDeleteNote(group.groupid);
-  if (result.message === "success") {
-    noteSaveSuccessful.value = true;
-    if (!hideToastMessage) {
-      useShowToast("info", "Info", "Note deleted successfully");
-    }
+  if (group) {
+    const result = await useDeleteNote(group.id);
+    if (isError(result)) {
+      noteSaveSuccessful.value = false;
+      if (!hideToastMessage) {
+        useShowToast(TYPE.ERROR, "Error", `Failed to delete a Note: ${result.message}`);
+      }
+    } else {
+      noteSaveSuccessful.value = true;
+      if (!hideToastMessage) {
+        useShowToast(TYPE.INFO, "Info", "Note deleted successfully");
+      }
 
-    loadFailedMessageGroups(); //reload the groups
-  } else {
-    noteSaveSuccessful.value = false;
-    if (!hideToastMessage) {
-      useShowToast("error", "Error", "Failed to delete a Note:");
+      loadFailedMessageGroups(); //reload the groups
     }
   }
 }
 
 // create comment note
-async function saveNote(group) {
+async function saveNote(group: GroupOperation, comment: string) {
   noteSaveSuccessful.value = null;
   showEditNoteModal.value = false;
 
-  groupsWithNotesAdded.push({ groupId: group.groupid, comment: group.comment });
+  groupsWithNotesAdded.push({ groupId: group.id, comment: comment });
 
-  const result = await useEditOrCreateNote(group.groupid, group.comment);
-  if (result.message === "success") {
-    noteSaveSuccessful.value = true;
-    useShowToast("info", "Info", "Note updated successfully");
-    loadFailedMessageGroups(); //reload the groups
-  } else {
+  const result = await useEditOrCreateNote(group.id, comment);
+  if (isError(result)) {
     noteSaveSuccessful.value = false;
-    useShowToast("error", "Error", "Failed to update Note:" + result.message);
+    useShowToast(TYPE.ERROR, "Error", `Failed to update Note: ${result.message}`);
+  } else {
+    noteSaveSuccessful.value = true;
+    useShowToast(TYPE.INFO, "Info", "Note updated successfully");
+    loadFailedMessageGroups(); //reload the groups
   }
 }
 
-function saveCreatedNote(group) {
-  saveNote(group);
+function saveCreatedNote(group: ExtendedGroupOperation, comment: string) {
+  saveNote(group, comment);
 }
 
-function saveEditedNote(group) {
-  saveNote(group);
+function saveEditedNote(group: ExtendedGroupOperation, comment: string) {
+  saveNote(group, comment);
 }
 
-function editNote(group) {
+function editNote(group: ExtendedGroupOperation) {
   noteSaveSuccessful.value = null;
-  selectedGroup.value.groupid = group.id;
-  selectedGroup.value.comment = group.comment;
+  selectedGroup.value = group;
   showEditNoteModal.value = true;
 }
 
 //delete a group
 const statusesForArchiveOperation = ["archivestarted", "archiveprogressing", "archivefinalizing", "archivecompleted"];
-function deleteGroup(group) {
+function deleteGroup(group: ExtendedGroupOperation) {
   groupDeleteSuccessful.value = null;
-  selectedGroup.value.groupid = group.id;
+  selectedGroup.value = group;
   showDeleteGroupModal.value = true;
 }
 
-async function saveDeleteGroup(group) {
+async function saveDeleteGroup(group?: ExtendedGroupOperation) {
   showDeleteGroupModal.value = false;
-  group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
+  if (group) {
+    group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
 
-  // We've started a delete, so increase the polling frequency
-  changeRefreshInterval(1000);
+    // We've started a delete, so increase the polling frequency
+    changeRefreshInterval(1000);
 
-  saveDeleteNote(group, true); // delete comment note when group is archived
-  const result = await useArchiveExceptionGroup(group.groupid);
-  if (result.message === "success") {
-    groupDeleteSuccessful.value = true;
-    useShowToast("info", "info", "Group delete started...");
-  } else {
-    groupDeleteSuccessful.value = false;
-    useShowToast("error", "Error", "Failed to delete the group:" + result.message);
+    saveDeleteNote(group, true); // delete comment note when group is archived
+    const result = await useArchiveExceptionGroup(group.id);
+    if (isError(result)) {
+      groupDeleteSuccessful.value = false;
+      useShowToast(TYPE.ERROR, "Error", `Failed to delete the group: ${result.message}`);
+    } else {
+      groupDeleteSuccessful.value = true;
+      useShowToast(TYPE.INFO, "info", "Group delete started...");
+    }
   }
 }
 
 //create workflow state
-function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
+function createWorkflowState(optionalStatus?: string, optionalTotal?: number, optionalFailed?: boolean) {
   if (optionalTotal && optionalTotal <= 1) {
     optionalTotal = optionalTotal * 100;
   }
@@ -191,7 +214,7 @@ function createWorkflowState(optionalStatus, optionalTotal, optionalFailed) {
 }
 
 //getClasses
-const getClasses = function (stepStatus, currentStatus, statusArray) {
+const getClasses = function (stepStatus: string, currentStatus: string, statusArray: string[]) {
   const indexOfStep = statusArray.indexOf(stepStatus);
   const indexOfCurrent = statusArray.indexOf(currentStatus);
   if (indexOfStep > indexOfCurrent) {
@@ -204,62 +227,60 @@ const getClasses = function (stepStatus, currentStatus, statusArray) {
 };
 
 //getClassesForArchiveOperation
-function getClassesForArchiveOperation(stepStatus, currentStatus) {
+function getClassesForArchiveOperation(stepStatus: string, currentStatus: string) {
   return getClasses(stepStatus, currentStatus, statusesForArchiveOperation);
 }
 
 //Retry operation
-function retryGroup(group) {
+function retryGroup(group: ExtendedGroupOperation) {
   groupRetrySuccessful.value = null;
-  selectedGroup.value.groupid = group.id;
-  selectedGroup.value.messagecount = group.count;
+  selectedGroup.value = group;
   showRetryGroupModal.value = true;
 }
 
-async function saveRetryGroup(group) {
+async function saveRetryGroup(group?: ExtendedGroupOperation) {
   showRetryGroupModal.value = false;
-  group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
+  if (group) {
+    group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
 
-  // We've started a retry, so increase the polling frequency
-  changeRefreshInterval(1000);
+    // We've started a retry, so increase the polling frequency
+    changeRefreshInterval(1000);
 
-  saveDeleteNote(group, true);
-  const result = await useRetryExceptionGroup(group.groupid);
-  if (result.message === "success") {
-    groupRetrySuccessful.value = true;
-  } else {
-    groupRetrySuccessful.value = false;
-    useShowToast("error", "Error", "Failed to retry the group:" + result.message);
+    saveDeleteNote(group, true);
+    const result = await useRetryExceptionGroup(group.id);
+    if (isError(result)) {
+      groupRetrySuccessful.value = false;
+      useShowToast(TYPE.ERROR, "Error", `Failed to retry the group: ${result.message}`);
+    } else groupRetrySuccessful.value = true;
   }
 }
 
 const statusesForRetryOperation = ["waiting", "preparing", "queued", "forwarding"];
-function getClassesForRetryOperation(stepStatus, currentStatus) {
+function getClassesForRetryOperation(stepStatus: string, currentStatus: string) {
   if (currentStatus === "queued") {
     currentStatus = "forwarding";
   }
   return getClasses(stepStatus, currentStatus, statusesForRetryOperation);
 }
 
-const acknowledgeGroup = async function (group) {
+const acknowledgeGroup = async function (group: GroupOperation) {
   const result = await useAcknowledgeArchiveGroup(group.id);
-  if (result.message === "success") {
+  if (isError(result)) useShowToast(TYPE.ERROR, "Error", `Acknowledging Group Failed: ${result.message}`);
+  else {
     if (group.operation_status === "ArchiveCompleted") {
-      useShowToast("info", "Info", "Group deleted successfully");
+      useShowToast(TYPE.INFO, "Info", "Group deleted successfully");
     } else {
-      useShowToast("info", "Info", "Group retried successfully");
+      useShowToast(TYPE.INFO, "Info", "Group retried successfully");
     }
     loadFailedMessageGroups(); //reload the groups
-  } else {
-    useShowToast("error", "Error", "Acknowledging Group Failed':" + result.message);
   }
 };
 
-function isBeingArchived(status) {
+function isBeingArchived(status: string) {
   return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
 }
 
-function isBeingRetried(group) {
+function isBeingRetried(group: ExtendedGroupOperation) {
   return group.workflow_state.status !== "none" && (group.workflow_state.status !== "completed" || group.need_user_acknowledgement === true) && !isBeingArchived(group.workflow_state.status);
 }
 
@@ -267,22 +288,20 @@ function clearInMemoryData() {
   groupsWithNotesAdded = [];
 }
 
-function navigateToGroup($event, groupId) {
-  if ($event.target.localName !== "button") {
-    router.push(routeLinks.failedMessage.group.link(groupId));
-  }
+function navigateToGroup(groupId: string) {
+  router.push(routeLinks.failedMessage.group.link(groupId));
 }
 
 function isRetryOrDeleteOperationInProgress() {
   return exceptionGroups.value.some((group) => group.operation_status !== "None" && group.operation_status !== "ArchiveCompleted" && group.operation_status !== "Completed");
 }
 
-function changeRefreshInterval(milliseconds) {
-  if (typeof refreshInterval !== "undefined") {
+function changeRefreshInterval(milliseconds: number) {
+  if (refreshInterval) {
     clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at 5 seconds and there is a retry or delete in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRetryOrDeleteOperationInProgress()) {
       changeRefreshInterval(1000);
@@ -298,7 +317,7 @@ function changeRefreshInterval(milliseconds) {
 }
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
+  if (refreshInterval) {
     clearInterval(refreshInterval);
   }
 });
@@ -308,7 +327,12 @@ onMounted(() => {
   changeRefreshInterval(5000);
 });
 
-defineExpose({
+export interface IMessageGroupList {
+  loadFailedMessageGroups(groupBy?: string): Promise<void>;
+  clearInMemoryData(): void;
+}
+
+defineExpose<IMessageGroupList>({
   loadFailedMessageGroups,
   clearInMemoryData,
 });
@@ -326,13 +350,13 @@ defineExpose({
       <div class="col-sm-12 no-mobile-side-padding">
         <div v-if="exceptionGroups.length > 0">
           <div
-            class="row box box-group wf-{{group.workflow_state.status}} failed-message-group repeat-modify"
+            :class="`row box box-group wf-${group.workflow_state.status} failed-message-group repeat-modify`"
             v-for="(group, index) in exceptionGroups"
             :key="index"
             :disabled="group.count == 0"
             @mouseenter="group.hover2 = true"
             @mouseleave="group.hover2 = false"
-            @click="navigateToGroup($event, group.id)"
+            @click="navigateToGroup(group.id)"
           >
             <div class="col-sm-12 no-mobile-side-padding">
               <div class="row">
@@ -344,7 +368,7 @@ defineExpose({
                         <span class="metadata">
                           <i aria-hidden="true" class="fa fa-envelope"></i>
                           {{ group.count }} message<span v-if="group.count > 1">s</span>
-                          <span v-if="group.operation_remaining_count > 0"> (currently retrying {{ group.operation_remaining_count }} </span>
+                          <span v-if="group.operation_remaining_count"> (currently retrying {{ group.operation_remaining_count }} </span>
                         </span>
 
                         <span class="metadata">
@@ -382,7 +406,7 @@ defineExpose({
                         @mouseenter="group.hover3 = true"
                         @mouseleave="group.hover3 = false"
                         v-if="exceptionGroups.length > 0"
-                        @click="retryGroup(group)"
+                        @click.stop="retryGroup(group)"
                       >
                         <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
                       </button>
@@ -394,13 +418,13 @@ defineExpose({
                         @mouseenter="group.hover3 = true"
                         @mouseleave="group.hover3 = false"
                         v-if="exceptionGroups.length > 0"
-                        @click="deleteGroup(group)"
+                        @click.stop="deleteGroup(group)"
                       >
                         <i aria-hidden="true" class="fa fa-trash no-link-underline">&nbsp;</i>Delete group
                       </button>
-                      <button type="button" class="btn btn-link btn-sm" v-if="!group.comment" @click="editNote(group)"><i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note</button>
-                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="editNote(group)"><i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note</button>
-                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click="deleteNote(group)"><i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp;</i>Remove note</button>
+                      <button type="button" class="btn btn-link btn-sm" v-if="!group.comment" @click.stop="editNote(group)"><i aria-hidden="true" class="fa fa-sticky-note no-link-underline">&nbsp;</i>Add note</button>
+                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click.stop="editNote(group)"><i aria-hidden="true" class="fa fa-pencil no-link-underline">&nbsp;</i>Edit note</button>
+                      <button type="button" class="btn btn-link btn-sm" v-if="group.comment" @click.stop="deleteNote(group)"><i aria-hidden="true" class="fa fa-eraser no-link-underline">&nbsp;</i>Remove note</button>
                     </div>
                   </div>
 
@@ -459,7 +483,7 @@ defineExpose({
                             </li>
                             <li v-if="group.workflow_state.status === 'completed'">
                               <div class="retry-completed bulk-retry-progress-status">Retry request completed</div>
-                              <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
+                              <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click.stop="acknowledgeGroup(group)">Dismiss</button>
                               <div class="danger sc-restart-warning" v-if="group.workflow_state.failed">
                                 <i aria-hidden="true" class="fa fa-exclamation-triangle danger"></i> <strong>WARNING: </strong>Not all messages will be retried because ServiceControl had to restart. You need to request retrying the remaining
                                 messages.
@@ -520,7 +544,7 @@ defineExpose({
                             </li>
                             <li v-if="group.workflow_state.status === 'archivecompleted'">
                               <div class="retry-completed bulk-retry-progress-status">Delete request completed</div>
-                              <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click="acknowledgeGroup(group)">Dismiss</button>
+                              <button type="button" class="btn btn-default btn-primary btn-xs btn-retry-dismiss" v-if="group.need_user_acknowledgement == true" @click.stop="acknowledgeGroup(group)">Dismiss</button>
                             </li>
                           </ul>
 
@@ -555,12 +579,12 @@ defineExpose({
   <!--modal display - create new/edit comment note-->
   <Teleport to="#modalDisplay">
     <FailedMessageGroupNoteEdit
-      v-if="showEditNoteModal === true"
-      v-bind="selectedGroup"
-      :group_id="selectedGroup.groupid"
+      v-if="showEditNoteModal === true && selectedGroup"
+      :groupid="selectedGroup.id"
+      :comment="selectedGroup.comment"
       @cancelEditNote="showEditNoteModal = false"
-      @createNoteConfirmed="saveCreatedNote"
-      @editNoteConfirmed="saveEditedNote"
+      @createNoteConfirmed="saveCreatedNote(selectedGroup, $event.comment)"
+      @editNoteConfirmed="saveEditedNote(selectedGroup, $event.comment)"
     ></FailedMessageGroupNoteEdit>
   </Teleport>
 
@@ -585,7 +609,7 @@ defineExpose({
         saveRetryGroup(selectedGroup);
       "
       :heading="'Are you sure you want to retry this group?'"
-      :body="`Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of ${selectedGroup.messagecount} messages?`"
+      :body="`Retrying a whole group can take some time and put extra load on your system. Are you sure you want to retry this group of ${selectedGroup?.count ?? 0} messages?`"
     ></ConfirmDialog>
 
     <ConfirmDialog
@@ -608,9 +632,5 @@ defineExpose({
 
 .toolbar-menus > .msg-group-menu {
   margin: 0;
-}
-
-.failed-message-group {
-  cursor: pointer;
 }
 </style>

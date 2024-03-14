@@ -1,34 +1,39 @@
-<script setup>
+<script setup lang="ts">
 import { onBeforeMount, onMounted, onUnmounted, ref, watch } from "vue";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState } from "../../composables/serviceServiceControl";
-import { useFetchFromServiceControl, usePatchToServiceControl } from "../../composables/serviceServiceControlUrls";
+import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useCookies } from "vue3-cookies";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
-import MessageList from "./MessageList.vue";
+import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import PaginationStrip from "../../components/PaginationStrip.vue";
 import moment from "moment";
+import { ExtendedFailedMessage } from "@/resources/FailedMessage";
+import Configuration from "@/resources/Configuration";
+import { TYPE } from "vue-toastification";
+import FailureGroup from "@/resources/FailureGroup";
 
 let pollingFaster = false;
-let refreshInterval = undefined;
+let refreshInterval: number | undefined;
 const perPage = 50;
-const configuration = ref([]);
+const configuration = ref<Configuration | null>(null);
 
 const route = useRoute();
-const groupId = ref(route.params.groupId);
+const groupId = ref<string>(route.params.groupId as string);
 const groupName = ref("");
 const pageNumber = ref(1);
 const totalCount = ref(0);
 const cookies = useCookies().cookies;
-const selectedPeriod = ref("Deleted in the last 7 days");
+const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"] as const;
+type PeriodOption = (typeof periodOptions)[number];
+const selectedPeriod = ref<PeriodOption>("Deleted in the last 7 days");
 const showConfirmRestore = ref(false);
-const messageList = ref();
-const messages = ref([]);
-const periodOptions = ["All Deleted", "Deleted in the last 2 Hours", "Deleted in the last 1 Day", "Deleted in the last 7 days"];
+const messageList = ref<IMessageList | undefined>();
+const messages = ref<ExtendedFailedMessage[]>([]);
 
 watch(pageNumber, () => loadMessages());
 
@@ -57,18 +62,12 @@ function loadMessages() {
   return loadPagedMessages(groupId.value, pageNumber.value, "", "", startDate.toISOString(), endDate.toISOString());
 }
 
-async function loadGroupDetails(groupId) {
-  const response = await useFetchFromServiceControl(`archive/groups/id/${groupId}`);
-  const data = await response.json();
+async function loadGroupDetails(groupId: string) {
+  const [, data] = await useTypedFetchFromServiceControl<FailureGroup>(`archive/groups/id/${groupId}`);
   groupName.value = data.title;
 }
 
-function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate) {
-  if (typeof sortBy === "undefined") sortBy = "modified";
-  if (typeof direction === "undefined") direction = "desc";
-  if (typeof page === "undefined") page = 1;
-  if (typeof startDate === "undefined") startDate = new Date(0).toISOString();
-  if (typeof endDate === "undefined") endDate = new Date().toISOString();
+function loadPagedMessages(groupId?: string, page: number = 1, sortBy: string = "modified", direction: string = "desc", startDate: string = new Date(0).toISOString(), endDate: string = new Date().toISOString()) {
   const dateRange = startDate + "..." + endDate;
   let loadGroupDetailsPromise;
   if (groupId && !groupName.value) {
@@ -77,11 +76,12 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
 
   async function loadDelMessages() {
     try {
-      const response = await useFetchFromServiceControl(`${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`);
+      const [response, data] = await useTypedFetchFromServiceControl<ExtendedFailedMessage[]>(
+        `${groupId ? `recoverability/groups/${groupId}/` : ""}errors?status=archived&page=${page}&per_page=${perPage}&sort=${sortBy}&direction=${direction}&modified=${dateRange}`
+      );
 
-      totalCount.value = parseInt(response.headers.get("Total-Count"));
+      totalCount.value = parseInt(response.headers.get("Total-Count") ?? "0");
 
-      const data = await response.json();
       if (messages.value.length && data.length) {
         // merge the previously selected messages into the new list so we can replace them
         messages.value.forEach((previousMessage) => {
@@ -115,10 +115,10 @@ function loadPagedMessages(groupId, page, sortBy, direction, startDate, endDate)
   return loadDelMessagesPromise;
 }
 
-function updateMessagesScheduledDeletionDate(messages) {
+function updateMessagesScheduledDeletionDate(messages: ExtendedFailedMessage[]) {
   //check deletion time
   messages.forEach((message) => {
-    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
+    message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
     const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
     message.delete_soon = countdown < moment();
     message.deleted_in = countdown.format();
@@ -127,35 +127,35 @@ function updateMessagesScheduledDeletionDate(messages) {
 }
 
 function numberSelected() {
-  return messageList?.value?.getSelectedMessages()?.length ?? 0;
+  return messageList.value?.getSelectedMessages()?.length ?? 0;
 }
 
 function selectAll() {
-  messageList.value.selectAll();
+  messageList.value?.selectAll();
 }
 
 function deselectAll() {
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
 }
 
 function isAnythingSelected() {
-  return messageList?.value?.isAnythingSelected();
+  return messageList.value?.isAnythingSelected();
 }
 
 async function restoreSelectedMessages() {
   changeRefreshInterval(1000);
-  const selectedMessages = messageList.value.getSelectedMessages();
+  const selectedMessages = messageList.value?.getSelectedMessages() ?? [];
   selectedMessages.forEach((m) => (m.restoreInProgress = true));
-  useShowToast("info", "Info", "restoring " + selectedMessages.length + " messages...");
+  useShowToast(TYPE.INFO, "Info", `restoring ${selectedMessages.length} messages...`);
 
   await usePatchToServiceControl(
     "errors/unarchive",
     selectedMessages.map((m) => m.id)
   );
-  messageList.value.deselectAll();
+  messageList.value?.deselectAll();
 }
 
-function periodChanged(period) {
+function periodChanged(period: PeriodOption) {
   selectedPeriod.value = period;
   cookies.set("all_deleted_messages_period", period);
 
@@ -163,8 +163,7 @@ function periodChanged(period) {
 }
 
 async function getConfiguration() {
-  const response = await useFetchFromServiceControl("configuration");
-  const data = await response.json();
+  const [, data] = await useTypedFetchFromServiceControl<Configuration>("configuration");
   configuration.value = data;
 }
 
@@ -172,12 +171,12 @@ function isRestoreInProgress() {
   return messages.value.some((message) => message.restoreInProgress);
 }
 
-function changeRefreshInterval(milliseconds) {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+function changeRefreshInterval(milliseconds: number) {
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at 5 seconds and there is a restore in progress, then change the polling interval to poll every 1 second
     if (!pollingFaster && isRestoreInProgress()) {
       changeRefreshInterval(1000);
@@ -193,8 +192,8 @@ function changeRefreshInterval(milliseconds) {
 }
 
 onBeforeRouteLeave(() => {
-  groupId.value = undefined;
-  groupName.value = undefined;
+  groupId.value = "";
+  groupName.value = "";
 });
 
 onBeforeMount(() => {
@@ -202,15 +201,15 @@ onBeforeMount(() => {
 });
 
 onUnmounted(() => {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 });
 
 onMounted(() => {
-  let cookiePeriod = cookies.get("all_deleted_messages_period");
+  let cookiePeriod = cookies.get("all_deleted_messages_period") as PeriodOption;
   if (!cookiePeriod) {
-    cookiePeriod = periodOptions[3]; //default is last 7 days
+    cookiePeriod = periodOptions[periodOptions.length - 1]; //default is last 7 days
   }
   selectedPeriod.value = cookiePeriod;
   loadMessages();
@@ -258,7 +257,7 @@ onMounted(() => {
         </div>
         <div class="row">
           <div class="col-12">
-            <MessageList :messages="messages" :showRequestRetry="false" ref="messageList"></MessageList>
+            <MessageList :messages="messages" ref="messageList"></MessageList>
           </div>
         </div>
         <div class="row" v-if="messages.length > 0">

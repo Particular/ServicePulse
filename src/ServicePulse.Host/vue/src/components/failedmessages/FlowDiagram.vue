@@ -1,48 +1,71 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
-import { MarkerType, useVueFlow, VueFlow } from "@vue-flow/core";
+import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { type DefaultEdge, MarkerType, useVueFlow, VueFlow, type Styles, type Node } from "@vue-flow/core";
 import TimeSince from "../TimeSince.vue";
 import routeLinks from "@/router/routeLinks";
+import Message from "@/resources/Message";
+import { NServiceBusHeaders } from "@/resources/Header";
 
-const props = defineProps({
-  conversationId: String,
-  messageId: String,
-});
+const props = defineProps<{
+  conversationId?: string;
+  messageId: string;
+}>();
 
-const messageType = Object.freeze({
-  Event: "Event message",
-  Timeout: "Timeout message",
-  Command: "Command message",
-});
+enum MessageType {
+  Event = "Event message",
+  Timeout = "Timeout message",
+  Command = "Command message",
+}
+
+interface MappedMessage {
+  nodeName: string;
+  id: string;
+  messageId: string;
+  sendingEndpoint: string;
+  receivingEndpoint: string;
+  parentId: string;
+  parentEndpoint: string;
+  type: MessageType;
+  isError: boolean;
+  sagaName: string;
+  link: {
+    name: string;
+    nodeName: string;
+  };
+  timeSent: string;
+  level?: number;
+  width?: number;
+  XPos?: number;
+}
 
 const nodeSpacingX = 300;
 const nodeSpacingY = 200;
 
-async function getConversation(conversationId) {
-  const response = await useFetchFromServiceControl(`conversations/${conversationId}`);
-  return response.json();
+async function getConversation(conversationId: string) {
+  const [, data] = await useTypedFetchFromServiceControl<Message[]>(`conversations/${conversationId}`);
+  return data;
 }
 
-function mapMessage(message) {
+function mapMessage(message: Message): MappedMessage {
   let parentId = "",
     parentEndpoint = "",
     sagaName = "";
-  const header = message.headers.find((header) => header.key === "NServiceBus.RelatedTo");
+  const header = message.headers.find((header) => header.key === NServiceBusHeaders.RelatedTo);
   if (header) {
-    parentId = header.value;
-    parentEndpoint = message.headers.find((h) => h.key === "NServiceBus.OriginatingEndpoint")?.value;
+    parentId = header.value ?? "";
+    parentEndpoint = message.headers.find((h) => h.key === "NServiceBus.OriginatingEndpoint")?.value ?? "";
   }
 
-  const sagaHeader = message.headers.find((header) => header.key === "NServiceBus.OriginatingSagaType");
+  const sagaHeader = message.headers.find((header) => header.key === NServiceBusHeaders.OriginatingSagaType);
   if (sagaHeader) {
-    sagaName = sagaHeader.value.split(", ")[0];
+    sagaName = sagaHeader.value?.split(", ")[0] ?? "";
   }
 
   const type = (() => {
-    if (message.headers.find((header) => header.key === "NServiceBus.MessageIntent").value === "Publish") return messageType.Event;
-    else if (message.headers.find((header) => header.key === "NServiceBus.IsSagaTimeoutMessage")?.value?.toLowerCase() === "true") return messageType.Timeout;
-    return messageType.Command;
+    if (message.headers.find((header) => header.key === NServiceBusHeaders.MessageIntent)?.value === "Publish") return MessageType.Event;
+    else if (message.headers.find((header) => header.key === NServiceBusHeaders.IsSagaTimeoutMessage)?.value?.toLowerCase() === "true") return MessageType.Timeout;
+    return MessageType.Command;
   })();
 
   return {
@@ -56,7 +79,7 @@ function mapMessage(message) {
     type,
     isError:
       message.headers.findIndex(function (x) {
-        return x.key === "NServiceBus.ExceptionInfo.ExceptionType";
+        return x.key === NServiceBusHeaders.ExceptionInfoExceptionType;
       }) > -1,
     sagaName,
     link: {
@@ -67,12 +90,12 @@ function mapMessage(message) {
   };
 }
 
-function constructNodes(mappedMessages) {
+function constructNodes(mappedMessages: MappedMessage[]): Node[] {
   return (
     mappedMessages
       //group by level
-      .reduce((groups, message) => {
-        groups[message.level] = [...(groups[message.level] ?? []), message];
+      .reduce((groups: MappedMessage[][], message: MappedMessage) => {
+        groups[message.level!] = [...(groups[message.level!] ?? []), message];
         return groups;
       }, [])
       //ensure each level has their items in the same "grouped" order as the level above
@@ -90,12 +113,12 @@ function constructNodes(mappedMessages) {
         return group.reduce(
           ({ result, currentWidth, previousParent }, message) => {
             //position on current level needs to be based on parent Node, so see if one exists
-            const parentMessage = previousLevel?.find((plMessage) => message.parentId === plMessage.messageId && message.parentEndpoint === plMessage.receivingEndpoint);
+            const parentMessage = previousLevel?.find((plMessage) => message.parentId === plMessage.messageId && message.parentEndpoint === plMessage.receivingEndpoint) ?? null;
             //if the current parent node is the same as the previous parent node, then the current position needs to be to the right of siblings
             const currentParentWidth = previousParent === parentMessage ? currentWidth : 0;
-            const startX = parentMessage == null ? 0 : parentMessage.XPos - parentMessage.width / 2;
+            const startX = parentMessage == null ? 0 : parentMessage.XPos! - parentMessage.width! / 2;
             //store the position of the node against the message, so child nodes can use it to determine their start position
-            message.XPos = startX + (currentParentWidth + message.width / 2);
+            message.XPos = startX + (currentParentWidth + message.width! / 2);
             return {
               result: [
                 ...result,
@@ -104,20 +127,20 @@ function constructNodes(mappedMessages) {
                   type: "message",
                   data: message,
                   label: message.nodeName,
-                  position: { x: message.XPos * nodeSpacingX, y: message.level * nodeSpacingY },
+                  position: { x: message.XPos * nodeSpacingX, y: message.level! * nodeSpacingY },
                 },
               ],
-              currentWidth: currentParentWidth + message.width,
+              currentWidth: currentParentWidth + message.width!,
               previousParent: parentMessage,
             };
           },
-          { result: [], currentWidth: 0, previousParent: null }
+          { result: [] as Node[], currentWidth: 0, previousParent: null as MappedMessage | null }
         ).result;
       })
   );
 }
 
-function constructEdges(mappedMessages) {
+function constructEdges(mappedMessages: MappedMessage[]): DefaultEdge[] {
   return mappedMessages
     .filter((message) => message.parentId)
     .map((message) => ({
@@ -126,25 +149,27 @@ function constructEdges(mappedMessages) {
       target: `${message.messageId}##${message.receivingEndpoint}`,
       markerEnd: MarkerType.ArrowClosed,
       style: {
-        "stroke-dasharray": message.type === messageType.Event && "5, 3",
-      },
+        "stroke-dasharray": message.type === MessageType.Event && "5, 3",
+      } as Styles,
     }));
 }
 
-const elements = ref([]);
+const elements = ref<(Node | DefaultEdge)[]>([]);
 const { onPaneReady, fitView } = useVueFlow();
 
 onMounted(async () => {
+  if (!props.conversationId) return;
+
   const messages = await getConversation(props.conversationId);
   const mappedMessages = messages.map(mapMessage);
 
-  const assignDescendantLevelsAndWidth = (message, level = 0) => {
+  const assignDescendantLevelsAndWidth = (message: MappedMessage, level = 0) => {
     message.level = level;
     const children = mappedMessages.filter((mm) => mm.parentId === message.messageId && mm.parentEndpoint === message.receivingEndpoint);
     message.width =
       children.length === 0
         ? 1 //leaf node
-        : children.map((child) => (child.width == null ? assignDescendantLevelsAndWidth(child, level + 1) : child)).reduce((sum, { width }) => sum + width, 0);
+        : children.map((child) => (child.width == null ? assignDescendantLevelsAndWidth(child, level + 1) : child)).reduce((sum, { width }) => sum + width!, 0);
     return message;
   };
   for (const root of mappedMessages.filter((message) => !message.parentId)) assignDescendantLevelsAndWidth(root);
@@ -159,11 +184,11 @@ onPaneReady(({ fitView }) => {
   fitView();
 });
 
-function typeIcon(type) {
+function typeIcon(type: MessageType) {
   switch (type) {
-    case messageType.Timeout:
+    case MessageType.Timeout:
       return "pa-flow-timeout";
-    case messageType.Event:
+    case MessageType.Event:
       return "pa-flow-event";
     default:
       return "pa-flow-command";

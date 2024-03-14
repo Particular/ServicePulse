@@ -1,7 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
-import { useFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
+import { useFetchFromServiceControl, useTypedFetchFromServiceControl, serviceControlUrl } from "../../composables/serviceServiceControlUrls";
 import { useArchiveMessage, useRetryMessages, useUnarchiveMessage } from "../../composables/serviceFailedMessage";
 import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { useShowToast } from "../../composables/toast";
@@ -12,15 +12,21 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 import FlowDiagram from "./FlowDiagram.vue";
 import EditRetryDialog from "./EditRetryDialog.vue";
 import routeLinks from "@/router/routeLinks";
+import Configuration, { EditAndRetryConfig } from "@/resources/Configuration";
+import { TYPE } from "vue-toastification";
+import { FailedMessageStatus, ExtendedFailedMessage, FailedMessageError, isError } from "@/resources/FailedMessage";
+import Message from "@/resources/Message";
+import { NServiceBusHeaders } from "@/resources/Header";
 
-let refreshInterval = undefined;
+let refreshInterval: number | undefined;
 let pollingFaster = false;
-const panel = ref();
+const panel = ref<number>(1);
 const route = useRoute();
-const failedMessage = ref({});
-const configuration = ref([]);
+const failedMessage = ref<ExtendedFailedMessage | FailedMessageError>();
+const configuration = ref<Configuration>();
+const editAndRetryConfiguration = ref<EditAndRetryConfig>();
 
-const id = computed(() => route.params.id);
+const id = computed(() => route.params.id as string);
 watch(id, async () => await loadFailedMessage());
 
 const showDeleteConfirm = ref(false);
@@ -32,29 +38,30 @@ async function loadFailedMessage() {
   try {
     const response = await useFetchFromServiceControl("errors/last/" + id.value);
     if (response.status === 404) {
-      failedMessage.value = { notFound: true };
-    } else if (response.status !== 200) {
-      failedMessage.value = { error: true };
+      failedMessage.value = { notFound: true } as FailedMessageError;
+      return;
+    } else if (!response.ok) {
+      failedMessage.value = { error: true } as FailedMessageError;
+      return;
     }
-    const data = await response.json();
-    const message = data;
-    message.archived = message.status === "archived";
-    message.resolved = message.status === "resolved";
-    message.retried = message.status === "retryIssued";
-    message.error_retention_period = moment.duration(configuration.value.data_retention.error_retention_period).asHours();
-    message.isEditAndRetryEnabled = configuration.value.edit.enabled;
+    const message = (await response.json()) as ExtendedFailedMessage;
+    message.archived = message.status === FailedMessageStatus.Archived;
+    message.resolved = message.status === FailedMessageStatus.Resolved;
+    message.retried = message.status === FailedMessageStatus.RetryIssued;
+    message.error_retention_period = moment.duration(configuration.value?.data_retention.error_retention_period).asHours();
+    message.isEditAndRetryEnabled = editAndRetryConfiguration.value?.enabled ?? false;
 
     // Maintain the mutations of the message in memory until the api returns a newer modified message
-    if (failedMessage.value.last_modified === message.last_modified) {
-      message.retried = failedMessage.value.retried;
-      message.archiving = failedMessage.value.archiving;
-      message.restoring = failedMessage.value.restoring;
+    if (failedMessage.value && !isError(failedMessage.value) && failedMessage.value.last_modified === message.last_modified) {
+      message.retried = failedMessage.value?.retried;
+      message.archiving = failedMessage.value?.archiving;
+      message.restoring = failedMessage.value?.restoring;
     } else {
       message.archiving = false;
       message.restoring = false;
     }
 
-    Object.assign(failedMessage.value, message);
+    failedMessage.value = message;
     updateMessageDeleteDate();
     return downloadHeadersAndBody();
   } catch (err) {
@@ -71,51 +78,61 @@ async function getConfiguration() {
 }
 
 async function getEditAndRetryConfig() {
-  const response = await useFetchFromServiceControl("edit/config");
-  const data = await response.json();
-  configuration.value.edit = data;
-  return;
+  const [, data] = await useTypedFetchFromServiceControl<EditAndRetryConfig>("edit/config");
+
+  editAndRetryConfiguration.value = data;
 }
 
 function updateMessageDeleteDate() {
-  const countdown = moment(failedMessage.value.last_modified).add(failedMessage.value.error_retention_period, "hours");
-  failedMessage.value.delete_soon = countdown < moment();
-  failedMessage.value.deleted_in = countdown.format();
+  if (failedMessage.value && !isError(failedMessage.value)) {
+    const countdown = moment(failedMessage.value?.last_modified).add(failedMessage.value?.error_retention_period, "hours");
+    failedMessage.value.delete_soon = countdown < moment();
+    failedMessage.value.deleted_in = countdown.format();
+  }
 }
 
 async function archiveMessage() {
-  useShowToast("info", "Info", `Deleting the message ${id.value} ...`);
+  useShowToast(TYPE.INFO, "Info", `Deleting the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started an archive, so increase the polling frequency
   await useArchiveMessage([id.value]);
-  failedMessage.value.archiving = true;
+  if (failedMessage.value && !isError(failedMessage.value)) {
+    failedMessage.value.archiving = true;
+  }
 }
 
 async function unarchiveMessage() {
   changeRefreshInterval(1000); // We've started an unarchive, so increase the polling frequency
   await useUnarchiveMessage([id.value]);
-  failedMessage.value.restoring = true;
+  if (failedMessage.value && !isError(failedMessage.value)) {
+    failedMessage.value.restoring = true;
+  }
 }
 
 async function retryMessage() {
-  useShowToast("info", "Info", `Retrying the message ${id.value} ...`);
+  useShowToast(TYPE.INFO, "Info", `Retrying the message ${id.value} ...`);
   changeRefreshInterval(1000); // We've started a retry, so increase the polling frequency
   await useRetryMessages([id.value]);
-  failedMessage.value.retried = true;
+  if (failedMessage.value && !isError(failedMessage.value)) {
+    failedMessage.value.retried = true;
+  }
 }
 
 async function downloadHeadersAndBody() {
+  if (!failedMessage.value || isError(failedMessage.value)) return;
+
   try {
-    const response = await useFetchFromServiceControl("messages/search/" + failedMessage.value.message_id);
-    const data = await response.json();
-    if (data[0] === undefined) {
+    const [, data] = await useTypedFetchFromServiceControl<Message[]>("messages/search/" + failedMessage.value?.message_id);
+
+    if (data[0] == null) {
       failedMessage.value.headersNotFound = true;
       failedMessage.value.messageBodyNotFound = true;
+
       return;
     }
 
     const message = data[0];
     failedMessage.value.headers = message.headers;
-    failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId").value;
+    failedMessage.value.conversationId = message.headers.find((header) => header.key === NServiceBusHeaders.ConversationId)?.value ?? "";
 
     return downloadBody();
   } catch (err) {
@@ -125,53 +142,47 @@ async function downloadHeadersAndBody() {
 }
 
 async function downloadBody() {
-  const response = await useFetchFromServiceControl("messages/" + failedMessage.value.message_id + "/body");
+  if (!failedMessage.value || isError(failedMessage.value)) return;
+
+  const response = await useFetchFromServiceControl("messages/" + failedMessage.value?.message_id + "/body");
   if (response.status === 404) {
     failedMessage.value.messageBodyNotFound = true;
-    return;
-  }
 
-  if (response.headers.get("content-type") === "application/json") {
-    try {
-      let jsonBody = await response.json();
-      jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
-
-      failedMessage.value.messageBody = formatJson(jsonBody);
-    } catch {
-      failedMessage.value.bodyUnavailable = true;
-    }
-    return;
-  }
-
-  if (response.headers.get("content-type") === "text/xml") {
-    try {
-      const xmlBody = await response.text();
-      failedMessage.value.messageBody = formatXml(xmlBody);
-    } catch {
-      failedMessage.value.bodyUnavailable = true;
-    }
     return;
   }
 
   try {
-    failedMessage.value.messageBody = await response.text();
+    switch (response.headers.get("content-type")) {
+      case "application/json": {
+        let jsonBody = await response.json();
+        jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
+        failedMessage.value.messageBody = formatJson(jsonBody);
+        return;
+      }
+      case "text/xml": {
+        const xmlBody = await response.text();
+        failedMessage.value.messageBody = formatXml(xmlBody);
+        return;
+      }
+      default: {
+        failedMessage.value.messageBody = await response.text();
+      }
+    }
   } catch {
     failedMessage.value.bodyUnavailable = true;
   }
 }
 
 // taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js
-function formatXml(xml) {
-  function createShiftArr(step) {
+function formatXml(xml: string) {
+  function createShiftArr(step: string) {
     let space = "";
     if (isNaN(parseInt(step))) {
       // argument is string
       space = step;
     } else {
       // argument is integer
-      for (let i = 0; i < step; i++) {
-        space += " ";
-      }
+      space = " ".repeat(parseInt(step));
     }
 
     const shift = ["\n"]; // array of shifts
@@ -195,14 +206,17 @@ function formatXml(xml) {
     shift = createShiftArr(indent);
   let inComment = false,
     depth = 0,
-    string = "";
+    string = "",
+    m1: RegExpExecArray | null,
+    m2: RegExpExecArray | null;
 
   for (let i = 0; i < len; i++) {
+    m1 = /^<[\w:\-.,]+/.exec(arr[i - 1]);
+    m2 = /^<\/[\w:\-.,]+/.exec(arr[i]);
     // start comment or <![CDATA[...]]> or <!DOCTYPE //
     if (arr[i].indexOf("<!") !== -1) {
       string += shift[depth] + arr[i];
       inComment = true;
-
       // end comment or <![CDATA[...]]> //
       if (arr[i].indexOf("-->") !== -1 || arr[i].indexOf("]>") !== -1 || arr[i].indexOf("!DOCTYPE") !== -1) {
         inComment = false;
@@ -214,7 +228,9 @@ function formatXml(xml) {
     } else if (
       /^<\w/.test(arr[i - 1]) &&
       /^<\/\w/.test(arr[i]) && // <elm></elm> //
-      /^<[\w:\-.,]+/.exec(arr[i - 1])[0] === /^<\/[\w:\-.,]+/.exec(arr[i])[0].replace("/", "")
+      m1 &&
+      m2 &&
+      m1[0] === m2[0].replace("/", "")
     ) {
       string += arr[i];
       if (!inComment) depth--;
@@ -244,45 +260,51 @@ function formatXml(xml) {
   return string.trim();
 }
 
-function formatJson(json) {
+function formatJson(json: string) {
   return JSON.stringify(json, null, 2);
 }
 
-function togglePanel(panelNum) {
-  if (!failedMessage.value.notFound && !failedMessage.value.error) {
+function togglePanel(panelNum: number) {
+  if (failedMessage.value && !isError(failedMessage.value)) {
     panel.value = panelNum;
   }
   return false;
 }
 
 function debugInServiceInsight() {
-  const messageId = failedMessage.value.message_id;
-  const endpointName = failedMessage.value.receiving_endpoint.name;
-  let serviceControlUrl = serviceControlUrl.value.toLowerCase();
+  if (!failedMessage.value || isError(failedMessage.value)) return;
 
-  if (serviceControlUrl.indexOf("https") === 0) {
-    serviceControlUrl = serviceControlUrl.replace("https://", "");
+  const messageId = failedMessage.value?.message_id;
+  const endpointName = failedMessage.value?.receiving_endpoint.name;
+  let url = serviceControlUrl.value?.toLowerCase() ?? "";
+
+  if (url.indexOf("https") === 0) {
+    url = url.replace("https://", "");
   } else {
-    serviceControlUrl = serviceControlUrl.replace("http://", "");
+    url = url.replace("http://", "");
   }
 
-  window.open("si://" + serviceControlUrl + "?search=" + messageId + "&endpointname=" + endpointName);
+  window.open(`si://${url}?search=${messageId}&endpointname=${endpointName}`);
 }
 
 function exportMessage() {
+  if (!failedMessage.value || isError(failedMessage.value)) return;
+
   let txtStr = "STACKTRACE\n";
-  txtStr += failedMessage.value.exception.stack_trace;
+  txtStr += failedMessage.value?.exception.stack_trace;
 
   txtStr += "\n\nHEADERS";
-  for (let i = 0; i < failedMessage.value.headers.length; i++) {
-    txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
+  if (failedMessage.value) {
+    for (let i = 0; i < failedMessage.value.headers.length; i++) {
+      txtStr += "\n" + failedMessage.value.headers[i].key + ": " + failedMessage.value.headers[i].value;
+    }
   }
 
   txtStr += "\n\nMESSAGE BODY\n";
-  txtStr += failedMessage.value.messageBody;
+  txtStr += failedMessage.value?.messageBody;
 
   useDownloadFile(txtStr, "text/txt", "failedMessage.txt");
-  useShowToast("info", "Info", "Message export completed.");
+  useShowToast(TYPE.INFO, "Info", "Message export completed.");
 }
 
 function showEditAndRetryModal() {
@@ -298,32 +320,34 @@ function cancelEditAndRetry() {
 
 function confirmEditAndRetry() {
   showEditRetryModal.value = false;
-  useShowToast("info", "Info", `Retrying the edited message ${id.value} ...`);
+  useShowToast(TYPE.INFO, "Info", `Retrying the edited message ${id.value} ...`);
   return startRefreshInterval();
 }
 
 function startRefreshInterval() {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     loadFailedMessage();
   }, 5000);
 }
 
 function stopRefreshInterval() {
-  if (typeof refreshInterval !== "undefined") {
-    clearInterval(refreshInterval);
+  if (refreshInterval != null) {
+    window.clearInterval(refreshInterval);
   }
 }
 
 function isRetryOrArchiveOperationInProgress() {
-  return failedMessage.value.retried || failedMessage.value.archiving || failedMessage.value.restoring;
+  if (!failedMessage.value || isError(failedMessage.value)) return false;
+
+  return failedMessage.value?.retried || failedMessage.value?.archiving || failedMessage.value?.restoring;
 }
 
-function changeRefreshInterval(milliseconds) {
+function changeRefreshInterval(milliseconds: number) {
   stopRefreshInterval(); // clear interval if it exists to prevent memory leaks
 
-  refreshInterval = setInterval(() => {
+  refreshInterval = window.setInterval(() => {
     // If we're currently polling at the default interval of 5 seconds and there is a retry, delete, or restore in progress, then change the polling interval
     if (!pollingFaster && isRetryOrArchiveOperationInProgress()) {
       changeRefreshInterval(milliseconds);
@@ -351,16 +375,16 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="container">
+  <div v-if="failedMessage" class="container">
     <section>
       <section name="failed_message">
         <no-data
-          v-if="failedMessage?.notFound"
+          v-if="isError(failedMessage) && failedMessage.notFound"
           title="message failures"
           message="Could not find message. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl."
         ></no-data>
-        <no-data v-if="failedMessage?.error" title="message failures" message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
-        <div v-if="!failedMessage?.error && !failedMessage?.notFound">
+        <no-data v-if="isError(failedMessage) && failedMessage.error" title="message failures" message="An error occurred while trying to load the message. Please check the ServiceControl logs to learn what the issue is."></no-data>
+        <div v-if="!isError(failedMessage)">
           <div class="row">
             <div class="col-sm-12 no-side-padding">
               <div class="active break group-title">
@@ -376,7 +400,7 @@ onUnmounted(() => {
                 <span v-if="failedMessage.archiving" title="Message is being deleted" class="label sidebar-label label-info metadata-label">Deleting...</span>
                 <span v-if="failedMessage.archived" title="Message is being deleted" class="label sidebar-label label-warning metadata-label">Deleted</span>
                 <span v-if="failedMessage.resolved" title="Message was processed successfully" class="label sidebar-label label-warning metadata-label">Processed</span>
-                <span v-if="failedMessage.number_of_processing_attempts > 1" :title="'This message has already failed ' + failedMessage.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label"
+                <span v-if="(failedMessage.number_of_processing_attempts ?? 0) - 1 > 1" :title="'This message has already failed ' + failedMessage.number_of_processing_attempts + ' times'" class="label sidebar-label label-important metadata-label"
                   >{{ failedMessage.number_of_processing_attempts }} Retry Failures</span
                 >
                 <span v-if="failedMessage.edited" tooltip="Message was edited" class="label sidebar-label label-info metadata-label">Edited</span>
@@ -403,7 +427,7 @@ onUnmounted(() => {
                   <i class="fa fa-pencil"></i> Edit & retry
                 </button>
                 <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
-                <button type="button" class="btn btn-default" v-if="!failedMessage.notFound && !failedMessage.error" @click="exportMessage()"><i class="fa fa-download"></i> Export message</button>
+                <button type="button" class="btn btn-default" @click="exportMessage()"><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
           </div>
@@ -435,7 +459,7 @@ onUnmounted(() => {
                 Could not find message body. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.
               </div>
               <div v-if="panel === 3 && failedMessage.bodyUnavailable" class="alert alert-info">Message body unavailable.</div>
-              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="route.params.id"></FlowDiagram>
+              <FlowDiagram v-if="panel === 4" :conversation-id="failedMessage.conversationId" :message-id="id"></FlowDiagram>
             </div>
           </div>
 
@@ -474,7 +498,14 @@ onUnmounted(() => {
               :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
-            <EditRetryDialog v-if="showEditRetryModal === true" @cancel="cancelEditAndRetry()" @retried="confirmEditAndRetry()" :id="id" :message="failedMessage" :configuration="configuration.edit"></EditRetryDialog>
+            <EditRetryDialog
+              v-if="editAndRetryConfiguration && failedMessage && showEditRetryModal === true"
+              @cancel="cancelEditAndRetry()"
+              @retried="confirmEditAndRetry()"
+              :id="id"
+              :message="failedMessage"
+              :configuration="editAndRetryConfiguration"
+            ></EditRetryDialog>
           </Teleport>
         </div>
       </section>

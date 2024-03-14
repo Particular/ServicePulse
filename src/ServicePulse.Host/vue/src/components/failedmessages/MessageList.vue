@@ -1,16 +1,30 @@
-<script setup>
+<script setup lang="ts">
 import { useRouter } from "vue-router";
 import TimeSince from "../TimeSince.vue";
 import NoData from "../NoData.vue";
 import routeLinks from "@/router/routeLinks";
+import { FailedMessageStatus, ExtendedFailedMessage } from "@/resources/FailedMessage";
 
-let lastLabelClickedIndex = undefined;
+export interface IMessageList {
+  getSelectedMessages(): ExtendedFailedMessage[];
+  selectAll(): void;
+  deselectAll(): void;
+  resolveAll(): void;
+  isAnythingSelected(): ExtendedFailedMessage | undefined;
+  isAnythingDisplayed(): boolean;
+  numberDisplayed(): number;
+}
+
+let lastLabelClickedIndex: number | undefined;
 const router = useRouter();
 const emit = defineEmits(["retryRequested"]);
-const props = defineProps({
-  messages: Array,
-  showRequestRetry: Boolean,
-});
+const props = withDefaults(
+  defineProps<{
+    messages: ExtendedFailedMessage[];
+    showRequestRetry?: boolean;
+  }>(),
+  { showRequestRetry: false }
+);
 
 function getSelectedMessages() {
   return props.messages.filter((m) => m.selected);
@@ -22,6 +36,10 @@ function selectAll() {
 
 function deselectAll() {
   props.messages.forEach((m) => (m.selected = false));
+}
+
+function resolveAll() {
+  props.messages.forEach((m) => (m.resolved = true));
 }
 
 function isAnythingSelected() {
@@ -36,8 +54,9 @@ function numberDisplayed() {
   return props.messages.length;
 }
 
-function labelClicked($event, index) {
-  if ($event.shiftKey && typeof lastLabelClickedIndex !== "undefined") {
+function labelClicked($event: MouseEvent, index: number) {
+  //TODO: this functionality isn't consistent on including start/end items
+  if ($event.shiftKey && lastLabelClickedIndex != null) {
     // toggle selection from lastLabel until current index
     const start = (index < lastLabelClickedIndex ? index : lastLabelClickedIndex) + 1;
     const end = (index < lastLabelClickedIndex ? lastLabelClickedIndex : index) + 1;
@@ -47,31 +66,25 @@ function labelClicked($event, index) {
       messages[x].selected = !messages[x].selected;
     }
 
-    clearSelection();
+    //clear selection
+    const selection = document.getSelection();
+    if (selection) {
+      selection.empty();
+    }
   }
 
   lastLabelClickedIndex = index;
 }
 
-function clearSelection() {
-  if (document.selection && document.selection.empty) {
-    document.selection.empty();
-  } else if (window.getSelection) {
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-  }
+function navigateToMessage(messageId: string) {
+  router.push(routeLinks.failedMessage.message.link(messageId));
 }
 
-function navigateToMessage($event, messageId) {
-  if ($event.target.name !== "retryMessage") {
-    router.push(routeLinks.failedMessage.message.link(messageId));
-  }
-}
-
-defineExpose({
+defineExpose<IMessageList>({
   getSelectedMessages,
   selectAll,
   deselectAll,
+  resolveAll,
   isAnythingSelected,
   isAnythingDisplayed,
   numberDisplayed,
@@ -92,7 +105,7 @@ defineExpose({
       <div class="row">
         <div class="col-12">
           <div class="row box-header">
-            <div class="col-12 no-side-padding" @click="navigateToMessage($event, message.id)">
+            <div class="col-12 no-side-padding" @click="navigateToMessage(message.id)">
               <p class="lead break">{{ message.message_type || "Message Type Unknown - missing metadata EnclosedMessageTypes" }}</p>
               <p class="metadata">
                 <span v-if="message.submittedForRetrial" :title="'Message was submitted for retrying'" class="label sidebar-label label-info metadata-label">To retry</span>
@@ -113,9 +126,11 @@ defineExpose({
                 <span class="metadata"><i class="fa fa-laptop"></i> Machine: {{ message.receiving_endpoint.host }}</span>
                 <span class="metadata" v-if="message.redirect"><i class="fa pa-redirect-source pa-redirect-small"></i> Redirect: {{ message.redirect }}</span>
                 <!-- for deleted messages-->
-                <span class="metadata" v-if="message.status == 'archived'"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="message.last_modified"></time-since></span>
-                <span class="metadata danger" v-if="message.status == 'archived' && message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
-                <span class="metadata danger" v-if="message.status == 'archived' && !message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: <time-since class="danger" :date-utc="message.deleted_in"></time-since> </span>
+                <span class="metadata" v-if="message.status === FailedMessageStatus.Archived"><i class="fa fa-clock-o"></i> Deleted: <time-since :date-utc="message.last_modified"></time-since></span>
+                <span class="metadata danger" v-if="message.status === FailedMessageStatus.Archived && message.delete_soon"><i class="fa fa-trash-o danger"></i> Scheduled for deletion: immediately</span>
+                <span class="metadata danger" v-if="message.status === FailedMessageStatus.Archived && !message.delete_soon">
+                  <i class="fa fa-trash-o danger"></i> Scheduled for deletion: <time-since class="danger" :date-utc="message.deleted_in"></time-since>
+                </span>
 
                 <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)">
                   <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
@@ -132,6 +147,8 @@ defineExpose({
 </template>
 
 <style>
+@import "../list.css";
+
 .stacktrace-preview {
   height: 38px;
   overflow: hidden;
@@ -171,12 +188,6 @@ div.failed-message-data {
   padding-top: 15px;
   padding-left: 25px;
   padding-bottom: 0;
-}
-
-.box p {
-  color: #777f7f;
-  font-size: 14px;
-  margin-bottom: 0;
 }
 
 .pa-endpoint {
@@ -237,17 +248,29 @@ p.metadata button {
   top: 0;
 }
 
-.metadata > .btn-sm {
+.failed-message .btn-link,
+.failed-message-group .btn-link,
+.deleted-message-group .btn-link {
   color: #00a3c4;
   font-size: 14px;
   font-weight: bold;
   padding: 0 36px 10px 0;
   text-decoration: none;
+}
+
+.failed-message .metadata > .btn-link {
   display: none;
 }
 
-.failed-message:hover .metadata > .btn-sm {
+.failed-message:hover .metadata > .btn-link {
   display: block;
+}
+
+.failed-message .btn-link:hover,
+.failed-message-group .btn-link:hover,
+.deleted-message-group .btn-link:hover {
+  color: #23527c;
+  text-decoration: underline;
 }
 
 .label-info {
@@ -283,7 +306,15 @@ p.metadata button {
   border-radius: 0.25em;
 }
 
-.lead.break {
+.failed-message-data,
+.failed-message-group,
+.deleted-message-group {
   cursor: pointer;
+}
+
+.failed-message-data:hover .lead.break,
+.failed-message-group:hover .lead.break,
+.deleted-message-group:hover .lead.break {
+  text-decoration: underline;
 }
 </style>
