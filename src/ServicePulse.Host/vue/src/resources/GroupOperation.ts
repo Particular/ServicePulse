@@ -7,7 +7,7 @@ export default interface GroupOperation {
   comment: string;
   first?: string;
   last?: string;
-  operation_status: string;
+  operation_status: WorkflowStateStatus;
   operation_failed?: boolean;
   operation_progress: number;
   operation_remaining_count?: number;
@@ -16,3 +16,23 @@ export default interface GroupOperation {
   need_user_acknowledgement: boolean;
   last_operation_completion_time?: string;
 }
+
+export enum ExtendedGroupOperationRetryState {
+  ArchiveCompleted = "archivecompleted",
+  ArchiveFinalizing = "archivefinalizing",
+  ArchiveProcessing = "archiveprogressing",
+  ArchiveStarted = "archivestarted",
+  None = "none",
+  Queued = "queued",
+  Working = "working",
+}
+
+export enum GroupOperationRetryState {  
+  Forwarding = "forwarding",
+  Queued = "queued",
+  Preparing = "preparing",
+  Completed = "completed",
+  Waiting = "waiting",
+}
+
+export type WorkflowStateStatus = ExtendedGroupOperationRetryState | GroupOperationRetryState;

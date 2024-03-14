@@ -4,7 +4,7 @@ import { monitoringConnectionState } from "./serviceServiceControl";
 import { useGetExceptionGroups } from "./serviceMessageGroup";
 import { type Endpoint, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, type EndpointDetailsError } from "@/resources/Endpoint";
 import { emptyEndpointMetrics } from "@/components/monitoring/endpoints";
-
+import { ExtendedGroupOperationRetryState } from "@/resources/GroupOperation";
 /**
  * @returns the max number of segments in a array of endpoint object names
  */
@@ -109,7 +109,7 @@ async function addEndpointsFromScSubscription(endpoints: Endpoint[]) {
     //sort the exceptionGroups array by name - case sensitive
     exceptionGroups.sort((a, b) => (a.title > b.title ? 1 : a.title < b.title ? -1 : 0)); //desc
     exceptionGroups.forEach((failedMessageEndpoint) => {
-      if (failedMessageEndpoint.operation_status === "ArchiveCompleted") {
+      if (failedMessageEndpoint.operation_status === ExtendedGroupOperationRetryState.ArchiveCompleted) {
         return;
       }
       const index = endpoints.findIndex(function (item) {

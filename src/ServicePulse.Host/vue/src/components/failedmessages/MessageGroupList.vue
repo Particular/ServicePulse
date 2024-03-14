@@ -10,10 +10,10 @@ import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
 import routeLinks from "@/router/routeLinks";
 import { TYPE } from "vue-toastification";
-import GroupOperation from "@/resources/GroupOperation";
+import GroupOperation, { ExtendedGroupOperationRetryState, GroupOperationRetryState, WorkflowStateStatus } from "@/resources/GroupOperation";
 
 interface WorkflowState {
-  status: string;
+  status: WorkflowStateStatus;
   total?: number;
   failed?: boolean;
   message?: string;
@@ -88,9 +88,9 @@ async function getExceptionGroups(classifier?: string) {
 }
 
 function initializeGroupState(group: GroupOperation, index: number): ExtendedGroupOperation {
-  let operationStatus = (group.operation_status ? group.operation_status.toLowerCase() : null) || "none";
+  let operationStatus: WorkflowStateStatus = (group.operation_status ? group.operation_status : null) || ExtendedGroupOperationRetryState.None;
   if (operationStatus === "preparing" && group.operation_progress === 1) {
-    operationStatus = "queued";
+    operationStatus = ExtendedGroupOperationRetryState.Queued;
   }
   return {
     ...group,
@@ -184,7 +184,7 @@ function deleteGroup(group: ExtendedGroupOperation) {
 async function saveDeleteGroup(group?: ExtendedGroupOperation) {
   showDeleteGroupModal.value = false;
   if (group) {
-    group.workflow_state = { status: "archivestarted", message: "Delete request initiated..." };
+    group.workflow_state = { status: ExtendedGroupOperationRetryState.ArchiveStarted, message: "Delete request initiated..." };
 
     // We've started a delete, so increase the polling frequency
     changeRefreshInterval(1000);
@@ -202,12 +202,12 @@ async function saveDeleteGroup(group?: ExtendedGroupOperation) {
 }
 
 //create workflow state
-function createWorkflowState(optionalStatus?: string, optionalTotal?: number, optionalFailed?: boolean) {
+function createWorkflowState(optionalStatus?: WorkflowStateStatus, optionalTotal?: number, optionalFailed?: boolean) {
   if (optionalTotal && optionalTotal <= 1) {
     optionalTotal = optionalTotal * 100;
   }
   return {
-    status: optionalStatus || "working",
+    status: optionalStatus || ExtendedGroupOperationRetryState.Working,
     total: Math.round(optionalTotal || 0),
     failed: optionalFailed || false,
   };
@@ -241,7 +241,7 @@ function retryGroup(group: ExtendedGroupOperation) {
 async function saveRetryGroup(group?: ExtendedGroupOperation) {
   showRetryGroupModal.value = false;
   if (group) {
-    group.workflow_state = { status: "waiting", message: "Retry Group Request Enqueued..." };
+    group.workflow_state = { status: GroupOperationRetryState.Waiting, message: "Retry Group Request Enqueued..." };
 
     // We've started a retry, so increase the polling frequency
     changeRefreshInterval(1000);
@@ -267,7 +267,7 @@ const acknowledgeGroup = async function (group: GroupOperation) {
   const result = await useAcknowledgeArchiveGroup(group.id);
   if (isError(result)) useShowToast(TYPE.ERROR, "Error", `Acknowledging Group Failed: ${result.message}`);
   else {
-    if (group.operation_status === "ArchiveCompleted") {
+    if (group.operation_status === ExtendedGroupOperationRetryState.ArchiveCompleted) {
       useShowToast(TYPE.INFO, "Info", "Group deleted successfully");
     } else {
       useShowToast(TYPE.INFO, "Info", "Group retried successfully");
@@ -276,7 +276,7 @@ const acknowledgeGroup = async function (group: GroupOperation) {
   }
 };
 
-function isBeingArchived(status: string) {
+function isBeingArchived(status: WorkflowStateStatus) {
   return status === "archivestarted" || status === "archiveprogressing" || status === "archivefinalizing" || status === "archivecompleted";
 }
 
@@ -293,7 +293,9 @@ function navigateToGroup(groupId: string) {
 }
 
 function isRetryOrDeleteOperationInProgress() {
-  return exceptionGroups.value.some((group) => group.operation_status !== "None" && group.operation_status !== "ArchiveCompleted" && group.operation_status !== "Completed");
+  return exceptionGroups.value.some(
+    (group) => group.operation_status !== ExtendedGroupOperationRetryState.None && group.operation_status !== ExtendedGroupOperationRetryState.ArchiveCompleted && group.operation_status !== GroupOperationRetryState.Completed
+  );
 }
 
 function changeRefreshInterval(milliseconds: number) {
@@ -496,7 +498,7 @@ defineExpose<IMessageGroupList>({
                               <i aria-hidden="true" class="fa fa-envelope"></i> {{ group.workflow_state.status === "completed" ? "Messages sent:" : "Messages to send:" }} {{ group.operation_remaining_count || group.count }}
                             </span>
                             <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request started: <time-since :date-utc="group.operation_start_time"></time-since></span>
-                            <span class="metadata" v-if="group.workflow_state.status === 'completed'"
+                            <span class="metadata" v-if="group.workflow_state.status === WorkflowStateStatus.Completed"
                               ><i aria-hidden="true" class="fa fa-clock-o"></i> Retry request completed: <time-since :date-utc="group.operation_completion_time"></time-since
                             ></span>
                           </div>
