@@ -3,7 +3,7 @@ import { onMounted, onUnmounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { stats } from "../../composables/serviceServiceControl";
 import { useShowToast } from "../../composables/toast";
-import { useAcknowledgeArchiveGroup, useArchiveExceptionGroup, useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
+import { isError, useAcknowledgeArchiveGroup, useArchiveExceptionGroup, useDeleteNote, useEditOrCreateNote, useGetExceptionGroups, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import FailedMessageGroupNoteEdit from "./FailedMessageGroupNoteEdit.vue";
@@ -125,18 +125,18 @@ async function saveDeleteNote(group?: GroupOperation, hideToastMessage?: boolean
 
   if (group) {
     const result = await useDeleteNote(group.id);
-    if (result.message === "success") {
+    if (isError(result)) {
+      noteSaveSuccessful.value = false;
+      if (!hideToastMessage) {
+        useShowToast(TYPE.ERROR, "Error", `Failed to delete a Note: ${result.message}`);
+      }
+    } else {
       noteSaveSuccessful.value = true;
       if (!hideToastMessage) {
         useShowToast(TYPE.INFO, "Info", "Note deleted successfully");
       }
 
       loadFailedMessageGroups(); //reload the groups
-    } else {
-      noteSaveSuccessful.value = false;
-      if (!hideToastMessage) {
-        useShowToast(TYPE.ERROR, "Error", "Failed to delete a Note:");
-      }
     }
   }
 }
@@ -149,13 +149,13 @@ async function saveNote(group: GroupOperation, comment: string) {
   groupsWithNotesAdded.push({ groupId: group.id, comment: comment });
 
   const result = await useEditOrCreateNote(group.id, comment);
-  if (result.message === "success") {
+  if (isError(result)) {
+    noteSaveSuccessful.value = false;
+    useShowToast(TYPE.ERROR, "Error", `Failed to update Note: ${result.message}`);
+  } else {
     noteSaveSuccessful.value = true;
     useShowToast(TYPE.INFO, "Info", "Note updated successfully");
     loadFailedMessageGroups(); //reload the groups
-  } else {
-    noteSaveSuccessful.value = false;
-    useShowToast(TYPE.ERROR, "Error", "Failed to update Note:" + result.message);
   }
 }
 
@@ -191,12 +191,12 @@ async function saveDeleteGroup(group?: ExtendedGroupOperation) {
 
     saveDeleteNote(group, true); // delete comment note when group is archived
     const result = await useArchiveExceptionGroup(group.id);
-    if (result.message === "success") {
+    if (isError(result)) {
+      groupDeleteSuccessful.value = false;
+      useShowToast(TYPE.ERROR, "Error", `Failed to delete the group: ${result.message}`);
+    } else {
       groupDeleteSuccessful.value = true;
       useShowToast(TYPE.INFO, "info", "Group delete started...");
-    } else {
-      groupDeleteSuccessful.value = false;
-      useShowToast(TYPE.ERROR, "Error", "Failed to delete the group:" + result.message);
     }
   }
 }
@@ -248,12 +248,10 @@ async function saveRetryGroup(group?: ExtendedGroupOperation) {
 
     saveDeleteNote(group, true);
     const result = await useRetryExceptionGroup(group.id);
-    if (result.message === "success") {
-      groupRetrySuccessful.value = true;
-    } else {
+    if (isError(result)) {
       groupRetrySuccessful.value = false;
-      useShowToast(TYPE.ERROR, "Error", "Failed to retry the group:" + result.message);
-    }
+      useShowToast(TYPE.ERROR, "Error", `Failed to retry the group: ${result.message}`);
+    } else groupRetrySuccessful.value = true;
   }
 }
 
@@ -267,15 +265,14 @@ function getClassesForRetryOperation(stepStatus: string, currentStatus: string) 
 
 const acknowledgeGroup = async function (group: GroupOperation) {
   const result = await useAcknowledgeArchiveGroup(group.id);
-  if (result.message === "success") {
+  if (isError(result)) useShowToast(TYPE.ERROR, "Error", `Acknowledging Group Failed: ${result.message}`);
+  else {
     if (group.operation_status === "ArchiveCompleted") {
       useShowToast(TYPE.INFO, "Info", "Group deleted successfully");
     } else {
       useShowToast(TYPE.INFO, "Info", "Group retried successfully");
     }
     loadFailedMessageGroups(); //reload the groups
-  } else {
-    useShowToast(TYPE.ERROR, "Error", "Acknowledging Group Failed':" + result.message);
   }
 };
 

@@ -4,7 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { licenseStatus } from "../../composables/serviceLicense";
 import { connectionState, stats } from "../../composables/serviceServiceControl";
 import { useShowToast } from "../../composables/toast";
-import { useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup";
+import { isError, useGetArchiveGroups, useRestoreGroup } from "../../composables/serviceMessageGroup";
 import { useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useCookies } from "vue3-cookies";
 import NoData from "../NoData.vue";
@@ -177,12 +177,12 @@ async function restoreGroup() {
     group.operation_start_time = new Date().toUTCString();
 
     const result = await useRestoreGroup(group.id);
-    if (result.message === "success") {
+    if (isError(result)) {
+      groupRestoreSuccessful.value = false;
+      useShowToast(TYPE.ERROR, "Error", `Failed to restore the group: ${result.message}`);
+    } else {
       groupRestoreSuccessful.value = true;
       useShowToast(TYPE.INFO, "Info", "Group restore started...");
-    } else {
-      groupRestoreSuccessful.value = false;
-      useShowToast(TYPE.ERROR, "Error", "Failed to restore the group:" + result.message);
     }
   }
 }
