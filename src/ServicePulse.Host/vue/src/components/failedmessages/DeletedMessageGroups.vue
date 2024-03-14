@@ -16,8 +16,12 @@ import routeLinks from "@/router/routeLinks";
 import FailureGroupView from "@/resources/FailureGroupView";
 import { TYPE } from "vue-toastification";
 
+const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"] as const;
+type RestoreOperationStatus = (typeof statusesForRestoreOperation)[number];
+const otherStatuses = ["none", "working"] as const;
+type Status = RestoreOperationStatus | (typeof otherStatuses)[number];
 interface WorkflowState {
-  status: string;
+  status: Status;
   total?: number;
   failed?: boolean;
   message?: string;
@@ -117,7 +121,7 @@ async function getArchiveGroups(classifier: string) {
 function initializeGroupState(group: FailureGroupView): ExtendedFailureGroupView {
   return {
     index: 0,
-    workflow_state: createWorkflowState("none", null, null),
+    workflow_state: createWorkflowState("none"),
     ...group,
   };
 }
@@ -147,15 +151,15 @@ async function loadArchivedMessageGroups(groupBy: string | null = null) {
 }
 
 //create workflow state
-function createWorkflowState(optionalStatus: string | null = null, optionalTotal: number | null = null, optionalFailed: boolean | null = null): WorkflowState {
+function createWorkflowState(optionalStatus?: Status, optionalTotal?: number, optionalFailed?: boolean): WorkflowState {
   if (optionalTotal && optionalTotal <= 1) {
     optionalTotal = optionalTotal * 100;
   }
 
   return {
-    status: optionalStatus || "working",
-    total: optionalTotal || 0,
-    failed: optionalFailed || false,
+    status: optionalStatus ?? "working",
+    total: optionalTotal ?? 0,
+    failed: optionalFailed ?? false,
   };
 }
 
@@ -187,10 +191,8 @@ async function restoreGroup() {
   }
 }
 
-const statusesForRestoreOperation = ["restorestarted", "restoreprogressing", "restorefinalizing", "restorecompleted"];
-
 //getClasses
-const getClasses = function (stepStatus: string, currentStatus: string, statusArray: string[]) {
+const getClasses = function (stepStatus: Status, currentStatus: Status, statusArray: readonly Status[]) {
   const indexOfStep = statusArray.indexOf(stepStatus);
   const indexOfCurrent = statusArray.indexOf(currentStatus);
   if (indexOfStep > indexOfCurrent) {
@@ -202,7 +204,7 @@ const getClasses = function (stepStatus: string, currentStatus: string, statusAr
   return "completed";
 };
 
-function getClassesForRestoreOperation(stepStatus: string, currentStatus: string) {
+function getClassesForRestoreOperation(stepStatus: Status, currentStatus: Status) {
   return getClasses(stepStatus, currentStatus, statusesForRestoreOperation);
 }
 
@@ -220,8 +222,8 @@ const acknowledgeGroup = function (dismissedGroup: FailureGroupView) {
   );
 };
 
-function isBeingRestored(status: string) {
-  return statusesForRestoreOperation.includes(status);
+function isBeingRestored(status: Status) {
+  return (statusesForRestoreOperation as readonly Status[]).includes(status);
 }
 
 function navigateToGroup(groupId: string) {
@@ -418,7 +420,10 @@ onMounted(async () => {
     </template>
   </template>
 </template>
-<style>
+
+<style scoped>
+@import "../list.css";
+
 .fake-link i {
   padding-right: 0.2em;
 }

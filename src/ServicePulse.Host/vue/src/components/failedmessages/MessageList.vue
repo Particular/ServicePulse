@@ -147,6 +147,8 @@ defineExpose<IMessageList>({
 </template>
 
 <style>
+@import "../list.css";
+
 .stacktrace-preview {
   height: 38px;
   overflow: hidden;
