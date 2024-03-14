@@ -16,6 +16,7 @@ import Configuration, { EditAndRetryConfig } from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
 import { FailedMessageStatus, ExtendedFailedMessage, FailedMessageError, isError } from "@/resources/FailedMessage";
 import Message from "@/resources/Message";
+import { NServiceBusHeaders } from "@/resources/Header";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -131,7 +132,7 @@ async function downloadHeadersAndBody() {
 
     const message = data[0];
     failedMessage.value.headers = message.headers;
-    failedMessage.value.conversationId = message.headers.find((header) => header.key === "NServiceBus.ConversationId")?.value ?? "";
+    failedMessage.value.conversationId = message.headers.find((header) => header.key === NServiceBusHeaders.ConversationId)?.value ?? "";
 
     return downloadBody();
   } catch (err) {
