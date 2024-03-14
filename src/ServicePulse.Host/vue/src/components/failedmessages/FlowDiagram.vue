@@ -5,6 +5,7 @@ import { type DefaultEdge, MarkerType, useVueFlow, VueFlow, type Styles, type No
 import TimeSince from "../TimeSince.vue";
 import routeLinks from "@/router/routeLinks";
 import Message from "@/resources/Message";
+import { NServiceBusHeaders } from "@/resources/Header";
 
 const props = defineProps<{
   conversationId?: string;
@@ -50,20 +51,20 @@ function mapMessage(message: Message): MappedMessage {
   let parentId = "",
     parentEndpoint = "",
     sagaName = "";
-  const header = message.headers.find((header) => header.key === "NServiceBus.RelatedTo");
+  const header = message.headers.find((header) => header.key === NServiceBusHeaders.RelatedTo);
   if (header) {
     parentId = header.value ?? "";
     parentEndpoint = message.headers.find((h) => h.key === "NServiceBus.OriginatingEndpoint")?.value ?? "";
   }
 
-  const sagaHeader = message.headers.find((header) => header.key === "NServiceBus.OriginatingSagaType");
+  const sagaHeader = message.headers.find((header) => header.key === NServiceBusHeaders.OriginatingSagaType);
   if (sagaHeader) {
     sagaName = sagaHeader.value?.split(", ")[0] ?? "";
   }
 
   const type = (() => {
-    if (message.headers.find((header) => header.key === "NServiceBus.MessageIntent")?.value === "Publish") return MessageType.Event;
-    else if (message.headers.find((header) => header.key === "NServiceBus.IsSagaTimeoutMessage")?.value?.toLowerCase() === "true") return MessageType.Timeout;
+    if (message.headers.find((header) => header.key === NServiceBusHeaders.MessageIntent)?.value === "Publish") return MessageType.Event;
+    else if (message.headers.find((header) => header.key === NServiceBusHeaders.IsSagaTimeoutMessage)?.value?.toLowerCase() === "true") return MessageType.Timeout;
     return MessageType.Command;
   })();
 
@@ -78,7 +79,7 @@ function mapMessage(message: Message): MappedMessage {
     type,
     isError:
       message.headers.findIndex(function (x) {
-        return x.key === "NServiceBus.ExceptionInfo.ExceptionType";
+        return x.key === NServiceBusHeaders.ExceptionInfoExceptionType;
       }) > -1,
     sagaName,
     link: {
