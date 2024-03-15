@@ -54,12 +54,12 @@ const config: RouteItem[] = [
         component: () => import("@/components/failedmessages/PendingRetries.vue"),
       },
       {
-        title: "All Failed Messages",
+        title: "Failed Messages",
         path: routeLinks.failedMessage.group.template,
         component: () => import("@/components/failedmessages/FailedMessages.vue"),
       },
       {
-        title: "All Deleted Messages",
+        title: "Deleted Messages",
         path: routeLinks.failedMessage.deletedGroup.template,
         component: () => import("@/components/failedmessages/DeletedMessages.vue"),
       },
