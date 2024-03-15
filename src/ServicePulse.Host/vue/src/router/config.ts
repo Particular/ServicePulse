@@ -29,7 +29,7 @@ const config: RouteItem[] = [
     redirect: routeLinks.failedMessage.failedMessagesGroups.link,
     children: [
       {
-        title: "Failed Messages",
+        title: "Failed Message Groups",
         path: routeLinks.failedMessage.failedMessagesGroups.template,
         component: () => import("@/components/failedmessages/FailedMessageGroups.vue"),
       },
