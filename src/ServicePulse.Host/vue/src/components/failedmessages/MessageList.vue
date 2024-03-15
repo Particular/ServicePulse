@@ -132,7 +132,7 @@ defineExpose<IMessageList>({
                   <i class="fa fa-trash-o danger"></i> Scheduled for deletion: <time-since class="danger" :date-utc="message.deleted_in"></time-since>
                 </span>
 
-                <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click="emit('retryRequested', message.id)">
+                <button type="button" name="retryMessage" v-if="!message.retryInProgress && props.showRequestRetry" class="btn btn-link btn-sm" @click.stop="emit('retryRequested', message.id)">
                   <i aria-hidden="true" class="fa fa-repeat no-link-underline">&nbsp;</i>Request retry
                 </button>
               </p>
