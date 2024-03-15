@@ -34,9 +34,9 @@ const config: RouteItem[] = [
         component: () => import("@/components/failedmessages/FailedMessageGroups.vue"),
       },
       {
-        path: routeLinks.failedMessage.allFailedMessages.template,
+        path: routeLinks.failedMessage.failedMessages.template,
         title: "All Failed Messages",
-        component: () => import("@/components/failedmessages/AllFailedMessages.vue"),
+        component: () => import("@/components/failedmessages/FailedMessages.vue"),
       },
       {
         path: routeLinks.failedMessage.deletedMessagesGroup.template,
@@ -44,9 +44,9 @@ const config: RouteItem[] = [
         component: () => import("@/components/failedmessages/DeletedMessageGroups.vue"),
       },
       {
-        path: routeLinks.failedMessage.allDeletedMessages.template,
+        path: routeLinks.failedMessage.deletedMessages.template,
         title: "All Deleted Messages",
-        component: () => import("@/components/failedmessages/AllDeletedMessages.vue"),
+        component: () => import("@/components/failedmessages/DeletedMessages.vue"),
       },
       {
         path: routeLinks.failedMessage.pendingRetries.template,
@@ -56,12 +56,12 @@ const config: RouteItem[] = [
       {
         title: "All Failed Messages",
         path: routeLinks.failedMessage.group.template,
-        component: () => import("@/components/failedmessages/AllFailedMessages.vue"),
+        component: () => import("@/components/failedmessages/FailedMessages.vue"),
       },
       {
         title: "All Deleted Messages",
         path: routeLinks.failedMessage.deletedGroup.template,
-        component: () => import("@/components/failedmessages/AllDeletedMessages.vue"),
+        component: () => import("@/components/failedmessages/DeletedMessages.vue"),
       },
       {
         path: routeLinks.failedMessage.message.template,

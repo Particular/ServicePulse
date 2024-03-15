@@ -28,9 +28,9 @@ const showPendingRetry = window.defaultConfig.showPendingRetry;
             <!--All Failed Messages-->
             <h5
               v-if="!licenseStatus.isExpired"
-              :class="{ active: isRouteSelected(routeLinks.failedMessage.allFailedMessages.link) || isRouteSelected(routeLinks.failedMessage.message.link(`id`)), disabled: !connectionState.connected && !connectionState.connectedRecently }"
+              :class="{ active: isRouteSelected(routeLinks.failedMessage.failedMessages.link) || isRouteSelected(routeLinks.failedMessage.message.link(`id`)), disabled: !connectionState.connected && !connectionState.connectedRecently }"
             >
-              <RouterLink :to="routeLinks.failedMessage.allFailedMessages.link">All Failed Messages </RouterLink>
+              <RouterLink :to="routeLinks.failedMessage.failedMessages.link">All Failed Messages </RouterLink>
               <span v-if="stats.number_of_failed_messages !== 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </h5>
 
@@ -44,8 +44,8 @@ const showPendingRetry = window.defaultConfig.showPendingRetry;
             </h5>
 
             <!--All Deleted Messages-->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: isRouteSelected(routeLinks.failedMessage.allDeletedMessages.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="routeLinks.failedMessage.allDeletedMessages.link">All Deleted Messages </RouterLink>
+            <h5 v-if="!licenseStatus.isExpired" :class="{ active: isRouteSelected(routeLinks.failedMessage.deletedMessages.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+              <RouterLink :to="routeLinks.failedMessage.deletedMessages.link">All Deleted Messages </RouterLink>
               <span v-if="stats.number_of_archived_messages !== 0" class="badge badge-important">{{ stats.number_of_archived_messages }}</span>
             </h5>
 
