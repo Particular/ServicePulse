@@ -283,7 +283,8 @@ p.metadata button {
   top: -1px;
 }
 
-.sidebar-label {
+.sidebar-label,
+.sidebar-label.label-important {
   box-shadow: none;
   color: #ffffff;
   display: inline-block;
