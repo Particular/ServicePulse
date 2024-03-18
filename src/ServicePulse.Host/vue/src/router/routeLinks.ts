@@ -6,9 +6,9 @@ const failedMessagesLinks = (root: string) => {
   return {
     root,
     failedMessagesGroups: createLink("failed-message-groups"),
-    allFailedMessages: createLink("all-failed-messages"),
+    failedMessages: createLink("all-failed-messages"),
     deletedMessagesGroup: createLink("deleted-message-groups"),
-    allDeletedMessages: createLink("all-deleted-messages"),
+    deletedMessages: createLink("all-deleted-messages"),
     pendingRetries: createLink("pending-retries"),
     group: { link: (groupId: string) => `${root}/group/${groupId}`, template: "group/:groupId" },
     deletedGroup: { link: (groupId: string) => `${root}/deleted-messages/group/${groupId}`, template: "deleted-messages/group/:groupId" },
