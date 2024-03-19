@@ -5,7 +5,7 @@ import type { SortInfo } from "./SortInfo";
 const props = withDefaults(
   defineProps<{
     sortBy: string;
-    defaultAscending: boolean;
+    defaultAscending?: boolean;
   }>(),
   { defaultAscending: false }
 );
