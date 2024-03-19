@@ -105,8 +105,8 @@ onMounted(() => {
               <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
                 <RouterLink :to="routeLinks.failedMessage.group.link(endpoint.serviceControlId)" v-if="endpoint.errorCount" class="warning cursorpointer">
                   <i class="fa fa-envelope"></i>
+                  <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
                 </RouterLink>
-                <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
               </span>
             </div>
           </div>
