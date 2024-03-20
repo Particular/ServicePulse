@@ -32,47 +32,47 @@ const displayDanger = computed(() => {
           <li :class="{ active: isRouteSelected(routeLinks.dashboard) }">
             <RouterLink :to="routeLinks.dashboard">
               <i class="fa fa-dashboard icon-white" title="Dashboard"></i>
-              <span class="navbar-label">Dashboard</span>
+              <span>Dashboard</span>
             </RouterLink>
           </li>
           <li>
             <a :href="routeLinks.heartbeats">
               <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
-              <span class="navbar-label">Heartbeats</span>
+              <span>Heartbeats</span>
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
             </a>
           </li>
           <li v-if="useIsMonitoringEnabled()" :class="{ active: isRouteSelected(routeLinks.monitoring.root) || isRouteSelected(routeLinks.monitoring.endpointDetails.link('endpointName', 1)) }">
             <RouterLink :to="routeLinks.monitoring.root">
               <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
-              <span class="navbar-label">Monitoring</span>
+              <span>Monitoring</span>
               <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
             </RouterLink>
           </li>
           <li :class="{ active: isRouteSelected(routeLinks.failedMessage.root) }">
             <RouterLink :to="routeLinks.failedMessage.root">
               <i class="fa fa-envelope icon-white" title="Failed Messages"></i>
-              <span class="navbar-label">Failed Messages</span>
+              <span>Failed Messages</span>
               <span v-if="stats.number_of_failed_messages > 0" class="badge badge-important">{{ stats.number_of_failed_messages }}</span>
             </RouterLink>
           </li>
           <li>
             <a :href="routeLinks.customChecks">
               <i class="fa fa-check icon-white" title="Custom Checks"></i>
-              <span class="navbar-label">Custom Checks</span>
+              <span>Custom Checks</span>
               <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
             </a>
           </li>
           <li :class="{ active: isRouteSelected(routeLinks.events) }">
             <RouterLink :to="routeLinks.events" exact>
               <i class="fa fa-list-ul icon-white" title="Events"></i>
-              <span class="navbar-label">Events</span>
+              <span>Events</span>
             </RouterLink>
           </li>
           <li :class="{ active: isRouteSelected(routeLinks.configuration.root) }">
             <RouterLink :to="routeLinks.configuration.root" exact>
               <i class="fa fa-cog icon-white" title="Configuration"></i>
-              <span class="navbar-label">Configuration</span>
+              <span>Configuration</span>
               <exclamation-mark :type="WarningLevel.Warning" v-if="displayWarn" />
               <exclamation-mark :type="WarningLevel.Danger" v-if="displayDanger" />
             </RouterLink>
@@ -80,7 +80,7 @@ const displayDanger = computed(() => {
           <li>
             <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
               <i class="fa fa-comment" title="Feedback"></i>
-              <span class="navbar-label">Feedback</span>
+              <span>Feedback</span>
             </a>
           </li>
         </ul>

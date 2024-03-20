@@ -170,10 +170,6 @@ a.btn-feedback:focus {
 }
 
 @media (max-width: 1300px) {
-  .navbar-label {
-    display: none;
-  }
-
   .nav > li > a .icon-white {
     color: #929e9e;
   }
