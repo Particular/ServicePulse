@@ -58,3 +58,9 @@
   width: 33%;
   box-sizing: border-box;
 }
+
+@media (max-width: 1300px) {
+  .graph-area {
+    width: 95%;
+  }
+}
