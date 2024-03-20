@@ -97,7 +97,7 @@ const displayDanger = computed(() => {
   --bs-link-hover-color: #fff;
 }
 
-.navbar > .container-fluid > div {
+.navbar > .container-fluid > div > ul {
   margin: 0 1em;
 }
 </style>
