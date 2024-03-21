@@ -69,6 +69,12 @@ const displayDanger = computed(() => {
               <span class="navbar-label">Events</span>
             </RouterLink>
           </li>
+          <li :class="{ active: isRouteSelected(routeLinks.throughputReport.root) }">
+            <RouterLink :to="routeLinks.throughputReport.root" exact>
+              <i class="fa fa-file-text-o icon-white" title="Throughput Report"></i>
+              <span class="navbar-label">Throughput Report</span>
+            </RouterLink>
+          </li>
           <li :class="{ active: isRouteSelected(routeLinks.configuration.root) }">
             <RouterLink :to="routeLinks.configuration.root" exact>
               <i class="fa fa-cog icon-white" title="Configuration"></i>
