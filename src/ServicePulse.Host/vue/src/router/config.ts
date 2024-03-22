@@ -5,6 +5,7 @@ import MonitoringView from "@/views/MonitoringView.vue";
 import EventsView from "@/views/EventsView.vue";
 import ConfigurationView from "@/views/ConfigurationView.vue";
 import routeLinks from "@/router/routeLinks";
+import CustomChecksView from "@/views/CustomChecksView.vue";
 
 export interface RouteItem {
   path: string;
@@ -79,6 +80,11 @@ const config: RouteItem[] = [
     path: routeLinks.monitoring.endpointDetails.template,
     component: () => import("@/components/monitoring/EndpointDetails.vue"),
     title: "Endpoint Details",
+  },
+  {
+    path: routeLinks.customChecks,
+    title: "Custom checks",
+    component: CustomChecksView,
   },
   {
     path: routeLinks.events,

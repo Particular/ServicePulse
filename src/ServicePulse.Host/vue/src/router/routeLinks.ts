@@ -45,7 +45,7 @@ const routeLinks = {
   heartbeats: `${baseUrl}a/#/endpoints`,
   monitoring: monitoringLinks("/monitoring"),
   failedMessage: failedMessagesLinks("/failed-messages"),
-  customChecks: `${baseUrl}a/#/custom-checks`,
+  customChecks: "/custom-checks",
   events: "/events",
   configuration: configurationLinks("/configuration"),
 };
