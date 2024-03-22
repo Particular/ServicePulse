@@ -5,8 +5,15 @@ import { useDeleteFromServiceControl } from "@/composables/serviceServiceControl
 
 defineProps<{ customCheck: CustomCheck }>();
 
+const prefix = "customchecks/";
+
 async function dismissCustomCheck(id: string) {
-  await useDeleteFromServiceControl(id);
+  // HINT: This is required to handle the difference between ServiceControl 4 and 5
+  let guid = id;
+  if (id.toLowerCase().startsWith(prefix)) {
+    guid = id.substring(prefix.length);
+  }
+  await useDeleteFromServiceControl(`${prefix}${guid}`);
 }
 </script>
 
