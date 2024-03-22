@@ -14,7 +14,7 @@ describe("FEATURE: Grouping endpoints", () => {
       //Act
       await driver.goTo("monitoring");
       
-      expect(await (await screen.findAllByRole("link", { name: /max\..*segments/i })).length).toBe(2);
+      expect((await screen.findAllByRole("link", { name: /max\..*segments/i })).length).toBe(2);
       expect(await screen.findByRole("link", { name: /max\. 1 segments/i })).toBeInTheDocument();
       expect(await screen.findByRole("link", { name: /max\. 2 segments/i })).toBeInTheDocument();      
       
