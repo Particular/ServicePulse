@@ -1,4 +1,6 @@
-{
+import { Endpoint } from "@/resources/Endpoint";
+
+const monitoredEndpointTemplate = <Endpoint> {
     "name": "Ms. Kavon Lockman",
     "errorCount": 88542,
     "serviceControlId": "voluptatibus",
@@ -6,11 +8,13 @@
     "metrics": {
         "processingTime": {
             "average": 0.0,
-            "points": []
+            "points": [],
+            timeAxisValues:[]
         },
         "criticalTime": {
             "average": 0.0,
-            "points": []
+            "points": [],
+            timeAxisValues:[]
         },
         "retries": {
             "average": 0.0,
@@ -92,4 +96,6 @@
     ],
     "disconnectedCount": 6940,
     "connectedCount": 54099
-  }
+};
+
+export default monitoredEndpointTemplate;
