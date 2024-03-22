@@ -18,7 +18,7 @@ export const hasNoMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
   return hasNoEmpoints;
 };
 
-export const withEndpointsNamed =
+export const monitoredEndpointsNamed =
   (endpointNames: string[]) =>
   ({ driver }: SetupFactoryOptions) => {
     const reponse = endpointNames.map((name) => {
