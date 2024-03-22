@@ -1,5 +1,5 @@
 import hasEndpointsResponse from "../mocks/monitored-endpoints.json";
-import hasNoEmpoints from "../mocks/monitored-endpoints-empty.json";
+import hasNoEndpoints from "../mocks/monitored-endpoints-empty.json";
 import monitoredEndpointTemplate from "../mocks/monitored-endpoint-template";
 
 import { SetupFactoryOptions } from "../driver";
@@ -13,20 +13,20 @@ export const hasMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
 
 export const hasNoMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
-    body: hasNoEmpoints,
+    body: hasNoEndpoints,
   });
-  return hasNoEmpoints;
+  return hasNoEndpoints;
 };
 
 export const monitoredEndpointsNamed =
   (endpointNames: string[]) =>
   ({ driver }: SetupFactoryOptions) => {
-    const reponse = endpointNames.map((name) => {
+    const response = endpointNames.map((name) => {
       return { ...monitoredEndpointTemplate, name: name };
     });
 
     driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
-      body: reponse,
+      body: response,
     });
-    return reponse;
+    return response;
   };
