@@ -9,30 +9,15 @@ describe("FEATURE: Grouping endpoints", () => {
     it("Example: 6 of 6 Endpoints have an equal amount of periods '.' in the endpoint name", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasMonitoredEndpoints);
+      await driver.setUp(precondition.withEndpointsNamed(["Endpoint1.A.B","Endpoint2.A.B","Endpoint3.A.B"]));
 
       //Act
       await driver.goTo("monitoring");
-      //var groupByButton = await screen.findByRole("button", { name: /no grouping/i });
-      //var groupByButton = screen.getByRole("button", { name: /no grouping/i });
-      //await userEvent.click(groupByButton);
-      var segment1Link = await screen.findByRole("link", { name: /max\. 1 segments/i });
-
-      //Assert
-      //Check the sales endpoint still shows right before filtering
-      expect(segment1Link).toBeInTheDocument();
-      //expect(await screen.findByRole("link", { name: /a\.c\.sales1/i })).toBeInTheDocument();
-
-      //Act
-      //var filterByNameInput = await screen.findByLabelText("filter by name");
-      //expect(filterByNameInput).toBeInTheDocument();
-      //await fireEvent.update(filterByNameInput, "A.C.ClientUI");
-
-      //Assert
-      //Confirm the sales endpoint no longer shows in the list after filtering
-      //expect(screen.queryByRole("link", { name: /a\.c\.sales1/i })).toBeNull();
-      //Confirm the sales endpoint Still shows in the list after filtering
-      //expect(screen.queryByRole("link", { name: /a\.c\.clientui/i })).toBeInTheDocument();
+      
+      expect(await (await screen.findAllByRole("link", { name: /max\..*segments/i })).length).toBe(2);
+      expect(await screen.findByRole("link", { name: /max\. 1 segments/i })).toBeInTheDocument();
+      expect(await screen.findByRole("link", { name: /max\. 2 segments/i })).toBeInTheDocument();      
+      
     });
   });
 });

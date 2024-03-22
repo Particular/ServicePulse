@@ -1,0 +1,95 @@
+{
+    "name": "Ms. Kavon Lockman",
+    "errorCount": 88542,
+    "serviceControlId": "voluptatibus",
+    "isScMonitoringDisconnected": false,
+    "metrics": {
+        "processingTime": {
+            "average": 0.0,
+            "points": []
+        },
+        "criticalTime": {
+            "average": 0.0,
+            "points": []
+        },
+        "retries": {
+            "average": 0.0,
+            "points": []
+        },
+        "throughput": {
+            "average": 0.0,
+            "points": []
+        },
+        "queueLength": {
+            "average": 0.0,
+            "points": [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0
+            ]
+        }
+    },
+    "isStale": false,
+    "endpointInstanceIds": [
+        "cce2f6add5189ee34de8af0e2cc9da34"
+    ],
+    "disconnectedCount": 6940,
+    "connectedCount": 54099
+  }
