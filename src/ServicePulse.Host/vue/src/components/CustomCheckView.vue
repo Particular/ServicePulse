@@ -13,8 +13,8 @@ async function dismissCustomCheck(id: string) {
 <template>
   <div class="row box box-warning box-no-click">
     <div class="col-sm-12 no-side-padding">
-      <div class="row">
-        <div class="col-xs-10">
+      <div class="custom-check-row">
+        <div>
           <div class="row box-header">
             <div class="col-sm-12 no-side-padding">
               <p class="lead pre-wrap">{{ customCheck.failure_reason }}</p>
@@ -32,10 +32,20 @@ async function dismissCustomCheck(id: string) {
             </div>
           </div>
         </div>
-        <div class="col-xs-2 pull-right">
+        <div>
           <button type="button" class="btn btn-default pull-right" title="Dismiss this custom check so it doesn't show up as an alert" @click="dismissCustomCheck(customCheck.id)">Dismiss</button>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+@import "./list.css";
+
+.custom-check-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>
