@@ -3,7 +3,6 @@ import hasNoEmpoints from "../mocks/monitored-endpoints-empty.json";
 import monitoredEndpointTemplate from "../mocks/monitored-endpoint-template";
 
 import { SetupFactoryOptions } from "../driver";
-import { Endpoint } from "@/resources/Endpoint";
 
 export const hasMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
