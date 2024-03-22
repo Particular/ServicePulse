@@ -1,101 +1,37 @@
 import { Endpoint } from "@/resources/Endpoint";
 
-const monitoredEndpointTemplate = <Endpoint> {
-    "name": "Ms. Kavon Lockman",
-    "errorCount": 88542,
-    "serviceControlId": "voluptatibus",
-    "isScMonitoringDisconnected": false,
-    "metrics": {
-        "processingTime": {
-            "average": 0.0,
-            "points": [],
-            timeAxisValues:[]
-        },
-        "criticalTime": {
-            "average": 0.0,
-            "points": [],
-            timeAxisValues:[]
-        },
-        "retries": {
-            "average": 0.0,
-            "points": []
-        },
-        "throughput": {
-            "average": 0.0,
-            "points": []
-        },
-        "queueLength": {
-            "average": 0.0,
-            "points": [
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                0.0
-            ]
-        }
+const monitoredEndpointTemplate = <Endpoint>{
+  name: "A happy endpoint",
+  isStale: false,
+  errorCount: 411,
+  serviceControlId: "voluptatibus",
+  isScMonitoringDisconnected: false,
+  endpointInstanceIds: ["c62841c1e8abe36415eb7ec412cedf58"],
+  metrics: {
+    processingTime: {
+      average: 0.0,
+      points: [],
+      timeAxisValues: [],
     },
-    "isStale": false,
-    "endpointInstanceIds": [
-        "cce2f6add5189ee34de8af0e2cc9da34"
-    ],
-    "disconnectedCount": 6940,
-    "connectedCount": 54099
+    criticalTime: {
+      average: 0.0,
+      points: [],
+      timeAxisValues: [],
+    },
+    retries: {
+      average: 0.0,
+      points: [],
+    },
+    throughput: {
+      average: 0.0,
+      points: [],
+    },
+    queueLength: {
+      average: 0.0,
+      points: [],
+    },
+  },
+  disconnectedCount: 0,
+  connectedCount: 1,
 };
-
 export default monitoredEndpointTemplate;
