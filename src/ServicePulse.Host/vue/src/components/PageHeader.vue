@@ -57,11 +57,11 @@ const displayDanger = computed(() => {
             </RouterLink>
           </li>
           <li>
-            <a :href="routeLinks.customChecks">
+            <RouterLink :to="routeLinks.customChecks">
               <i class="fa fa-check icon-white" title="Custom Checks"></i>
               <span class="navbar-label">Custom Checks</span>
               <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
-            </a>
+            </RouterLink>
           </li>
           <li :class="{ active: isRouteSelected(routeLinks.events) }">
             <RouterLink :to="routeLinks.events" exact>
