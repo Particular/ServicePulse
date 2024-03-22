@@ -21,10 +21,8 @@ export const hasNoMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
 export const withEndpointsNamed =
   (endpointNames: string[]) =>
   ({ driver }: SetupFactoryOptions) => {
-    const reponse = endpointNames.map((e) => {
-      const endpoint = monitoredEndpointTemplate;
-      endpoint.name = e;
-      return endpoint;
+    const reponse = endpointNames.map((name) => {
+      return { ...monitoredEndpointTemplate, name: name };
     });
 
     driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
