@@ -40,7 +40,7 @@ async function dismissCustomCheck(id: string) {
           </div>
         </div>
         <div>
-          <button type="button" class="btn btn-default pull-right" title="Dismiss this custom check so it doesn't show up as an alert" @click="dismissCustomCheck(customCheck.id)">Dismiss</button>
+          <button type="button" class="btn btn-default" title="Dismiss this custom check so it doesn't show up as an alert" @click="dismissCustomCheck(customCheck.id)">Dismiss</button>
         </div>
       </div>
     </div>
