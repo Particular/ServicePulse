@@ -1,7 +1,6 @@
 import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
-import userEvent from "@testing-library/user-event";
-import { fireEvent, screen } from "@testing-library/vue";
+import { screen } from "@testing-library/vue";
 import * as precondition from "../../preconditions";
 
 describe("FEATURE: Grouping endpoints", () => {
