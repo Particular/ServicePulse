@@ -1,11 +1,6 @@
 import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
-import { screen, fireEvent } from "@testing-library/vue";
 import * as precondition from "../../preconditions";
-import { numberOfGroupingSegments } from "./questions/numberOfGroupingSegments";
-import { groupingOptionWithName } from "./questions/groupingOptionWithName";
-import { openGroupingOptions } from "./actions/openGroupingOptions";
-import { groupingOptions } from "./questions/groupingOptions";
 import { endpointsGroupsNames } from "./questions/endpointsGroupsNames";
 import { endpointGroupEndpoints } from "./questions/endpointGroupEndpoints";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
