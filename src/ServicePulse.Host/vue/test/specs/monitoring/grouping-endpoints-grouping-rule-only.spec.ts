@@ -8,6 +8,7 @@ import { openGroupingOptions } from "./actions/openGroupingOptions";
 import { groupingOptions } from "./questions/groupingOptions";
 import { endpointsGroupsNames } from "./questions/endpointsGroupsNames";
 import { endpointGroupEndpoints } from "./questions/endpointGroupEndpoints";
+import { groupEndpointsBy } from "./actions/groupEndpointsBy";
 
 //TODO: move the content of this file to groupin-endpoints.spec.ts and delete this file.
 
@@ -19,10 +20,8 @@ describe("FEATURE: Grouping endpoints", () => {
       await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Alphacentauri.Proximacentauri.Endpoint1", "Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2"]));
 
       //Act
-      await driver.goTo("monitoring");
-      await openGroupingOptions();
-
-      await fireEvent.click(await groupingOptionWithName(/max\. 1 segments/i));
+      await driver.goTo("monitoring");      
+      await groupEndpointsBy({ numberOfSegments: 1 });
 
       expect(endpointsGroupsNames()).toEqual(["Universe"]);
       expect(endpointGroupEndpoints("Universe")).toEqual(["Alphacentauri.Proximacentauri.Endpoint1", "Solarsystem.Earth.Endpoint1", "Solarsystem.Earth.Endpoint2"]);
@@ -35,9 +34,7 @@ describe("FEATURE: Grouping endpoints", () => {
 
       //Act
       await driver.goTo("monitoring");
-      await openGroupingOptions();
-
-      await fireEvent.click(await groupingOptionWithName(/max\. 2 segments/i));
+      await groupEndpointsBy({ numberOfSegments: 2 });
 
       expect(endpointsGroupsNames()).toEqual(["Universe.Alphacentauri", "Universe.Solarsystem"]);
       expect(endpointGroupEndpoints("Universe.Alphacentauri")).toEqual(["Proximacentauri.Endpoint1"]);
