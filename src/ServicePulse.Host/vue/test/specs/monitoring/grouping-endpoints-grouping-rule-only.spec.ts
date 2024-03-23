@@ -2,7 +2,7 @@ import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { endpointsGroupsNames } from "./questions/endpointsGroupsNames";
-import { endpointGroup } from "./questions/endpointGroupEndpoints";
+import { endpointGroup } from "./questions/endpointGroup";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
 
 //TODO: move the content of this file to groupin-endpoints.spec.ts and delete this file.
