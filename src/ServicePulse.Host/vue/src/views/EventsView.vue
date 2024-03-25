@@ -13,11 +13,11 @@ const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCoun
 </script>
 
 <template>
-  <div class="container">
-    <LicenseExpired />
-    <template v-if="!licenseStatus.isExpired">
-      <ServiceControlNotAvailable />
-      <template v-if="connectionState.connected">
+  <LicenseExpired />
+  <template v-if="!licenseStatus.isExpired">
+    <ServiceControlNotAvailable />
+    <template v-if="connectionState.connected">
+      <div class="container">
         <div class="row">
           <div class="col-12">
             <h1>Events</h1>
@@ -35,7 +35,7 @@ const pageModel = ref<DataViewPageModel<EventLogItemType>>({ data: [], totalCoun
             </div>
           </div>
         </div>
-      </template>
+      </div>
     </template>
-  </div>
+  </template>
 </template>
