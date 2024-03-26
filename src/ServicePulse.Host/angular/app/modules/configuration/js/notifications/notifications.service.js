@@ -31,7 +31,9 @@
                 .then(function(response) {
                         defer.resolve({ message: success, status: response.status });
                     }, function(response) {
-                        defer.reject({ message: error + ':' + response.statusText, status: response.status, statusText: response.statusText, data: response.data });
+                    
+                        let statusText = response.headers.has('X-Particular-Reason') ? response.headers.get('X-Particular-Reason') : response.statusText;
+                        defer.reject({ message: error + ':' + statusText, status: response.status, statusText: statusText, data: response.data });
                     }
                 );
 

@@ -1,97 +1,104 @@
-(function (window, angular) {
-    'use strict';
+// (function (window, angular) {
+//     'use strict';
 
-    function Service(notifications, $log, $rootScope, connectionsManager, $jquery, uri) {
+//     function Service(notifications, $log, $rootScope, connectionsManager, uri) {
 
-        var subscriberRegistry = {}, registryKey = 1;
+//         var subscriberRegistry = {}, registryKey = 1;
 
-        var scu = connectionsManager.getServiceControlUrl();
-        var url = uri.join(scu, 'messagestream');
+//         var scu = connectionsManager.getServiceControlUrl();
+//         var url = uri.join(scu, 'messagestream');
 
-        var connection = $jquery.connection(url);
+//         //var connection = $jquery.connection(url);
 
-        connection.logging = true;
+//         let connection = new signalR.HubConnectionBuilder()
+//             .configureLogging(signalR.LogLevel.Trace)
+//             .withUrl(url)
+//             .build();
 
-        connection.received(function (data) {
-            for (var i in data.types) {
-                callSubscribers(data.types[i], data.message);
-            }
-        });
+//         connection.on("PushEnvelope", data => {
+//             $log.debug(data);
+//             for (var i in data.types) {
+//                 callSubscribers(data.types[i], data.message);
+//             }
+//         });
 
-        connection
-            .start()
-            .done(function () {
+//         // connection.start()
+//         //     .then(() => connection.invoke("send", "Hello"));
 
-                $log.info('SignalR started');
+//         connection
+//             .start()
+//             .done(function () {
 
-                connection.error(function (error) {
-                    notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'danger', { error: error });
-                });
+//                 $log.warn('SignalR started');
 
-                connection.reconnected(function () {
-                    notifications.pushForCurrentRoute('Reconnected to ServiceControl', 'info');
-                });
+//                 connection.error(function (error) {
+//                     notifications.pushForCurrentRoute('Lost connection to ServiceControl! Error: {{error}}', 'danger', { error: error });
+//                 });
 
-                connection.stateChanged(function (change) {
-                    console.log('SignalR state changed to=' + change.newState);
+//                 connection.reconnected(function () {
+//                     notifications.pushForCurrentRoute('Reconnected to ServiceControl', 'info');
+//                 });
 
-                    if (change.newState === $jquery.signalR.connectionState.disconnected) {
-                        console.log('The server is offline');
-                    }
-                });
+//                 connection.stateChanged(function (change) {
+//                     console.log('SignalR state changed to=' + change.newState);
 
-            })
-            .fail(function () {
-                notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scu });
-            });
+//                     if (change.newState === $jquery.signalR.connectionState.disconnected) {
+//                         console.log('The server is offline');
+//                     }
+//                 });
 
-        function callSubscribers(messageType, message) {
-            if (!subscriberRegistry[messageType]) {
-                return;
-            }
+//             })
+//             .fail(function () {
+//                 notifications.pushForCurrentRoute('Can\'t connect to ServiceControl ({{url}})', 'danger', { url: scu });
+//             });
 
-            var subscriberDictionary = subscriberRegistry[messageType];
+//         function callSubscribers(messageType, message) {
+//             if (!subscriberRegistry[messageType]) {
+//                 return;
+//             }
 
-            for (var key in subscriberDictionary) {
-                if (Object.prototype.hasOwnProperty.call(subscriberDictionary, key)) {
-                    if ($jquery.isFunction(subscriberDictionary[key])) {
-                        subscriberDictionary[key].call(undefined, message);
-                    }
-                }
-            }
-        }
+//             var subscriberDictionary = subscriberRegistry[messageType];
 
-        function onSubscribe(messageType, handler) {
-            if (!subscriberRegistry[messageType]) {
-                subscriberRegistry[messageType] = {};
-            }
+//             for (var key in subscriberDictionary) {
+//                 if (Object.prototype.hasOwnProperty.call(subscriberDictionary, key)) {
+//                     if ($jquery.isFunction(subscriberDictionary[key])) {
+//                         subscriberDictionary[key].call(undefined, message);
+//                     }
+//                 }
+//             }
+//         }
 
-            var uniqueKey = registryKey++;
+//         function onSubscribe(messageType, handler) {
+//             if (!subscriberRegistry[messageType]) {
+//                 subscriberRegistry[messageType] = {};
+//             }
 
-            subscriberRegistry[messageType][uniqueKey] = function (message) {
-                handler(message);
-            };
+//             var uniqueKey = registryKey++;
 
-            var unsubscribeAction = function() {
-                delete subscriberRegistry[messageType][uniqueKey];
-            };
+//             subscriberRegistry[messageType][uniqueKey] = function (message) {
+//                 handler(message);
+//             };
 
-            return unsubscribeAction;
-        }
+//             var unsubscribeAction = function() {
+//                 delete subscriberRegistry[messageType][uniqueKey];
+//             };
 
-        return {
-            subscribe: onSubscribe,
-            send: function (messageType, message) {
-                connection.send(JSON.stringify({ message: message, type: messageType }));
-            }
-        };
-    }
+//             return unsubscribeAction;
+//         }
 
-    Service.$inject = ['notifications', '$log', '$rootScope', 'connectionsManager', '$jquery', 'uri'];
+//         return {
+//             subscribe: onSubscribe,
+//             send: function (messageType, message) {
+//                 connection.send(JSON.stringify({ message: message, type: messageType }));
+//             }
+//         };
+//     }
 
-    angular
-        .module('services.streamService', [])
-        .factory('streamService', Service);
+//     Service.$inject = ['notifications', '$log', '$rootScope', 'connectionsManager', 'uri'];
+
+//     angular
+//         .module('services.streamService', [])
+//         .factory('streamService', Service);
 
 
-}(window, window.angular));
+// }(window, window.angular));

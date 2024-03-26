@@ -72,9 +72,9 @@
 
                     $uibModalInstance.close();
                 }, function(response) {
-                    if ((response.status === '409' || response.status === 409) && response.statusText === 'Duplicate') {
+                    if ((response.status === '409' || response.status === 409) && response.headers.get('X-Particular-Reason') === 'Duplicate') {
                         toastService.showError('Failed to create a redirect, can not create more than one redirect for queue: ' + $scope.selected.physical_address);
-                    } else if ((response.status === '409' || response.status === 409) && response.statusText === 'Dependents') {
+                    } else if ((response.status === '409' || response.status === 409) && response.headers.get('X-Particular-Reason') === 'Dependents') {
                         toastService.showError('Failed to create a redirect, can not create a redirect to a queue that already has a redirect or is a target of a redirect.');
                     } else {
                         toastService.showError(response.message);

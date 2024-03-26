@@ -1,7 +1,7 @@
 (function (window, angular) {
     'use strict';
 
-    function factory($rootScope, $jquery, notifyService, toastService, $window) {
+    function factory(notifyService, toastService, $window, signalR) {
 
         function listener(msgUrl) {
 
@@ -23,23 +23,39 @@
 
             }
 
-            if ($jquery) {
-                // you got to have jQuery for this to work
-                var connection = $jquery.connection(msgUrl);
+            let connection = new signalR.HubConnectionBuilder()
+                .configureLogging(signalR.LogLevel.Trace)
+                .withUrl(msgUrl)
+                .build();
 
-                connection.logging = true;
+            connection.on("PushEnvelope", data => {
+                for (var i in data.types) {
+                    var message = angular.extend({}, data.message);
+                    message.title = data.types[i];
+                    callSubscribers(data.types[i], message);
+                }
+            });
 
-                connection.received(function (data) {
-                    for (var i in data.types) {
-                        var message = angular.extend({}, data.message);
-                        message.title = data.types[i];
-                        callSubscribers(data.types[i], message);
-                    }
-                });
+            notifier.notify('SignalREvent', 'SignalR starting');
+            connectToSignalR(connection);
 
-                notifier.notify('SignalREvent', 'SignalR starting');
-                connectToSignalR(connection);
-            }
+            // if ($jquery) {
+            //     // you got to have jQuery for this to work
+            //     var connection = $jquery.connection(msgUrl);
+
+            //     connection.logging = true;
+
+            //     connection.received(function (data) {
+            //         for (var i in data.types) {
+            //             var message = angular.extend({}, data.message);
+            //             message.title = data.types[i];
+            //             callSubscribers(data.types[i], message);
+            //         }
+            //     });
+
+            //     notifier.notify('SignalREvent', 'SignalR starting');
+            //     connectToSignalR(connection);
+            // }
 
             var firstConnect = true;
             function connectToSignalR (connection) {
@@ -97,11 +113,10 @@
     }
 
     factory.$inject = [
-        '$rootScope',
-        '$jquery',
         'notifyService',
         'toastService',
-        '$window'
+        '$window',
+        'signalR'
     ];
 
     angular.module('sc')
