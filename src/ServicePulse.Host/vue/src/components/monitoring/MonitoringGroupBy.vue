@@ -48,13 +48,7 @@ onMounted(() => {
 
 <style scoped>
 .dropdown {
-  margin-left: 25px;
   width: 250px;
-}
-
-.dropdown .dropdown-menu {
-  top: 36px;
-  margin-left: 72px;
 }
 
 .btn.btn-dropdown {
@@ -67,9 +61,5 @@ onMounted(() => {
 
 .btn.dropdown-toggle::after {
   vertical-align: middle;
-}
-
-ul.dropdown-menu li a span {
-  color: #aaa;
 }
 </style>
