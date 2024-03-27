@@ -9,6 +9,7 @@ import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 import { WarningLevel } from "@/components/WarningLevel";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
+import CustomChecksMenuItem from "@/components/customchecks/CustomChecksMenuItem.vue";
 
 const displayWarn = computed(() => {
   return licenseStatus.warningLevel === LicenseWarningLevel.Warning;
@@ -57,11 +58,7 @@ const displayDanger = computed(() => {
             </RouterLink>
           </li>
           <li>
-            <RouterLink :to="routeLinks.customChecks">
-              <i class="fa fa-check icon-white" title="Custom Checks"></i>
-              <span class="navbar-label">Custom Checks</span>
-              <span v-if="stats.number_of_failed_checks > 0" class="badge badge-important">{{ stats.number_of_failed_checks }}</span>
-            </RouterLink>
+            <CustomChecksMenuItem />
           </li>
           <li :class="{ active: isRouteSelected(routeLinks.events) }">
             <RouterLink :to="routeLinks.events" exact>

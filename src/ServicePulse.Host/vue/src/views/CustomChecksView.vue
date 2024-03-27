@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import DataView, { AdditionalDataViewParameters } from "@/components/DataView.vue";
-import DataViewPageModel from "@/components/DataViewPageModel";
 import NoData from "@/components/NoData.vue";
-import CustomCheck from "@/resources/CustomCheck";
-import CustomCheckView from "@/components/CustomCheckView.vue";
+import CustomCheckView from "@/components/customchecks/CustomCheckView.vue";
+import { useCustomChecksStore } from "@/stores/CustomChecksStore";
+import { storeToRefs } from "pinia";
+import PaginationStrip from "@/components/PaginationStrip.vue";
 
-const pageModel = ref<DataViewPageModel<CustomCheck>>({ data: [], totalCount: 0 });
-const additionalApiParams: AdditionalDataViewParameters = {
-  status: "fail",
-};
+const store = useCustomChecksStore();
+
+const { pageNumber, failingCount, failedChecks } = storeToRefs(store);
 </script>
 
 <template>
@@ -21,19 +19,15 @@ const additionalApiParams: AdditionalDataViewParameters = {
     </div>
 
     <section name="custom_checks">
-      <NoData v-if="pageModel.totalCount === 0" message="No failed custom checks" />
-
-      <DataView api-url="customchecks" :api-params="additionalApiParams" v-model="pageModel" :auto-refresh-seconds="5">
-        <template #data>
+      <NoData v-if="failingCount === 0" message="No failed custom checks" />
+      <div v-else class="row">
+        <div class="col-sm-12">
+          <CustomCheckView v-for="item of failedChecks" :key="item.id" :custom-check="item" />
           <div class="row">
-            <div class="col-sm-12">
-              <div>
-                <CustomCheckView v-for="item of pageModel.data" :key="item.id" :customCheck="item" />
-              </div>
-            </div>
+            <PaginationStrip :items-per-page="10" :total-count="failingCount" v-model="pageNumber" />
           </div>
-        </template>
-      </DataView>
+        </div>
+      </div>
     </section>
   </div>
 </template>

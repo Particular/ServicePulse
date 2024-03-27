@@ -17,7 +17,7 @@ function navigateToEvent(eventLogItem: EventLogItem) {
       window.location.assign(routeLinks.heartbeats);
       break;
     case "CustomChecks":
-      window.location.assign(routeLinks.customChecks);
+      router.push(routeLinks.customChecks);
       break;
     case "EndpointControl":
       window.location.assign(routeLinks.heartbeats);

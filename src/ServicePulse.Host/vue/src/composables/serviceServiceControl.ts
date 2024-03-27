@@ -16,7 +16,6 @@ export const stats = reactive({
   failing_endpoints: 0,
   number_of_exception_groups: 0,
   number_of_failed_messages: 0,
-  number_of_failed_checks: 0,
   number_of_failed_heartbeats: 0,
   number_of_archived_messages: 0,
   number_of_pending_retries: 0,
@@ -152,15 +151,13 @@ watch(monitoringConnectionFailure, (newValue, oldValue) => {
 async function useServiceControlStats() {
   const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
-  const failedCustomChecksResult = getFailedCustomChecksCount();
   const archivedMessagesResult = getArchivedMessagesCount();
   const pendingRetriesResult = getPendingRetriesCount();
 
   try {
-    const [failedHeartbeats, failedMessages, failedCustomChecks, archivedMessages, pendingRetries] = await Promise.all([failedHeartBeatsResult, failedMessagesResult, failedCustomChecksResult, archivedMessagesResult, pendingRetriesResult]);
+    const [failedHeartbeats, failedMessages, archivedMessages, pendingRetries] = await Promise.all([failedHeartBeatsResult, failedMessagesResult, archivedMessagesResult, pendingRetriesResult]);
     stats.failing_endpoints = failedHeartbeats;
     stats.number_of_failed_messages = failedMessages;
-    stats.number_of_failed_checks = failedCustomChecks;
     stats.number_of_failed_heartbeats = failedHeartbeats;
     stats.number_of_archived_messages = archivedMessages;
     stats.number_of_pending_retries = pendingRetries;
