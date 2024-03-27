@@ -1,20 +1,11 @@
 <script setup lang="ts">
 import CustomCheck from "@/resources/CustomCheck";
 import TimeSince from "@/components/TimeSince.vue";
-import { useDeleteFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import { useCustomChecksStore } from "@/stores/CustomChecksStore";
 
 defineProps<{ customCheck: CustomCheck }>();
 
-const prefix = "customchecks/";
-
-async function dismissCustomCheck(id: string) {
-  // HINT: This is required to handle the difference between ServiceControl 4 and 5
-  let guid = id;
-  if (id.toLowerCase().startsWith(prefix)) {
-    guid = id.substring(prefix.length);
-  }
-  await useDeleteFromServiceControl(`${prefix}${guid}`);
-}
+const store = useCustomChecksStore();
 </script>
 
 <template>
@@ -40,7 +31,7 @@ async function dismissCustomCheck(id: string) {
           </div>
         </div>
         <div>
-          <button type="button" class="btn btn-default" title="Dismiss this custom check so it doesn't show up as an alert" @click="dismissCustomCheck(customCheck.id)">Dismiss</button>
+          <button type="button" class="btn btn-default" title="Dismiss this custom check so it doesn't show up as an alert" @click="store.dismissCustomCheck(customCheck.id)">Dismiss</button>
         </div>
       </div>
     </div>
