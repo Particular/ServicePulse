@@ -1,7 +1,5 @@
 import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
-//import { config } from "../../utils";  // Used when debugging
-//import { screen } from "@testing-library/vue"; // Used when debugging
 import * as precondition from "../../preconditions";
 import { numberOfGroupingSegments } from "./questions/numberOfGroupingSegments";
 import { groupingOptionWithName } from "./questions/groupingOptionWithName";
