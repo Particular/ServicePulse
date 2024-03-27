@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 import { mockServer } from "../../mock-server";
 import "@testing-library/jest-dom/vitest";
+import { config } from "../../utils";
 
 const defaultConfig = {
   default_route: "/dashboard",
@@ -40,4 +41,5 @@ afterEach(() => {
   localStorage.clear();
   sessionStorage.clear();
   deleteAllCookies();
+  config.consoleReset();
 });
