@@ -98,6 +98,20 @@ describe("FEATURE: Grouping endpoints", () => {
       expect(endpointGroup("Universe").Endpoints).toEqual(["Alphacentauri.Proximacentauri.Endpoint1", "Solarsystem.Earth.Endpoint1", "Solarsystem.Earth.Endpoint2"]);
     });
 
+    it("Example: Grouping by ONE segment when a single endpoint does not have a segment to be grouped by", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await groupEndpointsBy({ numberOfSegments: 1 });
+
+      expect(endpointsGroupsNames()).toEqual(["Ungrouped", "Universe"]);
+      expect(endpointGroup("Ungrouped").Endpoints).toEqual(["Endpoint1"]);
+      expect(endpointGroup("Universe").Endpoints).toEqual(["Solarsystem.Earth.Endpoint2", "Solarsystem.Earth.Endpoint3"]);
+    });
+
     it("Example: Grouping by TWO segments", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
@@ -110,6 +124,34 @@ describe("FEATURE: Grouping endpoints", () => {
       expect(endpointsGroupsNames()).toEqual(["Universe.Alphacentauri", "Universe.Solarsystem"]);
       expect(endpointGroup("Universe.Alphacentauri").Endpoints).toEqual(["Proximacentauri.Endpoint1"]);
       expect(endpointGroup("Universe.Solarsystem").Endpoints).toEqual(["Earth.Endpoint1", "Earth.Endpoint2"]);
+    });
+
+    it("Example: Grouping by TWO segments when a single endpoint only has ONE segment to be grouped by", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await groupEndpointsBy({ numberOfSegments: 2 });
+
+      expect(endpointsGroupsNames()).toEqual(["Universe", "Universe.Solarsystem"]);
+      expect(endpointGroup("Universe").Endpoints).toEqual(["Endpoint1"]);
+      expect(endpointGroup("Universe.Solarsystem").Endpoints).toEqual(["Earth.Endpoint2", "Earth.Endpoint3"]);
+    });
+  });
+
+  describe("RULE:  Allow the user to ungroup endpoints", () => {
+    it("Example: Grouping by ONE segment", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Alphacentauri.Proximacentauri.Endpoint1", "Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2"]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await groupEndpointsBy({ numberOfSegments: 0 });
+
+      expect(endpointsGroupsNames()).toEqual([]);
     });
   });
 });
