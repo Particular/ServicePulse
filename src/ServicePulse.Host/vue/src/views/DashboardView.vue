@@ -7,6 +7,7 @@ import { connectionState, stats } from "@/composables/serviceServiceControl";
 import { licenseStatus } from "@/composables/serviceLicense";
 import routeLinks from "@/router/routeLinks";
 import { useLink } from "vue-router";
+import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDashboardItem.vue";
 </script>
 
 <template>
@@ -35,7 +36,7 @@ import { useLink } from "vue-router";
                     <DashboardItem :counter="stats.number_of_failed_messages" :url="useLink({ to: routeLinks.failedMessage.root }).href.value" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
                   </div>
                   <div class="col-4">
-                    <DashboardItem :counter="stats.number_of_failed_checks" :url="routeLinks.customChecks" :iconClass="'fa-check'">Custom Checks</DashboardItem>
+                    <CustomChecksDashboardItem />
                   </div>
                 </div>
               </div>

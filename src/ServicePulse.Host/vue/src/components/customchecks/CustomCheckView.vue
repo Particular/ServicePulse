@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CustomCheck from "@/resources/CustomCheck";
-import TimeSince from "./TimeSince.vue";
+import TimeSince from "@/components/TimeSince.vue";
 import { useDeleteFromServiceControl } from "@/composables/serviceServiceControlUrls";
 
 defineProps<{ customCheck: CustomCheck }>();
@@ -48,7 +48,7 @@ async function dismissCustomCheck(id: string) {
 </template>
 
 <style scoped>
-@import "./list.css";
+@import "../list.css";
 
 .custom-check-row {
   display: flex;
