@@ -56,19 +56,19 @@ const sortByColumn = Object.freeze({
     </div>
     <div>
       <div v-if="monitoringStore.endpointListIsGrouped">
-        <div class="row" v-for="(endpointGroup, index) in monitoringStore.grouping.groupedEndpoints" :key="index">
+        <div class="row" v-for="endpointGroup in monitoringStore.grouping.groupedEndpoints" :key="endpointGroup.group">
           <div class="endpoint-group-title" :id="endpointGroup.group">
             {{ endpointGroup.group }}
           </div>
           <div role="group" :aria-labelledby="endpointGroup.group">
-            <div class="row box endpoint-row" v-for="(groupedEndpoint, index) in endpointGroup.endpoints" :key="index" role="treeitem" :aria-label="groupedEndpoint.shortName">
+            <div class="row box endpoint-row" v-for="groupedEndpoint in endpointGroup.endpoints" :key="groupedEndpoint.endpoint.name" role="treeitem" :aria-label="groupedEndpoint.shortName">
               <EndpointListRow :endpoint="groupedEndpoint" />
             </div>
           </div>
         </div>
       </div>
       <div v-else>
-        <div class="endpoint-row" v-for="(endpoint, index) in monitoringStore.getEndpointList" :key="index">
+        <div class="endpoint-row" v-for="endpoint in monitoringStore.getEndpointList" :key="endpoint.name">
           <EndpointListRow :endpoint="endpoint" />
         </div>
       </div>
