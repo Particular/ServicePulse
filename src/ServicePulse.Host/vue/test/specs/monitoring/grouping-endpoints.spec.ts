@@ -11,10 +11,10 @@ import { endpointGroup } from "./questions/endpointGroup";
 
 describe("FEATURE: Grouping endpoints", () => {
   describe("RULE: The number of grouping segments is determined by the number of periods in the endpoint name", () => {
-    it("Example: All endpoints have two periods in their name", async ({ driver }) => {
+    it("Example: All endpoints have three periods in their name", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Endpoint1", "Universe.Solarsystem.Endpoint2", "Universe.Solarsystem.Endpoint3"]));
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
 
       //Act
       await driver.goTo("monitoring");
@@ -23,7 +23,8 @@ describe("FEATURE: Grouping endpoints", () => {
       //Assert
       expect(await groupingOptionWithName(/max\. 1 segments/i)).toBeInTheDocument();
       expect(await groupingOptionWithName(/max\. 2 segments/i)).toBeInTheDocument();
-      expect(await numberOfGroupingSegments()).toBe(2);
+      expect(await groupingOptionWithName(/max\. 3 segments/i)).toBeInTheDocument();
+      expect(await numberOfGroupingSegments()).toBe(3);
     });
 
     it("Example: One endpoint has three periods in its name and the other endpoints have two periods in their name", async ({ driver }) => {
@@ -150,9 +151,10 @@ describe("FEATURE: Grouping endpoints", () => {
 
   describe("RULE:  Allow the user to ungroup endpoints", () => {
     it("Example: Select grouping by ONE segment and then select `no grouping` when all endpoints have one or more segments", async ({ driver }) => {
+      //
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2"]));
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
 
       //Act
       await driver.goTo("monitoring");
