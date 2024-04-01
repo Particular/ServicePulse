@@ -151,7 +151,6 @@ describe("FEATURE: Grouping endpoints", () => {
 
   describe("RULE:  Allow the user to ungroup endpoints", () => {
     it("Example: Select grouping by ONE segment and then select `no grouping` when all endpoints have one or more segments", async ({ driver }) => {
-      //
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
