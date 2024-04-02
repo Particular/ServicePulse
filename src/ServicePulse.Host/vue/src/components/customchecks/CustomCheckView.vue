@@ -39,7 +39,7 @@ const store = useCustomChecksStore();
 </template>
 
 <style scoped>
-@import "../list.css";
+@import "@/components/list.css";
 
 .custom-check-row {
   display: flex;
