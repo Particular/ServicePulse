@@ -19,5 +19,5 @@ const { failingCount } = storeToRefs(store);
 
 <style scoped>
 @import "@/assets/navbar.css";
-@import "@/assets/page-header-menu-item.css";
+@import "@/assets/header-menu-item.css";
 </style>
