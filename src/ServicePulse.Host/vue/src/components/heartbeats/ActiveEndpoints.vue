@@ -1,0 +1,1 @@
+<template>Active placeholder</template>

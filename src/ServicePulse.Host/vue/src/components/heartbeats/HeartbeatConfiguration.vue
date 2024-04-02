@@ -1,0 +1,1 @@
+<template>Configuration placeholder</template>

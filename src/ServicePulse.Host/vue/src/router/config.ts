@@ -6,6 +6,7 @@ import EventsView from "@/views/EventsView.vue";
 import ConfigurationView from "@/views/ConfigurationView.vue";
 import routeLinks from "@/router/routeLinks";
 import CustomChecksView from "@/views/CustomChecksView.vue";
+import HeartbeatsView from "@/views/HeartbeatsView.vue";
 
 export interface RouteItem {
   path: string;
@@ -22,6 +23,29 @@ const config: RouteItem[] = [
     alias: "/",
     component: DashboardView,
     title: "Dashboard",
+  },
+  {
+    path: routeLinks.heartbeats.root,
+    component: HeartbeatsView,
+    title: "Heartbeats",
+    redirect: routeLinks.heartbeats.inactive.link,
+    children: [
+      {
+        title: "Inactive Endpoints",
+        path: routeLinks.heartbeats.inactive.link,
+        component: () => import("@/components/heartbeats/InactiveEndpoints.vue"),
+      },
+      {
+        title: "Active Endpoints",
+        path: routeLinks.heartbeats.active.link,
+        component: () => import("@/components/heartbeats/ActiveEndpoints.vue"),
+      },
+      {
+        title: "Heartbeat Configuration",
+        path: routeLinks.heartbeats.configuration.link,
+        component: () => import("@/components/heartbeats/HeartbeatConfiguration.vue"),
+      },
+    ],
   },
   {
     path: routeLinks.failedMessage.root,
