@@ -4,8 +4,8 @@ export interface Endpoint {
   host_display_name: string;
   monitored: boolean;
   monitor_heartbeat: boolean;
-  heartbeat_information: {
-    last_reported_at: string;
+  heartbeat_information?: {
+    last_report_at: string;
     reported_status: EndpointStatus;
   };
   is_sending_heartbeats: boolean;

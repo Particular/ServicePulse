@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from "vue-router";
 import { licenseStatus } from "../composables/serviceLicense";
-import { connectionState, stats } from "../composables/serviceServiceControl";
+import { connectionState } from "../composables/serviceServiceControl";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
+import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { storeToRefs } from "pinia";
+
+const store = useHeartbeatsStore();
+const { inactiveEndpoints, activeEndpoints } = storeToRefs(store);
 </script>
 
 <template>
@@ -21,12 +26,12 @@ import isRouteSelected from "@/composables/isRouteSelected";
           <div class="tabs">
             <!--Inactive Endpoints-->
             <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.inactive.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="routeLinks.heartbeats.inactive.link"> Inactive Endpoints ({{ stats.number_of_failed_heartbeats }}) </RouterLink>
+              <RouterLink :to="routeLinks.heartbeats.inactive.link"> Inactive Endpoints ({{ inactiveEndpoints.length }}) </RouterLink>
             </h5>
 
             <!--Active Endpoints-->
             <h5 v-if="!licenseStatus.isExpired" :class="{ active: isRouteSelected(routeLinks.heartbeats.active.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="routeLinks.heartbeats.active.link"> Active Endpoints ({{ stats.number_of_failed_heartbeats }}) </RouterLink>
+              <RouterLink :to="routeLinks.heartbeats.active.link"> Active Endpoints ({{ activeEndpoints.length }}) </RouterLink>
             </h5>
 
             <!--Configuration-->
