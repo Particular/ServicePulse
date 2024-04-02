@@ -5,10 +5,6 @@ import ItemsPerPage from "@/components/ItemsPerPage.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
 import type DataViewPageModel from "./DataViewPageModel";
 
-export type AdditionalDataViewParameters = {
-  [key: string]: string | number;
-};
-
 const props = withDefaults(
   defineProps<{
     apiUrl: string;
@@ -17,7 +13,6 @@ const props = withDefaults(
     autoRefreshSeconds: number;
     showPagination?: boolean;
     showItemsPerPage?: boolean;
-    apiParams?: object;
   }>(),
   { itemsPerPageOptions: () => [20, 35, 50, 75], itemsPerPage: 50, showPagination: true, showItemsPerPage: false }
 );
@@ -40,16 +35,7 @@ watch(itemsPerPage, () => loadData());
 watch(pageNumber, () => loadData());
 
 async function loadData() {
-  const params: AdditionalDataViewParameters = {
-    ...props.apiParams,
-    page: pageNumber.value,
-    per_page: itemsPerPage.value,
-  };
-  const queryString = Object.keys(params)
-    .map((key) => `${key}=${params[key]}`)
-    .join("&");
-  const url = `${props.apiUrl}?${queryString}`;
-  const [response, data] = await useTypedFetchFromServiceControl<T[]>(url);
+  const [response, data] = await useTypedFetchFromServiceControl<T[]>(`${props.apiUrl}?page=${pageNumber.value}&per_page=${itemsPerPage.value}`);
   if (response.ok) {
     viewModel.value.totalCount = parseInt(response.headers.get("Total-Count") ?? "0");
     viewModel.value.data = data;
