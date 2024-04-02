@@ -84,7 +84,6 @@ Navigate to `ServicePulse\src\ServicePulse.Host\angular` and:
 
 > [!NOTE]
 > For compatibility with Node.js versions 17 and higher, it's essential to set the `NODE_OPTIONS` environment variable to `--openssl-legacy-provider` when loading and running the angularJS app. This configuration is specified in the `.npmrc` file located at the root of the Angular folder `ServicePulse\src\ServicePulse.Host\angular`. Any npm command executed from the Angular directory, including those in CI/Release workflows, will automatically have the necessary environment variable set.
-> On *nix environment, run the following command from a bash shell: `export NODE_OPTIONS=--openssl-legacy-provider`.
  
 #### Step 3 - run the Vue.js development server 
 
