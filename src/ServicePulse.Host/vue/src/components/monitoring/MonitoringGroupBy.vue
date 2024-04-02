@@ -32,11 +32,11 @@ onMounted(() => {
 
 <template>
   <div class="dropdown" v-tooltip title="Endpoint grouping will take '.' in endpoint names to delimit segments. Grouping endpoints will disable some list sorting.">
-    <label class="control-label">Group by:</label>
-    <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <label id="group-by-header" class="control-label">Group by:</label>
+    <button type="button" class="btn btn-dropdown dropdown-toggle sp-btn-menu" id="dropdownMenu1" aria-label="group-by-btn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ grouping.selectedGrouping === 0 ? "no grouping" : "max. " + grouping.selectedGrouping + " segments" }}
     </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <ul class="dropdown-menu" aria-labelledby="group-by-header">
       <li><a href="#" @click.prevent="selectGroup(0)">no grouping</a></li>
       <li role="separator" class="divider"></li>
       <li v-for="segment in grouping.groupSegments" :key="segment">
@@ -48,13 +48,7 @@ onMounted(() => {
 
 <style scoped>
 .dropdown {
-  margin-left: 25px;
   width: 250px;
-}
-
-.dropdown .dropdown-menu {
-  top: 36px;
-  margin-left: 72px;
 }
 
 .btn.btn-dropdown {
@@ -67,9 +61,5 @@ onMounted(() => {
 
 .btn.dropdown-toggle::after {
   vertical-align: middle;
-}
-
-ul.dropdown-menu li a span {
-  color: #aaa;
 }
 </style>
