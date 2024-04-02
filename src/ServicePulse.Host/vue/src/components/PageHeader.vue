@@ -88,13 +88,5 @@ const displayDanger = computed(() => {
 
 <style scoped>
 @import "@/assets/navbar.css";
-
-.nav {
-  --bs-link-color: #9d9d9d;
-  --bs-link-hover-color: #fff;
-}
-
-.navbar > .container-fluid > div {
-  margin: 0 1em;
-}
+@import "@/assets/page-header-menu-item.css";
 </style>
