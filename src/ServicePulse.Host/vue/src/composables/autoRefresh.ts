@@ -15,7 +15,7 @@ export default function useAutoRefresh(refreshAction: () => Promise<void>, timeo
     }, timeout);
   }
 
-  async function executeAndResetTimer(overrideAction: (() => Promise<void>) | null = null) {
+  async function executeAndResetTimer(overrideAction?: () => Promise<void>) {
     try {
       stopTimer();
       await (overrideAction ?? refreshAction)();
