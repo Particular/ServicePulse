@@ -1,4 +1,4 @@
-import type { ExtendedMessageType, MessageType, MessageTypeDetails } from "@/resources/Endpoint";
+import type { ExtendedMessageType, MessageType, MessageTypeDetails } from "@/resources/MonitoringEndpoint";
 
 function shortenTypeName(typeName: string): string {
   return typeName.split(".").pop() ?? typeName;

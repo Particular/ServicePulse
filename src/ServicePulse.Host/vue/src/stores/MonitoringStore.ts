@@ -3,7 +3,7 @@ import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import * as MonitoringEndpoints from "../composables/serviceMonitoringEndpoints";
 import { useMonitoringHistoryPeriodStore } from "./MonitoringHistoryPeriodStore";
-import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/Endpoint";
+import type { EndpointGroup, Endpoint, GroupedEndpoint } from "@/resources/MonitoringEndpoint";
 import type { SortInfo } from "@/components/SortInfo";
 
 export const useMonitoringStore = defineStore("MonitoringStore", () => {

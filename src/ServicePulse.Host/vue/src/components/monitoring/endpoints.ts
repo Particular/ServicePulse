@@ -1,4 +1,4 @@
-import type { DigestValues, EndpointDigest, EndpointMetrics, EndpointValues, EndpointValuesWithTime, ExtendedEndpointDetails } from "@/resources/Endpoint";
+import type { DigestValues, EndpointDigest, EndpointMetrics, EndpointValues, EndpointValuesWithTime, ExtendedEndpointDetails } from "@/resources/MonitoringEndpoint";
 
 const defaultMetricData: EndpointValues = {
   points: [],

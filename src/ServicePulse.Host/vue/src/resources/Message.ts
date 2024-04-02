@@ -23,7 +23,7 @@ export default interface Message {
 }
 export interface ExtendedMessage extends Message {
   notFound: boolean;
-  error: boolean
+  error: boolean;
   headersNotFound: boolean;
   messageBodyNotFound: boolean;
 }

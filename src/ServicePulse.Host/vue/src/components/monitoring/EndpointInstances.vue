@@ -7,7 +7,7 @@ import { storeToRefs } from "pinia";
 import { useMonitoringEndpointDetailsStore } from "@/stores/MonitoringEndpointDetailsStore";
 import NoData from "@/components/NoData.vue";
 import SmallGraph from "./SmallGraph.vue";
-import type { ExtendedEndpointInstance } from "@/resources/Endpoint";
+import type { ExtendedEndpointInstance } from "@/resources/MonitoringEndpoint";
 import routeLinks from "@/router/routeLinks";
 
 const isRemovingEndpointEnabled = ref<boolean>(false);
@@ -222,3 +222,4 @@ a.remove-endpoint:hover i {
   color: #00729c;
 }
 </style>
+@/resources/MonitoringEndpoint

@@ -1,4 +1,4 @@
-import { Endpoint } from "@/resources/Endpoint";
+import { Endpoint } from "@/resources/MonitoringEndpoint";
 
 const monitoredEndpointTemplate = <Endpoint>{
   name: "A happy endpoint",
