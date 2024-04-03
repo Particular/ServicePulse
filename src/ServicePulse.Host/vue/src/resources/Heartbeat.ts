@@ -9,6 +9,8 @@ export interface Endpoint {
     reported_status: EndpointStatus;
   };
   is_sending_heartbeats: boolean;
+  aliveCount: number;
+  downCount: number;
 }
 
 export enum EndpointStatus {

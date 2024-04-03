@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import NoData from "../NoData.vue";
-import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { DisplayType, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, isDeleteEndpointsEnabled, display } = storeToRefs(store);
+const { inactiveEndpoints, selectedDisplay } = storeToRefs(store);
 </script>
 
 <template>
@@ -21,7 +21,9 @@ const { inactiveEndpoints, isDeleteEndpointsEnabled, display } = storeToRefs(sto
                   <div class="col-sm-12 no-side-padding">
                     <p class="lead hard-wrap">
                       {{ store.endpointDisplayName(endpoint) }}
-                      <a class="remove-item" v-if="isDeleteEndpointsEnabled && display === 'Endpoint Instances'" ng-click="deleteEndpoint(endpoint)"><i class="fa fa-trash" uib-tooltip="Remove endpoint from list"></i></a>
+                      <a class="remove-item" v-if="selectedDisplay === DisplayType.Instances" ng-click="deleteEndpoint(endpoint)">
+                        <i class="fa fa-trash" v-tooltip :title="`Remove endpoint from list`" />
+                      </a>
                     </p>
                     <p>latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" /></p>
                     <p v-if="!endpoint.heartbeat_information">No plugin installed</p>

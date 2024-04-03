@@ -4,13 +4,17 @@ import { computed, ref } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
 import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
 
+export enum DisplayType {
+  Instances = "Endpoint Instances",
+  Logical = "Logical Endpoints",
+}
+
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const endpoints = ref<Endpoint[]>([]);
   const sorted = computed<Endpoint[]>(() => [...endpoints.value].sort((e1: Endpoint, e2: Endpoint) => e1.name.localeCompare(e2.name)));
   const activeEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitored && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const inactiveEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitored && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
-  const isDeleteEndpointsEnabled = ref(true);
-  const display = ref("Endpoint Instances");
+  const selectedDisplay = ref(DisplayType.Instances);
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
@@ -23,13 +27,14 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   }, 5000);
 
   function endpointDisplayName(endpoint: Endpoint) {
-    // if ($scope.display == "Logical Endpoints") {
-    //   if (endpoint.aliveCount > 0) {
-    //     return endpoint.name + " (" + endpoint.aliveCount + " instance" + (endpoint.aliveCount > 1 ? "s)" : ")");
-    //   }
+    if (selectedDisplay.value === DisplayType.Logical) {
+      if (endpoint.aliveCount > 0) {
+        return `${endpoint.name} (${endpoint.aliveCount} instance(${endpoint.aliveCount > 1 && "s"})`;
+      }
 
-    //   return endpoint.name + " (0 out of " + endpoint.downCount + " previous instance" + (endpoint.downCount > 1 ? "s" : "") + " reporting)";
-    // }
+      return `${endpoint.name} (0 out of ${endpoint.downCount} previous instance${endpoint.downCount > 1 && "s"} reporting)`;
+    }
+
     return `${endpoint.name}@${endpoint.host_display_name}`;
   }
 
@@ -40,8 +45,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     activeEndpoints,
     inactiveEndpoints,
     endpointDisplayName,
-    isDeleteEndpointsEnabled,
-    display,
+    selectedDisplay,
   };
 });
 
