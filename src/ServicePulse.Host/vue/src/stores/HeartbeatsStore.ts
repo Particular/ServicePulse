@@ -6,6 +6,7 @@ import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
 import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import { getSortFunction } from "@/components/failedmessages/OrderBy.vue";
+import { useCookies } from "vue3-cookies";
 
 export enum DisplayType {
   Instances = "Endpoint Instances",
@@ -56,7 +57,9 @@ export const sortOptions: SortOptions<Endpoint>[] = [
 ];
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
-  const selectedDisplay = ref(DisplayType.Instances);
+  const cookies = useCookies().cookies;
+
+  const selectedDisplay = ref(cookies.get("heartbeats_display_type") ?? DisplayType.Instances);
   const selectedSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
   const endpoints = ref<Endpoint[]>([]);
   const sorted = computed<Endpoint[]>(() =>
@@ -89,10 +92,12 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   }
 
   function setSelectedDisplay(displayType: DisplayType) {
+    cookies.set("heartbeats_display_type", displayType);
     selectedDisplay.value = displayType;
   }
 
   function setSelectedSort(sort: SortOptions<Endpoint>) {
+    //sort value is set/retrieved from cookies in the OrderBy control
     selectedSort.value = sort;
   }
 
