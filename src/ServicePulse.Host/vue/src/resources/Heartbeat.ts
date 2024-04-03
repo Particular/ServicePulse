@@ -2,7 +2,6 @@ export interface Endpoint {
   id: string;
   name: string;
   host_display_name: string;
-  monitored: boolean;
   monitor_heartbeat: boolean;
   heartbeat_information?: {
     last_report_at: string;
