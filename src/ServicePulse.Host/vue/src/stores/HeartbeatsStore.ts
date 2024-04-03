@@ -4,6 +4,8 @@ import { computed, ref } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
 import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
 import moment from "moment";
+import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import { getSortFunction } from "@/components/failedmessages/OrderBy.vue";
 
 export enum DisplayType {
   Instances = "Endpoint Instances",
@@ -40,10 +42,26 @@ function mapEndpointsToLogical(endpoints: Endpoint[]) {
   });
 }
 
+export const sortOptions: SortOptions<Endpoint>[] = [
+  {
+    description: "Name",
+    selector: (group) => group.name,
+    icon: "bi-sort-alpha-",
+  },
+  {
+    description: "Latest heartbeat",
+    selector: (group) => group.heartbeat_information?.last_report_at ?? "",
+    icon: "bi-sort-",
+  },
+];
+
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const selectedDisplay = ref(DisplayType.Instances);
+  const selectedSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
   const endpoints = ref<Endpoint[]>([]);
-  const sorted = computed<Endpoint[]>(() => (selectedDisplay.value === DisplayType.Instances ? [...endpoints.value] : mapEndpointsToLogical(endpoints.value)).sort((e1: Endpoint, e2: Endpoint) => e1.name.localeCompare(e2.name)));
+  const sorted = computed<Endpoint[]>(() =>
+    (selectedDisplay.value === DisplayType.Instances ? [...endpoints.value] : mapEndpointsToLogical(endpoints.value)).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending))
+  );
   const activeEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const inactiveEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
   const filterString = ref("");
@@ -74,6 +92,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     selectedDisplay.value = displayType;
   }
 
+  function setSelectedSort(sort: SortOptions<Endpoint>) {
+    selectedSort.value = sort;
+  }
+
   dataRetriever.executeAndResetTimer();
 
   return {
@@ -83,6 +105,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     endpointDisplayName,
     selectedDisplay,
     setSelectedDisplay,
+    selectedSort,
+    setSelectedSort,
     filterString,
   };
 });

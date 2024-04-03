@@ -5,11 +5,15 @@ import { connectionState } from "../composables/serviceServiceControl";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { DisplayType, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { DisplayType, sortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
+import OrderBy, { IOrderBy } from "@/components/failedmessages/OrderBy.vue";
+import { ref } from "vue";
 
 const store = useHeartbeatsStore();
 const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = storeToRefs(store);
+
+const orderBy = ref<IOrderBy>();
 </script>
 
 <template>
@@ -53,6 +57,7 @@ const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = st
                   </li>
                 </ul>
               </div>
+              <OrderBy @sort-updated="store.setSelectedSort" :sort-options="sortOptions" ref="orderBy" />
 
               <!-- <div class="msg-group-menu dropdown">
     <label class="control-label">Sort by:</label>
@@ -86,6 +91,10 @@ const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = st
   justify-content: space-between;
   align-items: end;
   flex-wrap: wrap;
+}
+
+.tabs .dropdown-menu li a {
+  font-size: 14px;
 }
 
 .filter-group {

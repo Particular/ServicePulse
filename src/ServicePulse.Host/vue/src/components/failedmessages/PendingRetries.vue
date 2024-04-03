@@ -15,9 +15,10 @@ import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMe
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import QueueAddress from "@/resources/QueueAddress";
 import { TYPE } from "vue-toastification";
+import GroupOperation from "@/resources/GroupOperation";
 
 let refreshInterval: number | undefined;
-let sortMethod: SortOptions | undefined;
+let sortMethod: SortOptions<GroupOperation> | undefined;
 const perPage = 50;
 const cookies = useCookies().cookies;
 const selectedPeriod = ref("All Pending Retries");
@@ -33,7 +34,7 @@ const showRetryAllConfirm = ref(false);
 const pageNumber = ref(1);
 const totalCount = ref(0);
 const isInitialLoad = ref(true);
-const sortOptions: SortOptions[] = [
+const sortOptions: SortOptions<GroupOperation>[] = [
   {
     description: "Time of failure",
     icon: "bi-sort-",
@@ -190,7 +191,7 @@ function retryAllClicked() {
   }
 }
 
-function sortGroups(sort: SortOptions) {
+function sortGroups(sort: SortOptions<GroupOperation>) {
   sortMethod = sort;
 
   if (!isInitialLoad.value) {

@@ -431,4 +431,11 @@ onMounted(async () => {
 .msg-group-menu.dropdown {
   float: right;
 }
+
+.dropdown > button:hover {
+  background: none;
+  border: none;
+  color: #00a3c4;
+  text-decoration: underline;
+}
 </style>

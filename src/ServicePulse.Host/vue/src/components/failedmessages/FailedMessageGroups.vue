@@ -10,21 +10,22 @@ import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList, { IMessageGroupList } from "../failedmessages/MessageGroupList.vue";
 import OrderBy, { IOrderBy } from "./OrderBy.vue";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import GroupOperation from "@/resources/GroupOperation";
 
 const selectedClassifier = ref<string>("");
 const classifiers = ref<string[]>([]);
 const messageGroupList = ref<IMessageGroupList>();
 const orderBy = ref<IOrderBy>();
-const sortMethod = ref<SortOptions["sort"]>();
+const sortMethod = ref<SortOptions<GroupOperation>["sort"]>();
 
-function sortGroups(sort: SortOptions) {
+function sortGroups(sort: SortOptions<GroupOperation>) {
   sortMethod.value = sort.sort ?? orderBy.value?.getSortFunction(sort.selector, SortDirection.Ascending);
 
   // force a re-render of the messagegroup list
   messageGroupList.value?.loadFailedMessageGroups();
 }
 
-const sortOptions: SortOptions[] = [
+const sortOptions: SortOptions<GroupOperation>[] = [
   {
     description: "Name",
     selector: (group) => group.title,
@@ -135,6 +136,13 @@ onMounted(async () => {
   </template>
 </template>
 
-<style>
+<style scoped>
 @import "../list.css";
+
+.dropdown > button:hover {
+  background: none;
+  border: none;
+  color: #00a3c4;
+  text-decoration: underline;
+}
 </style>
