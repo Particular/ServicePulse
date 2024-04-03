@@ -15,6 +15,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const activeEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitored && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const inactiveEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitored && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
   const selectedDisplay = ref(DisplayType.Instances);
+  const filterString = ref("");
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
@@ -38,6 +39,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     return `${endpoint.name}@${endpoint.host_display_name}`;
   }
 
+  function setSelectedDisplay(displayType: DisplayType) {
+    selectedDisplay.value = displayType;
+  }
+
   dataRetriever.executeAndResetTimer();
 
   return {
@@ -46,6 +51,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     inactiveEndpoints,
     endpointDisplayName,
     selectedDisplay,
+    setSelectedDisplay,
+    filterString,
   };
 });
 

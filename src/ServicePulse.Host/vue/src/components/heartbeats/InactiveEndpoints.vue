@@ -19,7 +19,7 @@ const { inactiveEndpoints, selectedDisplay } = storeToRefs(store);
               <div class="col-sm-12 no-side-padding">
                 <div class="row box-header">
                   <div class="col-sm-12 no-side-padding">
-                    <p class="lead hard-wrap">
+                    <p class="lead">
                       {{ store.endpointDisplayName(endpoint) }}
                       <a class="remove-item" v-if="selectedDisplay === DisplayType.Instances" ng-click="deleteEndpoint(endpoint)">
                         <i class="fa fa-trash" v-tooltip :title="`Remove endpoint from list`" />

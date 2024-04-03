@@ -5,11 +5,11 @@ import { connectionState } from "../composables/serviceServiceControl";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { DisplayType, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, activeEndpoints } = storeToRefs(store);
+const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = storeToRefs(store);
 </script>
 
 <template>
@@ -24,20 +24,52 @@ const { inactiveEndpoints, activeEndpoints } = storeToRefs(store);
       <div class="row">
         <div class="col-sm-12">
           <div class="tabs">
-            <!--Inactive Endpoints-->
-            <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.inactive.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="routeLinks.heartbeats.inactive.link"> Inactive Endpoints ({{ inactiveEndpoints.length }}) </RouterLink>
-            </h5>
+            <div>
+              <!--Inactive Endpoints-->
+              <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.inactive.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+                <RouterLink :to="routeLinks.heartbeats.inactive.link"> Inactive Endpoints ({{ inactiveEndpoints.length }}) </RouterLink>
+              </h5>
 
-            <!--Active Endpoints-->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: isRouteSelected(routeLinks.heartbeats.active.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="routeLinks.heartbeats.active.link"> Active Endpoints ({{ activeEndpoints.length }}) </RouterLink>
-            </h5>
+              <!--Active Endpoints-->
+              <h5 v-if="!licenseStatus.isExpired" :class="{ active: isRouteSelected(routeLinks.heartbeats.active.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+                <RouterLink :to="routeLinks.heartbeats.active.link"> Active Endpoints ({{ activeEndpoints.length }}) </RouterLink>
+              </h5>
 
-            <!--Configuration-->
-            <h5 v-if="!licenseStatus.isExpired" :class="{ active: isRouteSelected(routeLinks.heartbeats.configuration.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
-              <RouterLink :to="routeLinks.heartbeats.configuration.link"> Configuration </RouterLink>
-            </h5>
+              <!--Configuration-->
+              <h5 v-if="!licenseStatus.isExpired" :class="{ active: isRouteSelected(routeLinks.heartbeats.configuration.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
+                <RouterLink :to="routeLinks.heartbeats.configuration.link"> Configuration </RouterLink>
+              </h5>
+            </div>
+            <div class="filter-group">
+              <div class="msg-group-menu dropdown">
+                <label class="control-label">Display:</label>
+                <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  {{ selectedDisplay }}
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li v-for="displayType in DisplayType" :key="displayType">
+                    <a @click.prevent="store.setSelectedDisplay(displayType)">{{ displayType }}</a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- <div class="msg-group-menu dropdown">
+    <label class="control-label">Sort by:</label>
+    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{sort}} {{sortDir}}
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li ng-repeat-start="sort in sortOptions"><a ng-click="changeSort(sort, 'asc')">{{sort}}</a></li>
+        <li ng-repeat-end><a ng-click="changeSort(sort, 'desc')">{{sort}} <span>(Descending)</span></a></li>
+    </ul>
+</div> -->
+
+              <div class="filter-input">
+                <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="filterString" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -46,4 +78,58 @@ const { inactiveEndpoints, activeEndpoints } = storeToRefs(store);
   </template>
 </template>
 
-<style></style>
+<style scoped>
+@import "@/assets/dropdown.css";
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  padding: 2px 0;
+}
+
+.msg-group-menu {
+  margin: 0;
+  padding: 0;
+}
+
+.form-control-static {
+  min-height: 34px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  margin-bottom: 0;
+}
+
+.filter-group > *:not(:first-child) {
+  margin-left: 1.5em;
+}
+
+.filter-input input {
+  display: inline-block;
+  width: 100%;
+  padding-right: 10px;
+  padding-left: 30px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+div.filter-input {
+  position: relative;
+  width: 280px;
+}
+
+.filter-input:before {
+  font-family: "FontAwesome";
+  width: 1.43em;
+  content: "\f0b0";
+  color: #919e9e;
+  position: absolute;
+  top: calc(50% - 0.7em);
+  left: 0.75em;
+}
+</style>
