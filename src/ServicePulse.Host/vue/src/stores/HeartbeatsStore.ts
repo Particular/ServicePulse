@@ -61,13 +61,15 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   const selectedDisplay = ref(cookies.get("heartbeats_display_type") ?? DisplayType.Instances);
   const selectedSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
+  const filterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
-  const sorted = computed<Endpoint[]>(() =>
+  const sortedEndpoints = computed<Endpoint[]>(() =>
     (selectedDisplay.value === DisplayType.Instances ? [...endpoints.value] : mapEndpointsToLogical(endpoints.value)).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending))
   );
-  const activeEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
-  const inactiveEndpoints = computed<Endpoint[]>(() => sorted.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
-  const filterString = ref("");
+  const activeEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
+  const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
+  const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
+  const filteredInactiveEndpoints = computed<Endpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
@@ -101,6 +103,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     selectedSort.value = sort;
   }
 
+  function setFilterString(filter: string) {
+    filterString.value = filter;
+  }
+
   function toggleEndpointMonitor(endpoint: Endpoint) {
     usePatchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat });
   }
@@ -110,13 +116,16 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   return {
     endpoints,
     activeEndpoints,
+    filteredActiveEndpoints,
     inactiveEndpoints,
+    filteredInactiveEndpoints,
     endpointDisplayName,
     selectedDisplay,
     setSelectedDisplay,
     selectedSort,
     setSelectedSort,
     filterString,
+    setFilterString,
     toggleEndpointMonitor,
   };
 });

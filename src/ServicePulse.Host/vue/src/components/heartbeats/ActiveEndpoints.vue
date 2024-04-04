@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
 
 const store = useHeartbeatsStore();
-const { activeEndpoints } = storeToRefs(store);
+const { activeEndpoints, filteredActiveEndpoints } = storeToRefs(store);
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const { activeEndpoints } = storeToRefs(store);
     <no-data v-if="activeEndpoints.length === 0" message="No active endpoints"></no-data>
     <div v-if="activeEndpoints.length > 0" class="row">
       <div class="col-sm-12 no-side-padding">
-        <div class="row box box-no-click" v-for="endpoint in activeEndpoints" :key="endpoint.id">
+        <div class="row box box-no-click" v-for="endpoint in filteredActiveEndpoints" :key="endpoint.id">
           <div class="col-sm-12 no-side-padding">
             <div class="row">
               <div class="col-sm-12 no-side-padding">
