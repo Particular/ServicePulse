@@ -42,7 +42,7 @@ const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = st
               </h5>
             </div>
             <div class="filter-group">
-              <div class="msg-group-menu dropdown">
+              <div class="msg-group-menu dropdown" v-if="!isRouteSelected(routeLinks.heartbeats.configuration.link)">
                 <label class="control-label">Display:</label>
                 <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   {{ selectedDisplay }}
@@ -55,19 +55,6 @@ const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = st
                 </ul>
               </div>
               <OrderBy @sort-updated="store.setSelectedSort" :sort-options="sortOptions" />
-
-              <!-- <div class="msg-group-menu dropdown">
-    <label class="control-label">Sort by:</label>
-    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{sort}} {{sortDir}}
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        <li ng-repeat-start="sort in sortOptions"><a ng-click="changeSort(sort, 'asc')">{{sort}}</a></li>
-        <li ng-repeat-end><a ng-click="changeSort(sort, 'desc')">{{sort}} <span>(Descending)</span></a></li>
-    </ul>
-</div> -->
-
               <div class="filter-input">
                 <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="filterString" />
               </div>
