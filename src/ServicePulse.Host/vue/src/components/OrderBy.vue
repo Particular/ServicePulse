@@ -12,21 +12,19 @@ export function getSortFunction<T>(selector: SortOptions<T>["selector"], dir: So
 }
 </script>
 
-<script setup lang="ts">
+<script setup generic="T" lang="ts">
 import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 
 const emit = defineEmits<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  sortUpdated: [option: SortOptions<any>];
+  sortUpdated: [option: SortOptions<T>];
 }>();
 
 const props = withDefaults(
   defineProps<{
     hideSort?: boolean;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    sortOptions: SortOptions<any>[];
+    sortOptions: SortOptions<T>[];
     sortSavePrefix?: string;
   }>(),
   {
@@ -67,14 +65,14 @@ function loadSavedSortOption() {
   return props.sortOptions[0];
 }
 
-function sortUpdated<T>(sort: SortOptions<T>, dir: SortDirection) {
+function sortUpdated(sort: SortOptions<T>, dir: SortDirection) {
   selectedSort.value = sort.description + (dir === SortDirection.Descending ? " (Descending)" : "");
   saveSortOption(sort.description, dir);
 
   emit("sortUpdated", {
     ...sort,
     dir: dir,
-    sort: getSortFunction(sort.selector, dir),
+    sort: getSortFunction<T>(sort.selector, dir),
   });
 }
 
