@@ -222,4 +222,3 @@ a.remove-endpoint:hover i {
   color: #00729c;
 }
 </style>
-@/resources/MonitoringEndpoint

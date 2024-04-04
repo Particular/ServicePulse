@@ -62,4 +62,3 @@ const endpoint = defineModel<ExtendedEndpointDetails>({
   border-color: var(--monitoring-queue-length);
 }
 </style>
-@/resources/MonitoringEndpoint

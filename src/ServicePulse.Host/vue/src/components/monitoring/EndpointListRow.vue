@@ -148,4 +148,3 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
   font-weight: bold;
 }
 </style>
-@/resources/MonitoringEndpoint

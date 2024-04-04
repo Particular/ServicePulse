@@ -95,4 +95,3 @@ const averageCriticalTime = computed(() => useFormatTime(endpoint.value.digest.m
   border-color: var(--monitoring-processing-time);
 }
 </style>
-@/resources/MonitoringEndpoint

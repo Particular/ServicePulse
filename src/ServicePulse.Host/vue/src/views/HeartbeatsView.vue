@@ -8,16 +8,13 @@ import isRouteSelected from "@/composables/isRouteSelected";
 import { DisplayType, sortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import OrderBy from "@/components/OrderBy.vue";
-import { ref, watch } from "vue";
+import { watch } from "vue";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, activeEndpoints, selectedDisplay } = storeToRefs(store);
-
-const filterString = ref(store.filterString);
+const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = storeToRefs(store);
 
 watch(filterString, (newValue) => {
   store.setFilterString(newValue);
-  filterString.value = store.filterString;
 });
 </script>
 

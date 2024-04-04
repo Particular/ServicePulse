@@ -75,4 +75,3 @@ const endpoint = defineModel<ExtendedEndpointDetails>({ required: true });
   border-color: var(--monitoring-retries);
 }
 </style>
-@/resources/MonitoringEndpoint
