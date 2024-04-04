@@ -8,18 +8,17 @@ import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import LastTenOperations from "../failedmessages/LastTenOperations.vue";
 import MessageGroupList, { IMessageGroupList } from "../failedmessages/MessageGroupList.vue";
-import OrderBy, { IOrderBy } from "./OrderBy.vue";
+import OrderBy, { getSortFunction } from "./OrderBy.vue";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import GroupOperation from "@/resources/GroupOperation";
 
 const selectedClassifier = ref<string>("");
 const classifiers = ref<string[]>([]);
 const messageGroupList = ref<IMessageGroupList>();
-const orderBy = ref<IOrderBy>();
 const sortMethod = ref<SortOptions<GroupOperation>["sort"]>();
 
 function sortGroups(sort: SortOptions<GroupOperation>) {
-  sortMethod.value = sort.sort ?? orderBy.value?.getSortFunction(sort.selector, SortDirection.Ascending);
+  sortMethod.value = sort.sort ?? getSortFunction(sort.selector, SortDirection.Ascending);
 
   // force a re-render of the messagegroup list
   messageGroupList.value?.loadFailedMessageGroups();
@@ -117,7 +116,7 @@ onMounted(async () => {
                 </li>
               </ul>
             </div>
-            <OrderBy @sort-updated="sortGroups" :sortOptions="sortOptions" ref="orderBy"></OrderBy>
+            <OrderBy @sort-updated="sortGroups" :sortOptions="sortOptions"></OrderBy>
           </div>
         </div>
         <div class="box-container" v-if="sortMethod">

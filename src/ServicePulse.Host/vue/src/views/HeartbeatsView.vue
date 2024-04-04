@@ -7,13 +7,10 @@ import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
 import { DisplayType, sortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
-import OrderBy, { IOrderBy } from "@/components/failedmessages/OrderBy.vue";
-import { ref } from "vue";
+import OrderBy from "@/components/failedmessages/OrderBy.vue";
 
 const store = useHeartbeatsStore();
 const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = storeToRefs(store);
-
-const orderBy = ref<IOrderBy>();
 </script>
 
 <template>
@@ -57,7 +54,7 @@ const orderBy = ref<IOrderBy>();
                   </li>
                 </ul>
               </div>
-              <OrderBy @sort-updated="store.setSelectedSort" :sort-options="sortOptions" ref="orderBy" />
+              <OrderBy @sort-updated="store.setSelectedSort" :sort-options="sortOptions" />
 
               <!-- <div class="msg-group-menu dropdown">
     <label class="control-label">Sort by:</label>

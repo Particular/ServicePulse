@@ -1,8 +1,4 @@
 <script lang="ts">
-export interface IOrderBy {
-  getSortFunction<T>(selector: SortOptions<T>["selector"], dir: SortDirection): (firstElement: T, secondElement: T) => number;
-}
-
 export function getSortFunction<T>(selector: SortOptions<T>["selector"], dir: SortDirection) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   if (!selector) return (firstElement: T, secondElement: T) => 0;
@@ -88,10 +84,6 @@ function setSortOptions() {
 
   emit("sortUpdated", savedSort);
 }
-
-defineExpose<IOrderBy>({
-  getSortFunction,
-});
 
 onMounted(() => {
   setSortOptions();
