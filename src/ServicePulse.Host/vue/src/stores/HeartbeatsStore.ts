@@ -1,4 +1,4 @@
-import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
@@ -101,6 +101,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     selectedSort.value = sort;
   }
 
+  function toggleEndpointMonitor(endpoint: Endpoint) {
+    usePatchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat });
+  }
+
   dataRetriever.executeAndResetTimer();
 
   return {
@@ -113,6 +117,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     selectedSort,
     setSelectedSort,
     filterString,
+    toggleEndpointMonitor,
   };
 });
 
