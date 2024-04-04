@@ -113,4 +113,63 @@ describe("FEATURE: Endpoint filtering", () => {
       await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument());
     });
   });
+
+  describe("Rule: Filtering by endpoint name should be case insensitive", () => {
+    it("Example: All upper case letters are used for a filter string that matches only 1 endpoint", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument());
+      await enterFilterString("ENDPOINT1");
+
+      //Assert
+      //Confirm all endpoints shows in the list after clearing the filter string
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument();
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull();
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull();
+    });
+
+    it("Example: All lower case letters are used for a filter string that matches only 1 endpoint", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument());
+      await enterFilterString("endpoint1");
+
+      //Assert
+      //Confirm all endpoints shows in the list after clearing the filter string
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument();
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull();
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull();
+    });
+
+    it("Example: A mix of upper and lower case letters are used for a filter string that matches only 1 endpoint", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument());
+      await enterFilterString("EnDpOiNt1");
+
+      //Assert
+      //Confirm all endpoints shows in the list after clearing the filter string
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument();
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull();
+      expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull();
+    });
+  })
 });
