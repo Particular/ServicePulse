@@ -9,7 +9,7 @@ import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useArchiveExceptionGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import OrderBy from "./OrderBy.vue";
+import OrderBy from "@/components/OrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";

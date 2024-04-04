@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import NoData from "../NoData.vue";
 import { Endpoint } from "@/resources/Heartbeat";
-import { getSortFunction } from "../failedmessages/OrderBy.vue";
+import { getSortFunction } from "@/components/OrderBy.vue";
 import { SortDirection } from "@/resources/SortOptions";
 import TimeSince from "../TimeSince.vue";
 import OnOffSwitch from "../OnOffSwitch.vue";

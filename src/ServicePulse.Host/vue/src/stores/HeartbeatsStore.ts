@@ -5,7 +5,7 @@ import useAutoRefresh from "@/composables/autoRefresh";
 import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
 import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
-import { getSortFunction } from "@/components/failedmessages/OrderBy.vue";
+import { getSortFunction } from "@/components/OrderBy.vue";
 import { useCookies } from "vue3-cookies";
 
 export enum DisplayType {

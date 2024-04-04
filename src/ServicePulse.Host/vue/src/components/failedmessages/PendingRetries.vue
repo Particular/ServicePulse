@@ -5,7 +5,7 @@ import { connectionState } from "../../composables/serviceServiceControl";
 import { usePatchToServiceControl, usePostToServiceControl, useTypedFetchFromServiceControl } from "../../composables/serviceServiceControlUrls";
 import { useShowToast } from "../../composables/toast";
 import { useCookies } from "vue3-cookies";
-import OrderBy from "./OrderBy.vue";
+import OrderBy from "@/components/OrderBy.vue";
 import LicenseExpired from "../../components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
