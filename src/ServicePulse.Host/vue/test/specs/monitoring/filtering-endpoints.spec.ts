@@ -1,8 +1,11 @@
 import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
-import { waitFor } from "@testing-library/vue";
+import { waitFor, screen } from "@testing-library/vue";
 import { enterFilterString } from "./actions/enterFilterString";
 import { endpointWithName } from "./questions/endpointWithName";
+import { groupEndpointsBy } from "./actions/groupEndpointsBy";
+import { endpointGroupNames } from "./questions/endpointGroupNames";
+import { endpointGroup } from "./questions/endpointGroup";
 import * as precondition from "../../preconditions";
 
 describe("FEATURE: Endpoint filtering", () => {
@@ -170,6 +173,101 @@ describe("FEATURE: Endpoint filtering", () => {
       expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument();
       expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull();
       expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull();
+    });
+  })
+
+  describe("Filtering by endpoint name should be possible when endpoints are grouped", () => {
+    it("Example: Filter string matches only 1 endpoint in only 1 group", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed([
+        "Universe.Solarsystem.Mercury.Endpoint1",
+        "Universe.Solarsystem.Mercury.Endpoint2",
+        "Universe.Solarsystem.Venus.Endpoint3",
+        "Universe.Solarsystem.Venus.Endpoint4",
+        "Universe.Solarsystem.Earth.Endpoint5",
+        "Universe.Solarsystem.Earth.Endpoint6",
+      ]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await groupEndpointsBy({ numberOfSegments: 3 });
+      expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]);
+      expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint1", "Endpoint2"]);
+      expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint3", "Endpoint4"]);
+      expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint5", "Endpoint6"]);
+      await enterFilterString("Endpoint1");
+
+      //Assert
+      await waitFor(() => expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Mercury"]));
+      await waitFor(() => expect(endpointWithName("Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Endpoint2")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint3")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint4")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint5")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint6")).toBeNull());
+    });
+
+    it("Example: Filter string matches all endpoints in each group", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed([
+        "Universe.Solarsystem.Mercury.Endpoint1",
+        "Universe.Solarsystem.Mercury.Endpoint2",
+        "Universe.Solarsystem.Venus.Endpoint3",
+        "Universe.Solarsystem.Venus.Endpoint4",
+        "Universe.Solarsystem.Earth.Endpoint5",
+        "Universe.Solarsystem.Earth.Endpoint6",
+      ]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await groupEndpointsBy({ numberOfSegments: 3 });
+      expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]);
+      expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint1", "Endpoint2"]);
+      expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint3", "Endpoint4"]);
+      expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint5", "Endpoint6"]);
+      await enterFilterString("Endpoint");
+
+      //Assert
+      await waitFor(() => expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]));
+      await waitFor(() => expect(endpointWithName("Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Endpoint2")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Endpoint3")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Endpoint4")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Endpoint5")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Endpoint6")).toBeInTheDocument());
+    });
+
+    it("Example: Filter string doesn't match any endpoints in any groups", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed([
+        "Universe.Solarsystem.Mercury.Endpoint1",
+        "Universe.Solarsystem.Mercury.Endpoint2",
+        "Universe.Solarsystem.Venus.Endpoint3",
+        "Universe.Solarsystem.Venus.Endpoint4",
+        "Universe.Solarsystem.Earth.Endpoint5",
+        "Universe.Solarsystem.Earth.Endpoint6",
+      ]));
+
+      //Act
+      await driver.goTo("monitoring");
+      await groupEndpointsBy({ numberOfSegments: 3 });
+      expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]);
+      expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint1", "Endpoint2"]);
+      expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint3", "Endpoint4"]);
+      expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint5", "Endpoint6"]);
+      await enterFilterString("WrongName");
+
+      //Assert
+      await waitFor(() => expect(endpointGroupNames()).toEqual([]));
+      await waitFor(() => expect(endpointWithName("Endpoint1")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint2")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint3")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint4")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint5")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Endpoint6")).toBeNull());
     });
   })
 });
