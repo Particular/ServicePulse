@@ -136,8 +136,6 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-@import "../list.css";
-
 .dropdown > button:hover {
   background: none;
   border: none;
