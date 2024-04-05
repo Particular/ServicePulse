@@ -1,4 +1,7 @@
+import { Router } from "vue-router";
+
 type GoTo = (path: string) => Promise<void>;
+type GetRouter = () => Promise<Router>;
 
 export type MockEndpointOptions = {
   body: string | unknown[] | Record<string | number, unknown>;
@@ -9,7 +12,7 @@ export type MockEndpointOptions = {
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
 
-export type SetupFactoryOptions = {  
+export type SetupFactoryOptions = {
   driver: Driver;
 };
 
@@ -17,8 +20,9 @@ type SetupFactory = ({ driver }: SetupFactoryOptions) => any;
 
 type SetUp = <Factory extends SetupFactory>(factory: Factory) => Promise<ReturnType<Factory>>;
 
-export type Driver = {    
+export type Driver = {
   goTo: GoTo;
+  getRouter: GetRouter;
   mockEndpoint: MockEndpoint;
   setUp: SetUp;
-}
+};

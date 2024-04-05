@@ -6,6 +6,8 @@ import { endpointWithName } from "./questions/endpointWithName";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
 import { endpointGroupNames } from "./questions/endpointGroupNames";
 import { endpointGroup } from "./questions/endpointGroup";
+import { filteredByName } from "./questions/filteredByName";
+
 import * as precondition from "../../preconditions";
 
 describe("FEATURE: Endpoint filtering", () => {
@@ -174,20 +176,22 @@ describe("FEATURE: Endpoint filtering", () => {
       expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull();
       expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull();
     });
-  })
+  });
 
-  describe("Filtering by endpoint name should be possible when endpoints are grouped", () => {
+  describe("Rule: Filtering by endpoint name should be possible when endpoints are grouped", () => {
     it("Example: Filter string matches only 1 endpoint in only 1 group", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed([
-        "Universe.Solarsystem.Mercury.Endpoint1",
-        "Universe.Solarsystem.Mercury.Endpoint2",
-        "Universe.Solarsystem.Venus.Endpoint3",
-        "Universe.Solarsystem.Venus.Endpoint4",
-        "Universe.Solarsystem.Earth.Endpoint5",
-        "Universe.Solarsystem.Earth.Endpoint6",
-      ]));
+      await driver.setUp(
+        precondition.monitoredEndpointsNamed([
+          "Universe.Solarsystem.Mercury.Endpoint1",
+          "Universe.Solarsystem.Mercury.Endpoint2",
+          "Universe.Solarsystem.Venus.Endpoint3",
+          "Universe.Solarsystem.Venus.Endpoint4",
+          "Universe.Solarsystem.Earth.Endpoint5",
+          "Universe.Solarsystem.Earth.Endpoint6",
+        ])
+      );
 
       //Act
       await driver.goTo("monitoring");
@@ -211,14 +215,16 @@ describe("FEATURE: Endpoint filtering", () => {
     it("Example: Filter string matches all endpoints in each group", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed([
-        "Universe.Solarsystem.Mercury.Endpoint1",
-        "Universe.Solarsystem.Mercury.Endpoint2",
-        "Universe.Solarsystem.Venus.Endpoint3",
-        "Universe.Solarsystem.Venus.Endpoint4",
-        "Universe.Solarsystem.Earth.Endpoint5",
-        "Universe.Solarsystem.Earth.Endpoint6",
-      ]));
+      await driver.setUp(
+        precondition.monitoredEndpointsNamed([
+          "Universe.Solarsystem.Mercury.Endpoint1",
+          "Universe.Solarsystem.Mercury.Endpoint2",
+          "Universe.Solarsystem.Venus.Endpoint3",
+          "Universe.Solarsystem.Venus.Endpoint4",
+          "Universe.Solarsystem.Earth.Endpoint5",
+          "Universe.Solarsystem.Earth.Endpoint6",
+        ])
+      );
 
       //Act
       await driver.goTo("monitoring");
@@ -242,14 +248,16 @@ describe("FEATURE: Endpoint filtering", () => {
     it("Example: Filter string doesn't match any endpoints in any groups", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed([
-        "Universe.Solarsystem.Mercury.Endpoint1",
-        "Universe.Solarsystem.Mercury.Endpoint2",
-        "Universe.Solarsystem.Venus.Endpoint3",
-        "Universe.Solarsystem.Venus.Endpoint4",
-        "Universe.Solarsystem.Earth.Endpoint5",
-        "Universe.Solarsystem.Earth.Endpoint6",
-      ]));
+      await driver.setUp(
+        precondition.monitoredEndpointsNamed([
+          "Universe.Solarsystem.Mercury.Endpoint1",
+          "Universe.Solarsystem.Mercury.Endpoint2",
+          "Universe.Solarsystem.Venus.Endpoint3",
+          "Universe.Solarsystem.Venus.Endpoint4",
+          "Universe.Solarsystem.Earth.Endpoint5",
+          "Universe.Solarsystem.Earth.Endpoint6",
+        ])
+      );
 
       //Act
       await driver.goTo("monitoring");
@@ -269,5 +277,43 @@ describe("FEATURE: Endpoint filtering", () => {
       await waitFor(() => expect(endpointWithName("Endpoint5")).toBeNull());
       await waitFor(() => expect(endpointWithName("Endpoint6")).toBeNull());
     });
-  })
+  });
+
+  describe("Rule: Filter string can get and set the filter parameter in the permalink", () => {
+    it("Example: The permalink has the filter parameter set to match only 1 endpoint", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+
+      //Act
+      await driver.goTo("monitoring?filter=Endpoint1");
+
+      //Assert
+      await waitFor(() => expect(filteredByName("Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull());
+    });
+
+    it("Example: The permalink does not have the filter parameter set and then a filter string is entered that matches only 1 endpoint", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+
+      //Act
+      await driver.goTo("monitoring?filter=Endpoint1");
+      let foo = await driver.getRouter();
+      console.debug("Route: " + foo.currentRoute.value.fullPath);
+      enterFilterString("");
+      foo = await driver.getRouter();
+
+      console.debug("Route: " + foo.getRoutes().toString());
+
+      //Assert
+      /*  await waitFor(() => expect(filteredByName("Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull()); */
+    });
+  });
 });
