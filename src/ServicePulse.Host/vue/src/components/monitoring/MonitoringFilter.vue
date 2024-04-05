@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
 import GroupBy from "./MonitoringGroupBy.vue";
 import PeriodSelector from "./MonitoringHistoryPeriod.vue";
 import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 const monitoringStore = useMonitoringStore();
-
-const filterString = ref<string>(monitoringStore.filterString);
-
-watch(filterString, async (newValue) => {
-  await monitoringStore.updateFilterString(newValue);
-  filterString.value = monitoringStore.filterString;
-});
 </script>
 
 <template>
@@ -19,7 +11,7 @@ watch(filterString, async (newValue) => {
     <PeriodSelector />
     <GroupBy />
     <div class="filter-input">
-      <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="filterString" />
+      <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="monitoringStore.filterString" />
     </div>
   </div>
 </template>
