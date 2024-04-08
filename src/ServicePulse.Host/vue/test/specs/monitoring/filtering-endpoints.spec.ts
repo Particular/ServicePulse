@@ -19,17 +19,10 @@ describe("FEATURE: Endpoint filtering", () => {
 
       //Act
       await driver.goTo("monitoring");
-
-      //await waitFor(() => screen.getByText("Endpoints overview"));
       await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
       await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeInTheDocument());
       await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument());
-      //expect(endpointWithName2("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument();
-      //expect(await endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument();
-      //expect(await endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeInTheDocument();
-      //expect(await endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument();
       await enterFilterString("Universe.Solarsystem.Earth.Endpoint1");
-      //screen.logTestingPlaygroundURL();
 
       //Assert
       //Confirm Endpoint1 still shows in the list after filtering
@@ -38,8 +31,6 @@ describe("FEATURE: Endpoint filtering", () => {
       //Confirm Endpoint2 and Endpoint3 no longer shows in the list after filtering
       expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull();
       expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull();
-      //expect(async () => await endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).rejects.toThrow();
-      //expect(async () => await endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).rejects.toThrow();
     });
     it("Example: Filter string matches a substring of only 1 endpoint name", async ({ driver }) => {
       //Arrange
