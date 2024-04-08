@@ -20,7 +20,6 @@ const makeDriver = (): Driver => ({
 
     document.body.innerHTML = '<div id="app"></div>';
     mount({ router });
-    return router;
   },
   mockEndpoint,
   setUp(factory) {

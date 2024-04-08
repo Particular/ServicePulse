@@ -301,19 +301,17 @@ describe("FEATURE: Endpoint filtering", () => {
       await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
 
       //Act
-      await driver.goTo("monitoring?filter=Endpoint1");
-      let foo = await driver.getRouter();
-      console.debug("Route: " + foo.currentRoute.value.fullPath);
-      enterFilterString("");
-      foo = await driver.getRouter();
-
-      console.debug("Route: " + foo.getRoutes().toString());
+      await driver.goTo("monitoring");
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeInTheDocument());
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument());
+      await enterFilterString("Endpoint1");
 
       //Assert
-      /*  await waitFor(() => expect(filteredByName("Endpoint1")).toBeInTheDocument());
+      await waitFor(() => expect(window.location.href).toEqual("http://localhost:3000/#/monitoring?filter=Endpoint1"));
       await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
       await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull()); */
+      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull());
     });
   });
 });
