@@ -1,5 +1,3 @@
-import { Router } from "vue-router";
-
 type GoTo = (path: string) => Promise<void>;
 
 export type MockEndpointOptions = {
