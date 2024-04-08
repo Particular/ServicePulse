@@ -280,38 +280,44 @@ describe("FEATURE: Endpoint filtering", () => {
   });
 
   describe("Rule: Filter string can get and set the filter parameter in the permalink", () => {
-    it("Example: The permalink has the filter parameter set to match only 1 endpoint", async ({ driver }) => {
+    it("Example: Filter string should be updated when the permalink has the filter parameter set", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
 
       //Act
       await driver.goTo("monitoring?filter=Endpoint1");
 
       //Assert
       await waitFor(() => expect(filteredByName("Endpoint1")).toBeInTheDocument());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull());
     });
 
-    it("Example: The permalink does not have the filter parameter set and then a filter string is entered that matches only 1 endpoint", async ({ driver }) => {
+    it("Example: The permalink's filter parameter is updated when a filter string is entered", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
 
       //Act
       await driver.goTo("monitoring");
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeInTheDocument());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeInTheDocument());
       await enterFilterString("Endpoint1");
 
       //Assert
+      // Wait for the current page to change since the permalink should be different
+      await waitFor(() => expect(window.location.href).not.toEqual("http://localhost:3000/#/monitoring"));
       await waitFor(() => expect(window.location.href).toEqual("http://localhost:3000/#/monitoring?filter=Endpoint1"));
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint2")).toBeNull());
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint3")).toBeNull());
+    });
+
+    it("Example: The permalink's filter parameter is removed when filter string is empty", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      //Act
+      await driver.goTo("monitoring?filter=Endpoint1");
+      await waitFor(() => expect(filteredByName("Endpoint1")).toBeInTheDocument());
+      await enterFilterString("");
+
+      //Assert
+      //Wait for the current page to change since the permalink should be different
+      await waitFor(() => expect(window.location.href).not.toEqual("http://localhost:3000/#/monitoring?filter=Endpoint1"));
+      await waitFor(() => expect(window.location.href).toEqual("http://localhost:3000/#/monitoring"));
     });
   });
 });
