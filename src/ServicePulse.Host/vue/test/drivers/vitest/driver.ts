@@ -4,11 +4,9 @@ import { mount } from "../../../src/mount";
 import makeRouter from "../../../src/router";
 import { mockEndpoint } from "../../utils";
 
-const router = makeRouter();
-
 const makeDriver = (): Driver => ({
   async goTo(path) {
-    //const router = makeRouter();
+    const router = makeRouter();
     try {
       await router.push(path);
     } catch (error) {
@@ -22,8 +20,6 @@ const makeDriver = (): Driver => ({
 
     document.body.innerHTML = '<div id="app"></div>';
     mount({ router });
-  },
-  getRouter() {
     return router;
   },
   mockEndpoint,
