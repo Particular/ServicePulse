@@ -1,6 +1,6 @@
 import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
 import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
 import moment from "moment";
@@ -70,6 +70,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
   const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
   const filteredInactiveEndpoints = computed<Endpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
+
+  watch(filterString, (newValue) => {
+    setFilterString(newValue);
+  });
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
