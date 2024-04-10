@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { RouterLink } from "vue-router";
 import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
 import routeLinks from "@/router/routeLinks";
@@ -12,7 +13,8 @@ import DashboardMenuItem from "@/components/dashboard/DashboardMenuItem.vue";
 import FeedbackButton from "@/components/FeedbackButton.vue";
 
 // prettier-ignore
-const menuItems = [
+const menuItems = computed(
+  () => [
   DashboardMenuItem,
   HeartbeatsMenuItem,
   ...(useIsMonitoringEnabled() ? [MonitoringMenuItem] : []),
@@ -21,7 +23,7 @@ const menuItems = [
   EventsMenuItem,
   ConfigurationMenuItem,
   FeedbackButton,
-];
+]);
 </script>
 
 <template>
