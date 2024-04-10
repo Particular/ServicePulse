@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
-import { stats } from "@/composables/serviceServiceControl";
 import routeLinks from "@/router/routeLinks";
 import CustomChecksMenuItem from "@/components/customchecks/CustomChecksMenuItem.vue";
 import HeartbeatsMenuItem from "./heartbeats/HeartbeatsMenuItem.vue";
 import ConfigurationMenuItem from "./configuration/ConfigurationMenuItem.vue";
 import FailedMessagesMenuItem from "./failedmessages/FailedMessagesMenuItem.vue";
+import MonitoringMenuItem from "./monitoring/MonitoringMenuItem.vue";
 </script>
 
 <template>
@@ -30,11 +30,7 @@ import FailedMessagesMenuItem from "./failedmessages/FailedMessagesMenuItem.vue"
             <HeartbeatsMenuItem />
           </li>
           <li v-if="useIsMonitoringEnabled()">
-            <RouterLink :to="routeLinks.monitoring.root">
-              <i class="fa pa-monitoring icon-white" title="Monitoring"></i>
-              <span class="navbar-label">Monitoring</span>
-              <span v-if="stats.number_of_disconnected_endpoints > 0" class="badge badge-important">{{ stats.number_of_disconnected_endpoints }}</span>
-            </RouterLink>
+            <MonitoringMenuItem />
           </li>
           <li>
             <FailedMessagesMenuItem />
