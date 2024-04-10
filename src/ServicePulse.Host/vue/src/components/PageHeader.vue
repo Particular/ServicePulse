@@ -3,11 +3,25 @@ import { RouterLink } from "vue-router";
 import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
 import routeLinks from "@/router/routeLinks";
 import CustomChecksMenuItem from "@/components/customchecks/CustomChecksMenuItem.vue";
-import HeartbeatsMenuItem from "./heartbeats/HeartbeatsMenuItem.vue";
-import ConfigurationMenuItem from "./configuration/ConfigurationMenuItem.vue";
-import FailedMessagesMenuItem from "./failedmessages/FailedMessagesMenuItem.vue";
-import MonitoringMenuItem from "./monitoring/MonitoringMenuItem.vue";
-import EventsMenuItem from "./events/EventsMenuItem.vue";
+import HeartbeatsMenuItem from "@/components/heartbeats/HeartbeatsMenuItem.vue";
+import ConfigurationMenuItem from "@/components/configuration/ConfigurationMenuItem.vue";
+import FailedMessagesMenuItem from "@/components/failedmessages/FailedMessagesMenuItem.vue";
+import MonitoringMenuItem from "@/components/monitoring/MonitoringMenuItem.vue";
+import EventsMenuItem from "@/components/events/EventsMenuItem.vue";
+import DashboardMenuItem from "@/components/dashboard/DashboardMenuItem.vue";
+import FeedbackButton from "@/components/FeedbackButton.vue";
+
+// prettier-ignore
+const menuItems = [
+  DashboardMenuItem,
+  HeartbeatsMenuItem,
+  ...(useIsMonitoringEnabled() ? [MonitoringMenuItem] : []),
+  FailedMessagesMenuItem,
+  CustomChecksMenuItem,
+  EventsMenuItem,
+  ConfigurationMenuItem,
+  FeedbackButton,
+];
 </script>
 
 <template>
@@ -21,35 +35,8 @@ import EventsMenuItem from "./events/EventsMenuItem.vue";
 
       <div id="navbar" class="navbar navbar-expand-lg">
         <ul class="nav navbar-nav navbar-inverse">
-          <li>
-            <RouterLink :to="routeLinks.dashboard">
-              <i class="fa fa-dashboard icon-white" title="Dashboard"></i>
-              <span class="navbar-label">Dashboard</span>
-            </RouterLink>
-          </li>
-          <li>
-            <HeartbeatsMenuItem />
-          </li>
-          <li v-if="useIsMonitoringEnabled()">
-            <MonitoringMenuItem />
-          </li>
-          <li>
-            <FailedMessagesMenuItem />
-          </li>
-          <li>
-            <CustomChecksMenuItem />
-          </li>
-          <li>
-            <EventsMenuItem />
-          </li>
-          <li>
-            <ConfigurationMenuItem />
-          </li>
-          <li>
-            <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
-              <i class="fa fa-comment" title="Feedback"></i>
-              <span class="navbar-label">Feedback</span>
-            </a>
+          <li v-for="menuItem in menuItems" :key="menuItem?.name">
+            <component :is="menuItem" />
           </li>
         </ul>
       </div>

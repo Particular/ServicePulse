@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 import { computed } from "vue";
-import { connectionState, monitoringConnectionState, stats } from "@/composables/serviceServiceControl";
+import { connectionState, monitoringConnectionState } from "@/composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
 import { licenseStatus } from "@/composables/serviceLicense";
 import ExclamationMark from "@/components/ExclamationMark.vue";
