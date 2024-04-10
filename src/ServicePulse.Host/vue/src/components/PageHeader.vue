@@ -9,6 +9,7 @@ import { LicenseWarningLevel } from "@/composables/LicenseStatus";
 import { WarningLevel } from "@/components/WarningLevel";
 import routeLinks from "@/router/routeLinks";
 import CustomChecksMenuItem from "@/components/customchecks/CustomChecksMenuItem.vue";
+import HeartbeatsMenuItem from "./heartbeats/HeartbeatsMenuItem.vue";
 
 const displayWarn = computed(() => {
   return licenseStatus.warningLevel === LicenseWarningLevel.Warning;
@@ -36,11 +37,7 @@ const displayDanger = computed(() => {
             </RouterLink>
           </li>
           <li>
-            <RouterLink :to="routeLinks.heartbeats.root">
-              <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
-              <span class="navbar-label">Heartbeats</span>
-              <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
-            </RouterLink>
+            <HeartbeatsMenuItem />
           </li>
           <li v-if="useIsMonitoringEnabled()">
             <RouterLink :to="routeLinks.monitoring.root">
