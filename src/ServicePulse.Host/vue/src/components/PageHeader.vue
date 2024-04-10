@@ -7,6 +7,7 @@ import HeartbeatsMenuItem from "./heartbeats/HeartbeatsMenuItem.vue";
 import ConfigurationMenuItem from "./configuration/ConfigurationMenuItem.vue";
 import FailedMessagesMenuItem from "./failedmessages/FailedMessagesMenuItem.vue";
 import MonitoringMenuItem from "./monitoring/MonitoringMenuItem.vue";
+import EventsMenuItem from "./events/EventsMenuItem.vue";
 </script>
 
 <template>
@@ -39,10 +40,7 @@ import MonitoringMenuItem from "./monitoring/MonitoringMenuItem.vue";
             <CustomChecksMenuItem />
           </li>
           <li>
-            <RouterLink :to="routeLinks.events">
-              <i class="fa fa-list-ul icon-white" title="Events"></i>
-              <span class="navbar-label">Events</span>
-            </RouterLink>
+            <EventsMenuItem />
           </li>
           <li>
             <ConfigurationMenuItem />
