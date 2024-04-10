@@ -280,4 +280,11 @@ onMounted(() => {
   </template>
 </template>
 
-<style></style>
+<style scoped>
+.dropdown > button:hover {
+  background: none;
+  border: none;
+  color: #00a3c4;
+  text-decoration: underline;
+}
+</style>

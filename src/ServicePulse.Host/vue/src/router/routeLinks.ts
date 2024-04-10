@@ -1,3 +1,16 @@
+const heartbeatLinks = (root: string) => {
+  function createLink(template: string) {
+    return { link: `${root}/${template}`, template: template };
+  }
+
+  return {
+    root,
+    inactive: createLink("inactive"),
+    active: createLink("active"),
+    configuration: createLink("configuration"),
+  };
+};
+
 const failedMessagesLinks = (root: string) => {
   function createLink(template: string) {
     return { link: `${root}/${template}`, template: template };
@@ -38,11 +51,9 @@ const monitoringLinks = (root: string) => {
   };
 };
 
-const baseUrl = window.defaultConfig.base_url;
-
 const routeLinks = {
   dashboard: "/dashboard",
-  heartbeats: `${baseUrl}a/#/endpoints`,
+  heartbeats: heartbeatLinks("/heartbeats"),
   monitoring: monitoringLinks("/monitoring"),
   failedMessage: failedMessagesLinks("/failed-messages"),
   customChecks: "/custom-checks",

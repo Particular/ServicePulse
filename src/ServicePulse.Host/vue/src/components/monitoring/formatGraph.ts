@@ -1,4 +1,4 @@
-import { type EndpointValues } from "@/resources/Endpoint";
+import { type EndpointValues } from "@/resources/MonitoringEndpoint";
 import { useFormatTime, useFormatLargeNumber, type ValueWithUnit } from "../../composables/formatter";
 
 export function formatGraphDuration(input?: EndpointValues): ValueWithUnit {

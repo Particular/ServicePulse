@@ -6,7 +6,7 @@ import SmallGraph from "./SmallGraph.vue";
 import { useMonitoringHistoryPeriodStore } from "@/stores/MonitoringHistoryPeriodStore";
 import { useMonitoringStore } from "../../stores/MonitoringStore";
 import { storeToRefs } from "pinia";
-import type { GroupedEndpoint, Endpoint } from "@/resources/Endpoint";
+import type { GroupedEndpoint, Endpoint } from "@/resources/MonitoringEndpoint";
 import routeLinks from "@/router/routeLinks";
 
 const settings = defineProps<{

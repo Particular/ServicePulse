@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useTypedFetchFromMonitoring, useIsMonitoringDisabled } from "./serviceServiceControlUrls";
 import { monitoringConnectionState } from "./serviceServiceControl";
 import { useGetExceptionGroups } from "./serviceMessageGroup";
-import { type Endpoint, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, type EndpointDetailsError } from "@/resources/Endpoint";
+import { type Endpoint, type GroupedEndpoint, type EndpointGroup, type EndpointDetails, type EndpointDetailsError } from "@/resources/MonitoringEndpoint";
 import { emptyEndpointMetrics } from "@/components/monitoring/endpoints";
 
 /**

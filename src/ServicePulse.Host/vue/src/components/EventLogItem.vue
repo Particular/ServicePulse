@@ -14,13 +14,13 @@ function navigateToEvent(eventLogItem: EventLogItem) {
       router.push(routeLinks.configuration.endpointConnection.link);
       break;
     case "HeartbeatMonitoring":
-      window.location.assign(routeLinks.heartbeats);
+      router.push(routeLinks.heartbeats.root);
       break;
     case "CustomChecks":
       router.push(routeLinks.customChecks);
       break;
     case "EndpointControl":
-      window.location.assign(routeLinks.heartbeats);
+      router.push(routeLinks.heartbeats.root);
       break;
     case "MessageFailures":
       if (eventLogItem.related_to?.length && eventLogItem.related_to[0].search("message") > 0) {

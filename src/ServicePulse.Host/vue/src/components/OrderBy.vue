@@ -1,17 +1,30 @@
-<script setup lang="ts">
+<script lang="ts">
+export function getSortFunction<T>(selector: SortOptions<T>["selector"], dir: SortDirection) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  if (!selector) return (firstElement: T, secondElement: T) => 0;
+  return (firstElement: T, secondElement: T) => {
+    if (dir === SortDirection.Ascending) {
+      return selector(firstElement) < selector(secondElement) ? -1 : 1;
+    } else {
+      return selector(firstElement) < selector(secondElement) ? 1 : -1;
+    }
+  };
+}
+</script>
+
+<script setup generic="T" lang="ts">
 import { onMounted, ref } from "vue";
 import { useCookies } from "vue3-cookies";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
-import GroupOperation from "@/resources/GroupOperation";
 
 const emit = defineEmits<{
-  sortUpdated: [option: SortOptions];
+  sortUpdated: [option: SortOptions<T>];
 }>();
 
 const props = withDefaults(
   defineProps<{
     hideSort?: boolean;
-    sortOptions: SortOptions[];
+    sortOptions: SortOptions<T>[];
     sortSavePrefix?: string;
   }>(),
   {
@@ -52,26 +65,14 @@ function loadSavedSortOption() {
   return props.sortOptions[0];
 }
 
-function getSortFunction(selector: SortOptions["selector"], dir: SortDirection) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  if (!selector) return (firstElement: GroupOperation, secondElement: GroupOperation) => 0;
-  return (firstElement: GroupOperation, secondElement: GroupOperation) => {
-    if (dir === SortDirection.Ascending) {
-      return selector(firstElement) < selector(secondElement) ? -1 : 1;
-    } else {
-      return selector(firstElement) < selector(secondElement) ? 1 : -1;
-    }
-  };
-}
-
-function sortUpdated(sort: SortOptions, dir: SortDirection) {
+function sortUpdated(sort: SortOptions<T>, dir: SortDirection) {
   selectedSort.value = sort.description + (dir === SortDirection.Descending ? " (Descending)" : "");
   saveSortOption(sort.description, dir);
 
   emit("sortUpdated", {
     ...sort,
     dir: dir,
-    sort: getSortFunction(sort.selector, dir),
+    sort: getSortFunction<T>(sort.selector, dir),
   });
 }
 
@@ -82,14 +83,6 @@ function setSortOptions() {
   emit("sortUpdated", savedSort);
 }
 
-export interface IOrderBy {
-  getSortFunction(selector: SortOptions["selector"], dir: SortDirection): (firstElement: GroupOperation, secondElement: GroupOperation) => number;
-}
-
-defineExpose<IOrderBy>({
-  getSortFunction,
-});
-
 onMounted(() => {
   setSortOptions();
 });
@@ -98,7 +91,7 @@ onMounted(() => {
 <template>
   <div class="msg-group-menu dropdown" v-show="!props.hideSort">
     <label class="control-label">Sort by:</label>
-    <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{ selectedSort }}
       <span class="caret"></span>
     </button>
@@ -116,6 +109,8 @@ onMounted(() => {
 </template>
 
 <style>
+@import "@/assets/dropdown.css";
+
 .dropdown-menu .bi {
   padding-right: 5px;
 }
@@ -155,5 +150,10 @@ onMounted(() => {
 
 .sp-btn-menu > i {
   color: #00a3c4;
+}
+
+.dropdown-menu li button {
+  width: 100%;
+  text-align: left;
 }
 </style>

@@ -36,12 +36,12 @@ const displayDanger = computed(() => {
               <span class="navbar-label">Dashboard</span>
             </RouterLink>
           </li>
-          <li>
-            <a :href="routeLinks.heartbeats">
+          <li :class="{ active: isRouteSelected(routeLinks.heartbeats.root) }">
+            <RouterLink :to="routeLinks.heartbeats.root">
               <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
               <span class="navbar-label">Heartbeats</span>
               <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
-            </a>
+            </RouterLink>
           </li>
           <li v-if="useIsMonitoringEnabled()" :class="{ active: isRouteSelected(routeLinks.monitoring.root) || isRouteSelected(routeLinks.monitoring.endpointDetails.link('endpointName', 1)) }">
             <RouterLink :to="routeLinks.monitoring.root">

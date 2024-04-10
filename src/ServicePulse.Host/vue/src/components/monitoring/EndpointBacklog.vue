@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ExtendedEndpointDetails } from "@/resources/Endpoint";
+import type { ExtendedEndpointDetails } from "@/resources/MonitoringEndpoint";
 import { formatGraphDecimalFromNumber, largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
 

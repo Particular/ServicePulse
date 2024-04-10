@@ -24,7 +24,7 @@ import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDas
               <div class="col-12">
                 <div class="row">
                   <div class="col-4">
-                    <DashboardItem :counter="stats.number_of_failed_heartbeats" :url="routeLinks.heartbeats" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
+                    <DashboardItem :counter="stats.number_of_failed_heartbeats" :url="useLink({ to: routeLinks.heartbeats.root }).href.value" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
                   </div>
                   <div class="col-4">
                     <DashboardItem :counter="stats.number_of_failed_messages" :url="useLink({ to: routeLinks.failedMessage.root }).href.value" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>

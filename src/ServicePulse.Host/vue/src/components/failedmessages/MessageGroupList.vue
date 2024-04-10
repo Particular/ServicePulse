@@ -625,7 +625,9 @@ defineExpose<IMessageGroupList>({
   </Teleport>
 </template>
 
-<style>
+<style scoped>
+@import "../list.css";
+
 .fake-link i {
   padding-right: 0.2em;
 }

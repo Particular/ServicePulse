@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { useFormatTime } from "@/composables/formatter";
 import { largeGraphsMinimumYAxis } from "./formatGraph";
 import LargeGraph from "./LargeGraph.vue";
-import type { ExtendedEndpointDetails } from "@/resources/Endpoint";
+import type { ExtendedEndpointDetails } from "@/resources/MonitoringEndpoint";
 
 const endpoint = defineModel<ExtendedEndpointDetails>({
   required: true,

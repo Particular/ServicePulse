@@ -9,7 +9,7 @@ import { useDownloadFile } from "../../composables/fileDownloadCreator";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { useArchiveExceptionGroup, useRetryExceptionGroup } from "../../composables/serviceMessageGroup";
 import LicenseExpired from "../../components/LicenseExpired.vue";
-import OrderBy from "./OrderBy.vue";
+import OrderBy from "@/components/OrderBy.vue";
 import ServiceControlNotAvailable from "../ServiceControlNotAvailable.vue";
 import MessageList, { IMessageList } from "./MessageList.vue";
 import ConfirmDialog from "../ConfirmDialog.vue";
@@ -17,10 +17,11 @@ import PaginationStrip from "../../components/PaginationStrip.vue";
 import { ExtendedFailedMessage, FailedMessageStatus } from "@/resources/FailedMessage";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import { TYPE } from "vue-toastification";
+import GroupOperation from "@/resources/GroupOperation";
 
 let pollingFaster = false;
 let refreshInterval: number | undefined;
-let sortMethod: SortOptions | undefined;
+let sortMethod: SortOptions<GroupOperation> | undefined;
 const perPage = 50;
 const route = useRoute();
 const groupId = ref<string>(route.params.groupId as string);
@@ -32,7 +33,7 @@ const showConfirmRetryAll = ref(false);
 const showConfirmDeleteAll = ref(false);
 const messageList = ref<IMessageList>();
 const messages = ref<ExtendedFailedMessage[]>([]);
-const sortOptions: SortOptions[] = [
+const sortOptions: SortOptions<GroupOperation>[] = [
   {
     description: "Time of failure",
     icon: "bi-sort-",
@@ -45,7 +46,7 @@ const sortOptions: SortOptions[] = [
 
 watch(pageNumber, () => loadMessages());
 
-function sortGroups(sort: SortOptions) {
+function sortGroups(sort: SortOptions<GroupOperation>) {
   sortMethod = sort;
   loadMessages();
 }
