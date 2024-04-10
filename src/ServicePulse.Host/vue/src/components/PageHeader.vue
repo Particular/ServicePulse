@@ -1,22 +1,11 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
-import { computed } from "vue";
-import { connectionState, monitoringConnectionState, stats } from "@/composables/serviceServiceControl";
 import { useIsMonitoringEnabled } from "@/composables/serviceServiceControlUrls";
-import { licenseStatus } from "@/composables/serviceLicense";
-import ExclamationMark from "./ExclamationMark.vue";
-import { LicenseWarningLevel } from "@/composables/LicenseStatus";
-import { WarningLevel } from "@/components/WarningLevel";
+import { stats } from "@/composables/serviceServiceControl";
 import routeLinks from "@/router/routeLinks";
 import CustomChecksMenuItem from "@/components/customchecks/CustomChecksMenuItem.vue";
 import HeartbeatsMenuItem from "./heartbeats/HeartbeatsMenuItem.vue";
-
-const displayWarn = computed(() => {
-  return licenseStatus.warningLevel === LicenseWarningLevel.Warning;
-});
-const displayDanger = computed(() => {
-  return connectionState.unableToConnect || (monitoringConnectionState.unableToConnect && useIsMonitoringEnabled()) || licenseStatus.warningLevel === LicenseWarningLevel.Danger;
-});
+import ConfigurationMenuItem from "./configuration/ConfigurationMenuItem.vue";
 </script>
 
 <template>
@@ -63,12 +52,7 @@ const displayDanger = computed(() => {
             </RouterLink>
           </li>
           <li>
-            <RouterLink :to="routeLinks.configuration.root" exact>
-              <i class="fa fa-cog icon-white" title="Configuration"></i>
-              <span class="navbar-label">Configuration</span>
-              <exclamation-mark :type="WarningLevel.Warning" v-if="displayWarn" />
-              <exclamation-mark :type="WarningLevel.Danger" v-if="displayDanger" />
-            </RouterLink>
+            <ConfigurationMenuItem />
           </li>
           <li>
             <a class="btn-feedback" href="https://github.com/Particular/ServicePulse/issues/new" target="_blank">
