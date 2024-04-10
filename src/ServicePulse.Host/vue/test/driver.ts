@@ -9,7 +9,7 @@ export type MockEndpointOptions = {
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
 
-export type SetupFactoryOptions = {  
+export type SetupFactoryOptions = {
   driver: Driver;
 };
 
@@ -17,8 +17,8 @@ type SetupFactory = ({ driver }: SetupFactoryOptions) => any;
 
 type SetUp = <Factory extends SetupFactory>(factory: Factory) => Promise<ReturnType<Factory>>;
 
-export type Driver = {    
+export type Driver = {
   goTo: GoTo;
   mockEndpoint: MockEndpoint;
   setUp: SetUp;
-}
+};
