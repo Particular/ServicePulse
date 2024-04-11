@@ -13,4 +13,4 @@ export { hasMonitoredEndpoints, hasNoMonitoredEndpoints, hasMonitoredEndpointsLi
 export { hasEventLogItems } from "../preconditions/hasEventLogItems";
 export { hasRecoverabilityGroups } from "../preconditions/hasEmptyRecoverabilityGroups";
 export { hasHistoryPeriodDataForOneMinute } from "./hasHistoryPeriodDataForOneMinute";
-export { serviceControlWithMonitoring } from "./serviceControlWithMonitoring";
+export { serviceControlWithMonitoring, serviceControlWithMonitoringUrl } from "./serviceControlWithMonitoring";
