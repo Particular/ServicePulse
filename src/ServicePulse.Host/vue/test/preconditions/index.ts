@@ -1,6 +1,7 @@
 export { hasActiveLicense } from "../preconditions/hasActiveLicense";
 export { hasServiceControlMainInstance } from "../preconditions/hasServiceControlMainInstance";
 export { hasServiceControlMonitoringInstance } from "../preconditions/hasServiceControlMonitoringInstance";
+export { hasServiceControlMonitoringInstanceUrl } from "../preconditions/hasServiceControlMonitoringInstanceUrl";
 export { hasUpToDateServiceControl } from "../preconditions/hasUpToDateServiceControl";
 export { hasUpToDateServicePulse } from "../preconditions/hasUpToDateServicePulse";
 export { hasFiveActiveOneFailingHeartbeats } from "../preconditions/hasFiveActiveOneFailingHeartbeats";
@@ -12,4 +13,4 @@ export { hasMonitoredEndpoints, hasNoMonitoredEndpoints, monitoredEndpointsNamed
 export { hasEventLogItems } from "../preconditions/hasEventLogItems";
 export { hasRecoverabilityGroups } from "../preconditions/hasEmptyRecoverabilityGroups";
 export { hasHistoryPeriodDataForOneMinute } from "./hasHistoryPeriodDataForOneMinute";
-export { serviceControlWithMonitoring } from "./serviceControlWithMonitoring";
+export { serviceControlWithMonitoring, serviceControlWithMonitoringUrl } from "./serviceControlWithMonitoring";
