@@ -3,7 +3,8 @@ import { SetupFactoryOptions } from "../driver";
 const content = JSON.stringify([]);
 
 export const hasNoErrors = ({ driver }: SetupFactoryOptions) => {
-  driver.mockEndpoint(`http://localhost:33333/api/errors`, {
+  const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
+  driver.mockEndpoint(`${serviceControlInstanceUrl}errors`, {
     body: content,
   });
   return content;

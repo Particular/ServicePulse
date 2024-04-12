@@ -1,10 +1,11 @@
 import content from "../mocks/service-control-monitoring-instance.json";
-import {SetupFactoryOptions} from '../driver'
+import { SetupFactoryOptions } from "../driver";
 
 export const hasServiceControlMonitoringInstance = ({ driver }: SetupFactoryOptions) => {
-  driver.mockEndpoint(`http://localhost:33633`, {
+  const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+  driver.mockEndpoint(monitoringInstanceUrl, {
     body: content,
-    headers: {'X-Particular-Version':'5.0.4'}  
+    headers: { "X-Particular-Version": "5.0.4" },
   });
   return content;
 };

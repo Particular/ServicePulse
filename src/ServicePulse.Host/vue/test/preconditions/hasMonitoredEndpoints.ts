@@ -5,14 +5,16 @@ import monitoredEndpointTemplate from "../mocks/monitored-endpoint-template";
 import { SetupFactoryOptions } from "../driver";
 
 export const hasMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
-  driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
+  const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+  driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
     body: hasEndpointsResponse,
   });
   return hasEndpointsResponse;
 };
 
 export const hasNoMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
-  driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
+  const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+  driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
     body: hasNoEndpoints,
   });
   return hasNoEndpoints;
@@ -25,7 +27,8 @@ export const monitoredEndpointsNamed =
       return { ...monitoredEndpointTemplate, name: name };
     });
 
-    driver.mockEndpoint(`http://localhost:33633/monitored-endpoints`, {
+    const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+    driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
       body: response,
     });
     return response;

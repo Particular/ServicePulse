@@ -1,8 +1,9 @@
-import {SetupFactoryOptions} from '../driver'
+import { SetupFactoryOptions } from "../driver";
 
 export const hasRecoverabilityGroups = ({ driver }: SetupFactoryOptions) => {
-  driver.mockEndpoint(`http://localhost:33333/api/recoverability/groups/Endpoint%20Name`, {
-    body: []
+  const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
+  driver.mockEndpoint(`${serviceControlInstanceUrl}recoverability/groups/Endpoint%20Name`, {
+    body: [],
   });
   return [];
 };

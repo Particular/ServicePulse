@@ -9,7 +9,7 @@ declare global {
       base_url: string;
       version: string;
       service_control_url: string;
-      monitoring_urls: string;
+      monitoring_urls: string[];
       showPendingRetry: boolean;
     };
   }
