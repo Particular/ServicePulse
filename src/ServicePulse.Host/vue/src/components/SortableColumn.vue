@@ -21,12 +21,12 @@ function toggleSort() {
 </script>
 <template>
   <div class="box-header">
-    <button v-if="props.sortBy" @click="toggleSort" class="column-header-button">
+    <button v-if="props.sortBy" @click="toggleSort" class="column-header-button" :aria-label="props.sortBy">
       <span>
         <slot></slot>
         <span class="table-header-unit"><slot name="unit"></slot></span>
         <span>
-          <i v-if="isActive" :class="sortIcon"></i>
+          <i v-if="isActive" :class="sortIcon" :aria-label="sortIcon"></i>
         </span>
       </span>
     </button>
