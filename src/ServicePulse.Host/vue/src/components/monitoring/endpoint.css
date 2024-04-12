@@ -78,31 +78,31 @@ h1 .endpoint-status i.fa-envelope {
 }
 
 .pa-endpoint-lost.endpoints-overview {
-  background-image: url("../../a/img/endpoint-lost.svg");
+  background-image: url("@/assets/endpoint-lost.svg");
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .pa-monitoring-lost.endpoints-overview {
-  background-image: url("../../a/img/monitoring-lost.svg");
+  background-image: url("@/assets/monitoring-lost.svg");
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .pa-endpoint-lost.endpoint-details {
-  background-image: url("../../../a/img/endpoint-lost.svg");
+  background-image: url("@/assets/endpoint-lost.svg");
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .pa-monitoring-lost.endpoint-details {
-  background-image: url("../../../a/img/monitoring-lost.svg");
+  background-image: url("@/assets/monitoring-lost.svg");
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .pa-warning {
-  background-image: url("../../../a/img/warning.svg");
+  background-image: url("@/assets/warning.svg");
   background-position: center;
   background-repeat: no-repeat;
   width: 20px;
