@@ -13,6 +13,15 @@ const settings = defineProps<{
   endpoint: GroupedEndpoint | Endpoint;
 }>();
 
+const columnName = Object.freeze({
+  ENDPOINTNAME: "name",
+  QUEUELENGTH: "queueLength",
+  THROUGHPUT: "throughput",
+  SCHEDULEDRETRIES: "retries",
+  PROCESSINGTIME: "processingTime",
+  CRITICALTIME: "criticalTime",
+});
+
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const monitoringStore = useMonitoringStore();
 const isGrouped = computed<boolean>(() => monitoringStore.endpointListIsGrouped);
@@ -30,29 +39,29 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
 </script>
 
 <template>
-  <div class="table-first-col endpoint-name name-overview">
+  <div role="cell" :aria-label="columnName.ENDPOINTNAME" class="table-first-col endpoint-name name-overview">
     <div class="box-header with-status">
-      <div class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
+      <div :aria-label="shortName" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
         <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal)" class="cursorpointer" v-tooltip :title="endpoint.name">
           {{ shortName }}
         </RouterLink>
       </div>
-      <span class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip title="Endpoint instance(s): (connected/total)">
+      <span aria-label="instances-connected-total" class="endpoint-count" v-if="endpoint.connectedCount || endpoint.disconnectedCount" v-tooltip title="Endpoint instance(s): (connected/total)">
         ({{ endpoint.connectedCount }}/{{ endpoint.connectedCount + endpoint.disconnectedCount }})</span
       >
       <div class="no-side-padding endpoint-status">
-        <span class="warning" v-if="endpoint.metrics != null && parseFloat(criticalTimeGraphDuration.value) < 0">
+        <span role="status" class="warning" v-if="endpoint.metrics != null && parseFloat(criticalTimeGraphDuration.value) < 0">
           <i class="fa pa-warning" v-tooltip title="Warning: endpoint currently has negative critical time, possibly because of a clock drift."></i>
         </span>
-        <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
+        <span role="status" class="warning" v-if="endpoint.isScMonitoringDisconnected">
           <i class="fa pa-monitoring-lost endpoints-overview" v-tooltip title="Unable to connect to monitoring server"></i>
         </span>
-        <span class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
+        <span role="status" class="warning" v-if="(endpoint.isStale && !supportsEndpointCount) || !endpoint.connectedCount" v-tooltip title="No data received from any instance">
           <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal, 'instancesBreakdown')" class="cursorpointer">
-            <i class="fa pa-endpoint-lost endpoints-overview" />
+            <i role="img" aria-label="endpoint-no-data" class="fa pa-endpoint-lost endpoints-overview" />
           </RouterLink>
         </span>
-        <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
+        <span role="status" class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
           <RouterLink :to="routeLinks.failedMessage.group.link(endpoint.serviceControlId)" v-if="endpoint.errorCount" class="warning cursorpointer">
             <i class="fa fa-envelope"></i>
             <span class="badge badge-important ng-binding cursorpointer">{{ endpoint.errorCount }}</span>
@@ -62,9 +71,9 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Queue Length-->
-  <div class="table-col">
+  <div role="cell" :aria-label="columnName.QUEUELENGTH" class="table-col">
     <div class="box-header">
-      <div class="no-side-padding">
+      <div aria-label="queue-length" class="no-side-padding">
         <SmallGraph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" />
       </div>
       <div class="no-side-padding sparkline-value">
@@ -75,9 +84,9 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Throughput-->
-  <div class="table-col">
+  <div role="cell" :aria-label="columnName.THROUGHPUT" class="table-col">
     <div class="box-header">
-      <div class="no-side-padding">
+      <div aria-label="throughput" class="no-side-padding">
         <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" />
       </div>
       <div class="no-side-padding sparkline-value">
@@ -88,9 +97,9 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Scheduled Retries-->
-  <div class="table-col">
+  <div role="cell" :aria-label="columnName.SCHEDULEDRETRIES" class="table-col">
     <div class="box-header">
-      <div class="no-side-padding">
+      <div aria-label="scheduled-retries" class="no-side-padding">
         <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" />
       </div>
       <div class="no-side-padding sparkline-value">
@@ -101,9 +110,9 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Processing Time-->
-  <div class="table-col">
+  <div role="cell" :aria-label="columnName.PROCESSINGTIME" class="table-col">
     <div class="box-header">
-      <div class="no-side-padding">
+      <div aria-label="processing-time" class="no-side-padding">
         <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" />
       </div>
       <div class="no-side-padding sparkline-value">
@@ -115,9 +124,9 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Critical Time-->
-  <div class="table-col">
+  <div role="cell" :aria-label="columnName.CRITICALTIME" class="table-col">
     <div class="box-header">
-      <div class="no-side-padding">
+      <div aria-label="critical-time" class="no-side-padding">
         <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" />
       </div>
       <div class="no-side-padding sparkline-value" :class="{ negative: parseFloat(criticalTimeGraphDuration.value) < 0 }">
