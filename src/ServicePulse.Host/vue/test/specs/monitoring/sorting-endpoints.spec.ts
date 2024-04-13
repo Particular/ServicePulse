@@ -15,7 +15,7 @@ import * as precondition from "../../preconditions";
 
 describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Grouped endpoints should be able to be sorted in ascending and descending order by group name and by endpoint name inside the group", () => {
-    it("Example: Endpoint group names and the endpoints inside of the groups should be sorted in the same direction as the ungrouped endpoints", async ({ driver }) => {
+    it("Example: Endpoints inside of the groups and group names should be sorted in the same direction as the ungrouped endpoints", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
@@ -31,17 +31,25 @@ describe("FEATURE: Endpoint sorting", () => {
 
       //Act
       await driver.goTo("monitoring");
-
       await groupEndpointsBy({ numberOfSegments: 3 });
-
       //Assert
       expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]);
       expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint5", "Endpoint6"]);
       expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint1", "Endpoint2"]);
       expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint3", "Endpoint4"]);
+
+      //Act
+      await groupEndpointsBy({ numberOfSegments: 0 });
+      await sortEndpointsBy({ column: sortByColumn.ENDPOINTNAME }); //Descending
+      await groupEndpointsBy({ numberOfSegments: 3 });
+      //Assert
+      expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Venus", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Earth"]);
+      expect(endpointGroup("Universe.Solarsystem.Venus").Endpoints).toEqual(["Endpoint4", "Endpoint3"]);
+      expect(endpointGroup("Universe.Solarsystem.Mercury").Endpoints).toEqual(["Endpoint2", "Endpoint1"]);
+      expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint6", "Endpoint5"]);
     });
 
-    it("Example: Endpoint group names and the endpoints inside of the groups should be sorted in descending order when clicking the endpoint name column title", async ({ driver }) => {
+    it("Example: Endpoints inside of the groups and group names should be sorted in descending order when clicking the endpoint name column title", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
@@ -69,7 +77,7 @@ describe("FEATURE: Endpoint sorting", () => {
       expect(endpointGroup("Universe.Solarsystem.Earth").Endpoints).toEqual(["Endpoint6", "Endpoint5"]);
     });
 
-    it("Example: Endpoint group names and the endpoints inside of the groups should be sorted in ascending order when clicking twice on the endpoint name column title", async ({ driver }) => {
+    it("Example: Endpoints inside of the groups and group names should be sorted in ascending order when clicking twice on the endpoint name column title", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(
