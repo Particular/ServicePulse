@@ -1,3 +1,13 @@
+<script lang="ts">
+export enum columnName {
+  ENDPOINTNAME = "name",
+  QUEUELENGTH = "queueLength",
+  THROUGHPUT = "throughput",
+  SCHEDULEDRETRIES = "retries",
+  PROCESSINGTIME = "processingTime",
+  CRITICALTIME = "criticalTime",
+}
+</script>
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { RouterLink } from "vue-router";
@@ -12,15 +22,6 @@ import routeLinks from "@/router/routeLinks";
 const settings = defineProps<{
   endpoint: GroupedEndpoint | Endpoint;
 }>();
-
-const columnName = Object.freeze({
-  ENDPOINTNAME: "name",
-  QUEUELENGTH: "queueLength",
-  THROUGHPUT: "throughput",
-  SCHEDULEDRETRIES: "retries",
-  PROCESSINGTIME: "processingTime",
-  CRITICALTIME: "criticalTime",
-});
 
 const monitoringHistoryPeriodStore = useMonitoringHistoryPeriodStore();
 const monitoringStore = useMonitoringStore();
