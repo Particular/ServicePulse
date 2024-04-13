@@ -39,7 +39,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
 </script>
 
 <template>
-  <div role="cell" :aria-label="columnName.ENDPOINTNAME" class="table-first-col endpoint-name name-overview">
+  <div role="gridcell" :aria-label="columnName.ENDPOINTNAME" class="table-first-col endpoint-name name-overview">
     <div class="box-header with-status">
       <div :aria-label="shortName" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
         <RouterLink :to="routeLinks.monitoring.endpointDetails.link(endpoint.name, historyPeriod.pVal)" class="cursorpointer" v-tooltip :title="endpoint.name">
@@ -71,7 +71,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Queue Length-->
-  <div role="cell" :aria-label="columnName.QUEUELENGTH" class="table-col">
+  <div role="gridcell" :aria-label="columnName.QUEUELENGTH" class="table-col">
     <div class="box-header">
       <div aria-label="queue-length" class="no-side-padding">
         <SmallGraph :type="'queue-length'" :isdurationgraph="false" :plotdata="endpoint.metrics.queueLength" :minimumyaxis="smallGraphsMinimumYAxis.queueLength" :avglabelcolor="'#EA7E00'" :metricsuffix="'MSGS'" />
@@ -84,7 +84,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Throughput-->
-  <div role="cell" :aria-label="columnName.THROUGHPUT" class="table-col">
+  <div role="gridcell" :aria-label="columnName.THROUGHPUT" class="table-col">
     <div class="box-header">
       <div aria-label="throughput" class="no-side-padding">
         <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="endpoint.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :avglabelcolor="'#176397'" :metricsuffix="'MSGS/S'" />
@@ -97,7 +97,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Scheduled Retries-->
-  <div role="cell" :aria-label="columnName.SCHEDULEDRETRIES" class="table-col">
+  <div role="gridcell" :aria-label="columnName.SCHEDULEDRETRIES" class="table-col">
     <div class="box-header">
       <div aria-label="scheduled-retries" class="no-side-padding">
         <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="endpoint.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :avglabelcolor="'#CC1252'" :metricsuffix="'MSGS/S'" />
@@ -110,7 +110,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Processing Time-->
-  <div role="cell" :aria-label="columnName.PROCESSINGTIME" class="table-col">
+  <div role="gridcell" :aria-label="columnName.PROCESSINGTIME" class="table-col">
     <div class="box-header">
       <div aria-label="processing-time" class="no-side-padding">
         <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" :avglabelcolor="'#258135'" />
@@ -124,7 +124,7 @@ const criticalTimeGraphDuration = computed(() => formatGraphDuration(endpoint.va
     </div>
   </div>
   <!--Critical Time-->
-  <div role="cell" :aria-label="columnName.CRITICALTIME" class="table-col">
+  <div role="gridcell" :aria-label="columnName.CRITICALTIME" class="table-col">
     <div class="box-header">
       <div aria-label="critical-time" class="no-side-padding">
         <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="endpoint.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" :avglabelcolor="'#2700CB'" />
