@@ -4,6 +4,7 @@ import LicenseExpired from "../LicenseExpired.vue";
 import { licenseStatus } from "@/composables/serviceLicense";
 import { monitoringUrl as configuredMonitoringUrl, serviceControlUrl as configuredServiceControlUrl, updateServiceControlUrls, useIsMonitoringDisabled } from "../../composables/serviceServiceControlUrls";
 import { connectionState, monitoringConnectionState } from "@/composables/serviceServiceControl";
+import servicePulseFetch from "@/composables/servicePulseFetch";
 
 const isExpired = licenseStatus.isExpired;
 
@@ -22,7 +23,7 @@ async function testServiceControlUrl() {
   if (serviceControlUrl.value) {
     testingServiceControl.value = true;
     try {
-      const response = await fetch(serviceControlUrl.value);
+      const response = await servicePulseFetch(serviceControlUrl.value);
       serviceControlValid.value = response.ok && response.headers.has("X-Particular-Version");
     } catch {
       serviceControlValid.value = false;
@@ -41,7 +42,7 @@ async function testMonitoringUrl() {
     }
 
     try {
-      const response = await fetch(monitoringUrl.value + "monitored-endpoints");
+      const response = await servicePulseFetch(monitoringUrl.value + "monitored-endpoints");
       monitoringValid.value = response.ok && response.headers.has("X-Particular-Version");
     } catch {
       monitoringValid.value = false;
