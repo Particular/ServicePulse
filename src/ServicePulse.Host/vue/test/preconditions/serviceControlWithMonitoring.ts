@@ -36,4 +36,7 @@ export const serviceControlWithMonitoring = async ({ driver }: SetupFactoryOptio
 
   //http://localhost:33333/api/recoverability/groups/Endpoint%20Name
   await driver.setUp(precondition.hasRecoverabilityGroups);
+
+    //http://localhost:33333/api/endpoints
+    await driver.setUp(precondition.hasNoHeartbeatsEndpoints);
 };
