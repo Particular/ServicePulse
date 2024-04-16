@@ -6,3 +6,8 @@
 .navbar > .container-fluid > div {
   margin: 0 1em;
 }
+
+#navbar .router-link-active {
+  background: transparent !important;
+  border-bottom: 5px solid #00a3c4;
+}
