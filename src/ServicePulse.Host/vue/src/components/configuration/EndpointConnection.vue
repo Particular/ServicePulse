@@ -31,10 +31,12 @@ endpointConfiguration.ConnectToServicePlatform(servicePlatformConnection);
 `;
   const connections = await useServiceControlConnections();
   const config = {
-    heartbeats: connections.serviceControl.settings.Heartbeats,
-    customChecks: connections.serviceControl.settings.CustomChecks,
-    errorQueue: connections.serviceControl.settings.ErrorQueue,
-    metrics: connections.monitoring.settings,
+    Heartbeats: connections.serviceControl.settings.Heartbeats,
+    CustomChecks: connections.serviceControl.settings.CustomChecks,
+    ErrorQueue: connections.serviceControl.settings.ErrorQueue,
+    SagaAudit: connections.serviceControl.settings.SagaAudit,
+    MessageAudit: connections.serviceControl.settings.MessageAudit,
+    Metrics: connections.monitoring.settings,
   };
   let jsonText = JSON.stringify(config, null, 4);
   jsonConfig.value = jsonText;
