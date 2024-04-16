@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import DashboardItem from "@/components/DashboardItem.vue";
 import EventItemShort from "@/components/EventItemShort.vue";
 import LicenseExpired from "@/components/LicenseExpired.vue";
 import ServiceControlNotAvailable from "@/components/ServiceControlNotAvailable.vue";
-import { connectionState, stats } from "@/composables/serviceServiceControl";
+import { connectionState } from "@/composables/serviceServiceControl";
 import { licenseStatus } from "@/composables/serviceLicense";
-import routeLinks from "@/router/routeLinks";
-import { useLink } from "vue-router";
 import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDashboardItem.vue";
+import HeartbeatsDashboardItem from "@/components/heartbeats/HeartbeatsDashboardItem.vue";
+import FailedMessagesDashboardItem from "@/components/failedmessages/FailedMessagesDashboardItem.vue";
 </script>
 
 <template>
@@ -24,10 +23,10 @@ import CustomChecksDashboardItem from "@/components/customchecks/CustomChecksDas
               <div class="col-12">
                 <div class="row">
                   <div class="col-4">
-                    <DashboardItem :counter="stats.number_of_failed_heartbeats" :url="useLink({ to: routeLinks.heartbeats.root }).href.value" :iconClass="'fa-heartbeat'">Heartbeats</DashboardItem>
+                    <HeartbeatsDashboardItem />
                   </div>
                   <div class="col-4">
-                    <DashboardItem :counter="stats.number_of_failed_messages" :url="useLink({ to: routeLinks.failedMessage.root }).href.value" :iconClass="'fa-envelope'">Failed Messages</DashboardItem>
+                    <FailedMessagesDashboardItem />
                   </div>
                   <div class="col-4">
                     <CustomChecksDashboardItem />
