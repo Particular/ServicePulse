@@ -110,10 +110,13 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   }
 
   async function deleteEndpoint(endpoint: Endpoint) {
-    useShowToast(TYPE.INFO, "Info", "Removing Endpoint");
-    await useDeleteFromServiceControl(`endpoints/${endpoint.id}`);
-    endpoints.value = endpoints.value.filter((ep) => ep.id !== endpoint.id);
-    useShowToast(TYPE.SUCCESS, "Success", "Endpoint removed");
+    async function performDelete() {
+      useShowToast(TYPE.INFO, "Info", "Removing Endpoint");
+      await useDeleteFromServiceControl(`endpoints/${endpoint.id}`);
+      endpoints.value = endpoints.value.filter((ep) => ep.id !== endpoint.id);
+      useShowToast(TYPE.SUCCESS, "Success", "Endpoint removed");
+    }
+    await dataRetriever.executeAndResetTimer(performDelete);
   }
 
   function toggleEndpointMonitor(endpoint: Endpoint) {
