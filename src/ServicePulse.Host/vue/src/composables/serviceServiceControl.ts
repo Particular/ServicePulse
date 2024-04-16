@@ -5,18 +5,14 @@ import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useIsMon
 import { useShowToast } from "./toast";
 import { TYPE } from "vue-toastification";
 import type RootUrls from "@/resources/RootUrls";
-import type EndpointMonitoringStats from "@/resources/EndpointMonitoringStats";
 import type FailedMessage from "@/resources/FailedMessage";
-import type CustomCheck from "@/resources/CustomCheck";
 import type MonitoredEndpoint from "@/resources/MonitoredEndpoint";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 
 export const stats = reactive({
   active_endpoints: 0,
-  failing_endpoints: 0,
   number_of_exception_groups: 0,
   number_of_failed_messages: 0,
-  number_of_failed_heartbeats: 0,
   number_of_archived_messages: 0,
   number_of_pending_retries: 0,
   number_of_endpoints: 0,
@@ -149,16 +145,13 @@ watch(monitoringConnectionFailure, (newValue, oldValue) => {
 });
 
 async function useServiceControlStats() {
-  const failedHeartBeatsResult = getFailedHeartBeatsCount();
   const failedMessagesResult = getFailedMessagesCount();
   const archivedMessagesResult = getArchivedMessagesCount();
   const pendingRetriesResult = getPendingRetriesCount();
 
   try {
-    const [failedHeartbeats, failedMessages, archivedMessages, pendingRetries] = await Promise.all([failedHeartBeatsResult, failedMessagesResult, archivedMessagesResult, pendingRetriesResult]);
-    stats.failing_endpoints = failedHeartbeats;
+    const [failedMessages, archivedMessages, pendingRetries] = await Promise.all([failedMessagesResult, archivedMessagesResult, pendingRetriesResult]);
     stats.number_of_failed_messages = failedMessages;
-    stats.number_of_failed_heartbeats = failedHeartbeats;
     stats.number_of_archived_messages = archivedMessages;
     stats.number_of_pending_retries = pendingRetries;
   } catch (err) {
@@ -317,17 +310,6 @@ async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[
   return defaultResult;
 }
 
-function getFailedHeartBeatsCount() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<EndpointMonitoringStats>("heartbeats/stats"),
-    connectionState,
-    (_, data) => {
-      return data.failing;
-    },
-    0
-  );
-}
-
 function getFailedMessagesCount() {
   return getErrorMessagesCount(FailedMessageStatus.Unresolved);
 }
@@ -343,15 +325,6 @@ function getArchivedMessagesCount() {
 function getErrorMessagesCount(status: FailedMessageStatus) {
   return fetchWithErrorHandling(
     () => useTypedFetchFromServiceControl<FailedMessage>(`errors?status=${status}`),
-    connectionState,
-    (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
-    0
-  );
-}
-
-function getFailedCustomChecksCount() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromServiceControl<CustomCheck[]>("customchecks?status=fail"),
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0
