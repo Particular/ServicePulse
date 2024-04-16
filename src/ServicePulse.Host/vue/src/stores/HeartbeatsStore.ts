@@ -1,4 +1,4 @@
-import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import { useDeleteFromServiceControl, usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
@@ -7,6 +7,8 @@ import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import { getSortFunction } from "@/components/OrderBy.vue";
 import { useCookies } from "vue3-cookies";
+import { useShowToast } from "@/composables/toast";
+import { TYPE } from "vue-toastification";
 
 export enum DisplayType {
   Instances = "Endpoint Instances",
@@ -111,6 +113,16 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     filterString.value = filter;
   }
 
+  async function deleteEndpoint(endpoint: Endpoint) {
+    async function performDelete() {
+      useShowToast(TYPE.INFO, "Info", "Removing Endpoint");
+      await useDeleteFromServiceControl(`endpoints/${endpoint.id}`);
+      endpoints.value = endpoints.value.filter((ep) => ep.id !== endpoint.id);
+      useShowToast(TYPE.SUCCESS, "Success", "Endpoint removed");
+    }
+    await dataRetriever.executeAndResetTimer(performDelete);
+  }
+
   function toggleEndpointMonitor(endpoint: Endpoint) {
     usePatchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat });
   }
@@ -130,6 +142,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     setSelectedSort,
     filterString,
     setFilterString,
+    deleteEndpoint,
     toggleEndpointMonitor,
   };
 });

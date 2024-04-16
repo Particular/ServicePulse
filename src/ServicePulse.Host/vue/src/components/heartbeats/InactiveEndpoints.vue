@@ -21,7 +21,7 @@ const { inactiveEndpoints, filteredInactiveEndpoints, selectedDisplay } = storeT
                   <div class="col-sm-12 no-side-padding">
                     <p class="lead">
                       {{ store.endpointDisplayName(endpoint) }}
-                      <a class="remove-item" v-if="selectedDisplay === DisplayType.Instances" ng-click="deleteEndpoint(endpoint)">
+                      <a class="remove-item" v-if="selectedDisplay === DisplayType.Instances" @click="store.deleteEndpoint(endpoint)">
                         <i class="fa fa-trash" v-tooltip :title="`Remove endpoint from list`" />
                       </a>
                     </p>
