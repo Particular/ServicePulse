@@ -7,7 +7,6 @@ export async function smallGraphAverageValuesByColumn({ column }: { column: colu
   const endpointRows = within(ungroupedEndpoints).getAllByRole("row");
   const averageValues: string[] = [];
 
-  screen.logTestingPlaygroundURL();
   for (const row of endpointRows) {
     const gridCell = within(row).getByRole("gridcell", { name: column });
     const graphImage = within(gridCell).getByRole("image", { name: column });
