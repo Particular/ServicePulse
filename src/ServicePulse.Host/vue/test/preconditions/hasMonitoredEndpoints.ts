@@ -33,3 +33,13 @@ export const monitoredEndpointsNamed =
     });
     return response;
   };
+
+export const hasMonitoredEndpointsList =
+  (monitoringEndpointTemplates: (typeof monitoredEndpointTemplate)[]) =>
+  ({ driver }: SetupFactoryOptions) => {
+    const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+    driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
+      body: monitoringEndpointTemplates,
+    });
+    return monitoringEndpointTemplates;
+  };
