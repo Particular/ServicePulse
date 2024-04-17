@@ -29,7 +29,7 @@ const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.va
 <template>
   <div class="graph pull-left ng-isolate-scope" :class="[hover ? 'hover' : '']" @mouseover="hover = true" @mouseout="hover = false">
     <div class="padding">
-      <svg :viewBox="`0 0 100 ${maxYaxis}`" preserveAspectRatio="none">
+      <svg aria-label="graph" :viewBox="`0 0 100 ${maxYaxis}`" preserveAspectRatio="none">
         <g :class="type">
           <path :d="valuesArea" class="graph-data-fill" />
           <path :d="valuesPath" vector-effect="non-scaling-stroke" class="graph-data-line" />
@@ -39,7 +39,7 @@ const averageLabelPosition = computed(() => `calc(${(average.value / maxYaxis.va
     </div>
     <div class="avg-tooltip" :class="type" :style="{ bottom: averageLabelPosition }">
       <div>AVG</div>
-      <div class="value">
+      <div role="text" aria-label="average-value" class="value">
         {{ averageLabelValue }} <span>{{ averageLabelSuffix }}</span>
       </div>
     </div>

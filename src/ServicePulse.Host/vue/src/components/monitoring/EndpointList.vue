@@ -11,7 +11,7 @@ const { sortBy: activeColumn } = storeToRefs(monitoringStore);
 <template>
   <section role="treegrid" aria-label="endpoint-list">
     <!--Table headings-->
-    <div role="row" aria-label="column-headers" class="table-head-row">
+    <div role="treeitem" aria-label="column-headers" class="table-head-row">
       <div role="columnheader" :aria-label="columnName.ENDPOINTNAME" class="table-first-col">
         <SortableColumn :sort-by="columnName.ENDPOINTNAME" v-model="activeColumn" :default-ascending="true">Endpoint name</SortableColumn>
       </div>
@@ -58,7 +58,7 @@ const { sortBy: activeColumn } = storeToRefs(monitoringStore);
           </div>
         </div>
       </div>
-      <div v-else role="row" aria-label="ungrouped-endpoints">
+      <div v-else role="treeitem" aria-label="ungrouped-endpoints">
         <div role="row" :aria-label="endpoint.name" class="endpoint-row" v-for="endpoint in monitoringStore.getEndpointList" :key="endpoint.name">
           <EndpointListRow :endpoint="endpoint" />
         </div>
