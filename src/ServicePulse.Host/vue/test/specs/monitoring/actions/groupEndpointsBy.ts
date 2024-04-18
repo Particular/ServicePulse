@@ -1,6 +1,5 @@
-import { fireEvent, screen } from "@testing-library/vue";
+import { fireEvent } from "@testing-library/vue";
 import { groupingOptionWithName } from "../questions/groupingOptionWithName";
-import { isConstructorDeclaration } from "typescript";
 import { openGroupingOptions } from "./openGroupingOptions";
 
 export async function groupEndpointsBy({ numberOfSegments }: { numberOfSegments: number }) {
