@@ -7,13 +7,16 @@ export async function smallGraphAverageValuesByColumn({ column }: { column: colu
   const endpointRows = within(ungroupedEndpoints).getAllByRole("row");
   const averageValues: string[] = [];
 
-  screen.logTestingPlaygroundURL();
   for (const row of endpointRows) {
     const gridCell = within(row).getByRole("gridcell", { name: column });
     const graphImage = within(gridCell).getByRole("image", { name: column });
     await fireEvent.mouseOver(graphImage);
     const averageValueElement = within(graphImage).getByRole("text", { name: "average-value" });
-    averageValues.push(averageValueElement.textContent?.trim() || "");
+
+    const textContent = averageValueElement.textContent;
+    const valueWithoutSuffix = textContent?.split(" ")[0];
+
+    averageValues.push(valueWithoutSuffix || "");
   }
 
   return averageValues;
