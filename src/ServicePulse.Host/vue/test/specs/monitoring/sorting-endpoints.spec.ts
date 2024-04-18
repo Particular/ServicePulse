@@ -188,7 +188,7 @@ describe("FEATURE: Endpoint sorting", () => {
   });
 
   describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average queue length", () => {
-    it("Example: Endpoints are sorted in descending order by clicking name on the queue length column title", async ({ driver }) => {
+    it("Example: Endpoints are sorted in descending order by clicking the queue length column title", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
@@ -216,13 +216,296 @@ describe("FEATURE: Endpoint sorting", () => {
       //Assert
       await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint2", "Endpoint1", "Endpoint3"]));
       const avgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.QUEUELENGTH }));
-      await waitFor(() => expect(avgValues).toEqual(["4.1 MSGS", "2.1 MSGS", "1.1 MSGS"]));
+      await waitFor(() => expect(avgValues).toEqual(["4.1", "2.1", "1.1"]));
+    });
+    it("Example: Endpoints are sorted in ascending order by clicking the queue length column title twice", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.queueLength.average = 2.1;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.queueLength.average = 4.1;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.queueLength.average = 1.1;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.QUEUELENGTH }); // Act: Click the column title once for descending
+      await sortEndpointsBy({ column: columnName.QUEUELENGTH }); // Act: Click the column title once for ascending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint3", "Endpoint1", "Endpoint2"]));
+      const ascendingAvgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.QUEUELENGTH }));
+      await waitFor(() => expect(ascendingAvgValues).toEqual(["1.1", "2.1", "4.1"]));
     });
   });
-  describe.skip("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average throughput", () => {});
-  describe.skip("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average scheduled retries", () => {});
-  describe.skip("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average processing time", () => {});
-  describe.skip("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average critical time", () => {});
+
+  describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average throughput per second", () => {
+    it("Example: Endpoints are sorted in descending order by clicking the throughput column title", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.throughput.average = 2.1;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.throughput.average = 4.1;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.throughput.average = 1.1;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.THROUGHPUT }); // Act: Click the column title once for descending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint2", "Endpoint1", "Endpoint3"]));
+      const avgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.THROUGHPUT }));
+      await waitFor(() => expect(avgValues).toEqual(["4.1", "2.1", "1.1"]));
+    });
+    it("Example: Endpoints are sorted in ascending order by clicking the throughput column title twice", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.throughput.average = 2.1;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.throughput.average = 4.1;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.throughput.average = 1.1;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.THROUGHPUT }); // Act: Click the column title once for descending
+      await sortEndpointsBy({ column: columnName.THROUGHPUT }); // Act: Click the column title once for ascending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint3", "Endpoint1", "Endpoint2"]));
+      const ascendingAvgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.THROUGHPUT }));
+      await waitFor(() => expect(ascendingAvgValues).toEqual(["1.1", "2.1", "4.1"]));
+    });
+  });
+
+  describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average scheduled retries per second", () => {
+    it("Example: Endpoints are sorted in descending order by clicking the scheduled retries column title", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.retries.average = 2.1;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.retries.average = 4.1;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.retries.average = 1.1;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.SCHEDULEDRETRIES }); // Act: Click the column title once for descending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint2", "Endpoint1", "Endpoint3"]));
+      const avgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.SCHEDULEDRETRIES }));
+      await waitFor(() => expect(avgValues).toEqual(["4.1", "2.1", "1.1"]));
+    });
+    it("Example: Endpoints are sorted in ascending order by clicking the scheduled retries column title twice", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.retries.average = 2.1;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.retries.average = 4.1;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.retries.average = 1.1;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.SCHEDULEDRETRIES }); // Act: Click the column title once for descending
+      await sortEndpointsBy({ column: columnName.SCHEDULEDRETRIES }); // Act: Click the column title once for ascending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint3", "Endpoint1", "Endpoint2"]));
+      const ascendingAvgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.SCHEDULEDRETRIES }));
+      await waitFor(() => expect(ascendingAvgValues).toEqual(["1.1", "2.1", "4.1"]));
+    });
+  });
+
+  describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average processing time", () => {
+    it("Example: Endpoints are sorted in descending order by clicking the scheduled retries column title", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.processingTime.average = 350;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.processingTime.average = 800;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.processingTime.average = 225;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.PROCESSINGTIME }); // Act: Click the column title once for descending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint2", "Endpoint1", "Endpoint3"]));
+      const avgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.PROCESSINGTIME }));
+      await waitFor(() => expect(avgValues).toEqual(["800", "350", "225"]));
+    });
+    it("Example: Endpoints are sorted in ascending order by clicking the scheduled retries column title twice", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.processingTime.average = 350;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.processingTime.average = 800;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.processingTime.average = 225;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.PROCESSINGTIME }); // Act: Click the column title once for descending
+      await sortEndpointsBy({ column: columnName.PROCESSINGTIME }); // Act: Click the column title once for ascending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint3", "Endpoint1", "Endpoint2"]));
+      const ascendingAvgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.PROCESSINGTIME }));
+      await waitFor(() => expect(ascendingAvgValues).toEqual(["225", "350", "800"]));
+    });
+  });
+
+  describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average critical time", () => {
+    it("Example: Endpoints are sorted in descending order by clicking the scheduled retries column title", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.criticalTime.average = 350;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.criticalTime.average = 800;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.criticalTime.average = 225;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.CRITICALTIME }); // Act: Click the column title once for descending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint2", "Endpoint1", "Endpoint3"]));
+      const avgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.CRITICALTIME }));
+      await waitFor(() => expect(avgValues).toEqual(["800", "350", "225"]));
+    });
+    it("Example: Endpoints are sorted in ascending order by clicking the scheduled retries column title twice", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+
+      let monitoredEndpoints: monitoredEndpoint[] = [];
+
+      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint1.name = "Endpoint1";
+      endpoint1.metrics.criticalTime.average = 350;
+      monitoredEndpoints.push(endpoint1);
+      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint2.name = "Endpoint2";
+      endpoint2.metrics.criticalTime.average = 800;
+      monitoredEndpoints.push(endpoint2);
+      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      endpoint3.name = "Endpoint3";
+      endpoint3.metrics.criticalTime.average = 225;
+      monitoredEndpoints.push(endpoint3);
+
+      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+
+      //Act
+      await driver.goTo("monitoring");
+      await sortEndpointsBy({ column: columnName.CRITICALTIME }); // Act: Click the column title once for descending
+      await sortEndpointsBy({ column: columnName.CRITICALTIME }); // Act: Click the column title once for ascending
+
+      //Assert
+      await waitFor(() => expect(ungroupedEndpointNames().Endpoints).toEqual(["Endpoint3", "Endpoint1", "Endpoint2"]));
+      const ascendingAvgValues = await waitFor(() => smallGraphAverageValuesByColumn({ column: columnName.CRITICALTIME }));
+      await waitFor(() => expect(ascendingAvgValues).toEqual(["225", "350", "800"]));
+    });
+  });
 });
 
 async function assertSortImageState(column: string, direction: "up" | "down" | null) {
