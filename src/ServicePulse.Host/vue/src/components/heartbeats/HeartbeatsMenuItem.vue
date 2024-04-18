@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
-import { stats } from "@/composables/serviceServiceControl";
+import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+
+const store = useHeartbeatsStore();
 </script>
 
 <template>
   <RouterLink :to="routeLinks.heartbeats.root">
     <i class="fa fa-heartbeat icon-white" title="Heartbeats"></i>
     <span class="navbar-label">Heartbeats</span>
-    <span v-if="stats.number_of_failed_heartbeats > 0" class="badge badge-important">{{ stats.number_of_failed_heartbeats }}</span>
+    <span v-if="store.failedHeartbeatsCount > 0" class="badge badge-important">{{ store.failedHeartbeatsCount }}</span>
   </RouterLink>
 </template>
 

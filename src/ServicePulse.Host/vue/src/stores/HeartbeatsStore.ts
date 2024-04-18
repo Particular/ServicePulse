@@ -72,6 +72,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
   const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
   const filteredInactiveEndpoints = computed<Endpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
+  const failedHeartbeatsCount = computed(() => inactiveEndpoints.value.length);
 
   watch(filterString, (newValue) => {
     setFilterString(newValue);
@@ -135,6 +136,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     filteredActiveEndpoints,
     inactiveEndpoints,
     filteredInactiveEndpoints,
+    failedHeartbeatsCount,
     endpointDisplayName,
     selectedDisplay,
     setSelectedDisplay,
