@@ -35,30 +35,3 @@ const monitoredEndpointTemplate = <Endpoint>{
   connectedCount: 1,
 };
 export default monitoredEndpointTemplate;
-
-export interface monitoredEndpoint extends Endpoint {
-  metrics: {
-    processingTime: {
-      average: number;
-      points: number[];
-      timeAxisValues: string[];
-    };
-    criticalTime: {
-      average: number;
-      points: number[];
-      timeAxisValues: string[];
-    };
-    retries: {
-      average: number;
-      points: number[];
-    };
-    throughput: {
-      average: number;
-      points: number[];
-    };
-    queueLength: {
-      average: number;
-      points: number[];
-    };
-  };
-}

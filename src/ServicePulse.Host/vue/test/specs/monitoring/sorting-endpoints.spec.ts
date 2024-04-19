@@ -8,11 +8,11 @@ import { columnName } from "@/components/monitoring/EndpointListRow.vue";
 import { sortEndpointsBy } from "./actions/sortEndpointsBy";
 import { findSortImageInColumn } from "./questions/sortDirection";
 import { smallGraphAverageValuesByColumn } from "./questions/smallGraphAverageValuesByColumn";
-import { monitoredEndpoint } from "test/mocks/monitored-endpoint-template";
 import { ungroupedEndpointNames } from "./questions/ungroupedEndpointNames";
 
 import * as precondition from "../../preconditions";
 import monitoredEndpointTemplate from "../../mocks/monitored-endpoint-template";
+import { Endpoint } from "@/resources/MonitoringEndpoint";
 
 describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Grouped endpoints should be able to be sorted in ascending and descending order by group name and by endpoint name inside the group", () => {
@@ -190,24 +190,21 @@ describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average queue length", () => {
     it("Example: Endpoints are sorted in descending order by clicking the queue length column title", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate)
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.queueLength.average = 2.1;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate)
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.queueLength.average = 4.1;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate)
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.queueLength.average = 1.1;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.queueLength.average = 1.1;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -220,24 +217,21 @@ describe("FEATURE: Endpoint sorting", () => {
     });
     it("Example: Endpoints are sorted in ascending order by clicking the queue length column title twice", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.queueLength.average = 2.1;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.queueLength.average = 4.1;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.queueLength.average = 1.1;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.queueLength.average = 1.1;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -254,24 +248,21 @@ describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average throughput per second", () => {
     it("Example: Endpoints are sorted in descending order by clicking the throughput column title", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.throughput.average = 2.1;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.throughput.average = 4.1;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.throughput.average = 1.1;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.throughput.average = 1.1;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -284,24 +275,21 @@ describe("FEATURE: Endpoint sorting", () => {
     });
     it("Example: Endpoints are sorted in ascending order by clicking the throughput column title twice", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.throughput.average = 2.1;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.throughput.average = 4.1;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.throughput.average = 1.1;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.throughput.average = 1.1;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -318,24 +306,22 @@ describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average scheduled retries per second", () => {
     it("Example: Endpoints are sorted in descending order by clicking the scheduled retries column title", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.retries.average = 2.1;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.retries.average = 4.1;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
       endpoint3.metrics.retries.average = 1.1;
-      monitoredEndpoints.push(endpoint3);
+      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1,endpoint2,endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -348,24 +334,21 @@ describe("FEATURE: Endpoint sorting", () => {
     });
     it("Example: Endpoints are sorted in ascending order by clicking the scheduled retries column title twice", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.retries.average = 2.1;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.retries.average = 4.1;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.retries.average = 1.1;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.retries.average = 1.1;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -382,24 +365,21 @@ describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average processing time", () => {
     it("Example: Endpoints are sorted in descending order by clicking the scheduled retries column title", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.processingTime.average = 350;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2  = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.processingTime.average = 800;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.processingTime.average = 225;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.processingTime.average = 225;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -412,24 +392,21 @@ describe("FEATURE: Endpoint sorting", () => {
     });
     it("Example: Endpoints are sorted in ascending order by clicking the scheduled retries column title twice", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1: Endpoint = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.processingTime.average = 350;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.processingTime.average = 800;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
       endpoint3.metrics.processingTime.average = 225;
-      monitoredEndpoints.push(endpoint3);
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -446,24 +423,21 @@ describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Ungrouped endpoints should be able to be sorted in ascending and descending order based on average critical time", () => {
     it("Example: Endpoints are sorted in descending order by clicking the scheduled retries column title", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
 
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.criticalTime.average = 350;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.criticalTime.average = 800;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.criticalTime.average = 225;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.criticalTime.average = 225;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");
@@ -476,24 +450,20 @@ describe("FEATURE: Endpoint sorting", () => {
     });
     it("Example: Endpoints are sorted in ascending order by clicking the scheduled retries column title twice", async ({ driver }) => {
       //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-
-      let monitoredEndpoints: monitoredEndpoint[] = [];
-
-      const endpoint1: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      await driver.setUp(precondition.serviceControlWithMonitoring);      
+      const endpoint1 = structuredClone(monitoredEndpointTemplate);
       endpoint1.name = "Endpoint1";
       endpoint1.metrics.criticalTime.average = 350;
-      monitoredEndpoints.push(endpoint1);
-      const endpoint2: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint2 = structuredClone(monitoredEndpointTemplate);
       endpoint2.name = "Endpoint2";
       endpoint2.metrics.criticalTime.average = 800;
-      monitoredEndpoints.push(endpoint2);
-      const endpoint3: monitoredEndpoint = structuredClone(monitoredEndpointTemplate);
+      
+      const endpoint3 = structuredClone(monitoredEndpointTemplate);
       endpoint3.name = "Endpoint3";
-      endpoint3.metrics.criticalTime.average = 225;
-      monitoredEndpoints.push(endpoint3);
+      endpoint3.metrics.criticalTime.average = 225;      
 
-      await driver.setUp(precondition.hasMonitoredEndpointsList(monitoredEndpoints));
+      await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1, endpoint2, endpoint3]));
 
       //Act
       await driver.goTo("monitoring");

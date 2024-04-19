@@ -3,6 +3,7 @@ import hasNoEndpoints from "../mocks/monitored-endpoints-empty.json";
 import monitoredEndpointTemplate from "../mocks/monitored-endpoint-template";
 
 import { SetupFactoryOptions } from "../driver";
+import { Endpoint } from "@/resources/MonitoringEndpoint";
 
 export const hasMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
   const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
@@ -35,7 +36,7 @@ export const monitoredEndpointsNamed =
   };
 
 export const hasMonitoredEndpointsList =
-  (monitoringEndpointTemplates: (typeof monitoredEndpointTemplate)[]) =>
+  (monitoringEndpointTemplates: Endpoint[]) =>
   ({ driver }: SetupFactoryOptions) => {
     const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
     driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
