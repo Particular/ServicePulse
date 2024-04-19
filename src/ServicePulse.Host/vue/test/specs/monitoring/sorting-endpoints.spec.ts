@@ -4,15 +4,22 @@ import { waitFor, screen } from "@testing-library/vue";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
 import { endpointGroupNames } from "./questions/endpointGroupNames";
 import { endpointGroup } from "./questions/endpointGroup";
-import { columnName } from "@/components/monitoring/EndpointListRow.vue";
 import { sortEndpointsBy } from "./actions/sortEndpointsBy";
 import { findSortImageInColumn } from "./questions/sortDirection";
 import { smallGraphAverageValuesByColumn } from "./questions/smallGraphAverageValuesByColumn";
 import { ungroupedEndpointNames } from "./questions/ungroupedEndpointNames";
-
 import * as precondition from "../../preconditions";
 import monitoredEndpointTemplate from "../../mocks/monitored-endpoint-template";
 import { Endpoint } from "@/resources/MonitoringEndpoint";
+
+enum columnName {
+  ENDPOINTNAME = "name",
+  QUEUELENGTH = "queueLength",
+  THROUGHPUT = "throughput",
+  SCHEDULEDRETRIES = "retries",
+  PROCESSINGTIME = "processingTime",
+  CRITICALTIME = "criticalTime",
+}
 
 describe("FEATURE: Endpoint sorting", () => {
   describe("Rule: Grouped endpoints should be able to be sorted in ascending and descending order by group name and by endpoint name inside the group", () => {
