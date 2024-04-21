@@ -76,7 +76,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/index.html"),
+                    Path = new PathString("/favicon.ico"),
                     Method = "GET"
                 },
                 Response =
@@ -85,9 +85,9 @@
                 }
             };
             await middleware.Invoke(context);
-            const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
+            const long sizeOfEmbeddedHtmlFile = 5182; // this is the favicon.ico file embedded into ServicePulse.Host.exe
             Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
-            Assert.That(context.Response.ContentType, Is.EqualTo("text/html"));
+            Assert.That(context.Response.ContentType, Is.EqualTo("image/x-icon"));
         }
 
         [Test]
@@ -98,7 +98,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/InDex.html"),
+                    Path = new PathString("/faVicon.ico"),
                     Method = "GET"
                 },
                 Response =
@@ -107,9 +107,9 @@
                 }
             };
             await middleware.Invoke(context);
-            const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
+            const long sizeOfEmbeddedHtmlFile = 5182; // this is the favicon.ico file embedded into ServicePulse.Host.exe
             Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
-            Assert.That(context.Response.ContentType, Is.EqualTo("text/html"));
+            Assert.That(context.Response.ContentType, Is.EqualTo("image/x-icon"));
         }
 
         [Test]
