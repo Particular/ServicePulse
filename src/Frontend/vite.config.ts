@@ -60,7 +60,7 @@ export default defineConfig({
   },
   base: "./",
   build: {
-    outDir: "../app",
+    outDir: "../ServicePulseHost/app",
     emptyOutDir: true,
     sourcemap: true,
     rollupOptions: {

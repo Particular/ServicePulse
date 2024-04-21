@@ -1,7 +1,5 @@
 ﻿$AppOutputFolder = "app"
-$AngularSourceFolder = "angular"
-$AngularOutputFolder = "app\a"
-$VueSourceFolder = "vue"
+$FrontendSourceFolder = "../Frontend"
 
 if (Test-Path $AppOutputFolder)
 {
@@ -10,19 +8,9 @@ if (Test-Path $AppOutputFolder)
 
 New-Item -ItemType Directory -Force -Path $AppOutputFolder
 
-cd $VueSourceFolder
+cd $FrontendSourceFolder
 npm install
 npm run build
 if ( $? -eq $false ) {
     exit $LastExitCode
 }
-
-cd ..
-
-cd $AngularSourceFolder
-npm run load
-
-cd.. 
-
-New-Item -ItemType Directory -Force -Path $AngularOutputFolder
-Copy-Item -Path "$($AngularSourceFolder)\app\*" -Destination $AngularOutputFolder -Recurse -Force
