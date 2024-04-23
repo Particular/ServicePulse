@@ -23,10 +23,15 @@ export async function useRetryEditedMessage(
   id: string,
   editedMessage: Ref<{
     messageBody: string;
-    headers: unknown[];
+    headers: any[];
   }>
 ) {
-  const payload = { message_body: editedMessage.value.messageBody, message_headers: editedMessage.value.headers };
+  let editedHeaders: { [key: string]: string } = {};
+  for (let index = 0; index < editedMessage.value.headers.length; index++) {
+    const header = editedMessage.value.headers[index];
+    editedHeaders[header.key] = header.value;
+  }
+  const payload = { message_body: editedMessage.value.messageBody, message_headers: editedHeaders };
   const response = await usePostToServiceControl(`edit/${id}`, payload);
   if (!response.ok) {
     throw new Error(response.statusText);
