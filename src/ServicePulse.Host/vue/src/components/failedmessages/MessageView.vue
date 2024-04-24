@@ -61,9 +61,9 @@ async function loadFailedMessage() {
       message.restoring = false;
     }
 
+    updateMessageDeleteDate(message);
+    await downloadHeadersAndBody(message);
     failedMessage.value = message;
-    updateMessageDeleteDate();
-    return downloadHeadersAndBody();
   } catch (err) {
     console.log(err);
     return;
@@ -83,11 +83,11 @@ async function getEditAndRetryConfig() {
   editAndRetryConfiguration.value = data;
 }
 
-function updateMessageDeleteDate() {
-  if (failedMessage.value && !isError(failedMessage.value)) {
-    const countdown = moment(failedMessage.value?.last_modified).add(failedMessage.value?.error_retention_period, "hours");
-    failedMessage.value.delete_soon = countdown < moment();
-    failedMessage.value.deleted_in = countdown.format();
+function updateMessageDeleteDate(message: ExtendedFailedMessage) {
+  if (!isError(message)) {
+    const countdown = moment(message.last_modified).add(message.error_retention_period, "hours");
+    message.delete_soon = countdown < moment();
+    message.deleted_in = countdown.format();
   }
 }
 
@@ -117,36 +117,36 @@ async function retryMessage() {
   }
 }
 
-async function downloadHeadersAndBody() {
-  if (!failedMessage.value || isError(failedMessage.value)) return;
+async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
+  if (isError(message)) return;
 
   try {
-    const [, data] = await useTypedFetchFromServiceControl<Message[]>("messages/search/" + failedMessage.value?.message_id);
+    const [, data] = await useTypedFetchFromServiceControl<Message[]>(`messages/search/${message.message_id}`);
 
     if (data[0] == null) {
-      failedMessage.value.headersNotFound = true;
-      failedMessage.value.messageBodyNotFound = true;
+      message.headersNotFound = true;
+      message.messageBodyNotFound = true;
 
       return;
     }
 
-    const message = data[0];
-    failedMessage.value.headers = message.headers;
-    failedMessage.value.conversationId = message.headers.find((header) => header.key === NServiceBusHeaders.ConversationId)?.value ?? "";
+    const messageDetails = data[0];
+    message.headers = messageDetails.headers;
+    message.conversationId = messageDetails.headers.find((header) => header.key === NServiceBusHeaders.ConversationId)?.value ?? "";
 
-    return downloadBody();
+    await downloadBody(message);
   } catch (err) {
     console.log(err);
     return;
   }
 }
 
-async function downloadBody() {
-  if (!failedMessage.value || isError(failedMessage.value)) return;
+async function downloadBody(message: ExtendedFailedMessage) {
+  if (isError(message)) return;
 
-  const response = await useFetchFromServiceControl("messages/" + failedMessage.value?.message_id + "/body");
+  const response = await useFetchFromServiceControl(`messages/${message.message_id}/body`);
   if (response.status === 404) {
-    failedMessage.value.messageBodyNotFound = true;
+    message.messageBodyNotFound = true;
 
     return;
   }
@@ -156,20 +156,20 @@ async function downloadBody() {
       case "application/json": {
         let jsonBody = await response.json();
         jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
-        failedMessage.value.messageBody = formatJson(jsonBody);
+        message.messageBody = formatJson(jsonBody);
         return;
       }
       case "text/xml": {
         const xmlBody = await response.text();
-        failedMessage.value.messageBody = formatXml(xmlBody);
+        message.messageBody = formatXml(xmlBody);
         return;
       }
       default: {
-        failedMessage.value.messageBody = await response.text();
+        message.messageBody = await response.text();
       }
     }
   } catch {
-    failedMessage.value.bodyUnavailable = true;
+    message.bodyUnavailable = true;
   }
 }
 
