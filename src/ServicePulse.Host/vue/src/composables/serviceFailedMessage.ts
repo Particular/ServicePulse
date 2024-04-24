@@ -32,7 +32,7 @@ export async function useRetryEditedMessage(
       const { key, value } = header as { key: string; value: string };
       result[key] = value;
       return result;
-    }, {} as { [key: string]: string }),
+    }, {} as { [key: string]: string }) };
   const response = await usePostToServiceControl(`edit/${id}`, payload);
   if (!response.ok) {
     throw new Error(response.statusText);
