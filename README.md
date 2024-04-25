@@ -28,7 +28,6 @@ Install the following dependencies if you don't have them installed yet.
 
 ### Set development environment
 
-> [!TIP]
 > The `ServicePulse\src\run-dev.cmd` batch file will execute steps 1 - 3.
 
 #### Step 0 - Using a suitable IDE for frontend development
