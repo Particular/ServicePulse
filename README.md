@@ -56,8 +56,6 @@ After doing the above steps, navigate to the URL presented by the execution of t
 - `lint` - checks with eslint all vue, ts, and js files
 - `type-check` - runs TypeScript in no emit mode
 
-> [!NOTE]
-> Webpack observes files and updates the artifacts whenever they are changed; however, at the moment, not every bit of code is processed by Webpack. Only monitoring and configuration-related files are.
 
 ### Configuring automated tests
 
