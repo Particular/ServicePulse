@@ -27,9 +27,6 @@ Install the following dependencies if you don't have them installed yet.
   - **NOTE:** It is good practice when installing or updating node.js on your local environment also to check and make sure that the node.js version for the `ci.yml` and `release.yml` workflows match the version of your local environment. Look for the step `name: Set up Node.js`
 - [Docker](https://docs.docker.com/get-docker/)
   - **NOTE:** If running docker for Windows, the current user needs to be in the docker-users local group. If your Windows account differs from the installation (admin) account, you must manually add your user to the group. See <https://docs.docker.com/desktop/faqs/windowsfaqs/#why-do-i-see-the-docker-desktop-access-denied-error-message-when-i-try-to-start-docker-desktop>
-- Chutzpah
-  - [Test Adapter for the Test Explorer](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestAdapterfortheTestExplorer)
-  - [Test Runner Context Menu Extension](https://marketplace.visualstudio.com/items?itemName=vs-publisher-2795.ChutzpahTestRunnerContextMenuExtension)
 
 ### Set development environment
 
