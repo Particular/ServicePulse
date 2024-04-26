@@ -37,9 +37,9 @@ export async function useTestEmailNotifications() {
     const response = await usePostToServiceControl("notifications/email/test");
 
     let responseStatusText;
-    if (useIsSupported(environment.sc_version, "5.2.0")) {
+    if (useIsSupported(environment.sc_version, "5.2")) {
       responseStatusText = response.headers.get("X-Particular-Reason");
-    }else{
+    } else{
       responseStatusText = response.statusText;
     }
 

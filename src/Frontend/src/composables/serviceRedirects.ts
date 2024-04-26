@@ -52,7 +52,7 @@ export async function useUpdateRedirects(redirectId: string, sourceEndpoint: str
   let responseStatusText;
   if (useIsSupported(environment.sc_version, "5.2.0")) {
     responseStatusText = response.headers.get("X-Particular-Reason");
-  }else{
+  } else{
     responseStatusText = response.statusText;
   }
 
@@ -73,7 +73,7 @@ export async function useCreateRedirects(sourceEndpoint: string, targetEndpoint:
   let responseStatusText;
   if (useIsSupported(environment.sc_version, "5.2.0")) {
     responseStatusText = response.headers.get("X-Particular-Reason");
-  }else{
+  } else{
     responseStatusText = response.statusText;
   }
 
@@ -90,7 +90,7 @@ export async function useDeleteRedirects(redirectId: string) {
   let responseStatusText;
   if (useIsSupported(environment.sc_version, "5.2.0")) {
     responseStatusText = response.headers.get("X-Particular-Reason");
-  }else{
+  } else{
     responseStatusText = response.statusText;
   }
 
