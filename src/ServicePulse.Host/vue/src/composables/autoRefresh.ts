@@ -3,14 +3,14 @@ export default function useAutoRefresh(refreshAction: () => Promise<void>, timeo
 
   function stopTimer() {
     if (refreshInterval !== null) {
-      window.clearTimeout(refreshInterval);
+      window?.clearTimeout(refreshInterval);
       refreshInterval = null;
     }
   }
 
   function startTimer() {
     stopTimer();
-    refreshInterval = window.setTimeout(() => {
+    refreshInterval = window?.setTimeout(() => {
       executeAndResetTimer();
     }, timeout);
   }
