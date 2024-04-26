@@ -10,7 +10,7 @@ export default function useAutoRefresh(refreshAction: () => Promise<void>, timeo
 
   function startTimer() {
     stopTimer();
-    refreshInterval = window.setTimeout(() => {
+    refreshInterval = window?.setTimeout(() => {
       executeAndResetTimer();
     }, timeout);
   }
