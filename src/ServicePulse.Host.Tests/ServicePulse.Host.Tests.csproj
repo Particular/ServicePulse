@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\ServicePulse.Host\vue\public\js\app.constants.js" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\Frontend\public\js\app.constants.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

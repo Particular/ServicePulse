@@ -55,7 +55,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/a/js/app.js"),
+                    Path = new PathString("/favicon.ico"),
                     Method = method
                 },
                 Response =
@@ -76,7 +76,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/a/NoIE.html"),
+                    Path = new PathString("/favicon.ico"),
                     Method = "GET"
                 },
                 Response =
@@ -85,9 +85,9 @@
                 }
             };
             await middleware.Invoke(context);
-            const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
+            const long sizeOfEmbeddedHtmlFile = 5182; // this is the favicon.ico file embedded into ServicePulse.Host.exe
             Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
-            Assert.That(context.Response.ContentType, Is.EqualTo("text/html"));
+            Assert.That(context.Response.ContentType, Is.EqualTo("image/x-icon"));
         }
 
         [Test]
@@ -98,7 +98,7 @@
             {
                 Request =
                 {
-                    Path = new PathString("/a/nOie.html"),
+                    Path = new PathString("/faVicon.ico"),
                     Method = "GET"
                 },
                 Response =
@@ -107,32 +107,9 @@
                 }
             };
             await middleware.Invoke(context);
-            const long sizeOfEmbeddedHtmlFile = 1302; // this is the NoIe.html file embedded into ServicePulse.Host.exe
+            const long sizeOfEmbeddedHtmlFile = 5182; // this is the favicon.ico file embedded into ServicePulse.Host.exe
             Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
-            Assert.That(context.Response.ContentType, Is.EqualTo("text/html"));
-        }
-
-
-        [Test]
-        public async Task Should_find_deep_linking_file_embedded_in_assembly()
-        {
-            var middleware = new StaticFileMiddleware(new DummyNext());
-            var context = new OwinContext
-            {
-                Request =
-                {
-                    Path = new PathString("/a/js/views/message/editor/messageEditorModal.controller.js"),
-                    Method = "GET"
-                },
-                Response =
-                {
-                    Body = new MemoryStream()
-                }
-            };
-            await middleware.Invoke(context);
-            const long sizeOfEmbeddedHtmlFile = 8586; // this is the messageEditorModal.controller.js file embedded into ServicePulse.Host.exe
-            Assert.That(context.Response.ContentLength, Is.EqualTo(sizeOfEmbeddedHtmlFile));
-            Assert.That(context.Response.ContentType, Is.EqualTo("application/javascript"));
+            Assert.That(context.Response.ContentType, Is.EqualTo("image/x-icon"));
         }
 
         [Test]
