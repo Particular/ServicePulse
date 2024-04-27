@@ -1,6 +1,6 @@
 # ServicePulse ![Current Version](https://img.shields.io/github/release/particular/servicepulse.svg?style=flat&label=current%20version)
 
-ServicePulse provides real-time production monitoring for distributed applications. It keeps track of the health of a system's endpoints, monitors for processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard.
+ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard.
 
 ServicePulse is part of the [Particular Service Platform](https://particular.net/service-platform), which includes [NServiceBus](https://particular.net/nservicebus) and tools to build, monitor, and debug distributed systems.
 
@@ -28,18 +28,17 @@ Install the following dependencies if you don't have them installed yet.
 
 ### Set development environment
 
-
 #### Step 0 - Using a suitable IDE for frontend development
 
 Even though Visual Studio or Rider seem to be adequate IDEs for front-end development, they tend to be unreliable with the latest front-end frameworks, linting, and formatting.
-Because of that, we have [extra recommendations](/docs/frontend/frontend-ide.md) to help you be even more successful at front-end development.
+Because of that, we have [extra recommendations](/docs/frontend/frontend-ide.md) to help you succeed even more at front-end development.
  
 #### Step 1 - run the Vue.js development server 
 
-Navigate to `ServicePulse\src\ServicePulse.Host\vue` and:
+Navigate to `ServicePulse\src\Frontend` and:
 
 - run `npm install` to install all the npm dependencies
-- run the following command `npm run dev` (this will host a dev server on port 5173 and start watching for changes in `/vue` directory)
+- run the following command `npm run dev` (this will host a dev server on port 5173 and start watching for changes in `/Frontend` directory)
 
 If `npm run dev` fails with an error related to git submodules not being correctly configured, run the `npm install` command again to ensure all required dependencies are available, and then run `npm run dev`.
 
@@ -67,7 +66,7 @@ It is possible to run ServicePulse directly via `ServicePulse.Host.exe`.
 
 ### Step 1 - reserve URL ACL
 
-ServicePulse.Host.exe depends on a self-hosted web server. A URL ACL reservation needs to be set up before the project can run. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
+ServicePulse.Host.exe depends on a self-hosted web server. A URL ACL reservation must be set up before the project can run. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
 
 ```
 add urlacl url=URL
