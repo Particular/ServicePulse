@@ -10,7 +10,6 @@ New-Item -ItemType Directory -Force -Path $AppOutputFolder
 
 cd $FrontendSourceFolder
 npm install
-npm run msw:cleanup
 npm run build
 if ( $? -eq $false ) {
     exit $LastExitCode
