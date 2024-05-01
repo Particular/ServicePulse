@@ -32,8 +32,8 @@ Install the following dependencies if you don't have them installed yet.
 
 Even though Visual Studio or Rider seem to be adequate IDEs for front-end development, they tend to be unreliable with the latest front-end frameworks, linting, and formatting.
 Because of that, we have [extra recommendations](/docs/frontend/frontend-ide.md) to help you succeed even more at front-end development.
- 
-#### Step 1 - run the Vue.js development server 
+
+#### Step 1 - run the Vue.js development server
 
 Navigate to `ServicePulse\src\Frontend` and:
 
@@ -46,6 +46,42 @@ If `npm run dev` fails with an error related to git submodules not being correct
 
 After doing the above steps, navigate to the URL presented by the execution of the Vue.js application to see the ServicePulse application.
 
+### Running automated tests
+
+The frontend automated tests use Vitest as the testing framework and testing-library for testing utilities. Vitest uses `watch mode` by default in the development environment and `run mode` in the CI environment. `Watch mode` is useful in development as it gives instant feedback on code changes by only re-running the relevant tests on file save.
+
+If you haven't already executed the steps to run the Vue development server, navigate to `ServicePulse\src\Frontend` and run `npm install` to install all the npm dependencies.
+
+#### Running component tests
+
+Navigate to `ServicePulse\src\Frontend` and run:
+
+```console
+npm run test:component
+```
+
+This will run all the component test files in the directory and all the subdirectories under `ServicePulse\src\Frontend\src` with the extension `.spcs.ts`. You can then either start working on an existing test or create a new test and only the relevant tests will re-run on file save.
+
+#### Running application tests
+
+Navigate to `ServicePulse\src\Frontend` and run:
+
+```console
+npm run test:application
+```
+
+This will run all the application test files in the directory and all the subdirectories under `ServicePulse\src\Frontend\test` with the extension `.spcs.ts`. You can then either start working on an existing test or create a new test and only the relevant tests will re-run on file save.
+
+#### Running test coverage
+
+Navigate to `ServicePulse\src\Frontend` and run:
+
+```console
+npm run test:coverage
+```
+
+This will run a report against all component and application tests and provide a percentage value of how many statements, branches, function, and lines are covered by tests. It will also provide which line numbers are not covered by tests.
+
 ### Provided npm scripts
 
 #### Vue.js
@@ -55,10 +91,11 @@ After doing the above steps, navigate to the URL presented by the execution of t
 - `lint` - checks with eslint all vue, ts, and js files
 - `type-check` - runs TypeScript in no emit mode
 
+#### Vitest
 
-### Configuring automated tests
-
-For information on running automated tests, please follow [ServicePulse.Host.Tests/Readme](https://github.com/Particular/ServicePulse/blob/master/src/ServicePulse.Host.Tests/README.md).
+- `test:coverage` - runs the test coverage report on the files defined in `vitest.config.ts`
+- `test:component` - runs tests all the component tests located in the `Frontend/src` folder and any subdirectories.
+- `test:application` - runs all the application tests located in the `Frontend/test` folder.
 
 ## Running from ServicePulse.Host.exe
 
@@ -68,7 +105,7 @@ It is possible to run ServicePulse directly via `ServicePulse.Host.exe`.
 
 ServicePulse.Host.exe depends on a self-hosted web server. A URL ACL reservation must be set up before the project can run. Either run Visual Studio with Administrative privileges or run the following command to add the required URL ACL reservation:
 
-```
+```cmd
 add urlacl url=URL
 ```
 
