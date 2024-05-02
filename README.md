@@ -48,9 +48,9 @@ After doing the above steps, navigate to the URL presented by the execution of t
 
 ### Running automated tests
 
-The frontend automated tests use Vitest as the testing framework and testing-library for testing utilities. Vitest uses `watch mode` by default in the development environment and `run mode` in the CI environment. `Watch mode` is useful in development as it gives instant feedback on code changes by only re-running the relevant tests on file save.
+The frontend automated tests utilize Vitest as the testing framework and testing-library for testing utilities. Vitest provide two modes: `watch mode` in the development environment and `run mode` in the CI environment by default. `Watch mode` instantly re-runs relevant tests upon file save, providing immediate feedback during development.
 
-If you haven't already executed the steps to run the Vue development server, navigate to `ServicePulse\src\Frontend` and run `npm install` to install all the npm dependencies.
+Before running test, ensure you've set up the Vue development server. Navigate to `ServicePulse\src\Frontend` and run `npm install` to install all the npm dependencies.
 
 #### Running component tests
 
@@ -60,7 +60,7 @@ Navigate to `ServicePulse\src\Frontend` and run:
 npm run test:component
 ```
 
-This will run all the component test files in the directory and all the subdirectories under `ServicePulse\src\Frontend\src` with the extension `.spcs.ts`. You can then either start working on an existing test or create a new test and only the relevant tests will re-run on file save.
+This command runs all the component test files `*.spcs.ts` in the directory `ServicePulse\src\Frontend\src` and its subdirectories. With `watch mode` enabled it allows for efficient test development, as only the relevant tests are re-run on file save.
 
 #### Running application tests
 
@@ -70,7 +70,7 @@ Navigate to `ServicePulse\src\Frontend` and run:
 npm run test:application
 ```
 
-This will run all the application test files in the directory and all the subdirectories under `ServicePulse\src\Frontend\test` with the extension `.spcs.ts`. You can then either start working on an existing test or create a new test and only the relevant tests will re-run on file save.
+Similar to component tests, this command runs all the application test files `*.spcs.ts` in the directory `ServicePulse\src\Frontend\test` and all its subdirectories.
 
 #### Running test coverage
 
@@ -80,7 +80,7 @@ Navigate to `ServicePulse\src\Frontend` and run:
 npm run test:coverage
 ```
 
-This will run a report against all component and application tests and provide a percentage value of how many statements, branches, function, and lines are covered by tests. It will also provide which line numbers are not covered by tests.
+This command generates a report indicating the percentage of statements, branches, function, and lines covered by tests. Additionally, it identifies uncovered line numbers. Remember, the coverage report serves as a metric for code execution and does not validate functionality.
 
 ### Provided npm scripts
 
