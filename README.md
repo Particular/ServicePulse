@@ -50,7 +50,7 @@ After doing the above steps, navigate to the URL presented by the execution of t
 
 The frontend automated tests utilize Vitest as the testing framework and testing-library for testing utilities. Vitest provide two modes: `watch mode` in the development environment and `run mode` in the CI environment by default. `Watch mode` instantly re-runs relevant tests upon file save, providing immediate feedback during development.
 
-Before running test, ensure you've set up the Vue development server. Navigate to `ServicePulse\src\Frontend` and run `npm install` to install all the npm dependencies.
+Before running test, ensure you've set up the development server. Navigate to `ServicePulse\src\Frontend` and run `npm install` to install all the npm dependencies.
 
 #### Running component tests
 
@@ -70,7 +70,7 @@ Navigate to `ServicePulse\src\Frontend` and run:
 npm run test:application
 ```
 
-Similar to component tests, this command runs all the application test files `*.spcs.ts` in the directory `ServicePulse\src\Frontend\test` and all its subdirectories.
+Similar to component tests, this command runs all the application test files `*.spcs.ts` in the directory `ServicePulse\src\Frontend\test` and its subdirectories.
 
 #### Running test coverage
 
@@ -80,7 +80,7 @@ Navigate to `ServicePulse\src\Frontend` and run:
 npm run test:coverage
 ```
 
-This command generates a report indicating the percentage of statements, branches, function, and lines covered by tests. Additionally, it identifies uncovered line numbers. Remember, the coverage report serves as a metric for code execution and does not validate functionality.
+This command generates a report indicating the percentage of statements, branches, function, and lines covered by tests. Additionally, it identifies uncovered line numbers.
 
 ### Provided npm scripts
 
@@ -93,9 +93,9 @@ This command generates a report indicating the percentage of statements, branche
 
 #### Vitest
 
-- `test:coverage` - runs the test coverage report on the files defined in `vitest.config.ts`
-- `test:component` - runs tests all the component tests located in the `Frontend/src` folder and any subdirectories.
 - `test:application` - runs all the application tests located in the `Frontend/test` folder.
+- `test:component` - runs tests all the component tests located in the `Frontend/src` folder and any subdirectories.
+- `test:coverage` - runs the test coverage report on the files defined in `vitest.config.ts`
 
 ## Running from ServicePulse.Host.exe
 
