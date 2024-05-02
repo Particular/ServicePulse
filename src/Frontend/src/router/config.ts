@@ -119,7 +119,7 @@ const config: RouteItem[] = [
   {
     path: routeLinks.throughputReport.root,
     component: ThroughputReportView,
-    title: "Throughput Report",
+    title: "Throughput",
     children: [
       {
         title: "Endpoints",
