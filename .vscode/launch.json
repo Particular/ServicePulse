@@ -6,7 +6,7 @@
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue/src"
+      "webRoot": "${workspaceFolder}/src/FrontEnd/src"
     },
     {
       "name": "Debug Vue on Docker Port - Edge",
