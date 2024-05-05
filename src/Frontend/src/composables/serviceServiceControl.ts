@@ -43,7 +43,7 @@ export const monitoringConnectionState = reactive<ConnectionState>({
 export const environment = reactive({
   monitoring_version: "",
   sc_version: "",
-  minimum_supported_sc_version: "1.39.0",
+  minimum_supported_sc_version: "4.33.4",
   is_compatible_with_sc: true,
   sp_version: window.defaultConfig && window.defaultConfig.version ? window.defaultConfig.version : "1.1.0",
   supportsArchiveGroups: false,
