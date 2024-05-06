@@ -183,12 +183,10 @@ export async function useServiceControlConnections() {
   return connections;
 }
 
-watch(environment, (newValue, oldValue) => {
-  if (newValue.is_compatible_with_sc !== oldValue.is_compatible_with_sc) {
-    if (!newValue.is_compatible_with_sc) {
-      useShowToast(TYPE.ERROR, "Error", `You are using Service Control version ${newValue.sc_version}. Please, upgrade to version ${newValue.minimum_supported_sc_version} or higher to unlock new functionality in ServicePulse.`);
-    }
-  }
+watch(() => environment.is_compatible_with_sc, (newValue, oldValue) => {  
+  if (newValue == false) {
+    useShowToast(TYPE.ERROR, "Error", `You are using Service Control version ${environment.sc_version}. Please, upgrade to version ${environment.minimum_supported_sc_version} or higher to unlock new functionality in ServicePulse.`);
+  }  
 });
 
 async function getServiceControlVersion() {
