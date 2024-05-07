@@ -131,11 +131,6 @@ const config: RouteItem[] = [
         path: routeLinks.throughputReport.setup.template,
         component: () => import("@/views/throughputreport/SetupView.vue"),
       },
-      {
-        title: "Report",
-        path: routeLinks.throughputReport.report.template,
-        component: () => import("@/views/throughputreport/ReportView.vue"),
-      },
     ],
   },
   {
