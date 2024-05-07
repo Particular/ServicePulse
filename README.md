@@ -12,7 +12,7 @@ See the [ServicePulse documentation](https://docs.particular.net/servicepulse/) 
 
 ServicePulse mainly presents data provided by [ServiceControl](https://docs.particular.net/servicecontrol) and [ServiceControl Monitoring](https://docs.particular.net/servicecontrol/monitoring-instances/) instances.
 
-The URLs for both services can be set in `ServicePulse.Host/vue/public/app/js/app.constants.js` under the `scConfig` constant.
+The URLs for both services can be set in `src/Frontend/public/js/app.constants.js`.
 
 ### Setting up package managers
 
