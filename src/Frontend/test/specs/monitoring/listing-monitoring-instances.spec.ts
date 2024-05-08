@@ -16,27 +16,32 @@ describe("FEATURE: Instance switching", () => {
 
       //Act
       await driver.goTo("monitoring");
+      await openMonitoringInstanceOptions();
+      const listOfMonitoringInstances = await monitoringInstanceOptions();
 
       //Assert
-
-      await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
-      screen.logTestingPlaygroundURL();
+      await waitFor(() => expect(listOfMonitoringInstances.length).toBe(1));
+      await waitFor(() => expect(listOfMonitoringInstances).toEqual(["http://localhost:33644/"]));
+      //await waitFor(() => expect(endpointWithName("Universe.Solarsystem.Earth.Endpoint1")).toBeInTheDocument());
     });
 
     it("Example: All monitoring urls in app.config.js are displayed in the monitoring instance combobox", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoringUrl("http://localhost:33644/"));
+      //await driver.setUp(precondition.serviceControlWithMonitoringUrl("http://localhost:33645/"));
       await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1"]));
 
       //Act
       await driver.goTo("monitoring");
       await openMonitoringInstanceOptions();
       const listOfMonitoringInstances = await monitoringInstanceOptions();
-      screen.logTestingPlaygroundURL();
 
       //Assert
       await waitFor(() => expect(listOfMonitoringInstances.length).toBe(1));
       await waitFor(() => expect(listOfMonitoringInstances).toEqual(["http://localhost:33644/"]));
+
+      //await waitFor(() => expect(listOfMonitoringInstances.length).toBe(2));
+      //await waitFor(() => expect(listOfMonitoringInstances).toEqual(["http://localhost:33644/", "http://localhost:33645/"]));
     });
   });
 });
