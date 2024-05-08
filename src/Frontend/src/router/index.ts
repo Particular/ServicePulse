@@ -1,23 +1,37 @@
-import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
-import config from "./config";
+import { createRouter, createWebHashHistory, type RouteRecordRaw, RouteRecordSingleViewWithChildren } from "vue-router";
+import config, { RouteItem } from "./config";
 
 function meta(item: { title: string }) {
   return { title: `${item.title} • ServicePulse` };
 }
 
+function addChildren(parent: RouteRecordSingleViewWithChildren, item: RouteItem){
+  if(item.children){
+    item.children.forEach(child => {
+      const newItem: RouteRecordSingleViewWithChildren = ({
+        path: child.path,
+        name: `${item.path}/${child.path}`,
+        meta: meta(child),
+        component: child.component,
+        children: [],
+      });
+      parent.children.push(newItem);
+
+      addChildren(newItem, child);
+    })
+  }
+}
 const routes = config.map<RouteRecordRaw>((item) => {
-  const result: RouteRecordRaw = {
+  const result: RouteRecordSingleViewWithChildren = {
     path: item.path,
     name: item.path,
     meta: meta(item),
     component: item.component,
-    children: item.children?.map<RouteRecordRaw>((child) => ({
-      path: child.path,
-      name: `${item.path}/${child.path}`,
-      meta: meta(child),
-      component: child.component,
-    })),
+    children: [],
   };
+
+  addChildren(result, item);
+
   if (item.redirect) result.redirect = item.redirect;
   if (item.alias) result.alias = item.alias;
 
