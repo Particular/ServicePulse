@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import MonitoringFilter from "./MonitoringFilter.vue";
+import MonitoredInstanceList from "@/components/monitoring/monitoringInstanceList.vue";
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import MonitoringFilter from "./MonitoringFilter.vue";
     </div>
     <div class="col-sm-8 no-side-padding toolbar-menus">
       <MonitoringFilter />
+      <MonitoredInstanceList />
     </div>
   </div>
 </template>
