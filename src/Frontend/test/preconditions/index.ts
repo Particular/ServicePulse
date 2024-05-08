@@ -14,4 +14,4 @@ export { hasEventLogItems } from "../preconditions/hasEventLogItems";
 export { hasRecoverabilityGroups } from "../preconditions/hasEmptyRecoverabilityGroups";
 export { hasHistoryPeriodDataForOneMinute } from "./hasHistoryPeriodDataForOneMinute";
 export { hasNoHeartbeatsEndpoints } from "../preconditions/hasHeartbeatEndpoints";
-export { serviceControlWithMonitoring } from "./serviceControlWithMonitoring";
+export { serviceControlWithMonitoring, serviceControlWithMonitoringUrl } from "./serviceControlWithMonitoring";
