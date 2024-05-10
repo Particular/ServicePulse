@@ -185,3 +185,5 @@ export const monitoredEndpointList: Endpoint[] = [
     isScMonitoringDisconnected: false,
   },
 ];
+
+export const noMonitoredEndpoints = [];
