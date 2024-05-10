@@ -1,4 +1,3 @@
-import hasEndpointsResponse from "../mocks/monitored-endpoints.json";
 import hasNoEndpoints from "../mocks/monitored-endpoints-empty.json";
 import monitoredEndpointTemplate from "../mocks/monitored-endpoint-template";
 
