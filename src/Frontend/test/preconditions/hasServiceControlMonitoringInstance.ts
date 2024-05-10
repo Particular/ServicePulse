@@ -1,4 +1,4 @@
-import { serviceControlMainInstance } from "../mocks/service-control-main-instance";
+import { serviceControlMainInstance } from "../mocks/service-control-instance-template";
 import { SetupFactoryOptions } from "../driver";
 
 export const hasServiceControlMonitoringInstance = ({ driver }: SetupFactoryOptions) => {

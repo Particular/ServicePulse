@@ -1,4 +1,4 @@
-import { serviceControlNoPlatformUpdatesNeeded } from "../mocks/platform-updates";
+import { serviceControlNoPlatformUpdatesNeeded } from "../mocks/platform-updates-template";
 import { SetupFactoryOptions } from "../driver";
 
 export const hasUpToDateServiceControl = ({ driver }: SetupFactoryOptions) => {

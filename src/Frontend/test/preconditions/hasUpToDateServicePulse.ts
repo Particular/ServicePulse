@@ -1,4 +1,4 @@
-import { servicePulseNoPlatformUpdatesNeeded } from "../mocks/platform-updates";
+import { servicePulseNoPlatformUpdatesNeeded } from "../mocks/platform-updates-template";
 import { SetupFactoryOptions } from "../driver";
 
 export const hasUpToDateServicePulse = ({ driver }: SetupFactoryOptions) => {

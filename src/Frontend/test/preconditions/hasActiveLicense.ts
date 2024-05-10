@@ -1,4 +1,4 @@
-import { activeLicenseResponse } from "../mocks/active-license-response-template";
+import { activeLicenseResponse } from "../mocks/license-response-template";
 import { SetupFactoryOptions } from "../driver";
 
 export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {

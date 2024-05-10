@@ -1,5 +1,6 @@
 import RootUrls from "@/resources/RootUrls";
 import { LicenseStatus } from "@/resources/LicenseInfo";
+import { ServiceControlMonitoringInstance } from "@/resources/ServiceControlMonitoringInstance";
 
 export const serviceControlMainInstance = <RootUrls>{
   description: "The management backend for the Particular Service Platform",
@@ -20,4 +21,9 @@ export const serviceControlMainInstance = <RootUrls>{
   event_log_items: "http://localhost:33333/api/eventlogitems",
   archived_groups_url: "http://localhost:33333/api/errors/groups/{classifier?}",
   get_archive_group: "http://localhost:33333/api/archive/groups/id/{groupId}",
+};
+
+export const monitoredInstanceTemplate = <ServiceControlMonitoringInstance>{
+  instanceType: "monitoring",
+  version: "5.0.0-alpha.2",
 };

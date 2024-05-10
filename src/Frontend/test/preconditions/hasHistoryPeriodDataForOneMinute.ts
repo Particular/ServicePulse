@@ -1,4 +1,4 @@
-import { historyPeriodForOneMinute } from "../mocks/history-period-for-one-minute";
+import { historyPeriodForOneMinute } from "../mocks/history-period-template";
 import { SetupFactoryOptions } from "../driver";
 
 const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];

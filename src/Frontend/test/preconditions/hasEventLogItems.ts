@@ -1,4 +1,4 @@
-import { eventLogItems } from "../mocks/event-log-items";
+import { eventLogItems } from "../mocks/event-log-items-template";
 import { SetupFactoryOptions } from "../driver";
 
 export const hasEventLogItems = ({ driver }: SetupFactoryOptions) => {
