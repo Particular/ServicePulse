@@ -5,14 +5,6 @@ import monitoredEndpointTemplate from "../mocks/monitored-endpoint-template";
 import { SetupFactoryOptions } from "../driver";
 import { Endpoint } from "@/resources/MonitoringEndpoint";
 
-export const hasMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
-  const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
-  driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
-    body: hasEndpointsResponse,
-  });
-  return hasEndpointsResponse;
-};
-
 export const hasNoMonitoredEndpoints = ({ driver }: SetupFactoryOptions) => {
   const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
   driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints`, {
