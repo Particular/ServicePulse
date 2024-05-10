@@ -1,5 +1,5 @@
 import hasNoEndpoints from "../mocks/monitored-endpoints-empty.json";
-import monitoredEndpointTemplate from "../mocks/monitored-endpoint-template";
+import { monitoredEndpointTemplate } from "../mocks/monitored-endpoint-template";
 
 import { SetupFactoryOptions } from "../driver";
 import { Endpoint } from "@/resources/MonitoringEndpoint";
