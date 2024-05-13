@@ -5,7 +5,7 @@ const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
 
 export const hasHistoryPeriodDataForOneMinute = ({ driver }: SetupFactoryOptions) => {
   driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=1`, {
-    body: { ...historyPeriodForOneMinute },
+    body: historyPeriodForOneMinute,
   });
-  return { ...historyPeriodForOneMinute };
+  return historyPeriodForOneMinute;
 };

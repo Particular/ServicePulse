@@ -4,7 +4,7 @@ import { SetupFactoryOptions } from "../driver";
 export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlInstanceUrl}license`, {
-    body: { ...activeLicenseResponse },
+    body: activeLicenseResponse,
   });
-  return { ...activeLicenseResponse };
+  return activeLicenseResponse;
 };

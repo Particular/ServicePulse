@@ -1,4 +1,4 @@
-import { http } from "msw";
+import { http, HttpResponse } from "msw";
 import type { SetupWorker } from "msw/browser";
 import { SetupServer } from "msw/node";
 
@@ -18,15 +18,5 @@ export const makeMockEndpoint =
       headers?: { [key: string]: string };
     }
   ) => {
-    mockServer.use(
-      http[method](endpoint, () => {
-        return new Response(JSON.stringify(body), {
-          status: status,
-          headers: {
-            ...headers,
-            "Content-Type": "application/json",
-          },
-        });
-      })
-    );
+    mockServer.use(http[method](endpoint, () => HttpResponse.json(body, { status: status })));
   };

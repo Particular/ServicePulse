@@ -4,7 +4,7 @@ import { SetupFactoryOptions } from "../driver";
 export const hasEventLogItems = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlInstanceUrl}eventlogitems`, {
-    body: { ...eventLogItems },
+    body: eventLogItems,
   });
-  return { ...eventLogItems };
+  return eventLogItems;
 };

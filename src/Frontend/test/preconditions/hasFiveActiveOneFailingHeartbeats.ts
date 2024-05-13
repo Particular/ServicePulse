@@ -3,7 +3,7 @@ import { heartbeatsFiveActiveOneFailing } from "../mocks/heartbeat-endpoint-temp
 export const hasFiveActiveOneFailingHeartbeats = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlInstanceUrl}heartbeats/stats`, {
-    body: { ...heartbeatsFiveActiveOneFailing },
+    body: heartbeatsFiveActiveOneFailing,
   });
-  return { ...heartbeatsFiveActiveOneFailing };
+  return heartbeatsFiveActiveOneFailing;
 };
