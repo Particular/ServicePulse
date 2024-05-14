@@ -1,7 +1,7 @@
 import { Endpoint } from "@/resources/MonitoringEndpoint";
 
 export const historyPeriodForOneMinute: Endpoint[] = [
-  {
+  <Endpoint>{
     name: "A happy endpoint",
     isStale: false,
     errorCount: 411,
@@ -35,7 +35,7 @@ export const historyPeriodForOneMinute: Endpoint[] = [
     disconnectedCount: 0,
     connectedCount: 1,
   },
-  {
+  <Endpoint>{
     name: "A.C.Sales",
     isStale: false,
     endpointInstanceIds: ["6b40b6b994899339d03772d23d5c5f19"],
@@ -72,7 +72,7 @@ export const historyPeriodForOneMinute: Endpoint[] = [
     serviceControlId: "",
     isScMonitoringDisconnected: false,
   },
-  {
+  <Endpoint>{
     name: "A.C.ClientUI",
     isStale: false,
     endpointInstanceIds: ["cce2f6add5189ee34de8af0e2cc9da34"],
@@ -109,7 +109,7 @@ export const historyPeriodForOneMinute: Endpoint[] = [
     serviceControlId: "",
     isScMonitoringDisconnected: false,
   },
-  {
+  <Endpoint>{
     name: "A.C.Billing",
     isStale: false,
     endpointInstanceIds: ["af940336eb7c92f0687af81fe94a0673"],

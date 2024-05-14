@@ -34,7 +34,7 @@ export interface EndpointValuesWithTime extends EndpointValues {
 }
 
 export interface EndpointMetrics {
-  [index: string]: EndpointValues | EndpointValuesWithTime;
+  [index: string]: EndpointValues;
   queueLength: EndpointValues;
   throughput: EndpointValues;
   retries: EndpointValues;
