@@ -1,7 +1,7 @@
 type GoTo = (path: string) => Promise<void>;
 
 export type MockEndpointOptions = {
-  body: any;
+  body: Record<string, any> | string | number | boolean | null | undefined;
   method?: "get" | "post" | "patch" | "put" | "delete";
   status?: number;
   headers?: { [key: string]: string };

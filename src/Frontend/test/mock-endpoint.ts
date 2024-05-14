@@ -12,7 +12,7 @@ export const makeMockEndpoint =
       status = 200,
       headers = {},
     }: {
-      body: string | unknown[] | Record<string | number, unknown>;
+      body: Record<string, any> | string | number | boolean | null | undefined;
       method?: "get" | "post" | "put" | "patch" | "delete";
       status?: number;
       headers?: { [key: string]: string };
