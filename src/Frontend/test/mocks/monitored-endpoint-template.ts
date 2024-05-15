@@ -31,8 +31,8 @@ export const monitoredEndpointTemplate = <Endpoint>{
       points: [],
     },
   },
-  disconnectedCount: 1,
-  connectedCount: 0,
+  disconnectedCount: 0,
+  connectedCount: 1,
 };
 
 export const monitoredEndpointList: Endpoint[] = [

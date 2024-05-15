@@ -17,7 +17,9 @@ const makeDriver = (): Driver => ({
 
 const driver = makeDriver();
 
-driver.setUp(serviceControlWithMonitoring);
-driver.setUp(monitoredEndpointsNamed(["Happy Travis", "And Happy Christian", "Universe.Solarsystem.Earth.Endpoint3"]));
+driver.setUp(serviceControlWithMonitoring).then(async ()  => {
+  //override the default mocked endpoints with a custom list
+  await driver.setUp(monitoredEndpointsNamed(["Endpoint1","Endpoint2","Endpoint3"]));
+});
 
 
