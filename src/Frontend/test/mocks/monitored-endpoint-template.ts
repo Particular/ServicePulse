@@ -3,7 +3,7 @@ import { Endpoint } from "@/resources/MonitoringEndpoint";
 export const monitoredEndpointTemplate = <Endpoint>{
   name: "A happy endpoint",
   isStale: false,
-  errorCount: 300,
+  errorCount: 150,
   serviceControlId: "voluptatibus",
   isScMonitoringDisconnected: false,
   endpointInstanceIds: ["c62841c1e8abe36415eb7ec412cedf58"],
@@ -31,8 +31,8 @@ export const monitoredEndpointTemplate = <Endpoint>{
       points: [],
     },
   },
-  disconnectedCount: 1,
-  connectedCount: 0,
+  disconnectedCount: 0,
+  connectedCount: 1,
 };
 
 export const monitoredEndpointList: Endpoint[] = [
