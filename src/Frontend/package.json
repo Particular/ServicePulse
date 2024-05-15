@@ -6,6 +6,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite",
+    "dev:mocks":"NODE_ENV=dev-mocks vite",
     "build": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
