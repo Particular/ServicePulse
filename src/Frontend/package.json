@@ -6,7 +6,7 @@
   "main": "index.html",
   "scripts": {
     "dev": "vite",
-    "dev:mocks":"NODE_ENV=dev-mocks vite",
+    "dev:mocks": "cross-env NODE_ENV=dev-mocks vite",
     "build": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
@@ -20,6 +20,7 @@
     "@vue-flow/core": "^1.29.1",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.10.3",
+    "cross-env": "^7.0.3",
     "highlight.js": "^11.6.0",
     "memoize-one": "^6.0.0",
     "moment": "^2.29.4",
