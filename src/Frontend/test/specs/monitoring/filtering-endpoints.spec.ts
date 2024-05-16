@@ -5,7 +5,7 @@ import { enterFilterString } from "./actions/enterFilterString";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
 import { endpointGroupNames } from "./questions/endpointGroupNames";
 import { endpointGroup } from "./questions/endpointGroup";
-import { filteredByName } from "./questions/filteredByName";
+import { currentFilterValueToBe } from "./questions/currentFilterValueToBe";
 import { endpointsNames } from "./questions/endpointsNames";
 import * as precondition from "../../preconditions";
 
@@ -242,7 +242,7 @@ describe("FEATURE: Endpoint filtering", () => {
       await driver.goTo("monitoring?filter=Endpoint1");
 
       //Assert
-      expect(await filteredByName("Endpoint1")).toBeInTheDocument();
+      expect(await currentFilterValueToBe("Endpoint1")).toBeTruthy();
     });
 
     it("Example: The permalink's filter parameter is updated when a filter string is entered", async ({ driver }) => {
@@ -265,7 +265,7 @@ describe("FEATURE: Endpoint filtering", () => {
 
       //Act
       await driver.goTo("monitoring?filter=Endpoint1");
-      expect(await filteredByName("Endpoint1")).toBeInTheDocument();
+      expect(await currentFilterValueToBe("Endpoint1")).toBeTruthy();
       await enterFilterString("");
 
       //Assert
