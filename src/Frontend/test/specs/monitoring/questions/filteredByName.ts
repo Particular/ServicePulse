@@ -1,5 +1,5 @@
-import { screen } from "@testing-library/vue";
+import { screen, waitFor } from "@testing-library/vue";
 
-export function filteredByName(filterString: RegExp | string) {
-  return screen.queryByDisplayValue(filterString);
+export async function filteredByName(filterString: RegExp | string) {
+  return await waitFor(()=> screen.findByDisplayValue(filterString));
 }
