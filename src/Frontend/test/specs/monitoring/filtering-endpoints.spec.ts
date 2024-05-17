@@ -201,7 +201,7 @@ describe("FEATURE: Endpoint filtering", () => {
       await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1"]));
       //Act
       await driver.goTo("monitoring?filter=Endpoint1");
-      //Retrieve the endpoints names in order give time for endpoints list to render and parse the filter parameter from the ULR
+      //Retrieve the endpoints names to give time for endpoints list to render and parse the filter parameter from the URL. This functions awaits until the endpoint list gets rendered.
       expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
 
       //Assert
@@ -232,7 +232,7 @@ describe("FEATURE: Endpoint filtering", () => {
 
       //Act
       await driver.goTo("monitoring?filter=Endpoint1");
-      //Retrieve the endpoints names in order give time for endpoints list to render and parse the filter parameter from the ULR
+      //Retrieve the endpoints names to give time for endpoints list to render and parse the filter parameter from the URL. This functions awaits until the endpoint list gets rendered.
       expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
 
       expect(currentFilterValueToBe("Endpoint1")).toBeTruthy();
