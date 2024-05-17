@@ -218,9 +218,7 @@ describe("FEATURE: Endpoint filtering", () => {
       await driver.goTo("monitoring");
       await enterFilterString("Endpoint1");
 
-      //Assert
-      // Wait for the current page to change since the permalink should be different
-      expect(window.location.href).not.toEqual("http://localhost:3000/#/monitoring");
+      //Assert      
       expect(window.location.href).toEqual("http://localhost:3000/#/monitoring?historyPeriod=1&filter=Endpoint1");
     });
 
@@ -238,9 +236,7 @@ describe("FEATURE: Endpoint filtering", () => {
       expect(currentFilterValueToBe("Endpoint1")).toBeTruthy();
       await enterFilterString("");
 
-      //Assert
-      //Wait for the current page to change since the permalink should be different
-      expect(window.location.href).not.toEqual("http://localhost:3000/#/monitoring?historyPeriod=1&filter=Endpoint1");
+      //Assert      
       expect(window.location.href).toEqual("http://localhost:3000/#/monitoring");
     });
   });
