@@ -92,52 +92,27 @@ describe("FEATURE: Endpoint filtering", () => {
   });
 
   describe("Rule: Filtering by endpoint name should be case insensitive", () => {
-    it("Example: All upper case letters are used for a filter string that matches only 1 endpoint", async ({ driver }) => {
-      // Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+    [
+      {description: "All lower case letters are used for a filter string that matches only 1 endpoint", filterString: "endpoint1"},
+      {description: "All upper case letters are used for a filter string that matches only 1 endpoint", filterString: "ENDPOINT1"},
+      {description: "A mix of upper and lower case letters are used for a filter string that matches only 1 endpoint", filterString: "EnDpOiNt1"}
 
-      // Act
-      await driver.goTo("monitoring");
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]);
-      await enterFilterString("ENDPOINT1");
-
-      // Assert
-      // Expect Endpoint1 to be the only endpoint that still shows in the list after filtering
-      // confirming that Endpoint2 and Endpoint3 no longer show in the list after filtering
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
-    });
-
-    it("Example: All lower case letters are used for a filter string that matches only 1 endpoint", async ({ driver }) => {
-      // Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
-
-      // Act
-      await driver.goTo("monitoring");
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]);
-      await enterFilterString("endpoint1");
-
-      // Assert
-      // Expect Endpoint1 to be the only endpoint that still shows in the list after filtering
-      // confirming that Endpoint2 and Endpoint3 no longer show in the list after filtering
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
-    });
-
-    it("Example: A mix of upper and lower case letters are used for a filter string that matches only 1 endpoint", async ({ driver }) => {
-      // Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
-
-      // Act
-      await driver.goTo("monitoring");
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]);
-      await enterFilterString("EnDpOiNt1");
-
-      // Assert
-      // Confirm only endpoint1 shows in the list after filtering
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
-    });
+    ].forEach((example) => {
+      it(example.description, async ({ driver }) => {
+        // Arrange
+        await driver.setUp(precondition.serviceControlWithMonitoring);
+        await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+  
+        // Act
+        await driver.goTo("monitoring");
+        expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]);
+        await enterFilterString(example.filterString);
+  
+        // Assert
+        // Confirm only endpoint1 shows in the list after filtering
+        expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
+      });
+    });    
   });
 
   describe("Rule: Filtering by endpoint name should be possible when endpoints are grouped", () => {
