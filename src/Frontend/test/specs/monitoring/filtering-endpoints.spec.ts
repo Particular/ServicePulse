@@ -1,6 +1,5 @@
 import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
-import { waitFor, screen } from "@testing-library/vue";
 import { enterFilterString } from "./actions/enterFilterString";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
 import { endpointGroupNames } from "./questions/endpointGroupNames";
@@ -168,7 +167,7 @@ describe("FEATURE: Endpoint filtering", () => {
       await enterFilterString("Endpoint");
 
       // Assert
-      await waitFor(() => expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]));
+      expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Earth", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Venus"]);
       expect(await endpointsNames()).toEqual([
         "Endpoint5",
         "Endpoint6",
@@ -203,7 +202,7 @@ describe("FEATURE: Endpoint filtering", () => {
       await enterFilterString("WrongName");
 
       // Assert
-      await waitFor(() => expect(endpointGroupNames()).toEqual([]));
+      expect(endpointGroupNames()).toEqual([]);
       expect(await endpointsNames()).toEqual([]);
     });
   });
@@ -230,8 +229,8 @@ describe("FEATURE: Endpoint filtering", () => {
 
       //Assert
       // Wait for the current page to change since the permalink should be different
-      await waitFor(() => expect(window.location.href).not.toEqual("http://localhost:3000/#/monitoring"));
-      await waitFor(() => expect(window.location.href).toEqual("http://localhost:3000/#/monitoring?historyPeriod=1&filter=Endpoint1"));
+      expect(window.location.href).not.toEqual("http://localhost:3000/#/monitoring");
+      expect(window.location.href).toEqual("http://localhost:3000/#/monitoring?historyPeriod=1&filter=Endpoint1");
     });
 
     it("Example: The permalink's filter parameter is removed when filter string is empty", async ({ driver }) => {
