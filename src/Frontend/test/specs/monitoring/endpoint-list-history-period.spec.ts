@@ -70,8 +70,6 @@ describe("FEATURE: Viewing different endpoint history periods", () => {
         //Act
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
         expect(await groupingOptionWithName(/no grouping/i)).toBeInTheDocument();
-        screen.logTestingPlaygroundURL();
-        expect(await screen.findByText(/the monitoring service is active but no data is being returned\./i)).toBeInTheDocument();
       });
     });
   });

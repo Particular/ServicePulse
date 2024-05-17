@@ -1,4 +1,4 @@
-import { historyPeriodForOneMinute, historyPeriodFor } from "../mocks/history-period-template";
+import { historyPeriodForOneMinute, historyPeriodFor, oneEndpointWithHistoryPeriodFor } from "../mocks/history-period-template";
 import { SetupFactoryOptions } from "../driver";
 
 const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
@@ -15,9 +15,8 @@ export const hasHistoryPeriodDataForOneMinute = ({ driver }: SetupFactoryOptions
 export const hasOneEndpointWithHistoryPeriodDataFor =
   (historyPeriod: number) =>
   ({ driver }: SetupFactoryOptions) => {
-    console.log(`Setting up history period data for ${historyPeriod} minutes`);
     driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=${historyPeriod}`, {
-      body: historyPeriodFor(historyPeriod),
+      body: [oneEndpointWithHistoryPeriodFor(historyPeriod)],
     });
-    return historyPeriodFor(historyPeriod);
+    return [oneEndpointWithHistoryPeriodFor(historyPeriod)];
   };
