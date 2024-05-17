@@ -1,6 +1,6 @@
 import { screen, waitFor } from "@testing-library/vue";
 
-export async function currentFilterValueToBe(filterString: RegExp | string) {
-  var htmlElement = await waitFor(()=> screen.findByDisplayValue(filterString));
+export function currentFilterValueToBe(filterString: RegExp | string) {
+  var htmlElement = screen.queryByDisplayValue(filterString);
   return htmlElement!=null;
 }

@@ -197,16 +197,22 @@ describe("FEATURE: Endpoint filtering", () => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
+      //Setup at least one endpoint to prevent the no-data screen to show, which would prevent the filter input from being displayed
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1"]));
       //Act
       await driver.goTo("monitoring?filter=Endpoint1");
+      //Retrieve the endpoints names in order give time for endpoints list to render and parse the filter parameter from the ULR
+      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
 
       //Assert
-      expect(await currentFilterValueToBe("Endpoint1")).toBeTruthy();
+      expect(currentFilterValueToBe("Endpoint1")).toBeTruthy();
     });
 
     it("Example: The permalink's filter parameter is updated when a filter string is entered", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
+      //Setup at least one endpoint to prevent the no-data screen to show, which would prevent the filter input from being displayed
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1"]));
 
       //Act
       await driver.goTo("monitoring");
@@ -221,10 +227,15 @@ describe("FEATURE: Endpoint filtering", () => {
     it("Example: The permalink's filter parameter is removed when filter string is empty", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
+      //Setup at least one endpoint to prevent the no-data screen to show, which would prevent the filter input from being displayed
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1"]));
 
       //Act
       await driver.goTo("monitoring?filter=Endpoint1");
-      expect(await currentFilterValueToBe("Endpoint1")).toBeTruthy();
+      //Retrieve the endpoints names in order give time for endpoints list to render and parse the filter parameter from the ULR
+      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
+
+      expect(currentFilterValueToBe("Endpoint1")).toBeTruthy();
       await enterFilterString("");
 
       //Assert
