@@ -9,52 +9,37 @@ import { endpointsNames } from "./questions/endpointsNames";
 import * as precondition from "../../preconditions";
 
 describe("FEATURE: Endpoint filtering", () => {
-  describe("RULE: List of monitoring endpoints should be filterable by the name", () => {
-    it("Example: Filter string matches full endpoint name", async ({ driver }) => {
-      //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
+  describe("Rule: List of monitoring endpoints should be filterable by the name", () => {
+    [
+      {
+        description: "Filter string matches full endpoint name",
+        filterString: "Universe.Solarsystem.Earth.Endpoint1",
+        expectedEndpoints: ["Universe.Solarsystem.Earth.Endpoint1"],
+      },
+      {
+        description: "Filter string matches a substring of only 1 endpoint name",
+        filterString: "Endpoint1",
+        expectedEndpoints: ["Universe.Solarsystem.Earth.Endpoint1"],
+      },
+      {
+        description: "Filter string doesn't match any endpoint name",
+        filterString: "WrongName",
+        expectedEndpoints: [],
+      },
+    ].forEach(example => {
+      it(`Example: ${example.description}`, async ({ driver }) => {
+        // Arrange
+        await driver.setUp(precondition.serviceControlWithMonitoring);
+        await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
 
-      //Act
-      await driver.goTo("monitoring");
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1","Universe.Solarsystem.Earth.Endpoint2","Universe.Solarsystem.Earth.Endpoint3"]);
-      
-      await enterFilterString("Universe.Solarsystem.Earth.Endpoint1");
+        // Act
+        await driver.goTo("monitoring");
+        expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]);
+        await enterFilterString(example.filterString);
 
-      //Assert
-      //Expect Endpoint1 to be the only endpoint that still shows in the list after filtering   
-      //confirming that Endpoint2 and Endpoint3 no longer shows in the list after filtering   
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);            
-    });
-    it("Example: Filter string matches a substring of only 1 endpoint name", async ({ driver }) => {
-      //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
-
-      //Act
-      await driver.goTo("monitoring");
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1","Universe.Solarsystem.Earth.Endpoint2","Universe.Solarsystem.Earth.Endpoint3"]);
-      await enterFilterString("Endpoint1");
-
-      //Assert
-      //Expect Endpoint1 to be the only endpoint that still shows in the list after filtering   
-      //confirming that Endpoint2 and Endpoint3 no longer show in the list after filtering   
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1"]);
-    });
-
-    it("Example: Filter string doesn't match any endpoint name", async ({ driver }) => {
-      // Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
-
-      // Act
-      await driver.goTo("monitoring");
-      expect(await endpointsNames()).toEqual(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]);
-      await enterFilterString("WrongName");
-
-      // Assert
-      // Confirm no endpoints show in the list after filtering
-      expect(await endpointsNames()).toEqual([]);
+        // Assert
+        expect(await endpointsNames()).toEqual(example.expectedEndpoints);
+      }); 
     });
 
     it("Example: Enter filter string that matches 1 endpoint and clearing the filter string should display all endpoints", async ({ driver }) => {
@@ -97,7 +82,7 @@ describe("FEATURE: Endpoint filtering", () => {
       {description: "A mix of upper and lower case letters are used for a filter string that matches only 1 endpoint", filterString: "EnDpOiNt1"}
 
     ].forEach((example) => {
-      it(example.description, async ({ driver }) => {
+      it(`Example: ${example.description}`, async ({ driver }) => {
         // Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1", "Universe.Solarsystem.Earth.Endpoint2", "Universe.Solarsystem.Earth.Endpoint3"]));
