@@ -74,7 +74,7 @@ describe("FEATURE: Endpoint sorting", () => {
       //Act
       await driver.goTo("monitoring");
       await groupEndpointsBy({ numberOfSegments: 3 });
-      await sortEndpointsBy({ column: columnName.ENDPOINTNAME });      
+      await sortEndpointsBy({ column: columnName.ENDPOINTNAME });
 
       //Assert
       expect(endpointGroupNames()).toEqual(["Universe.Solarsystem.Venus", "Universe.Solarsystem.Mercury", "Universe.Solarsystem.Earth"]);
