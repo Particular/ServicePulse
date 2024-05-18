@@ -1,6 +1,5 @@
 import UserEvent from '@testing-library/user-event';
 import { groupingOptionWithName } from "../questions/groupingOptionWithName";
-import { isConstructorDeclaration } from "typescript";
 import { openGroupingOptions } from "./openGroupingOptions";
 
 export async function groupEndpointsBy({ numberOfSegments }: { numberOfSegments: number }) {
