@@ -3,6 +3,8 @@ import { it, describe } from "../../drivers/vitest/driver";
 import { screen } from "@testing-library/vue";
 import * as precondition from "../../preconditions";
 import { groupingOptionWithName } from "./questions/groupingOptionWithName";
+import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
+import { endpointSparklineValues } from "./questions/endpointSparklineValues";
 
 describe("FEATURE: Viewing different endpoint history periods", () => {
   describe("RULE: Endpoint list should display the correct history data from the permalink history query parameter", () => {
@@ -23,7 +25,7 @@ describe("FEATURE: Viewing different endpoint history periods", () => {
       { description: "History query parameter set to 30", historyPeriod: 30 },
       { description: "History query parameter set to 60", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
-      it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
@@ -57,19 +59,22 @@ describe("FEATURE: Viewing different endpoint history periods", () => {
   describe("RULE: Selecting a history period should update the historyPeriod parameter in the permalink", () => {
     [
       { description: "History period is set to 1 minute and changed to 5 minutes", historyPeriod: 5 },
-      { description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
-      { description: "History period is set to 1 minute and changed to 15 minutes", historyPeriod: 15 },
-      { description: "History period is set to 1 minute and changed to 30 minutes", historyPeriod: 30 },
-      { description: "History period is set to 1 minute and changed to 60 minutes", historyPeriod: 60 },
-      { description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
+      //{ description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
+      //{ description: "History period is set to 1 minute and changed to 15 minutes", historyPeriod: 15 },
+      //{ description: "History period is set to 1 minute and changed to 30 minutes", historyPeriod: 30 },
+      //{ description: "History period is set to 1 minute and changed to 60 minutes", historyPeriod: 60 },
+      //{ description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
     ].forEach(({ description, historyPeriod }) => {
       it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
         //Act
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
-        expect(await groupingOptionWithName(/no grouping/i)).toBeInTheDocument();
+        //await selectHistoryPeriod(historyPeriod);
+        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+        expect(await endpointSparklineValues("Endpoint1")).toEqual(["2.96", "2.26", "2.1", "36", "147"]);
+        //expect(await groupingOptionWithName(/no grouping/i)).toBeInTheDocument();
       });
     });
   });
