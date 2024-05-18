@@ -489,7 +489,7 @@ describe("FEATURE: Endpoint sorting", () => {
   });
 });
 
-async function assertSortImageState(column: string, direction: "up" | "down" | null) {
+function assertSortImageState(column: string, direction: "up" | "down" | null) {
   if (direction === null) {
     expect(findSortImageInColumn(column, "up")).toBeNull();
     expect(findSortImageInColumn(column, "down")).toBeNull();
