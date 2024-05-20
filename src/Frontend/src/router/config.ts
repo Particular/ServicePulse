@@ -119,7 +119,7 @@ const config: RouteItem[] = [
   {
     path: routeLinks.throughput.root,
     component: ThroughputReportView,
-    title: "Throughput",
+    title: "Usage",
     redirect: routeLinks.throughput.endpoints.root,
     children: [
       {
@@ -174,7 +174,7 @@ const config: RouteItem[] = [
         component: () => import("@/components/configuration/EndpointConnection.vue"),
       },
       {
-        title: "Throughput Setup",
+        title: "Usage Setup",
         path: routeLinks.throughput.setup.root,
         redirect: routeLinks.throughput.setup.connectionSetup.link,
         component: () => import("@/views/throughputreport/SetupView.vue"),
