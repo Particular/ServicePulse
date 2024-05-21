@@ -5,6 +5,7 @@ import * as precondition from "../../preconditions";
 import { groupingOptionWithName } from "./questions/groupingOptionWithName";
 import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
 import { endpointSparklineValues } from "./questions/endpointSparklineValues";
+import { generatedProcessingTimePoints } from "../../mocks/history-period-template";
 
 describe("FEATURE: Viewing different endpoint history periods", () => {
   describe("RULE: Endpoint list should display the correct history data from the permalink history query parameter", () => {
@@ -68,8 +69,8 @@ describe("FEATURE: Viewing different endpoint history periods", () => {
       it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        //await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
-        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
+        //await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
 
         //Act
         await driver.goTo(`monitoring`);
@@ -78,6 +79,8 @@ describe("FEATURE: Viewing different endpoint history periods", () => {
         //await selectHistoryPeriod(historyPeriod);
         await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
+        var foo = generatedProcessingTimePoints(historyPeriod);
+        //console.log(foo);
         //expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
         screen.logTestingPlaygroundURL();
         console.log(await endpointSparklineValues("Endpoint1"));
