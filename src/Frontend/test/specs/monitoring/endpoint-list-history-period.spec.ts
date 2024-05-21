@@ -1,6 +1,6 @@
 import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
-import { screen } from "@testing-library/vue";
+import { screen, waitFor } from "@testing-library/vue";
 import * as precondition from "../../preconditions";
 import { groupingOptionWithName } from "./questions/groupingOptionWithName";
 import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
@@ -68,11 +68,19 @@ describe("FEATURE: Viewing different endpoint history periods", () => {
       it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
+        //await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
+        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+
         //Act
-        await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
+        await driver.goTo(`monitoring`);
+        //expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+        console.log(await endpointSparklineValues("Endpoint1"));
         //await selectHistoryPeriod(historyPeriod);
         await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+        await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
+        //expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+        screen.logTestingPlaygroundURL();
+        console.log(await endpointSparklineValues("Endpoint1"));
         expect(await endpointSparklineValues("Endpoint1")).toEqual(["2.96", "2.26", "2.1", "36", "147"]);
         //expect(await groupingOptionWithName(/no grouping/i)).toBeInTheDocument();
       });

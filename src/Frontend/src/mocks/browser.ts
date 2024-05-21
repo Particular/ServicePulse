@@ -1,7 +1,7 @@
 import { setupWorker } from "msw/browser";
 import { Driver } from "../../test/driver";
 import { makeMockEndpoint } from "../../test/mock-endpoint";
-import { serviceControlWithMonitoring,monitoredEndpointsNamed } from "../../test/preconditions"
+import { serviceControlWithMonitoring, monitoredEndpointsNamed, hasOneEndpointWithHistoryPeriodDataFor } from "../../test/preconditions";
 export const worker = setupWorker();
 const mockEndpoint = makeMockEndpoint({ mockServer: worker });
 
@@ -17,5 +17,6 @@ const driver = makeDriver();
 
 driver.setUp(serviceControlWithMonitoring).then(async () => {
   //override the default mocked endpoints with a custom list
-  await driver.setUp(monitoredEndpointsNamed(["Endpoint1","Endpoint2","Endpoint3"]));
+  //await driver.setUp(monitoredEndpointsNamed(["Endpoint1", "Endpoint2", "Endpoint3"]));
+  await driver.setUp(hasOneEndpointWithHistoryPeriodDataFor(1));
 });
