@@ -10,7 +10,7 @@ import { historyPeriodSelected } from "./questions/historyPeriodSelected";
 import exp from "constants";
 
 describe("FEATURE: Endpoint history periods", () => {
-  describe("RULE: The history period can get and set the permalink history period query parameter", () => {
+  describe("RULE: History period should get and set the permalink history period query parameter", () => {
     [
       { description: "History period '1m' selected and permalink history period query parameter should be set to 1", historyPeriod: 1 },
       { description: "History period '5m' selected and permalink history period query parameter should be set to 5", historyPeriod: 5 },
@@ -19,7 +19,7 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "History period '30m' selected and permalink history period query parameter should be set to 30", historyPeriod: 30 },
       { description: "History period '1h' selected and permalink history period query parameter should be set to 60", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
-      it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
@@ -40,7 +40,7 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "History period query parameter is set to 30 and History period '30m' should be selected", historyPeriod: 30 },
       { description: "History period query parameter is set to 60 and History period '1h' should be selected", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
-      it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
@@ -52,6 +52,7 @@ describe("FEATURE: Endpoint history periods", () => {
         expect(await historyPeriodSelected(historyPeriod)).toEqual("true");
       });
     });
+    //TODO: Add test for when no history query parameter is set
     it.skip("EXAMPLE: No history query parameter set", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
@@ -62,7 +63,8 @@ describe("FEATURE: Endpoint history periods", () => {
       expect(window.location.href).toEqual("http://localhost:3000/#/monitoring?historyPeriod=1&filter=Endpoint1");
     });
   });
-  describe("RULE: Endpoint history period data is fetched immediately after the history period is updated", () => {
+  //TODO: add test to check if history period data is fetched immediately after the history period is updated
+  describe("RULE: Endpoint history period data should be fetched immediately after the history period is updated", () => {
     [
       { description: "History period is set to 1 minute and changed to 5 minutes", historyPeriod: 5 },
       { description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
@@ -71,17 +73,17 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "History period is set to 1 minute and changed to 60 minutes", historyPeriod: 60 },
       { description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
     ].forEach(({ description, historyPeriod }) => {
-      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it.skip(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
+
         //Act
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
-
-        expect(await screen.findByText(/the monitoring service is active but no data is being returned\./i)).toBeInTheDocument();
       });
     });
   });
+  //TODO: add test to check if endpoint history period data is fetched at the interval selected by the history period
   describe("RULE: Endpoint history period data should be fetched at the interval selected by the history period", () => {
     [
       { description: "History period is set to 1 minute", historyPeriod: 1 },
@@ -91,7 +93,7 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "History period is set to 30 minutes", historyPeriod: 30 },
       { description: "History period is set to 60 minutes", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
-      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it.skip(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
