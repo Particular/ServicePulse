@@ -53,14 +53,16 @@ describe("FEATURE: Endpoint history periods", () => {
       });
     });
     //TODO: Add test for when no history query parameter is set
-    it.skip("EXAMPLE: No history query parameter set", async ({ driver }) => {
+    it("EXAMPLE: No history query parameter set and History period '1m' should be selected", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasNoMonitoredEndpoints);
-      //Act
-      await driver.goTo("monitoring?historyPeriod=1");
+      await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
 
-      expect(window.location.href).toEqual("http://localhost:3000/#/monitoring?historyPeriod=1&filter=Endpoint1");
+      //Act
+      await driver.goTo("monitoring");
+
+      //Assert
+      expect(await historyPeriodSelected(1)).toEqual("true");
     });
   });
   //TODO: add test to check if history period data is fetched immediately after the history period is updated
