@@ -18,7 +18,7 @@ const makeDriver = (): Driver => ({
       throw error;
     }
 
-    document.body.innerHTML = '<div id="app"></div>';
+    document.body.innerHTML = '<div id="modalDisplay"></div><div id="app"></div>';
     mount({ router });
   },
   mockEndpoint,
