@@ -5,6 +5,7 @@ export type MockEndpointOptions = {
   method?: "get" | "post" | "patch" | "put" | "delete";
   status?: number;
   headers?: { [key: string]: string };
+  callback?: () => void;
 };
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
