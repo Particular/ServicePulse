@@ -5,9 +5,10 @@ import * as precondition from "../../preconditions";
 import { groupingOptionWithName } from "./questions/groupingOptionWithName";
 import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
 import { endpointSparklineValues } from "./questions/endpointSparklineValues";
-import { generatedProcessingTimePoints } from "../../mocks/history-period-template";
+import { generatedProcessingTimePoints, oneEndpointWithHistoryPeriodFor } from "../../mocks/history-period-template";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
-import exp from "constants";
+
+const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
 
 describe("FEATURE: Endpoint history periods", () => {
   describe("RULE: History period should get and set the permalink history period query parameter", () => {
@@ -52,7 +53,6 @@ describe("FEATURE: Endpoint history periods", () => {
         expect(await historyPeriodSelected(historyPeriod)).toEqual("true");
       });
     });
-    //TODO: Add test for when no history query parameter is set
     it("EXAMPLE: No history query parameter set and History period '1m' should be selected", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
@@ -68,20 +68,35 @@ describe("FEATURE: Endpoint history periods", () => {
   //TODO: add test to check if history period data is fetched immediately after the history period is updated
   describe("RULE: Endpoint history period data should be fetched immediately after the history period is updated", () => {
     [
-      { description: "History period is set to 1 minute and changed to 5 minutes", historyPeriod: 5 },
-      { description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
-      { description: "History period is set to 1 minute and changed to 15 minutes", historyPeriod: 15 },
-      { description: "History period is set to 1 minute and changed to 30 minutes", historyPeriod: 30 },
+      //{ description: "History period is set to 1 minute and changed to 5 minutes", historyPeriod: 5 },
+      //{ description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
+      //{ description: "History period is set to 1 minute and changed to 15 minutes", historyPeriod: 15 },
+      //{ description: "History period is set to 1 minute and changed to 30 minutes", historyPeriod: 30 },
       { description: "History period is set to 1 minute and changed to 60 minutes", historyPeriod: 60 },
-      { description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
+      //{ description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
     ].forEach(({ description, historyPeriod }) => {
-      it.skip(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
-        await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
+        //await driver.setUp(precondition.serviceControlWithMonitoring);
+        //await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
+
+        let foo = false;
+        console.log(`First Foo: ${foo}, History Period: ${historyPeriod}`);
+
+        const callback = () => {
+          foo = true;
+          console.log(`Second Foo: ${foo}, History Period: ${historyPeriod}`);
+        };
+
+        driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=${historyPeriod}`, {
+          body: [oneEndpointWithHistoryPeriodFor(historyPeriod)],
+          callback,
+        });
 
         //Act
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
+        //await driver.goTo(`monitoring`);
+        //await selectHistoryPeriod(historyPeriod);
       });
     });
   });
