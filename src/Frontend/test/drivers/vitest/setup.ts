@@ -36,6 +36,7 @@ function deleteAllCookies() {
 }
 
 afterEach(() => {
+  //await new Promise((resolve) => { setTimeout(resolve, 3000); });
   //Intentionally not calling mockServer.resetHandlers.
   localStorage.clear();
   sessionStorage.clear();
