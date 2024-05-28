@@ -17,10 +17,10 @@ export interface RouteItem {
   children?: RouteItem[];
 }
 
+const defaultRoute = window.defaultConfig.default_route;
 const config: RouteItem[] = [
   {
     path: routeLinks.dashboard,
-    alias: "/",
     component: DashboardView,
     title: "Dashboard",
   },
@@ -148,6 +148,9 @@ const config: RouteItem[] = [
       },
     ],
   },
-];
+].map((routeItem: RouteItem) => {
+  if (routeItem.path === defaultRoute) routeItem.alias = "/";
+  return routeItem;
+});
 
 export default config;
