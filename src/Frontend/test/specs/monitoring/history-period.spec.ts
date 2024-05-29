@@ -1,0 +1,64 @@
+import { expect } from "vitest";
+import { it, describe } from "../../drivers/vitest/driver";
+import * as precondition from "../../preconditions";
+import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
+import { historyPeriodSelected } from "./questions/historyPeriodSelected";
+
+const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+
+describe("FEATURE: Endpoint history periods", () => {
+  describe("RULE: History period should get and set the permalink history period query parameter", () => {
+    [
+      { description: "History period '1m' selected and permalink history period query parameter should be set to 1", historyPeriod: 1 },
+      { description: "History period '5m' selected and permalink history period query parameter should be set to 5", historyPeriod: 5 },
+      { description: "History period '10m' selected and permalink history period query parameter should be set to 10", historyPeriod: 10 },
+      { description: "History period '15m' selected and permalink history period query parameter should be set to 15", historyPeriod: 15 },
+      { description: "History period '30m' selected and permalink history period query parameter should be set to 30", historyPeriod: 30 },
+      { description: "History period '1h' selected and permalink history period query parameter should be set to 60", historyPeriod: 60 },
+    ].forEach(({ description, historyPeriod }) => {
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+        //Arrange
+        await driver.setUp(precondition.serviceControlWithMonitoring);
+        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+
+        //Act
+        await driver.goTo(`monitoring`);
+        await selectHistoryPeriod(historyPeriod);
+
+        //Assert
+        expect(window.location.href).toEqual(`http://localhost:3000/#/monitoring?historyPeriod=${historyPeriod}`);
+      });
+    });
+    [
+      { description: "History period query parameter is set to 1 and History period '1m' should be selected", historyPeriod: 1 },
+      { description: "History period query parameter is set to 5 and History period '5m' should be selected", historyPeriod: 10 },
+      { description: "History period query parameter is set to 10 and History period '10m' should be selected", historyPeriod: 15 },
+      { description: "History period query parameter is set to 15 and History period '15m' should be selected", historyPeriod: 30 },
+      { description: "History period query parameter is set to 30 and History period '30m' should be selected", historyPeriod: 30 },
+      { description: "History period query parameter is set to 60 and History period '1h' should be selected", historyPeriod: 60 },
+    ].forEach(({ description, historyPeriod }) => {
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+        //Arrange
+        await driver.setUp(precondition.serviceControlWithMonitoring);
+        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+
+        //Act
+        await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
+
+        //Assert
+        expect(await historyPeriodSelected(historyPeriod)).toEqual("true");
+      });
+    });
+    it("EXAMPLE: No history query parameter set and History period '1m' should be selected", async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
+
+      //Act
+      await driver.goTo("monitoring");
+
+      //Assert
+      expect(await historyPeriodSelected(1)).toEqual("true");
+    });
+  });
+});
