@@ -8,8 +8,9 @@ async function conditionallyEnableMocking() {
     if (process.env.NODE_ENV !== 'dev-mocks') {
       return
     }
-   
-    const { worker } = await import('./mocks/browser')
+    
+    await import("../public/mockServiceWorker.js?worker");
+    const { worker } = await import('@/../test/mocks/browser')
    
     // `worker.start()` returns a Promise that resolves
     // once the Service Worker is up and ready to intercept requests.
