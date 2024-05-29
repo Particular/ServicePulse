@@ -6,8 +6,6 @@ import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
 import { endpointDetailsLinks } from "./questions/endpointDetailsLinks";
 
-const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
-
 describe("FEATURE: Endpoint history periods", () => {
   describe("RULE: History period should get and set the permalink history period query parameter", () => {
     [
@@ -21,7 +19,7 @@ describe("FEATURE: Endpoint history periods", () => {
       it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+        await driver.setUp(precondition.monitoredEndpointsNamed(["Endpoint1"]));
 
         //Act
         await driver.goTo(`monitoring`);
@@ -42,7 +40,7 @@ describe("FEATURE: Endpoint history periods", () => {
       it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
+        await driver.setUp(precondition.monitoredEndpointsNamed(["Endpoint1"]));
 
         //Act
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
@@ -54,7 +52,7 @@ describe("FEATURE: Endpoint history periods", () => {
     it("EXAMPLE: No history query parameter set and History period '1m' should be selected", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Endpoint1"]));
 
       //Act
       await driver.goTo("monitoring");
