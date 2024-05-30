@@ -3,8 +3,9 @@ import { screen } from "@testing-library/dom";
 import { it, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
-import { historyPeriodSelected } from "./questions/historyPeriodSelected";
+import { selectedHistoryPeriodToBe } from "./questions/selectedHistoryPeriodToBe";
 import { endpointDetailsLinks } from "./questions/endpointDetailsLinks";
+import { endpointsNames } from "./questions/endpointsNames";
 
 describe("FEATURE: Endpoint history periods", () => {
   describe("RULE: History period should get and set the permalink history period query parameter", () => {
@@ -45,8 +46,11 @@ describe("FEATURE: Endpoint history periods", () => {
         //Act
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
 
+        //retrieve the endpoint names as a way to ensure the monitoring page finished rendering the endpoint list
+        await endpointsNames();
+
         //Assert
-        expect(await historyPeriodSelected(historyPeriod)).toEqual("true");
+        expect(selectedHistoryPeriodToBe(historyPeriod)).toBeTruthy();
       });
     });
     it("EXAMPLE: No history query parameter set and History period '1m' should be selected", async ({ driver }) => {
@@ -57,8 +61,11 @@ describe("FEATURE: Endpoint history periods", () => {
       //Act
       await driver.goTo("monitoring");
 
+      //retrieve the endpoint names as a way to ensure the monitoring page finished rendering the endpoint list
+      await endpointsNames();
+
       //Assert
-      expect(await historyPeriodSelected(1)).toEqual("true");
+      expect(selectedHistoryPeriodToBe(1)).toBeTruthy();
     });
     [
       { description: "Selecting history period '1m' should update the endpoint name link with the history period selected for details", historyPeriod: 1 },
