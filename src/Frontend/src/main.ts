@@ -9,7 +9,6 @@ async function conditionallyEnableMocking() {
       return
     }
     
-    await import("../public/mockServiceWorker.js?worker");
     const { worker } = await import('@/../test/mocks/browser')
    
     // `worker.start()` returns a Promise that resolves
