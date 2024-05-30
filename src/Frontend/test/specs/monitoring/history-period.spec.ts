@@ -35,12 +35,12 @@ describe("FEATURE: Endpoint history periods", () => {
       });
     });
     [
-      { description: "History period query parameter is set to 1 and History period '1m' should be selected", historyPeriod: 1 },
-      { description: "History period query parameter is set to 5 and History period '5m' should be selected", historyPeriod: 10 },
-      { description: "History period query parameter is set to 10 and History period '10m' should be selected", historyPeriod: 15 },
-      { description: "History period query parameter is set to 15 and History period '15m' should be selected", historyPeriod: 30 },
-      { description: "History period query parameter is set to 30 and History period '30m' should be selected", historyPeriod: 30 },
-      { description: "History period query parameter is set to 60 and History period '1h' should be selected", historyPeriod: 60 },
+      { description: "History period query parameter is set to 1 and history period '1m' should be selected", historyPeriod: 1 },
+      { description: "History period query parameter is set to 5 and history period '5m' should be selected", historyPeriod: 10 },
+      { description: "History period query parameter is set to 10 and history period '10m' should be selected", historyPeriod: 15 },
+      { description: "History period query parameter is set to 15 and history period '15m' should be selected", historyPeriod: 30 },
+      { description: "History period query parameter is set to 30 and history period '30m' should be selected", historyPeriod: 30 },
+      { description: "History period query parameter is set to 60 and history period '1h' should be selected", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
       it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
