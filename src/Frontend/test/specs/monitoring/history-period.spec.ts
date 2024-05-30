@@ -7,6 +7,7 @@ import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
 import { endpointSparklineValues } from "./questions/endpointSparklineValues";
 import { generatedProcessingTimePoints, oneEndpointWithHistoryPeriodFor } from "../../mocks/history-period-template";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
+import { endpointDetailsLinks } from "./questions/endpointDetailsLinks";
 
 const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
 
@@ -82,21 +83,23 @@ describe("FEATURE: Endpoint history periods", () => {
 
         //Assert
         expect(await endpointDetailsLinks()).toEqual([`#/monitoring/endpoint/Endpoint1?historyPeriod=${historyPeriod}`, `#/monitoring/endpoint/Endpoint2?historyPeriod=${historyPeriod}`]);
+      });
+    });
   });
   //TODO: add test to check if history period data is fetched immediately after the history period is updated
   describe("RULE: Endpoint history period data should be fetched immediately after the history period is updated", () => {
     [
-      //{ description: "History period is set to 1 minute and changed to 5 minutes", historyPeriod: 5 },
-      //{ description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
-      //{ description: "History period is set to 1 minute and changed to 15 minutes", historyPeriod: 15 },
-      //{ description: "History period is set to 1 minute and changed to 30 minutes", historyPeriod: 30 },
+      { description: "History period is set to 1 minute and changed to 5 minutes", historyPeriod: 5 },
+      { description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
+      { description: "History period is set to 1 minute and changed to 15 minutes", historyPeriod: 15 },
+      { description: "History period is set to 1 minute and changed to 30 minutes", historyPeriod: 30 },
       { description: "History period is set to 1 minute and changed to 60 minutes", historyPeriod: 60 },
-      //{ description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
+      { description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
     ].forEach(({ description, historyPeriod }) => {
-      it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
-        //await driver.setUp(precondition.serviceControlWithMonitoring);
-        //await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
+        await driver.setUp(precondition.serviceControlWithMonitoring);
+        await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
 
         let foo = false;
         console.log(`First Foo: ${foo}, History Period: ${historyPeriod}`);
@@ -128,7 +131,7 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "History period is set to 30 minutes", historyPeriod: 30 },
       { description: "History period is set to 60 minutes", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
-      it.skip(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it.todo(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
