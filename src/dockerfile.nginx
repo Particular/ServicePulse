@@ -1,19 +1,31 @@
-FROM ubuntu:latest
+FROM node:latest as build
 
-USER root
+ADD ServicePulse.Host /ServicePulse.Host/
 
-RUN apt-get update
-RUN apt-get install -y nginx nodejs
+RUN rm -rf /ServicePulse.Host/app &&\
+    mkdir -p /ServicePulse.Host/app
 
-RUN rm -v /etc/nginx/nginx.conf
+WORKDIR /ServicePulse.Host/vue
+
+RUN npm install &&\
+    npm run build
+
+FROM nginx:stable-alpine
+
+ENV SERVICECONTROL_URL="http://localhost:33333/api/"
+ENV MONITORING_URLS="['http://localhost:33633/']"
+ENV BASE_URL="/"
+
+COPY --from=build /ServicePulse.Host/app /usr/share/nginx/html
+
+RUN mv /usr/share/nginx/html/js/app.constants.js /usr/share/nginx/html/js/app.constants.template &&\
+    sed -i \
+    -e "s,http://localhost:33333/api/,\$SERVICECONTROL_URL,g" \
+    -e "s,\['http://localhost:33633/'\],\$MONITORING_URLS,g" \
+    -e "s,'/','\$BASE_URL',g" \
+    /usr/share/nginx/html/js/app.constants.template
 
 ADD nginx.conf /etc/nginx/
-
-ADD ServicePulse.Host/app /usr/share/nginx/html/
-ADD ServicePulse.Host/app /var/www/html/
-
-RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+ADD --chown=root:root --chmod=755 updateconstants.sh /docker-entrypoint.d/40-update-servicepulse-constants.sh
 
 EXPOSE 90
-
-CMD ["/usr/sbin/nginx"]
