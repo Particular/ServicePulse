@@ -2,7 +2,6 @@ import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 import { mockServer } from "../../mock-server";
 import "@testing-library/jest-dom/vitest";
 
-
 const defaultConfig = {
   default_route: "/dashboard",
   base_url: "/",
@@ -11,8 +10,9 @@ const defaultConfig = {
   monitoring_urls: ["http://localhost:33633/"],
   showPendingRetry: false,
 };
-beforeEach(() => {
-  vi.stubGlobal("defaultConfig", defaultConfig);
+
+beforeEach(() => {        
+  vi.stubGlobal("defaultConfig", defaultConfig);    
 });
 
 beforeAll(() => {
@@ -24,7 +24,7 @@ beforeAll(() => {
 });
 
 afterAll(async () => {
-  //Intentionally not calling mockServer.close here to prevent ServicePulse in flight messages after app unmount to fail
+  //Intentionally not calling mockServer.close here to prevent ServicePulse in flight messages after app unmount to fail  
 });
 
 function deleteAllCookies() {
@@ -38,10 +38,12 @@ function deleteAllCookies() {
   }
 }
 
-afterEach(async () => {
+afterEach(() => {
    //Intentionally not calling mockServer.resetHandlers here to prevent ServicePulse in flight messages after app unmount to fail.
    //mockServer.resetHandlers is being called instead in driver.ts
-
+  
+  //Make JSDOM create a fresh document per each test run
+  jsdom.reconfigure({ url: "http://localhost:3000/", caches: "reload"});  
   localStorage.clear();
   sessionStorage.clear();
   deleteAllCookies();
