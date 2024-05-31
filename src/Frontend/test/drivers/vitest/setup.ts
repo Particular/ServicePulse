@@ -43,7 +43,7 @@ afterEach(() => {
    //mockServer.resetHandlers is being called instead in driver.ts
   
   //Make JSDOM create a fresh document per each test run
-  jsdom.reconfigure({ url: "http://localhost:3000/", caches: "reload"});  
+  jsdom.reconfigure({ url: "http://localhost:3000/"});  
   localStorage.clear();
   sessionStorage.clear();
   deleteAllCookies();
