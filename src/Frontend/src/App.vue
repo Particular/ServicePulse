@@ -9,7 +9,7 @@ import { useServiceControl } from "@/composables/serviceServiceControl";
 import "highlight.js/styles/github-dark.css";
 
 // eslint-disable-next-line github/no-then
-useServiceControlUrls().then(() => Promise.all([useLicense(), useServiceControl()]));
+useServiceControlUrls().then(async () => await Promise.all([useLicense(), useServiceControl()]));
 </script>
 
 <template>

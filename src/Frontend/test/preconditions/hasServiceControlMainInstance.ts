@@ -9,3 +9,10 @@ export const hasServiceControlMainInstance = ({ driver }: SetupFactoryOptions) =
   });
   return serviceControlMainInstance;
 };
+
+export const hasServiceControlVersion = (version:string) => ({ driver }: SetupFactoryOptions) => {
+  driver.mockEndpoint(window.defaultConfig.service_control_url, {
+      body: structuredClone(serviceControlMainInstance),
+      headers: { "X-Particular-Version": version },
+  });  
+}
