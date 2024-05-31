@@ -8,8 +8,6 @@ import * as historyPeriodTemplate from "../../mocks/history-period-template";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
 import { endpointDetailsLinks } from "./questions/endpointDetailLinks";
 
-const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
-
 describe("FEATURE: Endpoint history periods", () => {
   describe("RULE: History period should get and set the permalink history period query parameter", () => {
     [
@@ -139,7 +137,7 @@ describe("FEATURE: Endpoint history periods", () => {
           console.log(`Second Foo: ${foo}, History Period: ${historyPeriod}`);
         };
 
-        driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=${historyPeriod}`, {
+        driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${historyPeriod}`, {
           body: [historyPeriodTemplate.oneEndpointWithHistoryPeriodFor(historyPeriod)],
           callback,
         });

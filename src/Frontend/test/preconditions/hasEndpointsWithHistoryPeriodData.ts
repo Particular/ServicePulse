@@ -1,10 +1,8 @@
 import * as historyPeriodTemplate from "../mocks/history-period-template";
 import { SetupFactoryOptions } from "../driver";
 
-const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
-
 export const hasHistoryPeriodDataForOneMinute = ({ driver }: SetupFactoryOptions) => {
-  driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=1`, {
+  driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=1`, {
     body: historyPeriodTemplate.historyPeriodForOneMinute(),
   });
   return historyPeriodTemplate.historyPeriodForOneMinute();
@@ -13,7 +11,7 @@ export const hasHistoryPeriodDataForOneMinute = ({ driver }: SetupFactoryOptions
 export const hasOneEndpointWithHistoryPeriodDataFor =
   (historyPeriod: number) =>
   ({ driver }: SetupFactoryOptions) => {
-    driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=${historyPeriod}`, {
+    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${historyPeriod}`, {
       body: [historyPeriodTemplate.oneEndpointWithHistoryPeriodFor(historyPeriod)],
     });
     return [historyPeriodTemplate.oneEndpointWithHistoryPeriodFor(historyPeriod)];
@@ -22,7 +20,7 @@ export const hasOneEndpointWithHistoryPeriodDataFor =
 export const hasOneEndpointWithHistoryPeriodDataForOneMinute =
   () =>
   ({ driver }: SetupFactoryOptions) => {
-    driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=1`, {
+    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=1`, {
       body: historyPeriodTemplate.oneEndpointWithHistoryPeriodForOneMinute(),
     });
     return historyPeriodTemplate.oneEndpointWithHistoryPeriodForOneMinute();
@@ -50,7 +48,7 @@ const getEndpointSparklineData = (historyPeriod: number) => {
 export const hasOneEndpointWithSparklineDataFor =
   (historyPeriod: number) =>
   ({ driver }: SetupFactoryOptions) => {
-    driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=${historyPeriod}`, {
+    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${historyPeriod}`, {
       body: getEndpointSparklineData(historyPeriod),
     });
     return [getEndpointSparklineData(historyPeriod)];
