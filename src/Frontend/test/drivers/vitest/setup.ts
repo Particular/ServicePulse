@@ -20,8 +20,10 @@ beforeAll(() => {
     },
   });
 });
-afterAll(() => {
-  //Intentionally not calling mockServer.close.
+
+afterAll(async () => {
+  await new Promise((resolve) => setTimeout(resolve.bind(null), 0));
+  mockServer.close();
 });
 
 function deleteAllCookies() {
@@ -35,8 +37,9 @@ function deleteAllCookies() {
   }
 }
 
-afterEach(() => {
-  //Intentionally not calling mockServer.resetHandlers.
+afterEach(async () => {
+  await new Promise((resolve) => setTimeout(resolve.bind(null), 0));
+  mockServer.resetHandlers();
   localStorage.clear();
   sessionStorage.clear();
   deleteAllCookies();
