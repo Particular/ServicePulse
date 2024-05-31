@@ -1,7 +1,7 @@
-import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 import { mockServer } from "../../mock-server";
 import "@testing-library/jest-dom/vitest";
-import { beforeEach } from "node:test";
+
 
 const defaultConfig = {
   default_route: "/dashboard",
@@ -11,9 +11,11 @@ const defaultConfig = {
   monitoring_urls: ["http://localhost:33633/"],
   showPendingRetry: false,
 };
+beforeEach(() => {
+  vi.stubGlobal("defaultConfig", defaultConfig);
+});
 
 beforeAll(() => {
-  vi.stubGlobal("defaultConfig", defaultConfig);
   mockServer.listen({
     onUnhandledRequest: (request) => {
       console.log("Unhandled %s %s", request.method, request.url);
