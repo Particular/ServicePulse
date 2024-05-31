@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 import { mockServer } from "../../mock-server";
 import "@testing-library/jest-dom/vitest";
+import { beforeEach } from "node:test";
 
 const defaultConfig = {
   default_route: "/dashboard",
@@ -11,9 +12,8 @@ const defaultConfig = {
   showPendingRetry: false,
 };
 
-vi.stubGlobal("defaultConfig", defaultConfig);
-
 beforeAll(() => {
+  vi.stubGlobal("defaultConfig", defaultConfig);
   mockServer.listen({
     onUnhandledRequest: (request) => {
       console.log("Unhandled %s %s", request.method, request.url);
@@ -37,7 +37,8 @@ function deleteAllCookies() {
 }
 
 afterEach(async () => {
-   //Intentionally not calling mockServer.resetHandlers here to prevent ServicePulse in flight messages after app unmount to fail
+   //Intentionally not calling mockServer.resetHandlers here to prevent ServicePulse in flight messages after app unmount to fail.
+   //mockServer.resetHandlers is being called instead in driver.ts
 
   localStorage.clear();
   sessionStorage.clear();
