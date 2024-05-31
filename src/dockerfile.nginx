@@ -1,22 +1,10 @@
-FROM node:latest as build
-
-ADD ServicePulse.Host /ServicePulse.Host/
-
-RUN rm -rf /ServicePulse.Host/app &&\
-    mkdir -p /ServicePulse.Host/app
-
-WORKDIR /ServicePulse.Host/vue
-
-RUN npm install &&\
-    npm run build
-
 FROM nginx:stable-alpine
 
 ENV SERVICECONTROL_URL="http://localhost:33333/api/"
 ENV MONITORING_URLS="['http://localhost:33633/']"
 ENV BASE_URL="/"
 
-COPY --from=build /ServicePulse.Host/app /usr/share/nginx/html
+COPY ServicePulse.Host/app /usr/share/nginx/html
 
 RUN mv /usr/share/nginx/html/js/app.constants.js /usr/share/nginx/html/js/app.constants.template &&\
     sed -i \
