@@ -22,8 +22,7 @@ beforeAll(() => {
 });
 
 afterAll(async () => {
-  await new Promise((resolve) => setTimeout(resolve.bind(null), 0));
-  mockServer.close();
+  //Intentionally not calling mockServer.close here to prevent ServicePulse in flight messages after app unmount to fail
 });
 
 function deleteAllCookies() {
@@ -38,8 +37,8 @@ function deleteAllCookies() {
 }
 
 afterEach(async () => {
-  await new Promise((resolve) => setTimeout(resolve.bind(null), 0));
-  mockServer.resetHandlers();
+   //Intentionally not calling mockServer.resetHandlers here to prevent ServicePulse in flight messages after app unmount to fail
+
   localStorage.clear();
   sessionStorage.clear();
   deleteAllCookies();

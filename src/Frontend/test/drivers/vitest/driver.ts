@@ -3,6 +3,7 @@ import { Driver } from "../../driver";
 import { mount } from "../../../src/mount";
 import makeRouter from "../../../src/router";
 import { mockEndpoint } from "../../utils";
+import { mockServer } from "../../mock-server";
 
 const makeDriver = (): Driver => ({
   async goTo(path) {
@@ -29,6 +30,7 @@ const makeDriver = (): Driver => ({
 
 const it = itVitest.extend<{ driver: Driver }>({
   driver: async ({}, use: any) => {
+    mockServer.resetHandlers();
     await use(makeDriver());
   },
 });
