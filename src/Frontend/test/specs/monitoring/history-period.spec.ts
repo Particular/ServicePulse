@@ -1,13 +1,12 @@
 import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
-import { screen, waitFor } from "@testing-library/vue";
+import { screen } from "@testing-library/vue";
 import * as precondition from "../../preconditions";
-import { groupingOptionWithName } from "./questions/groupingOptionWithName";
 import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
 import { endpointSparklineValues } from "./questions/endpointSparklineValues";
-import { generatedProcessingTimePoints, oneEndpointWithHistoryPeriodFor } from "../../mocks/history-period-template";
+import * as historyPeriodTemplate from "../../mocks/history-period-template";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
-import { endpointDetailsLinks } from "./questions/endpointDetailsLinks";
+import { endpointDetailsLinks } from "./questions/endpointDetailLinks";
 
 const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
 
@@ -86,8 +85,39 @@ describe("FEATURE: Endpoint history periods", () => {
       });
     });
   });
-  //TODO: add test to check if history period data is fetched immediately after the history period is updated
   describe("RULE: Endpoint history period data should be fetched immediately after the history period is updated", () => {
+    it(`EXAMPLE: As history periods are selected the endpoint sparkline data should updated immediately`, async ({ driver }) => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasOneEndpointWithSparklineDataFor(1));
+
+      //Act & Assert
+      await driver.goTo(`monitoring`);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+
+      await driver.setUp(precondition.hasOneEndpointWithSparklineDataFor(5));
+      await selectHistoryPeriod(5);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["2.96", "2.26", "2.1", "36", "147"]);
+
+      await driver.setUp(precondition.hasOneEndpointWithSparklineDataFor(10));
+      await selectHistoryPeriod(10);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["10", "6.98", "9.97", "63", "194"]);
+
+      await driver.setUp(precondition.hasOneEndpointWithSparklineDataFor(15));
+      await selectHistoryPeriod(15);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["3.65", "2.7", "2.84", "39", "152"]);
+
+      await driver.setUp(precondition.hasOneEndpointWithSparklineDataFor(30));
+      await selectHistoryPeriod(30);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "7.87", "11.45", "68", "203"]);
+
+      await driver.setUp(precondition.hasOneEndpointWithSparklineDataFor(60));
+      await selectHistoryPeriod(60);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["13", "8.37", "11.61", "72", "206"]);
+    });
+  });
+  //TODO: add test to check if history period data is fetched immediately after the history period is updated
+  describe("RULE: Endpoint history period data should be fetched at the interval selected by the history period", () => {
     [
       { description: "History period is set to 1 minute and changed to 5 minutes", historyPeriod: 5 },
       { description: "History period is set to 1 minute and changed to 10 minutes", historyPeriod: 10 },
@@ -96,7 +126,7 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "History period is set to 1 minute and changed to 60 minutes", historyPeriod: 60 },
       { description: "History period is set to 60 minutes and changed to 1 minute", historyPeriod: 1 },
     ].forEach(({ description, historyPeriod }) => {
-      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it(`EXAMPLE: As history periods are selected the endpoint sparkline data should updated immediately ${description}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
         await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
@@ -110,7 +140,7 @@ describe("FEATURE: Endpoint history periods", () => {
         };
 
         driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints?history=${historyPeriod}`, {
-          body: [oneEndpointWithHistoryPeriodFor(historyPeriod)],
+          body: [historyPeriodTemplate.oneEndpointWithHistoryPeriodFor(historyPeriod)],
           callback,
         });
 
@@ -118,39 +148,6 @@ describe("FEATURE: Endpoint history periods", () => {
         await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
         //await driver.goTo(`monitoring`);
         //await selectHistoryPeriod(historyPeriod);
-      });
-    });
-  });
-  //TODO: add test to check if endpoint history period data is fetched at the interval selected by the history period
-  describe("RULE: Endpoint history period data should be fetched at the interval selected by the history period", () => {
-    [
-      { description: "History period is set to 1 minute", historyPeriod: 1 },
-      { description: "History period is set to 5 minutes", historyPeriod: 5 },
-      { description: "History period is set to 10 minutes", historyPeriod: 10 },
-      { description: "History period is set to 15 minutes", historyPeriod: 15 },
-      { description: "History period is set to 30 minutes", historyPeriod: 30 },
-      { description: "History period is set to 60 minutes", historyPeriod: 60 },
-    ].forEach(({ description, historyPeriod }) => {
-      it.todo(`EXAMPLE: ${description}`, async ({ driver }) => {
-        //Arrange
-        await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(1));
-        //await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
-
-        //Act
-        await driver.goTo(`monitoring`);
-        //expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
-        //console.log(await endpointSparklineValues("Endpoint1"));
-        //await selectHistoryPeriod(historyPeriod);
-        await driver.setUp(precondition.hasOneEndpointWithHistoryPeriodDataFor(historyPeriod));
-        //await driver.goTo(`monitoring?historyPeriod=${historyPeriod}`);
-        //var foo = generatedProcessingTimePoints(historyPeriod);
-        //console.log(foo);
-        //expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
-        //screen.logTestingPlaygroundURL();
-        //console.log(await endpointSparklineValues("Endpoint1"));
-        expect(await endpointSparklineValues("Endpoint1")).toEqual(["2.96", "2.26", "2.1", "36", "147"]);
-        //expect(await groupingOptionWithName(/no grouping/i)).toBeInTheDocument();
       });
     });
   });
