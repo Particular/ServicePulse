@@ -8,6 +8,7 @@ import type RootUrls from "@/resources/RootUrls";
 import type FailedMessage from "@/resources/FailedMessage";
 import type MonitoredEndpoint from "@/resources/MonitoredEndpoint";
 import { FailedMessageStatus } from "@/resources/FailedMessage";
+import { useMonitoringStore } from "@/stores/MonitoringStore";
 
 export const stats = reactive({
   active_endpoints: 0,
