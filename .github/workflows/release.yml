@@ -133,5 +133,5 @@ jobs:
         env:
           TAG_NAME: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || env.MinVerVersion }}
         run: |
-          docker buildx build --push --tag ghcr.io/particular/servicepulse:${{ env.TAG_NAME }} --file src/Dockerfile.nginx --build-arg VERSION=${{ env.MinVerVersion }} --platform linux/arm64,linux/arm,linux/amd64 .
+          docker buildx build --push --tag ghcr.io/particular/servicepulse:${{ env.TAG_NAME }} --file src/Container/Dockerfile --platform linux/arm64,linux/arm,linux/amd64 .
           docker buildx imagetools inspect ghcr.io/particular/servicepulse:${{ env.TAG_NAME }}
