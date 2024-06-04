@@ -20,7 +20,6 @@ LABEL org.opencontainers.image.title="ServicePulse" \
       org.opencontainers.image.base.digest=$NGINX_DIGEST \
       org.opencontainers.image.base.name="nginx:stable-alpine" \
       com.particular.github.ref.name=$GITHUB_REF_NAME \
-      com.particular.github.workflow.revision=$GITHUB_WORKFLOW_SHA \
       com.particular.support.url="https://particular.net/support"
 
 ENV SERVICECONTROL_URL="http://localhost:33333/api/"
