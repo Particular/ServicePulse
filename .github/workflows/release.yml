@@ -120,6 +120,7 @@ jobs:
       - name: Build Frontend
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
+        shell: pwsh
       - name: Update app.constants.js with MinVerVersion
         run: |
           $filename = "src/ServicePulse.Host/app/js/app.constants.js"
