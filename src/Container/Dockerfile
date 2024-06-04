@@ -34,6 +34,6 @@ RUN mv /usr/share/nginx/html/js/app.constants.js /usr/share/nginx/html/js/app.co
     /usr/share/nginx/html/js/app.constants.template
 
 ADD nginx.conf /etc/nginx/
-ADD --chown=root:root --chmod=755 updateconstants.sh /docker-entrypoint.d/40-update-servicepulse-constants.sh
+ADD --chown=root:root --chmod=755 Container/updateconstants.sh /docker-entrypoint.d/40-update-servicepulse-constants.sh
 
 EXPOSE 90
