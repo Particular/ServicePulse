@@ -6,7 +6,7 @@ export const hasEndpointWithMetricsPoints =
   ({ driver }: SetupFactoryOptions) => {
     const body = historyPeriodTemplate.oneEndpointWithMetricsPoints(queueLength, throughput, retries, processingTime, criticalTime);
     //console.log(`Mocked Endpoint: ${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${historyPeriod}`);
-    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${historyPeriod}`, {
+    driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints`, {
       body: foo(body, historyPeriod, queueLength, throughput, retries, processingTime, criticalTime),
     });
     return [body];

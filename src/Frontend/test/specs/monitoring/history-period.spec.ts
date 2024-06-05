@@ -7,7 +7,7 @@ import { endpointSparklineValues } from "./questions/endpointSparklineValues";
 import * as historyPeriodTemplate from "../../mocks/history-period-template";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
 import { endpointDetailsLinks } from "./questions/endpointDetailLinks";
-import { nextTick } from "vue";
+import { monitoredEndpointTemplate } from "../../mocks/monitored-endpoint-template";
 
 describe("FEATURE: Endpoint history periods", () => {
   describe("RULE: History period should get and set the permalink history period query parameter", () => {
@@ -131,37 +131,78 @@ describe("FEATURE: Endpoint history periods", () => {
       //await driver.setUp(precondition.hasEndpointWithMetricsPoints(initialPeriod, 14, 9.28, 13.8, 76, 217));
       //await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
 
-      //vi.useFakeTimers();
-
-      //Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 14, 9.28, 13.8, 76, 217));
-
-      //Act & Assert
+      //vi.useFakeTimers();      
       vi.useFakeTimers(); // Needs to be called before the first call to setInterval
-      await driver.goTo(`monitoring`);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+          //Arrange
+          await driver.setUp(precondition.serviceControlWithMonitoring);
+          await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 14, 9.28, 13.8, 76, 217));
 
-      await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 12, 9.56, 13.24, 81, 209));
-      await vi.advanceTimersByTimeAsync(30000);
-      vi.useRealTimers();
+          //Act & Assert
+          await driver.goTo(`monitoring`);
+          
+
+          const endpoint1 = structuredClone(monitoredEndpointTemplate);          
+          endpoint1.name = "Endpoint1";
+          endpoint1.metrics.queueLength.points.push(14);
+          endpoint1.metrics.throughput.points.push(9.28);
+          endpoint1.metrics.retries.points.push(13.8);
+          endpoint1.metrics.processingTime.points.push(76);
+          endpoint1.metrics.criticalTime.points.push(217);      
+
+          await driver.setUp(precondition.hasMonitoredEndpointsList([endpoint1]));
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+
+          await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 12, 9.56, 13.24, 81, 209));          
+          // //await vi.runOnlyPendingTimersAsync(); 
+          await vi.advanceTimersByTimeAsync(1000);
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "209"]);
+          
+          await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 12, 9.56, 13.24, 81, 210));
+          await vi.advanceTimersByTimeAsync(1000);
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "210"]);
+
+          await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 9.56, 13.24, 81, 215));
+          // //vi.useRealTimers();
+           await vi.runOnlyPendingTimersAsync();
+           await selectHistoryPeriod(5,true);          
+           expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
+          // //vi.useFakeTimers();
+
+          await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 9.56, 13.24, 81, 220));
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
+
+          await vi.advanceTimersByTimeAsync(4000);
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
+
+          await vi.advanceTimersByTimeAsync(500);
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
+
+          await vi.advanceTimersByTimeAsync(499);
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
+
+          await vi.advanceTimersByTimeAsync(1);
+          expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "220"]);
+
+    vi.useRealTimers();     
 
       //await selectHistoryPeriod(5);
-      await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for the next tick to run the timers
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "209"]);
+      //await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for the next tick to run the timers
+      // expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "209"]);
 
-      await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 8.56, 13.24, 81, 209));
-      await selectHistoryPeriod(5);
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "8.56", "13.24", "81", "209"]);
+      // await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 8.56, 13.24, 81, 209));
+      // await selectHistoryPeriod(5);
+      // expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "8.56", "13.24", "81", "209"]);
 
-      vi.useFakeTimers();
-      await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 10.56, 12.24, 81, 209));
-      await vi.advanceTimersByTimeAsync(5000);
-      //await vi.runOnlyPendingTimersAsync();
-      vi.useRealTimers();
+      // //vi.useFakeTimers();
+      // await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 10.56, 12.24, 81, 209));
+      // await vi.advanceTimersByTimeAsync(5000);
+      // vi.runOnlyPendingTimers();
+      // //await vi.runOnlyPendingTimersAsync();
+      // //vi.useRealTimers();
 
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for the next tick to run the timers
-      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "10.56", "12.24", "81", "209"]);
+      // await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for the next tick to run the timers
+      // expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "10.56", "12.24", "81", "209"]);
+      // vi.useRealTimers();
       //await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 12, 9.57, 13.24, 81, 209));
       //await vi.runOnlyPendingTimersAsync();
 
