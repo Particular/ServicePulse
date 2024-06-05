@@ -1,4 +1,4 @@
-import { expect } from "vitest";
+import { expect, vi } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
 import { screen } from "@testing-library/vue";
 import * as precondition from "../../preconditions";
@@ -7,6 +7,7 @@ import { endpointSparklineValues } from "./questions/endpointSparklineValues";
 import * as historyPeriodTemplate from "../../mocks/history-period-template";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
 import { endpointDetailsLinks } from "./questions/endpointDetailLinks";
+import { nextTick } from "vue";
 
 describe("FEATURE: Endpoint history periods", () => {
   describe("RULE: History period should get and set the permalink history period query parameter", () => {
@@ -116,46 +117,103 @@ describe("FEATURE: Endpoint history periods", () => {
   });
   //TODO: add test to check if history period data is fetched immediately after the history period is updated
   describe("RULE: Endpoint history period data should be fetched at the interval selected by the history period", () => {
-    [
+    /*     [
       { description: "History period is set to 1 minute and changed to 5 minutes", initialPeriod: 1, historyPeriod: 5 },
       { description: "History period is set to 1 minute and changed to 10 minutes", initialPeriod: 1, historyPeriod: 10 },
       { description: "History period is set to 1 minute and changed to 15 minutes", initialPeriod: 1, historyPeriod: 15 },
       { description: "History period is set to 1 minute and changed to 30 minutes", initialPeriod: 1, historyPeriod: 30 },
       { description: "History period is set to 1 minute and changed to 60 minutes", initialPeriod: 1, historyPeriod: 60 },
       { description: "History period is set to 60 minutes and changed to 1 minute", initialPeriod: 60, historyPeriod: 1 },
-    ].forEach(({ description, initialPeriod, historyPeriod }) => {
-      it(`EXAMPLE: As history periods are selected the endpoint sparkline data should updated immediately ${description}`, async ({ driver }) => {
-        //Arrange
-        await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasEndpointWithMetricsPoints(initialPeriod, 14, 9.28, 13.8, 76, 217));
-        //await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
+    ].forEach(({ description, initialPeriod, historyPeriod }) => { */
+    it(`EXAMPLE: As history periods are selected the endpoint sparkline data should updated at the interval selected by the history period`, async ({ driver }) => {
+      //Arrange
+      //await driver.setUp(precondition.serviceControlWithMonitoring);
+      //await driver.setUp(precondition.hasEndpointWithMetricsPoints(initialPeriod, 14, 9.28, 13.8, 76, 217));
+      //await driver.setUp(precondition.hasHistoryPeriodDataForOneMinute);
 
-        //let foo = false;
-        //console.log(`First Foo: ${foo}, History Period: ${historyPeriod}`);
+      //vi.useFakeTimers();
 
-        /* const callback = () => {
+      //Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 14, 9.28, 13.8, 76, 217));
+
+      //Act & Assert
+      vi.useFakeTimers(); // Needs to be called before the first call to setInterval
+      await driver.goTo(`monitoring`);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 12, 9.56, 13.24, 81, 209));
+      await vi.advanceTimersByTimeAsync(30000);
+      vi.useRealTimers();
+
+      //await selectHistoryPeriod(5);
+      await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for the next tick to run the timers
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "209"]);
+
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 8.56, 13.24, 81, 209));
+      await selectHistoryPeriod(5);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "8.56", "13.24", "81", "209"]);
+
+      vi.useFakeTimers();
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 12, 10.56, 12.24, 81, 209));
+      await vi.advanceTimersByTimeAsync(5000);
+      //await vi.runOnlyPendingTimersAsync();
+      vi.useRealTimers();
+
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for the next tick to run the timers
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "10.56", "12.24", "81", "209"]);
+      //await driver.setUp(precondition.hasEndpointWithMetricsPoints(1, 12, 9.57, 13.24, 81, 209));
+      //await vi.runOnlyPendingTimersAsync();
+
+      //expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.57", "13.24", "81", "209"]);
+      //vi.useRealTimers();
+
+      /*  await driver.setUp(precondition.hasEndpointWithMetricsPoints(5, 2.96, 2.26, 2.1, 36, 147));
+      await selectHistoryPeriod(5);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["2.96", "2.26", "2.1", "36", "147"]);
+
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(10, 10, 6.98, 9.97, 63, 194));
+      await selectHistoryPeriod(10);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["10", "6.98", "9.97", "63", "194"]);
+
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(15, 3.65, 2.7, 2.84, 39, 152));
+      await selectHistoryPeriod(15);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["3.65", "2.7", "2.84", "39", "152"]);
+
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(30, 12, 7.87, 11.45, 68, 203));
+      await selectHistoryPeriod(30);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "7.87", "11.45", "68", "203"]);
+
+      await driver.setUp(precondition.hasEndpointWithMetricsPoints(60, 13, 8.37, 11.61, 72, 206));
+      await selectHistoryPeriod(60);
+      expect(await endpointSparklineValues("Endpoint1")).toEqual(["13", "8.37", "11.61", "72", "206"]); */
+
+      //let foo = false;
+      //console.log(`First Foo: ${foo}, History Period: ${historyPeriod}`);
+
+      /* const callback = () => {
           foo = true;
           console.log(`Second Foo: ${foo}, History Period: ${historyPeriod}`);
         }; */
 
-        /*  driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${historyPeriod}`, {
+      /*  driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${historyPeriod}`, {
           body: [historyPeriodTemplate.oneEndpointWithHistoryPeriodFor(historyPeriod)],
           callback,
         }); */
 
-        /* driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${initialPeriod}`, {
+      /* driver.mockEndpoint(`${window.defaultConfig.monitoring_urls[0]}monitored-endpoints?history=${initialPeriod}`, {
           //body: [historyPeriodTemplate.oneEndpointWithHistoryPeriodFor(historyPeriod)],
           body: [historyPeriodTemplate.oneEndpointWithMetricsPoints(14, 9.28, 13.8, 76, 217)],
           callback,
           //callback,
         }); */
 
-        //Act
-        await driver.goTo(`monitoring?historyPeriod=${initialPeriod}`);
-        //await driver.goTo(`monitoring`);
-        expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
-        //await selectHistoryPeriod(historyPeriod);
-      });
+      //Act
+      //await driver.goTo(`monitoring?historyPeriod=${initialPeriod}`);
+      //await driver.goTo(`monitoring`);
+      //expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
+      //await selectHistoryPeriod(historyPeriod);
+      //});
     });
   });
 });

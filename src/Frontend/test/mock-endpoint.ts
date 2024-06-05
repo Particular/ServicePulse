@@ -34,6 +34,10 @@ export const makeMockEndpoint =
 
         //console.log(`Mocked Endpoint: ${url.pathname}, \n Expect Params: ${JSON.stringify(expectedParams)}, \n Actual Params: ${JSON.stringify(actualParams)}`);
 
+        if (url.searchParams.get("history") && actualParams["history"]) {
+          console.log(`Mocked Endpoint: ${url.pathname}, \n Expect Params: ${JSON.stringify(expectedParams)}, \n Actual Params: ${JSON.stringify(actualParams)}`);
+        }
+
         if (expectedParams) {
           for (const key in expectedParams) {
             if (expectedParams[key] !== actualParams[key]) {
