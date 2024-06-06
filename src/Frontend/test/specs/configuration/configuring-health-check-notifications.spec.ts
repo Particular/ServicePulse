@@ -1,8 +1,8 @@
 import { it, describe } from "../../drivers/vitest/driver";
 
 describe("FEATURE: Health check notifications", () => {
-  describe("Rule: Toggle email notifcations", () => {
-    it.todo("Not implemented");
+  describe("Rule: Email notification should be able to toggled on and off", () => {
+    it.todo("Example: Email notification is toggled on");
 
     /* SCENARIO
           Enable email notifications
@@ -12,6 +12,7 @@ describe("FEATURE: Health check notifications", () => {
           Then Email notifications are ON
         */
 
+    it.todo("Example: Email notification is toggled off");
     /* SCENARIO
           Disable email notifications
           
@@ -20,28 +21,34 @@ describe("FEATURE: Health check notifications", () => {
           Then Email notifications are OFF
         */
   });
-  describe("Rule: Configure email notifications", () => {
-    it.todo("Not implemented");
+  describe("Rule: Email notifications should be configurable", () => {
+    it.todo("Example: Clicking the configure button should open the email configuration popup");
 
     /* SCENARIO
           Open email configuration
-          
+
           Given the Email configuration popup is not visible
           When the "Configure" button is clicked
           Then the Email configuration popup is displayed
         */
 
+    it.todo("Example: The save button should be enabled when the form is valid");
+    it.todo("Example: The save button should be disabled when the form is invalid");
+    it.todo("Example: The save button should update the email configuration and close the popup when clicked");
+
     /* SCENARIO
           Invalid configurations cannot be saved
-          
+
           Given the Email configuration popup is visible
           When invalid or incomplete data is entered into the form
           Then the Save button is not enabled
-        */
+    */
+
+    it.todo("Example: The cancel button should close the email configuration popup without saving changes");
 
     /* SCENARIO
           Email configuration changed can be cancelled
-          
+
           Given the Email configuration popup is visible
           And edits have been made to the email configuration
           When the Cancel button is pressed
@@ -49,39 +56,42 @@ describe("FEATURE: Health check notifications", () => {
           And no changes have been made to the email configuration
         */
   });
-  describe("Rule: Health check notification configuration is persistent", () => {
-    it.todo("Not implemented");
+  describe("Rule: Health check notification configuration should be persistent", () => {
+    it.todo("Example: Updated email configuration should remain after a page refresh");
 
     /* SCENARIO
           Email configuration
-          
+
           When the email configuration has been changed
           And the screen is refreshed
           Then the email notification configuration matches what was last saved
         */
 
+    it.todo("Example: Email notification are on and remain on after a page refresh");
+    it.todo("Example: Email notification are off and remain off after a page refresh");
     /* SCENARIO
           Email notifications toggle
-          
+
           Given the Email notifications are ON
           When the page is refreshed
           Then the Email notifications are ON
         */
   });
-  describe("Rule: Send test notification", () => {
-    it.todo("Not implemented");
+  describe("Rule: Sending a test notification should indicate success or failure", () => {
+    it.todo("Example: Test notification failed to send");
 
     /* SCENARIO
           Invalid Configuration
-          
+
           Given an invalid configuration
           When "Send test notification" is clicked
           Then "TEST FAILED" is displayed
         */
 
+    it.todo("Example: Test notification sent successfully");
     /* SCENARIO
           Valid Configuration
-          
+
           Given a valid configuration
           When "Send test notification" is clicked
           Then "Test email sent successfully" is displayed
