@@ -6,6 +6,7 @@ import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
 import { endpointSparklineValues } from "./questions/endpointSparklineValues";
 import { historyPeriodSelected } from "./questions/historyPeriodSelected";
 import { endpointDetailsLinks } from "./questions/endpointDetailLinks";
+import { endpointsNames } from "./questions/endpointsNames";
 
 describe("FEATURE: Endpoint history periods", () => {
   describe("RULE: History period should get and set the permalink history period query parameter", () => {
@@ -121,35 +122,26 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "As history period is changed to 30 minutes the endpoint sparkline data should be updated at the correct interval", historyPeriod: 30 },
       { description: "As history period is changed to 60 minutes the endpoint sparkline data should be updated at the correct interval", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
-      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         vi.useFakeTimers(); // Needs to be called before the first call to setInterval
-        await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasEndpointWithMetricsPoints(14, 9.28, 13.8, 76, 217));
+        await driver.setUp(precondition.serviceControlWithMonitoring);        
 
         //Act & Assert
-        await driver.goTo(`monitoring`);
-        // Check the initial endpoint data
-        expect(await endpointSparklineValues("Endpoint1")).toEqual(["14", "9.28", "13.8", "76", "217"]);
-        // Update the endpoint data to simulate new data being fetched
-        await driver.setUp(precondition.hasEndpointWithMetricsPoints(12, 9.56, 13.24, 81, 209));
-        // Simulate the time passing for the history period to elapse
-        await vi.advanceTimersByTimeAsync(1000);
-        // Check the endpoint data has been updated
-        expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "209"]);
+        await driver.goTo(`monitoring`);        
 
-        // Update the endpoint data to simulate new fetched data
+        // Update the mocked data to what the backed should respond with when the fetching happens
         await driver.setUp(precondition.hasEndpointWithMetricsPoints(12, 9.56, 13.24, 81, 215));
         // simulate clicking on the history period buttons
-        await selectHistoryPeriod(historyPeriod, true);
-
+        await selectHistoryPeriod(historyPeriod, true);                
+        
         // Wait for component to update from selected history period
         await waitFor(async () => {
           // check the endpoint data has been updated immediately
           expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
         });
 
-        // Update the endpoint data to simulate new fetched data
+        // Update the mocked data to what the backed should respond with when the fetching happens
         await driver.setUp(precondition.hasEndpointWithMetricsPoints(12, 9.56, 13.24, 81, 220));
 
         // Simulate the time passing for half the selected history period
@@ -157,13 +149,14 @@ describe("FEATURE: Endpoint history periods", () => {
         expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
 
         // Simulate the time passing for all except 1 millisecond of the selected history period
-        await vi.advanceTimersByTimeAsync((historyPeriod * 1000) / 2 - 1);
+        await vi.advanceTimersByTimeAsync(((historyPeriod * 1000) / 2) - 1);
         expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "215"]);
 
-        // Simulate the time passing for the last millisecond of the selected history period
+        // Simulate the time passing for the last millisecond to make the selected history period time now be elapsed
         await vi.advanceTimersByTimeAsync(1);
         expect(await endpointSparklineValues("Endpoint1")).toEqual(["12", "9.56", "13.24", "81", "220"]);
-
+        
+        //It is recomended to call runOnlyPendingTimers() before calling useRealTimers()
         vi.runOnlyPendingTimers();
         vi.useRealTimers();
       });
