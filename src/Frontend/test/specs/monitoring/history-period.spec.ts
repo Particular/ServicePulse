@@ -122,7 +122,7 @@ describe("FEATURE: Endpoint history periods", () => {
       { description: "As history period is changed to 30 minutes the endpoint sparkline data should be updated at the correct interval", historyPeriod: 30 },
       { description: "As history period is changed to 60 minutes the endpoint sparkline data should be updated at the correct interval", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
-      it.only(`EXAMPLE: ${description}`, async ({ driver }) => {
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
         //Arrange
         vi.useFakeTimers(); // Needs to be called before the first call to setInterval
         await driver.setUp(precondition.serviceControlWithMonitoring);        
