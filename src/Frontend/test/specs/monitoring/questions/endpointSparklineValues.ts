@@ -1,4 +1,3 @@
-import userEvent from "@testing-library/user-event";
 import { screen, within } from "@testing-library/vue";
 
 export async function endpointSparklineValues(endpointName: string) {
