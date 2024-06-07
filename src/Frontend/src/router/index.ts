@@ -31,7 +31,7 @@ export default function makeRouter() {
   });
   
   const defaultRoute = window.defaultConfig.default_route;  
-  if(defaultRoute!=='/'){    
+  if(!!defaultRoute && defaultRoute!=='/'){    
     routes.push({
       path: "/",
       redirect: defaultRoute,
