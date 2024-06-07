@@ -135,34 +135,6 @@ ServicePulse is supported on the following desktop browser versions:
 - Firefox ESR [current version](https://www.mozilla.org/en-US/firefox/enterprise/)
 - Safari [latest major version](https://developer.apple.com/safari/)
 
-## Docker image deployment
+## Container image development
 
-Dockerfiles for ServicePulse resides within the [`src`](https://github.com/Particular/ServicePulse/tree/master/src) folder. There are 2 docker files:
-
-- 1 for a [Windows image](https://github.com/Particular/ServicePulse/blob/master/src/dockerfile.iis)
-- 1 for a [Linux image](https://github.com/Particular/ServicePulse/blob/master/src/dockerfile.nginx)
-
-### Building & staging docker images
-
-The docker files are all built as part of the [release workflow](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml), pushed to the Docker hub, and tagged with the version of ServicePulse being deployed. More details are available in the [documentation](https://docs.particular.net/servicepulse/containerization/).
-
-For example, If we were deploying version 1.30.1 of ServicePulse, the build configurations after the Deploy step will build the following 2 containers for ServicePulse and tag them `1.30.1`:
-
-- `particular/servicepulse:1.30.1`
-- `particular/servicepule-windows:1.30.1`
-
-These images are tagged with the specific version of ServicePulse being built and pushed to the corresponding public `particular/servicepulse{-os}` repositories. At this point, the docker images are considered staged. If someone is watching the feed directly, they can install the staged images by explicitly specifying the exact tag, e.g., `docker pull particular/servicepulse:1.30.1`.
-
-### Promoting docker images to production
-
-When a ServicePulse release is promoted to production, one of the steps is to take the staged images and re-tag them as the following:
-
-- `particular/servicepulse:1.30.1` => `particular/servicepulse:1`
-  - This is so that customers interested in updates within a major can install the specific major only and not worry about breaking changes between major versions being automatically rolled out. Useful for auto-upgrading containers in a _production_ environment.
-- `particular/servicepulse:1.30.1` => `particular/servicepulse:latest`
-  - Primarily for developers wanting to use the latest version (`docker-compose up -d --build --force-recreate --renew-anon-volumes`
-  - This is only true if the release's major version is the same as the current latest major version.
-    - If a fix is being backported to a previous major, then the `:latest` tag will not be updated.
-    - If a release targets the current latest major or is a new major after the previous latest, then the `:latest` tag is updated to match the version being released.
-
-Once the tagging has been completed, the images are considered to be publicly released.
+A Dockerfile for ServicePulse resides within the [`src/Container`](https://github.com/Particular/ServicePulse/tree/master/src/Container) folder. The container images are all built as part of the [release workflow](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml) and staged in the [Github Container Registry](https://github.com/Particular/ServicePulse/pkgs/container/servicepulse). For branches with PRs the image will be tagged with the pr number, e.g. `pr-1234`.
