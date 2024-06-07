@@ -148,9 +148,6 @@ const config: RouteItem[] = [
       },
     ],
   },
-].map((routeItem: RouteItem) => {
-  if (routeItem.path === defaultRoute) routeItem.alias = "/";
-  return routeItem;
-});
+];
 
 export default config;
