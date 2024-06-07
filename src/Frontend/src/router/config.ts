@@ -17,7 +17,6 @@ export interface RouteItem {
   children?: RouteItem[];
 }
 
-const defaultRoute = window.defaultConfig.default_route;
 const config: RouteItem[] = [
   {
     path: routeLinks.dashboard,
