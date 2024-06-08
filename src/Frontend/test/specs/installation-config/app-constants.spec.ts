@@ -4,7 +4,7 @@ import * as precondition from "../../preconditions";
 import { endpointsNames } from "../monitoring/questions/endpointsNames";
 
 describe("FEATURE: app.constants.js", () => {
-  describe("RULE: The system should automatically navigate to the specified path in default_rule property", () => {
+  describe("RULE: The system should automatically navigate to the specified path in default_route property", () => {
     it("EXAMPLE: default route is set to /dashboard", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
