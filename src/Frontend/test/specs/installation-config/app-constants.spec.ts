@@ -46,7 +46,7 @@ describe("FEATURE: app.constants.js", () => {
     it("EXAMPLE: default route is set to /", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);  
-      window.defaultConfig.default_route = "";
+      window.defaultConfig.default_route = "/";
   
       //act
       await driver.goTo("");  
