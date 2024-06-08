@@ -2,7 +2,7 @@ import { it, describe } from "../../drivers/vitest/driver";
 
 describe("FEATURE: Dismiss custom checks", () => {
   describe("Rule: Dismiss button should be visible", () => {
-    it.todo("Not implemented");
+    it.todo("Example: Dismiss button should be visible on each failing custom check");
 
     /* SCENARIO
           Given 2 failing custom checks
@@ -10,8 +10,8 @@ describe("FEATURE: Dismiss custom checks", () => {
           Then each should render a dismiss button
         */
   });
-  describe("Rule: Clicking dismiss should remove from the list", () => {
-    it.todo("Not implemented");
+  describe("Rule: Dismissing a custom check should remove from the list", () => {
+    it.todo("Example: The dismiss button should remove the custom check from the list when clicked");
 
     /* SCENARIO
           Given 2 failing custom checks
@@ -20,7 +20,7 @@ describe("FEATURE: Dismiss custom checks", () => {
         */
   });
   describe("Rule: Failing after a dismiss should cause the failed check to reappear", () => {
-    it.todo("Not implemented");
+    it.todo("Example: Dismissed custom check should reappear in the list when it fails");
 
     /* SCENARIO
           Given 2 failed custom checks
