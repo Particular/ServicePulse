@@ -1,13 +1,19 @@
 import { it, describe } from "../../drivers/vitest/driver";
 
 describe("FEATURE: Deleted Message Groups", () => {
-  describe("Rule: Deleted Message Groups view shows all current deleted messages, grouped by the selected grouping", () => {
-    it.todo("Not implemented");
+  describe("Rule: Deleted Message Groups view should shows all current deleted messages, grouped by the selected grouping", () => {
+    it.todo("Example: A message should be show when there are no deleted messages");
 
     /* SCENARIO
-          Given there are no Deleted Messages 
+          Given there are no Deleted Messages
           Then the "Deleted Message Groups" tab will display a message indicating the fact
         */
+
+    it.todo("Example: The number of deleted messages in a group should be shown");
+    it.todo("Example: The time period from the first failed message should be shown");
+    it.todo("Example: The time period of the last failed message should be shown");
+    it.todo("Example: The time period of when the group was last retried should be shown");
+    it.todo("Example: A deleted message group that has not been retried should show N/A for the last retry time");
 
     /* SCENARIO
           Given there are 1 or more groups shown on the "Deleted Message Groups" tab
@@ -18,9 +24,8 @@ describe("FEATURE: Deleted Message Groups", () => {
           and the group will display a time period indicating how long ago the group was last retried, or N/A if never retried
         */
   });
-  describe("Rule: actions", () => {
-    it.todo("Not implemented");
-
+  describe("Rule: All messages in a Deleted Message Group should be able to be restored in a single action", () => {
+    it.todo("Example: A restore button should be shown when there are deleted messages in a group");
     /* SCENARIO
           Given there are 1 or more groups shown on the "Deleted Message Groups" tab
           Then "Restore group" is shown as an available action on the group
@@ -35,11 +40,11 @@ describe("FEATURE: Deleted Message Groups", () => {
         */
   });
   describe("Rule: Ability to select a given group should be hinted ", () => {
-    it.todo("Not implemented");
+    it.todo("Example: A group should indicate that it is active and selectable when the cursor is hovered over");
 
     /* SCENARIO
           Mouse hovering a group
-          
+
           Given there are 1 or more groups show in the "Deleted Message Groups" tab
           and the user hovers over a Deleted Message Group row
           Then the row indicates that it is active (hover state)

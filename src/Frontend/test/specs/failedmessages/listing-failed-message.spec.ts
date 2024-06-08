@@ -2,20 +2,28 @@ import { it, describe } from "../../drivers/vitest/driver";
 
 describe("FEATURE: All Failed Messages", () => {
   describe("Rule: All failed messages view should show an unfiltered list", () => {
-    it.todo("Not implemented");
+    it.todo("Example: All failed messages tab should be highlighted as active");
+    it.todo("Example: Browser tab title should show 'All Failed Messages'");
+    it.todo("Example: Failed messages should be ordered according to the selected sort by field");
 
     /* SCENARIO
           Given the entry route to the failed messages view is from the "All Failed Messages" tab
-          Then the view should show all current failed messages 
+          Then the view should show all current failed messages
           and the "All Failed Messages" tab should be highlighted as active
           and the browser tab title should show "All Failed Messages"
         */
 
+    it.todo("Example: Failed messages should be ordered according to the selected sort by field");
     /* SCENARIO
           Given the failed messages are shown
           Then they are ordered according to the selected Sort By field
         */
 
+    it.todo("Example: A failed message should display the current message name in bold");
+    it.todo("Example: A failed message should display a time period indicating how long ago the failure happened");
+    it.todo("Example: A failed message should display the name of the Endpoint that the message failed on");
+    it.todo("Example: A failed message should display the name of the Machine that the message failed on");
+    it.todo("Example: A failed message should display the exception message text");
     /* SCENARIO
           Given there are 1 or more Failed Message rows shown
           Then the row will display the current message name in bold
@@ -25,6 +33,7 @@ describe("FEATURE: All Failed Messages", () => {
           and the row will display the exception message text
         */
 
+    it.todo("Example: A failed message should display the number of times it has failed retries");
     /* SCENARIO
           Given there is a Failed Message row shown
           and that row has previously been retried
@@ -32,24 +41,27 @@ describe("FEATURE: All Failed Messages", () => {
           and this retry failure information will be visually more prominent than the other information
         */
 
+    it.todo("Example: A message should be shown when there are no failed messages");
     /* SCENARIO
-          Given there are no Failed Messages 
+          Given there are no Failed Messages
           Then the "All Failed Message" tab will display a message indicating the fact
         */
   });
   describe("Rule: Failed messages (group route) view should only show failed messages associated with that group", () => {
-    it.todo("Not implemented");
-
+    it.todo("Example: Only messages of a selected group should be shown");
+    it.todo("Example: Group name should be shown as a heading");
+    it.todo("Example: Group message count should be shown as a subtext to the group heading");
+    it.todo("Example: Failed Message Groups tab should remain highlighted as active");
     /* SCENARIO
           Given the entry route to the failed messages view is from selecting a group in the "Failed Message Groups" tab
-          Then the view should show only failed messages associated with the selected group 
-          and the group name should be shown as a heading 
+          Then the view should show only failed messages associated with the selected group
+          and the group name should be shown as a heading
           and the group message count should be shown as a subtext to the group heading
           and the "Failed Message Groups" tab should remain highlighted as active
         */
   });
   describe("Rule: Row hover functionality", () => {
-    it.todo("Not implemented");
+    it.todo("Example: Hovering the cursor over a failed message row should indicate that it is active, selectable, and show the 'Request Retry' action");
 
     /* SCENARIO
           Given there are 1 or more Failed Message rows shown
@@ -67,7 +79,7 @@ describe("FEATURE: All Failed Messages", () => {
     it.todo("Not implemented");
   });
   describe("Rule: action functionality", () => {
-    it.todo("Not implemented");
+    it.todo("Example: Clicking the 'Request Retry' action should initiate a retry for the selected message");
 
     /* SCENARIO
           Given there are 1 or more Failed Message rows are shown
@@ -77,7 +89,10 @@ describe("FEATURE: All Failed Messages", () => {
         */
   });
   describe("Rule: button functionality", () => {
-    it.todo("Not implemented");
+    it.todo("Example: When no Failed Message rows are selected, the 'Select All' button should be enabled");
+    it.todo("Example: When no Failed Message rows are selected, the 'Retry Selected' button should be disabled");
+    it.todo("Example: When no Failed Message rows are selected, the 'Delete Selected' button should be disabled");
+    it.todo("Example: When no Failed Message rows are selected, the 'Export Selected' button should be disabled");
 
     /* SCENARIO
           Given no Failed Message rows are selected
@@ -87,19 +102,15 @@ describe("FEATURE: All Failed Messages", () => {
           and the "Export Selected" button is disabled
         */
 
+    it.todo("Example: When 1 or more Failed Message rows are selected, the 'Select All' button should be replaced by a 'Clear Selection' button");
+    it.todo("Example: When 1 or more Failed Message rows are selected, the 'Retry Selected' button should indicate the number of rows selected and be enabled");
+    it.todo("Example: When 1 or more Failed Message rows are selected, the 'Delete Selected' button should indicate the number of rows selected and be enabled");
     /* SCENARIO
           Given 1 or more Failed Message rows are selected
           Then the "Select All" button is replaced by a "Clear Selection" button
           and the "Retry selected" button indicates the number of rows selected and is enabled
           and the "Delete selected" button indicates the number of rows selected and is enabled
           and the "Export selected" button indicates the number of rows selected and is enabled
-        */
-
-    /* SCENARIO
-          Given 1 or more Failed Message rows are selected
-          When the "Export selected" button is clicked
-          Then an export is generated containing garbled results due to commas in the exception details field
-          and the end-user finds this functionality completely useless
         */
   });
 });
