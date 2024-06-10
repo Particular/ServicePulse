@@ -1,20 +1,21 @@
 import { it, describe } from "../../drivers/vitest/driver";
 
 describe("FEATURE: Heartbeats configuration", () => {
-  describe("Rule: Show a list of all endpoint instances", () => {
-    it.todo("Not implemented");
+  describe("Rule: A list of all endpoints with the heartbeats plug-in installed should be displayed", () => {
+    it.todo("Example: With no endpoints, the text 'Nothing to configure' should be displayed");
 
     /* SCENARIO
       No endpoints
-      
+
       Given no endpoint instances
       When the configuration screen is loaded
       Then the text "Nothing to configure" should be displayed
     */
 
+    it.todo("Example: 3 endpoints should be displayed in the list");
     /* SCENARIO
       Some endpoints
-      
+
       Given 3 endpoint instances
         Name |
         Foo1
@@ -31,8 +32,8 @@ describe("FEATURE: Heartbeats configuration", () => {
       Monitoring status
     */
   });
-  describe("Rule: Toggle monitoring for endpoint instance off", () => {
-    it.todo("Not implemented");
+  describe("Rule: Toggling on/off heartbeat monitoring for endpoints should be possible", () => {
+    it.todo("Example: Heartbeat monitoring toggle should be off by default");
 
     /* SCENARIO
       Given a monitored endpoint instance
@@ -41,10 +42,8 @@ describe("FEATURE: Heartbeats configuration", () => {
       And should not appear in the inactive endpoints list
       And should not appear in the active endpoints list
     */
-  });
-  describe("Rule: Toggle monitoring for endpoint instance on", () => {
-    it.todo("Not implemented");
 
+    it.todo("Example: Clicking the monitoring toggle for an endpoint should activate heartbeat monitoring of the endpoint");
     /* SCENARIO
       Given an unmonitored endpoint instance
       And the instance is sending heartbeats
@@ -61,8 +60,8 @@ describe("FEATURE: Heartbeats configuration", () => {
       And should appear in the Inactive Endpoints list
     */
   });
-  describe("Rule: Sort endpoint instance list", () => {
-    it.todo("Not implemented");
+  describe("Rule: Sorting by of the name of an endpoint should be possible in all displays", () => {
+    it.todo("Example: List of endpoints should be sorted by name in ascending order");
 
     /* SCENARIO
       Given 3 endpoint instance
@@ -79,6 +78,7 @@ describe("FEATURE: Heartbeats configuration", () => {
       Latest heartbeat (asc/dec)
     */
 
+    it.todo("Example: List of endpoints should be sorted by name in descending order");
     /* SCENARIO
       Given 3 endpoint instance
         Name |
@@ -89,10 +89,13 @@ describe("FEATURE: Heartbeats configuration", () => {
       Then the instances should be listed in reverse order
     */
 
+    it.todo("Example: List of endpoints should be sorted by latest heartbeat in ascending order");
+    it.todo("Example: List of endpoints should be sorted by latest heartbeat in descending order");
     /* SCENARIO
       Same again for Latest heartbeat
     */
 
+    it.todo("Example: Sort by should be persisted on page refresh and across tabs");
     /* SCENARIO
       Given the Sort By field has been changed
       When the page is refreshed
@@ -100,12 +103,12 @@ describe("FEATURE: Heartbeats configuration", () => {
       And the Sort By field has the same value on all other Endpoint Heartbeats tabs
     */
   });
-  describe("Rule: Filter endpoint list", () => {
-    it.todo("Not implemented");
+  describe("Rule: Filtering endpoints by name should be possible", () => {
+    it.todo("Example: Filter string matches a subset of endpoint names should display only those endpoints");
 
     /* SCENARIO
       Given 3 endpoint instances
-        Name | 
+        Name |
         Foo1
         Bar
         Foo2
@@ -115,9 +118,10 @@ describe("FEATURE: Heartbeats configuration", () => {
       And Bar should not be shown
     */
 
+    it.todo("Example: Filter string matches no endpoint names should display no endpoints");
     /* SCENARIO
       Given 3 endpoint instances
-        Name | 
+        Name |
         Foo1
         Foo2
         Foo3
@@ -127,6 +131,7 @@ describe("FEATURE: Heartbeats configuration", () => {
       And Foo3 should not be shown
     */
 
+    it.todo("Example: The filter string should be persisted on page refresh and across tabs");
     /* SCENARIO
       Given the filter string is ""
       When the text "Foo" is entered into the filter control
@@ -135,8 +140,8 @@ describe("FEATURE: Heartbeats configuration", () => {
       And the filter control on the Inactive endpoints tab contains "Foo"
     */
   });
-  describe("Rule: Show performance monitoring warning", () => {
-    it.todo("Not implemented");
+  describe("Rule: A performance monitoring warning should be displayed", () => {
+    it.todo("Example: A warning should be displayed when the configuration screen is loaded");
 
     /* SCENARIO
       When the configuration screen is loaded

@@ -1,8 +1,8 @@
 import { it, describe } from "../../drivers/vitest/driver";
 
 describe("FEATURE: Active Endpoints", () => {
-  describe("Rule: Show count of active endpoints", () => {
-    it.todo("Not implemented");
+  describe("Rule: The number of active endpoints should be shown", () => {
+    it.todo("Example: With 7 active endpoints, the tab should show (7)");
 
     /* SCENARIO
         Given 7 endpoint instances sending heartbeats
@@ -10,12 +10,14 @@ describe("FEATURE: Active Endpoints", () => {
         Then the Active Endpoints tab includes a (7) suffix
       */
 
+    it.todo("Example: With 7 active endpoints and 1 endpoint stop sending heartbeat, the tab should show (6)");
     /* SCENARIO
         Given 7 endpoint instances sending heartbeats
         When one of the endpoints stop sending heartbeats
         Then the Active Endpoints tab suffix changes to (6)
       */
 
+    it.todo("Example: With 6 active endpoints and 1 endpoint starts sending heartbeat, the tab should show (7)");
     /* SCENARIO
         Given 6 endpoint instances sending heartbeats
         And 1 endpoint instance not sending heartbeats
@@ -23,12 +25,23 @@ describe("FEATURE: Active Endpoints", () => {
         Then the Active Endpoints tab suffix changes to (7)
       */
   });
-  describe("Rule: Show list of active endpoints", () => {
-    it.todo("Not implemented");
+  describe("Rule: A list of active endpoints should be shown", () => {
+    it.todo("Example: With 3 active endpoints sending heartbeats, 3 endpoints should be shown in the list of active endpoints");
+
+    /* SCENARIO
+        Display list of active endpoints
+
+        Given 3 endpoint instances sending heartbeats
+        When the Active Endpoints tab is open
+        Then the 3 endpoints are displayed
+      */
+  });
+  describe("Rule: Active endpoint list row should show endpoint instances with name, host identifier, and latest heartbeat received", () => {
+    it.todo("Example: With 3 active endpoint instances named 'Endpoint1' at host 'HOST1' sending a heartbeat, there should be 3 rows displaying 'Endpoint1@HOST1', and the latest heartbeat received");
 
     /* SCENARIO
         Display Endpoint Instances
-        
+
         Given 3 endpoint instances sending heartbeats
         When the Active Endpoints tab is open
         Then the 3 endpoint instances are displayed
@@ -38,12 +51,15 @@ describe("FEATURE: Active Endpoints", () => {
         Endpoint name
         Host identifier
         Latest heartbeat received
-        
-      */
 
-    /* SCENARIO
+      */
+  });
+  describe("Rule: Active endpoint list row should show logical endpoint with name, number of instances, host identifier, and latest heartbeat received", () => {
+    it.todo("Example: With multiple instances of an endpoints sending heartbeats, only the single logical endpoint details should be displayed in the list");
+  });
+  /* SCENARIO
         Display Logical Endpoints
-        
+
         Given 3 endpoint instances sending heartbeats
           Endpoint1@HOST1
           Endpoint1@HOST2
@@ -54,36 +70,35 @@ describe("FEATURE: Active Endpoints", () => {
           Endpoint2
       */
 
-    /* NOTES
+  /* NOTES
         Endpoint name
         Instance count
         Latest heartbeat received
       */
-  });
-  describe("Rule: Change display", () => {
+  describe("Rule: Changing between logical and instance listing displays should be possible", () => {
     it.todo("Not implemented");
   });
-  describe("Rule: Sort list of active endpoints", () => {
+  describe("Rule: Sorting by of the name of an endpoint should be possible in all displays", () => {
     it.todo("Not implemented");
   });
-  describe("Rule: Filter list of active endpoints", () => {
+  describe("Rule: Filtering endpoints by name should be possible", () => {
     it.todo("Not implemented");
   });
 });
 describe("FEATURE: Inactive endpoints", () => {
-  describe("Rule: Show count of inactive endpoints", () => {
+  describe("Rule: The count of inactive endpoints should be displayed", () => {
     it.todo("Not implemented");
   });
-  describe("Rule: Show list of inactive endpoints", () => {
+  describe("Rule: Listing inactive endpoints should be possible", () => {
     it.todo("Not implemented");
   });
-  describe("Rule: Change display", () => {
+  describe("Rule: Changing between logical and instance listing displays should be possible", () => {
     it.todo("Not implemented");
   });
-  describe("Rule: Sort list of inactive endpoints", () => {
+  describe("Rule: Sorting by of the name of an endpoint should be possible in all displays", () => {
     it.todo("Not implemented");
   });
-  describe("Rule: Filter list of inactive endpoints", () => {
+  describe("Rule: Filtering endpoints by name should be possible", () => {
     it.todo("Not implemented");
   });
 });
