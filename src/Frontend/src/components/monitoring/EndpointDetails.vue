@@ -89,7 +89,7 @@ onMounted(() => {
         <!--Header-->
         <div class="monitoring-head">
           <div class="endpoint-title no-side-padding list-section">
-            <h1 class="righ-side-ellipsis" v-tooltip :title="endpointName">
+            <h1 aria-label="endpoint-title" aria-level="1" class="righ-side-ellipsis" v-tooltip :title="endpointName">
               {{ endpointName }}
             </h1>
             <div class="endpoint-status">

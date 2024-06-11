@@ -1,4 +1,7 @@
+import { expect } from "vitest";
 import { it, describe } from "../../drivers/vitest/driver";
+import * as precondition from "../../preconditions";
+import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
 
 describe("FEATURE: Endpoint details", () => {
   describe("RULE: The details of an endpoint should be viewable on a dedicated page", () => {
@@ -9,7 +12,13 @@ describe("FEATURE: Endpoint details", () => {
     it("Example: The endpoint has valid license", async ({ driver }) => {});
   });
   describe("RULE: Endpoint details should display endpoint name correctly", () => {
-    it("Example: Clicking an endpoint name from the endpoint monitoring list", async ({ driver }) => {});
+    it("Example: Clicking an endpoint name from the endpoint monitoring list", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1"]));
+
+      await driver.goTo("/monitoring/endpoint/Universe.Solarsystem.Earth.Endpoint1?historyPeriod=1");
+      expect(await endpointsDetailsTitle()).toBe("Universe.Solarsystem.Earth.Endpoint1");
+    });
   });
   describe("RULE: An indication should be be displayed for the status of an endpoint", () => {
     it("Example: An endpoint has a negative critical time", async ({ driver }) => {});
