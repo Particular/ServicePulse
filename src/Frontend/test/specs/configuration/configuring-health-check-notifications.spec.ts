@@ -78,19 +78,16 @@ describe("FEATURE: Health check notifications", () => {
         */
   });
   describe("Rule: Sending a test notification should indicate success or failure", () => {
-    it.todo("Example: Test notification failed to send");
+    it.todo("Example: Invalid Configuration");
 
     /* SCENARIO
-          Invalid Configuration
-
           Given an invalid configuration
           When "Send test notification" is clicked
           Then "TEST FAILED" is displayed
         */
 
-    it.todo("Example: Test notification sent successfully");
-    /* SCENARIO
-          Valid Configuration
+    it.todo("Example: Valid Configuration");
+    /* SCENARIO          
 
           Given a valid configuration
           When "Send test notification" is clicked
