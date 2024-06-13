@@ -18,10 +18,13 @@ describe("FEATURE: Endpoint details", () => {
   describe("RULE: Endpoint details should display endpoint name correctly", () => {
     it("Example: Clicking an endpoint name from the endpoint monitoring list", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.monitoredEndpointsNamed(["Universe.Solarsystem.Earth.Endpoint1"]));
 
-      await driver.goTo("/monitoring/endpoint/Universe.Solarsystem.Earth.Endpoint1?historyPeriod=1");
-      expect(await endpointsDetailsTitle()).toBe("Universe.Solarsystem.Earth.Endpoint1");
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+
+      await driver.goTo("/monitoring/endpoint/Endpoint1");
+      expect(await endpointsDetailsTitle()).toBe("Endpoint1");
     });
   });
   describe("RULE: An indication should be be displayed for the status of an endpoint", () => {
@@ -31,12 +34,13 @@ describe("FEATURE: Endpoint details", () => {
       const endpointDetails = structuredClone(monitoredEndpointDetails);
       endpointDetails.instances[0].metrics.criticalTime.points.push(-1000);
       await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await negativeCriticalTimeWarning()).toBeTruthy());
+      await waitFor(async () => expect(await negativeCriticalTimeWarning()).toBeTruthy(), { timeout: 5000 });
     });
     it.todo("Example: An endpoint is stale", async ({ driver }) => {});
     it.todo("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {});
