@@ -6,6 +6,7 @@ import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
 import { endpointsDetailsMessageName } from "./questions/endpointDetailsMessageTypeName";
 import { monitoredEndpointTemplate, monitoredEndpointDetails } from "../../mocks/monitored-endpoint-template";
 import { negativeCriticalTimeWarning } from "./questions/negativeCriticalTimeWarning";
+import { endpointStaleWarning } from "./questions/endpointStaleWarning";
 
 describe("FEATURE: Endpoint details", () => {
   describe("RULE: The details of an endpoint should be viewable on a dedicated page", () => {
@@ -40,9 +41,22 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await negativeCriticalTimeWarning()).toBeTruthy(), { timeout: 5000 });
+      await waitFor(async () => expect(await negativeCriticalTimeWarning()).toBeTruthy());
     });
-    it.todo("Example: An endpoint is stale", async ({ driver }) => {});
+    it("Example: An endpoint is stale", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      endpointDetails.instances[0].isStale = true;
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+
+      // Assert
+      await waitFor(async () => expect(await endpointStaleWarning()).toBeTruthy());
+    });
     it.todo("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {});
     it.todo("Example: An endpoint has failed messages", async ({ driver }) => {});
   });
