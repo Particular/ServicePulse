@@ -1,4 +1,5 @@
-import { Endpoint, EndpointDetails, EndpointMetrics } from "@/resources/MonitoringEndpoint";
+import GroupOperation from "@/resources/GroupOperation";
+import { Endpoint, EndpointDetails, EndpointMetrics, ExtendedEndpointDetails } from "@/resources/MonitoringEndpoint";
 
 export const monitoredEndpointTemplate = <Endpoint>{
   name: "A happy endpoint",
@@ -186,7 +187,9 @@ export const monitoredEndpointList: Endpoint[] = [
   },
 ];
 
-export const monitoredEndpointDetails = <EndpointDetails>{
+export const monitoredEndpointDetails = <ExtendedEndpointDetails>{
+  isScMonitoringDisconnected: false,
+  errorCount: 0,
   digest: {
     metrics: {
       processingTime: {
