@@ -1,7 +1,11 @@
 import { expect } from "vitest";
+import { screen, waitFor } from "@testing-library/dom";
 import { it, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
+import { endpointsDetailsMessageName } from "./questions/endpointDetailsMessageTypeName";
+import { monitoredEndpointTemplate, monitoredEndpointDetails } from "../../mocks/monitored-endpoint-template";
+import { negativeCriticalTimeWarning } from "./questions/negativeCriticalTimeWarning";
 
 describe("FEATURE: Endpoint details", () => {
   describe("RULE: The details of an endpoint should be viewable on a dedicated page", () => {
@@ -21,7 +25,19 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: An indication should be be displayed for the status of an endpoint", () => {
-    it.todo("Example: An endpoint has a negative critical time", async ({ driver }) => {});
+    it("Example: An endpoint has a negative critical time", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      endpointDetails.instances[0].metrics.criticalTime.points.push(-1000);
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+
+      // Assert
+      await waitFor(async () => expect(await negativeCriticalTimeWarning()).toBeTruthy());
+    });
     it.todo("Example: An endpoint is stale", async ({ driver }) => {});
     it.todo("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {});
     it.todo("Example: An endpoint has failed messages", async ({ driver }) => {});
