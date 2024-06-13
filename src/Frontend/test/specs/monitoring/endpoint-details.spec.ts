@@ -3,10 +3,9 @@ import { screen, waitFor } from "@testing-library/dom";
 import { it, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
-import { endpointsDetailsMessageName } from "./questions/endpointDetailsMessageTypeName";
-import { monitoredEndpointTemplate, monitoredEndpointDetails } from "../../mocks/monitored-endpoint-template";
+import { endpointMessageNames } from "./questions/endpointDetailsMessageTypes";
+import { monitoredEndpointDetails } from "../../mocks/monitored-endpoint-template";
 import * as warningQuestion from "./questions/endpointWarnings";
-//import { endpointStaleWarning } from "./questions/endpointStaleWarning";
 
 describe("FEATURE: Endpoint details", () => {
   describe("RULE: The details of an endpoint should be viewable on a dedicated page", () => {
@@ -89,7 +88,18 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: Endpoint details should show all message types for the endpoint", () => {
-    it.todo("Example: The endpoint sends messages of type 'Message1,' 'Message2,' and 'Message3'", async ({ driver }) => {});
+    it("Example: The endpoint sends messages of type 'Message1,' 'Message2,' and 'Message3'", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+
+      // Assert
+      await waitFor(async () => expect(await endpointMessageNames()).toEqual(["Message1", "Message2", "Message3"]));
+    });
     it.todo("Example: Endpoint details should show correct counts for message types", async ({ driver }) => {});
   });
   describe("RULE: Endpoint details should show all instances of the endpoint", () => {
