@@ -96,16 +96,16 @@ onMounted(() => {
               <span role="status" aria-label="negative-critical-time-warning" class="warning" v-if="negativeCriticalTimeIsPresent">
                 <i class="fa pa-warning" v-tooltip :title="`Warning: endpoint currently has negative critical time, possibly because of a clock drift.`"></i>
               </span>
-              <span v-if="endpoint.isStale" class="warning">
+              <span role="status" aria-label="stale-warning" v-if="endpoint.isStale" class="warning">
                 <i class="fa pa-endpoint-lost endpoint-details" v-tooltip :title="`Unable to connect to endpoint`"></i>
               </span>
-              <span class="warning" v-if="endpoint.isScMonitoringDisconnected">
+              <span role="status" aria-label="disconnected-warning" class="warning" v-if="endpoint.isScMonitoringDisconnected">
                 <i class="fa pa-monitoring-lost endpoint-details" v-tooltip :title="`Unable to connect to monitoring server`"></i>
               </span>
-              <span class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
+              <span role="status" aria-label="error-count-warning" class="warning" v-if="endpoint.errorCount" v-tooltip :title="endpoint.errorCount + ` failed messages associated with this endpoint. Click to see list.`">
                 <RouterLink :to="routeLinks.failedMessage.group.link(endpoint.serviceControlId)" v-if="endpoint.errorCount" class="warning cursorpointer">
                   <i class="fa fa-envelope"></i>
-                  <span class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
+                  <span aria-label="error-count" class="badge badge-important ng-binding cursorpointer"> {{ endpoint.errorCount }}</span>
                 </RouterLink>
               </span>
             </div>
