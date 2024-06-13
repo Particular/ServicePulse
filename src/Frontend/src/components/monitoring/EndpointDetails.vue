@@ -93,7 +93,7 @@ onMounted(() => {
               {{ endpointName }}
             </h1>
             <div class="endpoint-status">
-              <span class="warning" v-if="negativeCriticalTimeIsPresent">
+              <span role="status" aria-label="negative-critical-time-warning" class="warning" v-if="negativeCriticalTimeIsPresent">
                 <i class="fa pa-warning" v-tooltip :title="`Warning: endpoint currently has negative critical time, possibly because of a clock drift.`"></i>
               </span>
               <span v-if="endpoint.isStale" class="warning">
