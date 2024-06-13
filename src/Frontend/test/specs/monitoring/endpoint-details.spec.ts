@@ -5,8 +5,8 @@ import * as precondition from "../../preconditions";
 import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
 import { endpointsDetailsMessageName } from "./questions/endpointDetailsMessageTypeName";
 import { monitoredEndpointTemplate, monitoredEndpointDetails } from "../../mocks/monitored-endpoint-template";
-import { negativeCriticalTimeWarning } from "./questions/negativeCriticalTimeWarning";
-import { endpointStaleWarning } from "./questions/endpointStaleWarning";
+import * as warningQuestion from "./questions/endpointWarnings";
+//import { endpointStaleWarning } from "./questions/endpointStaleWarning";
 
 describe("FEATURE: Endpoint details", () => {
   describe("RULE: The details of an endpoint should be viewable on a dedicated page", () => {
@@ -41,7 +41,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await negativeCriticalTimeWarning()).toBeTruthy());
+      await waitFor(async () => expect(await warningQuestion.negativeCriticalTimeWarning()).toBeTruthy());
     });
     it("Example: An endpoint is stale", async ({ driver }) => {
       // Arrange
@@ -55,10 +55,38 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await endpointStaleWarning()).toBeTruthy());
+      await waitFor(async () => expect(await warningQuestion.endpointStaleWarning()).toBeTruthy());
     });
-    it.todo("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {});
-    it.todo("Example: An endpoint has failed messages", async ({ driver }) => {});
+    it("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      endpointDetails.isScMonitoringDisconnected = true;
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+
+      // Assert
+      await waitFor(async () => expect(await warningQuestion.endpointDisconnectedWarning()).toBeTruthy());
+    });
+
+    it("Example: An endpoint has a failed message", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const endpointDetails = structuredClone(monitoredEndpointDetails);
+      endpointDetails.errorCount = 5;
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+
+      // Assert
+      await waitFor(async () => expect(await warningQuestion.endpointErrorCountWarning()).toBeTruthy());
+      await waitFor(async () => expect(await warningQuestion.endpointErrorCount()).toBe("5"));
+    });
   });
   describe("RULE: Endpoint details should show all message types for the endpoint", () => {
     it.todo("Example: The endpoint sends messages of type 'Message1,' 'Message2,' and 'Message3'", async ({ driver }) => {});
