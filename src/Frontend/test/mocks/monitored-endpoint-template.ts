@@ -1,5 +1,5 @@
 import GroupOperation from "@/resources/GroupOperation";
-import { Endpoint, EndpointDetails, EndpointMetrics, ExtendedEndpointDetails } from "@/resources/MonitoringEndpoint";
+import { Endpoint, EndpointDetails, EndpointMetrics, ExtendedEndpointDetails, MessageType } from "@/resources/MonitoringEndpoint";
 
 export const monitoredEndpointTemplate = <Endpoint>{
   name: "A happy endpoint",
@@ -294,6 +294,33 @@ export const monitoredEndpointDetails = <ExtendedEndpointDetails>{
         average: 2,
         points: [0],
       },
+    },
+  },
+};
+
+export const messageTypeForEndpoint = <MessageType>{
+  id: "Message1, Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+  typeName: "Message1",
+  assemblyName: "Shared",
+  assemblyVersion: "1.0.0.0",
+  culture: "neutral",
+  publicKeyToken: "null",
+  metrics: {
+    processingTime: {
+      average: 74.82203389830508,
+      points: [0],
+    },
+    criticalTime: {
+      average: 239.78813559322035,
+      points: [0],
+    },
+    retries: {
+      average: 0,
+      points: [0],
+    },
+    throughput: {
+      average: 1.9666666666666666,
+      points: [0],
     },
   },
 };
