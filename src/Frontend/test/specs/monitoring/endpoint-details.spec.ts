@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/dom";
 import { it, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
-import { endpointMessageNames } from "./questions/endpointDetailsMessageTypes";
+import { endpointMessageNames, endpointMessageTypesCount } from "./questions/endpointDetailsMessageTypes";
 import { monitoredEndpointDetails } from "../../mocks/monitored-endpoint-template";
 import * as warningQuestion from "./questions/endpointWarnings";
 
@@ -100,7 +100,18 @@ describe("FEATURE: Endpoint details", () => {
       // Assert
       await waitFor(async () => expect(await endpointMessageNames()).toEqual(["Message1", "Message2", "Message3"]));
     });
-    it.todo("Example: Endpoint details should show correct counts for message types", async ({ driver }) => {});
+    it("Example: Endpoint details should show correct counts for message types", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+
+      // Assert
+      await waitFor(async () => expect(await endpointMessageTypesCount()).toEqual("3"));
+    });
   });
   describe("RULE: Endpoint details should show all instances of the endpoint", () => {
     it.todo("Example: The endpoint has 1 instance running", async ({ driver }) => {});
