@@ -1,5 +1,5 @@
 import { EndpointDetails } from "@/resources/MonitoringEndpoint";
-import { monitoredEndpointDetails } from "../mocks/monitored-endpoint-template";
+import { monitoredEndpointDetails, instanceForEndpoint } from "../mocks/monitored-endpoint-template";
 import { SetupFactoryOptions } from "../driver";
 import { messageTypeForEndpoint } from "../mocks/monitored-endpoint-template";
 
@@ -19,6 +19,21 @@ export const hasEndpointMessageTypesNamed =
     const endpointDetails = structuredClone(monitoredEndpointDetails);
     endpointDetails.messageTypes = [];
     endpointDetails.messageTypes.push(...messageNames.map((name) => ({ ...messageTypeForEndpoint, typeName: name })));
+
+    const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+    driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints/${endpointDetails.instances[0].name}`, {
+      body: endpointDetails,
+    });
+
+    return endpointDetails;
+  };
+
+export const hasEndpointInstancesNamed =
+  (instanceNames: string[]) =>
+  ({ driver }: SetupFactoryOptions) => {
+    const endpointDetails = structuredClone(monitoredEndpointDetails);
+    endpointDetails.instances = [];
+    endpointDetails.instances.push(...instanceNames.map((name) => ({ ...instanceForEndpoint, name: name })));
 
     const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
     driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints/${endpointDetails.instances[0].name}`, {
