@@ -4,6 +4,7 @@ import { it, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
 import { endpointMessageNames, endpointMessageTypesCount } from "./questions/endpointDetailsMessageTypes";
+import { endpointInstanceNames, endpointInstancesCount } from "./questions/endpointDetailsInstances";
 import { monitoredEndpointDetails } from "../../mocks/monitored-endpoint-template";
 import * as warningQuestion from "./questions/endpointWarnings";
 
@@ -114,8 +115,32 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: Endpoint details should show all instances of the endpoint", () => {
-    it.todo("Example: The endpoint has 1 instance running", async ({ driver }) => {});
-    it.todo("Example: The endpoint has 3 instances running", async ({ driver }) => {});
+    it("Example: The endpoint has 1 instance running", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1"]));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1&tab=instancesBreakdown");
+
+      // Assert
+      await waitFor(async () => expect(await endpointInstancesCount()).toEqual("1"));
+      await waitFor(async () => expect(await endpointInstanceNames()).toEqual(["Endpoint1"]));
+    });
+    it("Example: The endpoint has 3 instances running", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1", "Endpoint2", "Endpoint3"]));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+
+      // Act
+      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1&tab=instancesBreakdown");
+
+      // Assert
+      await waitFor(async () => expect(await endpointInstancesCount()).toEqual("3"));
+      await waitFor(async () => expect(await endpointInstanceNames()).toEqual(["Endpoint1", "Endpoint2", "Endpoint3"]));
+    });
   });
   describe("RULE: Endpoint detail graphs should update on period selector change", () => {
     it.todo("Example: One period is selected from the period selector", async ({ driver }) => {});
