@@ -133,7 +133,10 @@ onMounted(() => {
           <!--tabs-->
           <div class="tabs">
             <h5 :class="{ active: activeTab === tabs.messageTypeBreakdown }">
-              <a @click="activeTab = tabs.messageTypeBreakdown" class="cursorpointer ng-binding">Message Types ({{ endpoint.messageTypes.length }})</a>
+              <a @click="activeTab = tabs.messageTypeBreakdown" class="cursorpointer ng-binding"
+                >Message Types (<span aria-label="message-types-count">{{ endpoint.messageTypes.length }}</span
+                >)</a
+              >
             </h5>
             <h5 :class="{ active: activeTab === tabs.instancesBreakdown }">
               <a @click="activeTab = tabs.instancesBreakdown" class="cursorpointer ng-binding">Instances ({{ endpoint.instances.length }})</a>
