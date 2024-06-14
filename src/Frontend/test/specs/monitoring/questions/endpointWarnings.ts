@@ -11,18 +11,18 @@ export async function negativeCriticalTimeWarning() {
 }
 
 export async function endpointDisconnectedWarning() {
-  const staleWarning = await screen.queryByRole("status", { name: "disconnected-warning" });
-  return staleWarning;
+  const disconnectedWarning = await screen.queryByRole("status", { name: "disconnected-warning" });
+  return disconnectedWarning;
 }
 
 export async function endpointErrorCountWarning() {
-  const staleWarning = await screen.queryByRole("status", { name: "error-count-warning" });
-  return staleWarning;
+  const errorCountWarning = await screen.queryByRole("status", { name: "error-count-warning" });
+  return errorCountWarning;
 }
 
 export async function endpointErrorCount() {
-  const staleWarning = await screen.queryByRole("status", { name: "error-count-warning" });
-  if (staleWarning === null) return null;
-  const errorCount = await within(staleWarning).findByLabelText("error-count");
+  const errorCountWarning = await screen.queryByRole("status", { name: "error-count-warning" });
+  if (errorCountWarning === null) return null;
+  const errorCount = await within(errorCountWarning).findByLabelText("error-count");
   return errorCount.textContent;
 }
