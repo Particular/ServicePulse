@@ -99,7 +99,7 @@ onMounted(async () => {
           <div class="row box endpoint-row" v-for="(instance, id) in endpoint.instances" :key="id">
             <div class="col-xs-12 no-side-padding">
               <div role="row" :aria-label="instance.name" class="row">
-                <div role="cell" class="col-xs-4 col-xl-8 endpoint-name">
+                <div role="cell" aria-label="instance-name" class="col-xs-4 col-xl-8 endpoint-name">
                   <div class="box-header with-status">
                     <div role="instance-name" aria-label="instance-name" class="no-side-padding lead righ-side-ellipsis" v-tooltip :title="instance.name">
                       {{ instance.name }}
@@ -123,7 +123,7 @@ onMounted(async () => {
                     </div>
                   </div>
                 </div>
-                <div role="cell" class="col-xs-2 col-xl-1 no-side-padding">
+                <div role="cell" aria-label="throughput" class="col-xs-2 col-xl-1 no-side-padding">
                   <div class="row box-header">
                     <div class="no-side-padding">
                       <SmallGraph :type="'throughput'" :isdurationgraph="false" :plotdata="instance.metrics.throughput" :minimumyaxis="smallGraphsMinimumYAxis.throughput" :metricsuffix="'MSGS/S'" />
@@ -135,7 +135,7 @@ onMounted(async () => {
                     </div>
                   </div>
                 </div>
-                <div role="cell" class="col-xs-2 col-xl-1 no-side-padding">
+                <div role="cell" aria-label="retires" class="col-xs-2 col-xl-1 no-side-padding">
                   <div class="row box-header">
                     <div class="no-side-padding">
                       <SmallGraph :type="'retries'" :isdurationgraph="false" :plotdata="instance.metrics.retries" :minimumyaxis="smallGraphsMinimumYAxis.retries" :metricsuffix="'MSGS/S'" />
@@ -147,7 +147,7 @@ onMounted(async () => {
                     </div>
                   </div>
                 </div>
-                <div role="cell" class="col-xs-2 col-xl-1 no-side-padding">
+                <div role="cell" aria-label="processing-time" class="col-xs-2 col-xl-1 no-side-padding">
                   <div class="row box-header">
                     <div class="no-side-padding">
                       <SmallGraph :type="'processing-time'" :isdurationgraph="true" :plotdata="instance.metrics.processingTime" :minimumyaxis="smallGraphsMinimumYAxis.processingTime" />
@@ -162,7 +162,7 @@ onMounted(async () => {
                     </div>
                   </div>
                 </div>
-                <div role="cell" class="col-xs-2 col-xl-1 no-side-padding">
+                <div role="cell" aria-label="critical-time" class="col-xs-2 col-xl-1 no-side-padding">
                   <div class="row box-header">
                     <div class="no-side-padding">
                       <SmallGraph :type="'critical-time'" :isdurationgraph="true" :plotdata="instance.metrics.criticalTime" :minimumyaxis="smallGraphsMinimumYAxis.criticalTime" />
