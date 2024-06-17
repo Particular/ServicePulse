@@ -16,7 +16,7 @@ describe("FEATURE: Endpoint details", () => {
     it.todo("Example: The endpoint has expired license", async ({ driver }) => {});
     it.todo("Example: The endpoint has valid license", async ({ driver }) => {});
   });
-  describe("RULE: Endpoint details should display endpoint name correctly", () => {
+  describe("RULE: Endpoint details include the endpoint name", () => {
     it("Example: Clicking an endpoint name from the endpoint monitoring list", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
