@@ -118,9 +118,9 @@ onMounted(() => {
           </div>
         </div>
         <!--large graphs-->
-        <div class="large-graphs">
+        <div role="grid" aria-label="detail-graphs-data" class="large-graphs">
           <div class="container">
-            <div class="row">
+            <div role="row" class="row">
               <EndpointBacklog v-model="endpoint" />
               <EndpointWorkload v-model="endpoint" />
               <EndpointTimings v-model="endpoint" />
