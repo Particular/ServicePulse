@@ -10,7 +10,7 @@ export enum columnName {
   CRITICALTIME = "criticalTime",
 }
 export async function smallGraphAverageValuesByColumn({ column }: { column: columnName | string }) {
-  const ungroupedEndpoints = screen.getByRole("treeitem", { name: "ungrouped-endpoints" });
+  const ungroupedEndpoints = screen.getByRole("rowgroup", { name: "ungrouped-endpoints" });
   const endpointRows = within(ungroupedEndpoints).getAllByRole("row");
   const averageValues: string[] = [];
 
