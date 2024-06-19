@@ -4,7 +4,7 @@ export function findSortImageInColumn(columnName: string, direction: "up" | "dow
   const columnButton = screen.getByRole("columnheader", { name: columnName });
   const { queryByRole } = within(columnButton);
   const imageRole = direction === "up" ? "sort-up" : "sort-down";
-  const sortImage = queryByRole("image", { name: imageRole });
+  const sortImage = queryByRole("img", { name: imageRole });
 
   return sortImage;
 }

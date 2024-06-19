@@ -16,7 +16,7 @@ export async function smallGraphAverageValuesByColumn({ column }: { column: colu
 
   for (const row of endpointRows) {
     const gridCell = within(row).getByRole("gridcell", { name: column });
-    const graphImage = within(gridCell).getByRole("image", { name: column });
+    const graphImage = within(gridCell).getByRole("img", { name: column });
     await fireEvent.mouseOver(graphImage);
     const averageValueElement = within(graphImage).getByRole("text", { name: "average-value" });
 
