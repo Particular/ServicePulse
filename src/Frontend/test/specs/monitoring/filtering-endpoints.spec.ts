@@ -1,5 +1,4 @@
 import { expect } from "vitest";
-import { waitFor } from "@testing-library/dom";
 import { it, describe } from "../../drivers/vitest/driver";
 import { enterFilterString } from "./actions/enterFilterString";
 import { groupEndpointsBy } from "./actions/groupEndpointsBy";
