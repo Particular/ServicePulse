@@ -99,7 +99,7 @@ describe("FEATURE: Grouping endpoints", () => {
       await groupEndpointsBy({ numberOfSegments: 1 });
 
       //Assert
-      expect(endpointGroupNames()).toEqual(["Universe"]);
+      expect(await endpointGroupNames()).toEqual(["Universe"]);
       expect(endpointGroup("Universe").Endpoints).toEqual(["Alphacentauri.Proximacentauri.Endpoint1", "Solarsystem.Earth.Endpoint1", "Solarsystem.Earth.Endpoint2"]);
     });
 
@@ -113,8 +113,8 @@ describe("FEATURE: Grouping endpoints", () => {
       await groupEndpointsBy({ numberOfSegments: 1 });
 
       //Assert
-      expect(endpointGroupNames()).toEqual(["Ungrouped", "Universe"]);
-      expect(endpointGroup("Ungrouped").Endpoints).toEqual(["Endpoint1"]);
+      expect(await endpointGroupNames()).toEqual(["Ungrouped", "Universe"]);
+      expect(await endpointGroup("Ungrouped").Endpoints).toEqual(["Endpoint1"]);
       expect(endpointGroup("Universe").Endpoints).toEqual(["Solarsystem.Earth.Endpoint2", "Solarsystem.Earth.Endpoint3"]);
     });
 
@@ -128,7 +128,7 @@ describe("FEATURE: Grouping endpoints", () => {
       await groupEndpointsBy({ numberOfSegments: 2 });
 
       //Assert
-      expect(endpointGroupNames()).toEqual(["Universe.Alphacentauri", "Universe.Solarsystem"]);
+      expect(await endpointGroupNames()).toEqual(["Universe.Alphacentauri", "Universe.Solarsystem"]);
       expect(endpointGroup("Universe.Alphacentauri").Endpoints).toEqual(["Proximacentauri.Endpoint1"]);
       expect(endpointGroup("Universe.Solarsystem").Endpoints).toEqual(["Earth.Endpoint1", "Earth.Endpoint2"]);
     });
@@ -143,7 +143,7 @@ describe("FEATURE: Grouping endpoints", () => {
       await groupEndpointsBy({ numberOfSegments: 2 });
 
       //Assert
-      expect(endpointGroupNames()).toEqual(["Universe", "Universe.Solarsystem"]);
+      expect(await endpointGroupNames()).toEqual(["Universe", "Universe.Solarsystem"]);
       expect(endpointGroup("Universe").Endpoints).toEqual(["Endpoint1"]);
       expect(endpointGroup("Universe.Solarsystem").Endpoints).toEqual(["Earth.Endpoint2", "Earth.Endpoint3"]);
     });
@@ -161,7 +161,7 @@ describe("FEATURE: Grouping endpoints", () => {
       await groupEndpointsBy({ numberOfSegments: 0 });
 
       //Assert
-      expect(endpointGroupNames()).toEqual([]);
+      expect(await endpointGroupNames()).toEqual([]);
     });
   });
 });
