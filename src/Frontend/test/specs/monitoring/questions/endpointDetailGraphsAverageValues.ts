@@ -1,7 +1,7 @@
 import { screen, within } from "@testing-library/vue";
 
-export async function endpointDetailsGraphsAverageValues() {
-  const graphDetails = await screen.getByRole("grid", { name: "detail-graphs-data" });
+export function endpointDetailsGraphsAverageValues() {
+  const graphDetails = screen.getByRole("grid", { name: "detail-graphs-data" });
   const allGraphCurrentValues = within(graphDetails).getAllByLabelText("metric-average-value");
 
   const data = allGraphCurrentValues.map((element) => {
