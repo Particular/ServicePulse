@@ -201,7 +201,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
 
       // Act
-      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+      await driver.goTo("/monitoring/endpoint/Endpoint1");
 
       // Assert
       await waitFor(async () => expect(await endpointMessageNames()).toEqual(["Message1", "Message2", "Message3"]));
@@ -213,7 +213,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
 
       // Act
-      await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
+      await driver.goTo("/monitoring/endpoint/Endpoint1");
 
       // Assert
       await waitFor(async () => expect(await endpointMessageTypesCount()).toEqual("3"));
@@ -247,30 +247,14 @@ describe("FEATURE: Endpoint details", () => {
       await waitFor(async () => expect(await endpointInstanceNames()).toEqual(["Endpoint1", "Endpoint2", "Endpoint3"]));
     });
   });
-  describe("RULE: Endpoint detail graphs should update on period selector change", () => {
-    it.todo("Example: One period is selected from the period selector", async ({ driver }) => {});
-    it.todo("Example: Two different periods are selected from the period selector", async ({ driver }) => {});
-  });
-  describe("RULE: Pagination should be displayed when more than 10 message types are present", () => {
-    it("Example: 9 message types are present", async ({ driver }) => {
-      // Arrange
-      await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(9).fill("Message").map((name, index) => `${name}${index}`)));
-
-      // Act
-      await driver.goTo("/monitoring/endpoint/Endpoint1");
-
-      // Assert
-      await waitFor(async () => expect(paginationVisible()).not.toBeTruthy());
-    });
+  describe("RULE: Pagination should be displayed when 11 or more message types are present", () => {
     it("Example: 10 message types are present", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(10).fill("Message").map((name, index) => `${name}${index}`)));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
 
       // Act
-      await driver.goTo("monitoring/endpoint/Endpoint1");
+      await driver.goTo("/monitoring/endpoint/Endpoint1");
 
       // Assert
       await waitFor(async () => expect(paginationVisible()).not.toBeTruthy());
@@ -279,6 +263,18 @@ describe("FEATURE: Endpoint details", () => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(11).fill("Message").map((name, index) => `${name}${index}`)));
+      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+
+      // Act
+      await driver.goTo("monitoring/endpoint/Endpoint1");
+
+      // Assert
+      await waitFor(async () => expect(paginationVisible()).not.toBeTruthy());
+    });
+    it("Example: 12 message types are present", async ({ driver }) => {
+      // Arrange
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(12).fill("Message").map((name, index) => `${name}${index}`)));
       await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
 
       // Act
