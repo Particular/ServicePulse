@@ -32,7 +32,7 @@ describe("FEATURE: Endpoint details", () => {
       expect(await endpointsDetailsTitle()).toBe("Endpoint1");
     });
   });
-  describe("RULE: Endpoint detail graph data should be updated immediately after changing the history period", () => {
+  describe("RULE: Endpoint detail metric data should be updated immediately after changing the history period", () => {
     it(`EXAMPLE: As history periods are selected the graph data values should update immediately`, async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
@@ -44,9 +44,10 @@ describe("FEATURE: Endpoint details", () => {
       //Act
       await driver.goTo(`/monitoring/endpoint/Endpoint1`);
 
-      // Assert for default monitored endpoint detail values
+      // Assert
+      // Wait for the default values of the page to be updated after the page is loaded
       await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
-      await waitFor(async () => expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "1.97", "0", "74", "239"]));
+      expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "1.97", "0", "74", "239"]);
 
       await driver.setUp(precondition.hasEndpointWithMetricValues(2, 2, 8, 9.56, 13.24, 10, 81, 78, 215, 220));
       await selectHistoryPeriod(5);
@@ -83,6 +84,53 @@ describe("FEATURE: Endpoint details", () => {
 
       expect(await endpointDetailsGraphsCurrentValues()).toEqual(["1", "3", "5", "7", "9"]);
       expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "4", "6", "8", "10"]);
+    });
+  });
+  describe("RULE:  Endpoint detail metric data should be updated at the interval selected by the history period", () => {
+    [
+      { description: "As history period is changed to 5 minutes the endpoint metrics data should be updated at the correct interval", historyPeriod: 5 },
+      { description: "As history period is changed to 10 minutes the endpoint metrics data should be updated at the correct interval", historyPeriod: 10 },
+      { description: "As history period is changed to 15 minutes the endpoint metrics data should be updated at the correct interval", historyPeriod: 15 },
+      { description: "As history period is changed to 30 minutes the endpoint metrics data should be updated at the correct interval", historyPeriod: 30 },
+      { description: "As history period is changed to 60 minutes the endpoint metrics data should be updated at the correct interval", historyPeriod: 60 },
+    ].forEach(({ description, historyPeriod }) => {
+      //
+      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+        // Arrange
+        vi.useFakeTimers(); // Needs to be called before the first call to setInterval
+        await driver.setUp(precondition.serviceControlWithMonitoring);
+        await driver.setUp(precondition.hasEndpointWithMetricValues(2, 2, 8, 9.56, 13.24, 10, 81, 78, 215, 220));
+        await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+
+        // Act
+        await driver.goTo("/monitoring/endpoint/Endpoint1");
+        await selectHistoryPeriod(historyPeriod, true);
+
+        // Assert
+        // Wait for component to update from selected history period immediately
+        await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "8", "13.24", "81", "215"]));
+        expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "9.56", "10", "78", "220"]);
+
+        // Update the mocked data to what the backend should respond with when the fetching happens
+        await driver.setUp(precondition.hasEndpointWithMetricValues(5, 3.1, 12, 7.4, 2.2, 1, 124, 105.7, 201, 198));
+
+        // Simulate the time passing for half the selected history period
+        await vi.advanceTimersByTimeAsync((historyPeriod * 1000) / 2);
+        expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "8", "13.24", "81", "215"]);
+        expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "9.56", "10", "78", "220"]);
+
+        // Simulate the time passing for all except 1 millisecond of the selected history period
+        await vi.advanceTimersByTimeAsync((historyPeriod * 1000) / 2 - 1);
+        expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "8", "13.24", "81", "215"]);
+        expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "9.56", "10", "78", "220"]);
+
+        // Simulate the time passing for the last millisecond to make the selected history period time now be elapsed
+        await vi.advanceTimersByTimeAsync(1);
+        expect(await endpointDetailsGraphsCurrentValues()).toEqual(["5", "12", "2.2", "124", "201"]);
+        expect(await endpointDetailsGraphsAverageValues()).toEqual(["3.1", "7.4", "1", "105", "198"]);
+
+        vi.useRealTimers();
+      });
     });
   });
   describe("RULE: An indication should be be displayed for the status of an endpoint", () => {
