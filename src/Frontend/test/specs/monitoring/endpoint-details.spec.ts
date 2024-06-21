@@ -45,44 +45,44 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo(`/monitoring/endpoint/Endpoint1`);
 
       // Assert for default monitored endpoint detail values
-      await waitFor(async () => expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
-      await waitFor(async () => expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "1.97", "0", "74", "239"]));
+      await waitFor(async () => expect(endpointDetailsGraphsCurrentValues()).toEqual(["2", "0", "0", "0", "0"]));
+      await waitFor(async () => expect(endpointDetailsGraphsAverageValues()).toEqual(["2", "1.97", "0", "74", "239"]));
 
       await driver.setUp(precondition.hasEndpointWithMetricValues(2, 2, 8, 9.56, 13.24, 10, 81, 78, 215, 220));
       await selectHistoryPeriod(5);
 
-      expect(await endpointDetailsGraphsCurrentValues()).toEqual(["2", "8", "13.24", "81", "215"]);
-      expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "9.56", "10", "78", "220"]);
+      expect(endpointDetailsGraphsCurrentValues()).toEqual(["2", "8", "13.24", "81", "215"]);
+      expect(endpointDetailsGraphsAverageValues()).toEqual(["2", "9.56", "10", "78", "220"]);
 
       await driver.setUp(precondition.hasEndpointWithMetricValues(5, 3.1, 12, 7.4, 2.2, 1, 124, 105.7, 201, 198));
       await selectHistoryPeriod(10);
 
-      expect(await endpointDetailsGraphsCurrentValues()).toEqual(["5", "12", "2.2", "124", "201"]);
-      expect(await endpointDetailsGraphsAverageValues()).toEqual(["3.1", "7.4", "1", "105", "198"]);
+      expect(endpointDetailsGraphsCurrentValues()).toEqual(["5", "12", "2.2", "124", "201"]);
+      expect(endpointDetailsGraphsAverageValues()).toEqual(["3.1", "7.4", "1", "105", "198"]);
 
       await driver.setUp(precondition.hasEndpointWithMetricValues(8, 6.5, 15, 12.6, 3.1, 2.4, 278, 255.3, 403, 387.8));
       await selectHistoryPeriod(15);
 
-      expect(await endpointDetailsGraphsCurrentValues()).toEqual(["8", "15", "3.1", "278", "403"]);
-      expect(await endpointDetailsGraphsAverageValues()).toEqual(["6.5", "12.6", "2.4", "255", "387"]);
+      expect(endpointDetailsGraphsCurrentValues()).toEqual(["8", "15", "3.1", "278", "403"]);
+      expect(endpointDetailsGraphsAverageValues()).toEqual(["6.5", "12.6", "2.4", "255", "387"]);
 
       await driver.setUp(precondition.hasEndpointWithMetricValues(1.1, 2.2, 3.3, 4.4, 5.5, 6.6, 777.7, 888.8, 999.9, 800.8));
       await selectHistoryPeriod(30);
 
-      expect(await endpointDetailsGraphsCurrentValues()).toEqual(["1.1", "3.3", "5.5", "777", "999"]);
-      expect(await endpointDetailsGraphsAverageValues()).toEqual(["2.2", "4.4", "6.6", "888", "800"]);
+      expect(endpointDetailsGraphsCurrentValues()).toEqual(["1.1", "3.3", "5.5", "777", "999"]);
+      expect(endpointDetailsGraphsAverageValues()).toEqual(["2.2", "4.4", "6.6", "888", "800"]);
 
       await driver.setUp(precondition.hasEndpointWithMetricValues(9.999, 8.888, 7.777, 6.666, 5.555, 4.444, 333.333, 222.222, 111.111, 100.123));
       await selectHistoryPeriod(60);
 
-      expect(await endpointDetailsGraphsCurrentValues()).toEqual(["10", "7.78", "5.55", "333", "111"]);
-      expect(await endpointDetailsGraphsAverageValues()).toEqual(["8.89", "6.67", "4.44", "222", "100"]);
+      expect(endpointDetailsGraphsCurrentValues()).toEqual(["10", "7.78", "5.55", "333", "111"]);
+      expect(endpointDetailsGraphsAverageValues()).toEqual(["8.89", "6.67", "4.44", "222", "100"]);
 
       await driver.setUp(precondition.hasEndpointWithMetricValues(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
       await selectHistoryPeriod(1);
 
-      expect(await endpointDetailsGraphsCurrentValues()).toEqual(["1", "3", "5", "7", "9"]);
-      expect(await endpointDetailsGraphsAverageValues()).toEqual(["2", "4", "6", "8", "10"]);
+      expect(endpointDetailsGraphsCurrentValues()).toEqual(["1", "3", "5", "7", "9"]);
+      expect(endpointDetailsGraphsAverageValues()).toEqual(["2", "4", "6", "8", "10"]);
     });
   });
   describe("RULE: An indication should be be displayed for the status of an endpoint", () => {
@@ -98,7 +98,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await warningQuestion.negativeCriticalTimeWarning()).toBeTruthy());
+      await waitFor(async () => expect(warningQuestion.negativeCriticalTimeWarning()).toBeTruthy());
     });
     it("Example: An endpoint is stale", async ({ driver }) => {
       // Arrange
@@ -112,7 +112,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await warningQuestion.endpointStaleWarning()).toBeTruthy());
+      await waitFor(async () => expect(warningQuestion.endpointStaleWarning()).toBeTruthy());
     });
     it("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {
       // Arrange
@@ -126,7 +126,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await warningQuestion.endpointDisconnectedWarning()).toBeTruthy());
+      await waitFor(async () => expect(warningQuestion.endpointDisconnectedWarning()).toBeTruthy());
     });
 
     it("Example: An endpoint has a failed message", async ({ driver }) => {
@@ -141,8 +141,8 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await warningQuestion.endpointErrorCountWarning()).toBeTruthy());
-      await waitFor(async () => expect(await warningQuestion.endpointErrorCount()).toBe("5"));
+      await waitFor(async () => expect(warningQuestion.endpointErrorCountWarning()).toBeTruthy());
+      await waitFor(async () => expect(warningQuestion.endpointErrorCount()).toBe("5"));
     });
   });
   describe("RULE: Endpoint details should show all message types for the endpoint", () => {
