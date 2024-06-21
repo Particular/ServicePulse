@@ -1,39 +1,32 @@
 {
   "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Debug Vue - Chrome",
-      "type": "chrome",
-      "request": "launch",
-      "url": "http://localhost:5173",
-      "webRoot": "${workspaceFolder}/src/FrontEnd/src"
-    },
+  "configurations": [     
     {
       "name": "Debug Vue on Docker Port - Edge",
       "type": "msedge",
       "request": "launch",
       "url": "http://localhost:1331",
-      "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue/src"
+      "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue/src",
     },
     {
       "name": "Debug Vue on Docker Port - Chrome",
       "type": "chrome",
       "request": "launch",
       "url": "http://localhost:1331",
-      "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue/src"
-    },
+      "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue/src",
+    }, 
     {
       "name": "Storybook Debug with Edge",
       "type": "node-terminal",
       "request": "launch",
       "command": "npm run storybook-dont-auto-open",
-      "cwd": "${workspaceFolder}/src/ServicePulse.Host/vue",
-      "internalConsoleOptions": "openOnFirstSessionStart",
-      "sourceMaps": true,
+      "cwd": "${workspaceFolder}/src/ServicePulse.Host/vue",        
+      "internalConsoleOptions": "openOnFirstSessionStart",        
+      "sourceMaps": true,        
       "serverReadyAction": {
         "pattern": "Local:.+(https?://[^:]+:[0-9]+)",
         "uriFormat": "%s",
-        "action": "debugWithEdge",
+        "action":"debugWithEdge",
         "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue",
         "killOnServerStop": true
       }
@@ -43,13 +36,13 @@
       "type": "node-terminal",
       "request": "launch",
       "command": "npm run storybook-dont-auto-open",
-      "cwd": "${workspaceFolder}/src/ServicePulse.Host/vue",
-      "internalConsoleOptions": "openOnFirstSessionStart",
-      "sourceMaps": true,
+      "cwd": "${workspaceFolder}/src/ServicePulse.Host/vue",        
+      "internalConsoleOptions": "openOnFirstSessionStart",        
+      "sourceMaps": true,        
       "serverReadyAction": {
         "pattern": "Local:.+(https?://[^:]+:[0-9]+)",
         "uriFormat": "%s",
-        "action": "debugWithChrome",
+        "action":"debugWithChrome",
         "webRoot": "${workspaceFolder}/src/ServicePulse.Host/vue",
         "killOnServerStop": true
       }
