@@ -182,7 +182,6 @@ function getUpgradeDaysLeft(license: UnwrapNestedRefs<License>) {
 async function getLicense() {
   try {
     let [, data] = await useTypedFetchFromServiceControl<LicenseInfo>("license?refresh=true");
-    data.license_status = LicenseStatus.ValidWithExpiredUpgradeProtection;
     return data;
   } catch (err) {
     console.log(err);
