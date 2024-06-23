@@ -66,7 +66,7 @@ async function useLicense(vueRouter: ReturnType<typeof useRouter>) {
   watch<UnwrapNestedRefs<License>>(license, (newValue, oldValue) => {
     const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
     if (checkForWarnings) {
-      displayWarningMessage(LicenseStatus.ValidWithExpiringUpgradeProtection);
+      displayWarningMessage(newValue.license_status);
     }
   });
 
