@@ -59,11 +59,14 @@ const licenseStatus = reactive({
   warningLevel: LicenseWarningLevel.None,
 });
 
-async function useLicense(router: ReturnType<typeof useRouter>) {
+let router: ReturnType<typeof useRouter>;
+
+async function useLicense(vueRouter: ReturnType<typeof useRouter>) {
+  router = vueRouter;
   watch<UnwrapNestedRefs<License>>(license, (newValue, oldValue) => {
     const checkForWarnings = oldValue !== null ? newValue && newValue.license_status != oldValue.license_status : newValue !== null;
     if (checkForWarnings) {
-      displayWarningMessage(newValue.license_status, router);
+      displayWarningMessage(LicenseStatus.ValidWithExpiringUpgradeProtection);
     }
   });
 
@@ -111,8 +114,7 @@ function isSubscriptionLicense(license: UnwrapNestedRefs<License>) {
   return license.expiration_date !== undefined && license.expiration_date !== "" && !license.trial_license;
 }
 
-function displayWarningMessage(licenseStatus: LicenseStatus, router: ReturnType<typeof useRouter>) {
-  //licenseStatus = LicenseStatus.ValidWithExpiringUpgradeProtection.toString() as LicenseStatus;
+function displayWarningMessage(licenseStatus: LicenseStatus) {
   const configurationRootLink = router.resolve(routeLinks.configuration.root).href;
   switch (licenseStatus) {
     case "ValidWithExpiredUpgradeProtection":

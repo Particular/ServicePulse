@@ -12,7 +12,8 @@ import "highlight.js/styles/github-dark.css";
 useServiceControlUrls();
 
 onMounted(async () => {
-  await Promise.all([useLicense(useRouter()), useServiceControl()]);
+  const router = useRouter();
+  await Promise.all([useLicense(router), useServiceControl(router)]);
 });
 </script>
 
