@@ -125,8 +125,9 @@ const monitoringConnectionFailure = computed(() => monitoringConnectionState.una
 watch(primaryConnectionFailure, (newValue, oldValue) => {
   //NOTE to eliminate success msg showing everytime the screen is refreshed
   if (newValue !== oldValue && !(oldValue === null && newValue === false)) {
+    const connectionUrl = router.resolve(routeLinks.configuration.connections.link).href;
     if (newValue) {
-      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlUrl.value}. <a class="btn btn-default" href="/#/configuration/connections">View connection settings</a>`);
+      useShowToast(TYPE.ERROR, "Error", `Could not connect to ServiceControl at ${serviceControlUrl.value}. <a class="btn btn-default" href="${connectionUrl}">View connection settings</a>`);
     } else {
       useShowToast(TYPE.SUCCESS, "Success", `Connection to ServiceControl was successful at ${serviceControlUrl.value}.`);
     }
