@@ -13,13 +13,6 @@ import { selectHistoryPeriod } from "./actions/selectHistoryPeriod";
 import { paginationVisible } from "./questions/paginationVisible";
 
 describe("FEATURE: Endpoint details", () => {
-  describe("RULE: The details of an endpoint should be viewable on a dedicated page", () => {
-    it.todo("Example: The endpoint name is clicked from the list of endpoints", async ({ driver }) => {});
-  });
-  describe("RULE: Endpoint details should hide if license has expired", () => {
-    it.todo("Example: The endpoint has expired license", async ({ driver }) => {});
-    it.todo("Example: The endpoint has valid license", async ({ driver }) => {});
-  });
   describe("RULE: Endpoint details include the endpoint name", () => {
     it("Example: Clicking an endpoint name from the endpoint monitoring list", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
