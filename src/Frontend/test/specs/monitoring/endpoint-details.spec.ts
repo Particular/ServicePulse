@@ -153,7 +153,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await warningQuestion.endpointStaleWarning()).toBeTruthy());
+      expect(await warningQuestion.endpointStaleWarning()).toBeTruthy();
     });
     it("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {
       // Arrange
@@ -167,7 +167,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await warningQuestion.endpointDisconnectedWarning()).toBeTruthy());
+      expect(await warningQuestion.endpointDisconnectedWarning()).toBeTruthy();
     });
 
     it("Example: An endpoint has a failed message", async ({ driver }) => {
@@ -182,8 +182,8 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
 
       // Assert
-      await waitFor(async () => expect(await warningQuestion.endpointErrorCountWarning()).toBeTruthy());
-      await waitFor(async () => expect(await warningQuestion.endpointErrorCount()).toBe("5"));
+      expect(await warningQuestion.endpointErrorCountWarning()).toBeTruthy();
+      expect(await warningQuestion.endpointErrorCount()).toBe("5");
     });
   });
   describe("RULE: Endpoint details should show all message types for the endpoint", () => {
@@ -197,7 +197,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1");
 
       // Assert
-      await waitFor(async () => expect(await endpointMessageNames()).toEqual(["Message1", "Message2", "Message3"]));
+     expect(await endpointMessageNames()).toEqual(["Message1", "Message2", "Message3"]);
     });
     it("Example: Endpoint details should show correct counts for message types", async ({ driver }) => {
       // Arrange
@@ -208,8 +208,10 @@ describe("FEATURE: Endpoint details", () => {
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1");
 
+      //retrieve the endpoint message names as a way to wait for the page to finish loading
+      await endpointMessageNames();
       // Assert
-      await waitFor(async () => expect(await endpointMessageTypesCount()).toEqual("3"));
+      expect(await endpointMessageTypesCount()).toEqual("3");
     });
   });
   describe("RULE: Endpoint details should show all instances of the endpoint", () => {
@@ -223,8 +225,8 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1&tab=instancesBreakdown");
 
       // Assert
-      await waitFor(async () => expect(await endpointInstancesCount()).toEqual("1"));
-      await waitFor(async () => expect(await endpointInstanceNames()).toEqual(["Endpoint1"]));
+      expect(await endpointInstanceNames()).toEqual(["Endpoint1"]);
+      expect(await endpointInstancesCount()).toEqual("1");
     });
     it("Example: The endpoint has 3 instances running", async ({ driver }) => {
       // Arrange
@@ -236,8 +238,8 @@ describe("FEATURE: Endpoint details", () => {
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1&tab=instancesBreakdown");
 
       // Assert
-      await waitFor(async () => expect(await endpointInstancesCount()).toEqual("3"));
-      await waitFor(async () => expect(await endpointInstanceNames()).toEqual(["Endpoint1", "Endpoint2", "Endpoint3"]));
+      expect(await endpointInstanceNames()).toEqual(["Endpoint1", "Endpoint2", "Endpoint3"]);
+      expect(await endpointInstancesCount()).toEqual("3");
     });
   });
   describe("RULE: Pagination should be displayed when 11 or more message types are present", () => {
@@ -248,7 +250,7 @@ describe("FEATURE: Endpoint details", () => {
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1");
-
+      
       // Assert
       await waitFor(async () => expect(paginationVisible()).not.toBeTruthy());
     });
