@@ -221,6 +221,14 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1"]));
       await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
 
+      const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+
+      driver.mockEndpoint(`${monitoringInstanceUrl}`, {
+        body: [],
+        method:"options",
+        headers: { "Allow": "DELETE" }
+      });
+
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1&tab=instancesBreakdown");
 

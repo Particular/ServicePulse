@@ -218,7 +218,7 @@ export const monitoredEndpointDetails = <ExtendedEndpointDetails>{
     {
       id: "d4b8b36ba72b0738feffe71105aaceQ1",
       name: "Endpoint1",
-      isStale: false,
+      isStale: true,
       metrics: {
         processingTime: {
           average: 74.82203389830508,
@@ -328,7 +328,7 @@ export const messageTypeForEndpoint = <MessageType>{
 export const instanceForEndpoint = <ExtendedEndpointInstance>{
   id: "d4b8b36ba72b0738feffe71105aaceQ1",
   name: "Endpoint1",
-  isStale: false,
+  isStale: true,
   metrics: {
     processingTime: {
       average: 74.82203389830508,
