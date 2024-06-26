@@ -39,6 +39,11 @@ jobs:
       # .NET Build and sign
       - name: Build
         run: dotnet build src --configuration Release
+      - name: Validate build version
+        if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+        uses: ./.github/actions/validate-version
+        with:
+          version: ${{ env.MinVerVersion }}
       - name: Sign NuGet packages
         uses: Particular/sign-nuget-packages-action@v1.0.0
         with:
@@ -99,6 +104,10 @@ jobs:
   linux-container:
     if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-22.04
+    name: linux-container
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Check for secrets
         env:
@@ -113,6 +122,11 @@ jobs:
         run: dotnet tool install --global minver-cli
       - name: Determine version
         run: echo "MinVerVersion=$(minver)" >> $GITHUB_ENV
+      - name: Validate build version
+        if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+        uses: ./.github/actions/validate-version
+        with:
+          version: ${{ env.MinVerVersion }}
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.2
         with:
@@ -138,10 +152,22 @@ jobs:
         env:
           TAG_NAME: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || env.MinVerVersion }}
         run: |
-          docker buildx build --push --tag ghcr.io/particular/servicepulse:${{ env.TAG_NAME }} --file src/Container/Dockerfile \
+          docker buildx build --push --tag ghcr.io/particular/servicepulse:${{ env.TAG_NAME }} \
+            --file src/Container/Dockerfile \
             --build-arg NGINX_TAGORDIGEST="@${{ env.NGINX_DIGEST }}" \
             --build-arg VERSION=${{ env.MinVerVersion }} \
             --build-arg GITHUB_SHA=${{ github.sha }} \
             --build-arg GITHUB_REF_NAME=${{ github.ref.name }} \
+            --annotation "index:org.opencontainers.image.title=ServicePulse" \
+            --annotation "index:org.opencontainers.image.description=ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard." \
+            --annotation "index:org.opencontainers.image.created=$(date '+%FT%TZ')" \
+            --annotation "index:org.opencontainers.image.revision=${{ github.sha }}" \
+            --annotation "index:org.opencontainers.image.authors=Particular Software" \
+            --annotation "index:org.opencontainers.image.vendor=Particular Software" \
+            --annotation "index:org.opencontainers.image.version=${{ env.MinVerVersion }}" \
+            --annotation "index:org.opencontainers.image.source=https://github.com/${{ github.repository }}/tree/${{ github.sha }}" \
+            --annotation "index:org.opencontainers.image.url=https://hub.docker.com/r/particular/servicepulse" \
+            --annotation "index:org.opencontainers.image.documentation=https://docs.particular.net/servicepulse/" \
+            --annotation "index:org.opencontainers.image.base.name=nginx@${{ env.NGINX_DIGEST }}" \
             --platform linux/arm64,linux/arm,linux/amd64 .
           docker buildx imagetools inspect ghcr.io/particular/servicepulse:${{ env.TAG_NAME }}
