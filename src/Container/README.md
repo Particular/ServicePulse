@@ -63,6 +63,10 @@ If `particular/servicepulse:1.30.1` is the latest release in the version 1 major
 
 The major version tag is never added to images pushed to [the GitHub Container Registry](https://github.com/Particular/ServicePulse/pkgs/container/servicepulse).
 
+#### Minor version tag
+
+The latest release within a minor version will be tagged with `{major}.{minor}` on images pushed to Docker Hub. This allows users to target the latest patch within a specific minor version.
+
 ## Built With
 
 This image is built from the stable Alpine version of the [nginx official Docker image](https://hub.docker.com/_/nginx/).
