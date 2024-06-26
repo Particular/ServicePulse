@@ -122,6 +122,11 @@ jobs:
         run: dotnet tool install --global minver-cli
       - name: Determine version
         run: echo "MinVerVersion=$(minver)" >> $GITHUB_ENV
+      - name: Validate build version
+        if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+        uses: ./.github/actions/validate-version
+        with:
+          version: ${{ env.MinVerVersion }}
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.2
         with:
