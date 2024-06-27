@@ -23,7 +23,7 @@ It may be desireable to run the ServiceControl services in an isolated network. 
 docker run -p 9090:90 -e SERVICECONTROL_URL="http://servicecontrol:33333/api/" -e MONITORING_URLS="['http://servicecontrol-monitoring:33633']" particular/servicepulse:latest
 ```
 
-Or as part of a https://docs.docker.com/compose/compose-file/05-services/:
+Or as part of a [Docker Compose services specification](https://docs.docker.com/compose/compose-file/05-services/):
 
 ```yaml
 services:
