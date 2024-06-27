@@ -14,7 +14,6 @@ docker run -p 9090:90 particular/servicepulse:latest
 
 - **`SERVICECONTROL_URL`**: _Default_: `http://localhost:33333/api/`. The url to your ServiceControl instance
 - **`MONITORING_URLS`**: _Default_: `['http://localhost:33633/']`. A JSON array of URLs to your monitoring instances
-- **`BASE_URL`**: _Default_ `'/'`. The base path to your ServicePulse install, for reverse proxy installations.
 
 It may be desireable to run the ServiceControl services in an isolated network. When doing so ServicePulse must be configured to connect to those services using environment variables:
 

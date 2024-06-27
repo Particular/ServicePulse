@@ -22,7 +22,6 @@ LABEL org.opencontainers.image.title="ServicePulse" \
 
 ENV SERVICECONTROL_URL="http://localhost:33333/api/"
 ENV MONITORING_URLS="['http://localhost:33633/']"
-ENV BASE_URL="/"
 
 COPY /src/ServicePulse.Host/app /usr/share/nginx/html
 
@@ -30,7 +29,6 @@ RUN mv /usr/share/nginx/html/js/app.constants.js /usr/share/nginx/html/js/app.co
     sed -i \
     -e "s,http://localhost:33333/api/,\$SERVICECONTROL_URL,g" \
     -e "s,\['http://localhost:33633/'\],\$MONITORING_URLS,g" \
-    -e "s,'/','\$BASE_URL',g" \
     /usr/share/nginx/html/js/app.constants.template
 
 ADD /src/Container/nginx.conf /etc/nginx/
