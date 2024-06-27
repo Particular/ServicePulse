@@ -1,0 +1,7 @@
+window.defaultConfig = {
+  default_route: '$DEFAULT_ROUTE',
+  version: '1.2.0',
+  service_control_url: '$SERVICECONTROL_URL',
+  monitoring_urls: $MONITORING_URLS,
+  showPendingRetry: $SHOW_PENDING_RETRY,
+};
