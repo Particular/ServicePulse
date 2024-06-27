@@ -23,15 +23,12 @@ LABEL org.opencontainers.image.title="ServicePulse" \
 ENV SERVICECONTROL_URL="http://localhost:33333/api/"
 ENV MONITORING_URLS="['http://localhost:33633/']"
 ENV DEFAULT_ROUTE="/dashboard"
+ENV SHOW_PENDING_RETRY="false"
 
 COPY /src/ServicePulse.Host/app /usr/share/nginx/html
+ADD /src/Container/app.constants.template /usr/share/nginx/html/js/app.constants.template
 
-RUN mv /usr/share/nginx/html/js/app.constants.js /usr/share/nginx/html/js/app.constants.template &&\
-    sed -i \
-    -e "s,http://localhost:33333/api/,\$SERVICECONTROL_URL,g" \
-    -e "s,\['http://localhost:33633/'\],\$MONITORING_URLS,g" \
-    -e "s,/dashboard,\$DEFAULT_ROUTE,g" \
-    /usr/share/nginx/html/js/app.constants.template
+RUN sed -i -e "s,__VERSION__,$VERSION,g" /usr/share/nginx/html/js/app.constants.template
 
 ADD /src/Container/nginx.conf /etc/nginx/
 ADD --chown=root:root --chmod=755 /src/Container/updateconstants.sh /docker-entrypoint.d/40-update-servicepulse-constants.sh
