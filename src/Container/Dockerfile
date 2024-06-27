@@ -30,7 +30,7 @@ RUN mv /usr/share/nginx/html/js/app.constants.js /usr/share/nginx/html/js/app.co
     sed -i \
     -e "s,http://localhost:33333/api/,\$SERVICECONTROL_URL,g" \
     -e "s,\['http://localhost:33633/'\],\$MONITORING_URLS,g" \
-    -e "s,'/dashboard','\$DEFAULT_ROUTE',g" \
+    -e "s,/dashboard,\$DEFAULT_ROUTE,g" \
     /usr/share/nginx/html/js/app.constants.template
 
 ADD /src/Container/nginx.conf /etc/nginx/
