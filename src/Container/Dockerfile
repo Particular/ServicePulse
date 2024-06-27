@@ -27,6 +27,9 @@ ENV SHOW_PENDING_RETRY="false"
 
 COPY /src/ServicePulse.Host/app /usr/share/nginx/html
 ADD /src/Container/app.constants.template /usr/share/nginx/html/js/app.constants.template
+
+RUN sed -i -e "s,__VERSION__,$VERSION,g" /usr/share/nginx/html/js/app.constants.template
+
 ADD /src/Container/nginx.conf /etc/nginx/
 ADD --chown=root:root --chmod=755 /src/Container/updateconstants.sh /docker-entrypoint.d/40-update-servicepulse-constants.sh
 
