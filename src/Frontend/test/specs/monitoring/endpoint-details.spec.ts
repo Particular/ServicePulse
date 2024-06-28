@@ -1,6 +1,6 @@
 import { expect, vi } from "vitest";
-import { screen, waitFor } from "@testing-library/dom";
-import { it, describe } from "../../drivers/vitest/driver";
+import { waitFor } from "@testing-library/dom";
+import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { endpointsDetailsTitle } from "./questions/endpointDetailsTitle";
 import { endpointMessageNames, endpointMessageTypesCount } from "./questions/endpointDetailsMessageTypes";
@@ -14,7 +14,7 @@ import { paginationVisible } from "./questions/paginationVisible";
 
 describe("FEATURE: Endpoint details", () => {
   describe("RULE: Endpoint details include the endpoint name", () => {
-    it("Example: Clicking an endpoint name from the endpoint monitoring list", async ({ driver }) => {
+    test("EXAMPLE: Clicking an endpoint name from the endpoint monitoring list", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
       const endpointDetails = structuredClone(monitoredEndpointDetails);
@@ -26,7 +26,7 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: Endpoint detail metric data should be updated immediately after changing the history period", () => {
-    it(`EXAMPLE: As history periods are selected the graph data values should update immediately`, async ({ driver }) => {
+    test(`EXAMPLE: As history periods are selected the graph data values should update immediately`, async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
@@ -88,7 +88,7 @@ describe("FEATURE: Endpoint details", () => {
       { description: "As history period is changed to 60 minutes the endpoint metrics data should be updated at the correct interval", historyPeriod: 60 },
     ].forEach(({ description, historyPeriod }) => {
       //
-      it(`EXAMPLE: ${description}`, async ({ driver }) => {
+      test(`EXAMPLE: ${description}`, async ({ driver }) => {
         // Arrange
         vi.useFakeTimers(); // Needs to be called before the first call to setInterval
         await driver.setUp(precondition.serviceControlWithMonitoring);
@@ -127,7 +127,7 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: An indication should be be displayed for the status of an endpoint", () => {
-    it("Example: An endpoint has a negative critical time", async ({ driver }) => {
+    test("EXAMPLE: An endpoint has a negative critical time", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
@@ -141,7 +141,7 @@ describe("FEATURE: Endpoint details", () => {
       // Assert
       await waitFor(async () => expect(await warningQuestion.negativeCriticalTimeWarning()).toBeTruthy());
     });
-    it("Example: An endpoint is stale", async ({ driver }) => {
+    test("EXAMPLE: An endpoint is stale", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
@@ -155,7 +155,7 @@ describe("FEATURE: Endpoint details", () => {
       // Assert
       expect(await warningQuestion.endpointStaleWarning()).toBeTruthy();
     });
-    it("Example: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {
+    test("EXAMPLE: An endpoint is disconnected from ServiceControl monitoring", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
@@ -170,7 +170,7 @@ describe("FEATURE: Endpoint details", () => {
       expect(await warningQuestion.endpointDisconnectedWarning()).toBeTruthy();
     });
 
-    it("Example: An endpoint has a failed message", async ({ driver }) => {
+    test("EXAMPLE: An endpoint has a failed message", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
@@ -187,7 +187,7 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: Endpoint details should show all message types for the endpoint", () => {
-    it("Example: The endpoint sends messages of type 'Message1,' 'Message2,' and 'Message3'", async ({ driver }) => {
+    test("EXAMPLE: The endpoint sends messages of type 'Message1,' 'Message2,' and 'Message3'", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));
@@ -199,7 +199,7 @@ describe("FEATURE: Endpoint details", () => {
       // Assert
      expect(await endpointMessageNames()).toEqual(["Message1", "Message2", "Message3"]);
     });
-    it("Example: Endpoint details should show correct counts for message types", async ({ driver }) => {
+    test("EXAMPLE: Endpoint details should show correct counts for message types", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));
@@ -215,7 +215,7 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: Endpoint details should show all instances of the endpoint", () => {
-    it("Example: The endpoint has 1 instance running", async ({ driver }) => {
+    test("EXAMPLE: The endpoint has 1 instance running", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1"]));
@@ -236,7 +236,7 @@ describe("FEATURE: Endpoint details", () => {
       expect(await endpointInstanceNames()).toEqual(["Endpoint1"]);
       expect(await endpointInstancesCount()).toEqual("1");
     });
-    it("Example: The endpoint has 3 instances running", async ({ driver }) => {
+    test("EXAMPLE: The endpoint has 3 instances running", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1", "Endpoint2", "Endpoint3"]));
@@ -251,7 +251,7 @@ describe("FEATURE: Endpoint details", () => {
     });
   });
   describe("RULE: Pagination should be displayed when 11 or more message types are present", () => {
-    it("Example: 10 message types are present", async ({ driver }) => {
+    test("EXAMPLE: 10 message types are present", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(10).fill("Message").map((name, index) => `${name}${index}`)));
@@ -262,7 +262,7 @@ describe("FEATURE: Endpoint details", () => {
       // Assert
       await waitFor(async () => expect(paginationVisible()).not.toBeTruthy());
     });
-    it("Example: 11 message types are present", async ({ driver }) => {
+    test("EXAMPLE: 11 message types are present", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(11).fill("Message").map((name, index) => `${name}${index}`)));
@@ -274,7 +274,7 @@ describe("FEATURE: Endpoint details", () => {
       // Assert
       await waitFor(async () => expect(paginationVisible()).not.toBeTruthy());
     });
-    it("Example: 12 message types are present", async ({ driver }) => {
+    test("EXAMPLE: 12 message types are present", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(12).fill("Message").map((name, index) => `${name}${index}`)));
