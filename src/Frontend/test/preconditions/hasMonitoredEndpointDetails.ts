@@ -30,15 +30,17 @@ export const hasEndpointMessageTypesNamed =
 
 export const hasEndpointInstancesNamed =
   (instanceNames: string[]) =>
-  ({ driver }: SetupFactoryOptions) => {
+  async ({ driver }: SetupFactoryOptions) => {
     const endpointDetails = structuredClone(monitoredEndpointDetails);
     endpointDetails.instances = [];
     endpointDetails.instances.push(...instanceNames.map((name) => ({ ...instanceForEndpoint, name: name })));
 
     const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+    const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
+
     driver.mockEndpoint(`${monitoringInstanceUrl}monitored-endpoints/${endpointDetails.instances[0].name}`, {
       body: endpointDetails,
-    });
+    });    
 
     return endpointDetails;
   };
@@ -93,22 +95,28 @@ export const hasEndpointWithMetricValues =
     return endpointDetails;
   };
 
-export const hasMonitoredEndpointRecoverabilityByInstance =
-  (id: string) =>
-  ({ driver }: SetupFactoryOptions) => {
-    const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
-    driver.mockEndpoint(`${serviceControlInstanceUrl}recoverability/groups/Endpoint%20Instance`, {
-      body: [],
-    });
-    return [];
-  };
+export const endpointRecoverabilityByInstanceDefaultHandler = ({ driver }: SetupFactoryOptions) => {
+  const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
+  driver.mockEndpoint(`${serviceControlInstanceUrl}recoverability/groups/Endpoint%20Instance`, {
+    body: [],
+  });
+  return [];
+};
 
-export const hasMonitoredEndpointRecoverabilityByName =
-  (name: string) =>
-  ({ driver }: SetupFactoryOptions) => {
-    const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
-    driver.mockEndpoint(`${serviceControlInstanceUrl}recoverability/groups/Endpoint%20Name?classifierFilter=${name}`, {
-      body: [],
-    });
-    return [];
-  };
+export const endpointRecoverabilityByNameDefaultHandler = ({ driver }: SetupFactoryOptions) => {
+  const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
+  driver.mockEndpoint(`${serviceControlInstanceUrl}recoverability/groups/Endpoint%20Name`, {
+    body: [],
+  });
+  return [];
+};
+
+export const serviceControlMonitoringOptions = ({ driver }: SetupFactoryOptions) => {
+  const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
+
+  driver.mockEndpoint(`${monitoringInstanceUrl}`, {
+    body: [],
+    method: "options",
+    headers: { Allow: "DELETE" },
+  });
+};

@@ -18,8 +18,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
 
       const endpointDetails = structuredClone(monitoredEndpointDetails);
-      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));      
 
       await driver.goTo("/monitoring/endpoint/Endpoint1");
       expect(await endpointsDetailsTitle()).toBe("Endpoint1");
@@ -32,7 +31,6 @@ describe("FEATURE: Endpoint details", () => {
 
       const endpointDetails = structuredClone(monitoredEndpointDetails);
       await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
 
       //Act
       await driver.goTo(`/monitoring/endpoint/Endpoint1`);
@@ -92,8 +90,7 @@ describe("FEATURE: Endpoint details", () => {
         // Arrange
         vi.useFakeTimers(); // Needs to be called before the first call to setInterval
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasEndpointWithMetricValues(2, 2, 8, 9.56, 13.24, 10, 81, 78, 215, 220));
-        await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+        await driver.setUp(precondition.hasEndpointWithMetricValues(2, 2, 8, 9.56, 13.24, 10, 81, 78, 215, 220));        
 
         // Act
         await driver.goTo("/monitoring/endpoint/Endpoint1");
@@ -132,8 +129,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
       endpointDetails.instances[0].metrics.criticalTime.points.push(-1000);
-      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
@@ -146,8 +142,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
       endpointDetails.instances[0].isStale = true;
-      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
@@ -160,8 +155,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
       endpointDetails.isScMonitoringDisconnected = true;
-      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
@@ -175,8 +169,7 @@ describe("FEATURE: Endpoint details", () => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       const endpointDetails = structuredClone(monitoredEndpointDetails);
       endpointDetails.errorCount = 5;
-      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance(endpointDetails.instances[0].id));
+      await driver.setUp(precondition.hasMonitoredEndpointDetails(endpointDetails));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1");
@@ -190,8 +183,7 @@ describe("FEATURE: Endpoint details", () => {
     test("EXAMPLE: The endpoint sends messages of type 'Message1,' 'Message2,' and 'Message3'", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+      await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1");
@@ -202,8 +194,7 @@ describe("FEATURE: Endpoint details", () => {
     test("EXAMPLE: Endpoint details should show correct counts for message types", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+      await driver.setUp(precondition.hasEndpointMessageTypesNamed(["Message1", "Message2", "Message3"]));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1");
@@ -218,16 +209,7 @@ describe("FEATURE: Endpoint details", () => {
     test("EXAMPLE: The endpoint has 1 instance running", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1"]));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
-
-      const monitoringInstanceUrl = window.defaultConfig.monitoring_urls[0];
-
-      driver.mockEndpoint(`${monitoringInstanceUrl}`, {
-        body: [],
-        method:"options",
-        headers: { "Allow": "DELETE" }
-      });
+      await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1"]));            
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1&tab=instancesBreakdown");
@@ -239,8 +221,7 @@ describe("FEATURE: Endpoint details", () => {
     test("EXAMPLE: The endpoint has 3 instances running", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1", "Endpoint2", "Endpoint3"]));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+      await driver.setUp(precondition.hasEndpointInstancesNamed(["Endpoint1", "Endpoint2", "Endpoint3"]));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1?historyPeriod=1&tab=instancesBreakdown");
@@ -265,8 +246,7 @@ describe("FEATURE: Endpoint details", () => {
     test("EXAMPLE: 11 message types are present", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(11).fill("Message").map((name, index) => `${name}${index}`)));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+      await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(11).fill("Message").map((name, index) => `${name}${index}`)));      
 
       // Act
       await driver.goTo("monitoring/endpoint/Endpoint1");
@@ -277,8 +257,7 @@ describe("FEATURE: Endpoint details", () => {
     test("EXAMPLE: 12 message types are present", async ({ driver }) => {
       // Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(12).fill("Message").map((name, index) => `${name}${index}`)));
-      await driver.setUp(precondition.hasMonitoredEndpointRecoverabilityByInstance("Endpoint1"));
+      await driver.setUp(precondition.hasEndpointMessageTypesNamed(new Array(12).fill("Message").map((name, index) => `${name}${index}`)));      
 
       // Act
       await driver.goTo("/monitoring/endpoint/Endpoint1");
