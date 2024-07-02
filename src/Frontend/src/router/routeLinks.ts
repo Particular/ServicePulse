@@ -44,6 +44,43 @@ const configurationLinks = (root: string) => {
   };
 };
 
+const throughputLinks = (root: string) => {
+  function createLink(template: string) {
+    return { link: `${root}/${template}`, template: template };
+  }
+
+  return {
+    root: root,
+    endpoints: throughputEndpointLinks(`${root}/endpoints`),
+    setup: throughputSetupLinks(`${root}/setup`),
+  };
+};
+
+const throughputSetupLinks = (root: string) => {
+  function createLink(template: string) {
+    return { link: `${root}/${template}`, template: template };
+  }
+
+  return {
+    root,
+    connectionSetup: createLink("connection-setup"),
+    mask: createLink("mask"),
+    diagnostics: createLink("diagnostics"),
+  }
+}
+
+const throughputEndpointLinks = (root: string) => {
+  function createLink(template: string) {
+    return { link: `${root}/${template}`, template: template };
+  }
+
+  return {
+    root,
+    detectedEndpoints: createLink("known"),
+    detectedBrokerQueues: createLink("broker"),
+  }
+}
+
 const monitoringLinks = (root: string) => {
   return {
     root,
@@ -59,6 +96,7 @@ const routeLinks = {
   customChecks: "/custom-checks",
   events: "/events",
   configuration: configurationLinks("/configuration"),
+  throughput: throughputLinks("/usage"),
 };
 
 export default routeLinks;
