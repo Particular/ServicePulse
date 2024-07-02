@@ -1,8 +1,10 @@
 import { expect } from "vitest";
 import { test, describe } from "../../drivers/vitest/driver";
-import { screen } from "@testing-library/vue";
 import * as precondition from "../../preconditions";
 import { Expired } from "../../preconditions";
+import { expiredLicenseMessageWithValue } from "./questions/expiredLicenseMessageWithValue";
+import { viewYourLicenseButton } from "./questions/viewYourLicenseButton";
+import { extendYourLicenseButton  } from "./questions/extendYourLicenseButton";
 
 describe("FEATURE: expiring license detection", () => {
     describe("RULE: The user should be alerted while using the {monitoring endpoint list} functionality about an EXPIRING license", () => {
@@ -30,12 +32,10 @@ describe("FEATURE: expired license detection", () => {
       
       //Act
       await driver.goTo("monitoring");
-
-      expect(await screen.findByText(/to continue using the particular service platform, please extend your license/i)).toBeInTheDocument();      
-      expect(screen.getByRole("link", { name: "Extend your license" })).toHaveAttribute("href", "https://particular.net/extend-your-trial?p=servicepulse");
       
-      expect(screen.getByRole("link", { name: "View license details" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "View license details" })).toHaveAttribute("href", "#/configuration/license");
+      expect(await expiredLicenseMessageWithValue(/to continue using the particular service platform, please extend your license/i)).toBeTruthy();
+      expect((await extendYourLicenseButton()).address).toBe("https://particular.net/extend-your-trial?p=servicepulse");
+      expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");      
     });
 
     test("EXAMPLE: Expired platform subscription", async ({ driver }) => {    
@@ -46,10 +46,9 @@ describe("FEATURE: expired license detection", () => {
         //Act
         await driver.goTo("monitoring");
   
-        expect(await screen.findByText(/please update your license to continue using the particular service platform/i)).toBeInTheDocument();        
-        
-        expect(screen.getByRole("link", { name: "View license details" })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "View license details" })).toHaveAttribute("href", "#/configuration/license");
+        //expect(await screen.findByText(/please update your license to continue using the particular service platform/i)).toBeInTheDocument();        
+        expect(await expiredLicenseMessageWithValue(/please update your license to continue using the particular service platform/i)).toBeTruthy();        
+        expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");
       });
 
       test("EXAMPLE: Expired upgrade protection", async ({ driver }) => {
@@ -60,9 +59,8 @@ describe("FEATURE: expired license detection", () => {
         //Act
         await driver.goTo("monitoring");
   
-        expect(await screen.findByText(/your upgrade protection period has elapsed and your license is not valid for this version of servicepulse\./i)).toBeInTheDocument();        
-        expect(screen.getByRole("link", { name: "View license details" })).toBeInTheDocument();
-        expect(screen.getByRole("link", { name: "View license details" })).toHaveAttribute("href", "#/configuration/license");
+        expect(await expiredLicenseMessageWithValue(/your upgrade protection period has elapsed and your license is not valid for this version of servicepulse\./i)).toBeTruthy();
+        expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");      
       });
   });
 });
