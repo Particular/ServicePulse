@@ -15,13 +15,13 @@ describe("FEATURE: EXPIRING license detection", () => {
 
       await driver.goTo("monitoring");
 
-      const alert = (await getAlertNotifications()).find(async (alert) => {
-        alert.textMatches(/your non\-production development license will expire soon\. to continue using the particular service platform you'll need to extend your license\./i);
+      const notification = (await getAlertNotifications()).find(async (n) => {
+        n.textMatches(/your non\-production development license will expire soon\. to continue using the particular service platform you'll need to extend your license\./i);
       });
 
       expect(alert).not.toBeUndefined();
-      expect(alert?.hasLink({ caption: "Extend your license", address: "http://particular.net/extend-your-trial?p=servicepulse" })).toBeTruthy();
-      expect(alert?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
+      expect(notification?.hasLink({ caption: "Extend your license", address: "http://particular.net/extend-your-trial?p=servicepulse" })).toBeTruthy();
+      expect(notification?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
     });
 
     [
@@ -35,12 +35,12 @@ describe("FEATURE: EXPIRING license detection", () => {
 
         await driver.goTo("monitoring");
 
-        const alert = (await getAlertNotifications()).find(async (alert) => {
-          alert.textMatches(/once upgrade protection expires, you'll no longer have access to support or new product versions/i);
+        const notification = (await getAlertNotifications()).find(async (n) => {
+          n.textMatches(/once upgrade protection expires, you'll no longer have access to support or new product versions/i);
         });
 
         expect(alert).not.toBeUndefined();
-        expect(alert?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
+        expect(notification?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
       });
     });
   });
@@ -64,11 +64,12 @@ describe("FEATURE: EXPIRED license detection", () => {
       expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");
 
       //Find all the toast notifications that popped up and check if there is a notification about the expired license with a link to the expected page
-      const alert = (await getAlertNotifications()).find(async (alert) => {
-        alert.textMatches(/your license has expired\. please contact particular software support at:/i) && alert.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" });
+      const notification = (await getAlertNotifications()).find(async (n) => {
+        n.textMatches(/your license has expired\. please contact particular software support at:/i);
       });
 
       expect(alert).not.toBeUndefined();
+      expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
     });
 
     test("EXAMPLE: Expired platform subscription", async ({ driver }) => {
@@ -84,11 +85,12 @@ describe("FEATURE: EXPIRED license detection", () => {
       expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");
 
       //Find all the toast notifications that popped up and check if there is a notification about the expired license with a link to the expected page
-      const alert = (await getAlertNotifications()).find(async (alert) => {
-        alert.textMatches(/your license has expired\. please contact particular software support at:/i) && alert.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" });
+      const notification = (await getAlertNotifications()).find(async (n) => {
+        n.textMatches(/your license has expired\. please contact particular software support at:/i);
       });
 
       expect(alert).not.toBeUndefined();
+      expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
     });
 
     test("EXAMPLE: Expired upgrade protection", async ({ driver }) => {
@@ -103,11 +105,12 @@ describe("FEATURE: EXPIRED license detection", () => {
       expect((await viewYourLicenseButton()).address).toBe("#/configuration/license");
 
       //Find all the toast notifications that popped up and check if there is a notification about the expired license with a link to the expected page
-      const alert = (await getAlertNotifications()).find(async (alert) => {
-        alert.textMatches(/your license has expired\. please contact particular software support at:/i) && alert.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" });
+      const notification = (await getAlertNotifications()).find(async (n) => {
+        n.textMatches(/your license has expired\. please contact particular software support at:/i);
       });
 
-      expect(alert).not.toBeUndefined();
+      expect(notification).not.toBeUndefined();
+      expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
     });
   });
 });
