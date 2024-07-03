@@ -19,7 +19,7 @@ describe("FEATURE: EXPIRING license detection", () => {
         n.textMatches(/your non\-production development license will expire soon\. to continue using the particular service platform you'll need to extend your license\./i);
       });
 
-      expect(alert).not.toBeUndefined();
+      expect(notification).not.toBeUndefined();
       expect(notification?.hasLink({ caption: "Extend your license", address: "http://particular.net/extend-your-trial?p=servicepulse" })).toBeTruthy();
       expect(notification?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
     });
@@ -39,7 +39,7 @@ describe("FEATURE: EXPIRING license detection", () => {
           n.textMatches(/once upgrade protection expires, you'll no longer have access to support or new product versions/i);
         });
 
-        expect(alert).not.toBeUndefined();
+        expect(notification).not.toBeUndefined();
         expect(notification?.hasLink({ caption: "View license details", address: "#/configuration" })).toBeTruthy();
       });
     });
@@ -68,7 +68,7 @@ describe("FEATURE: EXPIRED license detection", () => {
         n.textMatches(/your license has expired\. please contact particular software support at:/i);
       });
 
-      expect(alert).not.toBeUndefined();
+      expect(notification).not.toBeUndefined();
       expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
     });
 
@@ -89,7 +89,7 @@ describe("FEATURE: EXPIRED license detection", () => {
         n.textMatches(/your license has expired\. please contact particular software support at:/i);
       });
 
-      expect(alert).not.toBeUndefined();
+      expect(notification).not.toBeUndefined();
       expect(notification?.hasLink({ caption: "http://particular.net/support", address: "http://particular.net/support" })).toBeTruthy();
     });
 
