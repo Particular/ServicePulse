@@ -83,7 +83,29 @@ function getContentType() {
 }
 
 function isContentTypeSupported(contentType: string) {
-  return contentType === "application/json" || contentType === "text/xml";
+
+  if (contentType.startsWith("text/"))
+    return true;
+
+  var charsetUtf8 = "; charset=utf-8"; 
+
+  if (contentType.endsWith(charsetUtf8)) {
+    contentType = contentType.substring(0,contentType.length-charsetUtf8.length)
+  }
+
+  if (contentType==="application/json")
+    return true;
+    
+  if (contentType.startsWith("application/")) {
+    // Some examples:
+    // application/atom+xml
+    // application/ld+json
+    // application/vnd.masstransit+json
+    if(contentType.endsWith("+json") || contentType.endsWith("+xml"))
+      return true;
+    }
+
+  return false;
 }
 
 function getMessageIntent() {
@@ -181,7 +203,7 @@ onMounted(() => {
                       </div>
                       <div class="row alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage?.bodyUnavailable">
                         <div class="col-sm-12">
-                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type ({{ localMessage?.bodyContentType }}) is not supported. Only messages with body content serialized as JSON or XML can be edited.
+                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type "{{ localMessage?.bodyContentType }}) is not supported. Only messages with content types "application/json" and "text/xml"can be edited.
                         </div>
                       </div>
                       <div class="row alert alert-danger" v-if="showEditRetryGenericError">
