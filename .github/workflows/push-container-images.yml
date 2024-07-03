@@ -1,0 +1,55 @@
+name: Push container images
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Full version of container image to push. Normally, this should exactly match the tag name.
+        required: true
+        type: string
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    name: Push
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+      - name: Validate build version
+        id: validate
+        uses: ./.github/actions/validate-version
+        with:
+          version: ${{ inputs.version }}
+      - name: Log in to GitHub container registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3.2.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Publish to Docker Hub
+        run: |
+          $containers = @('servicepulse')
+          $tags = "${{ steps.validate.outputs.container-tags }}" -Split ','
+          $sourceTag = "${{ inputs.version }}"
+
+          foreach ($tag in $tags)
+          {
+            foreach($name in $containers)
+            {
+              Write-Output "::group::Pushing $($name):$($tag)"
+              $cmd = "docker buildx imagetools create --tag particular/$($name):$($tag) ghcr.io/particular/$($name):$($sourceTag)"
+              Write-Output "Command: $cmd"
+              Invoke-Expression $cmd
+              Write-Output "::endgroup::"
+            }
+          }
+      - name: Update Docker Hub Description
+        if: ${{ steps.validate.outputs.latest == 'true' }}
+        uses: peter-evans/dockerhub-description@v4.0.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: particular/servicepulse
+          readme-filepath: ./src/Container/README.md

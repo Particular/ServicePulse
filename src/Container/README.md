@@ -14,7 +14,8 @@ docker run -p 9090:90 particular/servicepulse:latest
 
 - **`SERVICECONTROL_URL`**: _Default_: `http://localhost:33333/api/`. The url to your ServiceControl instance
 - **`MONITORING_URLS`**: _Default_: `['http://localhost:33633/']`. A JSON array of URLs to your monitoring instances
-- **`BASE_URL`**: _Default_ `'/'`. The base path to your ServicePulse install, for reverse proxy installations.
+- **`DEFAULT_ROUTE`**: _Default_: `/dashboard`. The default page that should be displayed when visiting the site
+- **`SHOW_PENDING_RETRY`** _Default_: `false`. Set to `true` to show details of pending retries
 
 It may be desireable to run the ServiceControl services in an isolated network. When doing so ServicePulse must be configured to connect to those services using environment variables:
 
@@ -22,7 +23,7 @@ It may be desireable to run the ServiceControl services in an isolated network. 
 docker run -p 9090:90 -e SERVICECONTROL_URL="http://servicecontrol:33333/api/" -e MONITORING_URLS="['http://servicecontrol-monitoring:33633']" particular/servicepulse:latest
 ```
 
-Or as part of a https://docs.docker.com/compose/compose-file/05-services/:
+Or as part of a [Docker Compose services specification](https://docs.docker.com/compose/compose-file/05-services/):
 
 ```yaml
 services:
@@ -62,6 +63,10 @@ The latest release within a major version will be tagged with the major version 
 If `particular/servicepulse:1.30.1` is the latest release in the version 1 major release, the image will also be tagged `particular/servicepulse:1`.
 
 The major version tag is never added to images pushed to [the GitHub Container Registry](https://github.com/Particular/ServicePulse/pkgs/container/servicepulse).
+
+#### Minor version tag
+
+The latest release within a minor version will be tagged with `{major}.{minor}` on images pushed to Docker Hub. This allows users to target the latest patch within a specific minor version.
 
 ## Built With
 
