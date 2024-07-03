@@ -87,10 +87,10 @@ function isContentTypeSupported(contentType: string) {
   if (contentType.startsWith("text/"))
     return true;
 
-  var charsetUtf8 = "; charset=utf-8"; 
+  const charsetUtf8 = "; charset=utf-8"; 
 
   if (contentType.endsWith(charsetUtf8)) {
-    contentType = contentType.substring(0,contentType.length-charsetUtf8.length)
+    contentType = contentType.substring(0,contentType.length - charsetUtf8.length)
   }
 
   if (contentType==="application/json")
@@ -101,7 +101,7 @@ function isContentTypeSupported(contentType: string) {
     // application/atom+xml
     // application/ld+json
     // application/vnd.masstransit+json
-    if(contentType.endsWith("+json") || contentType.endsWith("+xml"))
+    if (contentType.endsWith("+json") || contentType.endsWith("+xml"))
       return true;
     }
 
