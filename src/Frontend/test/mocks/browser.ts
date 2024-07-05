@@ -1,17 +1,17 @@
 import { setupWorker } from "msw/browser";
 import { Driver } from "../driver";
-import { makeMockEndpoint, makeMockEndpointWithQueryString } from "../mock-endpoint";
+import { makeMockEndpoint, makeMockEndpointDynamic } from "../mock-endpoint";
 import * as precondition from "../preconditions";
 export const worker = setupWorker();
 const mockEndpoint = makeMockEndpoint({ mockServer: worker });
-const mockEndpointWithQueryString = makeMockEndpointWithQueryString({ mockServer: worker });
+const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
 
 const makeDriver = (): Driver => ({
   async goTo() {
     throw new Error("Not implemented");
   },
   mockEndpoint,
-  mockEndpointWithQueryString,
+  mockEndpointDynamic,
   setUp(factory) {
     return factory({ driver: this });
   },

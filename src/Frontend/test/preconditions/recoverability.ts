@@ -39,6 +39,20 @@ export const serviceControlConfigurationDefaultHandler = ({ driver }: SetupFacto
   });
 };
 
+export const archivedGroupsWithClassifierDefaulthandler = ({ driver }: SetupFactoryOptions) => {
+  const serviceControlUrl = window.defaultConfig.service_control_url;
+  driver.mockEndpoint(`${serviceControlUrl}errors/groups{/:classifier}`, {
+    body: [],
+  });
+};
+
+export const recoverabilityGroupsWithClassifierDefaulthandler = ({ driver }: SetupFactoryOptions) => {
+  const serviceControlUrl = window.defaultConfig.service_control_url;
+  driver.mockEndpoint(`${serviceControlUrl}recoverability/groups{/:classifier}`, {
+    body: [],
+  });
+};
+
 export const recoverabilityClassifiers = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlUrl}recoverability/classifiers`, {
@@ -57,49 +71,59 @@ export const recoverabilityHistoryDefaultHandler = ({ driver }: SetupFactoryOpti
   });
 };
 
+const editConfig = <EditAndRetryConfig>{
+  enabled: false,
+  sensitive_headers: [
+    "NServiceBus.Header.RouteTo",
+    "NServiceBus.DestinationSites",
+    "NServiceBus.OriginatingSite",
+    "NServiceBus.To",
+    "NServiceBus.ReplyToAddress",
+    "NServiceBus.ReturnMessage.ErrorCode",
+    "NServiceBus.SagaType",
+    "NServiceBus.OriginatingSagaType",
+    "NServiceBus.TimeSent",
+    "Header",
+  ],
+  locked_headers: [
+    "NServiceBus.MessageId",
+    "NServiceBus.SagaId",
+    "NServiceBus.CorrelationId",
+    "NServiceBus.ControlMessage",
+    "NServiceBus.OriginatingSagaId",
+    "NServiceBus.RelatedTo",
+    "NServiceBus.ConversationId",
+    "NServiceBus.MessageIntent",
+    "NServiceBus.Version",
+    "NServiceBus.IsSagaTimeoutMessage",
+    "NServiceBus.IsDeferredMessage",
+    "NServiceBus.Retries",
+    "NServiceBus.Retries.Timestamp",
+    "NServiceBus.FLRetries",
+    "NServiceBus.ProcessingStarted",
+    "NServiceBus.ProcessingEnded",
+    "NServiceBus.ExceptionInfo.ExceptionType",
+    "NServiceBus.ExceptionInfo.HelpLink",
+    "NServiceBus.ExceptionInfo.Message",
+    "NServiceBus.ExceptionInfo.Source",
+    "NServiceBus.ExceptionInfo.StackTrace",
+    "NServiceBus.TimeOfFailure",
+    "NServiceBus.FailedQ",
+  ],
+};
 export const recoverabilityEditConfigDefaultHandler = ({ driver }: SetupFactoryOptions) => {
   const serviceControlUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlUrl}edit/config`, {
-    body: <EditAndRetryConfig>{
-      enabled: true,
-      sensitive_headers: [
-        "NServiceBus.Header.RouteTo",
-        "NServiceBus.DestinationSites",
-        "NServiceBus.OriginatingSite",
-        "NServiceBus.To",
-        "NServiceBus.ReplyToAddress",
-        "NServiceBus.ReturnMessage.ErrorCode",
-        "NServiceBus.SagaType",
-        "NServiceBus.OriginatingSagaType",
-        "NServiceBus.TimeSent",
-        "Header",
-      ],
-      locked_headers: [
-        "NServiceBus.MessageId",
-        "NServiceBus.SagaId",
-        "NServiceBus.CorrelationId",
-        "NServiceBus.ControlMessage",
-        "NServiceBus.OriginatingSagaId",
-        "NServiceBus.RelatedTo",
-        "NServiceBus.ConversationId",
-        "NServiceBus.MessageIntent",
-        "NServiceBus.Version",
-        "NServiceBus.IsSagaTimeoutMessage",
-        "NServiceBus.IsDeferredMessage",
-        "NServiceBus.Retries",
-        "NServiceBus.Retries.Timestamp",
-        "NServiceBus.FLRetries",
-        "NServiceBus.ProcessingStarted",
-        "NServiceBus.ProcessingEnded",
-        "NServiceBus.ExceptionInfo.ExceptionType",
-        "NServiceBus.ExceptionInfo.HelpLink",
-        "NServiceBus.ExceptionInfo.Message",
-        "NServiceBus.ExceptionInfo.Source",
-        "NServiceBus.ExceptionInfo.StackTrace",
-        "NServiceBus.TimeOfFailure",
-        "NServiceBus.FailedQ",
-      ],
-    },
+    body: editConfig,
+  });
+};
+
+export const enableEditAndRetry = ({ driver }: SetupFactoryOptions) => {
+  const serviceControlUrl = window.defaultConfig.service_control_url;
+  const config = structuredClone(editConfig);
+  config.enabled = true;
+  driver.mockEndpoint(`${serviceControlUrl}edit/config`, {
+    body: config,
   });
 };
 
@@ -132,7 +156,7 @@ export const hasFailedMessage =
       edit_of: "",
     };
 
-    driver.mockEndpointWithQueryString(`${serviceControlUrl}errors`, (url) => {
+    driver.mockEndpointDynamic(`${serviceControlUrl}errors`, (url) => {
       const status = url.searchParams.get("status");
       if (status === "unresolved") {
         return {
@@ -216,7 +240,7 @@ export const hasFailedMessage =
       body: failedMessage,
     });
 
-    driver.mockEndpoint(`${serviceControlUrl}recoverability/groups/Endpoint%20Name`, {
+    driver.mockEndpoint(`${serviceControlUrl}recoverability/groups{/:classifier}`, {
       body: [
         {
           id: withGroupId,

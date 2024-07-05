@@ -169,7 +169,7 @@ onMounted(() => {
 
 <template>
   <section name="failed_message_editor">
-    <div class="model modal-msg-editor" style="z-index: 1050; display: block">
+    <div class="model modal-msg-editor" style="z-index: 1050; display: block" role="dialog" aria-label="edit and retry message">
       <div class="modal-mask">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -183,9 +183,9 @@ onMounted(() => {
                 <div class="col-sm-12">
                   <div class="row msg-editor-tabs">
                     <div class="col-sm-12 no-side-padding">
-                      <div class="tabs msg-tabs">
-                        <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="javascript:void(0)">Headers</a></h5>
-                        <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="javascript:void(0)">Message body</a></h5>
+                      <div role="tablist" class="tabs msg-tabs">
+                        <h5 role="tab" :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="javascript:void(0)">Headers</a></h5>
+                        <h5 role="tab" :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="javascript:void(0)">Message body</a></h5>
                       </div>
                     </div>
                   </div>
@@ -198,7 +198,7 @@ onMounted(() => {
                         </div>
                       </div>
                       <div class="alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage?.bodyUnavailable">
-                        <div class="col-sm-12">
+                        <div role="status" aria-label="cannot edit message body" class="col-sm-12">
                           <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type "{{ localMessage?.bodyContentType }}" is not supported. Only messages with content types "application/json" and "text/xml" can be
                           edited.
                         </div>
@@ -206,15 +206,15 @@ onMounted(() => {
                       <div class="row alert alert-danger" v-if="showEditRetryGenericError">
                         <div class="col-sm-12"><i class="fa fa-exclamation-triangle"></i> An error occurred while retrying the message, please check the ServiceControl logs for more details on the failure.</div>
                       </div>
-                      <table class="table" v-if="panel === 1">
+                      <table role="tabpanel" class="table" v-if="panel === 1">
                         <tbody>
                           <tr class="interactiveList" v-for="header in localMessage?.headers" :key="header.key">
                             <MessageHeader :header="header"></MessageHeader>
                           </tr>
                         </tbody>
                       </table>
-                      <div v-if="panel === 2 && !localMessage?.bodyUnavailable" style="height: calc(100% - 260px)">
-                        <textarea class="form-control" :disabled="!localMessage?.isContentTypeSupported" v-model="localMessage.messageBody"></textarea>
+                      <div role="tabpanel" v-if="panel === 2 && !localMessage?.bodyUnavailable" style="height: calc(100% - 260px)">
+                        <textarea aria-label="message body" class="form-control" :disabled="!localMessage?.isContentTypeSupported" v-model="localMessage.messageBody"></textarea>
                         <span class="empty-error" v-if="localMessage?.isBodyEmpty"><i class="fa fa-exclamation-triangle"></i> Message body cannot be empty</span>
                         <span class="reset-body" v-if="localMessage?.isBodyChanged"><i class="fa fa-undo" uib-tooltip="Reset changes"></i> <a @click="resetBodyChanges()" href="javascript:void(0)">Reset changes</a></span>
                         <div class="alert alert-info" v-if="localMessage?.panel === 2 && localMessage.bodyUnavailable">{{ localMessage.bodyUnavailable }}</div>

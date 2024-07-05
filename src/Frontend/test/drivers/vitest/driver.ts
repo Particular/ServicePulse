@@ -2,7 +2,7 @@ import { it as itVitest, describe } from "vitest";
 import { Driver } from "../../driver";
 import { mount } from "../../../src/mount";
 import makeRouter from "../../../src/router";
-import { mockEndpoint, mockEndpointWithQueryString } from "../../utils";
+import { mockEndpoint, mockEndpointDynamic } from "../../utils";
 import { mockServer } from "../../mock-server";
 import { App } from "vue";
 
@@ -22,11 +22,11 @@ function makeDriver() {
         throw error;
       }
 
-      document.body.innerHTML = '<div id="app"></div>';
+      document.body.innerHTML = '<div id="app"></div><div id="modalDisplay"></div>';
       app = mount({ router });
     },
     mockEndpoint,
-    mockEndpointWithQueryString,
+    mockEndpointDynamic: mockEndpointDynamic,
     setUp(factory) {
       return factory({ driver: this });
     },
