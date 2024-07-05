@@ -2,7 +2,7 @@ import { it as itVitest, describe } from "vitest";
 import { Driver } from "../../driver";
 import { mount } from "../../../src/mount";
 import makeRouter from "../../../src/router";
-import { mockEndpoint } from "../../utils";
+import { mockEndpoint, mockEndpointWithQueryString } from "../../utils";
 import { mockServer } from "../../mock-server";
 import { App } from "vue";
 
@@ -26,6 +26,7 @@ function makeDriver() {
       app = mount({ router });
     },
     mockEndpoint,
+    mockEndpointWithQueryString,
     setUp(factory) {
       return factory({ driver: this });
     },

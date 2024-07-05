@@ -1,4 +1,4 @@
-import { makeMockEndpoint } from "./mock-endpoint";
+import { makeMockEndpoint, makeMockEndpointWithQueryString } from "./mock-endpoint";
 import userEvent from "@testing-library/user-event";
 
 import { mockServer } from "./mock-server";
@@ -8,3 +8,5 @@ export { expect, test, describe } from "vitest";
 export { userEvent };
 
 export const mockEndpoint = makeMockEndpoint({ mockServer });
+export const mockEndpointWithQueryString = makeMockEndpointWithQueryString({ mockServer });
+

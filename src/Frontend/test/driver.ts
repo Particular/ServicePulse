@@ -8,6 +8,7 @@ export type MockEndpointOptions = {
 };
 
 type MockEndpoint = (path: string, options: MockEndpointOptions) => void;
+type makeMockEndpointWithQueryString = (endpoint: string, callBack: (url: URL) => MockEndpointOptions) => void;
 
 export type SetupFactoryOptions = {
   driver: Driver;
@@ -20,6 +21,7 @@ type SetUp = <Factory extends SetupFactory>(factory: Factory) => Promise<ReturnT
 export type Driver = {
   goTo: GoTo;
   mockEndpoint: MockEndpoint;
+  mockEndpointWithQueryString: makeMockEndpointWithQueryString
   setUp: SetUp;
   disposeApp: DisposeApp;
 };
