@@ -191,15 +191,15 @@ onMounted(() => {
                   </div>
                   <div class="row msg-editor-content">
                     <div class="col-sm-12 no-side-padding">
-                      <div class="row alert alert-warning" v-if="localMessage?.isEvent">
+                      <div class="alert alert-warning" v-if="localMessage?.isEvent">
                         <div class="col-sm-12">
                           <i class="fa fa-exclamation-circle"></i> This message is an event. If it was already successfully handled by other subscribers, editing it now has the risk of changing the semantic meaning of the event and may result in
                           altering the system behavior.
                         </div>
                       </div>
-                      <div class="row alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage?.bodyUnavailable">
+                      <div class="alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage?.bodyUnavailable">
                         <div class="col-sm-12">
-                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type "{{ localMessage?.bodyContentType }}) is not supported. Only messages with content types "application/json" and "text/xml" can be
+                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type "{{ localMessage?.bodyContentType }}" is not supported. Only messages with content types "application/json" and "text/xml" can be
                           edited.
                         </div>
                       </div>
