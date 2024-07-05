@@ -67,7 +67,7 @@ jobs:
         run: dotnet build src/Setup --configuration Release
       # Upload artifacts
       - name: Publish artifacts
-        uses: actions/upload-artifact@v4.3.3
+        uses: actions/upload-artifact@v4.3.4
         with:
           name: artifacts
           path: |
