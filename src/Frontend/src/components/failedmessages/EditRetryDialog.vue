@@ -199,7 +199,8 @@ onMounted(() => {
                       </div>
                       <div class="row alert alert-warning" v-if="!localMessage?.isContentTypeSupported || localMessage?.bodyUnavailable">
                         <div class="col-sm-12">
-                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type "{{ localMessage?.bodyContentType }}) is not supported. Only messages with content types "application/json" and "text/xml" can be edited.
+                          <i class="fa fa-exclamation-circle"></i> Message body cannot be edited because content type "{{ localMessage?.bodyContentType }}) is not supported. Only messages with content types "application/json" and "text/xml" can be
+                          edited.
                         </div>
                       </div>
                       <div class="row alert alert-danger" v-if="showEditRetryGenericError">
