@@ -31,6 +31,9 @@ function makeDriver() {
       return factory({ driver: this });
     },
     disposeApp() {
+      if (!app) {
+        throw new Error("App is not mounted, make your sure to await driver.goTo().");
+      }
       app.unmount();
     },
   };
