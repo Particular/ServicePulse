@@ -51,11 +51,11 @@ describe("FEATURE: Editing failed messages", () => {
         //When the user opens the message editor
         await driver.goTo("failed-messages/message/81dca64e-76fc-e1c3-11a2-3069f51c58c8");
         await openEditAndRetryEditor();
-        const editor = await getEditAndRetryEditor();
-        await editor.switchToMessageBodyTab();
+        const messageEditor = await getEditAndRetryEditor();
+        await messageEditor.switchToMessageBodyTab();
 
         //Then The message body should be editable
-        expect(editor.bodyFieldIsDisabled()).toBeFalsy();
+        expect(messageEditor.bodyFieldIsDisabled()).toBeFalsy();
       });
     });
 
@@ -77,12 +77,12 @@ describe("FEATURE: Editing failed messages", () => {
         //When the user opens the message editor
         await driver.goTo("failed-messages/message/81dca64e-76fc-e1c3-11a2-3069f51c58c8");
         await openEditAndRetryEditor();
-        const dialog = await getEditAndRetryEditor();
-        await dialog.switchToMessageBodyTab();
+        const messageEditor = await getEditAndRetryEditor();
+        await messageEditor.switchToMessageBodyTab();
 
         //Then The message body should NOT be editable
-        expect(dialog.bodyFieldIsDisabled()).toBeTruthy();        
-        expect(dialog.hasWarningMatchingText(/message body cannot be edited because content type "application\/octet\-stream" is not supported\. only messages with content types "application\/json" and "text\/xml" can be edited\./i)).toBeTruthy();        
+        expect(messageEditor.bodyFieldIsDisabled()).toBeTruthy();        
+        expect(messageEditor.hasWarningMatchingText(/message body cannot be edited because content type "application\/octet\-stream" is not supported\. only messages with content types "application\/json" and "text\/xml" can be edited\./i)).toBeTruthy();        
     });
   });
 });
