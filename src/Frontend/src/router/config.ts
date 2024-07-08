@@ -7,6 +7,7 @@ import ConfigurationView from "@/views/ConfigurationView.vue";
 import routeLinks from "@/router/routeLinks";
 import CustomChecksView from "@/views/CustomChecksView.vue";
 import HeartbeatsView from "@/views/HeartbeatsView.vue";
+import ThroughputReportView from "@/views/ThroughputReportView.vue";
 
 export interface RouteItem {
   path: string;
@@ -115,6 +116,32 @@ const config: RouteItem[] = [
     title: "Events",
   },
   {
+    path: routeLinks.throughput.root,
+    component: ThroughputReportView,
+    title: "Usage",
+    redirect: routeLinks.throughput.endpoints.root,
+    children: [
+      {
+        title: "Endpoints",
+        path: routeLinks.throughput.endpoints.root,
+        redirect: routeLinks.throughput.endpoints.detectedEndpoints.link,
+        component: () => import("@/views/throughputreport/EndpointsView.vue"),
+        children: [
+          {
+            title: "Detected Endpoints",
+            path: routeLinks.throughput.endpoints.detectedEndpoints.template,
+            component: () => import("@/views/throughputreport/endpoints/DetectedEndpointsView.vue"),
+          },
+          {
+            title: "Detected Broker Queues",
+            path: routeLinks.throughput.endpoints.detectedBrokerQueues.template,
+            component: () => import("@/views/throughputreport/endpoints/DetectedBrokerQueuesView.vue"),
+          }
+        ]
+      }
+    ],
+  },
+  {
     path: routeLinks.configuration.root,
     title: "Configuration",
     component: ConfigurationView,
@@ -144,6 +171,29 @@ const config: RouteItem[] = [
         title: "Endpoint Connection",
         path: routeLinks.configuration.endpointConnection.template,
         component: () => import("@/components/configuration/EndpointConnection.vue"),
+      },
+      {
+        title: "Usage Setup",
+        path: routeLinks.throughput.setup.root,
+        redirect: routeLinks.throughput.setup.connectionSetup.link,
+        component: () => import("@/views/throughputreport/SetupView.vue"),
+        children: [
+          {
+            title: "Connection Setup",
+            path: routeLinks.throughput.setup.connectionSetup.template,
+            component: () => import("@/views/throughputreport/setup/ConnectionSetupView.vue"),
+          },
+          {
+            title: "Mask Report Data",
+            path: routeLinks.throughput.setup.mask.template,
+            component: () => import("@/views/throughputreport/setup/MasksView.vue"),
+          },
+          {
+            title: "Diagnostics",
+            path: routeLinks.throughput.setup.diagnostics.template,
+            component: () => import("@/views/throughputreport/setup/DiagnosticsView.vue"),
+          }
+        ]
       },
     ],
   },
