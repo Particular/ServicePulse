@@ -30,7 +30,7 @@ jobs:
         with:
           dotnet-version: 7.0.x
       - name: Set up Node.js
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 21.6.x
       - name: Build Frontend
@@ -128,7 +128,7 @@ jobs:
         with:
           version: ${{ env.MinVerVersion }}
       - name: Set up Node.js
-        uses: actions/setup-node@v4.0.2
+        uses: actions/setup-node@v4.0.3
         with:
           node-version: 21.6.x
       - name: Build Frontend
