@@ -1,5 +1,5 @@
 export * from "../preconditions/hasLicense";
-export { hasServiceControlMainInstance } from "../preconditions/hasServiceControlMainInstance";
+export  * from "../preconditions/hasServiceControlMainInstance";
 export { hasServiceControlMonitoringInstance } from "../preconditions/hasServiceControlMonitoringInstance";
 export { hasServiceControlMonitoringInstanceUrl } from "../preconditions/hasServiceControlMonitoringInstanceUrl";
 export { hasUpToDateServiceControl } from "../preconditions/hasUpToDateServiceControl";

@@ -1,10 +1,9 @@
-import { expect, it as example, render, screen, describe, userEvent } from "@component-test-utils";
+import { expect, test, render, screen, describe, userEvent } from "@component-test-utils";
 //Imports from the system under test
 import ThroughputReportView from "./ThroughputReportView.vue";
-import ReportGenerationState from "@/resources/ReportGenerationState";
-import { useServiceControl } from "@/composables/serviceServiceControl";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
 import { useLicense } from "@/composables/serviceLicense";
+import { useServiceControl } from "@/composables/serviceServiceControl";
 import makeRouter from "@/router";
 
 //Testing framework imports
@@ -14,20 +13,21 @@ import { createTestingPinia } from "@pinia/testing";
 
 //Reusing functions from the acceptance test setup
 import { Driver } from "@/../test/driver";
-import { makeMockEndpoint } from "@/../test/mock-endpoint";
+import { makeMockEndpoint, makeMockEndpointDynamic } from "@/../test/mock-endpoint";
 import { mockServer } from "@/../test/mock-server";
 import { serviceControlWithMonitoring } from "@/../test/preconditions";
 import { serviceControlMainInstance } from "@/../test/mocks/service-control-instance-template";
 
 describe("Feature: Backend mininum requirements checking", async () => {
-  describe("Rule: It should be validated that ServiceControl version is at least 5.0.0", async () => {
+  describe("Rule: It should be validated that ServiceControl version is at least 5.4.0", async () => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
-    example("Example: ServiceControl main instance is 4.9.0", async () => {
+    test("Example: ServiceControl main instance is 4.9.0", async () => {
       mockEndpoint(serviceControlInstanceUrl, {
         body: serviceControlMainInstance,
         headers: { "X-Particular-Version": "4.0.4" },
       });
-      await useServiceControlUrls().then(() => Promise.all([useLicense(), useServiceControl()]));
+      useServiceControlUrls();
+      await Promise.all([useLicense(), useServiceControl()]);
 
       render(ThroughputReportView, {
         global: {
@@ -44,12 +44,13 @@ describe("Feature: Backend mininum requirements checking", async () => {
       screen.logTestingPlaygroundURL();
     });
 
-    example("Example: ServiceControl main instance is 5.0.0", async () => {
+    test("Example: ServiceControl main instance is 5.4.0", async () => {
       mockEndpoint(serviceControlInstanceUrl, {
         body: serviceControlMainInstance,
-        headers: { "X-Particular-Version": "5.0.4" },
+        headers: { "X-Particular-Version": "5.4.0" },
       });
-      await useServiceControlUrls().then(() => Promise.all([useLicense(), useServiceControl()]));
+      useServiceControlUrls();
+      await Promise.all([useLicense(), useServiceControl()]);
 
       render(ThroughputReportView, {
         global: {
@@ -69,34 +70,43 @@ describe("Feature: Backend mininum requirements checking", async () => {
 });
 
 const mockEndpoint = makeMockEndpoint({ mockServer: mockServer });
+const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: mockServer });
 
 const router = makeRouter();
 
 const makeDriver = (): Driver => ({
-  async goTo() {},
+  async goTo() {
+    throw "Not implemented";
+  },
   mockEndpoint,
+  mockEndpointDynamic,
   setUp(factory) {
     return factory({ driver: this });
   },
-  disposeApp() {},
+  disposeApp() {
+    throw "Not implemented";
+  },
 });
 
 const driver = makeDriver();
 
 beforeAll(async () => {
-  const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
   const el = document.createElement("div");
   el.id = "modalDisplay";
   document.body.appendChild(el);
+
+  const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
+  //Reuse preconditions from the acceptance test setup
   await driver.setUp(serviceControlWithMonitoring);
 
-  mockEndpoint(`${serviceControlInstanceUrl}licensing/report/available`, {
-    body: <ReportGenerationState>{
-      transport: "LearningTransport",
-      report_can_be_generated: true,
-      reason: "",
-    },
-    method: "get",
-    status: 200,
-  });
+  //Example of how to directly use mockEndpoint function as a precondition for all the tests in this file
+  // mockEndpoint(`${serviceControlInstanceUrl}licensing/report/available`, {
+  //   body: <ReportGenerationState>{
+  //     transport: "LearningTransport",
+  //     report_can_be_generated: true,
+  //     reason: "",
+  //   },
+  //   method: "get",
+  //   status: 200,
+  // });
 });
