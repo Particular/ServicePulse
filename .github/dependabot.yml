@@ -29,3 +29,13 @@ updates:
   schedule:
     interval: daily
   open-pull-requests-limit: 1000
+- package-ecosystem: "docker"
+  directory: "/src/Container"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 1000
+- package-ecosystem: "npm"
+  directory: "/src/Frontend"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 1000
