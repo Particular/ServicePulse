@@ -19,7 +19,7 @@
   "dependencies": {
     "@tinyhttp/content-disposition": "^2.2.1",
     "@vue-flow/core": "^1.29.1",
-    "@wdns/vue-code-block": "^2.3.2",
+    "@wdns/vue-code-block": "^2.3.3",
     "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.10.3",
     "highlight.js": "^11.10.0",
