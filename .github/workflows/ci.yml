@@ -38,8 +38,8 @@ jobs:
         uses: test-summary/action@v2
         with:
           paths: |
-            src/Frontend/test-component.tap
-            src/Frontend/test-application.tap
+            src/Frontend/test-component.xml
+            src/Frontend/test-application.xml
         if: always()
       # .NET Build and run tests
       - name: Build
