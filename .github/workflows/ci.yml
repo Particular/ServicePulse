@@ -37,6 +37,7 @@ jobs:
       - name: Frontend Test Summary
         uses: test-summary/action@v2
         with:
+          show: "all"
           paths: |
             src/Frontend/test-component.xml
             src/Frontend/test-application.xml
