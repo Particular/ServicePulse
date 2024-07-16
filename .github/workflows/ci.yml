@@ -34,6 +34,13 @@ jobs:
       - name: Run application tests
         run: npm run test:application
         working-directory: src/Frontend
+      - name: Frontend Test Summary
+        uses: test-summary/action@v2
+        with:
+          paths: |
+            ./test-component.tap
+            ./test-application.tap
+        if: always()
       # .NET Build and run tests
       - name: Build
         run: dotnet build src --configuration Release
