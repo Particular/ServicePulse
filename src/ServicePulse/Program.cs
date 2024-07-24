@@ -1,8 +1,18 @@
+using System.Net.Mime;
 using Microsoft.Extensions.FileProviders;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
 
-var builder = WebApplication.CreateBuilder(args);
+var constantsFile = """
+window.defaultConfig = {
+  default_route: '/dashboard',
+  base_url: '/',
+  version: '1.4.2',
+  service_control_url: '/api/',
+  monitoring_urls: ['/monitoring-api/'],
+  showPendingRetry: false,
+}
+""";
 
 var serviceControlInstance = new ClusterConfig
 {
@@ -54,6 +64,8 @@ var clusters = new List<ClusterConfig>
     monitoringInstance
 };
 
+var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
 
 var app = builder.Build();
@@ -68,5 +80,11 @@ var staticFileOptions = new StaticFileOptions { FileProvider = fileProvider };
 app.UseStaticFiles(staticFileOptions);
 
 app.MapReverseProxy();
+
+app.MapGet("/js/app.constants.js", (HttpContext context) =>
+{
+    context.Response.ContentType = MediaTypeNames.Text.JavaScript;
+    return constantsFile;
+});
 
 app.Run();
