@@ -1,8 +1,13 @@
 using System.Net.Mime;
 using System.Reflection;
 using Microsoft.Extensions.FileProviders;
+using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var (routes, clusters) = GetReverseProxyConfiguration();
+builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
 
 var app = builder.Build();
 
@@ -14,6 +19,8 @@ app.UseDefaultFiles(defaultFilesOptions);
 
 var staticFileOptions = new StaticFileOptions { FileProvider = fileProvider };
 app.UseStaticFiles(staticFileOptions);
+
+app.MapReverseProxy();
 
 var constantsFile = GetConstantsFile();
 
@@ -29,16 +36,14 @@ static string GetConstantsFile()
 {
     var defaultRoute = Environment.GetEnvironmentVariable("DEFAULT_ROUTE") ?? "/dashboard";
     var version = GetVersionInformation();
-    var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
-    var monitoringUrls = Environment.GetEnvironmentVariable("MONITORING_URLS") ?? "['http://localhost:33633/']";
     var showPendingRetry = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY") ?? "false";
 
     var constantsFile = $$"""
 window.defaultConfig = {
   default_route: '{{defaultRoute}}',
   version: '{{version}}',
-  service_control_url: '{{serviceControlUrl}}',
-  monitoring_urls: {{monitoringUrls}},
+  service_control_url: '/api/',
+  monitoring_urls: ['/monitoring-api/'],
   showPendingRetry: {{showPendingRetry}},
 }
 """;
@@ -61,4 +66,72 @@ static string GetVersionInformation()
     }
 
     return majorMinorPatch;
+}
+
+static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetReverseProxyConfiguration()
+{
+    var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333";
+    var serviceControlUri = new Uri(serviceControlUrl);
+
+    var oldDefault = "['http://localhost:33633/']";
+
+    var monitoringUrls = Environment.GetEnvironmentVariable("MONITORING_URLS");
+    var monitoringUrl = Environment.GetEnvironmentVariable("MONITORING_URL");
+
+    monitoringUrl ??= monitoringUrls;
+    monitoringUrl ??= "http://localhost:33633";
+
+    var monitoringUri = new Uri(monitoringUrl);
+
+    var serviceControlInstance = new ClusterConfig
+    {
+        ClusterId = "serviceControlInstance",
+        Destinations = new Dictionary<string, DestinationConfig>
+        {
+            { "instance", new DestinationConfig { Address = serviceControlUri.GetLeftPart(UriPartial.Authority) } }
+        }
+    };
+
+    var monitoringInstance = new ClusterConfig
+    {
+        ClusterId = "monitoringInstance",
+        Destinations = new Dictionary<string, DestinationConfig>
+        {
+            { "instance", new DestinationConfig { Address = monitoringUri.GetLeftPart(UriPartial.Authority) } }
+        }
+    };
+
+    var serviceControlRoute = new RouteConfig()
+    {
+        RouteId = "serviceControlRoute",
+        ClusterId = nameof(serviceControlInstance),
+        Match = new RouteMatch
+        {
+            Path = "/api/{**catch-all}"
+        }
+    };
+
+    var monitoringRoute = new RouteConfig()
+    {
+        RouteId = "monitoringRoute",
+        ClusterId = nameof(monitoringInstance),
+        Match = new RouteMatch
+        {
+            Path = "/monitoring-api/{**catch-all}"
+        }
+    }.WithTransformPathRemovePrefix("/monitoring-api");
+
+    var routes = new List<RouteConfig>
+    {
+        serviceControlRoute,
+        monitoringRoute
+    };
+
+    var clusters = new List<ClusterConfig>
+    {
+        serviceControlInstance,
+        monitoringInstance
+    };
+
+    return (routes, clusters);
 }
