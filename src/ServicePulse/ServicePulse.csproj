@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\Frontend\dist\**\*" LinkBase="wwwroot" />
+    <EmbeddedResource Include="..\Frontend\dist\**\*" Exclude="..\Frontend\dist\js\**\*" LinkBase="wwwroot" />
   </ItemGroup>
 
 </Project>
