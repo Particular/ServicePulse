@@ -1,17 +1,20 @@
 ﻿$AppOutputFolder = "app"
 $FrontendSourceFolder = "../Frontend"
 
-if (Test-Path $AppOutputFolder)
-{
-	Get-ChildItem -Path $AppOutputFolder -Include *.* -File -Recurse | foreach { $_.Delete()}
+if (Test-Path $AppOutputFolder) {
+    Remove-Item $AppOutputFolder -Force -Recurse 
 }
 
 New-Item -ItemType Directory -Force -Path $AppOutputFolder
 
-cd $FrontendSourceFolder
+Push-Location $FrontendSourceFolder
 npm install
-Remove-Item -Path "./public/mockServiceWorker.js"
 npm run build
+Remove-Item -Path "./dist/mockServiceWorker.js"
+Pop-Location
+
+Copy-Item -path $FrontendSourceFolder/dist/* -Destination $AppOutputFolder -Recurse
+
 if ( $? -eq $false ) {
     exit $LastExitCode
 }

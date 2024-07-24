@@ -8,11 +8,8 @@ src/scaffolding.config
 ServicePulse.Host.Tests/node_modules
 package-lock.json	
 
-# bower artifacts	
-ServicePulse.Host/app/bower_components	
-
 # Chutzpah folders	
 _Chutzpah.*/	
 
-# Webpack results	
-ServicePulse.Host/angular/app/modules/dist
+# ServicePulse.Host app
+ServicePulse.Host/app
