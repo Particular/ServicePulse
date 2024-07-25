@@ -1,5 +1,6 @@
 using System.Net.Mime;
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.Extensions.FileProviders;
 using Yarp.ReverseProxy.Configuration;
 using Yarp.ReverseProxy.Transforms;
@@ -73,9 +74,7 @@ static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetReverseProxyC
     var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333";
     var serviceControlUri = new Uri(serviceControlUrl);
 
-    var oldDefault = "['http://localhost:33633/']";
-
-    var monitoringUrls = Environment.GetEnvironmentVariable("MONITORING_URLS");
+    var monitoringUrls = ParseLegacyMonitoringValue(Environment.GetEnvironmentVariable("MONITORING_URLS"));
     var monitoringUrl = Environment.GetEnvironmentVariable("MONITORING_URL");
 
     monitoringUrl ??= monitoringUrls;
@@ -134,4 +133,40 @@ static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetReverseProxyC
     };
 
     return (routes, clusters);
+}
+
+static string? ParseLegacyMonitoringValue(string? value)
+{
+    if (value is null)
+    {
+        return null;
+    }
+
+    var cleanedValue = value.Replace('\'', '"');
+    var json = $$"""{"Addresses":{{cleanedValue}}}""";
+
+    MonitoringUrls? result = null;
+
+    try
+    {
+        result = JsonSerializer.Deserialize<MonitoringUrls>(json);
+    }
+    catch (JsonException)
+    {
+        return null;
+    }
+
+    var addresses = result?.Addresses;
+
+    if (addresses is not null && addresses.Length > 0)
+    {
+        return addresses[0];
+    }
+
+    return null;
+}
+
+class MonitoringUrls
+{
+    public string[] Addresses { get; set; } = [];
 }
