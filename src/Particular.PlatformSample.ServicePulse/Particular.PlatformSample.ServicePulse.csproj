@@ -1,15 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <Description>Particular ServicePulse binaries for use by Particular.PlatformSample. Not intended for use outside of Particular.PlatformSample.</Description>
     <PackageProjectUrl>https://docs.particular.net/servicepulse/</PackageProjectUrl>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddFilesToPackage</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ServicePulse.Host\ServicePulse.Host.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\ServicePulse\ServicePulse.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,12 +18,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\ServicePulse.Host\app\**\*" PackagePath="platform\servicepulse" Visible="false" Link="hidden" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="buildProps\**\*" />
     <Content Include="buildProps\**\*" PackagePath="" />
   </ItemGroup>
+
+  <Target Name="AddFilesToPackage">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="..\ServicePulse\bin\$(Configuration)\$(TargetFramework)\**\*" PackagePath="platform\servicepulse" />
+    </ItemGroup>
+  </Target>
 
 </Project>
