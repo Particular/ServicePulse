@@ -132,13 +132,7 @@ jobs:
         with:
           node-version: 21.6.x
       - name: Build Frontend
-        run: .\build.ps1
-        working-directory: src/ServicePulse.Host
-        shell: pwsh
-      - name: Update app.constants.js with MinVerVersion
-        run: |
-          $filename = "src/ServicePulse.Host/app/js/app.constants.js"
-          (Get-Content $filename).replace("1.2.0", "${{ env.MinVerVersion }}") | Set-Content $filename
+        run: src/ServicePulse/build.ps1
         shell: pwsh
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.6.1
@@ -153,11 +147,8 @@ jobs:
           TAG_NAME: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || env.MinVerVersion }}
         run: |
           docker buildx build --push --tag ghcr.io/particular/servicepulse:${{ env.TAG_NAME }} \
-            --file src/Container/Dockerfile \
-            --build-arg NGINX_TAGORDIGEST="@${{ env.NGINX_DIGEST }}" \
+            --file src/ServicePulse/Dockerfile \
             --build-arg VERSION=${{ env.MinVerVersion }} \
-            --build-arg GITHUB_SHA=${{ github.sha }} \
-            --build-arg GITHUB_REF_NAME=${{ github.ref.name }} \
             --annotation "index:org.opencontainers.image.title=ServicePulse" \
             --annotation "index:org.opencontainers.image.description=ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard." \
             --annotation "index:org.opencontainers.image.created=$(date '+%FT%TZ')" \
@@ -168,6 +159,6 @@ jobs:
             --annotation "index:org.opencontainers.image.source=https://github.com/${{ github.repository }}/tree/${{ github.sha }}" \
             --annotation "index:org.opencontainers.image.url=https://hub.docker.com/r/particular/servicepulse" \
             --annotation "index:org.opencontainers.image.documentation=https://docs.particular.net/servicepulse/" \
-            --annotation "index:org.opencontainers.image.base.name=nginx@${{ env.NGINX_DIGEST }}" \
+            --annotation "index:org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite" \
             --platform linux/arm64,linux/arm,linux/amd64 .
           docker buildx imagetools inspect ghcr.io/particular/servicepulse:${{ env.TAG_NAME }}

@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4.0.3
         with:
-          node-version: 21.6.x      
+          node-version: 21.6.x
       - name: Build Frontend
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
@@ -38,7 +38,7 @@ jobs:
       - name: Build
         run: dotnet build src --configuration Release
       - name: Run .NET tests
-        uses: Particular/run-tests-action@v1.7.0       
+        uses: Particular/run-tests-action@v1.7.0
       # Upload assets and packages
       - name: Upload assets
         uses: actions/upload-artifact@v4.3.6
