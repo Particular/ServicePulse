@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -9,10 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="GitHubActionsTestLogger" Version="2.4.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageReference Include="NUnit" Version="4.1.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
@@ -21,17 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\Frontend\public\js\app.constants.js" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="app\filename.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="app\js\app.constants.js">
-      <LogicalName>%(RelativeDir)%(Filename)%(Extension)</LogicalName>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Content Include="..\Frontend\public\js\app.constants.js" CopyToOutputDirectory="PreserveNewest" LinkBase="app/js" />
+    <None Update="app\filename.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>
