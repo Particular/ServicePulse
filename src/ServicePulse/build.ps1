@@ -1,4 +1,5 @@
-﻿$FrontendSourceFolder = "../Frontend"
+﻿$ScriptPath = $PSCommandPath | Split-Path
+$FrontendSourceFolder = $ScriptPath + "/../Frontend"
 
 Push-Location $FrontendSourceFolder
 npm install
