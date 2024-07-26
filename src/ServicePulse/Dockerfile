@@ -13,7 +13,7 @@ COPY . .
 RUN dotnet publish src/ServicePulse/ServicePulse.csproj -a $TARGETARCH -o /app
 
 # Runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite
 ARG VERSION
 WORKDIR /
 
