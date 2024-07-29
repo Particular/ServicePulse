@@ -141,7 +141,7 @@ jobs:
           (Get-Content $filename).replace("1.2.0", "${{ env.MinVerVersion }}") | Set-Content $filename
         shell: pwsh
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.5.0
+        uses: docker/setup-buildx-action@v3.6.1
       - name: Pull nginx:stable-alpine and determine digest
         run: |
           docker pull nginx:stable-alpine
