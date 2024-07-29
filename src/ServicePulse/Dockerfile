@@ -15,7 +15,7 @@ RUN dotnet publish src/ServicePulse/ServicePulse.csproj -a $TARGETARCH -o /app
 # Runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite
 ARG VERSION
-WORKDIR /
+WORKDIR /app
 
 LABEL org.opencontainers.image.source="https://github.com/particular/servicepulse" \
       org.opencontainers.image.authors="Particular Software" \
@@ -28,7 +28,7 @@ LABEL org.opencontainers.image.source="https://github.com/particular/servicepuls
 ENV ASPNETCORE_HTTP_PORTS=90
 EXPOSE 90
 
-COPY --from=build ./app ./app
+COPY --from=build /app .
 
 USER $APP_UID
-ENTRYPOINT ["./app/ServicePulse"]
+ENTRYPOINT ["./ServicePulse"]
