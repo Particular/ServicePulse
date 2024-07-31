@@ -10,6 +10,10 @@ const defaultConfig = {
   showPendingRetry: false,
 };
 
+export function disableMonitoring() {
+  vi.stubGlobal("defaultConfig", { ...defaultConfig, ...{ monitoring_urls: ["!"] } });
+}
+
 vi.stubGlobal("defaultConfig", defaultConfig);
 
 beforeEach(() => {
@@ -18,8 +22,9 @@ beforeEach(() => {
 
 beforeAll(() => {
   mockServer.listen({
-    onUnhandledRequest: (request) => {
+    onUnhandledRequest: (request, { error }) => {
       console.log("Unhandled %s %s", request.method, request.url);
+      error();
     },
   });
 });

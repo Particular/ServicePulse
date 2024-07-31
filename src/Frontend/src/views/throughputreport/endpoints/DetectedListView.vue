@@ -34,12 +34,15 @@ const sortData: SortData[] = [
   ];
 });
 
-const props = defineProps<{
+export interface DetectedListViewProps {
+  ariaLabel: string;
   columnTitle: string;
   showEndpointTypePlaceholder: boolean;
   indicatorOptions: UserIndicator[];
   source: DataSource;
-}>();
+}
+
+const props = defineProps<DetectedListViewProps>();
 
 const data = ref<EndpointThroughputSummary[]>([]);
 const dataChanges = ref(new Map<string, { indicator: string }>());
@@ -163,18 +166,18 @@ async function save() {
       <div class="col">
         <div class="text-search-container">
           <div>
-            <select class="form-select text-search format-text" @change="searchTypeChanged">
+            <select class="form-select text-search format-text" aria-label="Filter name type" @change="searchTypeChanged">
               <option v-for="item in filterNameOptions" :value="item.text" :key="item.text">{{ item.text }}</option>
             </select>
           </div>
           <div>
-            <input type="search" class="form-control format-text" :value="filterData.name" @input="nameFilterChanged" placeholder="Filter by name..." />
+            <input type="search" aria-label="Filter by name" class="form-control format-text" :value="filterData.name" @input="nameFilterChanged" placeholder="Filter by name..." />
           </div>
         </div>
       </div>
       <div class="col" style="align-content: center">
         <div>
-          <input type="checkbox" class="check-label" id="showUnsetOnly" @input="showUnsetChanged" />
+          <input type="checkbox" aria-label="Show only not set Endpoint Types" class="check-label" id="showUnsetOnly" @input="showUnsetChanged" />
           <label for="showUnsetOnly">Show only not set Endpoint Types</label>
         </div>
       </div>
@@ -193,10 +196,12 @@ async function save() {
         </td>
         <td class="col" style="width: 350px; padding-left: 0">
           <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" :disabled="filteredData.length === 0" type="button" data-bs-toggle="dropdown" aria-expanded="false">Set Endpoint Type for all items below</button>
+            <button class="btn btn-secondary dropdown-toggle" aria-label="Set Endpoint Type for all items below" :disabled="filteredData.length === 0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Set Endpoint Type for all items below
+            </button>
             <ul class="dropdown-menu">
               <li v-for="indicator in props.indicatorOptions" :key="indicator">
-                <a href="#" @click.prevent="showBulkUpdateIndicatorWarning(indicator)">{{ userIndicatorMapper.get(indicator) }}</a>
+                <a href="#" :aria-label="userIndicatorMapper.get(indicator)" @click.prevent="showBulkUpdateIndicatorWarning(indicator)">{{ userIndicatorMapper.get(indicator) }}</a>
               </li>
             </ul>
           </div>
@@ -213,7 +218,7 @@ async function save() {
       @confirm="proceedWithChangesWarning"
     />
   </Teleport>
-  <table class="table">
+  <table class="table" :aria-label="ariaLabel">
     <thead>
       <tr>
         <th scope="col">{{ props.columnTitle }}</th>
@@ -226,11 +231,11 @@ async function save() {
         <td colspan="3" class="text-center"><slot name="nodata"></slot></td>
       </tr>
       <tr v-for="row in filteredData" :key="row.name">
-        <td class="col">
+        <td class="col" aria-label="name">
           {{ row.name }}
         </td>
-        <td class="col text-end formatThroughputColumn" style="width: 250px">{{ row.max_daily_throughput.toLocaleString() }}</td>
-        <td class="col" style="width: 350px">
+        <td class="col text-end formatThroughputColumn" style="width: 250px" aria-label="maximum daily throughput">{{ row.max_daily_throughput.toLocaleString() }}</td>
+        <td class="col" style="width: 350px" aria-label="endpoint type">
           <select class="form-select endpointType format-text" @change="(event) => updateIndicator(event, row.name)">
             <option v-if="props.showEndpointTypePlaceholder" value="">Pick the most appropriate option</option>
             <option v-for="item in props.indicatorOptions" :key="item" :value="item" :selected="(dataChanges.get(row.name)?.indicator ?? getDefaultEndpointType(row)) === item">{{ userIndicatorMapper.get(item) }}</option>
