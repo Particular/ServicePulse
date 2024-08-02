@@ -41,13 +41,13 @@ jobs:
         uses: Particular/run-tests-action@v1.7.0       
       # Upload assets and packages
       - name: Upload assets
-        uses: actions/upload-artifact@v4.3.4
+        uses: actions/upload-artifact@v4.3.5
         with:
           name: Assets
           path: src/ServicePulse.Host/bin/Release/
           retention-days: 7
       - name: Upload packages
-        uses: actions/upload-artifact@v4.3.4
+        uses: actions/upload-artifact@v4.3.5
         with:
           name: NuGet packages
           path: nugets/
