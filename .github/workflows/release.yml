@@ -165,5 +165,5 @@ jobs:
             --annotation "index:org.opencontainers.image.url=https://hub.docker.com/r/particular/servicepulse" \
             --annotation "index:org.opencontainers.image.documentation=https://docs.particular.net/servicepulse/" \
             --annotation "index:org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite" \
-            --platform linux/arm64,linux/arm,linux/amd64 .
+            --platform linux/arm64,linux/amd64 .
           docker buildx imagetools inspect ghcr.io/particular/servicepulse:${{ env.TAG_NAME }}
