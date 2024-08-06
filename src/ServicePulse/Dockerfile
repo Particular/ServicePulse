@@ -25,8 +25,8 @@ LABEL org.opencontainers.image.source="https://github.com/particular/servicepuls
       org.opencontainers.image.title="ServicePulse" \
       org.opencontainers.image.description="ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard."
 
-ENV ASPNETCORE_HTTP_PORTS=90
-EXPOSE 90
+ENV ASPNETCORE_HTTP_PORTS=9090
+EXPOSE 9090
 
 COPY --from=build /app .
 
