@@ -7,6 +7,7 @@
     <Description>Particular ServicePulse binaries for use by Particular.PlatformSample. Not intended for use outside of Particular.PlatformSample.</Description>
     <PackageProjectUrl>https://docs.particular.net/servicepulse/</PackageProjectUrl>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);AddFilesToPackage</TargetsForTfmSpecificContentInPackage>
+    <NoWarn>$(NoWarn);NU5100</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
