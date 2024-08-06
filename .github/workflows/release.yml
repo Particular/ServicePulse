@@ -127,13 +127,6 @@ jobs:
         uses: ./.github/actions/validate-version
         with:
           version: ${{ env.MinVerVersion }}
-      - name: Set up Node.js
-        uses: actions/setup-node@v4.0.3
-        with:
-          node-version: 21.6.x
-      - name: Build Frontend
-        run: src/ServicePulse/build.ps1
-        shell: pwsh
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.6.1
       - name: Pull nginx:stable-alpine and determine digest
