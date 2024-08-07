@@ -7,7 +7,7 @@ This document describes basic usage and information related to the ServicePulse 
 The following is the most basic way to create a ServicePulse container using [Docker](https://www.docker.com/):
 
 ```shell
-docker run -p 9090:90 particular/servicepulse:latest
+docker run -p 9090:9090 particular/servicepulse:latest
 ```
 
 ### Environment Variables
@@ -20,7 +20,7 @@ docker run -p 9090:90 particular/servicepulse:latest
 It may be desireable to run the ServiceControl services in an isolated network. When doing so, ServicePulse must be configured to connect to those services using environment variables:
 
 ```shell
-docker run -p 9090:90 -e SERVICECONTROL_URL="http://servicecontrol:33333" -e MONITORING_URL="http://servicecontrol-monitoring:33633" particular/servicepulse:latest
+docker run -p 9090:9090 -e SERVICECONTROL_URL="http://servicecontrol:33333" -e MONITORING_URL="http://servicecontrol-monitoring:33633" particular/servicepulse:latest
 ```
 
 Or as part of a [Docker Compose services specification](https://docs.docker.com/compose/compose-file/05-services/):
@@ -29,7 +29,7 @@ Or as part of a [Docker Compose services specification](https://docs.docker.com/
 services:
     servicepulse:
         ports:
-            - 9090:90
+            - 9090:9090
         environment:
             - SERVICECONTROL_URL=http://servicecontrol:33333
             - MONITORING_URL=http://servicecontrol-monitoring:33633
@@ -70,7 +70,7 @@ The latest release within a minor version will be tagged with `{major}.{minor}` 
 
 ## Image architecture
 
-This image is a multi-arch image based on the `mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite` base image supporting `linux/arm64`, `linux/arm`, and `linux/amd64`.
+This image is a multi-arch image based on the `mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite` base image supporting `linux/arm64` and `linux/amd64`.
 
 ## Contributing
 
