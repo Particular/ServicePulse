@@ -54,7 +54,7 @@
     "eslint-plugin-github": "^5.0.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prefer-arrow": "^1.2.3",
-    "eslint-plugin-unused-imports": "^3.2.0",
+    "eslint-plugin-unused-imports": "^4.1.1",
     "eslint-plugin-vue": "^9.27.0",
     "flush-promises": "^1.0.2",
     "jsdom": "^24.1.1",
