@@ -137,4 +137,4 @@ ServicePulse is supported on the following desktop browser versions:
 
 ## Container image development
 
-A Dockerfile for ServicePulse resides within the [`src/Container`](https://github.com/Particular/ServicePulse/tree/master/src/Container) folder. The container images are all built as part of the [release workflow](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml) and staged in the [Github Container Registry](https://github.com/Particular/ServicePulse/pkgs/container/servicepulse). For branches with PRs the image will be tagged with the pr number, e.g. `pr-1234`.
+A Dockerfile for ServicePulse resides within the [`src/ServicePulse`](https://github.com/Particular/ServicePulse/tree/master/src/ServicePulse) folder. The container images are all built as part of the [release workflow](https://github.com/Particular/ServicePulse/blob/master/.github/workflows/release.yml) and staged in the [Github Container Registry](https://github.com/Particular/ServicePulse/pkgs/container/servicepulse). For branches with PRs, the image will be tagged with the PR number, e.g. `pr-1234`.

@@ -17,7 +17,7 @@
         [Test]
         public void App_constants_js_validation()
         {
-            var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app.constants.js");
+            var pathToConfig = Path.Combine(TestContext.CurrentContext.TestDirectory, "app", "js", "app.constants.js");
             Assert.That(File.Exists(pathToConfig), Is.True, "app.constants.js does not exist - this will break installation code");
 
             var config = File.ReadAllText(pathToConfig);

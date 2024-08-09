@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Custom.Build.props = Custom.Build.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServicePulse", "ServicePulse\ServicePulse.csproj", "{084808CF-4B93-4097-BFA1-2604AA7B4594}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,10 @@ Global
 		{67FD72C8-A459-4235-AD10-3DF5B68A3172}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67FD72C8-A459-4235-AD10-3DF5B68A3172}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67FD72C8-A459-4235-AD10-3DF5B68A3172}.Release|Any CPU.Build.0 = Release|Any CPU
+		{084808CF-4B93-4097-BFA1-2604AA7B4594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{084808CF-4B93-4097-BFA1-2604AA7B4594}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{084808CF-4B93-4097-BFA1-2604AA7B4594}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{084808CF-4B93-4097-BFA1-2604AA7B4594}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -52,4 +52,4 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: particular/servicepulse
-          readme-filepath: ./src/Container/README.md
+          readme-filepath: ./Container-README.md

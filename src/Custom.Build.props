@@ -8,5 +8,5 @@
   <PropertyGroup Label="Treat as warnings the transitive dependencies problems">
     <NuGetAuditMode>all</NuGetAuditMode>
   </PropertyGroup>
-  
+
 </Project>

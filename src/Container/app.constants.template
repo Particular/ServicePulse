@@ -1,7 +1,0 @@
-window.defaultConfig = {
-  default_route: '$DEFAULT_ROUTE',
-  version: '__VERSION__',
-  service_control_url: '$SERVICECONTROL_URL',
-  monitoring_urls: $MONITORING_URLS,
-  showPendingRetry: $SHOW_PENDING_RETRY,
-};

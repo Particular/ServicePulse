@@ -7,20 +7,20 @@ This document describes basic usage and information related to the ServicePulse 
 The following is the most basic way to create a ServicePulse container using [Docker](https://www.docker.com/):
 
 ```shell
-docker run -p 9090:90 particular/servicepulse:latest
+docker run -p 9090:9090 particular/servicepulse:latest
 ```
 
 ### Environment Variables
 
-- **`SERVICECONTROL_URL`**: _Default_: `http://localhost:33333/api/`. The url to your ServiceControl instance
-- **`MONITORING_URLS`**: _Default_: `['http://localhost:33633/']`. A JSON array of URLs to your monitoring instances
+- **`SERVICECONTROL_URL`**: _Default_: `http://localhost:33333`. The url to your ServiceControl instance
+- **`MONITORING_URL`**: _Default_: `http://localhost:33633`. The url to your monitoring instance
 - **`DEFAULT_ROUTE`**: _Default_: `/dashboard`. The default page that should be displayed when visiting the site
 - **`SHOW_PENDING_RETRY`** _Default_: `false`. Set to `true` to show details of pending retries
 
-It may be desireable to run the ServiceControl services in an isolated network. When doing so ServicePulse must be configured to connect to those services using environment variables:
+It may be desireable to run the ServiceControl services in an isolated network. When doing so, ServicePulse must be configured to connect to those services using environment variables:
 
 ```shell
-docker run -p 9090:90 -e SERVICECONTROL_URL="http://servicecontrol:33333/api/" -e MONITORING_URLS="['http://servicecontrol-monitoring:33633']" particular/servicepulse:latest
+docker run -p 9090:9090 -e SERVICECONTROL_URL="http://servicecontrol:33333" -e MONITORING_URL="http://servicecontrol-monitoring:33633" particular/servicepulse:latest
 ```
 
 Or as part of a [Docker Compose services specification](https://docs.docker.com/compose/compose-file/05-services/):
@@ -29,10 +29,10 @@ Or as part of a [Docker Compose services specification](https://docs.docker.com/
 services:
     servicepulse:
         ports:
-            - 9090:90
+            - 9090:9090
         environment:
-            - SERVICECONTROL_URL=http://servicecontrol:33333/api/
-            - MONITORING_URLS=['http://servicecontrol-monitoring:33633']
+            - SERVICECONTROL_URL=http://servicecontrol:33333
+            - MONITORING_URL=http://servicecontrol-monitoring:33633
         image: particular/servicepulse:latest
 ```
 
@@ -68,9 +68,9 @@ The major version tag is never added to images pushed to [the GitHub Container R
 
 The latest release within a minor version will be tagged with `{major}.{minor}` on images pushed to Docker Hub. This allows users to target the latest patch within a specific minor version.
 
-## Built With
+## Image architecture
 
-This image is built from the stable Alpine version of the [nginx official Docker image](https://hub.docker.com/_/nginx/).
+This image is a multi-arch image based on the `mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite` base image supporting `linux/arm64` and `linux/amd64`.
 
 ## Contributing
 
