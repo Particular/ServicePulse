@@ -9,6 +9,7 @@ export const heartbeatEndpointTemplate = <Endpoint>{
   monitor_heartbeat: true,
   heartbeat_information: { last_report_at: "0001-01-01T00:00:00", reported_status: "dead" },
   is_sending_heartbeats: false,
+  track_instances: true,
   aliveCount: 0,
   downCount: 0,
 };

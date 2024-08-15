@@ -8,6 +8,7 @@ export interface Endpoint {
     reported_status: EndpointStatus;
   };
   is_sending_heartbeats: boolean;
+  track_instances: boolean;
   aliveCount: number;
   downCount: number;
 }

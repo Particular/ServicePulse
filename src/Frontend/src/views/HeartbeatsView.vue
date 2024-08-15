@@ -5,12 +5,12 @@ import { connectionState } from "../composables/serviceServiceControl";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { DisplayType, sortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { sortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import OrderBy from "@/components/OrderBy.vue";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = storeToRefs(store);
+const { inactiveEndpoints, activeEndpoints, filterString } = storeToRefs(store);
 </script>
 
 <template>
@@ -42,18 +42,6 @@ const { inactiveEndpoints, activeEndpoints, selectedDisplay, filterString } = st
               </h5>
             </div>
             <div class="filter-group">
-              <div class="msg-group-menu dropdown" v-if="!isRouteSelected(routeLinks.heartbeats.configuration.link)">
-                <label class="control-label">Display:</label>
-                <button type="button" class="btn btn-default dropdown-toggle sp-btn-menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  {{ selectedDisplay }}
-                  <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                  <li v-for="displayType in DisplayType" :key="displayType">
-                    <a @click.prevent="store.setSelectedDisplay(displayType)">{{ displayType }}</a>
-                  </li>
-                </ul>
-              </div>
               <OrderBy @sort-updated="store.setSelectedSort" :sort-options="sortOptions" />
               <div class="filter-input">
                 <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="filterString" />

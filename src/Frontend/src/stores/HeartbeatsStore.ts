@@ -28,6 +28,7 @@ function mapEndpointsToLogical(endpoints: Endpoint[]) {
       name: endpointName,
       aliveCount: aliveCount,
       downCount: downCount,
+      track_instances: true,
       heartbeat_information: {
         reported_status: aliveCount > 0 ? EndpointStatus.Alive : EndpointStatus.Dead,
         last_report_at: logicalList.reduce((previousMax: Endpoint | null, endpoint: Endpoint) => {
@@ -65,9 +66,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const selectedSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
   const filterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
-  const sortedEndpoints = computed<Endpoint[]>(() =>
-    (selectedDisplay.value === DisplayType.Instances ? [...endpoints.value] : mapEndpointsToLogical(endpoints.value)).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending))
-  );
+  const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
   const activeEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
   const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
@@ -91,7 +90,9 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   function endpointDisplayName(endpoint: Endpoint) {
     if (selectedDisplay.value === DisplayType.Logical) {
       if (endpoint.aliveCount > 0) {
-        return `${endpoint.name} (${endpoint.aliveCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`;
+        return endpoint.track_instances
+          ? `${endpoint.name} (${endpoint.aliveCount}/${endpoint.aliveCount + endpoint.downCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`
+          : `${endpoint.name} (${endpoint.aliveCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`;
       }
 
       return `${endpoint.name} (0 out of ${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
