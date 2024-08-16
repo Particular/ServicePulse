@@ -6,14 +6,8 @@ import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
 import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import { getSortFunction } from "@/components/OrderBy.vue";
-import { useCookies } from "vue3-cookies";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
-
-export enum DisplayType {
-  Instances = "Endpoint Instances",
-  Logical = "Logical Endpoints",
-}
 
 function mapEndpointsToLogical(endpoints: Endpoint[]) {
   const logicalNames = [...new Set(endpoints.map((endpoint) => endpoint.name))];
@@ -60,13 +54,11 @@ export const sortOptions: SortOptions<Endpoint>[] = [
 ];
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
-  const cookies = useCookies().cookies;
-
-  const selectedDisplay = ref(cookies.get("heartbeats_display_type") ?? DisplayType.Instances);
   const selectedSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
   const filterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
   const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
+  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
   const activeEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
   const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
@@ -88,20 +80,11 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   }, 5000);
 
   function endpointDisplayName(endpoint: Endpoint) {
-    if (selectedDisplay.value === DisplayType.Logical) {
-      if (endpoint.aliveCount > 0) {
-        return endpoint.track_instances ? `(${endpoint.aliveCount}/${endpoint.aliveCount + endpoint.downCount} instance${endpoint.aliveCount > 1 ? "s" : ""})` : `(${endpoint.aliveCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`;
-      }
-
-      return `(0 out of ${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
+    if (endpoint.aliveCount > 0) {
+      return endpoint.track_instances ? `(${endpoint.aliveCount}/${endpoint.aliveCount + endpoint.downCount} instance${endpoint.aliveCount > 1 ? "s" : ""})` : `(${endpoint.aliveCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`;
     }
 
-    return `${endpoint.name}@${endpoint.host_display_name}`;
-  }
-
-  function setSelectedDisplay(displayType: DisplayType) {
-    cookies.set("heartbeats_display_type", displayType);
-    selectedDisplay.value = displayType;
+    return `(0 out of ${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
   }
 
   function setSelectedSort(sort: SortOptions<Endpoint>) {
@@ -131,14 +114,13 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   return {
     endpoints,
+    sortedInstances,
     activeEndpoints,
     filteredActiveEndpoints,
     inactiveEndpoints,
     filteredInactiveEndpoints,
     failedHeartbeatsCount,
     endpointDisplayName,
-    selectedDisplay,
-    setSelectedDisplay,
     selectedSort,
     setSelectedSort,
     filterString,
