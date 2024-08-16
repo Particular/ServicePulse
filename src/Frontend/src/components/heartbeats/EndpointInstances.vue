@@ -10,12 +10,13 @@ import { EndpointStatus } from "@/resources/Heartbeat";
 const route = useRoute();
 const endpointName = route.params.endpointName.toString();
 const store = useHeartbeatsStore();
-const { endpoints } = storeToRefs(store);
-const instances = computed(() => endpoints.value.filter((endpoint) => endpoint.name === endpointName));
+const { filteredInstances } = storeToRefs(store);
+const instances = computed(() => filteredInstances.value.filter((instance) => instance.name === endpointName));
 </script>
 
 <template>
-  <section name="active_endpoints">
+  <h3>Instances for Endpoint {{ endpointName }}</h3>
+  <section name="endpoint_instances">
     <no-data v-if="instances.length === 0" message="No endpoint instances found"></no-data>
     <div v-if="instances.length > 0" class="row">
       <div class="col-sm-12 no-side-padding">
@@ -52,6 +53,10 @@ const instances = computed(() => endpoints.value.filter((endpoint) => endpoint.n
 @import "./heartbeats.css";
 
 .lead.down {
+  color: red;
+}
+
+.fa-trash {
   color: red;
 }
 </style>

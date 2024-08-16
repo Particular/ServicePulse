@@ -10,7 +10,7 @@ import { storeToRefs } from "pinia";
 import OrderBy from "@/components/OrderBy.vue";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, activeEndpoints, filterString } = storeToRefs(store);
+const { inactiveEndpoints, activeEndpoints, endpointFilterString: filterString } = storeToRefs(store);
 </script>
 
 <template>
@@ -42,7 +42,7 @@ const { inactiveEndpoints, activeEndpoints, filterString } = storeToRefs(store);
               </h5>
             </div>
             <div class="filter-group">
-              <OrderBy @sort-updated="store.setSelectedSort" :sort-options="sortOptions" />
+              <OrderBy @sort-updated="store.setSelectedEndpointSort" :sort-options="sortOptions" />
               <div class="filter-input">
                 <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="filterString" />
               </div>

@@ -10,7 +10,7 @@ import TimeSince from "../TimeSince.vue";
 import OnOffSwitch from "../OnOffSwitch.vue";
 
 const store = useHeartbeatsStore();
-const { endpoints, filterString, selectedSort } = storeToRefs(store);
+const { endpoints, endpointFilterString: filterString, selectedEndpointSort: selectedSort } = storeToRefs(store);
 const sortedEndpoints = computed<Endpoint[]>(() =>
   [...endpoints.value].filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending))
 );

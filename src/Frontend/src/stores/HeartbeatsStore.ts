@@ -54,19 +54,25 @@ export const sortOptions: SortOptions<Endpoint>[] = [
 ];
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
-  const selectedSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
-  const filterString = ref("");
+  const selectedEndpointSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
+  const selectedInstanceSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
+  const endpointFilterString = ref("");
+  const instanceFilterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
-  const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
-  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
+  const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
+  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedInstanceSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
+  const filteredInstances = computed<Endpoint[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
   const activeEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
-  const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
+  const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
-  const filteredInactiveEndpoints = computed<Endpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())));
+  const filteredInactiveEndpoints = computed<Endpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const failedHeartbeatsCount = computed(() => inactiveEndpoints.value.length);
 
-  watch(filterString, (newValue) => {
-    setFilterString(newValue);
+  watch(endpointFilterString, (newValue) => {
+    setEndpointFilterString(newValue);
+  });
+  watch(instanceFilterString, (newValue) => {
+    setInstanceFilterString(newValue);
   });
 
   const dataRetriever = useAutoRefresh(async () => {
@@ -87,13 +93,22 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     return `(${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
   }
 
-  function setSelectedSort(sort: SortOptions<Endpoint>) {
+  function setSelectedEndpointSort(sort: SortOptions<Endpoint>) {
     //sort value is set/retrieved from cookies in the OrderBy control
-    selectedSort.value = sort;
+    selectedEndpointSort.value = sort;
   }
 
-  function setFilterString(filter: string) {
-    filterString.value = filter;
+  function setSelectedInstanceSort(sort: SortOptions<Endpoint>) {
+    //sort value is set/retrieved from cookies in the OrderBy control
+    selectedEndpointSort.value = sort;
+  }
+
+  function setEndpointFilterString(filter: string) {
+    endpointFilterString.value = filter;
+  }
+
+  function setInstanceFilterString(filter: string) {
+    instanceFilterString.value = filter;
   }
 
   async function deleteEndpoint(endpoint: Endpoint) {
@@ -114,17 +129,21 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   return {
     endpoints,
-    sortedInstances,
+    filteredInstances,
     activeEndpoints,
     filteredActiveEndpoints,
     inactiveEndpoints,
     filteredInactiveEndpoints,
     failedHeartbeatsCount,
     endpointDisplayName,
-    selectedSort,
-    setSelectedSort,
-    filterString,
-    setFilterString,
+    selectedEndpointSort,
+    setSelectedEndpointSort,
+    selectedInstanceSort,
+    setSelectedInstanceSort,
+    endpointFilterString,
+    setEndpointFilterString,
+    instanceFilterString,
+    setInstanceFilterString,
     deleteEndpoint,
     toggleEndpointMonitor,
   };
