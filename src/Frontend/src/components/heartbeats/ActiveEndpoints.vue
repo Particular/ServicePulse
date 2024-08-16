@@ -22,7 +22,7 @@ const { activeEndpoints, filteredActiveEndpoints } = storeToRefs(store);
                   <div class="col-sm-12 no-side-padding endpoint-name">
                     <div class="box-header">
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.active.link" class="cursorpointer" v-tooltip :title="endpoint.name">
+                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)" class="cursorpointer" v-tooltip :title="endpoint.name">
                           {{ endpoint.name }}
                         </RouterLink>
                       </div>

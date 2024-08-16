@@ -8,6 +8,7 @@ const heartbeatLinks = (root: string) => {
     inactive: createLink("inactive"),
     active: createLink("active"),
     configuration: createLink("configuration"),
+    instances: { link: (endpointName: string) => `${root}/instances/${endpointName}`, template: "/heartbeats/instances/:endpointName" },
   };
 };
 
@@ -66,8 +67,8 @@ const throughputSetupLinks = (root: string) => {
     connectionSetup: createLink("connection-setup"),
     mask: createLink("mask"),
     diagnostics: createLink("diagnostics"),
-  }
-}
+  };
+};
 
 const throughputEndpointLinks = (root: string) => {
   function createLink(template: string) {
@@ -78,8 +79,8 @@ const throughputEndpointLinks = (root: string) => {
     root,
     detectedEndpoints: createLink("known"),
     detectedBrokerQueues: createLink("broker"),
-  }
-}
+  };
+};
 
 const monitoringLinks = (root: string) => {
   return {

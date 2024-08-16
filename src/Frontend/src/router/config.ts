@@ -45,6 +45,11 @@ const config: RouteItem[] = [
         path: routeLinks.heartbeats.configuration.link,
         component: () => import("@/components/heartbeats/HeartbeatConfiguration.vue"),
       },
+      {
+        path: routeLinks.heartbeats.instances.template,
+        component: () => import("@/components/heartbeats/EndpointInstances.vue"),
+        title: "Endpoint Instances",
+      },
     ],
   },
   {
@@ -136,9 +141,9 @@ const config: RouteItem[] = [
             title: "Detected Broker Queues",
             path: routeLinks.throughput.endpoints.detectedBrokerQueues.template,
             component: () => import("@/views/throughputreport/endpoints/DetectedBrokerQueuesView.vue"),
-          }
-        ]
-      }
+          },
+        ],
+      },
     ],
   },
   {
@@ -192,8 +197,8 @@ const config: RouteItem[] = [
             title: "Diagnostics",
             path: routeLinks.throughput.setup.diagnostics.template,
             component: () => import("@/views/throughputreport/setup/DiagnosticsView.vue"),
-          }
-        ]
+          },
+        ],
       },
     ],
   },
