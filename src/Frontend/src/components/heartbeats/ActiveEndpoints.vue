@@ -43,50 +43,5 @@ const { activeEndpoints, filteredActiveEndpoints } = storeToRefs(store);
 
 <style scoped>
 @import "../list.css";
-
-.lead.endpoint-details-link.righ-side-ellipsis {
-  color: #00729c;
-  margin: 0;
-}
-
-.endpoint-name > div > div > a {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  color: #00729c;
-  border-bottom: 1px dotted lightgrey;
-}
-
-.endpoint-name,
-.endpoint-name > div {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.endpoint-name {
-  gap: 0.25em;
-}
-
-.endpoint-name .box-header {
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-  max-width: 100%;
-}
-
-.endpoint-name .box-header > *:not(:first-child) {
-  margin-left: 0.25em;
-}
-
-.endpoint-count {
-  font-weight: bold;
-}
-
-p:not(.lead) {
-  color: #777f7f;
-  margin: 0 0 5px;
-}
+@import "./heartbeats.css";
 </style>

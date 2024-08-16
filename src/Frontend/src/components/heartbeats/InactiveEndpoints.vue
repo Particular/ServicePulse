@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import NoData from "../NoData.vue";
-import { DisplayType, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
+import routeLinks from "@/router/routeLinks";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, filteredInactiveEndpoints, selectedDisplay } = storeToRefs(store);
+const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
 </script>
 
 <template>
@@ -18,13 +19,15 @@ const { inactiveEndpoints, filteredInactiveEndpoints, selectedDisplay } = storeT
             <div class="row">
               <div class="col-sm-12 no-side-padding">
                 <div class="row box-header">
-                  <div class="col-sm-12 no-side-padding">
-                    <p class="lead">
-                      {{ store.endpointDisplayName(endpoint) }}
-                      <a class="remove-item" v-if="selectedDisplay === DisplayType.Instances" @click="store.deleteEndpoint(endpoint)">
-                        <i class="fa fa-trash" v-tooltip :title="`Remove endpoint from list`" />
-                      </a>
-                    </p>
+                  <div class="col-sm-12 no-side-padding endpoint-name">
+                    <div class="box-header">
+                      <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.inactive.link" class="cursorpointer" v-tooltip :title="endpoint.name">
+                          {{ endpoint.name }}
+                        </RouterLink>
+                      </div>
+                      <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+                    </div>
                     <p>latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" /></p>
                     <p v-if="!endpoint.heartbeat_information">No plugin installed</p>
                   </div>
@@ -40,11 +43,7 @@ const { inactiveEndpoints, filteredInactiveEndpoints, selectedDisplay } = storeT
 
 <style scoped>
 @import "../list.css";
-
-p:not(.lead) {
-  color: #777f7f;
-  margin: 0 0 5px;
-}
+@import "./heartbeats.css";
 
 a.remove-item {
   margin-left: 5px;
