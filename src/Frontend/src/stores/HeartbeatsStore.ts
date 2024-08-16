@@ -84,7 +84,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
       return endpoint.track_instances ? `(${endpoint.aliveCount}/${endpoint.aliveCount + endpoint.downCount} instance${endpoint.aliveCount > 1 ? "s" : ""})` : `(${endpoint.aliveCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`;
     }
 
-    return `(0 out of ${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
+    return `(${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
   }
 
   function setSelectedSort(sort: SortOptions<Endpoint>) {
