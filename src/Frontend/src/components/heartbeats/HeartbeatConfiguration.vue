@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { endpointSortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import NoData from "../NoData.vue";
@@ -12,7 +12,7 @@ import OnOffSwitch from "../OnOffSwitch.vue";
 const store = useHeartbeatsStore();
 const { endpoints, endpointFilterString: filterString, selectedEndpointSort: selectedSort } = storeToRefs(store);
 const sortedEndpoints = computed<Endpoint[]>(() =>
-  [...endpoints.value].filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())).sort(selectedSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending))
+  [...endpoints.value].filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())).sort(selectedSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending))
 );
 </script>
 

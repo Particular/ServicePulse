@@ -40,7 +40,7 @@ function mapEndpointsToLogical(endpoints: Endpoint[]) {
   });
 }
 
-export const sortOptions: SortOptions<Endpoint>[] = [
+export const endpointSortOptions: SortOptions<Endpoint>[] = [
   {
     description: "Name",
     selector: (group) => group.name,
@@ -53,15 +53,28 @@ export const sortOptions: SortOptions<Endpoint>[] = [
   },
 ];
 
+export const instanceSortOptions: SortOptions<Endpoint>[] = [
+  {
+    description: "Name",
+    selector: (group) => group.host_display_name,
+    icon: "bi-sort-alpha-",
+  },
+  {
+    description: "Latest heartbeat",
+    selector: (group) => group.heartbeat_information?.last_report_at ?? "",
+    icon: "bi-sort-",
+  },
+];
+
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
-  const selectedEndpointSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
-  const selectedInstanceSort = ref<SortOptions<Endpoint>>(sortOptions[0]);
+  const selectedEndpointSort = ref<SortOptions<Endpoint>>(endpointSortOptions[0]);
+  const selectedInstanceSort = ref<SortOptions<Endpoint>>(endpointSortOptions[0]);
   const endpointFilterString = ref("");
   const instanceFilterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
-  const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
-  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedInstanceSort.value.sort ?? getSortFunction(sortOptions[0].selector, SortDirection.Ascending)));
-  const filteredInstances = computed<Endpoint[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
+  const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
+  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedInstanceSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
+  const filteredInstances = computed<Endpoint[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
   const activeEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && (!endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive)));
