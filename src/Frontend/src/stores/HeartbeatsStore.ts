@@ -68,12 +68,12 @@ export const instanceSortOptions: SortOptions<Endpoint>[] = [
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const selectedEndpointSort = ref<SortOptions<Endpoint>>(endpointSortOptions[0]);
-  const selectedInstanceSort = ref<SortOptions<Endpoint>>(endpointSortOptions[0]);
+  const selectedInstanceSort = ref<SortOptions<Endpoint>>(instanceSortOptions[0]);
   const endpointFilterString = ref("");
   const instanceFilterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
   const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
-  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedInstanceSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
+  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedInstanceSort.value.sort ?? getSortFunction(instanceSortOptions[0].selector, SortDirection.Ascending)));
   const filteredInstances = computed<Endpoint[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
   const activeEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
@@ -113,7 +113,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   function setSelectedInstanceSort(sort: SortOptions<Endpoint>) {
     //sort value is set/retrieved from cookies in the OrderBy control
-    selectedEndpointSort.value = sort;
+    selectedInstanceSort.value = sort;
   }
 
   function setEndpointFilterString(filter: string) {
