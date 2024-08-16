@@ -90,12 +90,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   function endpointDisplayName(endpoint: Endpoint) {
     if (selectedDisplay.value === DisplayType.Logical) {
       if (endpoint.aliveCount > 0) {
-        return endpoint.track_instances
-          ? `${endpoint.name} (${endpoint.aliveCount}/${endpoint.aliveCount + endpoint.downCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`
-          : `${endpoint.name} (${endpoint.aliveCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`;
+        return endpoint.track_instances ? `(${endpoint.aliveCount}/${endpoint.aliveCount + endpoint.downCount} instance${endpoint.aliveCount > 1 ? "s" : ""})` : `(${endpoint.aliveCount} instance${endpoint.aliveCount > 1 ? "s" : ""})`;
       }
 
-      return `${endpoint.name} (0 out of ${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
+      return `(0 out of ${endpoint.downCount} previous instance${endpoint.downCount > 1 ? "s" : ""} reporting)`;
     }
 
     return `${endpoint.name}@${endpoint.host_display_name}`;
