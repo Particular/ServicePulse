@@ -6,8 +6,7 @@ import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
 import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import { getSortFunction } from "@/components/OrderBy.vue";
-import { useShowToast } from "@/composables/toast";
-import { TYPE } from "vue-toastification";
+import type { SortInfo } from "@/components/SortInfo";
 
 function mapEndpointsToLogical(endpoints: Endpoint[]) {
   const logicalNames = [...new Set(endpoints.map((endpoint) => endpoint.name))];
@@ -15,8 +14,8 @@ function mapEndpointsToLogical(endpoints: Endpoint[]) {
     const logicalList = endpoints.filter((endpoint) => endpoint.name === endpointName);
     const aliveList = logicalList.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
 
-    var aliveCount = aliveList.length;
-    var downCount = logicalList.filter((endpoint) => endpoint.monitor_heartbeat).length - aliveCount;
+    const aliveCount = aliveList.length;
+    const downCount = logicalList.length - aliveCount;
 
     return {
       name: endpointName,
@@ -66,6 +65,8 @@ export const instanceSortOptions: SortOptions<Endpoint>[] = [
   },
 ];
 
+const nameProperty: keyof Endpoint = "name";
+
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const selectedEndpointSort = ref<SortOptions<Endpoint>>(endpointSortOptions[0]);
   const selectedInstanceSort = ref<SortOptions<Endpoint>>(instanceSortOptions[0]);
@@ -73,7 +74,28 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const instanceFilterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
   const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
-  const sortedInstances = computed<Endpoint[]>(() => endpoints.value.sort(selectedInstanceSort.value.sort ?? getSortFunction(instanceSortOptions[0].selector, SortDirection.Ascending)));
+  const sortByInstances = ref<SortInfo>({
+    property: nameProperty,
+    isAscending: true,
+  });
+  const sortedInstances = computed<Endpoint[]>(() => {
+    const nameSort = (a: Endpoint, b: Endpoint) => a.host_display_name.localeCompare(b.host_display_name);
+    const dateSort = (a: Endpoint, b: Endpoint) => {
+      const x = moment.utc(a.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00");
+      const y = moment.utc(b.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00");
+      if (x > y) {
+        return 1;
+      } else if (x < y) {
+        return -1;
+      }
+      return 0;
+    };
+    const sortFunc = sortByInstances.value.property === nameProperty ? nameSort : dateSort;
+    endpoints.value.sort((a, b) => (sortByInstances.value.isAscending ? sortFunc(a, b) : -sortFunc(a, b)));
+
+    return endpoints.value;
+  });
+
   const filteredInstances = computed<Endpoint[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
   const activeEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive));
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
@@ -126,10 +148,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   async function deleteEndpoint(endpoint: Endpoint) {
     async function performDelete() {
-      useShowToast(TYPE.INFO, "Info", "Removing Endpoint");
       await useDeleteFromServiceControl(`endpoints/${endpoint.id}`);
       endpoints.value = endpoints.value.filter((ep) => ep.id !== endpoint.id);
-      useShowToast(TYPE.SUCCESS, "Success", "Endpoint removed");
     }
     await dataRetriever.executeAndResetTimer(performDelete);
   }
@@ -159,6 +179,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     setInstanceFilterString,
     deleteEndpoint,
     toggleEndpointMonitor,
+    sortByInstances,
   };
 });
 

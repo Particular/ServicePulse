@@ -25,6 +25,11 @@ const config: RouteItem[] = [
     title: "Dashboard",
   },
   {
+    path: routeLinks.heartbeats.instances.template,
+    component: () => import("@/components/heartbeats/EndpointInstances.vue"),
+    title: "Endpoint Instances",
+  },
+  {
     path: routeLinks.heartbeats.root,
     component: HeartbeatsView,
     title: "Heartbeats",
@@ -44,11 +49,6 @@ const config: RouteItem[] = [
         title: "Heartbeat Configuration",
         path: routeLinks.heartbeats.configuration.link,
         component: () => import("@/components/heartbeats/HeartbeatConfiguration.vue"),
-      },
-      {
-        path: routeLinks.heartbeats.instances.template,
-        component: () => import("@/components/heartbeats/EndpointInstances.vue"),
-        title: "Endpoint Instances",
       },
     ],
   },

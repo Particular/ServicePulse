@@ -5,14 +5,12 @@ import { connectionState } from "../composables/serviceServiceControl";
 import LicenseExpired from "../components/LicenseExpired.vue";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { endpointSortOptions, instanceSortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { endpointSortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import OrderBy from "@/components/OrderBy.vue";
-import { computed } from "vue";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, activeEndpoints, endpointFilterString, instanceFilterString } = storeToRefs(store);
-const isInstanceView = computed(() => isRouteSelected(routeLinks.heartbeats.instances.link(`endpointName`)));
+const { inactiveEndpoints, activeEndpoints, endpointFilterString } = storeToRefs(store);
 </script>
 
 <template>
@@ -26,7 +24,7 @@ const isInstanceView = computed(() => isRouteSelected(routeLinks.heartbeats.inst
       </div>
       <div class="row">
         <div class="col-sm-12">
-          <div v-if="!isInstanceView" class="tabs">
+          <div class="tabs">
             <div>
               <!--Inactive Endpoints-->
               <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.inactive.link), disabled: !connectionState.connected && !connectionState.connectedRecently }">
@@ -47,15 +45,6 @@ const isInstanceView = computed(() => isRouteSelected(routeLinks.heartbeats.inst
               <OrderBy @sort-updated="store.setSelectedEndpointSort" :sort-options="endpointSortOptions" />
               <div class="filter-input">
                 <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="endpointFilterString" />
-              </div>
-            </div>
-          </div>
-          <div v-if="isInstanceView" class="tabs">
-            <div></div>
-            <div class="filter-group">
-              <OrderBy @sort-updated="store.setSelectedInstanceSort" :sort-options="instanceSortOptions" />
-              <div class="filter-input">
-                <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="instanceFilterString" />
               </div>
             </div>
           </div>
