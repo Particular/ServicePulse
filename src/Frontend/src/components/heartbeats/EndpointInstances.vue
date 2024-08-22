@@ -10,6 +10,7 @@ import SortableColumn from "@/components/SortableColumn.vue";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
+import { Tippy } from "vue-tippy";
 
 enum columnName {
   HostName = "name",
@@ -58,7 +59,34 @@ async function toggleAlerts(instance: Endpoint) {
           <SortableColumn :sort-by="columnName.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
         </div>
         <div role="columnheader" aria-label="actions" class="col-4">
-          <div>Actions</div>
+          <div>
+            Actions
+            <tippy max-width="400px">
+              <i :style="{ fontSize: '1.3em' }" class="fa fa-info-circle text-primary" />
+              <template #content>
+                <table>
+                  <tr>
+                    <td style="padding: 3px; width: 140px; text-align: end; align-content: center">
+                      <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash text-white" /> Delete</button>
+                    </td>
+                    <td style="padding: 3px">Delete an instance when that instance has been decommissioned.</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 3px; width: 140px; text-align: end; align-content: center">
+                      <button type="button" class="btn btn-info btn-sm"><i class="fa fa-bell-slash text-white" /> Mute Alerts</button>
+                    </td>
+                    <td style="padding: 3px">Mute an instance when you are planning to take the instance offline to do maintenance or some other reason. This will prevent alerts on the dashboard.</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 3px; width: 140px; text-align: end; align-content: center">
+                      <button type="button" class="btn btn-warning btn-sm"><i class="fa fa-bell text-white" /> Unmute Alerts</button>
+                    </td>
+                    <td style="padding: 3px">Unmute an instance, once the instance is back online.</td>
+                  </tr>
+                </table>
+              </template>
+            </tippy>
+          </div>
         </div>
       </div>
       <no-data v-if="instances.length === 0" message="No endpoint instances found"></no-data>

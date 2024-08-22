@@ -39,8 +39,7 @@ const { sortBy: activeColumn } = storeToRefs(monitoringStore);
         <SortableColumn
           :sort-by="monitoringStore.endpointListIsGrouped ? '' : columnName.CRITICALTIME"
           v-model="activeColumn"
-          v-tooltip
-          title="Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint."
+          v-tippy="'Critical time: The elapsed time from when a message was sent, until it was successfully processed by a receiving endpoint.'"
           >Critical Time <template #unit>(t)</template>
         </SortableColumn>
       </div>
