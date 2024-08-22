@@ -22,14 +22,14 @@ const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
                   <div class="col-sm-12 no-side-padding endpoint-name">
                     <div class="box-header">
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)" class="cursorpointer" v-tippy="endpoint.name">
+                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)" class="cursorpointer">
                           {{ endpoint.name }}
                         </RouterLink>
                       </div>
                       <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
                     </div>
-                    <p>latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" /></p>
-                    <p v-if="!endpoint.heartbeat_information">No plugin installed</p>
+                    <p v-if="endpoint.heartbeat_information">latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" /></p>
+                    <p v-else>No plugin installed</p>
                   </div>
                 </div>
               </div>
@@ -44,14 +44,4 @@ const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
 <style scoped>
 @import "../list.css";
 @import "./heartbeats.css";
-
-a.remove-item {
-  margin-left: 5px;
-  outline: none;
-  border: none;
-}
-
-a.remove-item .fa {
-  color: #00a3c4;
-}
 </style>
