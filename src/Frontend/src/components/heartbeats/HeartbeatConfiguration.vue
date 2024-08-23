@@ -1,19 +1,12 @@
 <script setup lang="ts">
-import { endpointSortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
 import NoData from "../NoData.vue";
-import { Endpoint } from "@/resources/Heartbeat";
-import { SortDirection } from "@/resources/SortOptions";
 import TimeSince from "../TimeSince.vue";
 import OnOffSwitch from "../OnOffSwitch.vue";
-import getSortFunction from "@/components/getSortFunction";
 
 const store = useHeartbeatsStore();
-const { endpoints, endpointFilterString: filterString, selectedEndpointSort: selectedSort } = storeToRefs(store);
-const sortedEndpoints = computed<Endpoint[]>(() =>
-  [...endpoints.value].filter((endpoint) => !filterString.value || endpoint.name.toLowerCase().includes(filterString.value.toLowerCase())).sort(selectedSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending))
-);
+const { sortedEndpoints } = storeToRefs(store);
 </script>
 
 <template>
@@ -27,20 +20,19 @@ const sortedEndpoints = computed<Endpoint[]>(() =>
           <i class="fa fa-external-link fake-link" />
         </div>
 
-        <no-data v-if="endpoints.length === 0" message="Nothing to configure" />
+        <no-data v-if="sortedEndpoints.length === 0" message="Nothing to configure" />
         <template v-for="endpoint in sortedEndpoints" :key="endpoint.id">
-          <div class="row box box-no-click" :class="{ 'box-info': endpoint.monitor_heartbeat, 'box-danger': !endpoint.monitor_heartbeat }">
+          <div class="row box box-no-click">
             <div class="col-sm-12 no-side-padding">
               <div class="row">
                 <div class="col-sm-2 col-lg-1">
-                  <OnOffSwitch :id="endpoint.id" v-model="endpoint.monitor_heartbeat" />
+                  <OnOffSwitch :id="endpoint.id" v-model="endpoint.track_instances" />
                 </div>
                 <div class="col-sm-10 col-lg-11">
                   <div class="row box-header">
                     <div class="col-xs-12">
-                      <p class="lead">{{ endpoint.name }}<span class="de-emphasize">@</span>{{ endpoint.host_display_name }}</p>
-                      <p class="endpoint-metadata" v-if="endpoint.heartbeat_information"><i class="fa fa-heartbeat"></i> <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" /></p>
-                      <p class="endpoint-metadata" v-if="!endpoint.heartbeat_information"><i class="fa fa-heartbeat"></i> No recent heartbeat information available</p>
+                      <p class="lead">{{ endpoint.name }}</p>
+                      <p class="endpoint-metadata"><i class="fa fa-heartbeat"></i> <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" default-text-on-failure="No recent heartbeat information available" /></p>
                       <p class="endpoint-metadata" v-if="!endpoint.heartbeat_information"><i class="fa fa-plug"></i> No heartbeat plugin installed</p>
                     </div>
                   </div>

@@ -7,10 +7,15 @@ export interface Endpoint {
     last_report_at: string;
     reported_status: EndpointStatus;
   };
-  is_sending_heartbeats: boolean;
   track_instances: boolean;
-  aliveCount: number;
-  downCount: number;
+  is_sending_heartbeats: boolean;
+  alive_count: number;
+  down_count: number;
+}
+
+export interface EndpointSettings {
+  name: string;
+  track_instances: boolean;
 }
 
 export enum EndpointStatus {

@@ -4,6 +4,7 @@ import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
 import routeLinks from "@/router/routeLinks";
+import { Tippy } from "vue-tippy";
 
 const store = useHeartbeatsStore();
 const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
@@ -21,15 +22,23 @@ const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
                 <div class="row box-header">
                   <div class="col-sm-12 no-side-padding endpoint-name">
                     <div class="box-header">
+                      <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">
+                        <i class="fa fa-server text-danger"></i>
+                      </tippy>
+                      <tippy v-else content="No tracking instances" :delay="[1000, 0]">
+                        <i class="fa fa-ssellsy text-danger"></i>
+                      </tippy>
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)">
-                          {{ endpoint.name }}
-                        </RouterLink>
+                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)"> {{ endpoint.name }} </RouterLink>
                       </div>
                       <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+                      <tippy v-if="!endpoint.monitor_heartbeat" content="All instances have alerts muted" :delay="[300, 0]">
+                        <i class="fa fa-bell-slash text-danger" />
+                      </tippy>
                     </div>
-                    <p v-if="endpoint.heartbeat_information">latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" /></p>
+                    <p v-if="endpoint.heartbeat_information">latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" default-text-on-failure="unknown" /></p>
                     <p v-else>No plugin installed</p>
+                    <p v-if="!endpoint.monitor_heartbeat">All instances are muted</p>
                   </div>
                 </div>
               </div>

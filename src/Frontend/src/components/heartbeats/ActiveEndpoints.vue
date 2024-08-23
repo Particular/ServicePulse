@@ -25,17 +25,17 @@ const { activeEndpoints, filteredActiveEndpoints } = storeToRefs(store);
                   <div class="col-sm-12 no-side-padding endpoint-name">
                     <div class="box-header">
                       <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">
-                        <i class="fa fa-server"></i>
+                        <i class="fa fa-server" :class="{ 'text-danger': endpoint.down_count > 0, 'text-success': endpoint.down_count === 0 }"></i>
                       </tippy>
                       <tippy v-else content="No tracking instances" :delay="[1000, 0]">
-                        <i class="fa fa-ssellsy"></i>
+                        <i class="fa fa-ssellsy" :class="{ 'text-warning': endpoint.down_count > 0, 'text-success': endpoint.down_count === 0 }"></i>
                       </tippy>
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
                         <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)">
                           {{ endpoint.name }}
                         </RouterLink>
                       </div>
-                      <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }} <exclamation-mark v-if="endpoint.track_instances && endpoint.downCount > 0" :type="WarningLevel.Danger" /> </span>
+                      <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }} <exclamation-mark v-if="endpoint.track_instances && endpoint.down_count > 0" :type="WarningLevel.Danger" /> </span>
                     </div>
                     <p v-if="endpoint.heartbeat_information">latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" /></p>
                     <p v-else>No plugin installed</p>
