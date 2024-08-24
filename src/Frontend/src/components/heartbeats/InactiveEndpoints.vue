@@ -26,7 +26,7 @@ const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
                         <i class="fa fa-server text-danger"></i>
                       </tippy>
                       <tippy v-else content="No tracking instances" :delay="[1000, 0]">
-                        <i class="fa fa-ssellsy text-danger"></i>
+                        <i class="fa fa-sellsy text-danger"></i>
                       </tippy>
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
                         <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)"> {{ endpoint.name }} </RouterLink>
@@ -38,7 +38,6 @@ const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
                     </div>
                     <p v-if="endpoint.heartbeat_information">latest heartbeat received <time-since :date-utc="endpoint.heartbeat_information?.last_report_at" default-text-on-failure="unknown" /></p>
                     <p v-else>No plugin installed</p>
-                    <p v-if="!endpoint.monitor_heartbeat">All instances are muted</p>
                   </div>
                 </div>
               </div>

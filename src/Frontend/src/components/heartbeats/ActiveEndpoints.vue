@@ -28,7 +28,7 @@ const { activeEndpoints, filteredActiveEndpoints } = storeToRefs(store);
                         <i class="fa fa-server" :class="{ 'text-danger': endpoint.down_count > 0, 'text-success': endpoint.down_count === 0 }"></i>
                       </tippy>
                       <tippy v-else content="No tracking instances" :delay="[1000, 0]">
-                        <i class="fa fa-ssellsy" :class="{ 'text-warning': endpoint.down_count > 0, 'text-success': endpoint.down_count === 0 }"></i>
+                        <i class="fa fa-sellsy" :class="{ 'text-warning': endpoint.down_count > 0, 'text-success': endpoint.down_count === 0 }"></i>
                       </tippy>
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
                         <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)">

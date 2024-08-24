@@ -1,4 +1,4 @@
-import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
+import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
@@ -6,39 +6,6 @@ import { Endpoint, EndpointSettings, EndpointStatus } from "@/resources/Heartbea
 import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
-
-function mapEndpointsToLogical(endpoints: Endpoint[], settings: EndpointSettings[]): Endpoint[] {
-  const logicalNames = [...new Set(endpoints.map((endpoint) => endpoint.name))];
-  const defaultTrackingInstancesValue = settings.find((value) => value.name === "")?.track_instances ?? true;
-
-  return logicalNames.map((endpointName) => {
-    const logicalInstances = endpoints.filter((endpoint) => endpoint.name === endpointName);
-    const aliveList = logicalInstances.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
-
-    const aliveCount = aliveList.length;
-    const downCount = logicalInstances.length - aliveCount;
-
-    return {
-      name: endpointName,
-      alive_count: aliveCount,
-      down_count: downCount,
-      track_instances: settings.find((value) => value.name === endpointName)?.track_instances ?? defaultTrackingInstancesValue,
-      heartbeat_information: {
-        reported_status: aliveCount > 0 ? EndpointStatus.Alive : EndpointStatus.Dead,
-        last_report_at: logicalInstances.reduce((previousMax: Endpoint | null, endpoint: Endpoint) => {
-          if (endpoint.heartbeat_information) {
-            if (previousMax) {
-              return moment.utc(endpoint.heartbeat_information.last_report_at) > moment.utc(previousMax.heartbeat_information!.last_report_at) ? endpoint : previousMax;
-            }
-            return endpoint;
-          }
-          return previousMax;
-        }, null)?.heartbeat_information?.last_report_at,
-      },
-      monitor_heartbeat: logicalInstances.some((endpoint) => endpoint.monitor_heartbeat),
-    } as Endpoint;
-  });
-}
 
 export const endpointSortOptions: SortOptions<Endpoint>[] = [
   {
@@ -55,6 +22,7 @@ export const endpointSortOptions: SortOptions<Endpoint>[] = [
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const selectedEndpointSort = ref<SortOptions<Endpoint>>(endpointSortOptions[0]);
+  const defaultTrackingInstancesValue = ref(true);
   const endpointFilterString = ref("");
   const endpoints = ref<Endpoint[]>([]);
   const settings = ref<EndpointSettings[]>([]);
@@ -63,7 +31,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const inactiveEndpoints = computed<Endpoint[]>(() => sortedEndpoints.value.filter((endpoint) => !endpoint.heartbeat_information || endpoint.heartbeat_information.reported_status !== EndpointStatus.Alive));
   const filteredInactiveEndpoints = computed<Endpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
-  const failedHeartbeatsCount = computed(() => inactiveEndpoints.value.filter((value) => value.monitor_heartbeat).length);
+  const failedHeartbeatsCount = computed(() => inactiveEndpoints.value.filter((value) => value.monitor_heartbeat).length + activeEndpoints.value.filter((endpoint) => endpoint.track_instances && endpoint.down_count > 0).length);
 
   watch(endpointFilterString, (newValue) => {
     setEndpointFilterString(newValue);
@@ -74,11 +42,17 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
       const [[, data], [, data2]] = await Promise.all([useTypedFetchFromServiceControl<Endpoint[]>("endpoints"), useTypedFetchFromServiceControl<EndpointSettings[]>("endpointssettings")]);
       endpoints.value = data;
       settings.value = data2;
+      defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")?.track_instances ?? true;
     } catch (e) {
       endpoints.value = settings.value = [];
       throw e;
     }
   }, 5000);
+
+  async function updateEndpointSettings(endpoint: Pick<Endpoint, "name" | "track_instances">) {
+    await usePatchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances });
+    await refresh();
+  }
 
   function endpointDisplayName(endpoint: Endpoint) {
     const total = endpoint.alive_count + endpoint.down_count;
@@ -94,12 +68,46 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     endpointFilterString.value = filter;
   }
 
+  function mapEndpointsToLogical(endpoints: Endpoint[], settings: EndpointSettings[]): Endpoint[] {
+    const logicalNames = [...new Set(endpoints.map((endpoint) => endpoint.name))];
+
+    return logicalNames.map((endpointName) => {
+      const logicalInstances = endpoints.filter((endpoint) => endpoint.name === endpointName);
+      const aliveList = logicalInstances.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
+
+      const aliveCount = aliveList.length;
+      const downCount = logicalInstances.length - aliveCount;
+
+      return {
+        name: endpointName,
+        alive_count: aliveCount,
+        down_count: downCount,
+        track_instances: settings.find((value) => value.name === endpointName)?.track_instances ?? defaultTrackingInstancesValue.value,
+        heartbeat_information: {
+          reported_status: aliveCount > 0 ? EndpointStatus.Alive : EndpointStatus.Dead,
+          last_report_at: logicalInstances.reduce((previousMax: Endpoint | null, endpoint: Endpoint) => {
+            if (endpoint.heartbeat_information) {
+              if (previousMax) {
+                return moment.utc(endpoint.heartbeat_information.last_report_at) > moment.utc(previousMax.heartbeat_information!.last_report_at) ? endpoint : previousMax;
+              }
+              return endpoint;
+            }
+            return previousMax;
+          }, null)?.heartbeat_information?.last_report_at,
+        },
+        monitor_heartbeat: logicalInstances.some((endpoint) => endpoint.monitor_heartbeat),
+      } as Endpoint;
+    });
+  }
+
   const refresh = dataRetriever.executeAndResetTimer;
 
   refresh().then();
 
   return {
     refresh,
+    defaultTrackingInstancesValue,
+    updateEndpointSettings,
     sortedEndpoints,
     endpoints,
     activeEndpoints,
