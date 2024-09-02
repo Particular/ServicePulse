@@ -50,7 +50,7 @@ function changeEndpointSettings(endpoint: Endpoint) {
                   </div>
                   <div class="col-4">
                     <select class="form-select dropDownOptions" @change="() => changeEndpointSettings(endpoint)">
-                      <option :value="item.value" :selected="endpoint.track_instances" v-for="item in dropdownOptions" :key="item.text">{{ item.text }}</option>
+                      <option :value="item.value" :selected="endpoint.track_instances === item.value" v-for="item in dropdownOptions" :key="item.text">{{ item.text }}</option>
                     </select>
                   </div>
                 </div>
