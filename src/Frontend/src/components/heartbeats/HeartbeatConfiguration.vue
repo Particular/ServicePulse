@@ -15,12 +15,21 @@ const dropdownOptions = [
   { text: "Do Not Track Instances", value: false },
 ];
 async function toggleDefaultSetting() {
-  await store.updateEndpointSettings({ name: "", track_instances: defaultTrackingInstancesValue.value });
-  useShowToast(TYPE.SUCCESS, `Default setting updated`, "", false, { timeout: 3000 });
+  try {
+    await store.updateEndpointSettings({ name: "", track_instances: defaultTrackingInstancesValue.value });
+    useShowToast(TYPE.SUCCESS, "Default setting updated", "", false, { timeout: 3000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Failed to update default setting", "", false, { timeout: 3000 });
+  }
 }
 
-function changeEndpointSettings(endpoint: LogicalEndpoint) {
-  store.updateEndpointSettings(endpoint);
+async function changeEndpointSettings(endpoint: LogicalEndpoint) {
+  try {
+    await store.updateEndpointSettings(endpoint);
+    useShowToast(TYPE.SUCCESS, "Saved", "", false, { timeout: 3000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });
+  }
 }
 </script>
 
