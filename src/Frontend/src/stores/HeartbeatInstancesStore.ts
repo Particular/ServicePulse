@@ -1,12 +1,12 @@
 import { useDeleteFromServiceControl, usePatchToServiceControl } from "@/composables/serviceServiceControlUrls";
 import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
-import { Endpoint } from "@/resources/Heartbeat";
 import moment from "moment";
 import type { SortInfo } from "@/components/SortInfo";
 import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { EndpointsView } from "@/resources/EndpointView";
 
-const nameProperty: keyof Endpoint = "name";
+const nameProperty: keyof EndpointsView = "name";
 
 export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore", () => {
   const instanceFilterString = ref("");
@@ -16,9 +16,9 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
     property: nameProperty,
     isAscending: true,
   });
-  const sortedInstances = computed<Endpoint[]>(() => {
-    const nameSort = (a: Endpoint, b: Endpoint) => a.host_display_name.localeCompare(b.host_display_name);
-    const dateSort = (a: Endpoint, b: Endpoint) => {
+  const sortedInstances = computed<EndpointsView[]>(() => {
+    const nameSort = (a: EndpointsView, b: EndpointsView) => a.host_display_name.localeCompare(b.host_display_name);
+    const dateSort = (a: EndpointsView, b: EndpointsView) => {
       const minDate = "1975-01-01T00:00:00";
       const x = moment.utc(a.heartbeat_information?.last_report_at ?? minDate);
       const y = moment.utc(b.heartbeat_information?.last_report_at ?? minDate);
@@ -35,7 +35,7 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
     return endpoints.value;
   });
 
-  const filteredInstances = computed<Endpoint[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
+  const filteredInstances = computed<EndpointsView[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
 
   watch(instanceFilterString, (newValue) => {
     setInstanceFilterString(newValue);
@@ -45,12 +45,12 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
     instanceFilterString.value = filter;
   }
 
-  async function deleteEndpointInstance(endpoint: Endpoint) {
+  async function deleteEndpointInstance(endpoint: EndpointsView) {
     await useDeleteFromServiceControl(`endpoints/${endpoint.id}`);
     await store.refresh();
   }
 
-  async function toggleEndpointMonitor(endpoint: Endpoint) {
+  async function toggleEndpointMonitor(endpoint: EndpointsView) {
     await usePatchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat });
     await store.refresh();
   }

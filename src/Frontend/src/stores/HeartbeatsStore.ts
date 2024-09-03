@@ -2,12 +2,13 @@ import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/com
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
-import { Endpoint, EndpointSettings, EndpointStatus } from "@/resources/Heartbeat";
+import { EndpointSettings, EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
 import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
+import { EndpointsView } from "@/resources/EndpointView";
 
-export const endpointSortOptions: SortOptions<Endpoint>[] = [
+export const endpointSortOptions: SortOptions<LogicalEndpoint>[] = [
   {
     description: "Name",
     selector: (group) => group.name,
@@ -21,24 +22,24 @@ export const endpointSortOptions: SortOptions<Endpoint>[] = [
 ];
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
-  const selectedEndpointSort = ref<SortOptions<Endpoint>>(endpointSortOptions[0]);
+  const selectedEndpointSort = ref<SortOptions<LogicalEndpoint>>(endpointSortOptions[0]);
   const defaultTrackingInstancesValue = ref(true);
   const endpointFilterString = ref("");
-  const endpoints = ref<Endpoint[]>([]);
+  const endpoints = ref<EndpointsView[]>([]);
   const settings = ref<EndpointSettings[]>([]);
-  const sortedEndpoints = computed<Endpoint[]>(() => mapEndpointsToLogical(endpoints.value, settings.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
-  const activeEndpoints = computed<Endpoint[]>(() =>
+  const sortedEndpoints = computed<LogicalEndpoint[]>(() => mapEndpointsToLogical(endpoints.value, settings.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
+  const activeEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
       return endpoint.heartbeat_information?.reported_status === EndpointStatus.Alive && ((endpoint.track_instances && endpoint.down_count === 0) || (!endpoint.track_instances && endpoint.alive_count > 0));
     })
   );
-  const filteredActiveEndpoints = computed<Endpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
-  const inactiveEndpoints = computed<Endpoint[]>(() =>
+  const filteredActiveEndpoints = computed<LogicalEndpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
+  const inactiveEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
       return endpoint.heartbeat_information?.reported_status === EndpointStatus.Dead || (endpoint.track_instances && endpoint.down_count > 0) || (!endpoint.track_instances && endpoint.alive_count === 0);
     })
   );
-  const filteredInactiveEndpoints = computed<Endpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
+  const filteredInactiveEndpoints = computed<LogicalEndpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const failedHeartbeatsCount = computed(() => inactiveEndpoints.value.filter((value) => value.monitor_heartbeat).length + activeEndpoints.value.filter((endpoint) => endpoint.track_instances && endpoint.down_count > 0).length);
 
   watch(endpointFilterString, (newValue) => {
@@ -47,7 +48,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
-      const [[, data], [, data2]] = await Promise.all([useTypedFetchFromServiceControl<Endpoint[]>("endpoints"), useTypedFetchFromServiceControl<EndpointSettings[]>("endpointssettings")]);
+      const [[, data], [, data2]] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), useTypedFetchFromServiceControl<EndpointSettings[]>("endpointssettings")]);
       endpoints.value = data;
       settings.value = data2;
       defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")?.track_instances ?? true;
@@ -57,12 +58,12 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     }
   }, 5000);
 
-  async function updateEndpointSettings(endpoint: Pick<Endpoint, "name" | "track_instances">) {
+  async function updateEndpointSettings(endpoint: Pick<LogicalEndpoint, "name" | "track_instances">) {
     await usePatchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances });
     await refresh();
   }
 
-  function endpointDisplayName(endpoint: Endpoint) {
+  function endpointDisplayName(endpoint: LogicalEndpoint) {
     const total = endpoint.alive_count + endpoint.down_count;
 
     if (endpoint.track_instances) {
@@ -74,7 +75,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     }
   }
 
-  function setSelectedEndpointSort(sort: SortOptions<Endpoint>) {
+  function setSelectedEndpointSort(sort: SortOptions<LogicalEndpoint>) {
     //sort value is set/retrieved from cookies in the OrderBy control
     selectedEndpointSort.value = sort;
   }
@@ -83,15 +84,15 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     endpointFilterString.value = filter;
   }
 
-  function mapEndpointsToLogical(endpoints: Endpoint[], settings: EndpointSettings[]): Endpoint[] {
+  function mapEndpointsToLogical(endpoints: EndpointsView[], settings: EndpointSettings[]): LogicalEndpoint[] {
     const logicalNames = [...new Set(endpoints.map((endpoint) => endpoint.name))];
 
     return logicalNames.map((endpointName) => {
-      const logicalInstances = endpoints.filter((endpoint) => endpoint.name === endpointName);
-      const aliveList = logicalInstances.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
+      const endpointInstances = endpoints.filter((endpoint) => endpoint.name === endpointName);
+      const aliveList = endpointInstances.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
 
       const aliveCount = aliveList.length;
-      const downCount = logicalInstances.length - aliveCount;
+      const downCount = endpointInstances.length - aliveCount;
 
       return {
         name: endpointName,
@@ -100,7 +101,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
         track_instances: settings.find((value) => value.name === endpointName)?.track_instances ?? defaultTrackingInstancesValue.value,
         heartbeat_information: {
           reported_status: aliveCount > 0 ? EndpointStatus.Alive : EndpointStatus.Dead,
-          last_report_at: logicalInstances.reduce((previousMax: Endpoint | null, endpoint: Endpoint) => {
+          last_report_at: endpointInstances.reduce((previousMax: EndpointsView | null, endpoint: EndpointsView) => {
             if (endpoint.heartbeat_information) {
               if (previousMax) {
                 return moment.utc(endpoint.heartbeat_information.last_report_at) > moment.utc(previousMax.heartbeat_information!.last_report_at) ? endpoint : previousMax;
@@ -110,8 +111,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
             return previousMax;
           }, null)?.heartbeat_information?.last_report_at,
         },
-        monitor_heartbeat: logicalInstances.some((endpoint) => endpoint.monitor_heartbeat),
-      } as Endpoint;
+        monitor_heartbeat: endpointInstances.some((endpoint) => endpoint.monitor_heartbeat),
+      } as LogicalEndpoint;
     });
   }
 

@@ -15,7 +15,7 @@ const { inactiveEndpoints, filteredInactiveEndpoints } = storeToRefs(store);
     <no-data v-if="inactiveEndpoints.length === 0" message="No inactive endpoints"></no-data>
     <div v-if="inactiveEndpoints.length > 0" class="row">
       <div class="col-sm-12 no-side-padding">
-        <div class="row box box-no-click" v-for="endpoint in filteredInactiveEndpoints" :key="endpoint.id">
+        <div class="row box box-no-click" v-for="endpoint in filteredInactiveEndpoints" :key="endpoint.name">
           <div class="col-sm-12 no-side-padding">
             <div class="row">
               <div class="col-sm-12 no-side-padding">

@@ -4,13 +4,14 @@ import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
-import { Endpoint, EndpointStatus } from "@/resources/Heartbeat";
+import { EndpointStatus } from "@/resources/Heartbeat";
 import SortableColumn from "@/components/SortableColumn.vue";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import { Tippy } from "vue-tippy";
 import { useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
+import { EndpointsView } from "@/resources/EndpointView";
 
 enum columnName {
   HostName = "name",
@@ -23,12 +24,12 @@ const store = useHeartbeatInstancesStore();
 const { filteredInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
 const instances = computed(() => filteredInstances.value.filter((instance) => instance.name === endpointName));
 
-async function deleteInstance(instance: Endpoint) {
+async function deleteInstance(instance: EndpointsView) {
   await store.deleteEndpointInstance(instance);
   useShowToast(TYPE.SUCCESS, "Endpoint instance deleted", "", false, { timeout: 1000 });
 }
 
-async function toggleAlerts(instance: Endpoint) {
+async function toggleAlerts(instance: EndpointsView) {
   await store.toggleEndpointMonitor(instance);
   useShowToast(TYPE.SUCCESS, `Endpoint instance ${instance.monitor_heartbeat ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
 }

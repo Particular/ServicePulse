@@ -5,7 +5,7 @@ import NoData from "../NoData.vue";
 import TimeSince from "../TimeSince.vue";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
-import { Endpoint } from "@/resources/Heartbeat";
+import { LogicalEndpoint } from "@/resources/Heartbeat";
 
 const store = useHeartbeatsStore();
 const { sortedEndpoints, defaultTrackingInstancesValue } = storeToRefs(store);
@@ -18,7 +18,7 @@ async function toggleDefaultSetting() {
   useShowToast(TYPE.SUCCESS, `Default setting updated`, "", false, { timeout: 3000 });
 }
 
-function changeEndpointSettings(endpoint: Endpoint) {
+function changeEndpointSettings(endpoint: LogicalEndpoint) {
   store.updateEndpointSettings(endpoint);
 }
 </script>
@@ -36,7 +36,7 @@ function changeEndpointSettings(endpoint: Endpoint) {
         <div class="row">
           <div class="col-9 no-side-padding">
             <no-data v-if="sortedEndpoints.length === 0" message="Nothing to configure" />
-            <div class="row box box-no-click no-side-padding" v-for="endpoint in sortedEndpoints" :key="endpoint.id">
+            <div class="row box box-no-click no-side-padding" v-for="endpoint in sortedEndpoints" :key="endpoint.name">
               <div class="col-sm-12 no-side-padding">
                 <div class="row">
                   <div class="col-8">
