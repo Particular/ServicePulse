@@ -96,6 +96,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
       const downCount = endpointInstances.length - aliveCount;
 
       return {
+        id: endpointName, //need this to be consistent between data refreshes for UI purposes, so using name rather than an id from one of the instances
         name: endpointName,
         alive_count: aliveCount,
         down_count: downCount,
