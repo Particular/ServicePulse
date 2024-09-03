@@ -58,11 +58,11 @@ function changeEndpointSettings(endpoint: Endpoint) {
                 <label>Default For New Endpoints:</label>
                 <ValueToggle id="defaultTIV" value1="Do Not Track Instances" value2="Track Instances" width="14.5em" @toggle="toggleDefaultSetting" v-model="defaultTrackingInstancesValue" />
               </div>
-              <template v-if="defaultTrackingInstancesValue">If most of your endpoints are autoscaled, consider changing this setting.</template>
+              <template v-if="defaultTrackingInstancesValue">If most of your endpoints are auto-scaled, consider changing this setting.</template>
               <template v-else>If most of your endpoint are hosted in physical infrastructure, consider changing this setting.</template>
             </div>
-            <p><code>Track Instances</code> is the best setting for endpoints where all instances are hosted in physical infrastructure that is not auto-scaled. Example, physical or virtual servers.</p>
-            <p><code>Do Not Track Instances</code> is the best setting for endpoints that are hosted in infrastructure with autoscalers. Example, Kubernetes, Azure Container Apps and AWS Elastic Container Service.</p>
+            <p><code>Track Instances</code> is the best setting for endpoints where all instances are hosted in physical infrastructure that is not auto-scaled. For example: physical or virtual servers.</p>
+            <p><code>Do Not Track Instances</code> is the best setting for endpoints that are hosted in infrastructure with autoscalers. For example: Kubernetes, Azure Container Apps and AWS Elastic Container Service.</p>
           </div>
         </div>
       </div>
