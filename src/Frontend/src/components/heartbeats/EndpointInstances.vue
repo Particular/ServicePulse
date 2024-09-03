@@ -125,8 +125,7 @@ async function toggleAlerts(instance: Endpoint) {
 }
 
 .logo {
-  width: 20px;
-  font-size: 1.4em;
+  width: 16px;
   margin-right: 4px;
 }
 

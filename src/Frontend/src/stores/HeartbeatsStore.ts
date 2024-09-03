@@ -64,7 +64,14 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   function endpointDisplayName(endpoint: Endpoint) {
     const total = endpoint.alive_count + endpoint.down_count;
-    return `(${endpoint.alive_count}/${total} instance${total > 1 ? "s" : ""})`;
+
+    if (endpoint.track_instances) {
+      return `(${endpoint.alive_count}/${total} instance${total > 1 ? "s" : ""})`;
+    } else if (endpoint.alive_count > 0) {
+      return `(${endpoint.alive_count})`;
+    } else {
+      return "";
+    }
   }
 
   function setSelectedEndpointSort(sort: SortOptions<Endpoint>) {

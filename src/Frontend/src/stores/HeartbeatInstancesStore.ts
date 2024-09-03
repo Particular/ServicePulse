@@ -19,8 +19,9 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
   const sortedInstances = computed<Endpoint[]>(() => {
     const nameSort = (a: Endpoint, b: Endpoint) => a.host_display_name.localeCompare(b.host_display_name);
     const dateSort = (a: Endpoint, b: Endpoint) => {
-      const x = moment.utc(a.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00");
-      const y = moment.utc(b.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00");
+      const minDate = "1975-01-01T00:00:00";
+      const x = moment.utc(a.heartbeat_information?.last_report_at ?? minDate);
+      const y = moment.utc(b.heartbeat_information?.last_report_at ?? minDate);
       if (x > y) {
         return 1;
       } else if (x < y) {
