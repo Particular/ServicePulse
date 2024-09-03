@@ -11,12 +11,21 @@ import ValueToggle from "../ValueToggle.vue";
 const store = useHeartbeatsStore();
 const { sortedEndpoints, defaultTrackingInstancesValue } = storeToRefs(store);
 async function toggleDefaultSetting() {
-  await store.updateEndpointSettings({ name: "", track_instances: defaultTrackingInstancesValue.value });
-  useShowToast(TYPE.SUCCESS, `Default setting updated`, "", false, { timeout: 3000 });
+  try {
+    await store.updateEndpointSettings({ name: "", track_instances: defaultTrackingInstancesValue.value });
+    useShowToast(TYPE.SUCCESS, "Default setting updated", "", false, { timeout: 3000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Failed to update default setting", "", false, { timeout: 3000 });
+  }
 }
 
-function changeEndpointSettings(endpoint: Endpoint) {
-  store.updateEndpointSettings(endpoint);
+async function changeEndpointSettings(endpoint: Endpoint) {
+  try {
+    await store.updateEndpointSettings(endpoint);
+    useShowToast(TYPE.SUCCESS, "Saved", "", false, { timeout: 3000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });
+  }
 }
 </script>
 
@@ -46,7 +55,7 @@ function changeEndpointSettings(endpoint: Endpoint) {
                     </div>
                   </div>
                   <div class="col-4">
-                    <ValueToggle :id="endpoint.id" value1="Do Not Track Instances" value2="Track Instances" width="14.5em" @toggle="() => changeEndpointSettings(endpoint)" v-model="endpoint.track_instances" />
+                    <ValueToggle :id="endpoint.id" value1="Do Not Track Instances" value2="Track Instances" width="14.5em" @toggle="async () => await changeEndpointSettings(endpoint)" v-model="endpoint.track_instances" />
                   </div>
                 </div>
               </div>
