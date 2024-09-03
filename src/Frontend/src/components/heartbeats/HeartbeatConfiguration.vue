@@ -6,13 +6,10 @@ import TimeSince from "../TimeSince.vue";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import { Endpoint } from "@/resources/Heartbeat";
+import ValueToggle from "../ValueToggle.vue";
 
 const store = useHeartbeatsStore();
 const { sortedEndpoints, defaultTrackingInstancesValue } = storeToRefs(store);
-const dropdownOptions = [
-  { text: "Track Instances", value: true },
-  { text: "Do Not Track Instances", value: false },
-];
 async function toggleDefaultSetting() {
   await store.updateEndpointSettings({ name: "", track_instances: defaultTrackingInstancesValue.value });
   useShowToast(TYPE.SUCCESS, `Default setting updated`, "", false, { timeout: 3000 });
@@ -49,27 +46,21 @@ function changeEndpointSettings(endpoint: Endpoint) {
                     </div>
                   </div>
                   <div class="col-4">
-                    <select class="form-select dropDownOptions" @change="() => changeEndpointSettings(endpoint)">
-                      <option :value="item.value" :selected="endpoint.track_instances === item.value" v-for="item in dropdownOptions" :key="item.text">{{ item.text }}</option>
-                    </select>
+                    <ValueToggle :id="endpoint.id" value1="Do Not Track Instances" value2="Track Instances" width="14.5em" @toggle="() => changeEndpointSettings(endpoint)" v-model="endpoint.track_instances" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="col-3 instructions">
-            <p>
-              The current default setting for new endpoints is set to
-              <strong>
-                <template v-if="defaultTrackingInstancesValue"><code>Track Instances</code></template>
-                <template v-else><code>Do Not Track Instances</code></template> </strong
-              >.
-            </p>
-            <p>
-              <template v-if="defaultTrackingInstancesValue">If most of your endpoints are autoscaled, consider changing this setting.</template
-              ><template v-else>If most of your endpoint are hosted in physical infrastructure, consider changing this setting.</template><br />
-              <a href="#" @click.prevent="toggleDefaultSetting">Click here to change default</a>
-            </p>
+            <div>
+              <div class="defaultSetting">
+                <label>Default For New Endpoints:</label>
+                <ValueToggle id="defaultTIV" value1="Do Not Track Instances" value2="Track Instances" width="14.5em" @toggle="toggleDefaultSetting" v-model="defaultTrackingInstancesValue" />
+              </div>
+              <template v-if="defaultTrackingInstancesValue">If most of your endpoints are autoscaled, consider changing this setting.</template>
+              <template v-else>If most of your endpoint are hosted in physical infrastructure, consider changing this setting.</template>
+            </div>
             <p><code>Track Instances</code> is the best setting for endpoints where all instances are hosted in physical infrastructure that is not auto-scaled. Example, physical or virtual servers.</p>
             <p><code>Do Not Track Instances</code> is the best setting for endpoints that are hosted in infrastructure with autoscalers. Example, Kubernetes, Azure Container Apps and AWS Elastic Container Service.</p>
           </div>
@@ -88,7 +79,16 @@ function changeEndpointSettings(endpoint: Endpoint) {
     color: unset;
   }
 }
-.dropDownOptions {
-  width: 250px;
+
+.defaultSetting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+  line-height: 20px;
+}
+
+.instructions > div {
+  margin-bottom: 5px;
 }
 </style>
