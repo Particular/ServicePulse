@@ -39,12 +39,6 @@ async function changeEndpointSettings(endpoint: LogicalEndpoint) {
     <section name="endpoint_configuration">
       <div class="row">
         <div class="col-sm-12 no-side-padding">
-          <div class="alert alert-warning">
-            <i class="fa fa-warning" />
-            <strong>Warning:</strong> The list of endpoints below only contains endpoints with the heartbeats plug-in installed. Toggling heartbeat monitoring won't toggle
-            <a href="https://docs.particular.net/monitoring/metrics/in-servicepulse" target="_blank">performance monitoring</a>
-            <i class="fa fa-external-link fake-link" />
-          </div>
           <div class="row">
             <div class="col-9 no-side-padding">
               <no-data v-if="sortedEndpoints.length === 0" message="Nothing to configure" />
