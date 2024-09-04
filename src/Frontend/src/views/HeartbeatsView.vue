@@ -2,9 +2,8 @@
 import { RouterLink, RouterView } from "vue-router";
 import routeLinks from "@/router/routeLinks";
 import isRouteSelected from "@/composables/isRouteSelected";
-import { endpointSortOptions, useHeartbeatsStore } from "@/stores/HeartbeatsStore";
+import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
-import OrderBy from "@/components/OrderBy.vue";
 import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
 
@@ -41,7 +40,6 @@ const { unhealthyEndpoints, healthyEndpoints, endpointFilterString } = storeToRe
                 </h5>
               </div>
               <div class="filter-group">
-                <OrderBy @sort-updated="store.setSelectedEndpointSort" :sort-options="endpointSortOptions" />
                 <div class="filter-input">
                   <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="endpointFilterString" />
                 </div>

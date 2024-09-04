@@ -1,7 +1,7 @@
-import type SortOptions from "@/resources/SortOptions";
+import type { GroupPropertyType } from "@/resources/SortOptions";
 import { SortDirection } from "@/resources/SortOptions";
 
-export default function getSortFunction<T>(selector: SortOptions<T>["selector"], dir: SortDirection) {
+export default function getSortFunction<T>(selector: ((group: T) => GroupPropertyType) | undefined, dir: SortDirection) {
   if (!selector) {
     return () => 0;
   }

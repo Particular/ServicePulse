@@ -4,31 +4,60 @@ import { computed, ref, watch } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
 import { EndpointSettings, EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
 import moment from "moment";
-import SortOptions, { SortDirection } from "@/resources/SortOptions";
+import { SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
+import type { SortInfo } from "@/components/SortInfo";
+import type { GroupPropertyType } from "@/resources/SortOptions";
 
-export const endpointSortOptions: SortOptions<LogicalEndpoint>[] = [
-  {
-    description: "Name",
-    selector: (group) => group.name,
-    icon: "bi-sort-alpha-",
-  },
-  {
-    description: "Latest heartbeat",
-    selector: (group) => moment.utc(group.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00"),
-    icon: "bi-sort-",
-  },
-];
+export enum ColumnNames {
+  Name = "name",
+  Instances = "instances",
+  LastHeartbeat = "latestHeartbeat",
+  Muted = "muted",
+  Tracked = "trackedInstances",
+}
+
+export enum MutedType {
+  None = 0,
+  Some = 1,
+  All = 2,
+}
+
+const columnSortings = new Map<string, (endpoint: LogicalEndpoint) => GroupPropertyType>([
+  [ColumnNames.Name, (endpoint) => endpoint.name],
+  [ColumnNames.Instances, (endpoint) => endpoint.alive_count - endpoint.down_count],
+  [ColumnNames.LastHeartbeat, (endpoint) => moment.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
+  [
+    ColumnNames.Muted,
+    (endpoint) => {
+      switch (endpoint.muted_count) {
+        case 0:
+          return MutedType.None;
+        case endpoint.alive_count + endpoint.down_count:
+          return MutedType.All;
+        default:
+          return MutedType.Some;
+      }
+    },
+  ],
+  [ColumnNames.Tracked, (endpoint) => endpoint.track_instances],
+]);
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
-  const selectedEndpointSort = ref<SortOptions<LogicalEndpoint>>(endpointSortOptions[0]);
+  const sortByInstances = ref<SortInfo>({
+    property: ColumnNames.Name,
+    isAscending: true,
+  });
+
   const defaultTrackingInstancesValue = ref(endpointSettingsClient.defaultEndpointSettingsValue().track_instances);
   const endpointFilterString = ref("");
-  const endpoints = ref<EndpointsView[]>([]);
+  const endpointInstances = ref<EndpointsView[]>([]);
   const settings = ref<EndpointSettings[]>([]);
-  const sortedEndpoints = computed<LogicalEndpoint[]>(() => mapEndpointsToLogical(endpoints.value, settings.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
+  const sortedEndpoints = computed<LogicalEndpoint[]>(() =>
+    mapEndpointsToLogical(endpointInstances.value, settings.value).sort(getSortFunction(columnSortings.get(sortByInstances.value.property), sortByInstances.value.isAscending ? SortDirection.Ascending : SortDirection.Descending))
+  );
   const healthyEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
       return endpoint.heartbeat_information?.reported_status === EndpointStatus.Alive && ((endpoint.track_instances && endpoint.down_count === 0) || (!endpoint.track_instances && endpoint.alive_count > 0));
@@ -50,11 +79,11 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const dataRetriever = useAutoRefresh(async () => {
     try {
       const [[, data], data2] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsClient.endpointSettings()]);
-      endpoints.value = data;
+      endpointInstances.value = data;
       settings.value = data2;
       defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")!.track_instances;
     } catch (e) {
-      endpoints.value = settings.value = [];
+      endpointInstances.value = settings.value = [];
       throw e;
     }
   }, 5000);
@@ -68,17 +97,12 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     const total = endpoint.alive_count + endpoint.down_count;
 
     if (endpoint.track_instances) {
-      return `(${endpoint.alive_count}/${total} instance${total > 1 ? "s" : ""})`;
+      return `${endpoint.alive_count}/${total}`;
     } else if (endpoint.alive_count > 0) {
-      return `(${endpoint.alive_count} instance${total > 1 ? "s" : ""})`;
+      return `${endpoint.alive_count}`;
     } else {
-      return "";
+      return "N/A";
     }
-  }
-
-  function setSelectedEndpointSort(sort: SortOptions<LogicalEndpoint>) {
-    //sort value is set/retrieved from cookies in the OrderBy control
-    selectedEndpointSort.value = sort;
   }
 
   function setEndpointFilterString(filter: string) {
@@ -100,6 +124,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
         name: endpointName,
         alive_count: aliveCount,
         down_count: downCount,
+        muted_count: endpointInstances.filter((endpoint) => endpoint.monitor_heartbeat).length,
         track_instances: settings.find((value) => value.name === endpointName)?.track_instances ?? defaultTrackingInstancesValue.value,
         heartbeat_information: {
           reported_status: aliveCount > 0 ? EndpointStatus.Alive : EndpointStatus.Dead,
@@ -127,15 +152,14 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     defaultTrackingInstancesValue,
     updateEndpointSettings,
     sortedEndpoints,
-    endpoints,
+    endpointInstances,
     healthyEndpoints,
     filteredHealthyEndpoints,
     unhealthyEndpoints,
     filteredUnhealthyEndpoints,
     failedHeartbeatsCount,
     endpointDisplayName,
-    selectedEndpointSort,
-    setSelectedEndpointSort,
+    sortByInstances,
     endpointFilterString,
   };
 });

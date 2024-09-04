@@ -109,7 +109,7 @@ async function toggleAlerts(instance: EndpointsView) {
       </div>
       <no-data v-if="instances.length === 0" message="No endpoint instances found. For untracked endpoints, disconnected instances are automatically pruned."></no-data>
       <div role="rowgroup" aria-label="endpoints">
-        <div role="row" :aria-label="instance.name" class="row instance-row" v-for="instance in instances" :key="instance.id">
+        <div role="row" :aria-label="instance.name" class="row grid-row" v-for="instance in instances" :key="instance.id">
           <div role="cell" aria-label="instance-name" class="col-6 host-name">
             <span role="status" class="logo">
               <i v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" aria-label="instance dead" class="fa fa-heartbeat text-danger" />
@@ -149,23 +149,6 @@ async function toggleAlerts(instance: EndpointsView) {
 
 .actions {
   display: flex;
-}
-.host-name,
-.last-heartbeat,
-.actions {
-  padding: 10px;
-  align-items: center;
-  display: flex;
-}
-.instance-row {
-  display: flex;
-  position: relative;
-  border-top: 1px solid #eee;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #eee;
-  border-left: 1px solid #fff;
-  background-color: #fff;
-  margin: 0;
 }
 
 .filter-input input {

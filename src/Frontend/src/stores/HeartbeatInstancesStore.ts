@@ -11,7 +11,7 @@ const nameProperty: keyof EndpointsView = "name";
 export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore", () => {
   const instanceFilterString = ref("");
   const store = useHeartbeatsStore();
-  const { endpoints } = storeToRefs(store);
+  const { endpointInstances } = storeToRefs(store);
   const sortByInstances = ref<SortInfo>({
     property: nameProperty,
     isAscending: true,
@@ -30,9 +30,9 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
       return 0;
     };
     const sortFunc = sortByInstances.value.property === nameProperty ? nameSort : dateSort;
-    endpoints.value.sort((a, b) => (sortByInstances.value.isAscending ? sortFunc(a, b) : -sortFunc(a, b)));
+    endpointInstances.value.sort((a, b) => (sortByInstances.value.isAscending ? sortFunc(a, b) : -sortFunc(a, b)));
 
-    return endpoints.value;
+    return endpointInstances.value;
   });
 
   const filteredInstances = computed<EndpointsView[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLowerCase().includes(instanceFilterString.value.toLowerCase())));

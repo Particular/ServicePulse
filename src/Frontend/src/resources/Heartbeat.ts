@@ -8,6 +8,7 @@ export interface LogicalEndpoint {
   track_instances: boolean;
   alive_count: number;
   down_count: number;
+  muted_count: number;
 }
 
 export interface EndpointSettings {
