@@ -31,7 +31,7 @@ const { healthyEndpoints, filteredHealthyEndpoints } = storeToRefs(store);
                         <i class="fa fa-sellsy text-success"></i>
                       </tippy>
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)">
+                        <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: routeLinks.heartbeats.healthy.link } }">
                           {{ endpoint.name }}
                         </RouterLink>
                       </div>

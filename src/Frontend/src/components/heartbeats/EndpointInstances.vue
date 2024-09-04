@@ -2,7 +2,7 @@
 import NoData from "../NoData.vue";
 import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
 import { EndpointSettings, EndpointStatus } from "@/resources/Heartbeat";
 import SortableColumn from "@/components/SortableColumn.vue";
@@ -24,6 +24,7 @@ const endpointName = route.params.endpointName.toString();
 const store = useHeartbeatInstancesStore();
 const { filteredInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
 const endpointSettings = ref<EndpointSettings[]>([endpointSettingsClient.defaultEndpointSettingsValue()]);
+const backLink = ref<string>(routeLinks.heartbeats.root);
 const instances = computed(() => {
   return filteredInstances.value
     .filter((instance) => instance.name === endpointName)
@@ -38,6 +39,10 @@ const instances = computed(() => {
 });
 
 onMounted(async () => {
+  const back = useRouter().currentRoute.value.query.back as string;
+  if (back) {
+    backLink.value = back;
+  }
   endpointSettings.value = await endpointSettingsClient.endpointSettings();
 });
 
@@ -56,7 +61,7 @@ async function toggleAlerts(instance: EndpointsView) {
   <div class="container">
     <div class="row">
       <div class="col-8 instances-heading">
-        <RouterLink :to="routeLinks.heartbeats.root">&#9664; Back to list</RouterLink>
+        <RouterLink :to="backLink"><i class="fa fa-chevron-left"></i> Back</RouterLink>
         <h1>{{ endpointName }} Instances</h1>
       </div>
       <div class="col-4 align-content-center">
