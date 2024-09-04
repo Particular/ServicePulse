@@ -7,6 +7,7 @@ import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import { LogicalEndpoint } from "@/resources/Heartbeat";
 import EndpointSettingsSupported from "@/components/heartbeats/EndpointSettingsSupported.vue";
+import OnOffSwitch from "../OnOffSwitch.vue";
 
 const store = useHeartbeatsStore();
 const { sortedEndpoints, defaultTrackingInstancesValue } = storeToRefs(store);
@@ -69,6 +70,12 @@ async function changeEndpointSettings(endpoint: LogicalEndpoint) {
               </div>
             </div>
             <div class="col-3 instructions">
+              <div class="defaultSetting">
+                <label>Track Instances by Default on New Endpoints</label>
+                <div class="switch">
+                  <OnOffSwitch id="defaultTIV" @toggle="toggleDefaultSetting" v-model="defaultTrackingInstancesValue" />
+                </div>
+              </div>
               <p>
                 <template v-if="defaultTrackingInstancesValue">If most of your endpoints are auto-scaled, consider changing this setting.</template>
                 <template v-else>If most of your endpoint are hosted in physical infrastructure, consider changing this setting.</template>
@@ -92,6 +99,23 @@ async function changeEndpointSettings(endpoint: LogicalEndpoint) {
     color: unset;
   }
 }
+
+.defaultSetting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1em;
+  line-height: 1em;
+}
+
+.defaultSetting .switch {
+  margin-top: -8px;
+}
+
+.instructions > div {
+  margin-bottom: 5px;
+}
+
 .dropDownOptions {
   width: 250px;
 }
