@@ -29,8 +29,7 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints } = storeToRefs(store);
                         <i class="fa fa-sellsy text-danger"></i>
                       </tippy>
                       <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                        <template v-if="!endpoint.track_instances">{{ endpoint.name }}</template>
-                        <RouterLink v-else aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)"> {{ endpoint.name }} </RouterLink>
+                        <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)"> {{ endpoint.name }} </RouterLink>
                       </div>
                       <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
                       <tippy v-if="!endpoint.monitor_heartbeat" content="All instances have alerts muted" :delay="[300, 0]">
