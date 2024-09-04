@@ -107,7 +107,7 @@ async function toggleAlerts(instance: EndpointsView) {
           </div>
         </div>
       </div>
-      <no-data v-if="instances.length === 0" message="No endpoint instances found"></no-data>
+      <no-data v-if="instances.length === 0" message="No endpoint instances found. For untracked endpoints, disconnected instances are automatically pruned."></no-data>
       <div role="rowgroup" aria-label="endpoints">
         <div role="row" :aria-label="instance.name" class="row instance-row" v-for="instance in instances" :key="instance.id">
           <div role="cell" aria-label="instance-name" class="col-6 host-name">
