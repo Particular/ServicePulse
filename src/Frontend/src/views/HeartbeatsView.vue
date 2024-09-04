@@ -9,7 +9,7 @@ import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
 
 const store = useHeartbeatsStore();
-const { inactiveEndpoints, activeEndpoints, endpointFilterString } = storeToRefs(store);
+const { unhealthyEndpoints, healthyEndpoints, endpointFilterString } = storeToRefs(store);
 </script>
 
 <template>
@@ -27,12 +27,12 @@ const { inactiveEndpoints, activeEndpoints, endpointFilterString } = storeToRefs
               <div>
                 <!--Inactive Endpoints-->
                 <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.unhealthy.link) }">
-                  <RouterLink :to="routeLinks.heartbeats.unhealthy.link"> Unhealthy Endpoints ({{ inactiveEndpoints.length }}) </RouterLink>
+                  <RouterLink :to="routeLinks.heartbeats.unhealthy.link"> Unhealthy Endpoints ({{ unhealthyEndpoints.length }}) </RouterLink>
                 </h5>
 
                 <!--Active Endpoints-->
                 <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.healthy.link) }">
-                  <RouterLink :to="routeLinks.heartbeats.healthy.link"> Healthy Endpoints ({{ activeEndpoints.length }}) </RouterLink>
+                  <RouterLink :to="routeLinks.heartbeats.healthy.link"> Healthy Endpoints ({{ healthyEndpoints.length }}) </RouterLink>
                 </h5>
 
                 <!--Configuration-->

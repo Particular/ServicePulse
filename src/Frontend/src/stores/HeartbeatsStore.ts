@@ -29,19 +29,19 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const endpoints = ref<EndpointsView[]>([]);
   const settings = ref<EndpointSettings[]>([]);
   const sortedEndpoints = computed<LogicalEndpoint[]>(() => mapEndpointsToLogical(endpoints.value, settings.value).sort(selectedEndpointSort.value.sort ?? getSortFunction(endpointSortOptions[0].selector, SortDirection.Ascending)));
-  const activeEndpoints = computed<LogicalEndpoint[]>(() =>
+  const healthyEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
       return endpoint.heartbeat_information?.reported_status === EndpointStatus.Alive && ((endpoint.track_instances && endpoint.down_count === 0) || (!endpoint.track_instances && endpoint.alive_count > 0));
     })
   );
-  const filteredActiveEndpoints = computed<LogicalEndpoint[]>(() => activeEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
-  const inactiveEndpoints = computed<LogicalEndpoint[]>(() =>
+  const filteredHealthyEndpoints = computed<LogicalEndpoint[]>(() => healthyEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
+  const unhealthyEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
       return endpoint.heartbeat_information?.reported_status === EndpointStatus.Dead || (endpoint.track_instances && endpoint.down_count > 0) || (!endpoint.track_instances && endpoint.alive_count === 0);
     })
   );
-  const filteredInactiveEndpoints = computed<LogicalEndpoint[]>(() => inactiveEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
-  const failedHeartbeatsCount = computed(() => inactiveEndpoints.value.filter((value) => value.monitor_heartbeat).length + activeEndpoints.value.filter((endpoint) => endpoint.track_instances && endpoint.down_count > 0).length);
+  const filteredUnhealthyEndpoints = computed<LogicalEndpoint[]>(() => unhealthyEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
+  const failedHeartbeatsCount = computed(() => unhealthyEndpoints.value.filter((value) => value.monitor_heartbeat).length + healthyEndpoints.value.filter((endpoint) => endpoint.track_instances && endpoint.down_count > 0).length);
 
   watch(endpointFilterString, (newValue) => {
     setEndpointFilterString(newValue);
@@ -128,10 +128,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     updateEndpointSettings,
     sortedEndpoints,
     endpoints,
-    activeEndpoints,
-    filteredActiveEndpoints,
-    inactiveEndpoints,
-    filteredInactiveEndpoints,
+    healthyEndpoints,
+    filteredHealthyEndpoints,
+    unhealthyEndpoints,
+    filteredUnhealthyEndpoints,
     failedHeartbeatsCount,
     endpointDisplayName,
     selectedEndpointSort,

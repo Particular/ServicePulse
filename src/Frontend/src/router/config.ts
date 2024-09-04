@@ -38,12 +38,12 @@ const config: RouteItem[] = [
       {
         title: "Unhealthy Endpoints",
         path: routeLinks.heartbeats.unhealthy.link,
-        component: () => import("@/components/heartbeats/InactiveEndpoints.vue"),
+        component: () => import("@/components/heartbeats/UnhealthyEndpoints.vue"),
       },
       {
         title: "Healthy Endpoints",
         path: routeLinks.heartbeats.healthy.link,
-        component: () => import("@/components/heartbeats/ActiveEndpoints.vue"),
+        component: () => import("@/components/heartbeats/HealthyEndpoints.vue"),
       },
       {
         title: "Heartbeat Configuration",
