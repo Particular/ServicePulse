@@ -14,7 +14,7 @@ const { activeEndpoints, filteredActiveEndpoints } = storeToRefs(store);
 
 <template>
   <section name="active_endpoints">
-    <no-data v-if="activeEndpoints.length === 0" message="No active endpoints"></no-data>
+    <no-data v-if="activeEndpoints.length === 0" message="No healthy endpoints"></no-data>
     <div v-if="activeEndpoints.length > 0" class="row">
       <div class="col-sm-12 no-side-padding">
         <div class="row box box-no-click logical_endpoint" v-for="endpoint in filteredActiveEndpoints" :key="endpoint.name">

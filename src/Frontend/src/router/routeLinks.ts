@@ -5,8 +5,8 @@ const heartbeatLinks = (root: string) => {
 
   return {
     root,
-    inactive: createLink("inactive"),
-    active: createLink("active"),
+    unhealthy: createLink("unhealthy"),
+    healthy: createLink("healthy"),
     configuration: createLink("configuration"),
     instances: { link: (endpointName: string) => `${root}/instances/${endpointName}`, template: "/heartbeats/instances/:endpointName" },
   };

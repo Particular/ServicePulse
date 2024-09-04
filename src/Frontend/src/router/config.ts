@@ -33,16 +33,16 @@ const config: RouteItem[] = [
     path: routeLinks.heartbeats.root,
     component: HeartbeatsView,
     title: "Heartbeats",
-    redirect: routeLinks.heartbeats.inactive.link,
+    redirect: routeLinks.heartbeats.unhealthy.link,
     children: [
       {
-        title: "Inactive Endpoints",
-        path: routeLinks.heartbeats.inactive.link,
+        title: "Unhealthy Endpoints",
+        path: routeLinks.heartbeats.unhealthy.link,
         component: () => import("@/components/heartbeats/InactiveEndpoints.vue"),
       },
       {
-        title: "Active Endpoints",
-        path: routeLinks.heartbeats.active.link,
+        title: "Healthy Endpoints",
+        path: routeLinks.heartbeats.healthy.link,
         component: () => import("@/components/heartbeats/ActiveEndpoints.vue"),
       },
       {

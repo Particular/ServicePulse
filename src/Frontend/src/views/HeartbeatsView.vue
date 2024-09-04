@@ -26,13 +26,13 @@ const { inactiveEndpoints, activeEndpoints, endpointFilterString } = storeToRefs
             <div class="tabs">
               <div>
                 <!--Inactive Endpoints-->
-                <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.inactive.link) }">
-                  <RouterLink :to="routeLinks.heartbeats.inactive.link"> Inactive Endpoints ({{ inactiveEndpoints.length }}) </RouterLink>
+                <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.unhealthy.link) }">
+                  <RouterLink :to="routeLinks.heartbeats.unhealthy.link"> Unhealthy Endpoints ({{ inactiveEndpoints.length }}) </RouterLink>
                 </h5>
 
                 <!--Active Endpoints-->
-                <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.active.link) }">
-                  <RouterLink :to="routeLinks.heartbeats.active.link"> Active Endpoints ({{ activeEndpoints.length }}) </RouterLink>
+                <h5 :class="{ active: isRouteSelected(routeLinks.heartbeats.healthy.link) }">
+                  <RouterLink :to="routeLinks.heartbeats.healthy.link"> Healthy Endpoints ({{ activeEndpoints.length }}) </RouterLink>
                 </h5>
 
                 <!--Configuration-->
