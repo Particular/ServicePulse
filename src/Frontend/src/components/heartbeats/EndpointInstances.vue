@@ -3,8 +3,8 @@ import NoData from "../NoData.vue";
 import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
 import { useRoute } from "vue-router";
-import { computed } from "vue";
-import { EndpointStatus } from "@/resources/Heartbeat";
+import { computed, onMounted, ref } from "vue";
+import { EndpointSettings, EndpointStatus } from "@/resources/Heartbeat";
 import SortableColumn from "@/components/SortableColumn.vue";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
@@ -12,6 +12,7 @@ import { TYPE } from "vue-toastification";
 import { Tippy } from "vue-tippy";
 import { useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
+import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
 
 enum columnName {
   HostName = "name",
@@ -22,7 +23,23 @@ const route = useRoute();
 const endpointName = route.params.endpointName.toString();
 const store = useHeartbeatInstancesStore();
 const { filteredInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
-const instances = computed(() => filteredInstances.value.filter((instance) => instance.name === endpointName));
+const endpointSettings = ref<EndpointSettings[]>([endpointSettingsClient.defaultEndpointSettingsValue()]);
+const instances = computed(() => {
+  return filteredInstances.value
+    .filter((instance) => instance.name === endpointName)
+    .filter((instance) => {
+      const trackInstances = (endpointSettings.value.find((value) => value.name === instance.name) ?? endpointSettings.value.find((value) => value.name === ""))!.track_instances;
+      if (!trackInstances && !instance.is_sending_heartbeats) {
+        return false;
+      }
+
+      return true;
+    });
+});
+
+onMounted(async () => {
+  endpointSettings.value = await endpointSettingsClient.endpointSettings();
+});
 
 async function deleteInstance(instance: EndpointsView) {
   await store.deleteEndpointInstance(instance);

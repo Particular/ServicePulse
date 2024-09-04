@@ -35,7 +35,7 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
     return endpoints.value;
   });
 
-  const filteredInstances = computed<EndpointsView[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLocaleLowerCase().includes(instanceFilterString.value.toLocaleLowerCase())));
+  const filteredInstances = computed<EndpointsView[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLowerCase().includes(instanceFilterString.value.toLowerCase())));
 
   watch(instanceFilterString, (newValue) => {
     setInstanceFilterString(newValue);

@@ -7,6 +7,7 @@ import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import { EndpointsView } from "@/resources/EndpointView";
+import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
 
 export const endpointSortOptions: SortOptions<LogicalEndpoint>[] = [
   {
@@ -23,7 +24,7 @@ export const endpointSortOptions: SortOptions<LogicalEndpoint>[] = [
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const selectedEndpointSort = ref<SortOptions<LogicalEndpoint>>(endpointSortOptions[0]);
-  const defaultTrackingInstancesValue = ref(true);
+  const defaultTrackingInstancesValue = ref(endpointSettingsClient.defaultEndpointSettingsValue().track_instances);
   const endpointFilterString = ref("");
   const endpoints = ref<EndpointsView[]>([]);
   const settings = ref<EndpointSettings[]>([]);
@@ -48,10 +49,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
-      const [[, data], [, data2]] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), useTypedFetchFromServiceControl<EndpointSettings[]>("endpointssettings")]);
+      const [[, data], data2] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsClient.endpointSettings()]);
       endpoints.value = data;
       settings.value = data2;
-      defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")?.track_instances ?? true;
+      defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")!.track_instances;
     } catch (e) {
       endpoints.value = settings.value = [];
       throw e;
@@ -69,7 +70,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     if (endpoint.track_instances) {
       return `(${endpoint.alive_count}/${total} instance${total > 1 ? "s" : ""})`;
     } else if (endpoint.alive_count > 0) {
-      return `(${endpoint.alive_count})`;
+      return `(${endpoint.alive_count} instance${total > 1 ? "s" : ""})`;
     } else {
       return "";
     }

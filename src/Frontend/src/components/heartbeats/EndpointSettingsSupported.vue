@@ -1,0 +1,56 @@
+<script setup lang="ts">
+import ConditionalRender from "@/components/ConditionalRender.vue";
+import isEndpointSettingsSupported, { minimumSCVersionForEndpointSettings } from "@/components/heartbeats/isEndpointSettingsSupported";
+</script>
+
+<template>
+  <ConditionalRender :supported="isEndpointSettingsSupported">
+    <template #unsupported>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="text-center message">
+              <p>
+                The minimum version of ServiceControl required to enable configuring tracking of endpoints is
+                <span> {{ minimumSCVersionForEndpointSettings }} </span>.
+              </p>
+              <div>
+                <a class="btn btn-default btn-primary" href="https://particular.net/downloads" target="_blank">Update ServiceControl to latest version</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    <slot />
+  </ConditionalRender>
+</template>
+
+<style scoped>
+.message {
+  margin: 60px auto 120px;
+  max-width: 520px;
+  line-height: 26px;
+}
+
+.message h1 {
+  font-size: 30px;
+}
+.message p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  margin-top: -18px;
+}
+
+.message ul {
+  padding-left: 0;
+  text-align: left;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.message .btn {
+  font-size: 16px;
+  margin-left: 10px;
+}
+</style>
