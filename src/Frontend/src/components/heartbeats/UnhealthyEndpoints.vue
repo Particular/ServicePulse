@@ -41,7 +41,7 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
               <div role="cell" aria-label="instance-name" class="col-6 host-name">
                 <div class="box-header">
                   <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                    <RouterLink aria-label="details-link" :to="routeLinks.heartbeats.instances.link(endpoint.name)"> {{ endpoint.name }} </RouterLink>
+                    <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: routeLinks.heartbeats.unhealthy.link } }"> {{ endpoint.name }} </RouterLink>
                   </div>
                   <tippy v-if="!endpoint.monitor_heartbeat" content="All instances have alerts muted" :delay="[300, 0]">
                     <i class="fa fa-bell-slash text-danger" />

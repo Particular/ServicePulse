@@ -11,11 +11,6 @@ export interface LogicalEndpoint {
   muted_count: number;
 }
 
-export interface EndpointSettings {
-  name: string;
-  track_instances: boolean;
-}
-
 export enum EndpointStatus {
   Alive = "beating",
   Dead = "dead",
