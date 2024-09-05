@@ -20,7 +20,7 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
           <!--Table headings-->
           <div role="row" aria-label="column-headers" class="row table-head-row">
             <div role="columnheader" :aria-label="ColumnNames.Name" class="col-6">
-              <SortableColumn :sort-by="ColumnNames.Name" v-model="sortByInstances" :default-ascending="true">Host name</SortableColumn>
+              <SortableColumn :sort-by="ColumnNames.Name" v-model="sortByInstances" :default-ascending="true">Name</SortableColumn>
             </div>
             <div role="columnheader" :aria-label="ColumnNames.Instances" class="col-2">
               <SortableColumn :sort-by="ColumnNames.Instances" v-model="sortByInstances" :default-ascending="true">Instances</SortableColumn>
@@ -40,9 +40,9 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
             <div role="row" :aria-label="endpoint.name" class="row grid-row" v-for="endpoint in filteredUnhealthyEndpoints" :key="endpoint.name">
               <div role="cell" aria-label="instance-name" class="col-6 host-name">
                 <div class="box-header">
-                  <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                  <tippy :aria-label="endpoint.name" :content="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
                     <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: routeLinks.heartbeats.unhealthy.link } }"> {{ endpoint.name }} </RouterLink>
-                  </div>
+                  </tippy>
                 </div>
               </div>
               <div role="cell" aria-label="instance-count" class="col-2">
@@ -88,6 +88,7 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
 .box-header {
   display: flex;
   gap: 0.5em;
+  max-width: 100%;
 }
 
 .instances-muted {

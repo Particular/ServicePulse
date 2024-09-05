@@ -1,6 +1,15 @@
 .lead.endpoint-details-link.righ-side-ellipsis {
   color: #00729c;
   margin: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px dotted lightgrey;
+}
+
+.righ-side-ellipsis {
+  direction: rtl;
+  text-align: left;
 }
 
 .endpoint-name > div > div > a {
