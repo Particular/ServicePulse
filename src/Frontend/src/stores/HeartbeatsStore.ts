@@ -2,12 +2,13 @@ import { usePatchToServiceControl, useTypedFetchFromServiceControl } from "@/com
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
-import { EndpointSettings, EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
+import { EndpointStatus, LogicalEndpoint } from "@/resources/Heartbeat";
 import moment from "moment";
 import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import getSortFunction from "@/components/getSortFunction";
 import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
+import { EndpointSettings } from "@/resources/EndpointSettings";
 
 export const endpointSortOptions: SortOptions<LogicalEndpoint>[] = [
   {

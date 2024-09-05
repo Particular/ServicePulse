@@ -1,5 +1,6 @@
 import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
-import { EndpointSettings } from "@/resources/Heartbeat";
+
+import { EndpointSettings } from "@/resources/EndpointSettings";
 
 class EndpointSettingsClient {
   public async endpointSettings(): Promise<EndpointSettings[]> {

@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import TimeSince from "../TimeSince.vue";
 import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
-import { EndpointSettings, EndpointStatus } from "@/resources/Heartbeat";
+import { EndpointStatus } from "@/resources/Heartbeat";
 import SortableColumn from "@/components/SortableColumn.vue";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
@@ -13,6 +13,7 @@ import { Tippy } from "vue-tippy";
 import { useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
+import { EndpointSettings } from "@/resources/EndpointSettings";
 
 enum columnName {
   HostName = "name",
