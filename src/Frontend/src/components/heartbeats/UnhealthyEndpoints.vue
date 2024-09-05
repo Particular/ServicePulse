@@ -46,12 +46,8 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
                 </div>
               </div>
               <div role="cell" aria-label="instance-count" class="col-2">
-                <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">
-                  <i class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
-                </tippy>
-                <tippy v-else content="No tracking instances" :delay="[1000, 0]">
-                  <i class="fa fa-sellsy text-danger"></i>
-                </tippy>
+                <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
+                <i v-else content="No tracking instances" class="fa fa-sellsy text-danger"></i>
                 <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
               </div>
               <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
@@ -61,9 +57,6 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
               <div role="cell" aria-label="tracked-instances" class="col-1 centre">
                 <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">
                   <i class="fa fa-check text-success"></i>
-                </tippy>
-                <tippy v-else content="No tracking instances" :delay="[1000, 0]">
-                  <i class="fa fa-sellsy text-danger"></i>
                 </tippy>
               </div>
               <div role="cell" aria-label="muted" class="col-1 centre">
