@@ -13,7 +13,7 @@ import EndpointSettingsSupported from "@/components/heartbeats/EndpointSettingsS
 import OnOffSwitch from "../OnOffSwitch.vue";
 
 const store = useHeartbeatsStore();
-const { sortedEndpoints, defaultTrackingInstancesValue, sortByInstances } = storeToRefs(store);
+const { sortedEndpoints, filteredEndpoints, defaultTrackingInstancesValue, sortByInstances } = storeToRefs(store);
 
 async function toggleDefaultSetting() {
   try {
@@ -47,7 +47,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
       <div class="row">
         <div class="col-9 no-side-padding">
           <no-data v-if="sortedEndpoints.length === 0" message="Nothing to configure" />
-          <div v-else class="row box box-no-click no-side-padding">
+          <div v-else class="row no-side-padding">
             <!--Table headings-->
             <div role="row" aria-label="column-headers" class="row table-head-row">
               <div role="columnheader" :aria-label="ColumnNames.Name" class="col-6">
@@ -65,7 +65,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
             </div>
             <!--Table rows-->
             <div role="rowgroup" aria-label="endpoints">
-              <div role="row" :aria-label="endpoint.name" class="row grid-row" v-for="endpoint in sortedEndpoints" :key="endpoint.name">
+              <div role="row" :aria-label="endpoint.name" class="row grid-row" v-for="endpoint in filteredEndpoints" :key="endpoint.name">
                 <div role="cell" aria-label="instance-name" class="col-6 host-name">
                   <div class="box-header">
                     <tippy :aria-label="endpoint.name" :content="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">

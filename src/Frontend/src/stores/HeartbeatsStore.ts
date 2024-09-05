@@ -59,6 +59,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const sortedEndpoints = computed<LogicalEndpoint[]>(() =>
     mapEndpointsToLogical(endpointInstances.value, settings.value).sort(getSortFunction(columnSortings.get(sortByInstances.value.property), sortByInstances.value.isAscending ? SortDirection.Ascending : SortDirection.Descending))
   );
+  const filteredEndpoints = computed<LogicalEndpoint[]>(() => sortedEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const healthyEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
       return endpoint.heartbeat_information?.reported_status === EndpointStatus.Alive && ((endpoint.track_instances && endpoint.down_count === 0) || (!endpoint.track_instances && endpoint.alive_count > 0));
@@ -153,6 +154,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     defaultTrackingInstancesValue,
     updateEndpointSettings,
     sortedEndpoints,
+    filteredEndpoints,
     endpointInstances,
     healthyEndpoints,
     filteredHealthyEndpoints,
