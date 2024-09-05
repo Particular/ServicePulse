@@ -102,10 +102,10 @@ describe("HeartbeatsStore tests", () => {
       sortByInstances.value = { property: ColumnNames.Tracked, isAscending: false };
       expect(names()[2]).toBe("John");
 
-      sortByInstances.value = { property: ColumnNames.Instances, isAscending: true };
+      sortByInstances.value = { property: ColumnNames.InstancesTotal, isAscending: true };
       expect(names()[2]).toBe("Anna");
 
-      sortByInstances.value = { property: ColumnNames.Instances, isAscending: false };
+      sortByInstances.value = { property: ColumnNames.InstancesTotal, isAscending: false };
       expect(names()[0]).toBe("Anna");
     });
   });
