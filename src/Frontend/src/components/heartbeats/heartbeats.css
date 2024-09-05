@@ -1,10 +1,15 @@
-.lead.endpoint-details-link.righ-side-ellipsis {
+.lead.endpoint-details-link.righ-side-ellipsis a {
   color: #00729c;
   margin: 0;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   border-bottom: 1px dotted lightgrey;
+}
+
+.lead.endpoint-details-link.righ-side-ellipsis a:hover {
+  border-bottom: 1px solid #00729c;
+  text-decoration: none !important;
 }
 
 .righ-side-ellipsis {
