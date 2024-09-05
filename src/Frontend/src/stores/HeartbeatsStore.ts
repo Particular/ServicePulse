@@ -125,7 +125,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
         name: endpointName,
         alive_count: aliveCount,
         down_count: downCount,
-        muted_count: endpointInstances.filter((endpoint) => endpoint.monitor_heartbeat).length,
+        muted_count: endpointInstances.filter((endpoint) => !endpoint.monitor_heartbeat).length,
         track_instances: settings.find((value) => value.name === endpointName)?.track_instances ?? defaultTrackingInstancesValue.value,
         heartbeat_information: {
           reported_status: aliveCount > 0 ? EndpointStatus.Alive : EndpointStatus.Dead,

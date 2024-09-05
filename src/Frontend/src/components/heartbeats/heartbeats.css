@@ -44,7 +44,7 @@ p:not(.lead) {
   margin: 0 0 5px;
 }
 
-div[role="columnHeader"] {
+div[role="columnheader"] {
   display: flex;
 }
 
@@ -52,10 +52,11 @@ div[role="cell"] {
   padding: 10px;
   align-items: center;
   display: flex;
+  gap: 0.25em;
 }
 
 div[role="cell"].centre,
-div[role="columnHeader"].centre {
+div[role="columnheader"].centre {
   justify-content: center;
 }
 

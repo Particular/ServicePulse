@@ -29,10 +29,10 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
               <SortableColumn :sort-by="ColumnNames.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
             </div>
             <div role="columnheader" :aria-label="ColumnNames.LastHeartbeat" class="col-1 centre">
-              <SortableColumn :sort-by="ColumnNames.Tracked" v-model="sortByInstances">Tracked</SortableColumn>
+              <SortableColumn :sort-by="ColumnNames.Tracked" v-model="sortByInstances">Track Instances</SortableColumn>
             </div>
             <div role="columnheader" :aria-label="ColumnNames.LastHeartbeat" class="col-1 centre">
-              <SortableColumn :sort-by="ColumnNames.Muted" v-model="sortByInstances">Muted</SortableColumn>
+              <SortableColumn :sort-by="ColumnNames.Muted" v-model="sortByInstances">Instances Muted</SortableColumn>
             </div>
           </div>
           <!--Table rows-->
@@ -43,13 +43,16 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
                   <div :aria-label="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
                     <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: routeLinks.heartbeats.unhealthy.link } }"> {{ endpoint.name }} </RouterLink>
                   </div>
-                  <tippy v-if="!endpoint.monitor_heartbeat" content="All instances have alerts muted" :delay="[300, 0]">
-                    <i class="fa fa-bell-slash text-danger" />
-                  </tippy>
                 </div>
               </div>
               <div role="cell" aria-label="instance-count" class="col-2">
-                <span class="endpoint-count" :class="endpoint.alive_count === 0 ? '' : 'partial'">{{ store.endpointDisplayName(endpoint) }}</span>
+                <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">
+                  <i class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
+                </tippy>
+                <tippy v-else content="No tracking instances" :delay="[1000, 0]">
+                  <i class="fa fa-sellsy text-danger"></i>
+                </tippy>
+                <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
               </div>
               <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
                 <p v-if="endpoint.heartbeat_information"><time-since :date-utc="endpoint.heartbeat_information?.last_report_at" default-text-on-failure="unknown" /></p>
@@ -57,19 +60,25 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
               </div>
               <div role="cell" aria-label="tracked-instances" class="col-1 centre">
                 <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">
-                  <i class="fa fa-server text-danger"></i>
+                  <i class="fa fa-check text-success"></i>
                 </tippy>
                 <tippy v-else content="No tracking instances" :delay="[1000, 0]">
                   <i class="fa fa-sellsy text-danger"></i>
                 </tippy>
               </div>
               <div role="cell" aria-label="muted" class="col-1 centre">
-                <tippy v-if="endpoint.muted_count === endpoint.alive_count + endpoint.down_count" content="All instances have alerts muted" :delay="[300, 0]">
-                  <i class="fa fa-bell-slash text-danger" />
-                </tippy>
-                <tippy v-else-if="endpoint.muted_count > 0" :content="`${endpoint.muted_count} instances have alerts muted`" :delay="[300, 0]">
-                  <i class="fa fa-bell-slash text-warning" />
-                </tippy>
+                <template v-if="endpoint.muted_count === endpoint.alive_count + endpoint.down_count">
+                  <tippy content="All instances have alerts muted" :delay="[300, 0]">
+                    <i class="fa fa-bell-slash text-danger" />
+                  </tippy>
+                  <span class="instances-muted">{{ endpoint.muted_count }}</span>
+                </template>
+                <template v-else-if="endpoint.muted_count > 0">
+                  <tippy :content="`${endpoint.muted_count} instances have alerts muted`" :delay="[300, 0]">
+                    <i class="fa fa-bell-slash text-warning" />
+                  </tippy>
+                  <span class="instances-muted">{{ endpoint.muted_count }}</span>
+                </template>
               </div>
             </div>
           </div>
@@ -88,11 +97,7 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
   gap: 0.5em;
 }
 
-.endpoint-count {
-  color: var(--bs-danger);
-}
-
-.endpoint-count.partial {
-  color: var(--bs-warning);
+.instances-muted {
+  font-weight: bold;
 }
 </style>
