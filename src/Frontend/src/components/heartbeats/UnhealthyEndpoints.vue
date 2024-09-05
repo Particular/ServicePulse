@@ -47,7 +47,7 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
               </div>
               <div role="cell" aria-label="instance-count" class="col-2">
                 <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
-                <i v-else content="No tracking instances" class="fa fa-sellsy text-danger"></i>
+                <i v-else class="fa fa-sellsy text-danger"></i>
                 <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
               </div>
               <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
@@ -84,12 +84,6 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints, sortByInstances } = stor
 <style scoped>
 @import "../list.css";
 @import "./heartbeats.css";
-
-.box-header {
-  display: flex;
-  gap: 0.5em;
-  max-width: 100%;
-}
 
 .instances-muted {
   font-weight: bold;

@@ -17,6 +17,12 @@
   text-align: left;
 }
 
+.box-header {
+  display: flex;
+  gap: 0.5em;
+  max-width: 100%;
+}
+
 .endpoint-name > div > div > a {
   text-overflow: ellipsis;
   overflow: hidden;
