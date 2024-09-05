@@ -68,7 +68,7 @@ async function toggleAlerts(instance: EndpointsView) {
       <div class="col-4 align-content-center">
         <div class="searchContainer">
           <div role="search" aria-label="filter" class="filter-input">
-            <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="instanceFilterString" />
+            <input type="search" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="instanceFilterString" />
           </div>
         </div>
       </div>

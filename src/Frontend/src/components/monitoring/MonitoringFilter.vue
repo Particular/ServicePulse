@@ -11,7 +11,7 @@ const monitoringStore = useMonitoringStore();
     <PeriodSelector />
     <GroupBy />
     <div role="search" aria-label="filter" class="filter-input">
-      <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="monitoringStore.filterString" />
+      <input type="search" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="monitoringStore.filterString" />
     </div>
   </div>
 </template>

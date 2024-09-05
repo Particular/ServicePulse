@@ -41,7 +41,7 @@ const { unhealthyEndpoints, healthyEndpoints, endpointFilterString } = storeToRe
               </div>
               <div class="filter-group">
                 <div class="filter-input">
-                  <input type="text" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="endpointFilterString" />
+                  <input type="search" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="endpointFilterString" />
                 </div>
               </div>
             </div>
