@@ -14,7 +14,8 @@ import { EndpointSettings } from "@/resources/EndpointSettings";
 
 export enum ColumnNames {
   Name = "name",
-  Instances = "instances",
+  InstancesDown = "instancesDown",
+  InstancesTotal = "instancesTotal",
   LastHeartbeat = "latestHeartbeat",
   Muted = "muted",
   Tracked = "trackedInstances",
@@ -28,7 +29,8 @@ export enum MutedType {
 
 const columnSortings = new Map<string, (endpoint: LogicalEndpoint) => GroupPropertyType>([
   [ColumnNames.Name, (endpoint) => endpoint.name],
-  [ColumnNames.Instances, (endpoint) => endpoint.alive_count - endpoint.down_count],
+  [ColumnNames.InstancesDown, (endpoint) => endpoint.alive_count - endpoint.down_count],
+  [ColumnNames.InstancesTotal, (endpoint) => endpoint.alive_count + endpoint.down_count],
   [ColumnNames.LastHeartbeat, (endpoint) => moment.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
   [
     ColumnNames.Muted,

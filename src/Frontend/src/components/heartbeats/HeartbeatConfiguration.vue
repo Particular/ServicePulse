@@ -53,8 +53,8 @@ function endpointHealth(endpoint: LogicalEndpoint) {
               <div role="columnheader" :aria-label="ColumnNames.Name" class="col-6">
                 <SortableColumn :sort-by="ColumnNames.Name" v-model="sortByInstances" :default-ascending="true">Name</SortableColumn>
               </div>
-              <div role="columnheader" :aria-label="ColumnNames.Instances" class="col-2">
-                <SortableColumn :sort-by="ColumnNames.Instances" v-model="sortByInstances" :default-ascending="true">Instances</SortableColumn>
+              <div role="columnheader" :aria-label="ColumnNames.InstancesTotal" class="col-2">
+                <SortableColumn :sort-by="ColumnNames.InstancesTotal" v-model="sortByInstances" :default-ascending="true">Instances</SortableColumn>
               </div>
               <div role="columnheader" :aria-label="ColumnNames.LastHeartbeat" class="col-2">
                 <SortableColumn :sort-by="ColumnNames.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
