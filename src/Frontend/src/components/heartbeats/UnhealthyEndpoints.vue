@@ -9,6 +9,11 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints } = storeToRefs(store);
 </script>
 
 <template>
+  <div class="row">
+    <div class="col format-showing-results">
+      <div>Showing {{ filteredUnhealthyEndpoints.length }} of {{ unhealthyEndpoints.length }} result(s)</div>
+    </div>
+  </div>
   <section name="unhealthy_endpoints">
     <no-data v-if="unhealthyEndpoints.length === 0" message="No unhealthy endpoints"></no-data>
     <div v-else class="row">

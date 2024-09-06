@@ -23,6 +23,11 @@ async function toggleDefaultSetting() {
 
 <template>
   <EndpointSettingsSupported>
+    <div class="row">
+      <div class="col format-showing-results">
+        <div>Showing {{ filteredEndpoints.length }} of {{ sortedEndpoints.length }} result(s)</div>
+      </div>
+    </div>
     <section name="endpoint_configuration">
       <div class="row">
         <div class="col-9 no-side-padding">
