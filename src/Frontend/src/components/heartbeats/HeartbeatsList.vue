@@ -17,7 +17,7 @@ defineProps<{
 }>();
 
 const store = useHeartbeatsStore();
-const { sortByInstances } = storeToRefs(store);
+const { sortByInstances, itemsPerPage } = storeToRefs(store);
 
 async function changeEndpointSettings(endpoint: LogicalEndpoint) {
   try {
@@ -63,7 +63,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
       </div>
     </div>
     <!--Table rows-->
-    <DataView :data="data" :show-items-per-page="true" :items-per-page="20">
+    <DataView :data="data" :show-items-per-page="true" :items-per-page="itemsPerPage" @items-per-page-changed="store.setItemsPerPage">
       <template #data="{ pageData }">
         <div role="rowgroup" aria-label="endpoints">
           <div role="row" :aria-label="endpoint.name" class="row grid-row" v-for="endpoint in pageData" :key="endpoint.name">

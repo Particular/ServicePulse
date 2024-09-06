@@ -58,6 +58,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
   const defaultTrackingInstancesValue = ref(endpointSettingsClient.defaultEndpointSettingsValue().track_instances);
   const endpointFilterString = ref("");
+  const itemsPerPage = ref(20);
   const endpointInstances = ref<EndpointsView[]>([]);
   const settings = ref<EndpointSettings[]>([]);
   const sortedEndpoints = computed<LogicalEndpoint[]>(() =>
@@ -115,6 +116,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     endpointFilterString.value = filter;
   }
 
+  function setItemsPerPage(value: number) {
+    itemsPerPage.value = value;
+  }
+
   function mapEndpointsToLogical(endpoints: EndpointsView[], settings: EndpointSettings[]): LogicalEndpoint[] {
     const logicalNames = [...new Set(endpoints.map((endpoint) => endpoint.name))];
 
@@ -168,6 +173,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     endpointDisplayName,
     sortByInstances,
     endpointFilterString,
+    itemsPerPage,
+    setItemsPerPage,
   };
 });
 

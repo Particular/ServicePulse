@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import ItemsPerPage from "@/components/ItemsPerPage.vue";
 import PaginationStrip from "@/components/PaginationStrip.vue";
 
@@ -17,6 +17,10 @@ const props = withDefaults(
 const pageNumber = ref(1);
 const itemsPerPage = ref(props.itemsPerPage);
 const pageData = computed(() => props.data.slice((pageNumber.value - 1) * itemsPerPage.value, Math.min(pageNumber.value * itemsPerPage.value, props.data.length)));
+
+const emit = defineEmits<{ itemsPerPageChanged: [value: number] }>();
+
+watch(itemsPerPage, () => emit("itemsPerPageChanged", itemsPerPage.value));
 </script>
 
 <template>
@@ -25,5 +29,4 @@ const pageData = computed(() => props.data.slice((pageNumber.value - 1) * itemsP
     <ItemsPerPage v-if="showItemsPerPage" v-model="itemsPerPage" :options="itemsPerPageOptions" />
     <PaginationStrip v-if="showPagination" v-model="pageNumber" :totalCount="data.length" :itemsPerPage="itemsPerPage" />
   </div>
-  <!-- <slot name="footer"></slot> -->
 </template>
