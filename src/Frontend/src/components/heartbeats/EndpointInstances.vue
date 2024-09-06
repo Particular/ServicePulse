@@ -6,6 +6,7 @@ import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
 import { EndpointStatus } from "@/resources/Heartbeat";
 import SortableColumn from "@/components/SortableColumn.vue";
+import DataView from "@/components/DataView.vue";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
@@ -114,23 +115,28 @@ async function toggleAlerts(instance: EndpointsView) {
         </div>
       </div>
       <no-data v-if="instances.length === 0" message="No endpoint instances found. For untracked endpoints, disconnected instances are automatically pruned."></no-data>
-      <div role="rowgroup" aria-label="endpoints">
-        <div role="row" :aria-label="instance.name" class="row grid-row" v-for="instance in instances" :key="instance.id">
-          <div role="cell" aria-label="instance-name" class="col-6 host-name">
-            <span role="status" class="logo">
-              <i v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" aria-label="instance dead" class="fa fa-heartbeat text-danger" />
-              <i v-else aria-label="instance alive" class="fa fa-heartbeat text-success" />
-            </span>
-            <span class="lead">{{ instance.host_display_name }}</span>
+      <!--Table rows-->
+      <DataView :data="instances" :show-items-per-page="true" :items-per-page="20">
+        <template #data="{ pageData }">
+          <div role="rowgroup" aria-label="endpoints">
+            <div role="row" :aria-label="instance.name" class="row grid-row" v-for="instance in pageData" :key="instance.id">
+              <div role="cell" aria-label="instance-name" class="col-6 host-name">
+                <span role="status" class="logo">
+                  <i v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" aria-label="instance dead" class="fa fa-heartbeat text-danger" />
+                  <i v-else aria-label="instance alive" class="fa fa-heartbeat text-success" />
+                </span>
+                <span class="lead">{{ instance.host_display_name }}</span>
+              </div>
+              <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat"><time-since :date-utc="instance.heartbeat_information?.last_report_at" default-text-on-failure="Unknown" /></div>
+              <div role="cell" aria-label="last-heartbeat" class="col-4 actions">
+                <button v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" type="button" @click="deleteInstance(instance)" class="btn btn-danger btn-sm"><i class="fa fa-trash text-white" /> Delete</button>&nbsp;
+                <button v-if="instance.monitor_heartbeat" type="button" @click="toggleAlerts(instance)" class="btn btn-info btn-sm"><i class="fa fa-bell-slash text-white" /> Mute Alerts</button>
+                <button v-else type="button" @click="toggleAlerts(instance)" class="btn btn-warning btn-sm"><i class="fa fa-bell text-white" /> Unmute Alerts</button>
+              </div>
+            </div>
           </div>
-          <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat"><time-since :date-utc="instance.heartbeat_information?.last_report_at" default-text-on-failure="Unknown" /></div>
-          <div role="cell" aria-label="last-heartbeat" class="col-4 actions">
-            <button v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" type="button" @click="deleteInstance(instance)" class="btn btn-danger btn-sm"><i class="fa fa-trash text-white" /> Delete</button>&nbsp;
-            <button v-if="instance.monitor_heartbeat" type="button" @click="toggleAlerts(instance)" class="btn btn-info btn-sm"><i class="fa fa-bell-slash text-white" /> Mute Alerts</button>
-            <button v-else type="button" @click="toggleAlerts(instance)" class="btn btn-warning btn-sm"><i class="fa fa-bell text-white" /> Unmute Alerts</button>
-          </div>
-        </div>
-      </div>
+        </template>
+      </DataView>
     </section>
   </div>
 </template>
