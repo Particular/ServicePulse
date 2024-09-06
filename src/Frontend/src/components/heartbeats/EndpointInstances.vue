@@ -151,7 +151,7 @@ async function toggleAlerts(instance: EndpointsView) {
               <template #content>
                 <table>
                   <tr>
-                    <td style="padding: 3px; width: 140px; text-align: end; align-content: center">
+                    <td style="padding: 3px; width: 6em; text-align: end; align-content: center">
                       <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash text-white" /> Delete</button>
                     </td>
                     <td style="padding: 3px">Delete an instance when that instance has been decommissioned.</td>
