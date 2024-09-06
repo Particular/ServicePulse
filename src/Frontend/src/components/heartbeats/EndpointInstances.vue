@@ -18,7 +18,7 @@ import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClie
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 
-enum operation {
+enum Operation {
   Mute = "mute",
   Unmute = "unmute",
 }
@@ -43,7 +43,7 @@ const filterInstances = (data: EndpointsView[]) =>
 const instances = computed(() => filterInstances(filteredInstances.value));
 const totalInstances = computed(() => filterInstances(sortedInstances.value));
 const showBulkWarningDialog = ref(false);
-const dialogWarningOperation = ref(operation.Mute);
+const dialogWarningOperation = ref(Operation.Mute);
 
 onMounted(async () => {
   const back = useRouter().currentRoute.value.query.back as string;
@@ -53,7 +53,7 @@ onMounted(async () => {
   endpointSettings.value = await endpointSettingsClient.endpointSettings();
 });
 
-function showBulkOperationWarningDialog(operation: operation) {
+function showBulkOperationWarningDialog(operation: Operation) {
   dialogWarningOperation.value = operation;
   showBulkWarningDialog.value = true;
 }
@@ -67,10 +67,10 @@ async function proceedWarningDialog() {
 
   const tasks: Promise<void>[] = [];
   for (const instance of instances.value) {
-    if (dialogWarningOperation.value === operation.Unmute && !instance.monitor_heartbeat) {
+    if (dialogWarningOperation.value === Operation.Unmute && !instance.monitor_heartbeat) {
       tasks.push(store.toggleEndpointMonitor(instance));
     }
-    if (dialogWarningOperation.value === operation.Mute && instance.monitor_heartbeat) {
+    if (dialogWarningOperation.value === Operation.Mute && instance.monitor_heartbeat) {
       tasks.push(store.toggleEndpointMonitor(instance));
     }
   }
@@ -116,8 +116,8 @@ async function toggleAlerts(instance: EndpointsView) {
     </div>
     <div class="row filters">
       <span class="buttonsContainer">
-        <button type="button" class="btn btn-info btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(operation.Mute)"><i class="fa fa-bell-slash text-white" /> Mute Alerts on All</button>
-        <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(operation.Unmute)"><i class="fa fa-bell text-white" /> Unmute Alerts on All</button>
+        <button type="button" class="btn btn-info btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Mute)"><i class="fa fa-bell-slash text-white" /> Mute Alerts on All</button>
+        <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Unmute)"><i class="fa fa-bell text-white" /> Unmute Alerts on All</button>
       </span>
     </div>
     <div class="row">
