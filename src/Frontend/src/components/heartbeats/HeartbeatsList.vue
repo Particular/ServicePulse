@@ -6,6 +6,7 @@ import SortableColumn from "@/components/SortableColumn.vue";
 import DataView from "@/components/DataView.vue";
 import OnOffSwitch from "../OnOffSwitch.vue";
 import routeLinks from "@/router/routeLinks";
+import { useRoute } from "vue-router";
 import { Tippy } from "vue-tippy";
 import { LogicalEndpoint } from "@/resources/Heartbeat";
 import { useShowToast } from "@/composables/toast";
@@ -18,6 +19,7 @@ defineProps<{
 
 const store = useHeartbeatsStore();
 const { sortByInstances, itemsPerPage } = storeToRefs(store);
+const route = useRoute();
 
 async function changeEndpointSettings(endpoint: LogicalEndpoint) {
   try {
@@ -70,7 +72,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
             <div v-if="columns.includes(ColumnNames.Name)" role="cell" aria-label="instance-name" class="col-6 host-name">
               <div class="box-header">
                 <tippy :aria-label="endpoint.name" :content="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                  <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: routeLinks.heartbeats.unhealthy.link } }"> {{ endpoint.name }} </RouterLink>
+                  <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: route.path } }"> {{ endpoint.name }} </RouterLink>
                 </tippy>
               </div>
             </div>
