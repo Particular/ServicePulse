@@ -39,7 +39,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
 <template>
   <section role="table" aria-label="endpoint-instances">
     <!--Table headings-->
-    <div role="row" aria-label="column-headers" class="row table-head-row">
+    <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
       <div v-if="columns.includes(ColumnNames.Name)" role="columnheader" :aria-label="ColumnNames.Name" class="col-6">
         <SortableColumn :sort-by="ColumnNames.Name" v-model="sortByInstances" :default-ascending="true">Name</SortableColumn>
       </div>
