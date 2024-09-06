@@ -116,7 +116,7 @@ async function toggleAlerts(instance: EndpointsView) {
     </div>
     <div class="row filters">
       <span class="buttonsContainer">
-        <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Mute)"><i class="fa fa-bell-slash text-white" /> Mute Alerts on All</button>
+        <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Mute)"><i class="fa fa-bell-slash text-black" /> Mute Alerts on All</button>
         <button type="button" class="btn btn-default btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Unmute)"><i class="fa fa-bell" /> Unmute Alerts on All</button>
       </span>
     </div>
