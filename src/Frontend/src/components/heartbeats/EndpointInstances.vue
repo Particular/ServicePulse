@@ -7,19 +7,15 @@ import { computed, onMounted, ref } from "vue";
 import { EndpointStatus } from "@/resources/Heartbeat";
 import SortableColumn from "@/components/SortableColumn.vue";
 import DataView from "@/components/DataView.vue";
+import OnOffSwitch from "../OnOffSwitch.vue";
 import routeLinks from "@/router/routeLinks";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
 import { Tippy } from "vue-tippy";
-import { useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
+import { useHeartbeatInstancesStore, ColumnNames } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
 import { EndpointSettings } from "@/resources/EndpointSettings";
-
-enum columnName {
-  HostName = "name",
-  LastHeartbeat = "heartbeatLength",
-}
 
 const route = useRoute();
 const endpointName = route.params.endpointName.toString();
@@ -77,17 +73,26 @@ async function toggleAlerts(instance: EndpointsView) {
     <section role="table" aria-label="endpoint-instances">
       <!--Table headings-->
       <div role="row" aria-label="column-headers" class="row table-head-row">
-        <div role="columnheader" :aria-label="columnName.HostName" class="col-6">
-          <SortableColumn :sort-by="columnName.HostName" v-model="sortByInstances" :default-ascending="true">Host name</SortableColumn>
+        <div role="columnheader" :aria-label="ColumnNames.HostName" class="col-6">
+          <SortableColumn :sort-by="ColumnNames.HostName" v-model="sortByInstances" :default-ascending="true">Host name</SortableColumn>
         </div>
-        <div role="columnheader" :aria-label="columnName.LastHeartbeat" class="col-2">
-          <SortableColumn :sort-by="columnName.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
+        <div role="columnheader" :aria-label="ColumnNames.LastHeartbeat" class="col-2">
+          <SortableColumn :sort-by="ColumnNames.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
         </div>
-        <div role="columnheader" aria-label="actions" class="col-4">
+        <div role="columnheader" :aria-label="ColumnNames.MonitorToggle" class="col-2 centre">
+          <SortableColumn :sort-by="ColumnNames.MonitorToggle" v-model="sortByInstances">Monitor Heartbeats</SortableColumn>
+          <tippy max-width="400px">
+            <i :style="{ fontSize: '1.1em', marginLeft: '0.25em' }" class="fa fa-info-circle text-primary" />
+            <template #content>
+              <span>Mute an instance when you are planning to take the instance offline to do maintenance or some other reason. This will prevent alerts on the dashboard.</span>
+            </template>
+          </tippy>
+        </div>
+        <div role="columnheader" aria-label="actions" class="col-1">
           <div>
             Actions
             <tippy max-width="400px">
-              <i :style="{ fontSize: '1.3em' }" class="fa fa-info-circle text-primary" />
+              <i :style="{ fontSize: '1.1em' }" class="fa fa-info-circle text-primary" />
               <template #content>
                 <table>
                   <tr>
@@ -95,18 +100,6 @@ async function toggleAlerts(instance: EndpointsView) {
                       <button type="button" class="btn btn-danger btn-sm"><i class="fa fa-trash text-white" /> Delete</button>
                     </td>
                     <td style="padding: 3px">Delete an instance when that instance has been decommissioned.</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 3px; width: 140px; text-align: end; align-content: center">
-                      <button type="button" class="btn btn-info btn-sm"><i class="fa fa-bell-slash text-white" /> Mute Alerts</button>
-                    </td>
-                    <td style="padding: 3px">Mute an instance when you are planning to take the instance offline to do maintenance or some other reason. This will prevent alerts on the dashboard.</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 3px; width: 140px; text-align: end; align-content: center">
-                      <button type="button" class="btn btn-warning btn-sm"><i class="fa fa-bell text-white" /> Unmute Alerts</button>
-                    </td>
-                    <td style="padding: 3px">Unmute an instance, once the instance is back online.</td>
                   </tr>
                 </table>
               </template>
@@ -128,10 +121,13 @@ async function toggleAlerts(instance: EndpointsView) {
                 <span class="lead">{{ instance.host_display_name }}</span>
               </div>
               <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat"><time-since :date-utc="instance.heartbeat_information?.last_report_at" default-text-on-failure="Unknown" /></div>
-              <div role="cell" aria-label="last-heartbeat" class="col-4 actions">
+              <div role="cell" aria-label="mute toggle" class="col-2 centre">
+                <div class="switch">
+                  <OnOffSwitch :id="instance.host_display_name" @toggle="toggleAlerts(instance)" v-model="instance.monitor_heartbeat" />
+                </div>
+              </div>
+              <div role="cell" aria-label="actions" class="col-1 actions">
                 <button v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" type="button" @click="deleteInstance(instance)" class="btn btn-danger btn-sm"><i class="fa fa-trash text-white" /> Delete</button>&nbsp;
-                <button v-if="instance.monitor_heartbeat" type="button" @click="toggleAlerts(instance)" class="btn btn-info btn-sm"><i class="fa fa-bell-slash text-white" /> Mute Alerts</button>
-                <button v-else type="button" @click="toggleAlerts(instance)" class="btn btn-warning btn-sm"><i class="fa fa-bell text-white" /> Unmute Alerts</button>
               </div>
             </div>
           </div>

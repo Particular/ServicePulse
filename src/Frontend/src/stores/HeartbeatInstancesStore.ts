@@ -3,38 +3,34 @@ import { acceptHMRUpdate, defineStore, storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 import moment from "moment";
 import type { SortInfo } from "@/components/SortInfo";
+import type { GroupPropertyType } from "@/resources/SortOptions";
+import { SortDirection } from "@/resources/SortOptions";
+import getSortFunction from "@/components/getSortFunction";
 import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { EndpointsView } from "@/resources/EndpointView";
 
-const nameProperty: keyof EndpointsView = "name";
+export enum ColumnNames {
+  HostName = "name",
+  LastHeartbeat = "latestHeartbeat",
+  MonitorToggle = "toggleAlerts",
+}
+
+const columnSortings = new Map<string, (endpoint: EndpointsView) => GroupPropertyType>([
+  [ColumnNames.HostName, (endpoint) => endpoint.host_display_name],
+  [ColumnNames.LastHeartbeat, (endpoint) => moment.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
+  [ColumnNames.MonitorToggle, (endpoint) => endpoint.monitor_heartbeat],
+]);
 
 export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore", () => {
   const instanceFilterString = ref("");
   const store = useHeartbeatsStore();
   const { endpointInstances } = storeToRefs(store);
   const sortByInstances = ref<SortInfo>({
-    property: nameProperty,
+    property: ColumnNames.HostName,
     isAscending: true,
   });
-  const sortedInstances = computed<EndpointsView[]>(() => {
-    const nameSort = (a: EndpointsView, b: EndpointsView) => a.host_display_name.localeCompare(b.host_display_name);
-    const dateSort = (a: EndpointsView, b: EndpointsView) => {
-      const minDate = "1975-01-01T00:00:00";
-      const x = moment.utc(a.heartbeat_information?.last_report_at ?? minDate);
-      const y = moment.utc(b.heartbeat_information?.last_report_at ?? minDate);
-      if (x > y) {
-        return 1;
-      } else if (x < y) {
-        return -1;
-      }
-      return 0;
-    };
-    const sortFunc = sortByInstances.value.property === nameProperty ? nameSort : dateSort;
-    endpointInstances.value.sort((a, b) => (sortByInstances.value.isAscending ? sortFunc(a, b) : -sortFunc(a, b)));
 
-    return endpointInstances.value;
-  });
-
+  const sortedInstances = computed<EndpointsView[]>(() => endpointInstances.value.sort(getSortFunction(columnSortings.get(sortByInstances.value.property), sortByInstances.value.isAscending ? SortDirection.Ascending : SortDirection.Descending)));
   const filteredInstances = computed<EndpointsView[]>(() => sortedInstances.value.filter((instance) => !instanceFilterString.value || instance.host_display_name.toLowerCase().includes(instanceFilterString.value.toLowerCase())));
 
   watch(instanceFilterString, (newValue) => {
