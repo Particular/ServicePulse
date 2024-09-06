@@ -16,15 +16,21 @@ import { useHeartbeatInstancesStore, ColumnNames } from "@/stores/HeartbeatInsta
 import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
 import { EndpointSettings } from "@/resources/EndpointSettings";
+import ConfirmDialog from "@/components/ConfirmDialog.vue";
+
+enum operation {
+  Mute = "mute",
+  Unmute = "unmute",
+}
 
 const route = useRoute();
 const endpointName = route.params.endpointName.toString();
 const store = useHeartbeatInstancesStore();
-const { filteredInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
+const { filteredInstances, sortedInstances, instanceFilterString, sortByInstances } = storeToRefs(store);
 const endpointSettings = ref<EndpointSettings[]>([endpointSettingsClient.defaultEndpointSettingsValue()]);
 const backLink = ref<string>(routeLinks.heartbeats.root);
-const instances = computed(() => {
-  return filteredInstances.value
+const filterInstances = (data: EndpointsView[]) =>
+  data
     .filter((instance) => instance.name === endpointName)
     .filter((instance) => {
       const trackInstances = (endpointSettings.value.find((value) => value.name === instance.name) ?? endpointSettings.value.find((value) => value.name === ""))!.track_instances;
@@ -34,7 +40,10 @@ const instances = computed(() => {
 
       return true;
     });
-});
+const instances = computed(() => filterInstances(filteredInstances.value));
+const totalInstances = computed(() => filterInstances(sortedInstances.value));
+const showBulkWarningDialog = ref(false);
+const dialogWarningOperation = ref(operation.Mute);
 
 onMounted(async () => {
   const back = useRouter().currentRoute.value.query.back as string;
@@ -44,6 +53,32 @@ onMounted(async () => {
   endpointSettings.value = await endpointSettingsClient.endpointSettings();
 });
 
+function showBulkOperationWarningDialog(operation: operation) {
+  dialogWarningOperation.value = operation;
+  showBulkWarningDialog.value = true;
+}
+
+function cancelWarningDialog() {
+  showBulkWarningDialog.value = false;
+}
+
+async function proceedWarningDialog() {
+  showBulkWarningDialog.value = false;
+
+  const tasks: Promise<void>[] = [];
+  for (const instance of instances.value) {
+    if (dialogWarningOperation.value === operation.Unmute && !instance.monitor_heartbeat) {
+      tasks.push(store.toggleEndpointMonitor(instance));
+    }
+    if (dialogWarningOperation.value === operation.Mute && instance.monitor_heartbeat) {
+      tasks.push(store.toggleEndpointMonitor(instance));
+    }
+  }
+
+  await Promise.all(tasks);
+  useShowToast(TYPE.SUCCESS, `All endpoint instances ${dialogWarningOperation.value}`, "", false, { timeout: 1000 });
+}
+
 async function deleteInstance(instance: EndpointsView) {
   await store.deleteEndpointInstance(instance);
   useShowToast(TYPE.SUCCESS, "Endpoint instance deleted", "", false, { timeout: 1000 });
@@ -51,11 +86,20 @@ async function deleteInstance(instance: EndpointsView) {
 
 async function toggleAlerts(instance: EndpointsView) {
   await store.toggleEndpointMonitor(instance);
-  useShowToast(TYPE.SUCCESS, `Endpoint instance ${instance.monitor_heartbeat ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
+  useShowToast(TYPE.SUCCESS, `Endpoint instance ${!instance.monitor_heartbeat ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
 }
 </script>
 
 <template>
+  <Teleport to="#modalDisplay">
+    <ConfirmDialog
+      v-if="showBulkWarningDialog"
+      heading="Proceed with bulk operation"
+      :body="`Are you sure you want to ${dialogWarningOperation} ${instances.length} endpoint instance(s)?`"
+      @cancel="cancelWarningDialog"
+      @confirm="proceedWarningDialog"
+    />
+  </Teleport>
   <div class="container">
     <div class="row">
       <div class="col-8 instances-heading">
@@ -68,6 +112,17 @@ async function toggleAlerts(instance: EndpointsView) {
             <input type="search" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="instanceFilterString" />
           </div>
         </div>
+      </div>
+    </div>
+    <div class="row filters">
+      <span class="buttonsContainer">
+        <button type="button" class="btn btn-info btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(operation.Mute)"><i class="fa fa-bell-slash text-white" /> Mute Alerts on All</button>
+        <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(operation.Unmute)"><i class="fa fa-bell text-white" /> Unmute Alerts on All</button>
+      </span>
+    </div>
+    <div class="row">
+      <div class="col format-showing-results">
+        <div>Showing {{ instances.length }} of {{ totalInstances.length }} result(s)</div>
       </div>
     </div>
     <section role="table" aria-label="endpoint-instances">
@@ -187,22 +242,15 @@ div.filter-input {
   left: 0.75em;
 }
 
-.pa-endpoint-lost {
-  background-image: url("@/assets/endpoint-lost.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  width: 26px;
-  height: 26px;
-  top: 4px;
-  left: 6px;
+.filters {
+  background-color: #f3f3f3;
+  margin-top: 5px;
+  border: #8c8c8c 1px solid;
+  border-radius: 3px;
+  padding: 5px;
 }
-
-.pa-endpoint {
-  top: 3px;
-  background-image: url("@/assets/endpoint.svg");
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 15px;
-  width: 15px;
+.buttonsContainer {
+  display: flex;
+  gap: 10px;
 }
 </style>

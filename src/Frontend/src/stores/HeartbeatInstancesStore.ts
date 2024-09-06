@@ -52,6 +52,7 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
   }
 
   return {
+    sortedInstances,
     filteredInstances,
     instanceFilterString,
     deleteEndpointInstance,
