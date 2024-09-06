@@ -138,12 +138,12 @@ async function toggleDefaultSetting() {
 }
 
 .filters {
-  background-color: #f3f3f3;
   margin-top: 0.25em;
   margin-bottom: 0.25em;
 }
 
 .buttonsContainer {
+  background-color: #f3f3f3;
   display: flex;
   gap: 0.5em;
   border: #8c8c8c 1px solid;

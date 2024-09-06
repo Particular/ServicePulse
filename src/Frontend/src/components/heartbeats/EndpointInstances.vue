@@ -117,8 +117,8 @@ async function toggleAlerts(instance: EndpointsView) {
     <div class="row filters">
       <div class="col-sm-12">
         <span class="buttonsContainer">
-          <button type="button" class="btn btn-info btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Mute)"><i class="fa fa-bell-slash text-white" /> Mute Alerts on All</button>
-          <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Unmute)"><i class="fa fa-bell text-white" /> Unmute Alerts on All</button>
+          <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Mute)"><i class="fa fa-bell-slash text-black" /> Mute Alerts on All</button>
+          <button type="button" class="btn btn-default btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Unmute)"><i class="fa fa-bell" /> Unmute Alerts on All</button>
         </span>
       </div>
     </div>
@@ -245,12 +245,12 @@ div.filter-input {
 }
 
 .filters {
-  background-color: #f3f3f3;
   margin-top: 0.25em;
   margin-bottom: 0.25em;
 }
 
 .buttonsContainer {
+  background-color: #f3f3f3;
   display: flex;
   gap: 0.5em;
   border: #8c8c8c 1px solid;
