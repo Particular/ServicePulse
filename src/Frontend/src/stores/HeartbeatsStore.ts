@@ -18,7 +18,8 @@ export enum ColumnNames {
   InstancesTotal = "instancesTotal",
   LastHeartbeat = "latestHeartbeat",
   Muted = "muted",
-  Tracked = "trackedInstances",
+  Tracked = "instancesTracked",
+  TrackToggle = "toggleInstancesTracked",
 }
 
 export enum MutedType {
@@ -46,6 +47,7 @@ const columnSortings = new Map<string, (endpoint: LogicalEndpoint) => GroupPrope
     },
   ],
   [ColumnNames.Tracked, (endpoint) => endpoint.track_instances],
+  [ColumnNames.TrackToggle, (endpoint) => endpoint.track_instances],
 ]);
 
 export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
