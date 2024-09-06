@@ -115,10 +115,12 @@ async function toggleAlerts(instance: EndpointsView) {
       </div>
     </div>
     <div class="row filters">
-      <span class="buttonsContainer">
-        <button type="button" class="btn btn-info btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Mute)"><i class="fa fa-bell-slash text-white" /> Mute Alerts on All</button>
-        <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Unmute)"><i class="fa fa-bell text-white" /> Unmute Alerts on All</button>
-      </span>
+      <div class="col-sm-12">
+        <span class="buttonsContainer">
+          <button type="button" class="btn btn-info btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Mute)"><i class="fa fa-bell-slash text-white" /> Mute Alerts on All</button>
+          <button type="button" class="btn btn-warning btn-sm" :disabled="instances.length === 0" @click="showBulkOperationWarningDialog(Operation.Unmute)"><i class="fa fa-bell text-white" /> Unmute Alerts on All</button>
+        </span>
+      </div>
     </div>
     <div class="row">
       <div class="col format-showing-results">
@@ -244,13 +246,15 @@ div.filter-input {
 
 .filters {
   background-color: #f3f3f3;
-  margin-top: 5px;
-  border: #8c8c8c 1px solid;
-  border-radius: 3px;
-  padding: 5px;
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
 }
+
 .buttonsContainer {
   display: flex;
-  gap: 10px;
+  gap: 0.5em;
+  border: #8c8c8c 1px solid;
+  border-radius: 3px;
+  padding: 0.4em;
 }
 </style>

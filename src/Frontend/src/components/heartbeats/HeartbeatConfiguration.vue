@@ -68,6 +68,7 @@ async function toggleDefaultSetting() {
       />
     </Teleport>
     <div class="row filters">
+      <div class="col-sm-12">
       <span class="buttonsContainer">
         <button type="button" class="btn btn-default btn-sm" :disabled="filteredEndpoints.length === 0" @click="showBulkOperationWarningDialog(Operation.Track)">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon">
@@ -88,6 +89,7 @@ async function toggleDefaultSetting() {
           Do Not Track All Endpoints
         </button>
       </span>
+    </div>
     </div>
     <div class="row">
       <div class="col format-showing-results">
@@ -144,20 +146,18 @@ async function toggleDefaultSetting() {
 .instructions > div {
   margin-bottom: 5px;
 }
+
 .filters {
   background-color: #f3f3f3;
-  margin-top: 5px;
-  border: #8c8c8c 1px solid;
-  border-radius: 3px;
-  padding: 5px;
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
 }
+
 .buttonsContainer {
   display: flex;
-  gap: 10px;
-}
-.icon {
-  width: 18px;
-  height: 18px;
-  //vertical-align: -0.125em;
+  gap: 0.5em;
+  border: #8c8c8c 1px solid;
+  border-radius: 3px;
+  padding: 0.4em;
 }
 </style>
