@@ -134,8 +134,8 @@ async function toggleAlerts(instance: EndpointsView) {
         <div role="columnheader" :aria-label="ColumnNames.LastHeartbeat" class="col-2">
           <SortableColumn :sort-by="ColumnNames.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
         </div>
-        <div role="columnheader" :aria-label="ColumnNames.MonitorToggle" class="col-2 centre">
-          <SortableColumn :sort-by="ColumnNames.MonitorToggle" v-model="sortByInstances">Monitor Heartbeats</SortableColumn>
+        <div role="columnheader" :aria-label="ColumnNames.MuteToggle" class="col-2 centre">
+          <SortableColumn :sort-by="ColumnNames.MuteToggle" v-model="sortByInstances">Mute Alerts</SortableColumn>
           <tippy max-width="400px">
             <i :style="{ fontSize: '1.1em', marginLeft: '0.25em' }" class="fa fa-info-circle text-primary" />
             <template #content>
@@ -178,7 +178,7 @@ async function toggleAlerts(instance: EndpointsView) {
               <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat"><time-since :date-utc="instance.heartbeat_information?.last_report_at" default-text-on-failure="Unknown" /></div>
               <div role="cell" aria-label="mute toggle" class="col-2 centre">
                 <div class="switch">
-                  <OnOffSwitch :id="instance.host_display_name" @toggle="toggleAlerts(instance)" v-model="instance.monitor_heartbeat" />
+                  <OnOffSwitch :id="instance.host_display_name" @toggle="toggleAlerts(instance)" :value="!instance.monitor_heartbeat" />
                 </div>
               </div>
               <div role="cell" aria-label="actions" class="col-1 actions">

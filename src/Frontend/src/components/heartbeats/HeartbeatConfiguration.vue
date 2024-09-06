@@ -40,7 +40,7 @@ async function toggleDefaultSetting() {
           <div class="defaultSetting">
             <label>Track Instances by default on new endpoints</label>
             <div class="switch">
-              <OnOffSwitch id="defaultTIV" @toggle="toggleDefaultSetting" v-model="defaultTrackingInstancesValue" />
+              <OnOffSwitch id="defaultTIV" @toggle="toggleDefaultSetting" :value="defaultTrackingInstancesValue" />
             </div>
           </div>
           <p>

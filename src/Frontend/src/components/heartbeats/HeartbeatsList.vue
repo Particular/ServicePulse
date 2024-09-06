@@ -95,7 +95,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
             </div>
             <div v-if="columns.includes(ColumnNames.TrackToggle)" role="cell" aria-label="tracked-instances" class="col-2 centre">
               <div class="switch">
-                <OnOffSwitch :id="endpoint.name" @toggle="changeEndpointSettings(endpoint)" v-model="endpoint.track_instances" />
+                <OnOffSwitch :id="endpoint.name" @toggle="changeEndpointSettings(endpoint)" :value="endpoint.track_instances" />
               </div>
             </div>
             <div v-if="columns.includes(ColumnNames.Muted)" role="cell" aria-label="muted" class="col-1 centre">
