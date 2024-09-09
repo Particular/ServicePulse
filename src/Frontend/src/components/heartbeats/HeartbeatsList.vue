@@ -96,7 +96,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                 </template>
                 <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpointHealth(endpoint)"></i>
                 <i v-else class="fa fa-sellsy" :class="endpointHealth(endpoint)"></i>&nbsp;
-                <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+                <span class="endpoint-count">{{ store.instanceDisplayText(endpoint) }}</span>
               </tippy>
             </div>
             <div v-if="columns.includes(ColumnNames.LastHeartbeat)" role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">

@@ -100,7 +100,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     await refresh();
   }
 
-  function endpointDisplayName(endpoint: LogicalEndpoint) {
+  function instanceDisplayText(endpoint: LogicalEndpoint) {
     const total = endpoint.alive_count + endpoint.down_count;
 
     if (endpoint.track_instances) {
@@ -168,7 +168,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     unhealthyEndpoints,
     filteredUnhealthyEndpoints,
     failedHeartbeatsCount,
-    endpointDisplayName,
+    instanceDisplayText,
     sortByInstances,
     endpointFilterString,
     itemsPerPage,
