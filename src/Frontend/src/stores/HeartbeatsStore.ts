@@ -125,7 +125,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
     return logicalNames.map((endpointName) => {
       const endpointInstances = endpoints.filter((endpoint) => endpoint.name === endpointName);
-      const aliveList = endpointInstances.filter((endpoint) => endpoint.monitor_heartbeat && endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
+      const aliveList = endpointInstances.filter((endpoint) => endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
 
       const aliveCount = aliveList.length;
       const downCount = endpointInstances.length - aliveCount;
