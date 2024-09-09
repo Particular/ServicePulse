@@ -105,10 +105,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
     if (endpoint.track_instances) {
       return `${endpoint.alive_count}/${total}`;
-    } else if (endpoint.alive_count > 0) {
-      return `${endpoint.alive_count}`;
     } else {
-      return "N/A";
+      return `${endpoint.alive_count}`;
     }
   }
 
