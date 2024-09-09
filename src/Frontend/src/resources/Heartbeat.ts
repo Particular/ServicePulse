@@ -1,6 +1,5 @@
 export interface LogicalEndpoint {
   name: string;
-  host_name: string;
   monitor_heartbeat: boolean;
   heartbeat_information?: {
     last_report_at: string;
