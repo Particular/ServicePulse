@@ -75,7 +75,9 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                   <template #content>
                     <p :style="{ overflowWrap: 'break-word' }">{{ endpoint.name }}</p>
                   </template>
-                  <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: route.path } }"> {{ endpoint.name }} </RouterLink>
+                  <RouterLink class="hackToPreventSafariFromShowingTooltip" aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: route.path } }">
+                    {{ endpoint.name }}
+                  </RouterLink>
                 </tippy>
               </div>
             </div>
@@ -154,6 +156,11 @@ function endpointHealth(endpoint: LogicalEndpoint) {
 <style scoped>
 @import "../list.css";
 @import "./heartbeats.css";
+
+.hackToPreventSafariFromShowingTooltip::after {
+  content: "";
+  display: block;
+}
 
 .instances-muted {
   font-weight: bold;
