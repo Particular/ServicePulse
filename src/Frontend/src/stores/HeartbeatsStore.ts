@@ -100,7 +100,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     await refresh();
   }
 
-  function endpointDisplayName(endpoint: LogicalEndpoint) {
+  function instancesDisplayText(endpoint: LogicalEndpoint) {
     const total = endpoint.alive_count + endpoint.down_count;
 
     if (endpoint.track_instances) {
@@ -110,6 +110,10 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     } else {
       return "N/A";
     }
+  }
+
+  function endpointDisplayName(endpoint: LogicalEndpoint) {
+    return endpoint.track_instances && endpoint.host_name ? `${endpoint.name}@${endpoint.host_name}` : endpoint.name;
   }
 
   function setEndpointFilterString(filter: string) {
@@ -125,6 +129,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
 
     return logicalNames.map((endpointName) => {
       const endpointInstances = endpoints.filter((endpoint) => endpoint.name === endpointName);
+      const isConsistentHost = endpointInstances.every((instance) => instance.host_display_name === endpointInstances[0].host_display_name);
       const aliveList = endpointInstances.filter((endpoint) => endpoint.heartbeat_information && endpoint.heartbeat_information.reported_status === EndpointStatus.Alive);
 
       const aliveCount = aliveList.length;
@@ -133,6 +138,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
       return {
         id: endpointName, //need this to be consistent between data refreshes for UI purposes, so using name rather than an id from one of the instances
         name: endpointName,
+        host_name: isConsistentHost && endpointInstances[0].host_display_name,
         alive_count: aliveCount,
         down_count: downCount,
         muted_count: endpointInstances.filter((endpoint) => !endpoint.monitor_heartbeat).length,
@@ -170,6 +176,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     unhealthyEndpoints,
     filteredUnhealthyEndpoints,
     failedHeartbeatsCount,
+    instancesDisplayText,
     endpointDisplayName,
     sortByInstances,
     endpointFilterString,

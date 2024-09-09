@@ -68,15 +68,15 @@ function endpointHealth(endpoint: LogicalEndpoint) {
     <DataView :data="data" :show-items-per-page="true" :items-per-page="itemsPerPage" @items-per-page-changed="store.setItemsPerPage">
       <template #data="{ pageData }">
         <div role="rowgroup" aria-label="endpoints">
-          <div role="row" :aria-label="endpoint.name" class="row grid-row" v-for="endpoint in pageData" :key="endpoint.name">
+          <div role="row" :aria-label="store.endpointDisplayName(endpoint)" class="row grid-row" v-for="endpoint in pageData" :key="endpoint.name">
             <div v-if="columns.includes(ColumnNames.Name)" role="cell" aria-label="instance-name" class="col-6 host-name">
               <div class="box-header">
-                <tippy :aria-label="endpoint.name" :delay="[700, 0]" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                <tippy :aria-label="store.endpointDisplayName(endpoint)" :delay="[700, 0]" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
                   <template #content>
-                    <p :style="{ overflowWrap: 'break-word' }">{{ endpoint.name }}</p>
+                    <p :style="{ overflowWrap: 'break-word' }">{{ store.endpointDisplayName(endpoint) }}</p>
                   </template>
                   <RouterLink class="hackToPreventSafariFromShowingTooltip" aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: route.path } }">
-                    {{ endpoint.name }}
+                    {{ store.endpointDisplayName(endpoint) }}
                   </RouterLink>
                 </tippy>
               </div>
@@ -96,7 +96,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                 </template>
                 <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
                 <i v-else class="fa fa-sellsy text-danger"></i>&nbsp;
-                <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+                <span class="endpoint-count">{{ store.instancesDisplayText(endpoint) }}</span>
               </tippy>
             </div>
             <div v-if="columns.includes(ColumnNames.InstancesTotal)" role="cell" aria-label="instance-count" class="col-2">
@@ -115,7 +115,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
 
                 <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpointHealth(endpoint)"></i>
                 <i v-else class="fa fa-sellsy" :class="endpointHealth(endpoint)"></i>&nbsp;
-                <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+                <span class="endpoint-count">{{ store.instancesDisplayText(endpoint) }}</span>
               </tippy>
             </div>
             <div v-if="columns.includes(ColumnNames.LastHeartbeat)" role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
