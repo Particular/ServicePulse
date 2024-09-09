@@ -77,7 +77,9 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     })
   );
   const filteredUnhealthyEndpoints = computed<LogicalEndpoint[]>(() => unhealthyEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
-  const failedHeartbeatsCount = computed(() => unhealthyEndpoints.value.filter((value) => value.monitor_heartbeat).length + healthyEndpoints.value.filter((endpoint) => endpoint.track_instances && endpoint.down_count > 0).length);
+  const failedHeartbeatsCount = computed(
+    () => [...new Set(endpointInstances.value.filter((instance) => instance.monitor_heartbeat && instance.heartbeat_information?.reported_status !== EndpointStatus.Alive).map((instance) => instance.name))].length
+  );
 
   watch(endpointFilterString, (newValue) => {
     setEndpointFilterString(newValue);
