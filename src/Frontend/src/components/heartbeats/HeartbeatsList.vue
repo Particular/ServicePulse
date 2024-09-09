@@ -71,20 +71,50 @@ function endpointHealth(endpoint: LogicalEndpoint) {
           <div role="row" :aria-label="endpoint.name" class="row grid-row" v-for="endpoint in pageData" :key="endpoint.name">
             <div v-if="columns.includes(ColumnNames.Name)" role="cell" aria-label="instance-name" class="col-6 host-name">
               <div class="box-header">
-                <tippy :aria-label="endpoint.name" :content="endpoint.name" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                <tippy :aria-label="endpoint.name" :delay="[700, 0]" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
+                  <template #content>
+                    <p :style="{ overflowWrap: 'break-word' }">{{ endpoint.name }}</p>
+                  </template>
                   <RouterLink aria-label="details-link" :to="{ path: routeLinks.heartbeats.instances.link(endpoint.name), query: { back: route.path } }"> {{ endpoint.name }} </RouterLink>
                 </tippy>
               </div>
             </div>
             <div v-if="columns.includes(ColumnNames.InstancesDown)" role="cell" aria-label="instance-count" class="col-2">
-              <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
-              <i v-else class="fa fa-sellsy text-danger"></i>
-              <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+              <tippy :delay="[300, 0]">
+                <template #content>
+                  <template v-if="endpoint.track_instances">
+                    <p>Tracking all instances</p>
+                    <p>{{ endpoint.alive_count }} alive</p>
+                    <p>{{ endpoint.down_count }} no heartbeat</p>
+                  </template>
+                  <template v-else>
+                    <p>Not tracking instances</p>
+                    <p>{{ endpoint.alive_count }} alive</p>
+                  </template>
+                </template>
+                <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
+                <i v-else class="fa fa-sellsy text-danger"></i>&nbsp;
+                <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+              </tippy>
             </div>
             <div v-if="columns.includes(ColumnNames.InstancesTotal)" role="cell" aria-label="instance-count" class="col-2">
-              <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpointHealth(endpoint)"></i>
-              <i v-else class="fa fa-sellsy" :class="endpointHealth(endpoint)"></i>
-              <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+              <tippy :delay="[300, 0]">
+                <template #content>
+                  <template v-if="endpoint.track_instances">
+                    <p>Tracking all instances</p>
+                    <p>{{ endpoint.alive_count }} alive</p>
+                    <p>{{ endpoint.down_count }} no heartbeat</p>
+                  </template>
+                  <template v-else>
+                    <p>Not tracking instances</p>
+                    <p>{{ endpoint.alive_count }} alive</p>
+                  </template>
+                </template>
+
+                <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpointHealth(endpoint)"></i>
+                <i v-else class="fa fa-sellsy" :class="endpointHealth(endpoint)"></i>&nbsp;
+                <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
+              </tippy>
             </div>
             <div v-if="columns.includes(ColumnNames.LastHeartbeat)" role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
               <p v-if="endpoint.heartbeat_information"><time-since :date-utc="endpoint.heartbeat_information?.last_report_at" default-text-on-failure="unknown" /></p>
