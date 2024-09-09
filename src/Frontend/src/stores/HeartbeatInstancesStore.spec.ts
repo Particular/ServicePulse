@@ -68,10 +68,10 @@ describe("HeartbeatInstancesStore tests", () => {
     );
 
     const names = () => filteredInstances.value.map((value) => value.host_display_name);
-    sortByInstances.value = { property: ColumnNames.HostName, isAscending: true };
+    sortByInstances.value = { property: ColumnNames.InstanceName, isAscending: true };
     expect(names()).toEqual(["Anna", "John", "Oliver"]);
 
-    sortByInstances.value = { property: ColumnNames.HostName, isAscending: false };
+    sortByInstances.value = { property: ColumnNames.InstanceName, isAscending: false };
     expect(names()).toEqual(["Oliver", "John", "Anna"]);
 
     sortByInstances.value = { property: ColumnNames.LastHeartbeat, isAscending: true };

@@ -10,13 +10,13 @@ import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { EndpointsView } from "@/resources/EndpointView";
 
 export enum ColumnNames {
-  HostName = "name",
+  InstanceName = "name",
   LastHeartbeat = "latestHeartbeat",
   MuteToggle = "toggleMuteAlerts",
 }
 
 const columnSortings = new Map<string, (endpoint: EndpointsView) => GroupPropertyType>([
-  [ColumnNames.HostName, (endpoint) => endpoint.host_display_name],
+  [ColumnNames.InstanceName, (endpoint) => endpoint.host_display_name],
   [ColumnNames.LastHeartbeat, (endpoint) => moment.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
   [ColumnNames.MuteToggle, (endpoint) => !endpoint.monitor_heartbeat],
 ]);
@@ -26,7 +26,7 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
   const store = useHeartbeatsStore();
   const { endpointInstances } = storeToRefs(store);
   const sortByInstances = ref<SortInfo>({
-    property: ColumnNames.HostName,
+    property: ColumnNames.InstanceName,
     isAscending: true,
   });
 

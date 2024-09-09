@@ -130,8 +130,8 @@ async function toggleAlerts(instance: EndpointsView) {
     <section role="table" aria-label="endpoint-instances">
       <!--Table headings-->
       <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
-        <div role="columnheader" :aria-label="ColumnNames.HostName" class="col-6">
-          <SortableColumn :sort-by="ColumnNames.HostName" v-model="sortByInstances" :default-ascending="true">Host name</SortableColumn>
+        <div role="columnheader" :aria-label="ColumnNames.InstanceName" class="col-6">
+          <SortableColumn :sort-by="ColumnNames.InstanceName" v-model="sortByInstances" :default-ascending="true">Instance Name</SortableColumn>
         </div>
         <div role="columnheader" :aria-label="ColumnNames.LastHeartbeat" class="col-2">
           <SortableColumn :sort-by="ColumnNames.LastHeartbeat" v-model="sortByInstances">Last Heartbeat</SortableColumn>
