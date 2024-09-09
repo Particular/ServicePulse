@@ -67,13 +67,13 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const filteredEndpoints = computed<LogicalEndpoint[]>(() => sortedEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const healthyEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
-      return endpoint.heartbeat_information?.reported_status === EndpointStatus.Alive && ((endpoint.track_instances && endpoint.down_count === 0) || (!endpoint.track_instances && endpoint.alive_count > 0));
+      return endpoint.monitor_heartbeat && endpoint.heartbeat_information?.reported_status === EndpointStatus.Alive && ((endpoint.track_instances && endpoint.down_count === 0) || (!endpoint.track_instances && endpoint.alive_count > 0));
     })
   );
   const filteredHealthyEndpoints = computed<LogicalEndpoint[]>(() => healthyEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
   const unhealthyEndpoints = computed<LogicalEndpoint[]>(() =>
     sortedEndpoints.value.filter(function (endpoint) {
-      return endpoint.heartbeat_information?.reported_status === EndpointStatus.Dead || (endpoint.track_instances && endpoint.down_count > 0) || (!endpoint.track_instances && endpoint.alive_count === 0);
+      return !endpoint.monitor_heartbeat || endpoint.heartbeat_information?.reported_status === EndpointStatus.Dead || (endpoint.track_instances && endpoint.down_count > 0) || (!endpoint.track_instances && endpoint.alive_count === 0);
     })
   );
   const filteredUnhealthyEndpoints = computed<LogicalEndpoint[]>(() => unhealthyEndpoints.value.filter((endpoint) => !endpointFilterString.value || endpoint.name.toLowerCase().includes(endpointFilterString.value.toLowerCase())));
@@ -149,7 +149,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
             return previousMax;
           }, null)?.heartbeat_information?.last_report_at,
         },
-        monitor_heartbeat: endpointInstances.some((endpoint) => endpoint.monitor_heartbeat),
+        monitor_heartbeat: endpointInstances.every((endpoint) => endpoint.monitor_heartbeat),
       } as LogicalEndpoint;
     });
   }

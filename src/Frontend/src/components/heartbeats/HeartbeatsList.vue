@@ -81,7 +81,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                 </tippy>
               </div>
             </div>
-            <div v-if="columns.includes(ColumnNames.InstancesDown)" role="cell" aria-label="instance-count" class="col-2">
+            <div v-if="columns.includes(ColumnNames.InstancesTotal) || columns.includes(ColumnNames.InstancesDown)" role="cell" aria-label="instance-count" class="col-2">
               <tippy :delay="[300, 0]">
                 <template #content>
                   <template v-if="endpoint.track_instances">
@@ -94,25 +94,6 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                     <p>{{ endpoint.alive_count }} alive</p>
                   </template>
                 </template>
-                <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpoint.alive_count === 0 ? 'text-danger' : 'text-warning'"></i>
-                <i v-else class="fa fa-sellsy text-danger"></i>&nbsp;
-                <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
-              </tippy>
-            </div>
-            <div v-if="columns.includes(ColumnNames.InstancesTotal)" role="cell" aria-label="instance-count" class="col-2">
-              <tippy :delay="[300, 0]">
-                <template #content>
-                  <template v-if="endpoint.track_instances">
-                    <p>Tracking all instances</p>
-                    <p>{{ endpoint.alive_count }} alive</p>
-                    <p>{{ endpoint.down_count }} no heartbeat</p>
-                  </template>
-                  <template v-else>
-                    <p>Not tracking instances</p>
-                    <p>{{ endpoint.alive_count }} alive</p>
-                  </template>
-                </template>
-
                 <i v-if="endpoint.track_instances" class="fa fa-server" :class="endpointHealth(endpoint)"></i>
                 <i v-else class="fa fa-sellsy" :class="endpointHealth(endpoint)"></i>&nbsp;
                 <span class="endpoint-count">{{ store.endpointDisplayName(endpoint) }}</span>
@@ -139,8 +120,8 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                 </tippy>
                 <span class="instances-muted">{{ endpoint.muted_count }}</span>
               </template>
-              <template v-else-if="endpoint.muted_count > 0">
-                <tippy :content="`${endpoint.muted_count} instances have alerts muted`" :delay="[300, 0]">
+              <template v-else-if="endpoint.track_instances && endpoint.muted_count > 0">
+                <tippy :content="`${endpoint.muted_count} instance(s) have alerts muted`" :delay="[300, 0]">
                   <i class="fa fa-bell-slash text-warning" />
                 </tippy>
                 <span class="instances-muted">{{ endpoint.muted_count }}</span>

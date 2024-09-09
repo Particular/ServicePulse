@@ -41,6 +41,72 @@ describe("HeartbeatsStore tests", () => {
   });
 
   describe("healthy endpoints", () => {
+    describe("total number when tracking instances", () => {
+      test("when all instances are heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { healthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false }) },
+          ],
+          [{ name: "", track_instances: true }]
+        );
+
+        expect(healthyEndpoints.value.length).toBe(1);
+      });
+
+      test("when some instances are not heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { healthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver", heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false, heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+          ],
+          [{ name: "", track_instances: true }]
+        );
+
+        expect(healthyEndpoints.value.length).toBe(0);
+      });
+    });
+
+    describe("total number when not tracking instances", () => {
+      test("when all instances are heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { healthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false }) },
+          ],
+          [{ name: "", track_instances: false }]
+        );
+
+        expect(healthyEndpoints.value.length).toBe(1);
+      });
+
+      test("when some instances are not heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { healthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver", heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false, heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+          ],
+          [{ name: "", track_instances: false }]
+        );
+
+        expect(healthyEndpoints.value.length).toBe(0);
+      });
+    });
+
     test("filter by name", async () => {
       const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
       const { filteredHealthyEndpoints, endpointFilterString } = await setup(
@@ -63,8 +129,8 @@ describe("HeartbeatsStore tests", () => {
       const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
       const { filteredHealthyEndpoints, sortByInstances } = await setup(
         [
-          { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "2024-10-01T00:00:00" }, monitor_heartbeat: true }) },
-          { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "2024-10-01T00:00:00" }, monitor_heartbeat: false }) },
+          { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "2024-10-01T00:00:00" } }) },
+          { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "2024-10-01T00:00:00" } }) },
           { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Anna", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "2024-01-01T00:00:00" } }) },
           { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Anna", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "2024-01-01T00:00:00" } }) },
           { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Anna", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "2024-01-01T00:00:00" } }) },
@@ -90,12 +156,6 @@ describe("HeartbeatsStore tests", () => {
       sortByInstances.value = { property: ColumnNames.LastHeartbeat, isAscending: false };
       expect(names()).toEqual(["John", "Oliver", "Anna"]);
 
-      sortByInstances.value = { property: ColumnNames.Muted, isAscending: true };
-      expect(names()[2]).toBe("John");
-
-      sortByInstances.value = { property: ColumnNames.Muted, isAscending: false };
-      expect(names()[0]).toBe("John");
-
       sortByInstances.value = { property: ColumnNames.Tracked, isAscending: true };
       expect(names()[0]).toBe("John");
 
@@ -107,6 +167,75 @@ describe("HeartbeatsStore tests", () => {
 
       sortByInstances.value = { property: ColumnNames.InstancesTotal, isAscending: false };
       expect(names()[0]).toBe("Anna");
+    });
+  });
+
+  describe("unhealthy endpoints", () => {
+    describe("total number when tracking instances", () => {
+      test("when all instances are heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: false, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { unhealthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false }) },
+          ],
+          [{ name: "", track_instances: true }]
+        );
+
+        expect(unhealthyEndpoints.value.length).toBe(2);
+      });
+
+      test("when some instances are not heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: false, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { unhealthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver", heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false, heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+          ],
+          [{ name: "", track_instances: true }]
+        );
+
+        expect(unhealthyEndpoints.value.length).toBe(3);
+      });
+    });
+
+    describe("total number when not tracking instances", () => {
+      test("when all instances are heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { unhealthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false }) },
+          ],
+          [{ name: "", track_instances: false }]
+        );
+
+        expect(unhealthyEndpoints.value.length).toBe(2);
+      });
+
+      test("when some instances are not heart beating", async () => {
+        const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: false, id: "", name: "", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+        const { unhealthyEndpoints } = await setup(
+          [
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Henry" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "John", monitor_heartbeat: false }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Oliver", heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica" }) },
+            { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ name: "Monica", monitor_heartbeat: false, heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } }) },
+          ],
+          [{ name: "", track_instances: false }]
+        );
+
+        expect(unhealthyEndpoints.value.length).toBe(3);
+      });
     });
   });
 });
