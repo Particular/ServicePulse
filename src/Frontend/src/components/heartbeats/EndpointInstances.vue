@@ -104,7 +104,7 @@ async function toggleAlerts(instance: EndpointsView) {
     <div class="row">
       <div class="col-8 instances-heading">
         <RouterLink :to="backLink"><i class="fa fa-chevron-left"></i> Back</RouterLink>
-        <h1>{{ endpointName }} Instances</h1>
+        <h1 :style="{ overflowWrap: 'break-word' }">{{ endpointName }} Instances</h1>
       </div>
       <div class="col-4 align-content-center">
         <div class="searchContainer">
