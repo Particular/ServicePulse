@@ -3,7 +3,7 @@ import { Driver } from "../../test/driver";
 import { makeDriverForTests } from "@component-test-utils";
 import { storeToRefs } from "pinia";
 import { createTestingPinia } from "@pinia/testing";
-import { useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
+import { ColumnNames, useHeartbeatInstancesStore } from "@/stores/HeartbeatInstancesStore";
 import { EndpointsView } from "@/resources/EndpointView";
 import { useServiceControlUrls } from "@/composables/serviceServiceControlUrls";
 import { useServiceControl } from "@/composables/serviceServiceControl";
@@ -68,17 +68,16 @@ describe("HeartbeatInstancesStore tests", () => {
     );
 
     const names = () => filteredInstances.value.map((value) => value.host_display_name);
-    const nameProperty: keyof EndpointsView = "name";
-    sortByInstances.value = { property: nameProperty, isAscending: true };
+    sortByInstances.value = { property: ColumnNames.HostName, isAscending: true };
     expect(names()).toEqual(["Anna", "John", "Oliver"]);
 
-    sortByInstances.value = { property: nameProperty, isAscending: false };
+    sortByInstances.value = { property: ColumnNames.HostName, isAscending: false };
     expect(names()).toEqual(["Oliver", "John", "Anna"]);
 
-    sortByInstances.value = { property: "last_report_at", isAscending: true };
+    sortByInstances.value = { property: ColumnNames.LastHeartbeat, isAscending: true };
     expect(names()).toEqual(["Anna", "Oliver", "John"]);
 
-    sortByInstances.value = { property: "last_report_at", isAscending: false };
+    sortByInstances.value = { property: ColumnNames.LastHeartbeat, isAscending: false };
     expect(names()).toEqual(["John", "Oliver", "Anna"]);
   });
 });
