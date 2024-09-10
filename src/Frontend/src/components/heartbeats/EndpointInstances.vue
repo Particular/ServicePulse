@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import NoData from "../NoData.vue";
 import { storeToRefs } from "pinia";
-import TimeSince from "../TimeSince.vue";
 import { useRoute, useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
 import { EndpointStatus } from "@/resources/Heartbeat";
@@ -17,6 +16,7 @@ import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import LastHeartbeat from "@/components/heartbeats/LastHeartbeat.vue";
 
 enum Operation {
   Mute = "mute",
@@ -196,8 +196,7 @@ async function toggleAlerts(instance: EndpointsView) {
                 <span class="lead">{{ instance.host_display_name }}</span>
               </div>
               <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
-                <time-since v-if="instance.heartbeat_information" :date-utc="instance.heartbeat_information?.last_report_at" default-text-on-failure="Unknown" />
-                <p v-else>No plugin installed</p>
+                <LastHeartbeat :date="instance.heartbeat_information?.last_report_at" tooltip-target="instance" />
               </div>
               <div role="cell" aria-label="mute toggle" class="col-2 centre">
                 <div class="switch">
