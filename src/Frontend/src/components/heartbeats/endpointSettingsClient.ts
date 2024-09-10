@@ -1,11 +1,12 @@
 import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceControlUrls";
 
 import { EndpointSettings } from "@/resources/EndpointSettings";
+import isEndpointSettingsSupported from "@/components/heartbeats/isEndpointSettingsSupported";
 
 class EndpointSettingsClient {
   public async endpointSettings(): Promise<EndpointSettings[]> {
-    const [response, data] = await useTypedFetchFromServiceControl<EndpointSettings[]>(`endpointssettings`);
-    if (response.status === 200) {
+    if (isEndpointSettingsSupported.value) {
+      const [_, data] = await useTypedFetchFromServiceControl<EndpointSettings[]>(`endpointssettings`);
       return data;
     }
 
