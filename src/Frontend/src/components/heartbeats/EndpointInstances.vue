@@ -195,7 +195,10 @@ async function toggleAlerts(instance: EndpointsView) {
                 </span>
                 <span class="lead">{{ instance.host_display_name }}</span>
               </div>
-              <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat"><time-since :date-utc="instance.heartbeat_information?.last_report_at" default-text-on-failure="Unknown" /></div>
+              <div role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
+                <time-since v-if="instance.heartbeat_information" :date-utc="instance.heartbeat_information?.last_report_at" default-text-on-failure="Unknown" />
+                <p v-else>No plugin installed</p>
+              </div>
               <div role="cell" aria-label="mute toggle" class="col-2 centre">
                 <div class="switch">
                   <OnOffSwitch :id="instance.host_display_name" @toggle="toggleAlerts(instance)" :value="!instance.monitor_heartbeat" />
