@@ -120,7 +120,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                 </tippy>
                 <span class="instances-muted">{{ endpoint.muted_count }}</span>
               </template>
-              <template v-else-if="endpoint.track_instances && endpoint.muted_count > 0">
+              <template v-else-if="endpoint.muted_count > 0">
                 <tippy :content="`${endpoint.muted_count} instance(s) have alerts muted`" :delay="[300, 0]">
                   <i class="fa fa-bell-slash text-warning" />
                 </tippy>
