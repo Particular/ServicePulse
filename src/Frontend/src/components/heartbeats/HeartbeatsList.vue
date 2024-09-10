@@ -23,7 +23,7 @@ const route = useRoute();
 
 async function changeEndpointSettings(endpoint: LogicalEndpoint) {
   try {
-    await store.updateEndpointSettings(endpoint);
+    await store.updateEndpointSettings([endpoint]);
     useShowToast(TYPE.SUCCESS, "Saved", "", false, { timeout: 3000 });
   } catch {
     useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });

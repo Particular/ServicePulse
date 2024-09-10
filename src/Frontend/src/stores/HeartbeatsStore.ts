@@ -97,8 +97,8 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
     }
   }, 5000);
 
-  async function updateEndpointSettings(endpoint: Pick<LogicalEndpoint, "name" | "track_instances">) {
-    await usePatchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances });
+  async function updateEndpointSettings(endpoints: Pick<LogicalEndpoint, "name" | "track_instances">[]) {
+    await Promise.all(endpoints.map((endpoint) => usePatchToServiceControl(`endpointssettings/${endpoint.name}`, { track_instances: !endpoint.track_instances })));
     await refresh();
   }
 

@@ -32,23 +32,19 @@ function cancelWarningDialog() {
 async function proceedWarningDialog() {
   showBulkWarningDialog.value = false;
 
-  const tasks: Promise<void>[] = [];
-  for (const endpoint of filteredEndpoints.value) {
-    if (dialogWarningOperation.value === Operation.Track && !endpoint.track_instances) {
-      tasks.push(store.updateEndpointSettings(endpoint));
-    }
-    if (dialogWarningOperation.value === Operation.DoNotTrack && endpoint.track_instances) {
-      tasks.push(store.updateEndpointSettings(endpoint));
-    }
+  try {
+    await store.updateEndpointSettings(
+      filteredEndpoints.value.filter((endpoint) => (dialogWarningOperation.value === Operation.Track && !endpoint.track_instances) || (dialogWarningOperation.value === Operation.DoNotTrack && endpoint.track_instances))
+    );
+    useShowToast(TYPE.SUCCESS, `All endpoints set to '${dialogWarningOperation.value}'`, "", false, { timeout: 1000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });
   }
-
-  await Promise.all(tasks);
-  useShowToast(TYPE.SUCCESS, `All endpoints set to '${dialogWarningOperation.value}'`, "", false, { timeout: 1000 });
 }
 
 async function toggleDefaultSetting() {
   try {
-    await store.updateEndpointSettings({ name: "", track_instances: defaultTrackingInstancesValue.value });
+    await store.updateEndpointSettings([{ name: "", track_instances: defaultTrackingInstancesValue.value }]);
     useShowToast(TYPE.SUCCESS, "Default setting updated", "", false, { timeout: 3000 });
   } catch {
     useShowToast(TYPE.ERROR, "Failed to update default setting", "", false, { timeout: 3000 });

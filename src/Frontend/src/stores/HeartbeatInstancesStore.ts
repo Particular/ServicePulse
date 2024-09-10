@@ -46,8 +46,8 @@ export const useHeartbeatInstancesStore = defineStore("HeartbeatInstancesStore",
     await store.refresh();
   }
 
-  async function toggleEndpointMonitor(endpoint: EndpointsView) {
-    await usePatchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat });
+  async function toggleEndpointMonitor(endpoints: EndpointsView[]) {
+    await Promise.all(endpoints.map((endpoint) => usePatchToServiceControl(`endpoints/${endpoint.id}`, { monitor_heartbeat: !endpoint.monitor_heartbeat })));
     await store.refresh();
   }
 

@@ -65,28 +65,30 @@ function cancelWarningDialog() {
 async function proceedWarningDialog() {
   showBulkWarningDialog.value = false;
 
-  const tasks: Promise<void>[] = [];
-  for (const instance of instances.value) {
-    if (dialogWarningOperation.value === Operation.Unmute && !instance.monitor_heartbeat) {
-      tasks.push(store.toggleEndpointMonitor(instance));
-    }
-    if (dialogWarningOperation.value === Operation.Mute && instance.monitor_heartbeat) {
-      tasks.push(store.toggleEndpointMonitor(instance));
-    }
+  try {
+    await store.toggleEndpointMonitor(instances.value.filter((instance) => (dialogWarningOperation.value === Operation.Unmute && !instance.monitor_heartbeat) || (dialogWarningOperation.value === Operation.Mute && instance.monitor_heartbeat)));
+    useShowToast(TYPE.SUCCESS, `All endpoint instances ${dialogWarningOperation.value}`, "", false, { timeout: 1000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });
   }
-
-  await Promise.all(tasks);
-  useShowToast(TYPE.SUCCESS, `All endpoint instances ${dialogWarningOperation.value}`, "", false, { timeout: 1000 });
 }
 
 async function deleteInstance(instance: EndpointsView) {
-  await store.deleteEndpointInstance(instance);
-  useShowToast(TYPE.SUCCESS, "Endpoint instance deleted", "", false, { timeout: 1000 });
+  try {
+    await store.deleteEndpointInstance(instance);
+    useShowToast(TYPE.SUCCESS, "Endpoint instance deleted", "", false, { timeout: 1000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Delete failed", "", false, { timeout: 3000 });
+  }
 }
 
 async function toggleAlerts(instance: EndpointsView) {
-  await store.toggleEndpointMonitor(instance);
-  useShowToast(TYPE.SUCCESS, `Endpoint instance ${!instance.monitor_heartbeat ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
+  try {
+    await store.toggleEndpointMonitor([instance]);
+    useShowToast(TYPE.SUCCESS, `Endpoint instance ${!instance.monitor_heartbeat ? "muted" : "unmuted"}`, "", false, { timeout: 1000 });
+  } catch {
+    useShowToast(TYPE.ERROR, "Save failed", "", false, { timeout: 3000 });
+  }
 }
 </script>
 
