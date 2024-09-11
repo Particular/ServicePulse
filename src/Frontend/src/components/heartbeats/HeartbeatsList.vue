@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useHeartbeatsStore, ColumnNames } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
-import TimeSince from "../TimeSince.vue";
 import SortableColumn from "@/components/SortableColumn.vue";
 import DataView from "@/components/DataView.vue";
 import OnOffSwitch from "../OnOffSwitch.vue";
@@ -11,6 +10,7 @@ import { Tippy } from "vue-tippy";
 import { LogicalEndpoint } from "@/resources/Heartbeat";
 import { useShowToast } from "@/composables/toast";
 import { TYPE } from "vue-toastification";
+import LastHeartbeat from "@/components/heartbeats/LastHeartbeat.vue";
 
 defineProps<{
   data: LogicalEndpoint[];
@@ -100,8 +100,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
               </tippy>
             </div>
             <div v-if="columns.includes(ColumnNames.LastHeartbeat)" role="cell" aria-label="last-heartbeat" class="col-2 last-heartbeat">
-              <p v-if="endpoint.heartbeat_information?.last_report_at"><time-since :date-utc="endpoint.heartbeat_information?.last_report_at" default-text-on-failure="unknown" /></p>
-              <p v-else>No plugin installed</p>
+              <LastHeartbeat :date="endpoint.heartbeat_information?.last_report_at" tooltip-target="endpoint" />
             </div>
             <div v-if="columns.includes(ColumnNames.Tracked)" role="cell" aria-label="tracked-instances" class="col-1 centre">
               <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">

@@ -1,6 +1,6 @@
 import { SetupFactoryOptions } from "../../../test/driver";
 import * as precondition from "../../../test/preconditions";
-import { minimumSCVersionForThroughput } from "@/views/throughputreport/isThroughputSupported";
+import { minimumSCVersionForEndpointSettings } from "@/components/heartbeats/isEndpointSettingsSupported";
 
 export const serviceControlWithHeartbeats = async ({ driver }: SetupFactoryOptions) => {
   await driver.setUp(precondition.hasUpToDateServicePulse);
@@ -8,7 +8,7 @@ export const serviceControlWithHeartbeats = async ({ driver }: SetupFactoryOptio
   await driver.setUp(precondition.errorsDefaultHandler);
   await driver.setUp(precondition.hasNoFailingCustomChecks);
   await driver.setUp(precondition.hasEventLogItems);
-  await driver.setUp(precondition.hasServiceControlMainInstance(minimumSCVersionForThroughput));
+  await driver.setUp(precondition.hasServiceControlMainInstance(minimumSCVersionForEndpointSettings));
   await driver.setUp(precondition.hasNoDisconnectedEndpoints);
   await driver.setUp(precondition.hasServiceControlMonitoringInstance);
 };
