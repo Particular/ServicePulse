@@ -61,7 +61,7 @@
     "jsdom": "^24.1.1",
     "msw": "^2.4.4",
     "prettier": "^3.3.3",
-    "typescript": "^5.5.4",
+    "typescript": "^5.6.2",
     "vite": "^5.4.3",
     "vite-plugin-checker": "^0.7.2",
     "vitest": "^2.0.3",
