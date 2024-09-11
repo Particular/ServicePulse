@@ -6,6 +6,7 @@ import { useHeartbeatsStore } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
+import FilterInput from "@/components/FilterInput.vue";
 
 const store = useHeartbeatsStore();
 const { unhealthyEndpoints, healthyEndpoints, endpointFilterString } = storeToRefs(store);
@@ -40,9 +41,7 @@ const { unhealthyEndpoints, healthyEndpoints, endpointFilterString } = storeToRe
                 </h5>
               </div>
               <div class="filter-group">
-                <div class="filter-input">
-                  <input type="search" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="endpointFilterString" />
-                </div>
+                <FilterInput v-model="endpointFilterString" />
               </div>
             </div>
           </div>
@@ -86,29 +85,5 @@ const { unhealthyEndpoints, healthyEndpoints, endpointFilterString } = storeToRe
 
 .filter-group > *:not(:first-child) {
   margin-left: 1.5em;
-}
-
-.filter-input input {
-  display: inline-block;
-  width: 100%;
-  padding-right: 10px;
-  padding-left: 30px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-}
-
-div.filter-input {
-  position: relative;
-  width: 280px;
-}
-
-.filter-input:before {
-  font-family: "FontAwesome";
-  width: 1.43em;
-  content: "\f0b0";
-  color: #919e9e;
-  position: absolute;
-  top: calc(50% - 0.7em);
-  left: 0.75em;
 }
 </style>

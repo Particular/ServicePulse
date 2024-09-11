@@ -67,11 +67,21 @@ async function toggleDefaultSetting() {
       <div class="col-sm-12">
         <span class="buttonsContainer">
           <button type="button" class="btn btn-default btn-sm" :disabled="filteredEndpoints.length === 0" @click="showBulkOperationWarningDialog(Operation.Track)">
-            <i class="fa fa-server text-black" />
+            <i
+              :class="{
+                'text-black': filteredEndpoints.length > 0,
+              }"
+              class="fa fa-server"
+            />
             Track Instances on All Endpoints
           </button>
           <button type="button" class="btn btn-default btn-sm" :disabled="filteredEndpoints.length === 0" @click="showBulkOperationWarningDialog(Operation.DoNotTrack)">
-            <i class="fa fa-sellsy text-black" />
+            <i
+              :class="{
+                'text-black': filteredEndpoints.length > 0,
+              }"
+              class="fa fa-sellsy"
+            />
             Do Not Track Instances on All Endpoints
           </button>
         </span>

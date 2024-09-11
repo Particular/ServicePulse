@@ -170,8 +170,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   }
 
   const refresh = dataRetriever.executeAndResetTimer;
-
-  refresh().then();
+  const _ = refresh();
 
   return {
     refresh,

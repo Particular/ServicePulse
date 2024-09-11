@@ -17,6 +17,7 @@ import { EndpointsView } from "@/resources/EndpointView";
 import endpointSettingsClient from "@/components/heartbeats/endpointSettingsClient";
 import { EndpointSettings } from "@/resources/EndpointSettings";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import FilterInput from "../FilterInput.vue";
 
 enum Operation {
   Mute = "mute",
@@ -110,9 +111,7 @@ async function toggleAlerts(instance: EndpointsView) {
       </div>
       <div class="col-4 align-content-center">
         <div class="searchContainer">
-          <div role="search" aria-label="filter" class="filter-input">
-            <input type="search" placeholder="Filter by name..." aria-label="filter by name" class="form-control-static filter-input" v-model="instanceFilterString" />
-          </div>
+          <FilterInput v-model="instanceFilterString" />
         </div>
       </div>
     </div>
@@ -189,7 +188,7 @@ async function toggleAlerts(instance: EndpointsView) {
           <div role="rowgroup" aria-label="endpoints">
             <div role="row" :aria-label="instance.name" class="row grid-row" v-for="instance in pageData" :key="instance.id">
               <div role="cell" aria-label="instance-name" class="col-6 host-name">
-                <span role="status" class="logo">
+                <span role="status" class="status-icon">
                   <i v-if="instance.heartbeat_information?.reported_status !== EndpointStatus.Alive" aria-label="instance dead" class="fa fa-heartbeat text-danger" />
                   <i v-else aria-label="instance alive" class="fa fa-heartbeat text-success" />
                 </span>
@@ -228,41 +227,13 @@ async function toggleAlerts(instance: EndpointsView) {
   margin-bottom: 10px;
 }
 
-.logo {
+.status-icon {
   width: 16px;
   margin-right: 4px;
 }
 
 .actions {
   display: flex;
-}
-
-.filter-input input {
-  display: inline-block;
-  width: 100%;
-  padding-right: 10px;
-  padding-left: 30px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-}
-
-div.filter-input {
-  position: relative;
-  width: 280px;
-}
-
-.filter-input {
-  height: 36px;
-}
-
-.filter-input:before {
-  font-family: "FontAwesome";
-  width: 1.43em;
-  content: "\f0b0";
-  color: #919e9e;
-  position: absolute;
-  top: calc(50% - 0.7em);
-  left: 0.75em;
 }
 
 .filters {
