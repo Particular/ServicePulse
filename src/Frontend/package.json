@@ -63,7 +63,7 @@
     "prettier": "^3.3.3",
     "typescript": "^5.5.4",
     "vite": "^5.4.3",
-    "vite-plugin-checker": "^0.7.2",
+    "vite-plugin-checker": "^0.8.0",
     "vitest": "^2.0.3",
     "vue-tsc": "^2.0.29"
   },
