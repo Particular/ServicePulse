@@ -6,7 +6,7 @@ import isThroughputSupported, { minimumSCVersionForThroughput } from "@/views/th
 <template>
   <ConditionalRender :supported="isThroughputSupported">
     <template #unsupported>
-      <div class="container">
+      <div class="container not-supported">
         <div class="row">
           <div class="col-sm-12">
             <div class="text-center message">
@@ -27,30 +27,5 @@ import isThroughputSupported, { minimumSCVersionForThroughput } from "@/views/th
 </template>
 
 <style scoped>
-.message {
-  margin: 60px auto 120px;
-  max-width: 520px;
-  line-height: 26px;
-}
-
-.message h1 {
-  font-size: 30px;
-}
-.message p {
-  font-size: 16px;
-  margin-bottom: 20px;
-  margin-top: -18px;
-}
-
-.message ul {
-  padding-left: 0;
-  text-align: left;
-  font-size: 16px;
-  margin-bottom: 30px;
-}
-
-.message .btn {
-  font-size: 16px;
-  margin-left: 10px;
-}
+@import "@/components/notsupported.css";
 </style>

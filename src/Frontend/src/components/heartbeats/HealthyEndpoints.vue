@@ -10,9 +10,7 @@ const { healthyEndpoints, filteredHealthyEndpoints } = storeToRefs(store);
 
 <template>
   <div class="row">
-    <div class="col format-showing-results">
-      <div>Showing {{ filteredHealthyEndpoints.length }} of {{ healthyEndpoints.length }} result(s)</div>
-    </div>
+    <ResultsCount :displayed="filteredHealthyEndpoints.length" :total="healthyEndpoints.length" />
   </div>
   <section name="healthy_endpoints">
     <no-data v-if="healthyEndpoints.length === 0" message="No healthy endpoints"></no-data>

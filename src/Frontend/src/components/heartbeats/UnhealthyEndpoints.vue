@@ -3,6 +3,7 @@ import NoData from "../NoData.vue";
 import { useHeartbeatsStore, ColumnNames } from "@/stores/HeartbeatsStore";
 import { storeToRefs } from "pinia";
 import HeartbeatsList from "./HeartbeatsList.vue";
+import ResultsCount from "../ResultsCount.vue";
 
 const store = useHeartbeatsStore();
 const { unhealthyEndpoints, filteredUnhealthyEndpoints } = storeToRefs(store);
@@ -10,9 +11,7 @@ const { unhealthyEndpoints, filteredUnhealthyEndpoints } = storeToRefs(store);
 
 <template>
   <div class="row">
-    <div class="col format-showing-results">
-      <div>Showing {{ filteredUnhealthyEndpoints.length }} of {{ unhealthyEndpoints.length }} result(s)</div>
-    </div>
+    <ResultsCount :displayed="filteredUnhealthyEndpoints.length" :total="unhealthyEndpoints.length" />
   </div>
   <section name="unhealthy_endpoints">
     <no-data v-if="unhealthyEndpoints.length === 0" message="No unhealthy endpoints"></no-data>

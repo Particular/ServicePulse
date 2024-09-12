@@ -18,6 +18,7 @@ import { EndpointSettings } from "@/resources/EndpointSettings";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import LastHeartbeat from "@/components/heartbeats/LastHeartbeat.vue";
 import FilterInput from "../FilterInput.vue";
+import ResultsCount from "../ResultsCount.vue";
 
 enum Operation {
   Mute = "mute",
@@ -140,9 +141,7 @@ async function toggleAlerts(instance: EndpointsView) {
       </div>
     </div>
     <div class="row">
-      <div class="col format-showing-results">
-        <div>Showing {{ instances.length }} of {{ totalInstances.length }} result(s)</div>
-      </div>
+      <ResultsCount :displayed="instances.length" :total="totalInstances.length" />
     </div>
     <section role="table" aria-label="endpoint-instances">
       <!--Table headings-->

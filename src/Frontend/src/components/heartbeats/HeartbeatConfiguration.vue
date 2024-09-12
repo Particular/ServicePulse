@@ -9,6 +9,7 @@ import OnOffSwitch from "../OnOffSwitch.vue";
 import HeartbeatsList from "./HeartbeatsList.vue";
 import { ref } from "vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
+import ResultsCount from "../ResultsCount.vue";
 
 enum Operation {
   Track = "track",
@@ -88,9 +89,7 @@ async function toggleDefaultSetting() {
       </div>
     </div>
     <div class="row">
-      <div class="col format-showing-results">
-        <div>Showing {{ filteredEndpoints.length }} of {{ sortedEndpoints.length }} result(s)</div>
-      </div>
+      <ResultsCount :displayed="filteredEndpoints.length" :total="sortedEndpoints.length" />
     </div>
     <section name="endpoint_configuration">
       <div class="row">
