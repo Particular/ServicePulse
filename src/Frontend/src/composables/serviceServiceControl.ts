@@ -1,10 +1,10 @@
-import { computed, reactive, watch } from "vue";
+import { reactive } from "vue";
 import { useIsSupported, useIsUpgradeAvailable } from "./serviceSemVer";
 import { useServiceProductUrls } from "./serviceProductUrls";
-import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useIsMonitoringDisabled, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
+import { monitoringUrl, serviceControlUrl, useTypedFetchFromMonitoring, useTypedFetchFromServiceControl } from "./serviceServiceControlUrls";
 import type RootUrls from "@/resources/RootUrls";
 import type FailedMessage from "@/resources/FailedMessage";
-import type MonitoredEndpoint from "@/resources/MonitoredEndpoint";
+// eslint-disable-next-line no-duplicate-imports
 import { FailedMessageStatus } from "@/resources/FailedMessage";
 
 export const stats = reactive({
@@ -75,7 +75,7 @@ export const newVersions = reactive({
 });
 
 interface ServiceControlInstanceConnection {
-  settings: { [key: string]: Object };
+  settings: { [key: string]: object };
   errors: string[];
 }
 
@@ -104,7 +104,7 @@ export const connections = reactive<Connections>({
   },
 });
 
-export async function useServiceControl() {  
+export async function useServiceControl() {
   await Promise.all([useServiceControlStats(), useServiceControlMonitoringStats(), getServiceControlVersion()]);
 }
 
@@ -261,7 +261,7 @@ async function fetchWithErrorHandling<T, TResult>(fetchFunction: () => Promise<[
       connectionState.connecting = false;
       console.log(err);
     }
-  } catch (err) {
+  } catch {
     connectionState.connecting = false;
     connectionState.connected = false;
   }
@@ -287,17 +287,6 @@ function getErrorMessagesCount(status: FailedMessageStatus) {
     connectionState,
     (response) => parseInt(response.headers.get("Total-Count") ?? "0"),
     0
-  );
-}
-
-function getMonitoredEndpoints() {
-  return fetchWithErrorHandling(
-    () => useTypedFetchFromMonitoring<MonitoredEndpoint>("monitored-endpoints?history=1"),
-    monitoringConnectionState,
-    (_, data) => {
-      return data;
-    },
-    null
   );
 }
 
