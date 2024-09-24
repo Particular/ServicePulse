@@ -12,7 +12,7 @@ static class ReverseProxy
             ClusterId = "serviceControlInstance",
             Destinations = new Dictionary<string, DestinationConfig>
             {
-                { "instance", new DestinationConfig { Address = settings.ServiceControlUri.GetLeftPart(UriPartial.Authority) } }
+                { "instance", new DestinationConfig { Address = settings.ServiceControlUri.ToString() } }
             }
         };
 
@@ -21,7 +21,7 @@ static class ReverseProxy
             ClusterId = "monitoringInstance",
             Destinations = new Dictionary<string, DestinationConfig>
             {
-                { "instance", new DestinationConfig { Address = settings.MonitoringUri.GetLeftPart(UriPartial.Authority) } }
+                { "instance", new DestinationConfig { Address = settings.MonitoringUri.ToString() } }
             }
         };
 
@@ -33,7 +33,7 @@ static class ReverseProxy
             {
                 Path = "/api/{**catch-all}"
             }
-        };
+        }.WithTransformPathRemovePrefix("/api");
 
         var monitoringRoute = new RouteConfig()
         {
