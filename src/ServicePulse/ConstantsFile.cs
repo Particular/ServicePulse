@@ -14,7 +14,7 @@ window.defaultConfig = {
   version: '{{version}}',
   service_control_url: '/api/',
   monitoring_urls: ['/monitoring-api/'],
-  showPendingRetry: {{settings.ShowPendingRetry}},
+  showPendingRetry: {{(settings.ShowPendingRetry ? "true" : "false")}},
 }
 """;
 

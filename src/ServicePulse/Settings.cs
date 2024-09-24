@@ -10,7 +10,7 @@ class Settings
 
     public required string DefaultRoute { get; init; }
 
-    public required string ShowPendingRetry { get; init; }
+    public required bool ShowPendingRetry { get; init; }
 
     public static Settings GetFromEnvironmentVariables()
     {
@@ -27,7 +27,8 @@ class Settings
 
         var defaultRoute = Environment.GetEnvironmentVariable("DEFAULT_ROUTE") ?? "/dashboard";
 
-        var showPendingRetry = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY") ?? "false";
+        var showPendingRetryValue = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY");
+        bool.TryParse(showPendingRetryValue, out var showPendingRetry);
 
         return new Settings
         {
