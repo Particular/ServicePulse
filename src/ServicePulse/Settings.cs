@@ -17,6 +17,17 @@ class Settings
     public static Settings GetFromEnvironmentVariables()
     {
         var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
+
+        if (!serviceControlUrl.EndsWith("/", StringComparison.Ordinal))
+        {
+            serviceControlUrl += "/";
+        }
+
+        if (!serviceControlUrl.EndsWith("api/", StringComparison.Ordinal))
+        {
+            serviceControlUrl += "api/";
+        }
+
         var serviceControlUri = new Uri(serviceControlUrl);
 
         var monitoringUrls = ParseLegacyMonitoringValue(Environment.GetEnvironmentVariable("MONITORING_URLS"));
