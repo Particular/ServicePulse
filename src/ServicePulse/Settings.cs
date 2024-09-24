@@ -12,16 +12,18 @@ class Settings
 
     public required bool ShowPendingRetry { get; init; }
 
+    public required bool EnableReverseProxy { get; init; }
+
     public static Settings GetFromEnvironmentVariables()
     {
-        var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333";
+        var serviceControlUrl = Environment.GetEnvironmentVariable("SERVICECONTROL_URL") ?? "http://localhost:33333/api/";
         var serviceControlUri = new Uri(serviceControlUrl);
 
         var monitoringUrls = ParseLegacyMonitoringValue(Environment.GetEnvironmentVariable("MONITORING_URLS"));
         var monitoringUrl = Environment.GetEnvironmentVariable("MONITORING_URL");
 
         monitoringUrl ??= monitoringUrls;
-        monitoringUrl ??= "http://localhost:33633";
+        monitoringUrl ??= "http://localhost:33633/";
 
         var monitoringUri = new Uri(monitoringUrl);
 
@@ -30,12 +32,20 @@ class Settings
         var showPendingRetryValue = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY");
         bool.TryParse(showPendingRetryValue, out var showPendingRetry);
 
+        var enableReverseProxyValue = Environment.GetEnvironmentVariable("ENABLE_REVERSE_PROXY");
+
+        if (!bool.TryParse(enableReverseProxyValue, out var enableReverseProxy))
+        {
+            enableReverseProxy = true;
+        }
+
         return new Settings
         {
             ServiceControlUri = serviceControlUri,
             MonitoringUri = monitoringUri,
             DefaultRoute = defaultRoute,
-            ShowPendingRetry = showPendingRetry
+            ShowPendingRetry = showPendingRetry,
+            EnableReverseProxy = enableReverseProxy
         };
     }
 
