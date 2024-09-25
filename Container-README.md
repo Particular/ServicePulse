@@ -13,9 +13,10 @@ docker run -p 9090:9090 particular/servicepulse:latest
 ### Environment Variables
 
 - **`SERVICECONTROL_URL`**: _Default_: `http://localhost:33333`. The url to your ServiceControl instance
-- **`MONITORING_URL`**: _Default_: `http://localhost:33633`. The url to your monitoring instance
+- **`MONITORING_URL`**: _Default_: `http://localhost:33633`. The url to your Monitoring instance
 - **`DEFAULT_ROUTE`**: _Default_: `/dashboard`. The default page that should be displayed when visiting the site
 - **`SHOW_PENDING_RETRY`** _Default_: `false`. Set to `true` to show details of pending retries
+- **`ENABLE_REVERSE_PROXY`** _Default_: `true`. Set to `false` to disable the proxy that forwards requests to the ServiceControl and Monitoring instances
 
 It may be desireable to run the ServiceControl services in an isolated network. When doing so, ServicePulse must be configured to connect to those services using environment variables:
 
