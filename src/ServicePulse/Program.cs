@@ -4,8 +4,13 @@ using ServicePulse;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var (routes, clusters) = ReverseProxy.GetConfiguration();
-builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
+var settings = Settings.GetFromEnvironmentVariables();
+
+if (settings.EnableReverseProxy)
+{
+    var (routes, clusters) = ReverseProxy.GetConfiguration(settings);
+    builder.Services.AddReverseProxy().LoadFromMemory(routes, clusters);
+}
 
 var app = builder.Build();
 
@@ -18,9 +23,12 @@ app.UseDefaultFiles(defaultFilesOptions);
 var staticFileOptions = new StaticFileOptions { FileProvider = fileProvider };
 app.UseStaticFiles(staticFileOptions);
 
-app.MapReverseProxy();
+if (settings.EnableReverseProxy)
+{
+    app.MapReverseProxy();
+}
 
-var constantsFile = ConstantsFile.GetContent();
+var constantsFile = ConstantsFile.GetContent(settings);
 
 app.MapGet("/js/app.constants.js", (HttpContext context) =>
 {

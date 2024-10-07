@@ -4,19 +4,31 @@ using System.Reflection;
 
 class ConstantsFile
 {
-    public static string GetContent()
+    public static string GetContent(Settings settings)
     {
-        var defaultRoute = Environment.GetEnvironmentVariable("DEFAULT_ROUTE") ?? "/dashboard";
         var version = GetVersionInformation();
-        var showPendingRetry = Environment.GetEnvironmentVariable("SHOW_PENDING_RETRY") ?? "false";
+
+        string serviceControlUrl;
+        string monitoringUrl;
+
+        if (settings.EnableReverseProxy)
+        {
+            serviceControlUrl = "/api/";
+            monitoringUrl = "/monitoring-api/";
+        }
+        else
+        {
+            serviceControlUrl = settings.ServiceControlUri.ToString();
+            monitoringUrl = settings.MonitoringUri.ToString();
+        }
 
         var constantsFile = $$"""
 window.defaultConfig = {
-  default_route: '{{defaultRoute}}',
+  default_route: '{{settings.DefaultRoute}}',
   version: '{{version}}',
-  service_control_url: '/api/',
-  monitoring_urls: ['/monitoring-api/'],
-  showPendingRetry: {{showPendingRetry}},
+  service_control_url: '{{serviceControlUrl}}',
+  monitoring_urls: ['{{monitoringUrl}}'],
+  showPendingRetry: {{(settings.ShowPendingRetry ? "true" : "false")}},
 }
 """;
 
