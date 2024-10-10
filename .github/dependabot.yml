@@ -30,7 +30,7 @@ updates:
     interval: daily
   open-pull-requests-limit: 1000
 - package-ecosystem: "docker"
-  directory: "/src/Container"
+  directory: "/src/ServicePulse"
   schedule:
     interval: daily
   open-pull-requests-limit: 1000
