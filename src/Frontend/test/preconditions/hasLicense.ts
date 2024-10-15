@@ -16,11 +16,11 @@ export enum LicenseType {
   UpgradeProtection,
 }
 
-export const hasExpiredLicense = (licenseType: LicenseType) => createLicenseMockedResponse(licenseType, false);
-export const hasExpiringLicense = (licenseType: LicenseType) => createLicenseMockedResponse(licenseType, true);
+export const hasExpiredLicense = (licenseType: LicenseType, licenseExtensionUrl: string = "https://particular.net/extend-your-trial?p=servicepulse") => createLicenseMockedResponse(licenseType, false, licenseExtensionUrl);
+export const hasExpiringLicense = (licenseType: LicenseType, licenseExtensionUrl: string = "https://particular.net/extend-your-trial?p=servicepulse") => createLicenseMockedResponse(licenseType, true, licenseExtensionUrl);
 
 const createLicenseMockedResponse =
-  (liceseType: LicenseType, expiring = false) =>
+  (liceseType: LicenseType, expiring = false, licenseExtensionUrl: string) =>
   ({ driver }: SetupFactoryOptions) => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
     let status: LicenseStatus;
@@ -47,6 +47,7 @@ const createLicenseMockedResponse =
         instance_name: "Particular.ServiceControl",
         trial_license: status === LicenseStatus.ValidWithExpiringTrial || status === LicenseStatus.InvalidDueToExpiredTrial,
         license_status: status,
+        license_extension_url: licenseExtensionUrl,
       },
     });
   };
