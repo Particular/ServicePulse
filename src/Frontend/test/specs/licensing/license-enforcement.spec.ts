@@ -8,10 +8,7 @@ import { getAlertNotifications } from "./questions/alertNotifications";
 
 describe("FEATURE: EXPIRING license detection", () => {
   describe("RULE: The user should be alerted while using the monitoring endpoint list functionality about an EXPIRING license", () => {
-    [
-      { licenseExtensionUrl: "https://particular.net/extend-your-trial?p=servicepulse" },
-      { licenseExtensionUrl: "http://custom-url?with-parts=value1" }
-    ].forEach(({ licenseExtensionUrl }) => {
+    [{ licenseExtensionUrl: "https://particular.net/extend-your-trial?p=servicepulse" }, { licenseExtensionUrl: "http://custom-url?with-parts=value1" }].forEach(({ licenseExtensionUrl }) => {
       test(`EXAMPLE: Expiring trial with ${licenseExtensionUrl} license extension url `, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
