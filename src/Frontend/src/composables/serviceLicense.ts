@@ -72,7 +72,7 @@ async function getOrUpdateLicenseStatus() {
   license.instance_name = lic.instance_name;
   license.registered_to = lic.registered_to;
   license.status = lic.status;
-  license.license_extension_url = lic.license_extension_url ?? "http://particular.net/extend-your-trial?p=servicepulse";
+  license.license_extension_url = lic.license_extension_url ?? "https://particular.net/extend-your-trial?p=servicepulse";
   license.upgrade_protection_expiration = lic.upgrade_protection_expiration;
 
   licenseStatus.isSubscriptionLicense = isSubscriptionLicense(license);
