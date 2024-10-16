@@ -40,7 +40,7 @@ const createLicenseMockedResponse =
         break;
     }
 
-    //We need to reset the global state to ensure the waring toast is always triggered by the value changing between multiple test runs. See documented issue and proposed solution https://github.com/Particular/ServicePulse/issues/1905
+    //We need to reset the global state to ensure the warning toast is always triggered by the value changing between multiple test runs. See documented issue and proposed solution https://github.com/Particular/ServicePulse/issues/1905
     license.license_status = LicenseStatus.Unavailable;
 
     driver.mockEndpoint(`${serviceControlInstanceUrl}license`, {
