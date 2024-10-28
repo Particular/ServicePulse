@@ -43,7 +43,7 @@ onMounted(() => {
     <span :class="{ 'header-removed': header.isMarkedAsRemoved }">{{ settings.header.key }}</span>
     <span v-if="header.isLocked">
       &nbsp;
-      <i class="fa fa-lock" tooltip="Protected system header"></i>
+      <i class="fa fa-lock" v-tippy="`Protected system header`"></i>
     </span>
     <span v-if="(header.isChanged || header.isMarkedAsRemoved) && header.isSensitive">
       &nbsp;
@@ -51,7 +51,7 @@ onMounted(() => {
     </span>
     <span v-if="header.isChanged">
       &nbsp;
-      <i class="fa fa-pencil" tooltip="Edited"></i>
+      <i class="fa fa-pencil" v-tippy="`Edited`"></i>
     </span>
   </td>
   <td>
@@ -59,10 +59,10 @@ onMounted(() => {
   </td>
   <td>
     <a v-if="!header.isLocked && !header.isMarkedAsRemoved" @click="markHeaderAsRemoved()">
-      <i class="fa fa-trash" tooltip="Protected system header"></i>
+      <i class="fa fa-trash" v-tippy="`Protected system header`"></i>
     </a>
     <a v-if="header.isChanged" @click="resetHeaderChanges()">
-      <i class="fa fa-undo" tooltip="Protected system header"></i>
+      <i class="fa fa-undo" v-tippy="`Protected system header`"></i>
     </a>
   </td>
 </template>
