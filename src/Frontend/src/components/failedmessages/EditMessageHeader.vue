@@ -47,7 +47,7 @@ onMounted(() => {
     </span>
     <span v-if="(header.isChanged || header.isMarkedAsRemoved) && header.isSensitive">
       &nbsp;
-      <i class="fa fa-exclamation-triangle" uib-tooltip="This is a sensitive message header that if changed can the system behavior. Proceed with caution."></i>
+      <i class="fa fa-exclamation-triangle" v-tippy="`This is a sensitive message header that if changed can the system behavior. Proceed with caution.`"></i>
     </span>
     <span v-if="header.isChanged">
       &nbsp;
@@ -59,10 +59,10 @@ onMounted(() => {
   </td>
   <td>
     <a v-if="!header.isLocked && !header.isMarkedAsRemoved" @click="markHeaderAsRemoved()">
-      <i class="fa fa-trash" v-tippy="`Protected system header`"></i>
+      <i class="fa fa-trash" v-tippy="`Remove header`"></i>
     </a>
     <a v-if="header.isChanged" @click="resetHeaderChanges()">
-      <i class="fa fa-undo" v-tippy="`Protected system header`"></i>
+      <i class="fa fa-undo" v-tippy="`Reset changes`"></i>
     </a>
   </td>
 </template>
