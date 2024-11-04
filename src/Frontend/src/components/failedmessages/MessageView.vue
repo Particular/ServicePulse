@@ -12,18 +12,18 @@ import ConfirmDialog from "../ConfirmDialog.vue";
 import FlowDiagram from "./FlowDiagram.vue";
 import EditRetryDialog from "./EditRetryDialog.vue";
 import routeLinks from "@/router/routeLinks";
-import Configuration, { EditAndRetryConfig } from "@/resources/Configuration";
+import { EditAndRetryConfig } from "@/resources/Configuration";
 import { TYPE } from "vue-toastification";
 import { ExtendedFailedMessage, FailedMessageError, FailedMessageStatus, isError } from "@/resources/FailedMessage";
 import Message from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
+import { useConfiguration } from "@/composables/configuration";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
 const panel = ref<number>(1);
 const route = useRoute();
 const failedMessage = ref<ExtendedFailedMessage | FailedMessageError>();
-const configuration = ref<Configuration>();
 const editAndRetryConfiguration = ref<EditAndRetryConfig>();
 
 const id = computed(() => route.params.id as string);
@@ -33,6 +33,8 @@ const showDeleteConfirm = ref(false);
 const showRestoreConfirm = ref(false);
 const showRetryConfirm = ref(false);
 const showEditRetryModal = ref(false);
+
+const configuration = useConfiguration();
 
 async function loadFailedMessage() {
   try {
@@ -68,12 +70,6 @@ async function loadFailedMessage() {
     console.log(err);
     return;
   }
-}
-
-async function getConfiguration() {
-  const response = await useFetchFromServiceControl("configuration");
-  configuration.value = await response.json();
-  return getEditAndRetryConfig();
 }
 
 async function getEditAndRetryConfig() {
@@ -361,10 +357,10 @@ function changeRefreshInterval(milliseconds: number) {
   }, milliseconds);
 }
 
-onMounted(async () => {
+onMounted(() => {
   togglePanel(1);
 
-  await getConfiguration();
+  getEditAndRetryConfig();
   startRefreshInterval();
   loadFailedMessage();
 });
