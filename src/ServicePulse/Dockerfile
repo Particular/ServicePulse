@@ -15,7 +15,7 @@ COPY --from=frontend . .
 RUN dotnet publish src/ServicePulse/ServicePulse.csproj -a $TARGETARCH -o /app
 
 # Host runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-noble-chiseled-composite
 ARG VERSION
 WORKDIR /app
 
