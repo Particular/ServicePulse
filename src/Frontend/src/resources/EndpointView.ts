@@ -9,5 +9,6 @@ export interface EndpointsView {
     last_report_at: string;
     reported_status: EndpointStatus;
   };
+  supports_heartbeats: boolean;
   is_sending_heartbeats: boolean;
 }

@@ -102,7 +102,7 @@ export const useHeartbeatsStore = defineStore("HeartbeatsStore", () => {
   const dataRetriever = useAutoRefresh(async () => {
     try {
       const [[, data], data2] = await Promise.all([useTypedFetchFromServiceControl<EndpointsView[]>("endpoints"), endpointSettingsClient.endpointSettings()]);
-      endpointInstances.value = data;
+      endpointInstances.value = data.filter((endpoint) => endpoint.supports_heartbeats);
       settings.value = data2;
       defaultTrackingInstancesValue.value = data2.find((value) => value.name === "")!.track_instances;
     } catch (e) {
