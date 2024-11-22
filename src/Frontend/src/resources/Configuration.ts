@@ -4,10 +4,11 @@ export default interface Configuration {
   performance_tunning: Performancetunning;
   transport: Transport;
   plugins: Plugins;
-  connected_applications: ConnectedApplications;
+  connected_applications: ConnectedApplication[];
 }
-interface ConnectedApplications {
-  connected_applications: string[];
+interface ConnectedApplication {
+  name: string;
+  supports_heartbeats: boolean;
 }
 interface Plugins {
   heartbeat_grace_period: string;
