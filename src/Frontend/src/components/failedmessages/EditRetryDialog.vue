@@ -106,7 +106,7 @@ function isContentTypeSupported(contentType: string) {
 
 function getMessageIntent() {
   const intent = findHeadersByKey("NServiceBus.MessageIntent");
-  return intent.value;
+  return intent?.value ?? "";
 }
 
 function removeHeadersMarkedAsRemoved() {
