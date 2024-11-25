@@ -357,10 +357,10 @@ function changeRefreshInterval(milliseconds: number) {
   }, milliseconds);
 }
 
-onMounted(() => {
+onMounted(async () => {
   togglePanel(1);
 
-  getEditAndRetryConfig();
+  await getEditAndRetryConfig();
   startRefreshInterval();
   loadFailedMessage();
 });
