@@ -39,7 +39,15 @@ describe("HeartbeatInstancesStore tests", () => {
   });
 
   test("filter by name", async () => {
-    const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: false, id: "", name: "", monitor_heartbeat: false, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+    const defaultEndpointsView = <EndpointsView>{
+      is_sending_heartbeats: false,
+      id: "",
+      name: "",
+      monitor_heartbeat: false,
+      host_display_name: "",
+      supports_heartbeats: true,
+      heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
+    };
     const { filteredInstances, instanceFilterString } = await setup(
       [
         { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ host_display_name: "John" }) },
@@ -57,7 +65,15 @@ describe("HeartbeatInstancesStore tests", () => {
   });
 
   test("sort by", async () => {
-    const defaultEndpointsView = <EndpointsView>{ is_sending_heartbeats: false, id: "", name: "", monitor_heartbeat: false, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" } };
+    const defaultEndpointsView = <EndpointsView>{
+      is_sending_heartbeats: false,
+      id: "",
+      name: "",
+      monitor_heartbeat: false,
+      host_display_name: "",
+      supports_heartbeats: true,
+      heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
+    };
     const { filteredInstances, sortByInstances } = await setup(
       [
         { ...defaultEndpointsView, ...(<Partial<EndpointsView>>{ host_display_name: "John", heartbeat_information: { last_report_at: "2024-10-01T00:00:00" } }) },
