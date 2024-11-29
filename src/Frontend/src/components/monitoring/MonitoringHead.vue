@@ -14,7 +14,7 @@ const isMassTransitConnected = useIsMassTransitConnected();
       <MonitoringFilter />
     </div>
     <div class="col-12" v-if="isMassTransitConnected">
-      <div class="alert alert-info">Note: MassTransit endpoints are currently not supported by monitoring functionality and will not show in this view.</div>
+      <div class="alert alert-info">MassTransit endpoints are currently not supported by monitoring functionality and will not show in this view.</div>
     </div>
   </div>
 </template>

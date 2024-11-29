@@ -24,7 +24,7 @@ const isMassTransitConnected = useIsMassTransitConnected();
             <h1>Endpoint Heartbeats</h1>
           </div>
           <div class="col-12" v-if="isMassTransitConnected">
-            <div class="alert alert-info">Note: MassTransit endpoints are currently not supported by heartbeat functionality and will not show in this view.</div>
+            <div class="alert alert-info">MassTransit endpoints are currently not supported by heartbeat functionality and will not show in this view.</div>
           </div>
         </div>
         <div class="row">

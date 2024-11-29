@@ -249,7 +249,7 @@ onMounted(() => {
             </div>
           </div>
           <div class="col-12" v-if="isMassTransitConnected">
-            <div class="alert alert-info">Note: MassTransit endpoints currently do not report when a pending retry has succeeded, and therefore any messages associated with those endpoints will need to be manually marked as resolved.</div>
+            <div class="alert alert-info">MassTransit endpoints currently do not report when a pending retry has succeeded, and therefore any messages associated with those endpoints will need to be manually marked as resolved.</div>
           </div>
         </div>
         <div class="row">
