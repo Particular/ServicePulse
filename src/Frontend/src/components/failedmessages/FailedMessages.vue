@@ -142,7 +142,7 @@ function exportSelected() {
           .map((k) => {
             let v = String(obj[k]);
             v = v.replaceAll('"', '""'); // Escape all double quotes
-            v = `"${v}"`; // Quote all values to deal with CR characters
+            if (v.search(/([",\n])/g) >= 0) v = `"${v}"`; // Quote all values to deal with CR characters
             return v;
           })
           .join(delimiter) + "\n";
