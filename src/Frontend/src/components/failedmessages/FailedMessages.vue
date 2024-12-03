@@ -133,7 +133,7 @@ async function retrySelected() {
 function exportSelected() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function toCSV(array: any[]) {
-    const delimiter = ',';
+    const delimiter = ",";
     const keys = Object.keys(array[0]);
     let result = keys.join(delimiter) + "\n";
     array.forEach((obj) => {
