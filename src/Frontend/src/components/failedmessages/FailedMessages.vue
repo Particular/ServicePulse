@@ -134,8 +134,9 @@ async function retrySelected() {
 function exportSelected() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function toCSV(array: any[]) {
+    const delimiter = ',';
     const keys = Object.keys(array[0]);
-    let result = keys.join("\t") + "\n";
+    let result = keys.join(delimiter) + "\n";
     array.forEach((obj) => {
       result +=
         keys
@@ -145,7 +146,7 @@ function exportSelected() {
             v = `"${v}"`; // Quote all values to deal with CR characters
             return v;
           })
-          .join(",") + "\n";
+          .join(delimiter) + "\n";
     });
 
     return result;
