@@ -139,12 +139,12 @@ function exportSelected() {
     array.forEach((obj) => {
       result +=
         keys
-          .map((k) =>
-            obj[k]
-              .map(String)
-              .map((v: string) => v.replaceAll('"', '""'))
-              .map((v: string) => `"${v}"`)
-          )
+          .map((k) => {
+            let v = String(obj[k]);
+            v = v.replaceAll('"', '""'); // Escape all double quotes
+            v = `"${v}"`; // Quote all values to deal with CR characters
+            return v;
+          })
           .join(",") + "\n";
     });
 
