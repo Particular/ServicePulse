@@ -137,7 +137,11 @@ function exportSelected() {
     const keys = Object.keys(array[0]);
     let result = keys.join("\t") + "\n";
     array.forEach((obj) => {
-      result += keys.map((k) => obj[k]).join(",") + "\n";
+      result += keys.map((k) => obj[k]
+          .map(String)
+          .map(v => v.replaceAll('"', '""'))
+          .map(v => `"${v}"`)
+      ).join(",") + "\n";
     });
 
     return result;
