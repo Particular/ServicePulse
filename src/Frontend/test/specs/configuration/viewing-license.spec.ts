@@ -5,7 +5,7 @@ import { licenseTypeDetails } from "./questions/licenseTypeDetails";
 
 describe("FEATURE: License", () => {
   describe("RULE: Platform license type should be shown shown", () => {
-    test.todo("EXAMPLE: Valid platform license type should be shown", async ({ driver }) => {
+    test("EXAMPLE: Valid platform license type should be shown", async ({ driver }) => {
 
       /* SCENARIO
             Given the platform license is valid
