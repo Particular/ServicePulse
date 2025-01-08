@@ -35,7 +35,7 @@ const configuration = useConfiguration();
           <div class="box">
             <div class="row">
               <div class="license-info">
-                <div><b>Platform license type:</b> {{ typeText(license, configuration) }}{{ license.licenseEdition }}</div>
+                <div><b>Platform license type:</b> <span aria-label="license-type">{{ license.license_type }}{{ license.licenseEdition }}</span></div>
 
                 <template v-if="licenseStatus.isSubscriptionLicense">
                   <div>

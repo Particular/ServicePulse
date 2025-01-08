@@ -1,13 +1,23 @@
+import { expect, vi } from "vitest";
 import { test, describe } from "../../drivers/vitest/driver";
+import * as precondition from "../../preconditions";
+import { licenseTypeDetails } from "./questions/licenseTypeDetails";
 
 describe("FEATURE: License", () => {
   describe("RULE: Platform license type should be shown shown", () => {
-    test.todo("EXAMPLE: Valid platform license type should be shown");
+    test.todo("EXAMPLE: Valid platform license type should be shown", async ({ driver }) => {
 
     /* SCENARIO
           Given the platform license is valid
           Then the platform license type is shown
         */
+    await driver.setUp(precondition.hasActiveLicense);
+    await driver.goTo("/configuration/license");
+
+    expect(await licenseTypeDetails()).toBe("Commercial, Enterprise");
+
+
+
   });
   describe("RULE: License expiry date should be shown", () => {
     test.todo("EXAMPLE: Valid license expiry date should be shown");
