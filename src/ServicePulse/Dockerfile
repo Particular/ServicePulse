@@ -7,7 +7,7 @@ RUN npm install
 RUN npm run build
 
 # Host build image
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG TARGETARCH
 WORKDIR /
 ENV CI=true
