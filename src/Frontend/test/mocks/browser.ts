@@ -2,6 +2,8 @@ import { setupWorker } from "msw/browser";
 import { Driver } from "../driver";
 import { makeMockEndpoint, makeMockEndpointDynamic } from "../mock-endpoint";
 import * as precondition from "../preconditions";
+import { EndpointsView } from "@/resources/EndpointView";
+import { EndpointStatus } from "@/resources/Heartbeat";
 export const worker = setupWorker();
 const mockEndpoint = makeMockEndpoint({ mockServer: worker });
 const mockEndpointDynamic = makeMockEndpointDynamic({ mockServer: worker });
@@ -35,6 +37,11 @@ const driver = makeDriver();
       "Universe.Solarsystem.Earth.Endpoint6",
     ])
   );
+
+  const unhealthyEndpoint = <EndpointsView>{ is_sending_heartbeats: true, id: "", name: "Dashboard.Item.Test", monitor_heartbeat: true, host_display_name: "", heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" } };
+
+  await driver.setUp(precondition.serviceControlWithMonitoring);
+  await driver.setUp(precondition.hasHeartbeatsEndpoints([unhealthyEndpoint]));
 
   await driver.setUp(
     precondition.hasFailedMessage({
