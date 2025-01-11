@@ -1,7 +1,7 @@
 import CustomCheck from "@/resources/CustomCheck";
 import { SetupFactoryOptions } from "../driver";
 
-const content = JSON.stringify([]);
+//const content = JSON.stringify([]);
 
 export const hasNoFailingCustomChecks = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
@@ -21,9 +21,12 @@ export const hasNoFailingCustomChecks = ({ driver }: SetupFactoryOptions) => {
         },
       },
     ],
+    headers: {
+      "Total-Count": "1",
+    },
   });
 
-  return content;
+  //return content;
 };
 // [
 //   {

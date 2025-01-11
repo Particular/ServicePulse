@@ -25,16 +25,17 @@ const driver = makeDriver();
 (async () => {
   await driver.setUp(precondition.serviceControlWithMonitoring);
   //override the default mocked endpoints with a custom list
-  //   await driver.setUp(
-  //     precondition.monitoredEndpointsNamed([
-  //       "Universe.Solarsystem.Mercury.Endpoint1",
-  //       "Universe.Solarsystem.Mercury.Endpoint2",
-  //       "Universe.Solarsystem.Venus.Endpoint3",
-  //       "Universe.Solarsystem.Venus.Endpoint4",
-  //       "Universe.Solarsystem.Earth.Endpoint5",
-  //       "Universe.Solarsystem.Earth.Endpoint6",
-  //     ])
-  //   );
+  await driver.setUp(precondition.hasNoFailingCustomChecks);
+  // await driver.setUp(
+  //   precondition.monitoredEndpointsNamed([
+  //     "Universe.Solarsystem.Mercury.Endpoint1",
+  //     "Universe.Solarsystem.Mercury.Endpoint2",
+  //     "Universe.Solarsystem.Venus.Endpoint3",
+  //     "Universe.Solarsystem.Venus.Endpoint4",
+  //     "Universe.Solarsystem.Earth.Endpoint5",
+  //     "Universe.Solarsystem.Earth.Endpoint6",
+  //   ])
+  // );
   // await driver.setUp(
   //   precondition.hasFailedMessage({
   //     withGroupId: "81dca64e-76fc-e1c3-11a2-3069f51c58c8",
