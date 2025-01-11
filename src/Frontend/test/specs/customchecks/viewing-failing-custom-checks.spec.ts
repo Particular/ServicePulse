@@ -1,9 +1,18 @@
 import { test, describe } from "../../drivers/vitest/driver";
+import * as precondition from "../../preconditions";
 
 describe("FEATURE: Failing custom checks", () => {
   describe("RULE: Custom checks are displayed", () => {
-    test.todo("EXAMPLE: All custom checks are in a failed state and should be displayed in a list on the custom checks tab");
-
+    test("EXAMPLE: All custom checks are in a failed state and should be displayed in a list on the custom checks tab", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      // Given there are failing custom checks
+      await driver.setUp(
+        precondition.hasCustomChecks([
+          { failed: true, reason: "Test reason 1" },
+          { failed: true, reason: "Test reason 2" },
+        ])
+      );
+    });
     /* SCENARIO
           Given there are custom checks
           And all custom checks are in a failed state
