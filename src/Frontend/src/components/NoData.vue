@@ -11,7 +11,7 @@ const props = defineProps<{
         <div class="col-sm-12">
           <div class="row box-header">
             <div class="col-sm-12">
-              <p class="lead hard-wrap">{{ props.message }}</p>
+              <p role="status" class="lead hard-wrap">{{ props.message }}</p>
               <slot>
                 <p>&nbsp;</p>
               </slot>
