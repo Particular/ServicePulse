@@ -27,8 +27,8 @@ const driver = makeDriver();
   //override the default mocked endpoints with a custom list
   await driver.setUp(
     precondition.hasCustomChecks([
-      { failed: true, reason: "Test reason 1" },
-      { failed: true, reason: "Test reason 2" },
+      { failing: true, reason: "Test reason 1" },
+      { failing: true, reason: "Test reason 2" },
     ])
   );
 
