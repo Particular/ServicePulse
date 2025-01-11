@@ -3,31 +3,32 @@ import * as precondition from "../../preconditions";
 
 describe("FEATURE: Failing custom checks", () => {
   describe("RULE: Custom checks are displayed", () => {
-    test("EXAMPLE: All custom checks are in a failed state and should be displayed in a list on the custom checks tab", async ({ driver }) => {
+    test("EXAMPLE: All custom checks are in a failed state", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       // Given there are failing custom checks
+      // And all custom checks are in a failed state
       await driver.setUp(
         precondition.hasCustomChecks([
           { failed: true, reason: "Test reason 1" },
           { failed: true, reason: "Test reason 2" },
         ])
       );
-    });
-    /* SCENARIO
-          Given there are custom checks
-          And all custom checks are in a failed state
-          When navigating to the custom checks tab
-          Then a list of custom checks is shown
-        */
 
-    /* NOTES
+      // When navigating to the custom checks tab
+      await driver.goTo("/custom-checks");
+
+      //TODO: Then a list of custom checks is shown and all FAILED checks should be displayed in a list on the custom checks tab
+
+      //TODO: retrieve the list of custom checks and check the different attributes being rendered.
+      /* NOTES
           Failure reason (if given)
           Name (Check)
           Category
           Endpoint
           Host
           Last checked
-        */
+      */
+    });
   });
   describe("RULE: Only failed custom checks are displayed", () => {
     test.todo("EXAMPLE: Only failed custom checks should be displayed in the list on the custom checks tab");
