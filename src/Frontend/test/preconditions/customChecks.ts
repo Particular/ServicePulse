@@ -26,14 +26,14 @@ const customCheckTemplate = <CustomCheck>{
 };
 
 export const hasCustomChecks =
-  (params: { failed: boolean; reason: string }[]) =>
+  (params: { failing: boolean; reason: string }[]) =>
   ({ driver }: SetupFactoryOptions) => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
 
     const customChecks = params.map((check) => {
       return {
         ...customCheckTemplate,
-        status: check.failed ? "Fail" : "Pass",
+        status: check.failing ? "Fail" : "Pass",
         failure_reason: check.reason.toString(),
       };
     });

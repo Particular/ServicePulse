@@ -27,8 +27,8 @@ describe("FEATURE: No data", () => {
       // Given there are custom checks but none of them are failing
       await driver.setUp(
         precondition.hasCustomChecks([
-          { failed: false, reason: "Test reason 1" },
-          { failed: false, reason: "Test reason 2" },
+          { failing: false, reason: "Test reason 1" },
+          { failing: false, reason: "Test reason 2" },
         ])
       );
 
