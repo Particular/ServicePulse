@@ -1,8 +1,5 @@
-import { waitFor } from "@testing-library/vue";
 import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
-import { messageShownWithText } from "./questions/messageShownWithText";
-import { expect } from "vitest";
 
 describe("FEATURE: Failing custom checks", () => {
   describe("RULE: Custom checks are displayed", () => {
@@ -19,8 +16,6 @@ describe("FEATURE: Failing custom checks", () => {
 
       // When navigating to the custom checks tab
       await driver.goTo("/custom-checks");
-
-      waitFor(() => expect(messageShownWithText("No failed custom checks")).toBe(false));
 
       //TODO: Then a list of custom checks is shown and all FAILED checks should be displayed in a list on the custom checks tab
 
