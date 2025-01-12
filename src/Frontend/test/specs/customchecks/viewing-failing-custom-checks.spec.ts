@@ -9,8 +9,8 @@ describe("FEATURE: Failing custom checks", () => {
       // And all custom checks are in a failed state
       await driver.setUp(
         precondition.hasCustomChecks([
-          { failing: true, reason: "Test reason 1" },
-          { failing: true, reason: "Test reason 2" },
+          { failed: true, reason: "Test reason 1" },
+          { failed: true, reason: "Test reason 2" },
         ])
       );
 
