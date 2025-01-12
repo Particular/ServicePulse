@@ -32,8 +32,6 @@ const driver = makeDriver();
     ])
   );
 
-  await driver.setUp(precondition.hasZeroCustomChecks);
-
   // await driver.setUp(
   //   precondition.monitoredEndpointsNamed([
   //     "Universe.Solarsystem.Mercury.Endpoint1",
