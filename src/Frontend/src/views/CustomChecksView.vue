@@ -19,7 +19,7 @@ const { pageNumber, failingCount, failedChecks } = storeToRefs(store);
     </div>
 
     <section name="custom_checks">
-      <NoData v-if="failingCount === 0" message="No failed custom checks"  role="heading" aria-label="customcheck-message" />
+      <NoData v-if="failingCount === 0" message="No failed custom checks" role="heading" aria-label="customcheck-message" />
       <div v-else class="row">
         <div class="col-sm-12">
           <CustomCheckView v-for="item of failedChecks" :key="item.id" :custom-check="item" />
