@@ -38,6 +38,7 @@ const configurationLinks = (root: string) => {
   return {
     root,
     license: createLink("license"),
+    massTransitConnector: createLink("mass-transit-connector"),
     healthCheckNotifications: createLink("health-check-notifications"),
     retryRedirects: createLink("retry-redirects"),
     connections: createLink("connections"),

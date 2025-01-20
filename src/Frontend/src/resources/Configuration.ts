@@ -1,14 +1,15 @@
 export default interface Configuration {
   host: Host;
-  data_retention: Dataretention;
-  performance_tunning: Performancetunning;
+  data_retention: DataRetention;
+  performance_tunning: PerformanceTuning;
   transport: Transport;
   plugins: Plugins;
-  connected_applications: ConnectedApplication[];
+  mass_transit_connector?: MassTransitConnector;
 }
-interface ConnectedApplication {
-  name: string;
-  supports_heartbeats: boolean;
+interface MassTransitConnector {
+  version: string;
+  logs: Array<{ level: string; message: string; date: string }>;
+  error_queues: Array<{ name: string; ingesting: boolean }>;
 }
 interface Plugins {
   heartbeat_grace_period: string;
@@ -19,13 +20,13 @@ interface Transport {
   error_queue: string;
   forward_error_messages: boolean;
 }
-interface Performancetunning {
+interface PerformanceTuning {
   http_default_connection_limit: number;
   external_integrations_dispatching_batch_size: number;
   expiration_process_batch_size: number;
   expiration_process_timer_in_seconds: number;
 }
-interface Dataretention {
+interface DataRetention {
   error_retention_period: string;
 }
 interface Host {
