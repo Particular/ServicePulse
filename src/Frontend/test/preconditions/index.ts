@@ -5,7 +5,9 @@ export { hasServiceControlMonitoringInstanceUrl } from "../preconditions/hasServ
 export { hasUpToDateServiceControl } from "../preconditions/hasUpToDateServiceControl";
 export { hasUpToDateServicePulse } from "../preconditions/hasUpToDateServicePulse";
 export { errorsDefaultHandler } from "../preconditions/hasNoErrors";
-export { hasNoFailingCustomChecks } from "../preconditions/hasNoFailingCustomChecks";
+export { hasCustomChecksEmpty } from "./hasCustomChecksEmpty";
+export { hasCustomChecksFailing } from "./hasCustomChecksFailing";
+export { hasCustomChecksPassing } from "./hasCustomChecksPassing";
 export { hasNoDisconnectedEndpoints } from "../preconditions/hasNoDisconnectedEndpoints";
 export { hasNoMonitoredEndpoints, hasMonitoredEndpointsList, monitoredEndpointsNamed } from "../preconditions/hasMonitoredEndpoints";
 export { hasEventLogItems } from "../preconditions/hasEventLogItems";
