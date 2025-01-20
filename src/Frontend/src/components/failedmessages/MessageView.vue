@@ -18,6 +18,7 @@ import { ExtendedFailedMessage, FailedMessageError, FailedMessageStatus, isError
 import Message from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { useConfiguration } from "@/composables/configuration";
+import { useIsMassTransitConnected } from "@/composables/connectedApplications";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -35,6 +36,7 @@ const showRetryConfirm = ref(false);
 const showEditRetryModal = ref(false);
 
 const configuration = useConfiguration();
+const isMassTransitConnected = useIsMassTransitConnected();
 
 async function loadFailedMessage() {
   try {
@@ -422,7 +424,9 @@ onUnmounted(() => {
                 <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showEditAndRetryModal()">
                   <i class="fa fa-pencil"></i> Edit & retry
                 </button>
-                <button type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed"><img src="@/assets/si-icon.svg" /> View in ServiceInsight</button>
+                <button v-if="!isMassTransitConnected" type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed">
+                  <img src="@/assets/si-icon.svg" /> View in ServiceInsight
+                </button>
                 <button type="button" class="btn btn-default" @click="exportMessage()"><i class="fa fa-download"></i> Export message</button>
               </div>
             </div>
@@ -433,7 +437,7 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 1 }" class="nav-item" @click="togglePanel(1)"><a href="javascript:void(0)">Stacktrace</a></h5>
                 <h5 :class="{ active: panel === 2 }" class="nav-item" @click="togglePanel(2)"><a href="javascript:void(0)">Headers</a></h5>
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click="togglePanel(3)"><a href="javascript:void(0)">Message body</a></h5>
-                <h5 :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="javascript:void(0)">Flow Diagram</a></h5>
+                <h5 v-if="!isMassTransitConnected" :class="{ active: panel === 4 }" class="nav-item" @click="togglePanel(4)"><a href="javascript:void(0)">Flow Diagram</a></h5>
               </div>
               <pre v-if="panel === 0">{{ failedMessage.exception?.message }}</pre>
               <pre v-if="panel === 1">{{ failedMessage.exception?.stack_trace }}</pre>
