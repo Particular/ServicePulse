@@ -14,7 +14,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit",
           host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -26,7 +26,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -38,7 +38,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit",
           host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -50,7 +50,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit",
           host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -62,7 +62,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -74,7 +74,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -86,7 +86,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -98,7 +98,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -110,7 +110,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -122,7 +122,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -134,7 +134,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -146,7 +146,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl",
           host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
       {
@@ -158,7 +158,7 @@ export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
         originating_endpoint: {
           name: "Particular.ServiceControl.Audit",
           host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
-          host: "COMPUSA-LAPTOP",
+          host: "COMPUSA",
         },
       },
     ],
