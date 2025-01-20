@@ -45,7 +45,6 @@ describe("HeartbeatInstancesStore tests", () => {
       name: "",
       monitor_heartbeat: false,
       host_display_name: "",
-      supports_heartbeats: true,
       heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
     };
     const { filteredInstances, instanceFilterString } = await setup(
@@ -71,7 +70,6 @@ describe("HeartbeatInstancesStore tests", () => {
       name: "",
       monitor_heartbeat: false,
       host_display_name: "",
-      supports_heartbeats: true,
       heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
     };
     const { filteredInstances, sortByInstances } = await setup(

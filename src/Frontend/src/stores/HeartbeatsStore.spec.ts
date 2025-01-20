@@ -48,7 +48,6 @@ describe("HeartbeatsStore tests", () => {
         name: "",
         monitor_heartbeat: true,
         host_display_name: "",
-        supports_heartbeats: true,
         heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
       };
       const { failedHeartbeatsCount } = await setup(
@@ -71,7 +70,6 @@ describe("HeartbeatsStore tests", () => {
         name: "",
         monitor_heartbeat: true,
         host_display_name: "",
-        supports_heartbeats: true,
         heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
       };
       const { failedHeartbeatsCount } = await setup(
@@ -94,7 +92,6 @@ describe("HeartbeatsStore tests", () => {
         name: "",
         monitor_heartbeat: true,
         host_display_name: "",
-        supports_heartbeats: true,
         heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
       };
       const { failedHeartbeatsCount } = await setup(
@@ -120,7 +117,6 @@ describe("HeartbeatsStore tests", () => {
         name: "",
         monitor_heartbeat: true,
         host_display_name: "",
-        supports_heartbeats: true,
         heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
       };
       const { failedHeartbeatsCount } = await setup(
@@ -144,7 +140,6 @@ describe("HeartbeatsStore tests", () => {
         name: "",
         monitor_heartbeat: true,
         host_display_name: "",
-        supports_heartbeats: true,
         heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
       };
       const { failedHeartbeatsCount } = await setup(
@@ -173,7 +168,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { healthyEndpoints } = await setup(
@@ -196,7 +190,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { healthyEndpoints } = await setup(
@@ -222,7 +215,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { healthyEndpoints } = await setup(
@@ -245,7 +237,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { healthyEndpoints } = await setup(
@@ -270,7 +261,6 @@ describe("HeartbeatsStore tests", () => {
         name: "",
         monitor_heartbeat: true,
         host_display_name: "",
-        supports_heartbeats: true,
         heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
       };
       const { filteredHealthyEndpoints, endpointFilterString } = await setup(
@@ -296,7 +286,6 @@ describe("HeartbeatsStore tests", () => {
         name: "",
         monitor_heartbeat: true,
         host_display_name: "",
-        supports_heartbeats: true,
         heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
       };
       const { filteredHealthyEndpoints, sortByInstances } = await setup(
@@ -351,7 +340,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { unhealthyEndpoints } = await setup(
@@ -374,7 +362,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { unhealthyEndpoints } = await setup(
@@ -400,7 +387,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { unhealthyEndpoints } = await setup(
@@ -423,7 +409,6 @@ describe("HeartbeatsStore tests", () => {
           name: "",
           monitor_heartbeat: true,
           host_display_name: "",
-          supports_heartbeats: true,
           heartbeat_information: { reported_status: EndpointStatus.Alive, last_report_at: "" },
         };
         const { unhealthyEndpoints } = await setup(
