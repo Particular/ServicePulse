@@ -64,7 +64,7 @@ export const hasAnUnhealthyUnMonitoredEndpoint = () => {
       is_sending_heartbeats: true,
       id: "",
       name: `Unhealthy_UnmonitoredEndpoint`,
-      monitor_heartbeat: true,
+      monitor_heartbeat: false,
       host_display_name: "",
       heartbeat_information: { reported_status: EndpointStatus.Dead, last_report_at: "" },
     },
