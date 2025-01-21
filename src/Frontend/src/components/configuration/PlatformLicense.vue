@@ -31,18 +31,22 @@ const loading = computed(() => {
           <div class="box">
             <div class="row">
               <div class="license-info">
-                <div><b>Platform license type:</b> <span role="displayText" aria-label="license-type">{{ license.license_type }}{{ license.licenseEdition }}</span></div>
+                <div>
+                  <b>Platform license type:</b> <span role="note" aria-label="license-type">{{ license.license_type }}{{ license.licenseEdition }}</span>
+                </div>
 
                 <template v-if="licenseStatus.isSubscriptionLicense">
                   <div>
                     <b>License expiry date: </b>
                     <span
+                      role="note"
+                      aria-label="licenseExpiryDate"
                       :class="{
                         'license-expired': licenseStatus.isPlatformExpired,
                       }"
                     >
                       {{ license.formattedExpirationDate }}
-                      {{ licenseStatus.subscriptionDaysLeft }}
+                      <span role="note" aria-label="licenseExpiryDaysLeft">{{ licenseStatus.subscriptionDaysLeft }}</span>
                       <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
                     <div class="license-expired-text" v-if="licenseStatus.isPlatformExpired">Your license expired. Please update the license to continue using the Particular Service Platform.</div>
