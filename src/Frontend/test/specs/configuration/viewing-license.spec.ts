@@ -1,4 +1,4 @@
-import { expect } from "vitest";
+import { expect, vi } from "vitest";
 import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { licenseTypeDetails } from "./questions/licenseTypeDetails";
@@ -9,9 +9,11 @@ import { waitFor } from "@testing-library/vue";
 describe("FEATURE: License", () => {
   describe("RULE: Platform license type should be shown shown", () => {
     test("EXAMPLE: Valid platform license type should be shown", async ({ driver }) => {
+      vi.useFakeTimers();
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasActiveLicense);
       await driver.goTo("/configuration/license");
+      vi.advanceTimersByTime(5000);
       waitFor(async () => {
         expect(await licenseTypeDetails()).toBe("Commercial, Enterprise");
       });
