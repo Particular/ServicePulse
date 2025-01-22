@@ -11,7 +11,7 @@ describe("FEATURE: No data", () => {
           When navigating to the custom checks tab
           Then a message is shown "No failed custom checks"
         */
-    test("EXAMPLE: 'No failed custom checks' should be displayed when there are no custom checks", async ({ driver }) => {
+    test("EXAMPLE: There are no failed or passing custom checks", async ({ driver }) => {
       //Arrange
       await driver.setUp(precondition.serviceControlWithMonitoring);
       // given that the custom check list is empty
