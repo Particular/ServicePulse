@@ -30,7 +30,7 @@ describe("FEATURE: No data", () => {
           When navigating to the custom checks tab
           Then a message is shown "No failed custom checks"
         */
-    test("EXAMPLE: 'No failed custom checks' should be displayed when all custom checks are in a success state", async ({ driver }) => {
+    test("EXAMPLE: There are custom checks but none of them are failing", async ({ driver }) => {
       //Arrange
       // vi.useFakeTimers();
       await driver.setUp(precondition.serviceControlWithMonitoring);
