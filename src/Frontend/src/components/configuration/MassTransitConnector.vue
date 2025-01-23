@@ -33,7 +33,7 @@ function formatDate(date: string) {
           <div class="col-2">{{ formatDate(log.date) }}</div>
           <div class="col-1" :class="`${log.level.toLowerCase()}-color`">{{ log.level }}</div>
           <div class="col-9" :class="`${log.level.toLowerCase()}-color`">
-            <span>{{ log.message }}</span>
+            <pre>{{ log.message }}</pre>
           </div>
         </div>
       </div>
@@ -55,18 +55,16 @@ function formatDate(date: string) {
 }
 
 .queues-container {
-  max-width: 30em;
+  max-width: 100%;
+  width: fit-content;
   padding: 0.75rem;
 }
 .queues-container .row {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 5fr minmax(10em, 1fr);
 }
 .queues-container .row div {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  direction: rtl;
-  text-align: left;
+  overflow-wrap: anywhere;
 }
 
 .logs-container {
@@ -80,6 +78,15 @@ function formatDate(date: string) {
   border-bottom: 1px solid #ccc;
   margin-bottom: 0.5rem;
 }
+
+.logs-container pre {
+  all: revert;
+  margin: 0;
+  font-size: 0.9rem;
+  overflow-wrap: break-word;
+  text-wrap: auto;
+}
+
 .warning-color {
   color: var(--bs-warning);
 }
