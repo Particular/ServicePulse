@@ -32,16 +32,25 @@ describe("FEATURE: No data", () => {
         */
     test("EXAMPLE: 'No failed custom checks' should be displayed when all custom checks are in a success state", async ({ driver }) => {
       //Arrange
+      // vi.useFakeTimers();
       await driver.setUp(precondition.serviceControlWithMonitoring);
+      console.log("test started now;");
       // given that the custom check list is not empty and status of all checks are passing
       await driver.setUp(precondition.hasCustomChecksPassing);
 
       //Act - When navigating to the custom checks tab
       await driver.goTo("/custom-checks");
+      console.log("navigating to the custom checks tab");
+      //vi.advanceTimersByTime(10000);
+      //setTimeout(async () => {
       //Expect
-      await waitFor(async () => {
+      waitFor(async () => {
+        console.log("expecting");
         expect(await customChecksMessage()).toBe("No failed custom checks");
       });
+      //  }, 5500);
+
+      // vi.restoreAllMocks();
     });
   });
 });
