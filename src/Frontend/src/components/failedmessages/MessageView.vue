@@ -19,6 +19,7 @@ import Message from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { useConfiguration } from "@/composables/configuration";
 import { useIsMassTransitConnected } from "@/composables/connectedApplications";
+import { parse, stringify } from "lossless-json";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -152,8 +153,8 @@ async function downloadBody(message: ExtendedFailedMessage) {
   try {
     switch (response.headers.get("content-type")) {
       case "application/json": {
-        let jsonBody = await response.json();
-        jsonBody = JSON.parse(JSON.stringify(jsonBody).replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
+        const jsonBodyRaw = await response.text();
+        const jsonBody = parse(jsonBodyRaw.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
         message.messageBody = formatJson(jsonBody);
         return;
       }
@@ -258,8 +259,8 @@ function formatXml(xml: string) {
   return string.trim();
 }
 
-function formatJson(json: string) {
-  return JSON.stringify(json, null, 2);
+function formatJson(json: unknown) {
+  return stringify(json, null, 2) as string;
 }
 
 function togglePanel(panelNum: number) {
