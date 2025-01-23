@@ -20,16 +20,16 @@ function formatDate(date: string) {
       <h4>List of error queues configured in the connector.</h4>
       <div class="queues-container">
         <div class="row margin-gap hover-highlight" v-for="queue in configuration.mass_transit_connector.error_queues" :key="queue.name">
-          <div class="col-sm-6">{{ queue.name }}</div>
-          <div class="col-sm-6 error-color" v-if="!queue.ingesting">Not ingesting</div>
-          <div class="col-sm-6 ok-color" v-else>Ok</div>
+          <div :title="queue.name">{{ queue.name }}</div>
+          <div class="error-color" v-if="!queue.ingesting">Not ingesting</div>
+          <div class="ok-color" v-else>Ok</div>
         </div>
       </div>
     </div>
     <div class="row">
       <h4>The entries below are the most recent warning and error-level events recorded on the ServiceControl Connector.</h4>
       <div class="logs-container">
-        <div class="row margin-gap hover-highlight" v-for="log in configuration.mass_transit_connector.logs" :key="log.date">
+        <div class="row margin-gap hover-highlight" v-for="log in [...configuration.mass_transit_connector.logs].reverse()" :key="log.date">
           <div class="col-2">{{ formatDate(log.date) }}</div>
           <div class="col-1" :class="`${log.level.toLowerCase()}-color`">{{ log.level }}</div>
           <div class="col-9" :class="`${log.level.toLowerCase()}-color`">
@@ -53,10 +53,22 @@ function formatDate(date: string) {
 .margin-gap {
   margin-bottom: 3px;
 }
+
 .queues-container {
   max-width: 30em;
   padding: 0.75rem;
 }
+.queues-container .row {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+.queues-container .row div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  direction: rtl;
+  text-align: left;
+}
+
 .logs-container {
   padding: 0.75rem;
 }
