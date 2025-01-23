@@ -6,7 +6,7 @@ class Settings
 {
     public required Uri ServiceControlUri { get; init; }
 
-    public required Uri MonitoringUri { get; init; }
+    public required Uri? MonitoringUri { get; init; }
 
     public required string DefaultRoute { get; init; }
 
@@ -36,7 +36,7 @@ class Settings
         monitoringUrl ??= monitoringUrls;
         monitoringUrl ??= "http://localhost:33633/";
 
-        var monitoringUri = new Uri(monitoringUrl);
+        var monitoringUri = monitoringUrl == "!" ? null : new Uri(monitoringUrl);
 
         var defaultRoute = Environment.GetEnvironmentVariable("DEFAULT_ROUTE") ?? "/dashboard";
 
