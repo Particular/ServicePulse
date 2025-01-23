@@ -1,0 +1,54 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+      - release-*
+  pull_request:
+  workflow_dispatch:
+env:
+  DOTNET_NOLOGO: true
+jobs:
+  build:
+    name: Windows
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4.2.0
+        with:
+          dotnet-version: 7.0.x
+      - name: Set up Node.js
+        uses: actions/setup-node@v4.1.0
+        with:
+          node-version: 21.6.x
+      - name: Build Frontend
+        run: .\build.ps1
+        working-directory: src/ServicePulse.Host
+      - name: Run component tests
+        run: npm run test:component
+        working-directory: src/Frontend
+      - name: Run application tests
+        run: npm run test:application
+        working-directory: src/Frontend
+      # .NET Build and run tests
+      - name: Build
+        run: dotnet build src --configuration Release
+      - name: Run .NET tests
+        uses: Particular/run-tests-action@v1.7.0
+      # Upload assets and packages
+      - name: Upload assets
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: Assets
+          path: src/ServicePulse.Host/bin/Release/
+          retention-days: 7
+      - name: Upload packages
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: NuGet packages
+          path: nugets/
+          retention-days: 7
