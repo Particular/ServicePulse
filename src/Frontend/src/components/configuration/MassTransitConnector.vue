@@ -40,7 +40,7 @@ function formatDate(date: string) {
   </div>
   <div class="box" v-else>
     <p>MassTransit Connector for ServiceControl is not configured.</p>
-    <p>Learn more about the Connector url.</p>
+    <p><a target="_blank" href="https://particular.net/learn-more-about-masstransit-connector">Learn more about the MassTransit Connector.</a></p>
   </div>
 </template>
 
