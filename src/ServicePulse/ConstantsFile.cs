@@ -19,7 +19,7 @@ class ConstantsFile
         else
         {
             serviceControlUrl = settings.ServiceControlUri.ToString();
-            monitoringUrl = settings.MonitoringUri.ToString();
+            monitoringUrl = settings.MonitoringUri?.ToString() ?? "!";
         }
 
         var constantsFile = $$"""
