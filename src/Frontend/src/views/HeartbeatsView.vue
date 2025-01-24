@@ -7,7 +7,7 @@ import { storeToRefs } from "pinia";
 import ServiceControlAvailable from "@/components/ServiceControlAvailable.vue";
 import LicenseNotExpired from "@/components/LicenseNotExpired.vue";
 import FilterInput from "@/components/FilterInput.vue";
-import { useIsMassTransitConnected } from "@/composables/connectedApplications";
+import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
 
 const store = useHeartbeatsStore();
 const { unhealthyEndpoints, healthyEndpoints, endpointFilterString } = storeToRefs(store);

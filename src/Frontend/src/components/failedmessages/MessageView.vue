@@ -18,7 +18,7 @@ import { ExtendedFailedMessage, FailedMessageError, FailedMessageStatus, isError
 import Message from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { useConfiguration } from "@/composables/configuration";
-import { useIsMassTransitConnected } from "@/composables/connectedApplications";
+import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
 import { parse, stringify } from "lossless-json";
 
 let refreshInterval: number | undefined;

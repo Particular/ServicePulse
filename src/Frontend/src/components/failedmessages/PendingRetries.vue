@@ -16,7 +16,7 @@ import SortOptions, { SortDirection } from "@/resources/SortOptions";
 import QueueAddress from "@/resources/QueueAddress";
 import { TYPE } from "vue-toastification";
 import GroupOperation from "@/resources/GroupOperation";
-import { useIsMassTransitConnected } from "@/composables/connectedApplications";
+import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
 
 let refreshInterval: number | undefined;
 let sortMethod: SortOptions<GroupOperation> | undefined;

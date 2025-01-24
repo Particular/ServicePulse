@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useIsMassTransitConnected } from "@/composables/connectedApplications";
+import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
 import MonitoringFilter from "./MonitoringFilter.vue";
 
 const isMassTransitConnected = useIsMassTransitConnected();
