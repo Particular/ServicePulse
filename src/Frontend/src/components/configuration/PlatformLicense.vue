@@ -40,16 +40,16 @@ const loading = computed(() => {
                     <b>License expiry date: </b>
                     <span
                       role="note"
-                      aria-label="licenseExpiryDate"
+                      aria-label="license-expiry-date"
                       :class="{
                         'license-expired': licenseStatus.isPlatformExpired,
                       }"
                     >
                       {{ license.formattedExpirationDate }}
-                      <span role="note" aria-label="licenseExpiryDaysLeft">{{ licenseStatus.subscriptionDaysLeft }}</span>
+                      <span role="note" aria-label="license-days-left">{{ licenseStatus.subscriptionDaysLeft }}</span>
                       <exclamation-mark :type="convertToWarningLevel(licenseStatus.warningLevel)" />
                     </span>
-                    <div class="license-expired-text" v-if="licenseStatus.isPlatformExpired">Your license expired. Please update the license to continue using the Particular Service Platform.</div>
+                    <div class="license-expired-text" v-if="licenseStatus.isPlatformExpired" role="note" aria-label="license-expired">Your license expired. Please update the license to continue using the Particular Service Platform.</div>
                   </div>
                 </template>
                 <template v-if="licenseStatus.isTrialLicense">

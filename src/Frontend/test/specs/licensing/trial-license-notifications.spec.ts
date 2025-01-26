@@ -3,6 +3,7 @@ import { expect } from "vitest";
 import { test, describe } from "../../drivers/vitest/driver";
 import * as precondition from "../../preconditions";
 import { getTrialBar } from "./questions/trialLicenseBar";
+import { LicenseType } from "@/resources/LicenseInfo";
 
 describe("FEATURE: Trial license notifications", () => {
   describe("RULE: The user should know they are using a trial license at all times", () => {
@@ -10,7 +11,7 @@ describe("FEATURE: Trial license notifications", () => {
       test(`EXAMPLE: ${viewname}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasExpiringLicense(precondition.LicenseType.Trial));
+        await driver.setUp(precondition.hasExpiringLicense(LicenseType.Trial));
 
         await driver.goTo(viewname);
 
@@ -25,7 +26,7 @@ describe("FEATURE: Trial license notifications", () => {
       test(`EXAMPLE: ${viewname}`, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasExpiringLicense(precondition.LicenseType.Subscription));
+        await driver.setUp(precondition.hasExpiringLicense(LicenseType.Subscription));
 
         await driver.goTo(viewname);
 

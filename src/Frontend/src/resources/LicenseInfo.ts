@@ -22,3 +22,8 @@ export enum LicenseStatus {
   ValidWithExpiringUpgradeProtection = "ValidWithExpiringUpgradeProtection",
   ValidWithExpiringSubscription = "ValidWithExpiringSubscription",
 }
+export enum LicenseType {
+  Subscription,
+  Trial,
+  UpgradeProtection,
+}
