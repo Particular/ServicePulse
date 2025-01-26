@@ -1,6 +1,6 @@
 import { activeLicenseResponse } from "../mocks/license-response-template";
 import { SetupFactoryOptions } from "../driver";
-import LicenseInfo, { LicenseStatus } from "@/resources/LicenseInfo";
+import LicenseInfo, { LicenseStatus, LicenseType } from "@/resources/LicenseInfo";
 import { useLicense } from "@/composables/serviceLicense";
 
 const { license } = useLicense();
@@ -13,22 +13,16 @@ export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {
   return activeLicenseResponse;
 };
 
-export enum LicenseType {
-  Subscription,
-  Trial,
-  UpgradeProtection,
-}
-
 export const hasExpiredLicense = (licenseType: LicenseType, licenseExtensionUrl: string = "https://particular.net/extend-your-trial?p=servicepulse") => createLicenseMockedResponse(licenseType, false, licenseExtensionUrl);
 export const hasExpiringLicense = (licenseType: LicenseType, licenseExtensionUrl: string = "https://particular.net/extend-your-trial?p=servicepulse") => createLicenseMockedResponse(licenseType, true, licenseExtensionUrl);
 
 const createLicenseMockedResponse =
-  (liceseType: LicenseType, expiring = false, licenseExtensionUrl: string) =>
+  (licenseType: LicenseType, expiring = false, licenseExtensionUrl: string) =>
   ({ driver }: SetupFactoryOptions) => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
     let status: LicenseStatus;
 
-    switch (liceseType) {
+    switch (licenseType) {
       case LicenseType.Subscription:
         status = expiring ? LicenseStatus.ValidWithExpiringSubscription : LicenseStatus.InvalidDueToExpiredSubscription;
         break;

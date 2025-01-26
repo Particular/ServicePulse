@@ -15,6 +15,7 @@ export * from "./hasMonitoredEndpointDetails";
 export * from "../preconditions/hasHeartbeatEndpoints";
 export { serviceControlWithMonitoring } from "./serviceControlWithMonitoring";
 export * from "./recoverability";
+export * from "./licensing";
 export { hasLicensingReportAvailable } from "../preconditions/hasLicensingReportAvailable";
 export { hasLicensingSettingTest } from "../preconditions/hasLicensingSettingTest";
 export { hasLicensingEndpoints } from "../preconditions/hasLicensingEndpoints";
