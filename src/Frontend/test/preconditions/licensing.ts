@@ -14,7 +14,13 @@ const licenseResponseTemplate = <LicenseInfo>{
   license_status: LicenseStatus.Valid,
   status: "valid",
 };
-
+export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {
+  const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
+  driver.mockEndpoint(`${serviceControlInstanceUrl}license`, {
+    body: licenseResponseTemplate,
+  });
+  return licenseResponseTemplate;
+};
 export const withExpiredLicense = (licenseType: LicenseType, expiredDays: number) => getLicenseMockedResponse(licenseType, expiredDays, true);
 export const withExpiringLicense = (licenseType: LicenseType, expiringInDays: number) => getLicenseMockedResponse(licenseType, expiringInDays, false);
 
