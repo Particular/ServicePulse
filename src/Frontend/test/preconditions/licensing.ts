@@ -1,6 +1,8 @@
 import { SetupFactoryOptions } from "../driver";
 import LicenseInfo, { LicenseStatus, LicenseType } from "@/resources/LicenseInfo";
+import { useLicense } from "@/composables/serviceLicense";
 
+const { license } = useLicense();
 const licenseResponseTemplate = <LicenseInfo>{
   registered_to: "ACME Software",
   edition: "Enterprise",
@@ -23,23 +25,37 @@ const getLicenseMockedResponse =
     const customISOString = getCustomDateISOString(expiringInDays, isExpired);
 
     let status: LicenseStatus;
+    let triallicense = false;
+    let upgradeprotectionexpiration = "";
+    let expirationdate = "";
+
     switch (licenseType) {
       case LicenseType.Subscription:
         status = isExpired ? LicenseStatus.InvalidDueToExpiredSubscription : LicenseStatus.ValidWithExpiringSubscription;
+        expirationdate = customISOString;
         break;
       case LicenseType.Trial:
         status = isExpired ? LicenseStatus.InvalidDueToExpiredTrial : LicenseStatus.ValidWithExpiringTrial;
+        expirationdate = customISOString;
+        triallicense = true;
         break;
       case LicenseType.UpgradeProtection:
         status = isExpired ? LicenseStatus.InvalidDueToExpiredUpgradeProtection : LicenseStatus.ValidWithExpiringUpgradeProtection;
+        upgradeprotectionexpiration = customISOString;
         break;
     }
-    const response = { ...licenseResponseTemplate, license_type: licenseType, expiration_date: customISOString, license_status: status };
+
+    //We need to reset the global state to ensure the warning toast is always triggered by the value changing between multiple test runs. See documented issue and proposed solution https://github.com/Particular/ServicePulse/issues/1905
+    license.license_status = LicenseStatus.Unavailable;
+
+    const response = { ...licenseResponseTemplate, license_type: licenseType, trial_license: triallicense, expiration_date: expirationdate, upgrade_protection_expiration: upgradeprotectionexpiration, license_status: status };
+    console.log(response);
     driver.mockEndpoint(`${serviceControlInstanceUrl}license`, {
       body: response,
     });
     return response;
   };
+
 function getCustomDateISOString(daysCount: number, isExpired: boolean) {
   const today = new Date();
   const customDate = new Date(today);

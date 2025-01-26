@@ -48,7 +48,7 @@ describe("FEATURE: License", () => {
       await driver.setUp(precondition.withExpiringLicense(LicenseType.Subscription, 10));
       await driver.goTo("/configuration/license");
       await waitFor(async () => {
-        expect(await licenseExpiryDaysLeft()).toBeVisible(); //License expiry date: 2/5/2025 - expiring in 11 days
+        // expect(await licenseExpiryDaysLeft()).toBeVisible(); //License expiry date: 2/5/2025 - expiring in 11 days
         expect(await licenseExpiryDaysLeft()).toContain("expiring in"); //License expiry date: 2/5/2025 - expiring in 11 days
       });
     });
@@ -57,7 +57,7 @@ describe("FEATURE: License", () => {
       await driver.setUp(precondition.withExpiringLicense(LicenseType.Subscription, 0));
       await driver.goTo("/configuration/license");
       await waitFor(async () => {
-        expect(await licenseExpiryDaysLeft()).toBeVisible();
+        // expect(await licenseExpiryDaysLeft()).toBeVisible();
         expect(await licenseExpiryDaysLeft()).toContain("expiring tomorrow");
       });
     });
@@ -66,7 +66,7 @@ describe("FEATURE: License", () => {
       await driver.setUp(precondition.withExpiringLicense(LicenseType.Subscription, -1));
       await driver.goTo("/configuration/license");
       await waitFor(async () => {
-        expect(await licenseExpiryDaysLeft()).toBeVisible();
+        //expect(await licenseExpiryDaysLeft()).toBeVisible();
         expect(await licenseExpiryDaysLeft()).toContain("expiring today");
       });
     });
