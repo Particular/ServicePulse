@@ -60,7 +60,7 @@ const getLicenseMockedResponse =
 
     const response = {
       ...licenseResponseTemplate,
-      license_type: licenseType,
+      license_type: status === LicenseStatus.ValidWithExpiringTrial || status === LicenseStatus.InvalidDueToExpiredTrial ? "Trial" : "Commercial",
       trial_license: trialLicense,
       expiration_date: expirationDate,
       upgrade_protection_expiration: upgradeProtectionExpiration,
