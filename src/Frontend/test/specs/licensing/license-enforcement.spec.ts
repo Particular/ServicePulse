@@ -14,7 +14,7 @@ describe("FEATURE: EXPIRING license detection", () => {
       test(`EXAMPLE: Expiring trial with ${licenseExtensionUrl} as license extension url `, async ({ driver }) => {
         //Arrange
         await driver.setUp(precondition.serviceControlWithMonitoring);
-        await driver.setUp(precondition.hasExpiringLicense(LicenseType.Trial, licenseExtensionUrl));
+        await driver.setUp(precondition.hasExpiringLicense(LicenseType.Trial, 10, licenseExtensionUrl));
 
         await driver.goTo("monitoring");
 

@@ -12,6 +12,7 @@ const licenseResponseTemplate = <LicenseInfo>{
   instance_name: "Particular.ServiceControl",
   trial_license: false,
   license_status: LicenseStatus.Valid,
+  license_extension_url: "",
   status: "valid",
 };
 export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {
@@ -21,40 +22,51 @@ export const hasActiveLicense = ({ driver }: SetupFactoryOptions) => {
   });
   return licenseResponseTemplate;
 };
-export const withExpiredLicense = (licenseType: LicenseType, expiredDays: number) => getLicenseMockedResponse(licenseType, expiredDays, true);
-export const withExpiringLicense = (licenseType: LicenseType, expiringInDays: number) => getLicenseMockedResponse(licenseType, expiringInDays, false);
+export const hasExpiredLicense = (licenseType: LicenseType, expiredDays: number = 10, extensionUrl: string = "") => getLicenseMockedResponse(licenseType, expiredDays, extensionUrl, true);
+export const hasExpiringLicense = (licenseType: LicenseType, expiringInDays: number = 10, extensionUrl: string = "") => getLicenseMockedResponse(licenseType, expiringInDays, extensionUrl, false);
 
 const getLicenseMockedResponse =
-  (licenseType: LicenseType, expiringInDays: number, isExpired: boolean) =>
+  (licenseType: LicenseType, expiringInDays: number, extensionUrl: string, isExpired: boolean) =>
   ({ driver }: SetupFactoryOptions) => {
     const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
     const customISOString = getCustomDateISOString(expiringInDays, isExpired);
 
     let status: LicenseStatus;
-    let triallicense = false;
-    let upgradeprotectionexpiration = "";
-    let expirationdate = "";
+    let trialLicense = false;
+    let upgradeProtectionExpiration = "";
+    let expirationDate = "";
+    let licenseExtensionUrl = extensionUrl;
 
     switch (licenseType) {
       case LicenseType.Subscription:
         status = isExpired ? LicenseStatus.InvalidDueToExpiredSubscription : LicenseStatus.ValidWithExpiringSubscription;
-        expirationdate = customISOString;
+        expirationDate = customISOString;
         break;
       case LicenseType.Trial:
         status = isExpired ? LicenseStatus.InvalidDueToExpiredTrial : LicenseStatus.ValidWithExpiringTrial;
-        expirationdate = customISOString;
-        triallicense = true;
+        expirationDate = customISOString;
+        trialLicense = true;
+        licenseExtensionUrl = extensionUrl ? extensionUrl : "https://particular.net/extend-your-trial?p=servicepulse";
         break;
       case LicenseType.UpgradeProtection:
         status = isExpired ? LicenseStatus.InvalidDueToExpiredUpgradeProtection : LicenseStatus.ValidWithExpiringUpgradeProtection;
-        upgradeprotectionexpiration = customISOString;
+        upgradeProtectionExpiration = customISOString;
+        licenseExtensionUrl = extensionUrl ? extensionUrl : "https://particular.net/extend-your-trial?p=servicepulse";
         break;
     }
 
     //We need to reset the global state to ensure the warning toast is always triggered by the value changing between multiple test runs. See documented issue and proposed solution https://github.com/Particular/ServicePulse/issues/1905
     license.license_status = LicenseStatus.Unavailable;
 
-    const response = { ...licenseResponseTemplate, license_type: licenseType, trial_license: triallicense, expiration_date: expirationdate, upgrade_protection_expiration: upgradeprotectionexpiration, license_status: status };
+    const response = {
+      ...licenseResponseTemplate,
+      license_type: licenseType,
+      trial_license: trialLicense,
+      expiration_date: expirationDate,
+      upgrade_protection_expiration: upgradeProtectionExpiration,
+      license_status: status,
+      license_extension_url: licenseExtensionUrl,
+    };
     console.log(response);
     driver.mockEndpoint(`${serviceControlInstanceUrl}license`, {
       body: response,
