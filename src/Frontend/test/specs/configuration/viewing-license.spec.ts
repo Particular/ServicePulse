@@ -72,22 +72,35 @@ describe("FEATURE: License", () => {
     });
   });
 
-  // describe("RULE: Remaining license period should be displayed", () => {
-  //   test("EXAMPLE: License expiring in more than 10 days should show 'X days left", async ({ driver }) => {
-  //     /* SCENARIO
-  //         License expiring in the future
-
-  //         Given a platform license which expires more than 10 days from now
-  //         Then "X days left" is shown
-  //       */
-  //     await driver.setUp(precondition.serviceControlWithMonitoring);
-  //     await driver.setUp(precondition.hasActiveLicense);
-  //     await driver.goTo("/configuration/license");
-  //     waitFor(async () => {
-  //       expect(await licenseExpiryDaysLeft()).toContain("days left");
-  //     });
-  //   });
-  // });
+  describe("RULE: Upgrade Protection license expiring soon must be displayed", () => {
+    test("EXAMPLE: Upgrade Protection license expiring with x days should show 'X days left'", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, 10));
+      await driver.goTo("/configuration/license");
+      await waitFor(async () => {
+        // expect(await licenseExpiryDaysLeft()).toBeVisible(); //License expiry date: 2/5/2025 - expiring in 11 days
+        expect(await licenseExpiryDaysLeft()).toContain("days left"); //License expiry date: 2/5/2025 - expiring in 11 days
+      });
+    });
+    test("EXAMPLE: Upgrade Protection license  expiring tomorrow should show 'expiring tomorrow'", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, 0));
+      await driver.goTo("/configuration/license");
+      await waitFor(async () => {
+        // expect(await licenseExpiryDaysLeft()).toBeVisible();
+        expect(await licenseExpiryDaysLeft()).toContain("1 day left");
+      });
+    });
+    test("EXAMPLE: Upgrade Protection license  expiring today should show 'expired'", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, -1));
+      await driver.goTo("/configuration/license");
+      await waitFor(async () => {
+        //expect(await licenseExpiryDaysLeft()).toBeVisible();
+        expect(await licenseExpiryDaysLeft()).toContain("expired");
+      });
+    });
+  });
   describe("RULE: Non-license options should be hidden if license has expired", () => {
     test.todo("EXAMPLE: Only 'LICENSE' tab is visible when license has expired");
 
