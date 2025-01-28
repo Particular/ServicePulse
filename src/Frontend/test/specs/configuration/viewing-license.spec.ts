@@ -7,6 +7,7 @@ import { licenseExpiryDaysLeft } from "./questions/licenseExpiryDaysLeft";
 import { licenseExpired } from "./questions/licenseExpired";
 import { waitFor } from "@testing-library/vue";
 import { LicenseType } from "@/resources/LicenseInfo";
+import { licenseTabList, licenseTabNames } from "./questions/licenseTabs";
 
 describe("FEATURE: License", () => {
   describe("RULE: Platform license type should be shown shown", () => {
@@ -40,12 +41,15 @@ describe("FEATURE: License", () => {
         expect(await licenseExpired()).toBe("Your license expired. Please update the license to continue using the Particular Service Platform.");
       });
     });
-    test.todo("EXAMPLE: Only 'LICENSE' tab is visible when license has expired");
-
-    /* SCENARIO
-          Given an expired license
-          Then "LICENSE" is the only visible tab in the Configuration screen
-        */
+    test("EXAMPLE: An expired license should show only the license and usage setup tabs", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasExpiredLicense(LicenseType.Subscription, 5)); //license expired 6 days before
+      await driver.goTo("/configuration/license");
+      await waitFor(async () => {
+        expect(await licenseTabList()).toHaveLength(2);
+        expect(await licenseTabNames()).toEqual(expect.arrayContaining(["License", "Usage Setup"]));
+      });
+    });
   });
 
   describe("RULE: License expiring soon must be displayed", () => {
