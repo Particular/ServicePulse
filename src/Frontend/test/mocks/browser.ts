@@ -25,7 +25,8 @@ const driver = makeDriver();
 (async () => {
   await driver.setUp(precondition.serviceControlWithMonitoring);
   //override the default mocked endpoints with a custom list
-  await driver.setUp(precondition.hasCustomChecksEmpty);
+  await driver.setUp(precondition.hasCustomChecks);
+
   await driver.setUp(
     precondition.monitoredEndpointsNamed([
       "Universe.Solarsystem.Mercury.Endpoint1",

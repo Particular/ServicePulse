@@ -7,7 +7,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "ServiceControl.Audit Health",
     status: Status.Fail,
     failure_reason: "I dont know the reason",
-    reported_at: "2025-01-10T05:06:30.4074087Z",
+    reported_at: "2025-01-12T05:06:30.4074087Z",
     originating_endpoint: {
       name: "Particular.ServiceControl.Audit",
       host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
@@ -20,7 +20,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "ServiceControl Health",
     status: Status.Fail,
     failure_reason: "I am unable to ingest error messages",
-    reported_at: "2025-01-10T05:42:00.531067Z",
+    reported_at: "2025-01-11T05:42:00.531067Z",
     originating_endpoint: {
       name: "Particular.ServiceControl",
       host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
@@ -33,7 +33,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "Storage space",
     status: Status.Pass,
     failure_reason: "",
-    reported_at: "2025-01-10T05:52:03.8512021Z",
+    reported_at: "2025-01-03T05:52:03.8512021Z",
     originating_endpoint: {
       name: "Particular.ServiceControl",
       host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
@@ -46,7 +46,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "Configuration",
     status: Status.Fail,
     failure_reason: "There is something wrong in Saga Audit configuration",
-    reported_at: "2025-01-10T05:52:03.850927Z",
+    reported_at: "2025-01-27T05:52:03.850927Z",
     originating_endpoint: {
       name: "Particular.ServiceControl",
       host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
@@ -59,7 +59,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "ServiceControl Health",
     status: Status.Pass,
     failure_reason: "",
-    reported_at: "2025-01-10T05:52:05.8153025Z",
+    reported_at: "2025-01-20T05:52:05.8153025Z",
     originating_endpoint: {
       name: "Particular.ServiceControl",
       host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
@@ -72,7 +72,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "ServiceControl Health",
     status: Status.Fail,
     failure_reason: "Unable to ingest messages",
-    reported_at: "2025-01-10T05:52:29.398929Z",
+    reported_at: "2025-01-08T05:52:29.398929Z",
     originating_endpoint: {
       name: "Particular.ServiceControl",
       host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
@@ -85,7 +85,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "ServiceControl Health",
     status: Status.Fail,
     failure_reason: "No idea whats going on here",
-    reported_at: "2025-01-10T05:52:29.3984912Z",
+    reported_at: "2025-01-07T05:52:29.3984912Z",
     originating_endpoint: {
       name: "Particular.ServiceControl",
       host_id: "9f822d11-b097-a4df-3db5-e069e5d356fe",
@@ -98,7 +98,7 @@ export const customCheckItems: CustomCheck[] = [
     category: "ServiceControl Health",
     status: Status.Pass,
     failure_reason: "",
-    reported_at: "2025-01-10T05:52:31.4929675Z",
+    reported_at: "2025-01-24T05:52:31.4929675Z",
     originating_endpoint: {
       name: "Particular.ServiceControl.Audit",
       host_id: "ff605b55-6fbb-af56-5753-73c1ff73e601",
