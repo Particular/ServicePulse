@@ -106,3 +106,6 @@ export const customCheckItems: CustomCheck[] = [
     },
   },
 ];
+
+export const failedCustomCheckItems = customCheckItems.filter((check) => check.status === "Fail");
+export const passedCustomCheckItems = customCheckItems.filter((check) => check.status === "Pass");

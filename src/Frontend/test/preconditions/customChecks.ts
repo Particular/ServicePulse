@@ -1,43 +1,47 @@
 import { SetupFactoryOptions } from "../driver";
-import { customCheckItems } from "../mocks/custom-checks-template";
+import { passedCustomCheckItems, customCheckItems } from "../mocks/custom-checks-template";
 
-const content = JSON.stringify([]);
-const failedCustomCheckItems = customCheckItems.filter((check) => check.status === "Fail");
-const passedCustomCheckItems = customCheckItems.filter((check) => check.status === "Pass");
+const emptyContent = JSON.stringify([]);
 
 export const hasCustomChecksEmpty = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
   driver.mockEndpoint(`${serviceControlInstanceUrl}customchecks`, {
-    body: content,
+    body: emptyContent,
     headers: {
       "Total-Count": "0", //count of failing custom checks
     },
   });
 };
 
-export const hasCustomChecksFailing = ({ driver }: SetupFactoryOptions) => {
+export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
   driver.mockEndpointDynamic(`${serviceControlInstanceUrl}customchecks`, (url) => {
     const status = url.searchParams.get("status");
+    let dataForCustomCheckItems = passedCustomCheckItems;
+
     if (status === "fail") {
-      return {
-        body: failedCustomCheckItems,
-        headers: { "Total-Count": failedCustomCheckItems.length.toString() },
-      };
+      dataForCustomCheckItems = dataForCustomCheckItems.filter((check) => check.status === "Fail");
     }
 
     return {
-      body: passedCustomCheckItems,
-      headers: { "Total-Count": passedCustomCheckItems.length.toString() },
+      body: dataForCustomCheckItems,
+      headers: { "Total-Count": dataForCustomCheckItems.length.toString() },
     };
   });
 };
-export const hasCustomChecksPassing = ({ driver }: SetupFactoryOptions) => {
+export const hasCustomChecks = ({ driver }: SetupFactoryOptions) => {
   const serviceControlInstanceUrl = window.defaultConfig.service_control_url;
-  driver.mockEndpoint(`${serviceControlInstanceUrl}customchecks`, {
-    body: passedCustomCheckItems,
-    headers: {
-      "Total-Count": passedCustomCheckItems.length.toString(), //count of passing custom checks
-    },
+  driver.mockEndpointDynamic(`${serviceControlInstanceUrl}customchecks`, (url) => {
+    const status = url.searchParams.get("status");
+    let dataForCustomCheckItems = customCheckItems;
+
+    if (status === "fail") {
+      dataForCustomCheckItems = dataForCustomCheckItems.filter((check) => check.status === "Fail");
+    }
+
+    return {
+      body: dataForCustomCheckItems,
+      headers: { "Total-Count": dataForCustomCheckItems.length.toString() },
+    };
   });
 };
