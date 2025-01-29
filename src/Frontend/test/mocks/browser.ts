@@ -25,7 +25,7 @@ const driver = makeDriver();
 (async () => {
   await driver.setUp(precondition.serviceControlWithMonitoring);
   //override the default mocked endpoints with a custom list
-  await driver.setUp(precondition.hasCustomChecks);
+  await driver.setUp(precondition.hasCustomChecks(49, 2));
 
   await driver.setUp(
     precondition.monitoredEndpointsNamed([
