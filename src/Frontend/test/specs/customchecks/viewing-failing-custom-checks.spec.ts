@@ -30,10 +30,10 @@ describe("FEATURE: Failing custom checks", () => {
     });
   });
 
-  describe("RULE: Failed custom checks should have pagination when failed checks count is greater than 50", () => {
-    test("EXAMPLE: 51 failed custom checks is paginated on the custom checks tab", async ({ driver }) => {
+  describe("RULE: Failed custom checks should have pagination when failed checks count is greater than 10", () => {
+    test("EXAMPLE: 11 failed custom checks is paginated on the custom checks tab", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasCustomChecks(51, 3));
+      await driver.setUp(precondition.hasCustomChecks(11, 3));
 
       await driver.goTo("/custom-checks");
 
@@ -42,13 +42,13 @@ describe("FEATURE: Failing custom checks", () => {
       });
       expect(customChecksListPaginationElement()).toBeInTheDocument(); //pagination vsible
       await waitFor(async () => {
-        expect(await customChecksFailedRowsList()).toHaveLength(51); //count of failed checks matches failing count set
+        expect(await customChecksFailedRowsList()).toHaveLength(11); //count of failed checks matches failing count set
       });
     });
 
-    test("EXAMPLE: 49 failed custom checks is not paginated on the custom checks tab", async ({ driver }) => {
+    test("EXAMPLE: 9 failed custom checks is not paginated on the custom checks tab", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasCustomChecks(49, 3));
+      await driver.setUp(precondition.hasCustomChecks(9, 3));
 
       await driver.goTo("/custom-checks");
 
@@ -57,7 +57,7 @@ describe("FEATURE: Failing custom checks", () => {
       });
       expect(customChecksListPaginationElement()).not.toBeInTheDocument(); //pagination vsible
       await waitFor(async () => {
-        expect(await customChecksFailedRowsList()).toHaveLength(49); //count of failed checks matches failing count set
+        expect(await customChecksFailedRowsList()).toHaveLength(9); //count of failed checks matches failing count set
       });
     });
   });
