@@ -17,6 +17,7 @@ export function typeText(license: LicenseInfo, configuration: Configuration | nu
   if (license.trial_license && configuration?.mass_transit_connector) {
     return "Early Access";
   }
+  return license.license_type;
 }
 
 export enum LicenseStatus {
