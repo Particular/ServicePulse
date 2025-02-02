@@ -5,7 +5,7 @@ export async function licenseTabList() {
   return tabs;
 }
 export async function licenseTabNames() {
-  const tabs = await screen.findAllByRole("tab");
+  const tabs = await licenseTabList();
   // Check the names of the tabs
   const tabNames = tabs.map((tab) => tab.textContent?.trim());
   return tabNames;
