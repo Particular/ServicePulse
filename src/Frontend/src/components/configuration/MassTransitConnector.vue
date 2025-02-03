@@ -19,10 +19,9 @@ function formatDate(date: string) {
     <div class="row margin-bottom-10">
       <h4>List of error queues configured in the connector.</h4>
       <div class="queues-container">
-        <div class="row margin-gap hover-highlight" v-for="queue in configuration.mass_transit_connector.error_queues" :key="queue.name">
-          <div :title="queue.name">{{ queue.name }}</div>
-          <div class="error-color" v-if="!queue.ingesting">Not ingesting</div>
-          <div class="ok-color" v-else>Ok</div>
+        <div class="margin-gap hover-highlight" v-for="queue in configuration.mass_transit_connector.error_queues" :key="queue.name">
+          <div :title="queue.ingesting ? 'Ok' : 'Not ingesting'" class="status" :class="queue.ingesting ? 'ok-status' : 'error-status'" />
+          <div>{{ queue.name }}</div>
         </div>
       </div>
     </div>
@@ -55,16 +54,28 @@ function formatDate(date: string) {
 }
 
 .queues-container {
-  max-width: 100%;
-  width: fit-content;
   padding: 0.75rem;
 }
-.queues-container .row {
-  display: grid;
-  grid-template-columns: 5fr minmax(10em, 1fr);
+.queues-container > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
-.queues-container .row div {
+.queues-container > div div {
   overflow-wrap: anywhere;
+}
+
+.status {
+  width: 1em;
+  height: 1em;
+  border-radius: 0.5em;
+  flex-shrink: 0;
+}
+.error-status {
+  background-color: var(--bs-danger);
+}
+.ok-status {
+  background-color: var(--bs-success);
 }
 
 .logs-container {
