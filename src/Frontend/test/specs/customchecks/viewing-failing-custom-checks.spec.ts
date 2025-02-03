@@ -1,7 +1,7 @@
 import { test, describe } from "../../drivers/vitest/driver";
 import { expect } from "vitest";
 import * as precondition from "../../preconditions";
-import { customChecksFailedRowsList, customChecksListElement, customChecksMessageElement, customChecksFailedReasonList, customChecksListPaginationElement } from "./questions/failedCustomChecks";
+import { customChecksFailedRowsList, customChecksListElement, customChecksMessageElement, customChecksFailedReasonList, customChecksListPaginationElement, customChecksReportedDateList } from "./questions/failedCustomChecks";
 import { waitFor } from "@testing-library/vue";
 
 describe("FEATURE: Failing custom checks", () => {
@@ -62,14 +62,27 @@ describe("FEATURE: Failing custom checks", () => {
     });
   });
   describe("RULE: Failed custom checks should be shown in descending order of last checked", () => {
-    test.todo("EXAMPLE: Three failed custom checks is  displayed in descending order of last checked on the custom checks tab");
+    test("EXAMPLE:Three failed custom checks is  displayed in descending order of last checked on the custom checks tab", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasCustomChecks(3, 3));
 
-    /* SCENARIO
-          Given there are three failed custom checks
-          And the custom checks failed at different times
-          When navigating to the custom checks tab
-          Then the custom checks are shown in descending order of last checked
-        */
+      await driver.goTo("/custom-checks");
+
+      await waitFor(async () => {
+        expect(await customChecksListElement()).toBeInTheDocument(); //failed list is visisble
+      });
+      expect(customChecksListPaginationElement()).not.toBeInTheDocument(); //pagination not  vsible
+      await waitFor(async () => {
+        expect(await customChecksFailedRowsList()).toHaveLength(3); //count of failed checks matches failing count set
+      });
+
+      const timestamps = await customChecksReportedDateList(); // Ensure this is awaited correctly
+
+      // Ensure that the times are in descending order
+      for (let i = 0; i < timestamps.length - 1; i++) {
+        expect(timestamps[i]).toBeGreaterThanOrEqual(timestamps[i + 1]);
+      }
+    });
   });
   describe("RULE: Custom checks should auto-refresh", () => {
     test.todo("EXAMPLE: When a custom check fails, the custom checks tab is auto-refreshed with the new failed custom check");

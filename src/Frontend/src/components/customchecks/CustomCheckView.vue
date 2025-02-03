@@ -23,7 +23,7 @@ const store = useCustomChecksStore();
                     <span class="metadata"><i aria-hidden="true" class="fa fa-list"></i> Category: {{ customCheck.category }}</span>
                     <span class="metadata"><i aria-hidden="true" class="fa pa-endpoint"></i> Endpoint: {{ customCheck.originating_endpoint.name }}</span>
                     <span class="metadata"><i aria-hidden="true" class="fa fa-server"></i> Host: {{ customCheck.originating_endpoint.host }}</span>
-                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last checked: <TimeSince :date-utc="customCheck.reported_at"></TimeSince></span>
+                    <span class="metadata"><i aria-hidden="true" class="fa fa-clock-o"></i> Last checked: <TimeSince :date-utc="customCheck.reported_at" role="note" aria-label="custom-check-reported-date"></TimeSince></span>
                   </p>
                 </div>
               </div>
