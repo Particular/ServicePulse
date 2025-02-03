@@ -1,5 +1,4 @@
 import { screen } from "@testing-library/vue";
-import { Console } from "console";
 import moment from "moment";
 
 export function customChecksMessageElement() {

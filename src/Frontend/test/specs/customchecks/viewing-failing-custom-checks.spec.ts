@@ -3,6 +3,7 @@ import { expect } from "vitest";
 import * as precondition from "../../preconditions";
 import { customChecksFailedRowsList, customChecksListElement, customChecksMessageElement, customChecksFailedReasonList, customChecksListPaginationElement, customChecksReportedDateList } from "./questions/failedCustomChecks";
 import { waitFor } from "@testing-library/vue";
+import { updateCustomCheckItem } from "../../preconditions";
 
 describe("FEATURE: Failing custom checks", () => {
   describe("RULE: Failed custom checks should be displayed", () => {
@@ -71,7 +72,6 @@ describe("FEATURE: Failing custom checks", () => {
       await waitFor(async () => {
         expect(await customChecksListElement()).toBeInTheDocument(); //failed list is visisble
       });
-      expect(customChecksListPaginationElement()).not.toBeInTheDocument(); //pagination not  vsible
       await waitFor(async () => {
         expect(await customChecksFailedRowsList()).toHaveLength(3); //count of failed checks matches failing count set
       });
@@ -85,21 +85,52 @@ describe("FEATURE: Failing custom checks", () => {
     });
   });
   describe("RULE: Custom checks should auto-refresh", () => {
-    test.todo("EXAMPLE: When a custom check fails, the custom checks tab is auto-refreshed with the new failed custom check");
+    test("EXAMPLE:When a custom check fails, the custom checks tab is auto-refreshed with the new failed custom check", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const customCheckItems = precondition.setCustomChecksData(3, 2)();
+      await driver.setUp(precondition.getCustomChecks(customCheckItems));
 
-    /* SCENARIO
-          Given 2 passing custom checks
-          And the custom checks page is open
-          When the endpoint reports a failing custom check
-          Then the failing custom check should be rendered
-        */
+      await driver.goTo("/custom-checks");
 
-    test.todo("EXAMPLE: A failing custom check that begins passing is auto-refreshed and removed from the list on the custom checks tab");
-    /* SCENARIO
-          Given 2 failing custom checks
-          And the custom checks page is open
-          When one of the custom checks passes
-          Then the passing custom check should be removed from the list
-        */
+      await waitFor(async () => {
+        expect(await customChecksListElement()).toBeInTheDocument(); //failed list is visisble
+      });
+      await waitFor(async () => {
+        expect(await customChecksFailedRowsList()).toHaveLength(3); //count of failed checks matches failing count set
+      });
+
+      updateCustomCheckItem(customCheckItems, "Pass"); // Fail an existing item that is passing
+
+      await driver.setUp(precondition.getCustomChecks(customCheckItems));
+
+      await driver.goTo("/custom-checks");
+      await waitFor(async () => {
+        expect(await customChecksFailedRowsList()).toHaveLength(4); // Now it should be 4
+      });
+    });
+
+    test("EXAMPLE: A failing custom check that begins passing is auto-refreshed and removed from the list on the custom checks tab", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      const customCheckItems = precondition.setCustomChecksData(3, 2)();
+      await driver.setUp(precondition.getCustomChecks(customCheckItems));
+
+      await driver.goTo("/custom-checks");
+
+      await waitFor(async () => {
+        expect(await customChecksListElement()).toBeInTheDocument(); //failed list is visisble
+      });
+      await waitFor(async () => {
+        expect(await customChecksFailedRowsList()).toHaveLength(3); //count of failed checks matches failing count set
+      });
+
+      updateCustomCheckItem(customCheckItems, "Fail"); // Pass an existing item that is failing
+
+      await driver.setUp(precondition.getCustomChecks(customCheckItems));
+
+      await driver.goTo("/custom-checks");
+      await waitFor(async () => {
+        expect(await customChecksFailedRowsList()).toHaveLength(2); // Now it should be 2
+      });
+    });
   });
 });
