@@ -53,4 +53,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: particular/servicepulse
           readme-filepath: ./Container-README.md
-          short-description: Keep track of the health and performance of your system's endpoints, with minimal configuration.
+          short-description: Keep track of the health and performance of your system's endpoints.
