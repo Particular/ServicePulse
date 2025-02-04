@@ -5,7 +5,7 @@ import moment from "moment";
 const configuration = useConfiguration();
 
 function formatDate(date: string) {
-  return moment(date).local().format("ddd, MMM Do YYYY HH:mm:ss Z");
+  return moment(date).local().format("LLLL");
 }
 </script>
 
