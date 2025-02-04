@@ -3,9 +3,9 @@ import { useConfiguration } from "@/composables/configuration";
 import moment from "moment";
 
 const configuration = useConfiguration();
-// "Wed, Jan 15th 2025 10:56:21 +10:00",
+
 function formatDate(date: string) {
-  return moment(date).local().format("LLLL"); //.format("ddd, MMM Do YYYY HH:mm:ss Z");
+  return moment(date).local().format("ddd, MMM Do YYYY HH:mm:ss Z");
 }
 </script>
 
@@ -20,8 +20,9 @@ function formatDate(date: string) {
       <h4>List of error queues configured in the connector.</h4>
       <div class="queues-container">
         <div class="margin-gap hover-highlight" v-for="queue in configuration.mass_transit_connector.error_queues" :key="queue.name">
-          <div :title="queue.ingesting ? 'Ok' : 'Not ingesting'" class="status" :class="queue.ingesting ? 'ok-status' : 'error-status'" />
-          <div>{{ queue.name }}</div>
+          <i v-if="queue.ingesting" class="fa fa-check info-color"></i>
+          <i v-else class="fa fa-times error-color" v-tippy="`Not ingesting from this queue. Check the logs below for more information.`"></i>
+          <span>{{ queue.name }}</span>
         </div>
       </div>
     </div>
@@ -65,19 +66,6 @@ function formatDate(date: string) {
   overflow-wrap: anywhere;
 }
 
-.status {
-  width: 1em;
-  height: 1em;
-  border-radius: 0.5em;
-  flex-shrink: 0;
-}
-.error-status {
-  background-color: var(--bs-danger);
-}
-.ok-status {
-  background-color: var(--bs-success);
-}
-
 .logs-container {
   padding: 0.75rem;
 }
@@ -104,7 +92,7 @@ function formatDate(date: string) {
 .error-color {
   color: var(--bs-danger);
 }
-.ok-color {
+.info-color {
   color: var(--bs-success);
 }
 </style>
