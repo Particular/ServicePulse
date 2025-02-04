@@ -1,39 +1,48 @@
 import { test, describe } from "../../drivers/vitest/driver";
+import * as precondition from "../../preconditions";
+import { expect } from "vitest";
+import { getNothingToConfigureStatus } from "./questions/getNothingToConfigureStatus";
+import { navigateToHeartbeatsConfiguration } from "./actions/navigateToHeartbeatsConfiguration";
+import { getEndpointsForConfiguration } from "./questions/getEndpointsForConfiguration";
+import { getEndpointInstance } from "./questions/getEndpointInstance";
 
 describe("FEATURE: Heartbeats configuration", () => {
   describe("RULE: A list of all endpoints with the heartbeats plug-in installed should be displayed", () => {
-    test.todo("EXAMPLE: With no endpoints, the text 'Nothing to configure' should be displayed");
+    test("EXAMPLE: With no endpoints, the text 'Nothing to configure' should be displayed", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.goTo("dashboard");
 
-    /* SCENARIO
-      No endpoints
+      await navigateToHeartbeatsConfiguration();
 
-      Given no endpoint instances
-      When the configuration screen is loaded
-      Then the text "Nothing to configure" should be displayed
-    */
+      const nothingToConfigureElement = await getNothingToConfigureStatus();
 
-    test.todo("EXAMPLE: 3 endpoints should be displayed in the list");
-    /* SCENARIO
-      Some endpoints
+      expect(nothingToConfigureElement).toBeTruthy();
+      expect(nothingToConfigureElement.textContent).toBe("Nothing to configure");
+    });
 
-      Given 3 endpoint instances
-        Name |
-        Foo1
-        Foo2
-        Foo3
-      When the configuration screen is loaded
-      Then All 3 endpoints should be displayed
-    */
+    test("EXAMPLE: 3 endpoints should be displayed in the list", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.hasHealthyEndpoints(3));
+      await driver.goTo("dashboard");
 
-    /* NOTES
-      Endpoint name
-      Host id
-      last reported heartbeat
-      Monitoring status
-    */
+      await navigateToHeartbeatsConfiguration();
+
+      const endpointRows = await getEndpointsForConfiguration();
+
+      expect(endpointRows.size).toBe(3);
+    });
   });
+
   describe("RULE: Toggling on/off heartbeat monitoring for endpoints should be possible", () => {
-    test.todo("EXAMPLE: Heartbeat monitoring toggle should be off by default");
+    test("EXAMPLE: Heartbeat monitoring toggle should be off by default", async ({ driver }) => {
+      await driver.setUp(precondition.serviceControlWithMonitoring);
+      await driver.setUp(precondition.HasHealthyAndUnHealthyEndpoints(1, 1));
+      await driver.goTo("heartbeats/instances/TestEndpoint_2");
+
+      const endpointInstance = await getEndpointInstance("TestEndpoint_2");
+
+      expect(endpointInstance.muted).toBeFalsy();
+    });
 
     /* SCENARIO
       Given a monitored endpoint instance
