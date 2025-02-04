@@ -16,7 +16,7 @@ const generateGuid = () => {
   return crypto.randomUUID();
 };
 const customCheckTemplate = <CustomCheck>{
-  id: "CustomChecks/6131fa95-9414-1898-9c83-c5b18587945b",
+  id: "customchecks/6131fa95-9414-1898-9c83-c5b18587945b",
   custom_check_id: "SampleCustomeCheck",
   category: "SomeCategory",
   status: "Pass",
@@ -57,7 +57,7 @@ export const hasCustomChecks =
 
       return {
         ...customCheckTemplate,
-        id: `customcheck/${newGuid}`, // New GUID for ID
+        id: `customchecks/${newGuid}`, // New GUID for ID
         category: customCategory,
         custom_check_id: customeCheckId,
         status, // Fail or Pass based on index
@@ -113,7 +113,7 @@ export const setCustomChecksData = (failingCount: number, passingCount: number) 
 
     return {
       ...customCheckTemplate,
-      id: `customcheck/${newGuid}`, // New GUID for ID
+      id: `customchecks/${newGuid}`, // New GUID for ID
       category: customCategory,
       custom_check_id: customeCheckId,
       status, // Fail or Pass based on index
@@ -152,11 +152,11 @@ export const getCustomChecks =
     });
   };
 
-export const updateCustomCheckItem = (data: CustomCheck[], status: string) => {
+export const updateCustomCheckItem = (data: CustomCheck[], statusToUpdate: string) => {
   const itemToUpdate = data.find((item) => item.status === status);
 
   if (itemToUpdate) {
-    if (status === "Pass") {
+    if (statusToUpdate === "Pass") {
       itemToUpdate.status = Status.Fail;
       itemToUpdate.failure_reason = "Some reason I dont know";
     } else {

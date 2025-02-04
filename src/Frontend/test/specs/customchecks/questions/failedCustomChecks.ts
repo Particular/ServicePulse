@@ -40,3 +40,7 @@ export async function customChecksReportedDateList() {
 
   return timeStamps;
 }
+export async function customChecksDismissButtonList() {
+  const dismissButtonList = await screen.findAllByRole("button", { name: "custom-check-dismiss" });
+  return dismissButtonList;
+}

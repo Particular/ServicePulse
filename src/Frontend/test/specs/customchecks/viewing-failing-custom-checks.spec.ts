@@ -123,7 +123,7 @@ describe("FEATURE: Failing custom checks", () => {
         expect(await customChecksFailedRowsList()).toHaveLength(3); //count of failed checks matches failing count set
       });
 
-      updateCustomCheckItem(customCheckItems, "Fail"); // Pass an existing item that is failing
+      updateCustomCheckItem(customCheckItems, "Fail"); // an existing item that is failing
 
       await driver.setUp(precondition.getCustomChecks(customCheckItems));
 
