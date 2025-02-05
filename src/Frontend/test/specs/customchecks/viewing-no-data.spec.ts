@@ -18,7 +18,9 @@ describe("FEATURE: No data", () => {
     });
     test("EXAMPLE: There are custom checks but none of them are failing", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      await driver.setUp(precondition.hasCustomChecks(0, 5));
+      const failingCustomCheckCount = 0;
+      const passingCustomCheckCount = 5;
+      await driver.setUp(precondition.hasCustomChecks(failingCustomCheckCount, passingCustomCheckCount));
 
       await driver.goTo("/custom-checks");
 
