@@ -9,6 +9,12 @@ if (Test-Path $AppOutputFolder) {
 New-Item -ItemType Directory -Force -Path $AppOutputFolder
 
 Push-Location $FrontendSourceFolder
+npm audit --audit-level=low
+
+if ( $? -eq $false ) {
+    exit $LastExitCode
+}
+
 npm install
 npm run build
 Remove-Item -Path "./dist/mockServiceWorker.js"
