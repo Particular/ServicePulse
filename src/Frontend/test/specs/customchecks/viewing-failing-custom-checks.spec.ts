@@ -3,7 +3,7 @@ import { expect } from "vitest";
 import * as precondition from "../../preconditions";
 import { customChecksFailedRowsList, customChecksListElement, customChecksMessageElement, customChecksFailedReasonList, customChecksListPaginationElement, customChecksReportedDateList } from "./questions/failedCustomChecks";
 import { waitFor } from "@testing-library/vue";
-import { updateCustomCheckItem } from "../../preconditions";
+import { updateCustomCheckItemByStatus } from "../../preconditions/customChecks";
 
 describe("FEATURE: Failing custom checks", () => {
   describe("RULE: Failed custom checks should be displayed", () => {
@@ -87,7 +87,7 @@ describe("FEATURE: Failing custom checks", () => {
   describe("RULE: Custom checks should auto-refresh", () => {
     test("EXAMPLE:When a custom check fails, the custom checks tab is auto-refreshed with the new failed custom check", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      const customCheckItems = precondition.setCustomChecksData(3, 2)();
+      const customCheckItems = precondition.generateCustomChecksData(3, 2)();
       await driver.setUp(precondition.getCustomChecks(customCheckItems));
 
       await driver.goTo("/custom-checks");
@@ -99,7 +99,7 @@ describe("FEATURE: Failing custom checks", () => {
         expect(await customChecksFailedRowsList()).toHaveLength(3); //count of failed checks matches failing count set
       });
 
-      updateCustomCheckItem(customCheckItems, "Pass"); // Fail an existing item that is passing
+      updateCustomCheckItemByStatus(customCheckItems, "Pass"); // Fail an existing item that is passing
 
       await driver.setUp(precondition.getCustomChecks(customCheckItems));
 
@@ -111,7 +111,7 @@ describe("FEATURE: Failing custom checks", () => {
 
     test("EXAMPLE: A failing custom check that begins passing is auto-refreshed and removed from the list on the custom checks tab", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
-      const customCheckItems = precondition.setCustomChecksData(3, 2)();
+      const customCheckItems = precondition.generateCustomChecksData(3, 2)();
       await driver.setUp(precondition.getCustomChecks(customCheckItems));
 
       await driver.goTo("/custom-checks");
@@ -123,7 +123,7 @@ describe("FEATURE: Failing custom checks", () => {
         expect(await customChecksFailedRowsList()).toHaveLength(3); //count of failed checks matches failing count set
       });
 
-      updateCustomCheckItem(customCheckItems, "Fail"); // an existing item that is failing
+      updateCustomCheckItemByStatus(customCheckItems, "Fail"); // an existing item that is failing
 
       await driver.setUp(precondition.getCustomChecks(customCheckItems));
 
