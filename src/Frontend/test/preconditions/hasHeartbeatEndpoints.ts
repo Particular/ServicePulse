@@ -8,6 +8,10 @@ interface ChangeTracking {
   track_instances: boolean;
 }
 
+interface MonitorHeartbeat {
+  monitor_heartbeat: boolean;
+}
+
 export const hasHeartbeatsEndpoints = (endpoints: EndpointsView[]) => {
   const endpointSettingsList: EndpointSettings[] = [
     {
@@ -16,10 +20,12 @@ export const hasHeartbeatsEndpoints = (endpoints: EndpointsView[]) => {
     },
   ];
 
+  const endpointsList = [...endpoints];
+
   return ({ driver }: SetupFactoryOptions) => {
     driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}endpoints`, "get", () => {
       return Promise.resolve({
-        body: endpoints,
+        body: endpointsList,
       });
     });
 
@@ -29,8 +35,18 @@ export const hasHeartbeatsEndpoints = (endpoints: EndpointsView[]) => {
       });
     });
 
-    endpoints.forEach((e) => {
-      driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}endpointssettings/${e.name}`, "patch", async (url: URL, params: PathParams, request: StrictRequest<DefaultBodyType>) => {
+    endpointsList.forEach((e) => {
+      driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}endpoints/${e.id}`, "patch", async (_url: URL, _params: PathParams, request: StrictRequest<DefaultBodyType>) => {
+        const requestBody = <MonitorHeartbeat>await request.json();
+
+        e.monitor_heartbeat = requestBody.monitor_heartbeat;
+
+        return Promise.resolve(<MockEndpointDynamicOptions>{
+          status: 200,
+        });
+      });
+
+      driver.mockEndpointDynamic(`${window.defaultConfig.service_control_url}endpointssettings/${e.id}`, "patch", async (url: URL, params: PathParams, request: StrictRequest<DefaultBodyType>) => {
         const requestBody = <ChangeTracking>await request.json();
 
         let endpointSettings = endpointSettingsList.find((setting) => setting.name === e.name);
@@ -59,6 +75,7 @@ export const hasUnhealthyHeartbeatsEndpoints = (numberOfUnhealthyEndpoints: numb
   for (let i = 0; i < numberOfUnhealthyEndpoints; i++) {
     unhealthyEndpoints.push(<EndpointsView>{
       ...unHealthyEndpointTemplate,
+      id: `${endpointNamePrefix}_${i}`,
       name: `${endpointNamePrefix}_${i}`,
     });
   }
@@ -78,6 +95,7 @@ export const hasHealthyHeartbeatsEndpoints = (numberOfHealthyEndpoints: number, 
   for (let i = 0; i < numberOfHealthyEndpoints; i++) {
     healthyEndpoints.push(<EndpointsView>{
       ...healthyEndpointTemplate,
+      id: `${endpointNamePrefix}_${i}`,
       name: `${endpointNamePrefix}_${i}`,
     });
   }
@@ -96,7 +114,19 @@ export const hasAnUnhealthyUnMonitoredEndpoint = () => {
   return hasHeartbeatsEndpoints([
     <EndpointsView>{
       ...unHealthyEndpointTemplate,
+      id: `Unhealthy_UnmonitoredEndpoint`,
       name: `Unhealthy_UnmonitoredEndpoint`,
+      monitor_heartbeat: false,
+    },
+  ]);
+};
+
+export const hasAHealthyButUnMonitoredEndpoint = () => {
+  return hasHeartbeatsEndpoints([
+    <EndpointsView>{
+      ...healthyEndpointTemplate,
+      id: `Healthy_UnmonitoredEndpoint`,
+      name: `Healthy_UnmonitoredEndpoint`,
       monitor_heartbeat: false,
     },
   ]);
@@ -116,6 +146,7 @@ export const HasHealthyAndUnHealthyNamedEndpoints = (numberOfHealthyEndpoints: n
     (count) =>
       endpoints.push(<EndpointsView>{
         ...healthyEndpointTemplate,
+        id: `${endpointNamePrefix}_${count}`,
         name: `${endpointNamePrefix}_${count}`,
       }),
     numberOfHealthyEndpoints
@@ -125,6 +156,7 @@ export const HasHealthyAndUnHealthyNamedEndpoints = (numberOfHealthyEndpoints: n
     (count) =>
       endpoints.push(<EndpointsView>{
         ...unHealthyEndpointTemplate,
+        id: `${endpointNamePrefix}_${numberOfHealthyEndpoints + count}`,
         name: `${endpointNamePrefix}_${numberOfHealthyEndpoints + count}`,
       }),
     numberOfUnhealthyEndpoints

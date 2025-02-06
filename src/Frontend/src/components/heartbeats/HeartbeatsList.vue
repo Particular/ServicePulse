@@ -103,8 +103,8 @@ function endpointHealth(endpoint: LogicalEndpoint) {
               <LastHeartbeat :date="endpoint.heartbeat_information?.last_report_at" tooltip-target="endpoint" />
             </div>
             <div v-if="columns.includes(ColumnNames.Tracked)" role="cell" aria-label="tracked-instances" class="col-1 centre">
-              <tippy v-if="endpoint.track_instances" content="Instances are being tracked" :delay="[1000, 0]">
-                <i class="fa fa-check text-success"></i>
+              <tippy v-if="endpoint.track_instances" id="tracked-instance-desc" content="Instances are being tracked" :delay="[1000, 0]">
+                <i class="fa fa-check text-success" aria-title="Instances are being tracked"></i>
               </tippy>
             </div>
             <div v-if="columns.includes(ColumnNames.TrackToggle)" role="cell" aria-label="tracked-instances" class="col-2 centre">
@@ -117,7 +117,7 @@ function endpointHealth(endpoint: LogicalEndpoint) {
                 <tippy content="All instances have alerts muted" :delay="[300, 0]">
                   <i class="fa fa-bell-slash text-danger" />
                 </tippy>
-                <span class="instances-muted">{{ endpoint.muted_count }}</span>
+                <span class="instances-muted" aria-label="Muted instance count">{{ endpoint.muted_count }}</span>
               </template>
               <template v-else-if="endpoint.muted_count > 0">
                 <tippy :content="`${endpoint.muted_count} instance(s) have alerts muted`" :delay="[300, 0]">

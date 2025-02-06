@@ -1,5 +1,6 @@
 import { screen, within } from "@testing-library/vue";
 
+// Assumes the current page is /heartbeats/instances/{instance name}
 export async function getEndpointInstance(instanceName: string) {
   const endpointRow = await screen.findByRole("row", { name: instanceName });
   const hostName = within(endpointRow).getByLabelText("instance-name").textContent;
