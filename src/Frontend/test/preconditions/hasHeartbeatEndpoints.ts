@@ -12,13 +12,16 @@ interface MonitorHeartbeat {
   monitor_heartbeat: boolean;
 }
 
-export const hasHeartbeatsEndpoints = (endpoints: EndpointsView[]) => {
-  const endpointSettingsList: EndpointSettings[] = [
+export const hasHeartbeatsEndpoints = (
+  endpoints: EndpointsView[],
+  endpointSettings = [
     {
       name: "",
       track_instances: true,
     },
-  ];
+  ]
+) => {
+  const endpointSettingsList: EndpointSettings[] = [...endpointSettings];
 
   const endpointsList = [...endpoints];
 
