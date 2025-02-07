@@ -11,7 +11,9 @@ import { licenseTabList, licenseTabNames } from "./questions/licenseTabs";
 
 describe("FEATURE: License", () => {
   describe("RULE: Platform license type should be shown shown", () => {
-    test("EXAMPLE: Valid platform license type is shown", async ({ driver }) => {
+    test.todo("EXAMPLE: The platform is running a trial license");
+    
+    test("EXAMPLE: The platform is running a commercial license", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasActiveLicense);
       await driver.goTo("/configuration/license");
