@@ -35,7 +35,7 @@ describe("FEATURE: License", () => {
   });
 
   describe("RULE: License expired", () => {
-    test("EXAMPLE: An expired license shows 'expired'", async ({ driver }) => {
+    test("EXAMPLE: An expired license", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasExpiredLicense(LicenseType.Subscription, 5)); //license expired 6 days before
       await driver.goTo("/configuration/license");
