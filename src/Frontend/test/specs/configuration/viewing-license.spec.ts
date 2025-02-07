@@ -103,7 +103,7 @@ describe("FEATURE: License", () => {
         expect((await licenseExpiryDaysLeft()).textContent).toContain("1 day left");
       });
     });
-    test("EXAMPLE: Upgrade Protection license  expiring today shows 'expired'", async ({ driver }) => {
+    test("EXAMPLE: Upgrade Protection license expiring today", async ({ driver }) => {
       await driver.setUp(precondition.serviceControlWithMonitoring);
       await driver.setUp(precondition.hasExpiringLicense(LicenseType.UpgradeProtection, -1));
       await driver.goTo("/configuration/license");
