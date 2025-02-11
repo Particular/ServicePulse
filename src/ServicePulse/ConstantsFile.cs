@@ -14,7 +14,7 @@ class ConstantsFile
         if (settings.EnableReverseProxy)
         {
             serviceControlUrl = "/api/";
-            monitoringUrl = "/monitoring-api/";
+            monitoringUrl = settings.MonitoringUri == null ? "!" : "/monitoring-api/";
         }
         else
         {
