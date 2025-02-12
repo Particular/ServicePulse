@@ -115,6 +115,7 @@ jobs:
         env:
           SECRETS_AVAILABLE: ${{ secrets.SECRETS_AVAILABLE }}
         run: exit $(If ($env:SECRETS_AVAILABLE -eq 'true') { 0 } Else { 1 })
+        shell: pwsh
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
