@@ -109,13 +109,12 @@ jobs:
     name: linux-container
     defaults:
       run:
-        shell: bash
+        shell: pwsh
     steps:
       - name: Check for secrets
         env:
           SECRETS_AVAILABLE: ${{ secrets.SECRETS_AVAILABLE }}
         run: exit $(If ($env:SECRETS_AVAILABLE -eq 'true') { 0 } Else { 1 })
-        shell: pwsh
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
@@ -143,10 +142,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.7.1
       - name: Log in to GitHub container registry
+        shell: bash
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Build & inspect image
         env:
           TAG_NAME: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || env.MinVerVersion }}
+        shell: bash
         run: |
           docker buildx build --push --tag ghcr.io/particular/servicepulse:${{ env.TAG_NAME }} \
             --file src/ServicePulse/Dockerfile \
