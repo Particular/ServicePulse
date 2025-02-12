@@ -28,4 +28,8 @@
     <Content Include="app\js\app.constants.js" CopyToOutputDirectory="PreserveNewest" Condition="Exists('app\js\app.constants.js')" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ServicePulse.Host.Tests" />
+  </ItemGroup>
+
 </Project>
