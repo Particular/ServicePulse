@@ -76,15 +76,15 @@ const getLicenseMockedResponse =
 
 function getCustomDateISOString(daysCount: number, isExpired: boolean) {
   const today = new Date();
-  const customDate = new Date(today);
+  today.setHours(0, 0, 0, 0);
+  today.setDate(today.getDate() + 1);
 
+  const customDate = new Date(today);
   if (isExpired) {
     customDate.setDate(today.getDate() - daysCount);
   } else {
     customDate.setDate(today.getDate() + daysCount);
   }
 
-  const nativeISOString = customDate.toISOString(); // e.g., "2026-02-02T14:23:45.123Z"
-  const customISOString = nativeISOString.replace(/\.\d+Z$/, (match) => match.slice(0, -1).padEnd(8, "0") + "Z");
-  return customISOString;
+  return customDate.toISOString();
 }
