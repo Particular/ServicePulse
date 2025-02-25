@@ -140,28 +140,47 @@ jobs:
         with:
           version: ${{ env.MinVerVersion }}
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.7.1
+        uses: docker/setup-buildx-action@v3.9.0
       - name: Log in to GitHub container registry
-        shell: bash
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - name: Build & inspect image
-        env:
-          TAG_NAME: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || env.MinVerVersion }}
-        shell: bash
-        run: |
-          docker buildx build --push --tag ghcr.io/particular/servicepulse:${{ env.TAG_NAME }} \
-            --file src/ServicePulse/Dockerfile \
-            --build-arg VERSION=${{ env.MinVerVersion }} \
-            --annotation "index:org.opencontainers.image.title=ServicePulse" \
-            --annotation "index:org.opencontainers.image.description=ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard." \
-            --annotation "index:org.opencontainers.image.created=$(date '+%FT%TZ')" \
-            --annotation "index:org.opencontainers.image.revision=${{ github.sha }}" \
-            --annotation "index:org.opencontainers.image.authors=Particular Software" \
-            --annotation "index:org.opencontainers.image.vendor=Particular Software" \
-            --annotation "index:org.opencontainers.image.version=${{ env.MinVerVersion }}" \
-            --annotation "index:org.opencontainers.image.source=https://github.com/${{ github.repository }}/tree/${{ github.sha }}" \
-            --annotation "index:org.opencontainers.image.url=https://hub.docker.com/r/particular/servicepulse" \
-            --annotation "index:org.opencontainers.image.documentation=https://docs.particular.net/servicepulse/" \
-            --annotation "index:org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite" \
-            --platform linux/arm64,linux/amd64 .
-          docker buildx imagetools inspect ghcr.io/particular/servicepulse:${{ env.TAG_NAME }}
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get current date
+        id: date
+        run: echo "date=$(date '+%FT%TZ')" >> $GITHUB_OUTPUT
+      - name: Build and push image to GitHub container registry
+        uses: docker/build-push-action@v6.14.0
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          sbom: true
+          labels: |
+            org.opencontainers.image.source=https://github.com/Particular/ServicePulse/tree/${{ github.sha }}
+            org.opencontainers.image.authors="Particular Software"
+            org.opencontainers.image.vendor="Particular Software"
+            org.opencontainers.image.url=https://hub.docker.com/r/particular/servicepulse
+            org.opencontainers.image.documentation=https://docs.particular.net/servicepulse/
+            org.opencontainers.image.version=${{ env.MinVerVersion }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.created=${{ steps.date.outputs.date }}
+            org.opencontainers.image.title=ServicePulse
+            org.opencontainers.image.description=ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard.
+            org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite
+          annotations: |
+            index:org.opencontainers.image.source=https://github.com/Particular/ServicePulse/tree/${{ github.sha }}
+            index:org.opencontainers.image.authors="Particular Software"
+            index:org.opencontainers.image.vendor="Particular Software"
+            index:org.opencontainers.image.url=https://hub.docker.com/r/particular/servicepulse
+            index:org.opencontainers.image.documentation=https://docs.particular.net/servicepulse/
+            index:org.opencontainers.image.version=${{ env.MinVerVersion }}
+            index:org.opencontainers.image.revision=${{ github.sha }}
+            index:org.opencontainers.image.created=${{ steps.date.outputs.date }}
+            index:org.opencontainers.image.title=ServicePulse
+            index:org.opencontainers.image.description=ServicePulse provides real-time production monitoring for distributed applications. It monitors the health of a system's endpoints, detects processing errors, sends failed messages for reprocessing, and ensures the specific environment's needs are met, all in one consolidated dashboard.
+            index:org.opencontainers.image.base.name=mcr.microsoft.com/dotnet/aspnet:8.0-noble-chiseled-composite
+          file: src/ServicePulse/Dockerfile
+          tags: ghcr.io/particular/servicepulse:${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || env.MinVerVersion }}
+
