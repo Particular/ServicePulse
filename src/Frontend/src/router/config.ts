@@ -8,6 +8,7 @@ import routeLinks from "@/router/routeLinks";
 import CustomChecksView from "@/views/CustomChecksView.vue";
 import HeartbeatsView from "@/views/HeartbeatsView.vue";
 import ThroughputReportView from "@/views/ThroughputReportView.vue";
+import AuditView from "@/views/AuditView.vue";
 
 export interface RouteItem {
   path: string;
@@ -51,6 +52,11 @@ const config: RouteItem[] = [
         component: () => import("@/components/heartbeats/HeartbeatConfiguration.vue"),
       },
     ],
+  },
+  {
+    path: routeLinks.audit.root,
+    component: AuditView,
+    title: "Messages",
   },
   {
     path: routeLinks.failedMessage.root,
