@@ -6,6 +6,8 @@ import { useRoute } from "vue-router";
 import DataView from "../DataView.vue";
 import SortableColumn from "../SortableColumn.vue";
 import { MessageStatus } from "@/resources/Message";
+import moment from "moment";
+import { useFormatTime } from "@/composables/formatter";
 
 const route = useRoute();
 const store = useAuditStore();
@@ -51,6 +53,13 @@ function friendlyTypeName(messageType: string) {
   const typeClass = messageType.split(",")[0];
   const typeName = typeClass.split(".").reverse()[0];
   return typeName.replace(/\+/g, ".");
+}
+
+function formatDotNetTimespan(timespan: string) {
+  //assuming if we have days in the timespan then something is very, very wrong
+  const [hh, mm, ss] = timespan.split(":");
+  const time = useFormatTime(((parseInt(hh) * 60 + parseInt(mm)) * 60 + parseFloat(ss)) * 1000);
+  return `${time.value} ${time.unit}`;
 }
 </script>
 
@@ -99,10 +108,10 @@ function friendlyTypeName(messageType: string) {
               {{ friendlyTypeName(message.message_type) }}
             </div>
             <div role="cell" aria-label="time-sent" class="col-2 time-sent">
-              {{ "todo" }}
+              {{ moment(message.time_sent).local().format("LLLL") }}
             </div>
             <div role="cell" aria-label="processing-time" class="col-2 processing-time">
-              {{ "todo" }}
+              {{ formatDotNetTimespan(message.processing_time) }}
             </div>
           </div>
         </div>
