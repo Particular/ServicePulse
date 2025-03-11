@@ -10,7 +10,7 @@ import AuditList from "@/components/audit/AuditList.vue";
     <div class="container">
       <div class="row">
         <div class="col-12">
-          <h1>Audit Messages</h1>
+          <h1>All Messages</h1>
         </div>
       </div>
       <div class="row">

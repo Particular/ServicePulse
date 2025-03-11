@@ -56,7 +56,12 @@ const config: RouteItem[] = [
   {
     path: routeLinks.audit.root,
     component: AuditView,
-    title: "Messages",
+    title: "All Messages",
+  },
+  {
+    path: routeLinks.audit.message.template,
+    title: "Message",
+    component: () => import("@/components/audit/MessageView.vue"),
   },
   {
     path: routeLinks.failedMessage.root,

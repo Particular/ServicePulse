@@ -5,8 +5,8 @@ import routeLinks from "@/router/routeLinks";
 
 <template>
   <RouterLink :to="routeLinks.audit.root">
-    <i class="fa fa-envelope icon-white" title="Audit"></i>
-    <span class="navbar-label">Audit</span>
+    <i class="fa fa-envelope icon-white" title="All Messages"></i>
+    <span class="navbar-label">All Messages</span>
   </RouterLink>
 </template>
 

@@ -13,13 +13,9 @@ const heartbeatLinks = (root: string) => {
 };
 
 const auditLinks = (root: string) => {
-  // function createLink(template: string) {
-  //   return { link: `${root}/${template}`, template: template };
-  // }
-
   return {
     root,
-    message: { link: (id: string) => `${root}/message/${id}`, template: "message/:id" },
+    message: { link: (id: string) => `${root}/message/${id}`, template: `${root}/message/:id` },
   };
 };
 
