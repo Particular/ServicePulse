@@ -44,6 +44,14 @@ function statusToIcon(messageStatus: MessageStatus) {
       return "fa retry-issued";
   }
 }
+
+function friendlyTypeName(messageType: string) {
+  if (messageType == null) return null;
+
+  const typeClass = messageType.split(",")[0];
+  const typeName = typeClass.split(".").reverse()[0];
+  return typeName.replace(/\+/g, ".");
+}
 </script>
 
 <template>
@@ -88,7 +96,7 @@ function statusToIcon(messageStatus: MessageStatus) {
               </div>
             </div>
             <div role="cell" aria-label="message-type" class="col-3 message-type">
-              {{ message.message_type }}
+              {{ friendlyTypeName(message.message_type) }}
             </div>
             <div role="cell" aria-label="time-sent" class="col-2 time-sent">
               {{ "todo" }}
