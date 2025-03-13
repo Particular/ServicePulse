@@ -195,4 +195,19 @@ function formatDotNetTimespan(timespan: string) {
 .retry-issued::before {
   content: "\f01e";
 }
+
+.grid-row {
+  display: flex;
+  position: relative;
+  border-top: 1px solid #eee;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #eee;
+  border-left: 1px solid #fff;
+  background-color: #fff;
+  margin: 0;
+}
+
+.grid-row:nth-child(even) {
+  background-color: #eee;
+}
 </style>
