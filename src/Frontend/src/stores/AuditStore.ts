@@ -48,7 +48,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
       messages.value = [];
       throw e;
     }
-  }, 30000);
+  }, null);
 
   function setMessageFilterString(filter: string) {
     messageFilterString.value = filter;
@@ -58,13 +58,9 @@ export const useAuditStore = defineStore("AuditStore", () => {
     itemsPerPage.value = value;
   }
 
-  const refresh = dataRetriever.executeAndResetTimer;
-
-  // eslint-disable-next-line promise/catch-or-return,promise/prefer-await-to-then,promise/valid-params
-  refresh().then();
-
   return {
-    refresh,
+    refresh: dataRetriever.executeAndResetTimer,
+    updateRefreshTimer: dataRetriever.updateTimeout,
     sortByInstances,
     messages,
     messageFilterString,
