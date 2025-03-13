@@ -8,6 +8,7 @@ import SortableColumn from "../SortableColumn.vue";
 import { MessageStatus } from "@/resources/Message";
 import moment from "moment";
 import { useFormatTime } from "@/composables/formatter";
+import RefreshConfig from "../RefreshConfig.vue";
 
 const route = useRoute();
 const store = useAuditStore();
@@ -64,6 +65,7 @@ function formatDotNetTimespan(timespan: string) {
 </script>
 
 <template>
+  <RefreshConfig id="auditListRefresh" @change="store.updateRefreshTimer" @manual-refresh="store.refresh" />
   <section role="table" aria-label="endpoint-instances">
     <!--Table headings-->
     <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
