@@ -5,9 +5,10 @@ import OnOffSwitch from "./OnOffSwitch.vue";
 const props = defineProps<{
   id: string;
   initialTimeout?: number;
-  onChange: (newValue: number | null) => void;
   onManualRefresh: () => void;
 }>();
+
+const emit = defineEmits<{ change: [newValue: number | null]; manualRefresh: [] }>();
 
 const autoRefresh = ref(props.initialTimeout != null);
 const refreshTimeout = ref(props.initialTimeout ?? 5);
@@ -19,7 +20,7 @@ function toggleRefresh() {
 
 function updateTimeout() {
   validateTimeout();
-  props.onChange(autoRefresh.value ? refreshTimeout.value * 1000 : null);
+  emit("change", autoRefresh.value ? refreshTimeout.value * 1000 : null);
 }
 
 function validateTimeout() {
@@ -29,7 +30,7 @@ function validateTimeout() {
 
 <template>
   <div class="refresh-config">
-    <button class="fa" title="refresh" @click="() => onManualRefresh()">
+    <button class="fa" title="refresh" @click="() => emit('manualRefresh')">
       <i class="fa fa-lg fa-refresh" />
     </button>
     <span>|</span>
