@@ -496,7 +496,7 @@ onUnmounted(() => {
                 retryMessage();
               "
               :heading="'Are you sure you want to retry this message?'"
-              :body="'Ensure that the selected message was not processed previously as this will create a duplicate message.'"
+              :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
             <EditRetryDialog
