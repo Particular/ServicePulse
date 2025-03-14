@@ -3,16 +3,17 @@ import routeLinks from "@/router/routeLinks";
 import { ColumnNames, useAuditStore } from "@/stores/AuditStore";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
-import DataView from "../DataView.vue";
 import SortableColumn from "../SortableColumn.vue";
 import { MessageStatus } from "@/resources/Message";
 import moment from "moment";
 import { useFormatTime } from "@/composables/formatter";
 import RefreshConfig from "../RefreshConfig.vue";
+import ItemsPerPage from "../ItemsPerPage.vue";
+import PaginationStrip from "../PaginationStrip.vue";
 
 const route = useRoute();
 const store = useAuditStore();
-const { messages, sortByInstances, itemsPerPage } = storeToRefs(store);
+const { messages, sortByInstances, itemsPerPage, selectedPage, totalCount } = storeToRefs(store);
 
 function statusToName(messageStatus: MessageStatus) {
   switch (messageStatus) {
@@ -87,38 +88,38 @@ function formatDotNetTimespan(timespan: string) {
     </div>
     <!--Table rows-->
     <!--NOTE: currently the DataView pages on the client only: we need to make it server data aware (i.e. the total will be the count from the server, not the length of the data we have locally)-->
-    <DataView :data="messages" :show-items-per-page="true" :items-per-page="itemsPerPage" @items-per-page-changed="store.setItemsPerPage">
-      <template #data="{ pageData }">
-        <div role="rowgroup" aria-label="endpoints">
-          <div role="row" :aria-label="message.message_id" class="row grid-row" v-for="message in pageData" :key="message.id">
-            <div role="cell" aria-label="status" class="status" :title="statusToName(message.status)">
-              <div class="status-icon" :class="statusToIcon(message.status)"></div>
-            </div>
-            <div role="cell" aria-label="message-id" class="col-3 message-id">
-              <div class="box-header">
-                <tippy :aria-label="message.message_id" :delay="[700, 0]" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
-                  <template #content>
-                    <p :style="{ overflowWrap: 'break-word' }">{{ message.message_id }}</p>
-                  </template>
-                  <RouterLink class="hackToPreventSafariFromShowingTooltip" aria-label="details-link" :to="{ path: routeLinks.audit.message.link(message.id), query: { back: route.path } }">
-                    {{ message.message_id }}
-                  </RouterLink>
-                </tippy>
-              </div>
-            </div>
-            <div role="cell" aria-label="message-type" class="col-3 message-type">
-              {{ friendlyTypeName(message.message_type) }}
-            </div>
-            <div role="cell" aria-label="time-sent" class="col-2 time-sent">
-              {{ moment(message.time_sent).local().format("LLLL") }}
-            </div>
-            <div role="cell" aria-label="processing-time" class="col-2 processing-time">
-              {{ formatDotNetTimespan(message.processing_time) }}
-            </div>
+    <div role="rowgroup" aria-label="endpoints">
+      <div role="row" :aria-label="message.message_id" class="row grid-row" v-for="message in messages" :key="message.id">
+        <div role="cell" aria-label="status" class="status" :title="statusToName(message.status)">
+          <div class="status-icon" :class="statusToIcon(message.status)"></div>
+        </div>
+        <div role="cell" aria-label="message-id" class="col-3 message-id">
+          <div class="box-header">
+            <tippy :aria-label="message.message_id" :delay="[700, 0]" class="no-side-padding lead righ-side-ellipsis endpoint-details-link">
+              <template #content>
+                <p :style="{ overflowWrap: 'break-word' }">{{ message.message_id }}</p>
+              </template>
+              <RouterLink class="hackToPreventSafariFromShowingTooltip" aria-label="details-link" :to="{ path: routeLinks.audit.message.link(message.id), query: { back: route.path } }">
+                {{ message.message_id }}
+              </RouterLink>
+            </tippy>
           </div>
         </div>
-      </template>
-    </DataView>
+        <div role="cell" aria-label="message-type" class="col-3 message-type">
+          {{ friendlyTypeName(message.message_type) }}
+        </div>
+        <div role="cell" aria-label="time-sent" class="col-2 time-sent">
+          {{ moment(message.time_sent).local().format("LLLL") }}
+        </div>
+        <div role="cell" aria-label="processing-time" class="col-2 processing-time">
+          {{ formatDotNetTimespan(message.processing_time) }}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <ItemsPerPage v-model="itemsPerPage" />
+      <PaginationStrip v-model="selectedPage" :totalCount="totalCount" :itemsPerPage="itemsPerPage" />
+    </div>
   </section>
 </template>
 

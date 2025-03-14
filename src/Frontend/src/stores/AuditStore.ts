@@ -31,6 +31,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
   const messageFilterString = ref("");
   const itemsPerPage = ref(20);
+  const selectedPage = ref(1);
+  const totalCount = ref(0);
   const messages = ref<Message[]>([]);
   // const sortedMessages = computed<Message[]>(() =>
   //   [...messages.value].sort(getSortFunction(columnSortings.get(sortByInstances.value.property), sortByInstances.value.isAscending ? SortDirection.Ascending : SortDirection.Descending))
@@ -42,7 +44,8 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
-      const [, data] = await useTypedFetchFromServiceControl<Message[]>("messages");
+      const [response, data] = await useTypedFetchFromServiceControl<Message[]>(`messages/?include_system_messages=false&per_page=${itemsPerPage.value}&page=${selectedPage.value}`);
+      totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
       messages.value = data;
     } catch (e) {
       messages.value = [];
@@ -50,22 +53,23 @@ export const useAuditStore = defineStore("AuditStore", () => {
     }
   }, null);
 
+  const refresh = dataRetriever.executeAndResetTimer;
+  watch(itemsPerPage, () => refresh());
+  watch(selectedPage, () => refresh());
+
   function setMessageFilterString(filter: string) {
     messageFilterString.value = filter;
   }
 
-  function setItemsPerPage(value: number) {
-    itemsPerPage.value = value;
-  }
-
   return {
-    refresh: dataRetriever.executeAndResetTimer,
+    refresh,
     updateRefreshTimer: dataRetriever.updateTimeout,
     sortByInstances,
     messages,
     messageFilterString,
     itemsPerPage,
-    setItemsPerPage,
+    selectedPage,
+    totalCount,
   };
 });
 
