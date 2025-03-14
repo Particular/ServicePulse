@@ -2,7 +2,6 @@ import { useTypedFetchFromServiceControl } from "@/composables/serviceServiceCon
 import { acceptHMRUpdate, defineStore } from "pinia";
 import { ref, watch } from "vue";
 import useAutoRefresh from "@/composables/autoRefresh";
-//import { SortDirection, type GroupPropertyType } from "@/resources/SortOptions";
 import type { SortInfo } from "@/components/SortInfo";
 import Message from "@/resources/Message";
 
@@ -14,19 +13,18 @@ export enum ColumnNames {
   ProcessingTime = "processingTime",
 }
 
-// const columnSortings = new Map<string, (endpoint: Message) => GroupPropertyType>([
-//   // [ColumnNames.Name, (endpoint) => endpoint.name],
-//   // [ColumnNames.InstancesDown, (endpoint) => endpoint.alive_count - endpoint.down_count],
-//   // [ColumnNames.InstancesTotal, (endpoint) => endpoint.alive_count + endpoint.down_count],
-//   // [ColumnNames.LastHeartbeat, (endpoint) => moment.utc(endpoint.heartbeat_information?.last_report_at ?? "1975-01-01T00:00:00")],
-//   // [ColumnNames.Tracked, (endpoint) => endpoint.track_instances],
-//   // [ColumnNames.TrackToggle, (endpoint) => endpoint.track_instances],
-// ]);
+const columnSortings = new Map<string, string>([
+  [ColumnNames.Status, "status"],
+  [ColumnNames.MessageId, "id"],
+  [ColumnNames.MessageType, "message_type"],
+  [ColumnNames.TimeSent, "time_sent"],
+  [ColumnNames.ProcessingTime, "processing_time"],
+]);
 
 export const useAuditStore = defineStore("AuditStore", () => {
   const sortByInstances = ref<SortInfo>({
-    property: ColumnNames.MessageId,
-    isAscending: true,
+    property: ColumnNames.TimeSent,
+    isAscending: false,
   });
 
   const messageFilterString = ref("");
@@ -34,9 +32,6 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const selectedPage = ref(1);
   const totalCount = ref(0);
   const messages = ref<Message[]>([]);
-  // const sortedMessages = computed<Message[]>(() =>
-  //   [...messages.value].sort(getSortFunction(columnSortings.get(sortByInstances.value.property), sortByInstances.value.isAscending ? SortDirection.Ascending : SortDirection.Descending))
-  // );
   // const filteredMessages = computed<Message[]>(() => sortedMessages.value.filter((message) => !messageFilterString.value || message.id.toLowerCase().includes(messageFilterString.value.toLowerCase())));
   watch(messageFilterString, (newValue) => {
     setMessageFilterString(newValue);
@@ -44,7 +39,9 @@ export const useAuditStore = defineStore("AuditStore", () => {
 
   const dataRetriever = useAutoRefresh(async () => {
     try {
-      const [response, data] = await useTypedFetchFromServiceControl<Message[]>(`messages/?include_system_messages=false&per_page=${itemsPerPage.value}&page=${selectedPage.value}`);
+      const [response, data] = await useTypedFetchFromServiceControl<Message[]>(
+        `messages/?include_system_messages=false&per_page=${itemsPerPage.value}&page=${selectedPage.value}&sort=${columnSortings.get(sortByInstances.value.property)}&direction=${sortByInstances.value.isAscending ? "asc" : "desc"}`
+      );
       totalCount.value = parseInt(response.headers.get("total-count") ?? "0");
       messages.value = data;
     } catch (e) {
@@ -56,6 +53,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   const refresh = dataRetriever.executeAndResetTimer;
   watch(itemsPerPage, () => refresh());
   watch(selectedPage, () => refresh());
+  watch(sortByInstances, () => refresh());
 
   function setMessageFilterString(filter: string) {
     messageFilterString.value = filter;
