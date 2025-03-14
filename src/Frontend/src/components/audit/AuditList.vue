@@ -66,29 +66,31 @@ function formatDotNetTimespan(timespan: string) {
 </script>
 
 <template>
-  <RefreshConfig id="auditListRefresh" @change="store.updateRefreshTimer" @manual-refresh="store.refresh" />
-  <section role="table" aria-label="endpoint-instances">
-    <!--Table headings-->
-    <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
-      <div role="columnheader" :aria-label="ColumnNames.Status" class="status">
-        <SortableColumn :sort-by="ColumnNames.Status" v-model="sortByInstances" :default-ascending="true">Status</SortableColumn>
-      </div>
-      <div role="columnheader" :aria-label="ColumnNames.MessageId" class="col-3">
-        <SortableColumn :sort-by="ColumnNames.MessageId" v-model="sortByInstances" :default-ascending="true">Message Id</SortableColumn>
-      </div>
-      <div role="columnheader" :aria-label="ColumnNames.MessageType" class="col-3">
-        <SortableColumn :sort-by="ColumnNames.MessageType" v-model="sortByInstances" :default-ascending="true">Type</SortableColumn>
-      </div>
-      <div role="columnheader" :aria-label="ColumnNames.TimeSent" class="col-2">
-        <SortableColumn :sort-by="ColumnNames.TimeSent" v-model="sortByInstances">Time Sent</SortableColumn>
-      </div>
-      <div role="columnheader" :aria-label="ColumnNames.ProcessingTime" class="col-2">
-        <SortableColumn :sort-by="ColumnNames.ProcessingTime" v-model="sortByInstances">Processing Time</SortableColumn>
+  <section class="section-table" role="table" aria-label="endpoint-instances">
+    <div class="header">
+      <RefreshConfig id="auditListRefresh" @change="store.updateRefreshTimer" @manual-refresh="store.refresh" />
+      <!--Table headings-->
+      <div role="row" aria-label="column-headers" class="row table-head-row" :style="{ borderTop: 0 }">
+        <div role="columnheader" :aria-label="ColumnNames.Status" class="status">
+          <SortableColumn :sort-by="ColumnNames.Status" v-model="sortByInstances" :default-ascending="true">Status</SortableColumn>
+        </div>
+        <div role="columnheader" :aria-label="ColumnNames.MessageId" class="col-3">
+          <SortableColumn :sort-by="ColumnNames.MessageId" v-model="sortByInstances" :default-ascending="true">Message Id</SortableColumn>
+        </div>
+        <div role="columnheader" :aria-label="ColumnNames.MessageType" class="col-3">
+          <SortableColumn :sort-by="ColumnNames.MessageType" v-model="sortByInstances" :default-ascending="true">Type</SortableColumn>
+        </div>
+        <div role="columnheader" :aria-label="ColumnNames.TimeSent" class="col-2">
+          <SortableColumn :sort-by="ColumnNames.TimeSent" v-model="sortByInstances">Time Sent</SortableColumn>
+        </div>
+        <div role="columnheader" :aria-label="ColumnNames.ProcessingTime" class="col-2">
+          <SortableColumn :sort-by="ColumnNames.ProcessingTime" v-model="sortByInstances">Processing Time</SortableColumn>
+        </div>
       </div>
     </div>
     <!--Table rows-->
     <!--NOTE: currently the DataView pages on the client only: we need to make it server data aware (i.e. the total will be the count from the server, not the length of the data we have locally)-->
-    <div role="rowgroup" aria-label="endpoints">
+    <div class="messages" role="rowgroup" aria-label="messages">
       <div role="row" :aria-label="message.message_id" class="row grid-row" v-for="message in messages" :key="message.id">
         <div role="cell" aria-label="status" class="status" :title="statusToName(message.status)">
           <div class="status-icon" :class="statusToIcon(message.status)"></div>
@@ -131,8 +133,16 @@ function formatDotNetTimespan(timespan: string) {
   display: block;
 }
 
-.instances-muted {
-  font-weight: bold;
+.section-table {
+  overflow: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex: 1;
+  overflow: auto;
 }
 
 .status {
