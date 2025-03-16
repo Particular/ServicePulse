@@ -13,7 +13,7 @@ const props = defineProps<{
         <td nowrap="nowrap">{{ header.key }}</td>
         <td class="toolbar">
           <div style="display: flex; align-items: center">
-            <pre style="margin: 0; white-space: nowrap">{{ header.value }}</pre>
+            <pre>{{ header.value }}</pre>
             <CopyToClipboard :value="header.value || ''" />
           </div>
         </td>
