@@ -37,6 +37,13 @@ const failedMessagesLinks = (root: string) => {
   };
 };
 
+const messagesLinks = (root: string) => {
+  return {
+    root,
+    message: { link: (id: string) => `${root}/${id}`, template: "/messages/:id" },
+  };
+};
+
 const configurationLinks = (root: string) => {
   function createLink(template: string) {
     return { link: `${root}/${template}`, template: template };
@@ -104,6 +111,7 @@ const routeLinks = {
   failedMessage: failedMessagesLinks("/failed-messages"),
   customChecks: "/custom-checks",
   events: "/events",
+  messages: messagesLinks("/messages"),
   configuration: configurationLinks("/configuration"),
   throughput: throughputLinks("/usage"),
 };
