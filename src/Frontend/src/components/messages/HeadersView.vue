@@ -12,16 +12,7 @@ const props = defineProps<{
       <tr class="interactiveList" v-for="(header, index) in props.message.headers" :key="index">
         <td nowrap="nowrap">{{ header.key }}</td>
         <td class="toolbar">
-          <!--
-          <pre>{{ header.value }}</pre>
-          <span>
-            <CopyToClipboard :value="header.value || ''" />
-            
-          </span>
-          -->
-          <!-- Use flexbox to align items horizontally -->
           <div style="display: flex; align-items: center">
-            <!-- The pre element should not wrap, so use white-space: nowrap or keep it as a block element -->
             <pre style="margin: 0; white-space: nowrap">{{ header.value }}</pre>
             <CopyToClipboard :value="header.value || ''" />
           </div>
