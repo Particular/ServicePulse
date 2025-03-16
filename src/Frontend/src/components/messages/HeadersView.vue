@@ -1,9 +1,16 @@
 <script setup lang="ts">
 import { ExtendedFailedMessage } from "@/resources/FailedMessage";
 import CopyToClipboard from "@/components/CopyToClipboard.vue";
+import { ref } from "vue";
 const props = defineProps<{
   message: ExtendedFailedMessage;
 }>();
+
+const hoverStates = ref<Record<number, boolean>>({});
+
+const toggleHover = (index: number, state: boolean) => {
+  hoverStates.value[index] = state;
+};
 </script>
 
 <template>
@@ -12,9 +19,9 @@ const props = defineProps<{
       <tr class="interactiveList" v-for="(header, index) in props.message.headers" :key="index">
         <td nowrap="nowrap">{{ header.key }}</td>
         <td class="toolbar">
-          <div style="display: flex; align-items: center">
+          <div style="display: flex; align-items: center" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
             <pre>{{ header.value }}</pre>
-            <CopyToClipboard :value="header.value || ''" />
+            <CopyToClipboard v-if="hoverStates[index]" :value="header.value || ''" />
           </div>
         </td>
       </tr>
