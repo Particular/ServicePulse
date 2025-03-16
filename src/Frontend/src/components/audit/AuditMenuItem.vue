@@ -4,7 +4,7 @@ import routeLinks from "@/router/routeLinks";
 </script>
 
 <template>
-  <RouterLink :to="routeLinks.audit.root">
+  <RouterLink :to="routeLinks.messages.root">
     <i class="fa fa-envelope icon-white" title="All Messages"></i>
     <span class="navbar-label">All Messages</span>
   </RouterLink>

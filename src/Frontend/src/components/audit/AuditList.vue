@@ -101,7 +101,7 @@ function formatDotNetTimespan(timespan: string) {
               <template #content>
                 <p :style="{ overflowWrap: 'break-word' }">{{ message.message_id }}</p>
               </template>
-              <RouterLink class="hackToPreventSafariFromShowingTooltip" aria-label="details-link" :to="{ path: routeLinks.audit.message.link(message.id), query: { back: route.path } }">
+              <RouterLink class="hackToPreventSafariFromShowingTooltip" aria-label="details-link" :to="{ path: routeLinks.messages.message.link(message.id), query: { back: route.path } }">
                 {{ message.message_id }}
               </RouterLink>
             </tippy>

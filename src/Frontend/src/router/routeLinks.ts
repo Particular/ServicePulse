@@ -12,13 +12,6 @@ const heartbeatLinks = (root: string) => {
   };
 };
 
-const auditLinks = (root: string) => {
-  return {
-    root,
-    message: { link: (id: string) => `${root}/message/${id}`, template: `${root}/message/:id` },
-  };
-};
-
 const failedMessagesLinks = (root: string) => {
   function createLink(template: string) {
     return { link: `${root}/${template}`, template: template };
@@ -107,7 +100,6 @@ const routeLinks = {
   dashboard: "/dashboard",
   heartbeats: heartbeatLinks("/heartbeats"),
   monitoring: monitoringLinks("/monitoring"),
-  audit: auditLinks("/audit"),
   failedMessage: failedMessagesLinks("/failed-messages"),
   customChecks: "/custom-checks",
   events: "/events",
