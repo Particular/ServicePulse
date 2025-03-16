@@ -28,7 +28,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   });
 
   const messageFilterString = ref("");
-  const itemsPerPage = ref(20);
+  const itemsPerPage = ref(35);
   const selectedPage = ref(1);
   const totalCount = ref(0);
   const messages = ref<Message[]>([]);
