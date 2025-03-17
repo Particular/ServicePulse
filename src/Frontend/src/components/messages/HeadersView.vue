@@ -29,7 +29,7 @@ function clearSearch() {
     <button v-if="searchTerm" title="Clear" @click="clearSearch" class="clear-btn">X</button>
   </div>
 
-  <table class="table" v-if="!props.message.headersNotFound">
+  <table class="table" v-if="filteredHeaders.length > 0 && !props.message.headersNotFound">
     <tbody>
       <tr class="interactiveList" v-for="(header, index) in filteredHeaders" :key="index">
         <td nowrap="nowrap">{{ header.key }}</td>
@@ -42,6 +42,8 @@ function clearSearch() {
       </tr>
     </tbody>
   </table>
+  <!-- Message if filtered list is empty -->
+  <div v-else class="alert alert-warning">No headers found matching the search term.</div>
   <div v-if="props.message.headersNotFound" class="alert alert-info">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
 </template>
 
@@ -74,5 +76,18 @@ function clearSearch() {
   padding: 0;
   margin: 0;
   font-weight: bold;
+}
+
+.clear-btn:hover {
+  color: #000;
+}
+/* Style for the empty filtered list message */
+.alert-warning {
+  margin-top: 10px;
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
+  padding: 10px;
+  border-radius: 5px;
 }
 </style>
