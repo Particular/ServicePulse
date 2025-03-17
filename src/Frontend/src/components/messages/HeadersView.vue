@@ -34,6 +34,6 @@ const toggleHover = (index: number, state: boolean) => {
 .headercopy {
   display: flex;
   align-items: top;
-  gap: 10px;
+  gap: 0.4rem;
 }
 </style>

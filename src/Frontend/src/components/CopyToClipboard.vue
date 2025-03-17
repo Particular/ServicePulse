@@ -2,16 +2,13 @@
 import { Tippy, TippyComponent } from "vue-tippy";
 import { useTemplateRef } from "vue";
 
-const props = defineProps({
-  value: {
-    type: String,
-    required: true,
-  },
-  isIconOnly: {
-    type: Boolean,
-    default: false, // Default value
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    value: string;
+    isIconOnly?: boolean;
+  }>(),
+  { isIconOnly: false }
+);
 
 const tippyRef = useTemplateRef<TippyComponent | null>("tippyRef");
 let timeoutId: number;
