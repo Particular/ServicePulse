@@ -16,7 +16,7 @@ const filteredHeaders = computed(() => {
   if (!searchTerm.value) {
     return props.message.headers;
   }
-  return props.message.headers.filter((header) => header.key.toLowerCase().includes(searchTerm.value.toLowerCase()));
+  return props.message.headers.filter((header) => header.key.toLowerCase().includes(searchTerm.value.toLowerCase()) || header.value?.toLowerCase().includes(searchTerm.value.toLowerCase()));
 });
 function clearSearch() {
   searchTerm.value = ""; // Clears the search term
