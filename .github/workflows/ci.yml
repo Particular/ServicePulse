@@ -8,6 +8,9 @@ on:
   workflow_dispatch:
 env:
   DOTNET_NOLOGO: true
+defaults:
+  run:
+    shell: pwsh
 jobs:
   build:
     name: Windows
@@ -18,13 +21,13 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4.1.0
+        uses: actions/setup-dotnet@v4.3.1
         with:
           dotnet-version: 7.0.x
       - name: Set up Node.js
-        uses: actions/setup-node@v4.1.0
+        uses: actions/setup-node@v4.3.0
         with:
-          node-version: 21.6.x
+          node-version: 22.13.x
       - name: Build Frontend
         run: .\build.ps1
         working-directory: src/ServicePulse.Host
@@ -41,13 +44,13 @@ jobs:
         uses: Particular/run-tests-action@v1.7.0
       # Upload assets and packages
       - name: Upload assets
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: Assets
           path: src/ServicePulse.Host/bin/Release/
           retention-days: 7
       - name: Upload packages
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: NuGet packages
           path: nugets/

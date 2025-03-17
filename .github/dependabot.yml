@@ -1,7 +1,12 @@
 version: 2
+registries:
+  particular-packages:
+    type: nuget-feed
+    url: https://f.feedz.io/particular-software/packages/nuget/index.json
 updates:
 - package-ecosystem: nuget
   directory: "/src"
+  registries: "*"
   schedule:
     interval: daily
   open-pull-requests-limit: 1000
@@ -26,11 +31,6 @@ updates:
     - dependency-name: "Microsoft.CodeAnalysis.CSharp.Workspaces"
 - package-ecosystem: "github-actions"
   directory: "/"
-  schedule:
-    interval: daily
-  open-pull-requests-limit: 1000
-- package-ecosystem: "docker"
-  directory: "/src/ServicePulse"
   schedule:
     interval: daily
   open-pull-requests-limit: 1000

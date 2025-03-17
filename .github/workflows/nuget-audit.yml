@@ -1,0 +1,9 @@
+name: NuGet Audit
+on:
+  workflow_dispatch:
+env:
+  DOTNET_NOLOGO: true
+jobs:
+  call-shared-nuget-audit:
+    uses: particular/shared-workflows/.github/workflows/nuget-audit.yml@main
+    secrets: inherit

@@ -7,6 +7,9 @@ static class ReverseProxy
 {
     public static (List<RouteConfig> routes, List<ClusterConfig> clusters) GetConfiguration(Settings settings)
     {
+        var routes = new List<RouteConfig>();
+        var clusters = new List<ClusterConfig>();
+
         var serviceControlInstance = new ClusterConfig
         {
             ClusterId = "serviceControlInstance",
@@ -15,17 +18,7 @@ static class ReverseProxy
                 { "instance", new DestinationConfig { Address = settings.ServiceControlUri.ToString() } }
             }
         };
-
-        var monitoringInstance = new ClusterConfig
-        {
-            ClusterId = "monitoringInstance",
-            Destinations = new Dictionary<string, DestinationConfig>
-            {
-                { "instance", new DestinationConfig { Address = settings.MonitoringUri.ToString() } }
-            }
-        };
-
-        var serviceControlRoute = new RouteConfig()
+        var serviceControlRoute = new RouteConfig
         {
             RouteId = "serviceControlRoute",
             ClusterId = nameof(serviceControlInstance),
@@ -35,27 +28,30 @@ static class ReverseProxy
             }
         }.WithTransformPathRemovePrefix("/api");
 
-        var monitoringRoute = new RouteConfig()
+        clusters.Add(serviceControlInstance);
+        routes.Add(serviceControlRoute);
+
+        if (settings.MonitoringUri != null)
         {
-            RouteId = "monitoringRoute",
-            ClusterId = nameof(monitoringInstance),
-            Match = new RouteMatch
+            var monitoringInstance = new ClusterConfig
             {
-                Path = "/monitoring-api/{**catch-all}"
-            }
-        }.WithTransformPathRemovePrefix("/monitoring-api");
+                ClusterId = "monitoringInstance",
+                Destinations = new Dictionary<string, DestinationConfig>
+                {
+                    { "instance", new DestinationConfig { Address = settings.MonitoringUri.ToString() } }
+                }
+            };
 
-        var routes = new List<RouteConfig>
-        {
-            serviceControlRoute,
-            monitoringRoute
-        };
+            var monitoringRoute = new RouteConfig
+            {
+                RouteId = "monitoringRoute",
+                ClusterId = nameof(monitoringInstance),
+                Match = new RouteMatch { Path = "/monitoring-api/{**catch-all}" }
+            }.WithTransformPathRemovePrefix("/monitoring-api");
 
-        var clusters = new List<ClusterConfig>
-        {
-            serviceControlInstance,
-            monitoringInstance
-        };
+            clusters.Add(monitoringInstance);
+            routes.Add(monitoringRoute);
+        }
 
         return (routes, clusters);
     }

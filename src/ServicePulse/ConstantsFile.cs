@@ -14,12 +14,12 @@ class ConstantsFile
         if (settings.EnableReverseProxy)
         {
             serviceControlUrl = "/api/";
-            monitoringUrl = "/monitoring-api/";
+            monitoringUrl = settings.MonitoringUri == null ? "!" : "/monitoring-api/";
         }
         else
         {
             serviceControlUrl = settings.ServiceControlUri.ToString();
-            monitoringUrl = settings.MonitoringUri.ToString();
+            monitoringUrl = settings.MonitoringUri?.ToString() ?? "!";
         }
 
         var constantsFile = $$"""
