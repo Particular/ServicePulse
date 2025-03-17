@@ -18,8 +18,8 @@ const toggleHover = (index: number, state: boolean) => {
     <tbody>
       <tr class="interactiveList" v-for="(header, index) in props.message.headers" :key="index">
         <td nowrap="nowrap">{{ header.key }}</td>
-        <td class="toolbar">
-          <div style="display: flex; align-items: center" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
+        <td>
+          <div class="headercopy" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
             <pre>{{ header.value }}</pre>
             <CopyToClipboard v-if="hoverStates[index]" :value="header.value || ''" :isIconOnly="true" />
           </div>
@@ -30,4 +30,10 @@ const toggleHover = (index: number, state: boolean) => {
   <div v-if="props.message.headersNotFound" class="alert alert-info">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.headercopy {
+  display: flex;
+  align-items: top;
+  gap: 10px;
+}
+</style>
