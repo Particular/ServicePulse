@@ -15,7 +15,7 @@ export interface RouteItem {
   alias?: string;
   redirect?: string;
   title: string;
-  component: RouteComponent | (() => Promise<RouteComponent>);
+  component?: RouteComponent | (() => Promise<RouteComponent>);
   children?: RouteItem[];
 }
 
@@ -102,7 +102,7 @@ const config: RouteItem[] = [
       {
         path: routeLinks.failedMessage.message.template,
         title: "Message",
-        component: () => import("@/components/failedmessages/MessageRedirectForBackwardsCompatibility.vue"),
+        redirect: routeLinks.messages.message.template,
       },
     ],
   },
