@@ -388,8 +388,8 @@ onUnmounted(() => {
                 showRetryConfirm = false;
                 retryMessage();
               "
-              heading="Are you sure you want to retry this message?"
-              body="Are you sure you want to retry this message?"
+              :heading="'Retry Message'"
+              :body="'Are you sure you want to retry this message?'"
             ></ConfirmDialog>
 
             <EditRetryDialog
