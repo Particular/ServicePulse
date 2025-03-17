@@ -2,9 +2,16 @@
 import { Tippy, TippyComponent } from "vue-tippy";
 import { useTemplateRef } from "vue";
 
-const props = defineProps<{
-  value: string;
-}>();
+const props = defineProps({
+  value: {
+    type: String,
+    required: true,
+  },
+  isIconOnly: {
+    type: Boolean,
+    default: false, // Default value
+  },
+});
 
 const tippyRef = useTemplateRef<TippyComponent | null>("tippyRef");
 let timeoutId: number;
@@ -19,6 +26,6 @@ async function copyToClipboard() {
 
 <template>
   <Tippy content="Copied" ref="tippyRef" trigger="manual">
-    <button type="button" class="btn btn-secondary btn-sm" @click="copyToClipboard"><i class="fa fa-copy"></i> Copy to clipboard</button>
+    <button type="button" class="btn btn-secondary btn-sm" @click="copyToClipboard"><i class="fa fa-copy"></i> <span v-if="!props.isIconOnly">Copy to clipboard</span></button>
   </Tippy>
 </template>

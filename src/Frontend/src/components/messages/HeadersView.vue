@@ -21,7 +21,7 @@ const toggleHover = (index: number, state: boolean) => {
         <td class="toolbar">
           <div style="display: flex; align-items: center" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
             <pre>{{ header.value }}</pre>
-            <CopyToClipboard v-if="hoverStates[index]" :value="header.value || ''" />
+            <CopyToClipboard v-if="hoverStates[index]" :value="header.value || ''" :isIconOnly="true" />
           </div>
         </td>
       </tr>
