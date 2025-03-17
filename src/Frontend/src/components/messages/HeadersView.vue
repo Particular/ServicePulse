@@ -25,7 +25,7 @@ function clearSearch() {
 
 <template>
   <div class="searchheader">
-    <input v-model="searchTerm" type="text" placeholder="Search for a header key" class="search-input" />
+    <input v-model="searchTerm" type="search" placeholder="Search for a header key" class="search-input" />
     <button v-if="searchTerm" title="Clear" @click="clearSearch" class="clear-btn">X</button>
   </div>
 
@@ -43,7 +43,7 @@ function clearSearch() {
     </tbody>
   </table>
   <!-- Message if filtered list is empty -->
-  <div v-else class="alert alert-warning">No headers found matching the search term.</div>
+  <div v-if="filteredHeaders.length <= 0 && !props.message.headersNotFound" class="alert alert-warning">No headers found matching the search term.</div>
   <div v-if="props.message.headersNotFound" class="alert alert-info">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
 </template>
 
