@@ -18,15 +18,11 @@ const filteredHeaders = computed(() => {
   }
   return props.message.headers.filter((header) => header.key.toLowerCase().includes(searchTerm.value.toLowerCase()) || header.value?.toLowerCase().includes(searchTerm.value.toLowerCase()));
 });
-function clearSearch() {
-  searchTerm.value = ""; // Clears the search term
-}
 </script>
 
 <template>
   <div class="searchheader">
-    <input v-model="searchTerm" type="search" placeholder="Search for a header key" class="search-input" />
-    <button v-if="searchTerm" title="Clear" @click="clearSearch" class="clear-btn">X</button>
+    <input v-model="searchTerm" type="search" placeholder="Search for a header key or value" class="search-input" />
   </div>
 
   <table class="table" v-if="filteredHeaders.length > 0 && !props.message.headersNotFound">
