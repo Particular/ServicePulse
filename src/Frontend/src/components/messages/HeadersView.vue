@@ -21,10 +21,17 @@ const filteredHeaders = computed(() => {
 </script>
 
 <template>
-  <div class="searchheader">
-    <input v-model="searchTerm" type="search" placeholder="Search for a header key or value" class="search-input" />
+  <div>
+    <div class="row filters">
+      <div class="col">
+        <div class="text-search-container">
+          <div class="text-search">
+            <input type="search" aria-label="Filter by name" v-model="searchTerm" class="form-control format-text" placeholder="Search for a header key or value..." />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
   <table class="table" v-if="filteredHeaders.length > 0 && !props.message.headersNotFound">
     <tbody>
       <tr class="interactiveList" v-for="(header, index) in filteredHeaders" :key="index">
@@ -38,6 +45,7 @@ const filteredHeaders = computed(() => {
       </tr>
     </tbody>
   </table>
+
   <!-- Message if filtered list is empty -->
   <div v-if="filteredHeaders.length <= 0 && !props.message.headersNotFound" class="alert alert-warning">No headers found matching the search term.</div>
   <div v-if="props.message.headersNotFound" class="alert alert-info">Could not find message headers. This could be because the message URL is invalid or the corresponding message was processed and is no longer tracked by ServiceControl.</div>
@@ -49,21 +57,8 @@ const filteredHeaders = computed(() => {
   align-items: top;
   gap: 0.4rem;
 }
-.searchheader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
 
-/* Style for the search input */
-.search-input {
-  padding: 5px;
-  margin-right: 10px;
-  width: 100%;
-  max-width: 40rem;
-}
-
-/* Style for the empty filtered list message */
+/*  empty filtered list message */
 .alert-warning {
   margin-top: 10px;
   color: #856404;
@@ -71,5 +66,26 @@ const filteredHeaders = computed(() => {
   border-color: #ffeeba;
   padding: 10px;
   border-radius: 5px;
+}
+
+.text-search-container {
+  display: flex;
+  flex-direction: row;
+}
+.text-search {
+  width: 100%;
+  max-width: 40rem;
+}
+.format-text {
+  font-weight: unset;
+  font-size: 14px;
+  min-width: 120px;
+}
+.filters {
+  background-color: #f3f3f3;
+  margin-top: 5px;
+  border: #8c8c8c 1px solid;
+  border-radius: 3px;
+  padding: 5px;
 }
 </style>
