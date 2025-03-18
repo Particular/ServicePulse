@@ -22,7 +22,8 @@ async function copyToClipboard() {
 </script>
 
 <template>
-  <Tippy content="Copied" ref="tippyRef" trigger="manual" :title="props.isIconOnly ? 'Copy to Clipboard' : ''">
-    <button type="button" class="btn btn-secondary btn-sm" @click="copyToClipboard"><i class="fa fa-copy"></i> <span v-if="!props.isIconOnly">Copy to clipboard</span></button>
+  <Tippy content="Copied" ref="tippyRef" trigger="manual">
+    <button v-if="!props.isIconOnly" type="button" class="btn btn-secondary btn-sm" @click="copyToClipboard"><i class="fa fa-copy"></i> Copy to clipboard</button>
+    <button v-else type="button" class="btn btn-secondary btn-sm" @click="copyToClipboard" v-tippy="'Copy to clipboard'"><i class="fa fa-copy"></i></button>
   </Tippy>
 </template>
