@@ -1,6 +1,11 @@
-Feature: 1 Detecting no Saga Data Available
-        
-    Rule: 1.1: When no saga data is available, display a message indicating the absence of data.​
+Feature: 0 Message not involved in Saga
+
+    Rule: 0.1: When the message is not part of a sage , display a message indicating the no saga data.​
+    "No Saga Data Available"
+
+Feature: 1 Detecting no Audited Saga Data Available
+
+    Rule: 1.1: When a message is part of Saga but the Saga data is not available, display a message indicating the absence of data.​
     "Saga audit plugin needed to visualize saga" - "To visualize your saga, please install the appropriate nuget package in your endpoint"
 
 Feature: 2 Navigation and Contextual Information
