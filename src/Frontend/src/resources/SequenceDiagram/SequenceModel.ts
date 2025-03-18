@@ -21,17 +21,19 @@ export class ModelCreator implements ConversationModel {
 
   constructor(messages: Message[]) {
     this.#endpoints = [];
+
     const endpointRegistry = new EndpointRegistry();
-    //TODO: order messages
+    const messagesInOrder = MessageTreeNode.createTree(messages).flatMap((node) => node.walk());
+
     // NOTE: All sending endpoints are created first to ensure version info is retained
-    for (const message of messages) {
+    for (const message of messagesInOrder) {
       endpointRegistry.register(this.createSendingEndpoint(message));
     }
-    for (const message of messages) {
+    for (const message of messagesInOrder) {
       endpointRegistry.register(this.createProcessingEndpoint(message));
     }
 
-    for (const message of messages) {
+    for (const message of messagesInOrder) {
       const sendingEndpoint = endpointRegistry.get(this.createSendingEndpoint(message));
       if (!this.#endpoints.find((endpoint) => endpoint.name === sendingEndpoint?.name)) {
         this.#endpoints.push(sendingEndpoint);
@@ -48,12 +50,12 @@ export class ModelCreator implements ConversationModel {
       message.receiving_endpoint.name,
       message.receiving_endpoint.host,
       message.receiving_endpoint.host_id,
-      message.receiving_endpoint.name === message.sending_endpoint.name && message.receiving_endpoint.host === message.sending_endpoint.host ? message.headers.find((h) => h.key === NServiceBusHeaders.Version)?.value : undefined
+      message.receiving_endpoint.name === message.sending_endpoint.name && message.receiving_endpoint.host === message.sending_endpoint.host ? message.headers.find((h) => h.key === NServiceBusHeaders.NServiceBusVersion)?.value : undefined
     );
   }
 
   private createSendingEndpoint(message: Message): EndpointItem {
-    return new EndpointItem(message.sending_endpoint.name, message.sending_endpoint.host, message.sending_endpoint.host_id, message.headers.find((h) => h.key === NServiceBusHeaders.Version)?.value);
+    return new EndpointItem(message.sending_endpoint.name, message.sending_endpoint.host, message.sending_endpoint.host_id, message.headers.find((h) => h.key === NServiceBusHeaders.NServiceBusVersion)?.value);
   }
 
   get endpoints(): Endpoint[] {
@@ -132,5 +134,55 @@ class EndpointRegistry {
 
   get(item: EndpointItem) {
     return this.#store.get(item.name)!;
+  }
+}
+
+class MessageTreeNode {
+  #message: Message;
+  #parent?: string;
+  #children: MessageTreeNode[];
+
+  static createTree(messages: Message[]) {
+    const nodes = messages.map((message) => new MessageTreeNode(message));
+    const resolved: MessageTreeNode[] = [];
+    const index = new Map<string, MessageTreeNode>(nodes.map((node) => [node.id, node]));
+
+    for (const node of nodes) {
+      const parent = index.get(node.parent ?? "");
+      if (parent) {
+        parent.addChild(node);
+        resolved.push(node);
+      }
+    }
+
+    return nodes.filter((node) => !resolved.includes(node));
+  }
+
+  constructor(message: Message) {
+    this.#message = message;
+    this.#parent = message.headers.find((h) => h.key === NServiceBusHeaders.RelatedTo)?.value;
+    this.#children = [];
+  }
+
+  get id() {
+    return this.#message.message_id;
+  }
+  get parent() {
+    return this.#parent;
+  }
+  get message() {
+    return this.#message;
+  }
+  get children() {
+    return [...this.#children];
+  }
+
+  addChild(childNode: MessageTreeNode) {
+    this.#children.push(childNode);
+  }
+
+  walk(): Message[] {
+    //TODO: check performance of this. We may need to pre-calculate the processed_at as a date on the message object
+    return [this.#message, ...this.children.sort((a, b) => new Date(a.message.processed_at).getTime() - new Date(b.message.processed_at).getTime()).flatMap((child) => child.walk())];
   }
 }
