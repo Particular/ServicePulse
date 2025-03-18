@@ -10,6 +10,7 @@ import HeartbeatsList from "./HeartbeatsList.vue";
 import { ref } from "vue";
 import ConfirmDialog from "@/components/ConfirmDialog.vue";
 import ResultsCount from "../ResultsCount.vue";
+import { LogicalEndpoint } from "@/resources/Heartbeat";
 
 enum Operation {
   Track = "track",
@@ -35,7 +36,7 @@ async function proceedWarningDialog() {
 
   try {
     await store.updateEndpointSettings(
-      filteredEndpoints.value.filter((endpoint) => (dialogWarningOperation.value === Operation.Track && !endpoint.track_instances) || (dialogWarningOperation.value === Operation.DoNotTrack && endpoint.track_instances))
+      filteredEndpoints.value.filter((endpoint: LogicalEndpoint) => (dialogWarningOperation.value === Operation.Track && !endpoint.track_instances) || (dialogWarningOperation.value === Operation.DoNotTrack && endpoint.track_instances))
     );
     useShowToast(TYPE.SUCCESS, `All endpoints set to '${dialogWarningOperation.value}'`, "", false, { timeout: 1000 });
   } catch {

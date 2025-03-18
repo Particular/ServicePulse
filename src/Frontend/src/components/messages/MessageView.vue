@@ -23,6 +23,7 @@ import { parse, stringify } from "lossless-json";
 import BodyView from "@/components/messages/BodyView.vue";
 import HeadersView from "@/components/messages/HeadersView.vue";
 import StackTraceView from "@/components/messages/StacktraceView.vue";
+import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -70,7 +71,7 @@ async function loadFailedMessage() {
   }
 
   updateMessageDeleteDate(message);
-  await downloadHeadersAndBody(message);
+  await fetchMessageDetails(message);
   failedMessage.value = message;
 }
 
@@ -114,7 +115,7 @@ async function retryMessage() {
   }
 }
 
-async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
+async function fetchMessageDetails(message: ExtendedFailedMessage) {
   if (isError(message)) return;
 
   try {
@@ -132,7 +133,7 @@ async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
     message.headers = messageDetails.headers;
     message.conversationId = messageDetails.headers.find((header) => header.key === NServiceBusHeaders.ConversationId)?.value ?? "";
 
-    await downloadBody(message);
+    await Promise.all([downloadBody(message), fetchConversation(message)]);
   } catch (err) {
     console.log(err);
     return;
@@ -169,6 +170,15 @@ async function downloadBody(message: ExtendedFailedMessage) {
   } catch {
     message.bodyUnavailable = true;
   }
+}
+
+async function fetchConversation(message: ExtendedFailedMessage) {
+  const response = await useFetchFromServiceControl(`conversations/${"9d91504c-d8b7-488c-b525-b2a300109653"}`);
+  if (response.status === 404) {
+    return;
+  }
+
+  message.conversation = new ModelCreator((await response.json()) as Message[]);
 }
 
 // taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js
