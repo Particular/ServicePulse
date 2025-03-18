@@ -51,7 +51,6 @@ const filteredHeaders = computed(() => {
 }
 .searchheader {
   display: flex;
-  /*  justify-content: flex-end;*/
   align-items: center;
   margin-bottom: 10px;
 }
@@ -60,23 +59,10 @@ const filteredHeaders = computed(() => {
 .search-input {
   padding: 5px;
   margin-right: 10px;
+  width: 100%;
+  max-width: 40rem;
 }
 
-/* Style for the clear button */
-.clear-btn {
-  background: none;
-  border: none;
-  color: #888;
-  font-size: 16px;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
-  font-weight: bold;
-}
-
-.clear-btn:hover {
-  color: #000;
-}
 /* Style for the empty filtered list message */
 .alert-warning {
   margin-top: 10px;
