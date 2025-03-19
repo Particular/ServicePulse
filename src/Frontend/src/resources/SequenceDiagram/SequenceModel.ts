@@ -90,7 +90,8 @@ class EndpointItem implements Endpoint {
     if (!this.#hosts.has(host.equatableKey)) {
       this.#hosts.set(host.equatableKey, host);
     } else {
-      //TODO version stuff
+      const existing = this.#hosts.get(host.equatableKey)!;
+      existing.addVersions(host.versions);
     }
   }
 }
@@ -104,7 +105,7 @@ class Host implements EndpointHost {
     this.#host = host;
     this.#hostId = hostId;
     this.#versions = new Set<string>();
-    if (version) this.#versions.add(version);
+    this.addVersions([version]);
   }
 
   get host() {
@@ -114,8 +115,16 @@ class Host implements EndpointHost {
     return this.#hostId;
   }
 
+  get versions() {
+    return [...this.#versions];
+  }
+
   get equatableKey() {
     return `${this.#hostId}###${this.#host}`;
+  }
+
+  addVersions(versions: (string | undefined)[]) {
+    versions.filter((version) => version).forEach((version) => this.#versions.add(version!.toLowerCase()));
   }
 }
 
