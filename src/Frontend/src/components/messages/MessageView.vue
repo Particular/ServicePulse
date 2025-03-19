@@ -24,7 +24,7 @@ import HeadersView from "@/components/messages/HeadersView.vue";
 import StackTraceView from "@/components/messages/StacktraceView.vue";
 import { stringify, parse } from "lossless-json";
 import xmlFormat from "xml-formatter";
-import SagaView from "./saga-diagram/SagaView.vue";
+import SagaView from "./SagaView.vue";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -115,13 +115,14 @@ async function retryMessage() {
     failedMessage.value.retried = true;
   }
 }
+let storedMessage: Message;
 
 async function downloadHeadersAndBody(message: ExtendedFailedMessage) {
   if (isError(message)) return;
 
   try {
     const [, data] = await useTypedFetchFromServiceControl<Message[]>(`messages/search/${message.message_id}`);
-
+    storedMessage = data[0];
     const messageDetails = data.find((value) => value.receiving_endpoint.name === message.receiving_endpoint?.name);
 
     if (!messageDetails) {
@@ -356,7 +357,7 @@ onUnmounted(() => {
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
-              <SagaView v-if="panel === 5" :message_id="failedMessage.message_id" />
+              <SagaView v-if="panel === 5" :message="storedMessage" />
             </div>
           </div>
 

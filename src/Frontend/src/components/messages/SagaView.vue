@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import Message from "@/resources/Message";
+
 const props = defineProps<{
-  message_id: string;
+  message: Message;
 }>();
 //http://localhost:33333/api/messages/search/4807d6c6-fc45-4385-a448-b2a201322a8c
 </script>
@@ -12,7 +14,7 @@ const props = defineProps<{
   <div>
     <span aria-label="no-saga-plugin">To visualize your saga, please install the appropriate nuget package in your endpoint. Saga audit plugin needed to visualize saga</span>
   </div>
-  <div>Message Id :{{ props.message_id }}</div>
+  <div>Message Id :{{ props.message.id }}</div>
 </template>
 
 <style scoped></style>
