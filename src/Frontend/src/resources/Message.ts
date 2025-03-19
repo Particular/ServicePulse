@@ -20,7 +20,15 @@ export default interface Message {
   body_url: string;
   body_size: number;
   instance_id: string;
+  invoked_sagas: SagaInfo[];
 }
+
+export interface SagaInfo {
+  change_status: string;
+  saga_type: string;
+  saga_id: string;
+}
+
 export interface ExtendedMessage extends Message {
   notFound: boolean;
   error: boolean;
