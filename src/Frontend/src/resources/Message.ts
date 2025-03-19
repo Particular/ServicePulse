@@ -21,6 +21,7 @@ export default interface Message {
   body_size: number;
   instance_id: string;
   invoked_sagas: SagaInfo[];
+  originates_from_saga: SagaInfo;
 }
 
 export interface SagaInfo {
