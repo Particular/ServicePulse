@@ -20,6 +20,8 @@ export default interface Message {
   body_url: string;
   body_size: number;
   instance_id: string;
+  invoked_sagas?: SagaInfo[];
+  originates_from_saga?: SagaInfo;
 }
 export interface ExtendedMessage extends Message {
   notFound: boolean;
@@ -35,4 +37,10 @@ export enum MessageStatus {
   ResolvedSuccessfully = "resolvedSuccessfully",
   ArchivedFailure = "archivedFailure",
   RetryIssued = "retryIssued",
+}
+
+interface SagaInfo {
+  change_status?: string;
+  saga_type: string;
+  saga_id: string;
 }

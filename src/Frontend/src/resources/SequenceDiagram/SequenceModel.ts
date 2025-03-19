@@ -1,148 +1,70 @@
 import { NServiceBusHeaders } from "../Header";
 import Message from "../Message";
+import { createProcessingEndpoint, createSendingEndpoint, Endpoint, EndpointRegistry } from "./Endpoint";
+import { ConversationStartHandlerName, createProcessingHandler, createSendingHandler, Handler, HandlerRegistry, updateProcessingHandler } from "./Handler";
 
 export interface ConversationModel {
   endpoints: Endpoint[];
 }
 
-interface Endpoint {
-  name: string;
-  hosts: EndpointHost[];
-  hostId: string;
-}
-
-interface EndpointHost {
-  host: string;
-  hostId: string;
-}
-
 export class ModelCreator implements ConversationModel {
-  #endpoints: EndpointItem[];
+  #endpoints: Endpoint[];
+  #handlers: Handler[];
 
   constructor(messages: Message[]) {
     this.#endpoints = [];
 
     const endpointRegistry = new EndpointRegistry();
+    const handlerRegistry = new HandlerRegistry();
+    const firstOrderHandlers: Handler[] = [];
     const messagesInOrder = MessageTreeNode.createTree(messages).flatMap((node) => node.walk());
 
     // NOTE: All sending endpoints are created first to ensure version info is retained
     for (const message of messagesInOrder) {
-      endpointRegistry.register(this.createSendingEndpoint(message));
+      endpointRegistry.register(createSendingEndpoint(message));
     }
     for (const message of messagesInOrder) {
-      endpointRegistry.register(this.createProcessingEndpoint(message));
+      endpointRegistry.register(createProcessingEndpoint(message));
     }
 
     for (const message of messagesInOrder) {
-      const sendingEndpoint = endpointRegistry.get(this.createSendingEndpoint(message));
+      const sendingEndpoint = endpointRegistry.get(createSendingEndpoint(message));
       if (!this.#endpoints.find((endpoint) => endpoint.name === sendingEndpoint?.name)) {
         this.#endpoints.push(sendingEndpoint);
       }
-      const processingEndpoint = endpointRegistry.get(this.createProcessingEndpoint(message));
+      const processingEndpoint = endpointRegistry.get(createProcessingEndpoint(message));
       if (!this.#endpoints.find((endpoint) => endpoint.name === processingEndpoint?.name)) {
         this.#endpoints.push(processingEndpoint);
       }
+
+      const { handler: sendingHandler, isNew: sendingHandlerIsNew } = handlerRegistry.register(createSendingHandler(message, sendingEndpoint));
+      if (sendingHandlerIsNew) {
+        firstOrderHandlers.push(sendingHandler);
+        sendingEndpoint.addHandler(sendingHandler);
+      }
+      sendingHandler.updateProcessedAt(new Date(message.time_sent));
+
+      const { handler: processingHandler, isNew: processingHandlerIsNew } = handlerRegistry.register(createProcessingHandler(message, processingEndpoint));
+      if (processingHandlerIsNew) {
+        firstOrderHandlers.push(processingHandler);
+        processingEndpoint.addHandler(processingHandler);
+      } else {
+        updateProcessingHandler(processingHandler, message);
+      }
     }
-  }
 
-  private createProcessingEndpoint(message: Message): EndpointItem {
-    return new EndpointItem(
-      message.receiving_endpoint.name,
-      message.receiving_endpoint.host,
-      message.receiving_endpoint.host_id,
-      message.receiving_endpoint.name === message.sending_endpoint.name && message.receiving_endpoint.host === message.sending_endpoint.host ? message.headers.find((h) => h.key === NServiceBusHeaders.NServiceBusVersion)?.value : undefined
-    );
-  }
+    const start = firstOrderHandlers.find((h) => h.id === ConversationStartHandlerName);
+    const orderByHandledAt = firstOrderHandlers.filter((h) => h.id !== ConversationStartHandlerName).sort((a, b) => (a.handledAt?.getTime() ?? 0) - (b.handledAt?.getTime() ?? 0));
 
-  private createSendingEndpoint(message: Message): EndpointItem {
-    return new EndpointItem(message.sending_endpoint.name, message.sending_endpoint.host, message.sending_endpoint.host_id, message.headers.find((h) => h.key === NServiceBusHeaders.NServiceBusVersion)?.value);
+    this.#handlers = [start!, ...orderByHandledAt];
   }
 
   get endpoints(): Endpoint[] {
     return [...this.#endpoints];
   }
-}
 
-class EndpointItem implements Endpoint {
-  #hosts: Map<string, Host>;
-  #name: string;
-
-  constructor(name: string, host: string, id: string, version?: string) {
-    const initialHost = new Host(host, id, version);
-    this.#hosts = new Map<string, Host>([[initialHost.equatableKey, initialHost]]);
-    this.#name = name;
-  }
-
-  get name() {
-    return this.#name;
-  }
-  get hosts() {
-    return [...this.#hosts].map(([, host]) => host);
-  }
-  get host() {
-    return [...this.#hosts].map(([, host]) => host.host).join(",");
-  }
-  get hostId() {
-    return [...this.#hosts].map(([, host]) => host.hostId).join(",");
-  }
-
-  addHost(host: Host) {
-    if (!this.#hosts.has(host.equatableKey)) {
-      this.#hosts.set(host.equatableKey, host);
-    } else {
-      const existing = this.#hosts.get(host.equatableKey)!;
-      existing.addVersions(host.versions);
-    }
-  }
-}
-
-class Host implements EndpointHost {
-  #host: string;
-  #hostId: string;
-  #versions: Set<string>;
-
-  constructor(host: string, hostId: string, version?: string) {
-    this.#host = host;
-    this.#hostId = hostId;
-    this.#versions = new Set<string>();
-    this.addVersions([version]);
-  }
-
-  get host() {
-    return this.#host;
-  }
-  get hostId() {
-    return this.#hostId;
-  }
-
-  get versions() {
-    return [...this.#versions];
-  }
-
-  get equatableKey() {
-    return `${this.#hostId}###${this.#host}`;
-  }
-
-  addVersions(versions: (string | undefined)[]) {
-    versions.filter((version) => version).forEach((version) => this.#versions.add(version!.toLowerCase()));
-  }
-}
-
-class EndpointRegistry {
-  #store = new Map<string, EndpointItem>();
-
-  register(item: EndpointItem) {
-    let endpoint = this.#store.get(item.name);
-    if (!endpoint) {
-      endpoint = item;
-      this.#store.set(endpoint.name, endpoint);
-    }
-
-    item.hosts.forEach((host) => endpoint.addHost(host));
-  }
-
-  get(item: EndpointItem) {
-    return this.#store.get(item.name)!;
+  get handlers(): Handler[] {
+    return [...this.#handlers];
   }
 }
 
