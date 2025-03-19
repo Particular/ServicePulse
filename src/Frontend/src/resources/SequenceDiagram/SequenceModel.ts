@@ -1,5 +1,6 @@
 import { NServiceBusHeaders } from "../Header";
 import Message from "../Message";
+import { createRoutedMessage, createRoute, MessageProcessingRoute } from "./RoutedMessage";
 import { createProcessingEndpoint, createSendingEndpoint, Endpoint, EndpointRegistry } from "./Endpoint";
 import { ConversationStartHandlerName, createProcessingHandler, createSendingHandler, Handler, HandlerRegistry, updateProcessingHandler } from "./Handler";
 
@@ -7,12 +8,23 @@ export interface ConversationModel {
   endpoints: Endpoint[];
 }
 
+//TODO: extract to common area if this continues to be used in AuditList
+export function friendlyTypeName(messageType: string) {
+  if (messageType == null) return undefined;
+
+  const typeClass = messageType.split(",")[0];
+  const typeName = typeClass.split(".").reverse()[0];
+  return typeName.replace(/\+/g, ".");
+}
+
 export class ModelCreator implements ConversationModel {
   #endpoints: Endpoint[];
   #handlers: Handler[];
+  #processingRoutes: MessageProcessingRoute[];
 
   constructor(messages: Message[]) {
     this.#endpoints = [];
+    this.#processingRoutes = [];
 
     const endpointRegistry = new EndpointRegistry();
     const handlerRegistry = new HandlerRegistry();
@@ -51,6 +63,13 @@ export class ModelCreator implements ConversationModel {
       } else {
         updateProcessingHandler(processingHandler, message);
       }
+
+      const routedMessage = createRoutedMessage(message);
+      routedMessage.toHandler = processingHandler;
+      routedMessage.fromHandler = sendingHandler;
+      this.#processingRoutes.push(createRoute(routedMessage, processingHandler));
+      processingHandler.inMessage = routedMessage;
+      sendingHandler.addOutMessage(routedMessage);
     }
 
     const start = firstOrderHandlers.find((h) => h.id === ConversationStartHandlerName);
@@ -65,6 +84,10 @@ export class ModelCreator implements ConversationModel {
 
   get handlers(): Handler[] {
     return [...this.#handlers];
+  }
+
+  get routes(): MessageProcessingRoute[] {
+    return [...this.#processingRoutes];
   }
 }
 

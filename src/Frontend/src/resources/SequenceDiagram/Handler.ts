@@ -1,6 +1,8 @@
 import { NServiceBusHeaders } from "../Header";
 import Message, { MessageStatus } from "../Message";
+import { MessageProcessingRoute, RoutedMessage } from "./RoutedMessage";
 import { Endpoint } from "./Endpoint";
+import { friendlyTypeName } from "./SequenceModel";
 
 export interface Handler {
   readonly id: string;
@@ -9,11 +11,15 @@ export interface Handler {
   readonly isPartOfSaga: boolean;
   partOfSaga?: string;
   state: HandlerState;
+  inMessage?: RoutedMessage;
+  readonly outMessages: RoutedMessage[];
   processedAt?: Date;
   readonly handledAt?: Date;
   processingTime?: number;
-  //readonly selectedMessage: Message;
+  route?: MessageProcessingRoute;
+  readonly selectedMessage?: Message;
   updateProcessedAt(timeSent: Date): void;
+  addOutMessage(routedMessage: RoutedMessage): void;
 }
 
 export enum HandlerState {
@@ -68,28 +74,23 @@ export function updateProcessingHandler(handler: Handler, message: Message) {
   }
 }
 
-//TODO: extract
-function friendlyTypeName(messageType: string) {
-  if (messageType == null) return undefined;
-
-  const typeClass = messageType.split(",")[0];
-  const typeName = typeClass.split(".").reverse()[0];
-  return typeName.replace(/\+/g, ".");
-}
-
 class HandlerItem implements Handler {
   #id: string;
   #endpoint: Endpoint;
   #processedAtGuess?: Date;
+  #outMessages: RoutedMessage[];
   name?: string;
   partOfSaga?: string;
+  inMessage?: RoutedMessage;
   state: HandlerState = HandlerState.Fail;
   processedAt?: Date;
   processingTime?: number;
+  route?: MessageProcessingRoute;
 
   constructor(id: string, endpoint: Endpoint) {
     this.#id = id;
     this.#endpoint = endpoint;
+    this.#outMessages = [];
   }
 
   get id() {
@@ -108,7 +109,19 @@ class HandlerItem implements Handler {
     return this.processedAt ?? this.#processedAtGuess;
   }
 
+  get selectedMessage() {
+    return this.route?.fromRoutedMessage?.selectedMessage;
+  }
+
+  get outMessages() {
+    return [...this.#outMessages];
+  }
+
   updateProcessedAt(timeSent: Date) {
     if (!this.#processedAtGuess || this.#processedAtGuess.getTime() > timeSent.getTime()) this.#processedAtGuess = timeSent;
+  }
+
+  addOutMessage(routedMessage: RoutedMessage) {
+    this.#outMessages = [routedMessage, ...this.#outMessages].sort((a, b) => (a.sentTime?.getTime() ?? 0) - (b.sentTime?.getTime() ?? 0));
   }
 }

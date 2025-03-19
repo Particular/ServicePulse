@@ -16,7 +16,7 @@ export default interface Message {
   conversation_id: string;
   headers: Header[];
   status: MessageStatus;
-  message_intent: string;
+  message_intent: MessageIntent;
   body_url: string;
   body_size: number;
   instance_id: string;
@@ -37,6 +37,15 @@ export enum MessageStatus {
   ResolvedSuccessfully = "resolvedSuccessfully",
   ArchivedFailure = "archivedFailure",
   RetryIssued = "retryIssued",
+}
+
+export enum MessageIntent {
+  Send = "send",
+  Publish = "publish",
+  Subscribe = "subscribe",
+  Unsubscribe = "unsubscribe",
+  Reply = "reply",
+  Init = "init",
 }
 
 interface SagaInfo {
