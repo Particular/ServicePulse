@@ -39,7 +39,7 @@ const filteredHeaders = computed(() => {
         <td>
           <div class="headercopy" @mouseover="toggleHover(index, true)" @mouseleave="toggleHover(index, false)">
             <pre>{{ header.value }}</pre>
-            <CopyToClipboard v-if="hoverStates[index]" :value="header.value || ''" :isIconOnly="true" />
+            <CopyToClipboard v-if="hoverStates[index] && header.value" :value="header.value" :isIconOnly="true" />
           </div>
         </td>
       </tr>
