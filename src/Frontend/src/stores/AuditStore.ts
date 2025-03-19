@@ -51,9 +51,7 @@ export const useAuditStore = defineStore("AuditStore", () => {
   }, null);
 
   const refresh = dataRetriever.executeAndResetTimer;
-  watch(itemsPerPage, () => refresh());
-  watch(selectedPage, () => refresh());
-  watch(sortByInstances, () => refresh());
+  watch([itemsPerPage, selectedPage, sortByInstances], () => refresh());
 
   function setMessageFilterString(filter: string) {
     messageFilterString.value = filter;

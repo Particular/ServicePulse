@@ -40,6 +40,7 @@ export interface ExtendedFailedMessage extends FailedMessage {
   conversationId: string;
   conversation?: ConversationModel;
   messageBody: string;
+  contentType: string;
   isEditAndRetryEnabled: boolean;
   redirect: boolean;
   submittedForRetrial: boolean;

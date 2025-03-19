@@ -19,10 +19,11 @@ import Message from "@/resources/Message";
 import { NServiceBusHeaders } from "@/resources/Header";
 import { useConfiguration } from "@/composables/configuration";
 import { useIsMassTransitConnected } from "@/composables/useIsMassTransitConnected";
-import { parse, stringify } from "lossless-json";
 import BodyView from "@/components/messages/BodyView.vue";
 import HeadersView from "@/components/messages/HeadersView.vue";
 import StackTraceView from "@/components/messages/StacktraceView.vue";
+import { stringify, parse } from "lossless-json";
+import xmlFormat from "xml-formatter";
 import { ModelCreator } from "@/resources/SequenceDiagram/SequenceModel";
 
 let refreshInterval: number | undefined;
@@ -151,21 +152,15 @@ async function downloadBody(message: ExtendedFailedMessage) {
   }
 
   try {
-    switch (response.headers.get("content-type")) {
-      case "application/json": {
-        const jsonBodyRaw = await response.text();
-        const jsonBody = parse(jsonBodyRaw.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => (g ? "" : m)));
-        message.messageBody = formatJson(jsonBody);
-        return;
-      }
-      case "text/xml": {
-        const xmlBody = await response.text();
-        message.messageBody = formatXml(xmlBody);
-        return;
-      }
-      default: {
-        message.messageBody = await response.text();
-      }
+    const contentType = response.headers.get("content-type");
+    message.contentType = contentType ?? "text/plain";
+    message.messageBody = await response.text();
+
+    if (contentType === "application/json") {
+      message.messageBody = stringify(parse(message.messageBody), null, 2) ?? message.messageBody;
+    }
+    if (contentType === "text/xml") {
+      message.messageBody = xmlFormat(message.messageBody, { indentation: "  ", collapseContent: true });
     }
   } catch {
     message.bodyUnavailable = true;
@@ -179,97 +174,6 @@ async function fetchConversation(message: ExtendedFailedMessage) {
   }
 
   message.conversation = new ModelCreator((await response.json()) as Message[]);
-}
-
-// taken from https://github.com/krtnio/angular-pretty-xml/blob/master/src/angular-pretty-xml.js
-function formatXml(xml: string) {
-  function createShiftArr(step: string) {
-    let space: string;
-    if (isNaN(parseInt(step))) {
-      // argument is string
-      space = step;
-    } else {
-      // argument is integer
-      space = " ".repeat(parseInt(step));
-    }
-
-    const shift = ["\n"]; // array of shifts
-
-    for (let ix = 0; ix < 100; ix++) {
-      shift.push(shift[ix] + space);
-    }
-
-    return shift;
-  }
-
-  const indent = "\t";
-
-  const arr = xml
-    .replace(/>\s*</gm, "><")
-    .replace(/</g, "~::~<")
-    .replace(/\s*xmlns([=:])/g, "~::~xmlns$1")
-    .split("~::~");
-
-  const len = arr.length,
-    shift = createShiftArr(indent);
-  let inComment = false,
-    depth = 0,
-    string = "",
-    m1: RegExpExecArray | null,
-    m2: RegExpExecArray | null;
-
-  for (let i = 0; i < len; i++) {
-    m1 = /^<[\w:\-.,]+/.exec(arr[i - 1]);
-    m2 = /^<\/[\w:\-.,]+/.exec(arr[i]);
-    // start comment or <![CDATA[...]]> or <!DOCTYPE //
-    if (arr[i].indexOf("<!") !== -1) {
-      string += shift[depth] + arr[i];
-      inComment = true;
-      // end comment or <![CDATA[...]]> //
-      if (arr[i].indexOf("-->") !== -1 || arr[i].indexOf("]>") !== -1 || arr[i].indexOf("!DOCTYPE") !== -1) {
-        inComment = false;
-      }
-    } else if (arr[i].indexOf("-->") !== -1 || arr[i].indexOf("]>") !== -1) {
-      // end comment  or <![CDATA[...]]> //
-      string += arr[i];
-      inComment = false;
-    } else if (
-      /^<\w/.test(arr[i - 1]) &&
-      /^<\/\w/.test(arr[i]) && // <elm></elm> //
-      m1 &&
-      m2 &&
-      m1[0] === m2[0].replace("/", "")
-    ) {
-      string += arr[i];
-      if (!inComment) depth--;
-    } else if (arr[i].search(/<\w/) !== -1 && arr[i].indexOf("</") === -1 && arr[i].indexOf("/>") === -1) {
-      // <elm> //
-      string += !inComment ? shift[depth++] + arr[i] : arr[i];
-    } else if (arr[i].search(/<\w/) !== -1 && arr[i].indexOf("</") !== -1) {
-      // <elm>...</elm> //
-      string += !inComment ? shift[depth] + arr[i] : arr[i];
-    } else if (arr[i].search(/<\//) > -1) {
-      // </elm> //
-      string += !inComment ? shift[--depth] + arr[i] : arr[i];
-    } else if (arr[i].indexOf("/>") !== -1) {
-      // <elm/> //
-      string += !inComment ? shift[depth] + arr[i] : arr[i];
-    } else if (arr[i].indexOf("<?") !== -1) {
-      // <? xml ... ?> //
-      string += shift[depth] + arr[i];
-    } else if (arr[i].indexOf("xmlns:") !== -1 || arr[i].indexOf("xmlns=") !== -1) {
-      // xmlns //
-      string += shift[depth] + arr[i];
-    } else {
-      string += arr[i];
-    }
-  }
-
-  return string.trim();
-}
-
-function formatJson(json: unknown) {
-  return stringify(json, null, 2) as string;
 }
 
 function togglePanel(panelNum: number) {
@@ -438,7 +342,7 @@ onUnmounted(() => {
                 <button type="button" class="btn btn-default" v-if="!failedMessage.archived" :disabled="failedMessage.retried || failedMessage.resolved" @click="showDeleteConfirm = true"><i class="fa fa-trash"></i> Delete message</button>
                 <button type="button" class="btn btn-default" v-if="failedMessage.archived" @click="showRestoreConfirm = true"><i class="fa fa-undo"></i> Restore</button>
                 <button type="button" class="btn btn-default" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showRetryConfirm = true"><i class="fa fa-refresh"></i> Retry message</button>
-                <button type="button" class="btn btn-default" v-if="failedMessage.isEditAndRetryEnabled" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showEditAndRetryModal()">
+                <button type="button" class="btn btn-default" aria-label="Edit & retry" v-if="failedMessage.isEditAndRetryEnabled" :disabled="failedMessage.retried || failedMessage.archived || failedMessage.resolved" @click="showEditAndRetryModal()">
                   <i class="fa fa-pencil"></i> Edit & retry
                 </button>
                 <button v-if="!isMassTransitConnected" type="button" class="btn btn-default" @click="debugInServiceInsight()" title="Browse this message in ServiceInsight, if installed">
@@ -456,7 +360,7 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(3)"><a href="#">Headers</a></h5>
                 <h5 v-if="!isMassTransitConnected" :class="{ active: panel === 4 }" class="nav-item" @click.prevent="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
               </div>
-              <StackTraceView v-if="panel === 1" :message="failedMessage" />
+              <StackTraceView v-if="panel === 1 && failedMessage.exception?.stack_trace" :message="failedMessage" />
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
@@ -494,7 +398,7 @@ onUnmounted(() => {
                 showRetryConfirm = false;
                 retryMessage();
               "
-              heading="Are you sure you want to retry this message?"
+              heading="Retry Message"
               body="Are you sure you want to retry this message?"
             ></ConfirmDialog>
 
