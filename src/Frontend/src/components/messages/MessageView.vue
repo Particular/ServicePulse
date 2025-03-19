@@ -356,7 +356,7 @@ onUnmounted(() => {
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
-              <SagaView v-if="panel === 5" :message="failedMessage" />
+              <SagaView v-if="panel === 5" :message_id="failedMessage.message_id" />
             </div>
           </div>
 
