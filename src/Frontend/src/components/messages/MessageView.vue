@@ -24,6 +24,7 @@ import HeadersView from "@/components/messages/HeadersView.vue";
 import StackTraceView from "@/components/messages/StacktraceView.vue";
 import { stringify, parse } from "lossless-json";
 import xmlFormat from "xml-formatter";
+import SagaView from "./saga-diagram/SagaView.vue";
 
 let refreshInterval: number | undefined;
 let pollingFaster = false;
@@ -349,11 +350,13 @@ onUnmounted(() => {
                 <h5 :class="{ active: panel === 2 }" class="nav-item" @click.prevent="togglePanel(2)"><a href="#">Message body</a></h5>
                 <h5 :class="{ active: panel === 3 }" class="nav-item" @click.prevent="togglePanel(3)"><a href="#">Headers</a></h5>
                 <h5 v-if="!isMassTransitConnected" :class="{ active: panel === 4 }" class="nav-item" @click.prevent="togglePanel(4)"><a href="#">Flow Diagram</a></h5>
+                <h5 :class="{ active: panel === 5 }" class="nav-item" @click.prevent="togglePanel(5)"><a href="#">Saga</a></h5>
               </div>
               <StackTraceView v-if="panel === 1 && failedMessage.exception?.stack_trace" :message="failedMessage" />
               <BodyView v-if="panel === 2" :message="failedMessage" />
               <HeadersView v-if="panel === 3" :message="failedMessage" />
               <FlowDiagram v-if="panel === 4" :message="failedMessage" />
+              <SagaView v-if="panel === 5" :message="failedMessage" />
             </div>
           </div>
 
