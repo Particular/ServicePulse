@@ -1,20 +1,29 @@
 <script setup lang="ts">
 import Message from "@/resources/Message";
+import { SagaHistory } from "@/resources/SagaHistory";
+import { computed } from "vue";
 
-defineProps<{
-  message: Message;
-}>();
-//http://localhost:33333/api/messages/search/4807d6c6-fc45-4385-a448-b2a201322a8c
+const props = withDefaults(
+  defineProps<{
+    message: Message;
+    sagaHistory?: SagaHistory;
+  }>(),
+  { sagaHistory: undefined }
+);
+
+const participatedInSaga = computed(() => (props.message?.invoked_sagas ?? []).length > 0);
+const hasSagaData = computed(() => (props.sagaHistory?.changes?.length ?? 0) > 0);
+const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true && hasSagaData.value === false);
 </script>
 
 <template>
-  <div>
+  <div v-if="participatedInSaga == false">
     <span role="status" aria-label="message-not-involved-in-saga">No Saga Data Available</span>
   </div>
-  <div>
-    <span aria-label="no-saga-plugin">To visualize your saga, please install the appropriate nuget package in your endpoint. Saga audit plugin needed to visualize saga</span>
+  <div v-if="showNoPluginActiveLeged">
+    <span role="status" aria-label="saga-plugin-needed">To visualize your saga, please install the appropriate nuget package in your endpoint. Saga audit plugin needed to visualize saga</span>
   </div>
-  <div v-if="message && message.invoked_sagas && message.invoked_sagas.length > 0" role="list" aria-label="saga-sequence-list"></div>
+  <div v-if="hasSagaData" role="list" aria-label="saga-sequence-list"></div>
 </template>
 
 <style scoped></style>
