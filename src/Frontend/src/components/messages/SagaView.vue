@@ -2,6 +2,8 @@
 import Message from "@/resources/Message";
 import { SagaHistory } from "@/resources/SagaHistory";
 import { computed } from "vue";
+import { RouterLink } from "vue-router";
+import routeLinks from "@/router/routeLinks";
 
 const props = withDefaults(
   defineProps<{
@@ -26,14 +28,15 @@ const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true
   <div v-if="hasSagaData" role="list" aria-label="saga-sequence-list">
     <div class="header">
       <div>Saga</div>
-      <btn aria-label="message-not-involved-in-saga">Show Message Data</btn>
+      <button aria-label="message-not-involved-in-saga">Show Message Data</button>
     </div>
     <div class="body">
       <div class="container">
         <div class="block">
           <div class="row row--center">
             <div class="cell cell--center">
-              <a href="">Back to Message View</a>
+              <!-- //TODO: this link needs to be configured so it navigates back but to the corresponding message in the flow diagram -->
+              <RouterLink aria-role="link" :to="routeLinks.messages.message.link(message.id)">← Back to Messages</RouterLink>
               <h1 class="main-title">AuditingSaga</h1>
               <div><b>guid</b> 85bbb156-431b-73ff-ef32-83e8df9ed051</div>
             </div>

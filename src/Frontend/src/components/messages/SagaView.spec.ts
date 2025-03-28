@@ -3,6 +3,7 @@ import sut from "./SagaView.vue";
 import Message, { SagaInfo } from "@/resources/Message";
 import { within } from "@testing-library/vue";
 import { SagaHistory } from "@/resources/SagaHistory";
+import makeRouter from "@/router";
 
 //Defines a domain-specific language (DSL) for interacting with the system under test (sut)
 interface componentDSL {
@@ -12,6 +13,7 @@ interface componentDSL {
 
 //Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
 interface componentDSLAssertions {
+  linkIsShown(arg0: { withText: string; withHref: string }): void;
   NoSagaDataAvailableMessageIsShown(): void;
   SagaPlugInNeededIsShownWithTheMessage(message: RegExp): void;
   SagaSequenceIsNotShown(): void;
@@ -44,11 +46,41 @@ describe("Feature: 1 Detecting no Audited Saga Data Available", () => {
   });
 });
 
+describe("Feature: Navigation and Contextual Information", () => {
+  describe("Rule: Provide clear navigational elements to move between the message flow diagram and the saga view.", () => {
+    test("EXAMPLE: A message that participated in a saga with audited saga history gets selected", () => {
+      //A "← Back to Messages" link allows users to easily navigate back to the flow diagram.
+      const message = {} as Message;
+      const invokedSaga = {} as SagaInfo;
+      invokedSaga.saga_id = "saga_id";
+      message.invoked_sagas = [invokedSaga];
+
+      const storedMessageRecordId = "45f425fc-26ce-163b-4f64-857b889348f3";
+      message.id = storedMessageRecordId;
+
+      const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
+      //TODO: this link needs to be configured so it navigates back but to the corresponding message in the flow diagram
+      componentDriver.assert.linkIsShown({ withText: "← Back to Messages", withHref: `#/messages/${storedMessageRecordId}` });
+    });
+  });
+
+  describe("Rule: Clearly indicate contextual information like Saga ID or Saga Type.", () => {
+    test.todo("EXAMPLE: A message that participated in a saga with audited saga history gets selected", () => {
+      //The saga’s type ("AuditingSaga") and unique identifier (guid) are prominently displayed at the top for reference.
+    });
+  });
+});
+
 function rendercomponent({ message, sagaHistory = undefined }: { message: Message; sagaHistory?: SagaHistory }): componentDSL {
+  const router = makeRouter();
+
   render(sut, {
     props: {
       message,
       sagaHistory,
+    },
+    global: {
+      plugins: [router],
     },
   });
 
@@ -84,8 +116,107 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
         const sagaSequence = screen.queryByRole("list", { name: /saga-sequence-list/i });
         expect(sagaSequence).not.toBeInTheDocument();
       },
+      linkIsShown(args: { withText: string; withHref: string }) {
+        const link = screen.getByRole("link", { name: args.withText });
+        expect(link).toBeInTheDocument();
+        expect(link.getAttribute("href")).toBe(args.withHref);
+      },
     },
   };
 
   return dslAPI;
 }
+
+const sampleSagaHistory = <SagaHistory>{
+  id: "45f425fc-26ce-163b-4f64-857b889348f3",
+  saga_id: "45f425fc-26ce-163b-4f64-857b889348f3",
+  saga_type: "ServiceControl.SmokeTest.AuditingSaga",
+  changes: [
+    {
+      start_time: "2025-03-28T03:04:08.3819211Z",
+      finish_time: "2025-03-28T03:04:08.3836Z",
+      status: "completed",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "876d89bd-7a1f-43f1-b384-b2ae003290e8",
+        is_saga_timeout_message: true,
+        originating_endpoint: "Endpoint1",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:06.321561Z",
+        message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+        intent: "Send",
+      },
+      outgoing_messages: [],
+      endpoint: "Endpoint1",
+    },
+    {
+      start_time: "2025-03-28T03:04:07.5416262Z",
+      finish_time: "2025-03-28T03:04:07.5509712Z",
+      status: "updated",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "1308367f-c6a2-418f-9df2-b2ae00328fc9",
+        is_saga_timeout_message: true,
+        originating_endpoint: "Endpoint1",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:05.37723Z",
+        message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+        intent: "Send",
+      },
+      outgoing_messages: [],
+      endpoint: "Endpoint1",
+    },
+    {
+      start_time: "2025-03-28T03:04:06.3088353Z",
+      finish_time: "2025-03-28T03:04:06.3218175Z",
+      status: "updated",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "e5bb5304-7892-4d39-96e2-b2ae003290df",
+        is_saga_timeout_message: false,
+        originating_endpoint: "Sender",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:06.293765Z",
+        message_type: "ServiceControl.SmokeTest.SagaMessage2",
+        intent: "Send",
+      },
+      outgoing_messages: [
+        {
+          delivery_delay: "00:00:02",
+          destination: "Endpoint1",
+          message_id: "876d89bd-7a1f-43f1-b384-b2ae003290e8",
+          time_sent: "2025-03-28T03:04:06.3214397Z",
+          message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+          intent: "Send",
+        },
+      ],
+      endpoint: "Endpoint1",
+    },
+    {
+      start_time: "2025-03-28T03:04:05.3332078Z",
+      finish_time: "2025-03-28T03:04:05.3799483Z",
+      status: "new",
+      state_after_change: '{"Id":"45f425fc-26ce-163b-4f64-857b889348f3","Originator":null,"OriginalMessageId":"4b9fdea7-d78c-41f0-91ee-b2ae00328f9c"}',
+      initiating_message: {
+        message_id: "4b9fdea7-d78c-41f0-91ee-b2ae00328f9c",
+        is_saga_timeout_message: false,
+        originating_endpoint: "Sender",
+        originating_machine: "mobvm2",
+        time_sent: "2025-03-28T03:04:05.235534Z",
+        message_type: "ServiceControl.SmokeTest.SagaMessage1",
+        intent: "Send",
+      },
+      outgoing_messages: [
+        {
+          delivery_delay: "00:00:02",
+          destination: "Endpoint1",
+          message_id: "1308367f-c6a2-418f-9df2-b2ae00328fc9",
+          time_sent: "2025-03-28T03:04:05.3715034Z",
+          message_type: "ServiceControl.SmokeTest.MyCustomTimeout",
+          intent: "Send",
+        },
+      ],
+      endpoint: "Endpoint1",
+    },
+  ],
+};
