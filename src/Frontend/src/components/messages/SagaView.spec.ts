@@ -13,6 +13,8 @@ interface componentDSL {
 
 //Defines a domain-specific language (DSL) for checking assertions against the system under test (sut)
 interface componentDSLAssertions {
+  displayedSagaGuidIs(sagaId: string): void;
+  displayedSagaNameIs(humanizedSagaName: string): void;
   linkIsShown(arg0: { withText: string; withHref: string }): void;
   NoSagaDataAvailableMessageIsShown(): void;
   SagaPlugInNeededIsShownWithTheMessage(message: RegExp): void;
@@ -64,9 +66,19 @@ describe("Feature: Navigation and Contextual Information", () => {
     });
   });
 
-  describe("Rule: Clearly indicate contextual information like Saga ID or Saga Type.", () => {
-    test.todo("EXAMPLE: A message that participated in a saga with audited saga history gets selected", () => {
+  describe("Rule: Clearly indicate contextual information like Saga ID and Saga Type.", () => {
+    test("EXAMPLE: A message that participated in a saga with audited saga history gets selected", () => {
       //The saga’s type ("AuditingSaga") and unique identifier (guid) are prominently displayed at the top for reference.
+      const message = {} as Message;
+      const invokedSaga = {} as SagaInfo;
+      invokedSaga.saga_id = "123";
+      invokedSaga.saga_type = "ServiceControl.SmokeTest.AuditingSaga";
+      message.invoked_sagas = [invokedSaga];
+
+      const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
+
+      componentDriver.assert.displayedSagaNameIs("AuditingSaga");
+      componentDriver.assert.displayedSagaGuidIs("123");
     });
   });
 });
@@ -120,6 +132,16 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
         const link = screen.getByRole("link", { name: args.withText });
         expect(link).toBeInTheDocument();
         expect(link.getAttribute("href")).toBe(args.withHref);
+      },
+      displayedSagaNameIs(name: string) {
+        const sagaName = screen.getByRole("heading", { name: /saga name/i });
+        expect(sagaName).toBeInTheDocument();
+        expect(sagaName).toHaveTextContent(name);
+      },
+      displayedSagaGuidIs(guid: string) {
+        const sagaGuid = screen.getByRole("note", { name: /saga guid/i });
+        expect(sagaGuid).toBeInTheDocument();
+        expect(sagaGuid).toHaveTextContent(guid);
       },
     },
   };

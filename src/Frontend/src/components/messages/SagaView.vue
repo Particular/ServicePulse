@@ -4,6 +4,7 @@ import { SagaHistory } from "@/resources/SagaHistory";
 import { computed } from "vue";
 import { RouterLink } from "vue-router";
 import routeLinks from "@/router/routeLinks";
+import { typeToName } from "@/composables/typeHumanizer";
 
 const props = withDefaults(
   defineProps<{
@@ -36,9 +37,11 @@ const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true
           <div class="row row--center">
             <div class="cell cell--center">
               <!-- //TODO: this link needs to be configured so it navigates back but to the corresponding message in the flow diagram -->
-              <RouterLink aria-role="link" :to="routeLinks.messages.message.link(message.id)">← Back to Messages</RouterLink>
-              <h1 class="main-title">AuditingSaga</h1>
-              <div><b>guid</b> 85bbb156-431b-73ff-ef32-83e8df9ed051</div>
+              <RouterLink :to="routeLinks.messages.message.link(message.id)">← Back to Messages</RouterLink>
+              <h1 aria-label="saga name" class="main-title">{{ typeToName(message.invoked_sagas[0].saga_type) }}</h1>
+              <div>
+                <b>guid</b> <span role="note" aria-label="saga guid">{{ message.invoked_sagas[0].saga_id }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -265,12 +268,6 @@ const showNoPluginActiveLeged = computed(() => participatedInSaga.value === true
   margin-left: 100%;
   left: -5px;
 }
-
-/* Content styles */
-
-/* * {
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-} */
 
 .main-title {
   margin: 0.3rem 0;
