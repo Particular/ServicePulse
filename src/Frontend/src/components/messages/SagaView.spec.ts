@@ -16,7 +16,7 @@ interface componentDSLAssertions {
   displayedSagaGuidIs(sagaId: string): void;
   displayedSagaNameIs(humanizedSagaName: string): void;
   linkIsShown(arg0: { withText: string; withHref: string }): void;
-  NoSagaDataAvailableMessageIsShown(): void;
+  NoSagaDataAvailableMessageIsShownWithMessage(message: RegExp): void;
   SagaPlugInNeededIsShownWithTheMessage(message: RegExp): void;
   SagaSequenceIsNotShown(): void;
 }
@@ -29,7 +29,7 @@ describe("Feature: Message not involved in Saga", () => {
 
       const componentDriver = rendercomponent({ message: message });
 
-      componentDriver.assert.NoSagaDataAvailableMessageIsShown();
+      componentDriver.assert.NoSagaDataAvailableMessageIsShownWithMessage(/no saga data/i);
     });
   });
 });
@@ -50,14 +50,14 @@ describe("Feature: 1 Detecting no Audited Saga Data Available", () => {
 
 describe("Feature: Navigation and Contextual Information", () => {
   describe("Rule: Provide clear navigational elements to move between the message flow diagram and the saga view.", () => {
-    test("EXAMPLE: A message that participated in a saga with audited saga history gets selected", () => {
+    test("EXAMPLE: An record with id 123 gets selected", () => {
       //A "← Back to Messages" link allows users to easily navigate back to the flow diagram.
       const message = {} as Message;
       const invokedSaga = {} as SagaInfo;
       invokedSaga.saga_id = "saga_id";
       message.invoked_sagas = [invokedSaga];
 
-      const storedMessageRecordId = "45f425fc-26ce-163b-4f64-857b889348f3";
+      const storedMessageRecordId = "123";
       message.id = storedMessageRecordId;
 
       const componentDriver = rendercomponent({ message: message, sagaHistory: sampleSagaHistory });
@@ -67,7 +67,7 @@ describe("Feature: Navigation and Contextual Information", () => {
   });
 
   describe("Rule: Clearly indicate contextual information like Saga ID and Saga Type.", () => {
-    test("EXAMPLE: A message that participated in a saga with audited saga history gets selected", () => {
+    test("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
       //The saga’s type ("AuditingSaga") and unique identifier (guid) are prominently displayed at the top for reference.
       const message = {} as Message;
       const invokedSaga = {} as SagaInfo;
@@ -101,28 +101,28 @@ function rendercomponent({ message, sagaHistory = undefined }: { message: Messag
       // Add actions here
     },
     assert: {
-      NoSagaDataAvailableMessageIsShown() {
+      NoSagaDataAvailableMessageIsShownWithMessage(message: RegExp) {
         //ensure that the only one status message is shown
         expect(screen.queryAllByRole("status")).toHaveLength(1);
 
         const status = screen.queryByRole("status", { name: /message-not-involved-in-saga/i });
         expect(status).toBeInTheDocument();
+        const statusText = within(status!).getByText(message);
+        expect(statusText).toBeInTheDocument();
 
         this.SagaSequenceIsNotShown();
       },
       SagaPlugInNeededIsShownWithTheMessage(message: RegExp) {
-        //ensure that the only one status message is shown
+        // Ensure that only one status message is shown
         expect(screen.queryAllByRole("status")).toHaveLength(1);
+
         const status = screen.queryByRole("status", { name: /saga-plugin-needed/i });
         expect(status).toBeInTheDocument();
 
-        if (status) {
-          const statusText = within(status).getByText(message);
-          expect(statusText).toBeInTheDocument();
-        }
+        const statusText = within(status!).getByText(message);
+        expect(statusText).toBeInTheDocument();
 
         this.SagaSequenceIsNotShown();
-        //
       },
       SagaSequenceIsNotShown() {
         const sagaSequence = screen.queryByRole("list", { name: /saga-sequence-list/i });
