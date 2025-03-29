@@ -83,6 +83,20 @@ describe("Feature: Navigation and Contextual Information", () => {
   });
 });
 
+describe("Feature: 3 Visual Representation of Saga Timeline", () => {
+  describe("Rule: 3.1 Clearly indicate the initiation and completion of a saga.", () => {
+    test.todo("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
+      //"Saga Initiated" is explicitly displayed first, and "Saga Completed" is explicitly displayed at the bottom.
+    });
+  });
+
+  describe("Rule: 3.2 Display a chronological timeline of saga events.", () => {
+    test.todo("EXAMPLE: A message with a Saga Id '123' and a Saga Type 'ServiceControl.SmokeTest.AuditingSaga' gets selected", () => {
+      //     Each saga event ("Saga Initiated," "Saga Updated," "Timeout Invoked," "Saga Completed") is timestamped and visually aligned vertically to represent progression over time. Events are ordered by the time they ocurred. Incoming messages are displayed on the left, and outgoing messages are displayed on the right.
+    });
+  });
+});
+
 function rendercomponent({ message, sagaHistory = undefined }: { message: Message; sagaHistory?: SagaHistory }): componentDSL {
   const router = makeRouter();
 
