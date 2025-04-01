@@ -1,7 +1,6 @@
-import { render, describe, test, screen, expect } from "@component-test-utils";
+import { render, describe, test, screen, expect, within } from "@component-test-utils";
 import sut from "./SagaView.vue";
 import Message, { SagaInfo } from "@/resources/Message";
-import { within } from "@testing-library/vue";
 import { SagaHistory } from "@/resources/SagaHistory";
 import makeRouter from "@/router";
 
